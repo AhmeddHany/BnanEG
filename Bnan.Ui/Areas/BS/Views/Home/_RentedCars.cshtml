@@ -1,0 +1,79 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.BS;
+@using Newtonsoft.Json;
+@model BSLayoutVM
+@inject IViewLocalizer localizer
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+@{
+    var addedCategories = new HashSet<string>();
+}
+<div id="carousel2" class="carousel slide carousel-dark " data-bs-ride="carousel">
+    @if (Model.RentedCars != null)
+    {
+        <div class="carousel-inner" id="carousel-inner1">
+            <div class="row flex-row-reverse g-4">
+                <div class="col-md-auto">
+                    <div class="row buttons text-center flex-column g-1 buttons-car-categories ">
+                        
+                        <div class="row buttons text-center flex-column g-1 buttons-car-categories  gap-1 px-2 ">
+                            <button class="btn btn-car-categoray" onclick="loadRentedCarsByCategory(`00`)"> @localizer["All"] </button>
+                            @foreach (var item in Model.RentedCars)
+                            {
+                                var categoryCode = item.CrCasCarInformationCategoryNavigation?.CrMasSupCarCategoryCode;
+                                if (!addedCategories.Contains(categoryCode))
+                                {
+                                    addedCategories.Add(categoryCode);
+
+                                    <button class="btn btn-car-categoray" onclick="loadRentedCarsByCategory(`@categoryCode`)">
+                                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                        {
+                                            @item.CrCasCarInformationCategoryNavigation?.CrMasSupCarCategoryEnName
+                                        }
+                                        else
+                                        {
+                                            @item.CrCasCarInformationCategoryNavigation?.CrMasSupCarCategoryArName
+                                        }
+                                    </button>
+                                }
+                            }
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row px-3 align-items-start carsdiv" id="RentedCarListdiv">
+                        <partial name="_RentedCarByCategory" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+
+@if (Model.RentedCars != null)
+{
+    <script>
+        $(document).ready(function () {
+            scrollCategories();
+        });
+    </script>
+}
+<script>
+    function loadRentedCarsByCategory(code) {
+        console.log(code);
+        $.ajax({
+            url: "/BS/Home/GetRentedCarsByCategory", // Replace YourController with your actual controller name
+            type: "GET",
+            data: { code: code },
+            success: function (data) {
+                $("#RentedCarListdiv").html(data);
+            },
+            error: function () {
+                alert("Error loading data.");
+            }
+        });
+    }
+</script>

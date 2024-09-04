@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "Error";
+    var statusCode = ViewBag.StatusCode ?? 0;
+    var originalPath = ViewBag.OriginalPath ?? string.Empty;
+    var originalQueryString = ViewBag.OriginalQueryString ?? string.Empty;
+    var errorMessage = ViewBag.ErrorMessage ?? "An unexpected error occurred. Please try again later.";
+}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-McKWWsyCMe5iYzjEr77T5vY7Zjp3E2oqpJ6fG8fLv91kB4BZaSKbXTI2pbiFU1M" crossorigin="anonymous">
+<style>
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f8f9fa;
+        overflow: hidden; /* Prevents scrollbar on body */
+    }
+
+    .error-container {
+        max-width: 600px;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        animation: slideIn 0.5s ease-out; /* Example animation */
+        overflow: hidden; /* Prevents scrollbar on body */
+    }
+
+        .error-container h1 {
+            font-size: 100px;
+            margin: 0;
+            color: #dc3545; /* Red color for emphasis */
+            animation: pulse 1.5s infinite alternate; /* Example animation */
+        }
+
+        .error-container h2 {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        .error-container p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .error-container a,
+        .error-container button {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #007bff; /* Bootstrap primary color */
+            color: #ffffff;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+
+            .error-container a:hover,
+            .error-container button:hover {
+                background-color: #0056b3; /* Darker shade on hover */
+            }
+
+    @@keyframes slideIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        100% {
+            transform: scale(1.1);
+        }
+    }
+</style>
+<div class="error-container">
+    <h1>@statusCode</h1>
+    <h2>@errorMessage</h2>
+
+    @if (statusCode == 404)
+    {
+        <p>The resource you are looking for could not be found.</p>
+    }
+    else if (statusCode == 500)
+    {
+        <p>There was an internal server error. Please try again later.</p>
+    }
+    else if (statusCode == 403)
+    {
+        <p>You do not have permission to access this resource.</p>
+    }
+    else
+    {
+        <p>An unexpected error occurred. Please try again later.</p>
+    }
+
+    <p><strong>Requested URL:</strong> @originalPath@originalQueryString</p>
+
+    <a href="/" class="btn btn-primary">Go to Home Page</a>
+    <button onclick="history.back()" class="btn btn-secondary">Back</button>
+</div>

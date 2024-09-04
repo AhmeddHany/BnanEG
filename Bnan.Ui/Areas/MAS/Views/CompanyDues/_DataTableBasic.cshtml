@@ -1,0 +1,184 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.MAS
+
+@model CompanyDues_VM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+@* 
+  "EmployeeInformationCode": "Code",
+  "CarContractId": "ID",
+  "EmployeeInformationNationality": "Nationality",
+ 
+ *@
+ <style>
+    #_Nc{
+        text-align: center;
+    }
+ </style>
+<style>
+    ._Tr_black {
+        border-image:fill;
+    }
+
+    ._Tr_red {
+        color:red;
+    }
+</style>
+
+@{
+    var class_color_black = "_Tr_black";
+    var class_color_red = "_Tr_red";
+    var color_tr = "";
+
+}
+
+@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+{
+    
+       <div class="col-sm-12">
+        @* For-scrolling *@
+        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
+
+            <thead>
+                <tr role="row">
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    <th style="text-align:start" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["CompanyDues_Car_ContractNo"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Dues_Date"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_ContractValue"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Dues_Value_Before"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Dues_Value_After"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Tax_Value"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Total_Value"]</th>
+                    <th style="text-align:start">@localizer["CompanyDues_Status"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Payment_Date"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Payment_No"]</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.CrCasAccountContractCompanyOwed)
+                {
+
+                    color_tr = class_color_black;
+                    if (item.CrCasAccountContractCompanyOwedAccrualStatus == false)
+                    {
+                        color_tr = class_color_red;
+                    }
+                    
+                    @*<tr onclick="location.href='@Url.Action("Edit", "CarContract", new { id = item.CrCasEmployeeContractBasic4.CrCasEmployeePrivateCarInformationId })'" style="cursor:pointer;color:red">*@
+                    <tr class="@color_tr" >
+                        <td id="_Nc">@no</td>
+                        <td style="text-align:start">@item.CrCasAccountContractCompanyOwedNo</td>
+                        @{
+                            <td style="text-align:start">@item.CrCasAccountContractCompanyOwedDate?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</td>
+
+                            <td id="_Nc">@item.CrCasAccountContractCompanyOwedContractValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountContractCompanyOwedBeforeAmount?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountContractCompanyOwedAfterAmount?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountContractCompanyOwedTaxValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            //<td id="_Nc">@item.CrCasAccountContractCompanyOwedAmount?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            var Total_amount = item.CrCasAccountContractCompanyOwedAfterAmount + item.CrCasAccountContractCompanyOwedTaxValue;
+                            <td id="_Nc">@Total_amount?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">
+                                @if (item.CrCasAccountContractCompanyOwedAccrualStatus == true)
+                                {
+                                    @localizer["status_Is_Paid"]
+                                }
+                                else
+                                {
+                                    @localizer["status_Not_Paid"]
+                                }
+                                
+                            </td>
+                            <td style="text-align:start">@item.CrCasAccountContractCompanyOwedDatePayment?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">@item.CrCasAccountContractCompanyOwedAccrualPaymentNo</td>
+                        }
+                        </tr>
+                    
+                    
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="col-sm-12">
+        @* For-scrolling *@
+        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
+
+
+            <thead>
+                <tr role="row">
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    <th style="text-align:start" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["CompanyDues_Car_ContractNo"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Dues_Date"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_ContractValue"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Dues_Value_Before"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Dues_Value_After"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Tax_Value"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Total_Value"]</th>
+                    <th style="text-align:start">@localizer["CompanyDues_Status"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Payment_Date"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["CompanyDues_Payment_No"]</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.CrCasAccountContractCompanyOwed)
+                {
+
+                    color_tr = class_color_black;
+                    if (item.CrCasAccountContractCompanyOwedAccrualStatus == false)
+                    {
+                        color_tr = class_color_red;
+                    }
+
+                    @*<tr onclick="location.href='@Url.Action("Edit", "CarContract", new { id = item.CrCasEmployeeContractBasic4.CrCasEmployeePrivateCarInformationId })'" style="cursor:pointer;color:red">*@
+                    <tr class="@color_tr">
+                        <td id="_Nc">@no</td>
+                        <td style="text-align:start">@item.CrCasAccountContractCompanyOwedNo</td>
+                        @{
+                            <td style="text-align:start">@item.CrCasAccountContractCompanyOwedDate?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountContractCompanyOwedContractValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountContractCompanyOwedBeforeAmount?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountContractCompanyOwedAfterAmount?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountContractCompanyOwedTaxValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            //<td id="_Nc">@item.CrCasAccountContractCompanyOwedAmount?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            var Total_amount = item.CrCasAccountContractCompanyOwedAfterAmount + item.CrCasAccountContractCompanyOwedTaxValue;
+                            <td id="_Nc">@Total_amount?.ToString("N2",CultureInfo.InvariantCulture)</td>
+
+                            <td style="text-align:start">
+                                @if (item.CrCasAccountContractCompanyOwedAccrualStatus == true)
+                                {
+                                    @localizer["status_Is_Paid"]
+                                }
+                                else
+                                {
+                                    @localizer["status_Not_Paid"]
+                                }
+
+                            </td>
+                            <td style="text-align:start">@item.CrCasAccountContractCompanyOwedDatePayment?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">@item.CrCasAccountContractCompanyOwedAccrualPaymentNo</td>
+                        }
+                    </tr>
+
+
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}

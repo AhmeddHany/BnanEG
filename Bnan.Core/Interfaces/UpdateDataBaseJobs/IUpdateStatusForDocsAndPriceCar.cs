@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Bnan.Core.Interfaces.UpdateDataBaseJobs
+{
+    public interface IUpdateStatusForDocsAndPriceCar
+    {
+        Task UpdateBranchDocuments();
+        Task UpdateCompanyContracts();
+        Task UpdateCarDocumentsAndMaintaince();
+        Task UpdatePricesCar();
+    }
+}

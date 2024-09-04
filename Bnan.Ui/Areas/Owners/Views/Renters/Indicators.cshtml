@@ -1,0 +1,500 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.Owners
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Http.Features;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using System.Globalization;
+@inject IViewLocalizer localizer
+@model OwnersLayoutVM
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+<!-- Content Row -->
+<div class="row  text-end ">
+    <div class="container-fluid">
+        <div class="row text-end ">
+            <div class="col-lg-4">
+                <div class="card  mb-5">
+                    <div class="card-header py-1">
+                        <h5 class="m-0 font-weight-bold ">@localizer["MostActiveNationality"] </h5>
+                        <hr class="card-hr">
+
+                    </div>
+                    <div class="card-body">
+                        @{
+                            int indexNationality = 0;  // Initialize index variable
+                        }
+                        @foreach (var item in Model.NationalityStaticitis)
+                        {
+                            indexNationality++;  // Initialize index variable
+                            <div class=" mb-2">
+                                <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <span>
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                            {
+                                                @item.ArName
+                                            }
+                                            else
+                                            {
+                                                @item.EnName
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="col d-flex align-items-center">
+                                        <div class="progress">
+                                            <div class="progress-bar progress@(indexNationality)" role="progressbar"
+                                                 style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
+                                                 aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card  mb-5">
+                    <div class="card-header py-1">
+                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveJobs"] </h5>
+                        <hr class="card-hr">
+
+                    </div>
+                    <div class="card-body">
+                        @{
+                            int indexProffesion = 0;  // Initialize index variable
+                        }
+                        @foreach (var item in Model.ProfessionStaticitis)
+                        {
+                            indexProffesion++;
+                            if (@item.Percent > 0)
+                            {
+                                <div class=" mb-2">
+                                    <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <span>
+                                                @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                                {
+                                                    @item.ArName
+                                                }
+                                                else
+                                                {
+                                                    @item.EnName
+                                                }
+                                            </span>
+                                        </div>
+                                        <div class="col d-flex align-items-center">
+                                            <div class="progress">
+                                                <div class="progress-bar progress@(indexProffesion)" role="progressbar"
+                                                     style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
+                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card  mb-5">
+                    <div class="card-header py-1">
+                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveAges"] </h5>
+                        <hr class="card-hr">
+
+                    </div>
+                    <div class="card-body">
+                       
+                        @{
+                            int indexAges = 0;  // Initialize index variable
+                        }
+                        @foreach (var item in Model.AgeStaticitis)
+                        {
+                            indexAges++;
+                            if (@item.Percent > 0)
+                            {
+                                <div class=" mb-2">
+                                    <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <span>
+                                                @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                                {
+                                                    @item.ArName
+                                                }
+                                                else
+                                                {
+                                                    @item.EnName
+                                                }
+                                            </span>
+                                        </div>
+                                        <div class="col d-flex align-items-center">
+                                            <div class="progress">
+                                                <div class="progress-bar progress@(indexAges)" role="progressbar"
+                                                     style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
+                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="row text-end">
+    <div class="container-fluid">
+        <div class="row text-end  ">
+            <div class="col-xl-4">
+                <div class="card  mb-2">
+                    <div class="card-header py-1">
+                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveCity"] </h5>
+                        <hr class="card-hr">
+
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @{
+                                var indexCity = 0;
+                                var idCity = "";
+                                var popularChartsDivCity = "";
+                                foreach (var item in Model.CityStaticitis)
+                                {
+                                    if (indexCity == 0) idCity = "First_City_Charts";
+                                    else if (indexCity == 1)
+                                    {
+                                        idCity = "Second_City_Charts";
+                                        popularChartsDivCity = "popularCharts_div";
+                                    }
+                                    else if (indexCity == 2) idCity = "Third_City_Charts";
+                                    <div class="col-sm-4 @popularChartsDivCity">
+                                        <p class="text-center">
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                            {
+                                                @item.ArName
+                                            }
+                                            else
+                                            {
+                                                @item.EnName
+                                            }
+                                        </p>
+                                        <div id="@idCity"></div>
+                                        <p class="text-center m-0">@item.Percent.ToString("N2",CultureInfo.InvariantCulture)%</p>
+
+                                    </div>
+                                    indexCity++;
+                                }
+                            }
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card  mb-2">
+                    <div class="card-header py-1">
+                        <h5 class="m-0 font-weight-bold ">@localizer["MostActiveBranchCity"]</h5>
+                        <hr class="card-hr">
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            @{
+                                var indexBranchCity = 0;
+                                var idBranchCity = "";
+                                var popularChartsDivBranchCity = "";
+                                foreach (var item in Model.BranchCityStaticitis)
+                                {
+                                    if (indexBranchCity == 0) idBranchCity = "First_BranchCity_Charts";
+                                    else if (indexBranchCity == 1)
+                                    {
+                                        idBranchCity = "Second_BranchCity_Charts";
+                                        popularChartsDivBranchCity = "popularCharts_div";
+                                    }
+                                    else if (indexBranchCity == 2) idBranchCity = "Third_BranchCity_Charts";
+                                    <div class="col-sm-4 @popularChartsDivBranchCity">
+                                        <p class="text-center">
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                            {
+                                                @item.ArName
+                                            }
+                                            else
+                                            {
+                                                @item.EnName
+                                            }
+                                        </p>
+                                        <div id="@idBranchCity"></div>
+                                        <p class="text-center m-0">@item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</p>
+
+                                    </div>
+                                    indexBranchCity++;
+                                }
+                            }
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="card  mb-2">
+                    <div class="card-header py-1">
+                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveMembership"] </h5>
+                        <hr class="card-hr">
+
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            @{
+                                var indexMembership = 0;
+                                var idMembership = "";
+                                var popularChartsDivMembership = "";
+                                foreach (var item in Model.MembershipStaticitis)
+                                {
+                                    if (indexMembership == 0) idMembership = "First_Membership_Charts";
+                                    else if (indexMembership == 1)
+                                    {
+                                        idMembership = "Second_Membership_Charts";
+                                        popularChartsDivMembership = "popularCharts_div";
+                                    }
+                                    else if (indexMembership == 2) idMembership = "Third_Membership_Charts";
+                                    <div class="col-sm-4 @popularChartsDivMembership">
+                                        <p class="text-center">
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                            {
+                                                @item.ArName
+                                            }
+                                            else
+                                            {
+                                                @item.EnName
+                                            }
+                                        </p>
+                                        <div id="@idMembership"></div>
+                                        <p class="text-center m-0">@item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</p>
+
+                                    </div>
+                                    indexMembership++;
+                                }
+                            }
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@section scripts {
+    <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-core.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-pie.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            /////////////////////////////////City Renters//////////////////////////////
+            var CityModel = @Html.Raw(Json.Serialize(Model.CityStaticitis));
+            for (var i = 0; i < CityModel.length; i++) {
+                var positionCity = "";
+                var colorCity = "";
+                if (i == 0) {
+                    positionCity = "First_City_Charts";
+                    colorCity = "#9747FF";
+                }
+                else if (i == 1) {
+                    positionCity = "Second_City_Charts";
+                    colorCity = "#FF9F40";
+                }
+                else if (i == 2) {
+                    positionCity = "Third_City_Charts";
+                    colorCity = "#4BC0C0";
+                }
+                var city = CityModel[i];
+                console.log("city", city);
+                // First_City_Charts ///////////////////////////////////////////////////////////////////////
+                var palette = anychart.palettes.distinctColors();
+                var percentage = city.percent; // Define the percentage value
+                var label = anychart.standalones.label();
+                label.useHtml(true).text('<span style = "color: #313136; font-weight:600">' +'</span>').position('center').anchor('center').hAlign('center').vAlign('middle');
+                var data;
+                if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                    data = anychart.data.set([
+                        [city.enName, city.percent],
+                        [' اخري', 100 - city.percent]
+                    ]);
+                }
+                else {
+                    data = anychart.data.set([
+                        [city.arName, city.percent],
+                        [' Others', 100 - city.percent]
+                    ]);
+                }
+
+                // set the colors according to the brands
+                palette.items([
+                    { color: colorCity },
+                    { color: '#CCC' },
+                ]);
+
+                // apply the donut chart color palette
+                // create a pie chart with the data
+                var chart = anychart.pie(data)
+                // set the chart radius making a donut chart
+                chart.palette(palette);
+                chart.innerRadius('80%');
+                chart.container(positionCity);
+                chart.legend(false);
+                chart.labels(false)
+                chart.tooltip(false)
+                chart.center().content(label);
+                chart.draw();
+            }
+
+            /////////////////////////////////Memberships//////////////////////////////
+            var MembershipModel = @Html.Raw(Json.Serialize(Model.MembershipStaticitis));
+            for (var i = 0; i < MembershipModel.length; i++) {
+                var positionMembership = "";
+                var colorMembership = "";
+                if (i == 0) {
+                    positionMembership = "First_Membership_Charts";
+                    colorMembership = "#FF9F40";
+                }
+                else if (i == 1) {
+                    positionMembership = "Second_Membership_Charts";
+                    colorMembership = "#4BC0C0";
+                }
+                else if (i == 2) {
+                    positionMembership = "Third_Membership_Charts";
+                    colorMembership = "#9747FF";
+                }
+                var Membership = MembershipModel[i];
+                console.log("Membership", Membership);
+                //First_Memberships_Charts ///////////////////////////////////////////////////////////////////////
+                var palette = anychart.palettes.distinctColors();
+                var percentMembership = Membership.percent // Define the percentMembership value
+                var label = anychart.standalones.label();
+                label
+                    .useHtml(true)
+                    .text(
+                        '<span style = "color: #313136; font-weight:600">' + '</span>'
+                    )
+                    .position('center')
+                    .anchor('center')
+                    .hAlign('center')
+                    .vAlign('middle');
+                var data;
+                if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                    data = anychart.data.set([
+                        [Membership.enName, Membership.percent],
+                        [' اخري', 100 - Membership.percent]
+                    ]);
+                }
+                else {
+                    data = anychart.data.set([
+                        [Membership.arName, Membership.percent],
+                        [' Others', 100 - Membership.percent]
+                    ]);
+                }
+
+                // set the colors according to the brands
+                palette.items([
+                    { color: colorMembership },
+                    { color: '#CCC' },
+                ]);
+
+                // apply the donut chart color palette
+                // create a pie chart with the data
+                var chart = anychart.pie(data)
+                // set the chart radius making a donut chart
+                chart.palette(palette);
+                chart.innerRadius('80%');
+                chart.container(positionMembership);
+                chart.legend(false);
+                chart.labels(false)
+                chart.tooltip(false)
+                chart.center().content(label);
+                chart.draw();
+            }
+
+            /////////////////////////////////City Branch////////////////////////
+            var BranchCityModel = @Html.Raw(Json.Serialize(Model.BranchCityStaticitis));
+            for (var i = 0; i < BranchCityModel.length; i++) {
+                var positionBranchCity = "";
+                var colorBranchCity = "";
+                if (i == 0) {
+                    positionBranchCity = "First_BranchCity_Charts";
+                    colorBranchCity = "#9747FF";
+                }
+                else if (i == 1) {
+                    positionBranchCity = "Second_BranchCity_Charts";
+                    colorBranchCity = "#FF9F40";
+                }
+                else if (i == 2) {
+                    positionBranchCity = "Third_BranchCity_Charts";
+                    colorBranchCity = "#4BC0C0";
+                }
+                var BranchCity = BranchCityModel[i];
+                var palette = anychart.palettes.distinctColors();
+                var percentage = BranchCity.percent; // Define the percentage value
+                var label = anychart.standalones.label();
+                label.useHtml(true).text('<span style = "color: #313136; font-weight:600">' + '</span>').position('center').anchor('center').hAlign('center').vAlign('middle');
+                var data;
+                if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                    data = anychart.data.set([
+                        [BranchCity.enName, BranchCity.percent],
+                        [' اخري', 100 - BranchCity.percent]
+                    ]);
+                }
+                else {
+                    data = anychart.data.set([
+                        [BranchCity.arName, BranchCity.percent],
+                        [' Others', 100 - BranchCity.percent]
+                    ]);
+                }
+
+                // set the colors according to the brands
+                palette.items([
+                    { color: colorBranchCity },
+                    { color: '#CCC' },
+                ]);
+
+                // apply the donut chart color palette
+                // create a pie chart with the data
+                var chart = anychart.pie(data)
+                // set the chart radius making a donut chart
+                chart.palette(palette);
+                chart.innerRadius('80%');
+                chart.container(positionBranchCity);
+                chart.legend(false);
+                chart.labels(false)
+                chart.tooltip(false)
+                chart.center().content(label);
+                chart.draw();
+            }
+
+        });
+    </script>
+}

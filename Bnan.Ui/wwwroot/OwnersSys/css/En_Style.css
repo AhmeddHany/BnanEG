@@ -1,0 +1,116 @@
+body {
+    direction: ltr;
+    color: black;
+    font-family: "Cairo", sans-serif;
+
+}
+
+#wrapper {
+    direction: ltr;
+}
+
+.accordion {
+    direction: rtl;
+    position: relative;
+}
+
+.card-body,
+.tables-row {
+    text-align: left;
+}
+.user-dropdown{
+    text-align: left ;
+}
+.sidebar-dark #sidebarToggle {
+    right: -16px;
+    left: 0;
+}
+
+.spacing-table {
+    text-align: left;
+    direction: rtl;
+}
+
+#accordionSidebar {
+    padding: 0px;
+}
+
+.sidebar .nav-item .nav-link[data-bs-toggle=collapse].collapsed::after {
+    content: '\f105';
+}
+
+.sidebar .nav-item .nav-link[data-bs-toggle=collapse]::after {
+    width: 1rem;
+    text-align: center;
+    float: right;
+    vertical-align: 0;
+    border: 0;
+    font-weight: 900;
+    content: '\f107';
+    font-family: 'Font Awesome 5 Free';
+}
+.rate-data{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 5px;
+}
+.Time-position{
+    flex-direction: row;
+}
+.card-header{
+    text-align: start;
+}
+.progress-rate{
+    text-align: end;
+}
+.middel-arrow{
+    padding-right:3rem !important ;
+   }
+.lang-button-col{
+    text-align: end;
+}
+.bars-button {
+    text-align: left;
+}
+.lang_globe{
+    padding-left: .3rem;
+    padding-right: 0rem;
+}
+.sidebar #sidebarToggle::after{
+    content: url("../img/Group.svg") !important;
+
+}
+.sidebar.toggled #sidebarToggle::after{
+    content: url("../img/chevrons-right.svg") !important;
+
+}
+
+@media (max-width:768px) {
+    .sidebar .nav-item .collapse {
+        position: absolute;
+        right: calc(4rem + 1.5rem / 2);
+        z-index: 1;
+        top: 50px;
+    }
+}
+
+@media (min-width: 768px) {
+    .sidebar.toggled .nav-item .collapse {
+        position: absolute;
+        right: calc(-8rem + 1.5rem / 2);
+        z-index: 10;
+        top: 2px;
+        -webkit-animation-name: growIn;
+        animation-name: growIn;
+        -webkit-animation-duration: .2s;
+        animation-duration: .2s;
+        -webkit-animation-timing-function: transform cubic-bezier(.18, 1.25, .4, 1), opacity cubic-bezier(0, 1, .4, 1);
+        animation-timing-function: transform cubic-bezier(.18, 1.25, .4, 1), opacity cubic-bezier(0, 1, .4, 1);
+    }
+}
+@media (max-width: 765px) {
+    .sidebar.toggled {
+        transform: translateX(-100%) !important;
+    }
+}

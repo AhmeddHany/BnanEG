@@ -1,0 +1,197 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.BS;
+@using Newtonsoft.Json;
+@model BSLayoutVM
+@inject IViewLocalizer localizer
+<!--UnAvaliable Cars-->
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+
+<table width="100%" class="table table-hover" id="NotAvailableCarsListTable">
+    <tbody>
+        @foreach (var item in Model.UnAvaliableCars)
+        {
+            <tr>
+                <td>
+                    <div class="row flex-row-reverse ">
+
+                        <div class="col-lg-9">
+                            <div class="row flex-row-reverse car-img-data align-items-center">
+                                <div class="col-md-4">
+                                    <div class="d-flex justify-content-center align-items-center h-100">
+                                        <img src="@Url.Content(item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionImage)"
+                                             class="carImg w-100" alt="@item.CrCasCarInformationConcatenateArName">
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="row w-100">
+                                        <div class="col">
+                                            <div class="row car-data-row ">
+
+                                                <div class="col-lg-6 car-data">
+                                                    <p>
+                                                    <p>@item.CrCasCarInformationSerailNo</p>
+                                                    </p>
+                                                </div>
+                                                <div class="col-auto car-data">
+                                                    <p>
+                                                        @localizer["CurrentMeter"]:
+                                                        @item.CrCasCarInformationCurrentMeter
+                                                    </p>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col car-data">
+                                                    <P>
+                                                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                        {
+                                                            @item.CrCasCarInformationConcatenateEnName
+                                                        }
+                                                        else
+                                                        {
+                                                            @item.CrCasCarInformationConcatenateArName
+                                                        }
+                                                    </P>
+                                                </div>
+                                            </div>
+                                            <div class="row car-data-row">
+                                                <div class="col-lg-11 car-data">
+                                                    <div class="row ">
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-center flex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="@Url.Content(item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelImage?.ToString())" class="iconss w-50">
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-centerflex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="@Url.Content(item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtImage?.ToString())" class="iconss w-50">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-centerflex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="/BranchSys/img/carDataIcons/Rectangle 95.svg"
+                                                                         class="iconss">
+
+                                                                </div>
+                                                                <div class="col-auto p-0">
+                                                                    <p>
+                                                                        @item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionBagBags
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-centerflex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="/BranchSys/img/carDataIcons/Rectangle 96.svg"
+                                                                         class="iconss">
+
+                                                                </div>
+                                                                <div class="col-auto p-0">
+                                                                    <p>
+                                                                        @item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionSmallBags
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-centerflex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="/BranchSys/img/carDataIcons/Rectangle 97.svg"
+                                                                         class="iconss">
+
+                                                                </div>
+                                                                <div class="col-auto p-0">
+                                                                    <p>
+                                                                        @item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionPassengers
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-centerflex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="/BranchSys/img/carDataIcons/Rectangle 98.svg"
+                                                                         class="iconss">
+
+                                                                </div>
+                                                                <div class="col-auto p-0">
+                                                                    <p>
+                                                                        @item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionDoor
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="row flex-nowrap resons-icon">
+                                <div class="col-auto text-center">
+
+                                    <div class="p-2 extra-details" title="@localizer["Causes"]">
+                                        <img src="/BranchSys/img/carDataIcons/Frame.svg"
+                                             class="w-100">
+                                        <div class="dropdown-content ">
+                                            @{
+                                                var statuses = new List<(bool Condition, string LocalizationKey)>
+                                        {
+                                        (item.CrCasCarInformationBranchStatus == "H", "BranchHold"),
+                                        (item.CrCasCarInformationOwnerStatus == "H", "OwnerHold"),
+                                        (item.CrCasCarInformationPriceStatus != true, "PriceHold"),
+                                        (item.CrCasCarInformationStatus == "H", "CarHold"),
+                                        (item.CrCasCarInformationStatus == "D", "CarDelete"),
+                                        (item.CrCasCarInformationStatus == "S", "CarSold"),
+                                        (item.CrCasCarInformationStatus == "M", "CarMaintaince"),
+                                        (item.CrCasCarInformationStatus == Status.Active && item.CrCasCarInformationForSaleStatus == Status.ForSale, "CarForSale"),
+                                        (item.CrCasCarInformationMaintenanceStatus == false, "CarMaintainceReview"),
+                                        (item.CrCasCarInformationDocumentationStatus == false, "CarDocumentReview"),
+                                        (item.CrCasCarInformationStatus == Status.Rented, "CarRented")
+                                        };
+
+                                                foreach (var status in statuses)
+                                                {
+                                                    if (status.Condition)
+                                                    {
+                                                        <div class="row dropdown-content-row pt-2">
+                                                            <div class="col titles">
+                                                                <p>@localizer[status.LocalizationKey]</p>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

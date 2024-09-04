@@ -1,0 +1,180 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS
+
+@model TaxOwed_VM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+@* 
+  "EmployeeInformationCode": "Code",
+  "CarContractId": "ID",
+  "EmployeeInformationNationality": "Nationality",
+ 
+ *@
+ <style>
+    #_Nc{
+        text-align: center;
+    }
+ </style>
+<style>
+    ._Tr_black {
+        border-image:fill;
+    }
+
+    ._Tr_red {
+        color:red;
+    }
+</style>
+
+@{
+    var class_color_black = "_Tr_black";
+    var class_color_red = "_Tr_red";
+    var color_tr = "";
+
+}
+
+@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+{
+    
+       <div class="col-sm-12">
+        @* For-scrolling *@
+        <table id="basic-datatable" class="table table-bordered dt-responsive w-100 nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
+
+            <thead>
+                <tr role="row">
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    <th style="text-align:start" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["TaxOwed_pay_no_new"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Date_new"]</th>
+                    @*<th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_year"]</th>*@
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Quarter"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Invoices_Value_new"]</th>
+                    @*<th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Percentage_OfTax"]</th>*@
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Tax_Value_new"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Invoices_Count"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_User_new"]</th>
+                    @*<th style="text-align:start" data-orderable="false">@localizer["TaxOwed_pay_Reasons"]</th>*@
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.CrCasAccountContractTaxOwed_Filtered)
+                {
+
+                    color_tr = class_color_black;
+                    <tr class="@color_tr" onclick="location.href='@Url.Action("EditPaymentTaxValues", "TaxOwed", new { id = item.CrCasAccountContractTaxOwedPayCodeNavigation?.CrCasSysAdministrativeProceduresNo })'" style="cursor:pointer">
+                    @*<tr class="@color_tr" >*@
+                        <td id="_Nc">@no</td>
+                        <td style="text-align:start">@item.CrCasAccountContractTaxOwedPayCodeNavigation?.CrCasSysAdministrativeProceduresNo</td>
+                        @{
+                            var quarter = @item.CrCasAccountContractTaxOwedDate?.ToString("MM", CultureInfo.InvariantCulture) ?? "0";
+                            var quarter_int = Int16.Parse(quarter);
+                            <td style="text-align:start">@item.CrCasAccountContractTaxOwedPayDate?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</td>
+                            //<td id="_Nc">@item.CrCasAccountContractTaxOwedDate?.ToString("yyyy",CultureInfo.InvariantCulture)</td>
+                            if (quarter_int < 4)
+                            {
+                                <td id="_Nc">@localizer["quarter_int1"] / @item.CrCasAccountContractTaxOwedDate?.ToString("yyyy",CultureInfo.InvariantCulture)</td>
+                            }
+                            else if (quarter_int < 7)
+                            {
+                                <td id="_Nc">@localizer["quarter_int2"] / @item.CrCasAccountContractTaxOwedDate?.ToString("yyyy",CultureInfo.InvariantCulture)</td>
+                            }
+                            else if (quarter_int < 10)
+                            {
+                                <td id="_Nc">@localizer["quarter_int3"] / @item.CrCasAccountContractTaxOwedDate?.ToString("yyyy",CultureInfo.InvariantCulture)</td>
+                            }
+                            else if (quarter_int < 13)
+                            {
+                                <td id="_Nc">@localizer["quarter_int4"] / @item.CrCasAccountContractTaxOwedDate?.ToString("yyyy",CultureInfo.InvariantCulture)</td>
+                            }
+                            <td id="_Nc">@Model?.CrCasAccountContractTaxOwed?.Where(x=>x.CrCasAccountContractTaxOwedPayCode==item.CrCasAccountContractTaxOwedPayCode).Sum(x=>x.CrCasAccountContractTaxOwedContractValue)?.ToString("N2",CultureInfo.InvariantCulture) </td>
+                            //<td id="_Nc">@Model?.CrCasAccountContractTaxOwed?.Where(x=>x.CrCasAccountContractTaxOwedPayCode==item.CrCasAccountContractTaxOwedPayCode).Average(x=>x.CrCasAccountContractTaxOwedPercentage)?.ToString("N2",CultureInfo.InvariantCulture) %</td>
+                            <td id="_Nc">@Model?.CrCasAccountContractTaxOwed?.Where(x=>x.CrCasAccountContractTaxOwedPayCode==item.CrCasAccountContractTaxOwedPayCode).Sum(x=>x.CrCasAccountContractTaxOwedValue)?.ToString("N2",CultureInfo.InvariantCulture) </td>
+                            <td id="_Nc">@Model?.CrCasAccountContractTaxOwed?.Count(x=>x.CrCasAccountContractTaxOwedPayCode ==item.CrCasAccountContractTaxOwedPayCodeNavigation?.CrCasSysAdministrativeProceduresNo)</td>
+                            <td style="text-align:start">@item.CrCasAccountContractTaxOwedUserCodeNavigation?.CrMasUserInformationEnName</td>
+                            //<td style="text-align:start">@item.CrCasAccountContractTaxOwedPayCodeNavigation?.CrCasSysAdministrativeProceduresReasons</td>
+                        }
+                        </tr>
+                    
+                    
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="col-sm-12">
+        @* For-scrolling *@
+        <table id="basic-datatable" class="table table-bordered dt-responsive w-100 nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
+            <thead>
+                <tr role="row">
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    <th style="text-align:start" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["TaxOwed_pay_no_new"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Date_new"]</th>
+                    @*<th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_year"]</th>*@
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Quarter"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Invoices_Value_new"]</th>
+                    @*<th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Percentage_OfTax"]</th>*@
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Tax_Value_new"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_Invoices_Count"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["TaxOwed_pay_User_new"]</th>
+                    @*<th style="text-align:start" data-orderable="false">@localizer["TaxOwed_pay_Reasons"]</th>*@
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.CrCasAccountContractTaxOwed_Filtered)
+                {
+                    color_tr = class_color_black;
+                    <tr class="@color_tr" onclick="location.href='@Url.Action("EditPaymentTaxValues", "TaxOwed", new { id = item.CrCasAccountContractTaxOwedPayCodeNavigation?.CrCasSysAdministrativeProceduresNo })'" style="cursor:pointer">
+                        @*<tr class="@color_tr" >*@
+                        <td id="_Nc">@no</td>
+                        <td style="text-align:start">@item.CrCasAccountContractTaxOwedPayCodeNavigation?.CrCasSysAdministrativeProceduresNo</td>
+                        @{
+                            var quarter = @item.CrCasAccountContractTaxOwedDate?.ToString("MM", CultureInfo.InvariantCulture) ?? "0";
+                            var quarter_int = Int16.Parse(quarter);
+                            <td style="text-align:start">@item.CrCasAccountContractTaxOwedPayDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</td>
+                            //<td id="_Nc">@item.CrCasAccountContractTaxOwedDate?.ToString("yyyy",CultureInfo.InvariantCulture)</td>
+                            if (quarter_int < 4)
+                            {
+                                <td id="_Nc">@localizer["quarter_int1"] / @item.CrCasAccountContractTaxOwedDate?.ToString("yyyy",CultureInfo.InvariantCulture)</td>
+                            }
+                            else if (quarter_int < 7)
+                            {
+                                <td id="_Nc">@localizer["quarter_int2"] / @item.CrCasAccountContractTaxOwedDate?.ToString("yyyy",CultureInfo.InvariantCulture)</td>
+                            }
+                            else if (quarter_int < 10)
+                            {
+                                <td id="_Nc">@localizer["quarter_int3"] / @item.CrCasAccountContractTaxOwedDate?.ToString("yyyy",CultureInfo.InvariantCulture)</td>
+                        }
+                            else if (quarter_int < 13)
+                            {
+                                <td id="_Nc">@localizer["quarter_int4"] / @item.CrCasAccountContractTaxOwedDate?.ToString("yyyy",CultureInfo.InvariantCulture)</td>
+                            }
+                            <td id="_Nc">@Model?.CrCasAccountContractTaxOwed?.Where(x=>x.CrCasAccountContractTaxOwedPayCode==item.CrCasAccountContractTaxOwedPayCode).Sum(x=>x.CrCasAccountContractTaxOwedContractValue)?.ToString("N2",CultureInfo.InvariantCulture) </td>
+                            //<td id="_Nc">@Model?.CrCasAccountContractTaxOwed?.Where(x=>x.CrCasAccountContractTaxOwedPayCode==item.CrCasAccountContractTaxOwedPayCode).Average(x=>x.CrCasAccountContractTaxOwedPercentage)?.ToString("N2",CultureInfo.InvariantCulture) %</td>
+                            <td id="_Nc">@Model?.CrCasAccountContractTaxOwed?.Where(x=>x.CrCasAccountContractTaxOwedPayCode==item.CrCasAccountContractTaxOwedPayCode).Sum(x=>x.CrCasAccountContractTaxOwedValue)?.ToString("N2",CultureInfo.InvariantCulture) </td>
+                            <td id="_Nc">@Model?.CrCasAccountContractTaxOwed?.Count(x=>x.CrCasAccountContractTaxOwedPayCode ==item.CrCasAccountContractTaxOwedPayCodeNavigation?.CrCasSysAdministrativeProceduresNo)</td>
+                            <td style="text-align:start">@item.CrCasAccountContractTaxOwedUserCodeNavigation?.CrMasUserInformationArName</td>
+                            //<td style="text-align:start">@item.CrCasAccountContractTaxOwedPayCodeNavigation?.CrCasSysAdministrativeProceduresReasons</td>
+                        }
+                    </tr>
+
+
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}

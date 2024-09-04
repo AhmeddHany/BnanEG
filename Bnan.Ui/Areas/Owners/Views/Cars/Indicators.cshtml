@@ -1,0 +1,332 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.Owners
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Http.Features;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using System.Globalization;
+@inject IViewLocalizer localizer
+@model OwnersLayoutVM
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<!-- Content Row -->
+<div class="row text-end g-5 ">
+    <div class="container-fluid">
+        <div class="row mt-3 text-end g-5">
+            <div class="col-lg-6">
+                <div class="card  mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveModelCar"]</h5>
+                        <hr class="card-hr">
+
+                    </div>
+                    <div class="card-body">
+                        @{
+                            int indexBrand = 0;  // Initialize index variable
+                        }
+                        @foreach (var item in Model.BrandCarStaticitis)
+                        {
+                            indexBrand++;  // Initialize index variable
+
+                            <div class=" mb-2">
+                                <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <span>
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                            {
+                                                @item.ArName
+                                            }
+                                            else
+                                            {
+                                                @item.EnName
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="col d-flex align-items-center">
+                                        <div class="progress">
+                                            <div class="progress-bar progress@(indexBrand)" role="progressbar"
+                                                 style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
+                                                 aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveBrandCar"] </h5>
+                        <hr class="card-hr">
+
+                    </div>
+                    <div class="card-body">
+                       @{
+                            int indexModelCount = 0;  // Initialize index variable
+                        }
+                        @foreach (var item in Model.ModelCarStaticitis)
+                        {
+                            indexModelCount++;  // Initialize index variable
+
+                            <div class=" mb-2">
+                                <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <span>
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                            {
+                                                @item.ArName
+                                            }
+                                            else
+                                            {
+                                                @item.EnName
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="col d-flex align-items-center">
+                                        <div class="progress">
+                                            <div class="progress-bar progress@(indexModelCount)" role="progressbar"
+                                                 style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
+                                                 aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row  text-end g-5 mb-lg-3">
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-header py-3">
+                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveYearCar"]</h5>
+                        <hr class="card-hr">
+
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @{
+                                var indexYearCar = 0;
+                                var idYearCar = "";
+                                var popularChartsDivYearCar = "";
+                                foreach (var item in Model.YearCarStaticitis)
+                                {
+                                    if (indexYearCar == 0) idYearCar = "First_YearCar_Charts";
+                                    else if (indexYearCar == 1)
+                                    {
+                                        idYearCar = "Second_YearCar_Charts";
+                                        popularChartsDivYearCar = "popularCharts_div";
+                                    }
+                                    else if (indexYearCar == 2) idYearCar = "Third_YearCar_Charts";
+                                    <div class="col-sm-4 @popularChartsDivYearCar">
+                                        <p class="text-center">
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                            {
+                                                @item.Code
+                                            }
+                                            else
+                                            {
+                                                @item.Code
+                                            }
+                                        </p>
+                                        <div id="@idYearCar"></div>
+                                        <p class="text-center m-0">@item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</p>
+                                    </div>
+                                    indexYearCar++;
+                                }
+                            }
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-header py-3">
+                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveCategory"] </h5>
+                        <hr class="card-hr">
+
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @{
+                                var indexCategoryCar = 0;
+                                var idCategoryCar = "";
+                                var popularChartsDivCategoryCar = "";
+                                foreach (var item in Model.CategoryCarStaticitis)
+                                {
+                                    if (indexCategoryCar == 0) idCategoryCar = "First_CategoryCar_Charts";
+                                    else if (indexCategoryCar == 1)
+                                    {
+                                        idCategoryCar = "Second_CategoryCar_Charts";
+                                        popularChartsDivCategoryCar = "popularCharts_div";
+                                    }
+                                    else if (indexCategoryCar == 2) idCategoryCar = "Third_CategoryCar_Charts";
+                                    <div class="col-sm-4 @popularChartsDivCategoryCar">
+                                        <p class="text-center">
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                            {
+                                                @item.ArName
+                                            }
+                                            else
+                                            {
+                                                @item.EnName
+                                            }
+                                        </p>
+                                        <div id="@idCategoryCar"></div>
+                                        <p class="text-center m-0">@item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</p>
+                                    </div>
+                                    indexCategoryCar++;
+                                }
+                            }
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+    <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-core.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-pie.min.js"></script>
+    <!--jquery-->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            /////////////////////////////////YearCar//////////////////////////////
+            var YearCarModel = @Html.Raw(Json.Serialize(Model.YearCarStaticitis));
+            for (var i = 0; i < YearCarModel.length; i++) {
+                var positionYearCar = "";
+                var colorYearCar = "";
+                if (i == 0) {
+                    positionYearCar = "First_YearCar_Charts";
+                    colorYearCar = "#9747FF";
+                }
+                else if (i == 1) {
+                    positionYearCar = "Second_YearCar_Charts";
+                    colorYearCar = "#FF9F40";
+                }
+                else if (i == 2) {
+                    positionYearCar = "Third_YearCar_Charts";
+                    colorYearCar = "#4BC0C0";
+                }
+                var YearCar = YearCarModel[i];
+                //Km_Charts ///////////////////////////////////////////////////////////////////////
+                var palette = anychart.palettes.distinctColors();
+                var percentage = YearCar.percent; // Define the percentage value
+                var label = anychart.standalones.label();
+                label.useHtml(true).text('<span style = "color: #313136; font-weight:600">' + '</span>').position('center').anchor('center').hAlign('center').vAlign('middle');
+                var data;
+                if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                    data = anychart.data.set([
+                        [YearCar.enName, YearCar.percent],
+                        [' اخري', 100 - YearCar.percent]
+                    ]);
+                }
+                else {
+                    data = anychart.data.set([
+                        [YearCar.arName, YearCar.percent],
+                        [' Others', 100 - YearCar.percent]
+                    ]);
+                }
+
+                // set the colors according to the YearCars
+                palette.items([
+                    { color: colorYearCar },
+                    { color: '#CCC' },
+                ]);
+
+                // apply the donut chart color palette
+                // create a pie chart with the data
+                var chart = anychart.pie(data)
+                // set the chart radius making a donut chart
+                chart.palette(palette);
+                chart.innerRadius('80%');
+                chart.container(positionYearCar);
+                chart.legend(false);
+                chart.labels(false)
+                chart.tooltip(false)
+                chart.center().content(label);
+                chart.draw();
+            }
+
+            /////////////////////////////////CategoryCar//////////////////////////////
+            var CategoryCarModel = @Html.Raw(Json.Serialize(Model.CategoryCarStaticitis));
+            for (var i = 0; i < CategoryCarModel.length; i++) {
+                var positionCategoryCar = "";
+                var colorCategoryCar = "";
+                if (i == 0) {
+                    positionCategoryCar = "First_CategoryCar_Charts";
+                    colorCategoryCar = "#9747FF";
+                }
+                else if (i == 1) {
+                    positionCategoryCar = "Second_CategoryCar_Charts";
+                    colorCategoryCar = "#FF9F40";
+                }
+                else if (i == 2) {
+                    positionCategoryCar = "Third_CategoryCar_Charts";
+                    colorCategoryCar = "#4BC0C0";
+                }
+                var CategoryCar = CategoryCarModel[i];
+                //Km_Charts ///////////////////////////////////////////////////////////////////////
+                var palette = anychart.palettes.distinctColors();
+                var percentage = CategoryCar.percent; // Define the percentage value
+                var label = anychart.standalones.label();
+                label.useHtml(true).text('<span style = "color: #313136; font-weight:600">' + '</span>').position('center').anchor('center').hAlign('center').vAlign('middle');
+                var data;
+                if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                    data = anychart.data.set([
+                        [CategoryCar.enName, CategoryCar.percent],
+                        [' اخري', 100 - CategoryCar.percent]
+                    ]);
+                }
+                else {
+                    data = anychart.data.set([
+                        [CategoryCar.arName, CategoryCar.percent],
+                        [' Others', 100 - CategoryCar.percent]
+                    ]);
+                }
+
+                // set the colors according to the CategoryCars
+                palette.items([
+                    { color: colorCategoryCar },
+                    { color: '#CCC' },
+                ]);
+
+                // apply the donut chart color palette
+                // create a pie chart with the data
+                var chart = anychart.pie(data)
+                // set the chart radius making a donut chart
+                chart.palette(palette);
+                chart.innerRadius('80%');
+                chart.container(positionCategoryCar);
+                chart.legend(false);
+                chart.labels(false)
+                chart.tooltip(false)
+                chart.center().content(label);
+                chart.draw();
+            }
+        });
+
+
+    </script>
+}

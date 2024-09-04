@@ -1,0 +1,243 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.CAS;
+@model CarsInformation_indexVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+{
+    <div class="col-sm-12">
+        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
+            <thead>
+                <tr role="row">
+                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["SerialNumber"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["Branch"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["Car"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["CurrentMeter"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["CarsInformation_Registration_type"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["CarsInformation_Fuel_type"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["CarsInformation_CVT_type"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.AllCars)
+                {
+                    @if (item.CrCasCarInformationStatus == @Status.Deleted || item.CrCasCarInformationStatus == Status.Sold)
+                    {
+                        <tr onclick="location.href='@Url.Action("Edit", "CarsInformation", new { serialNumber = item.CrCasCarInformationSerailNo })'" style="cursor:pointer;color:red">
+                            <td>@no</td>
+                            <td>@item.CrCasCarInformationSerailNo</td>
+                            <td>@item.CrCasCarInformation1?.CrCasBranchInformationEnShortName</td>
+                            @{
+                                var advantage = Model.AdvantagesAll?.Find(x => x.CrCasCarAdvantagesSerialNo == item.CrCasCarInformationSerailNo);
+                            }
+                            @if (advantage == null)
+                            {
+                                <td>@item.CrCasCarInformationConcatenateEnName</td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @item.CrCasCarInformationConcatenateEnName <span>+</span>
+                                </td>
+                            }
+                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
+
+                            <td>@item.CrCasCarInformationRegistrationNavigation?.CrMasSupCarRegistrationEnName</td>
+                            <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelEnName</td>
+                            <td>@item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtEnName</td>
+                            <td>
+                                @if (@item.CrCasCarInformationStatus == Status.Deleted)
+                                {
+                                    @localizer["Deleted"]
+                                }
+                                else if (@item.CrCasCarInformationStatus == Status.Sold)
+                                {
+                                    @localizer["Sold"]
+                                }
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr onclick="location.href='@Url.Action("Edit", "CarsInformation", new { serialNumber = item.CrCasCarInformationSerailNo })'">
+                            <td>@no</td>
+                            <td>@item.CrCasCarInformationSerailNo</td>
+                            <td>@item.CrCasCarInformation1?.CrCasBranchInformationEnShortName</td>
+                            @{
+                                var advantage = Model.AdvantagesAll?.Find(x => x.CrCasCarAdvantagesSerialNo == item.CrCasCarInformationSerailNo);
+                            }
+                            @if (advantage == null)
+                            {
+                                <td>@item.CrCasCarInformationConcatenateEnName</td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @item.CrCasCarInformationConcatenateEnName <span>+</span>
+                                </td>
+                            }
+                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
+
+                            <td>@item.CrCasCarInformationRegistrationNavigation?.CrMasSupCarRegistrationEnName</td>
+                            <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelEnName</td>
+                            <td>@item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtEnName</td>
+                            <td>
+                                @if (item.CrCasCarInformationPriceStatus == true && item.CrCasCarInformationOwnerStatus == "A" &&
+                               item.CrCasCarInformationBranchStatus == "A" && item.CrCasCarInformationStatus == Status.Active && (item.CrCasCarInformationForSaleStatus == Status.Active||item.CrCasCarInformationForSaleStatus == Status.RendAndForSale))
+                                {
+                                    @localizer["Avaliable"]
+                                }
+                                else
+                                {
+                                    @if (item.CrCasCarInformationStatus == "R")
+                                    {
+                                        @localizer["Car_Rented"]
+                                    }
+                                    else
+                                    {
+                                        @localizer["UnAvaliable"]
+                                    }
+                                    
+                                }
+                            </td>
+                        </tr>
+                    }
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="col-sm-12">
+        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
+            <thead>
+                <tr role="row">
+                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["SerialNumber"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["Branch"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["Car"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["CurrentMeter"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["CarsInformation_Registration_type"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["CarsInformation_Fuel_type"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["CarsInformation_CVT_type"]</th>
+                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.AllCars)
+                {
+                    @if (item.CrCasCarInformationStatus == @Status.Deleted || @item.CrCasCarInformationStatus == Status.Sold)
+                    {
+                        <tr onclick="location.href='@Url.Action("Edit", "CarsInformation", new { serialNumber = item.CrCasCarInformationSerailNo })'" style="cursor:pointer;color:red">
+                            <td>@no</td>
+                            <td>@item.CrCasCarInformationSerailNo</td>
+                            <td>@item.CrCasCarInformation1?.CrCasBranchInformationArShortName</td>
+                            @{
+                                var advantage = Model.AdvantagesAll?.Find(x => x.CrCasCarAdvantagesSerialNo == item.CrCasCarInformationSerailNo);
+                            }
+                            @if (advantage == null)
+                            {
+                                <td>@item.CrCasCarInformationConcatenateArName</td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @item.CrCasCarInformationConcatenateArName <span>+</span>
+                                </td>
+                            }
+                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
+
+                            <td>@item.CrCasCarInformationRegistrationNavigation?.CrMasSupCarRegistrationArName</td>
+                            <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelArName</td>
+                            <td>@item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtArName</td>
+                            <td>
+                                @if (@item.CrCasCarInformationStatus == Status.Deleted)
+                                {
+                                    @localizer["Deleted"]
+                                }
+                                else if (@item.CrCasCarInformationStatus == Status.Sold)
+                                {
+                                    @localizer["Sold"]
+                                }
+
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr onclick="location.href='@Url.Action("Edit", "CarsInformation", new { serialNumber = item.CrCasCarInformationSerailNo })'" style="cursor:pointer;">
+                            <td>@no</td>
+                            <td>@item.CrCasCarInformationSerailNo</td>
+                            <td>@item.CrCasCarInformation1?.CrCasBranchInformationArShortName</td>
+                            
+                            @{
+                                var advantage = Model.AdvantagesAll?.Find(x => x.CrCasCarAdvantagesSerialNo == item.CrCasCarInformationSerailNo);
+                            }
+                            @if(advantage == null)
+                            {
+                                <td>@item.CrCasCarInformationConcatenateArName</td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @item.CrCasCarInformationConcatenateArName <span>+</span>
+                                </td>
+                            }
+
+                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
+
+                            <td>@item.CrCasCarInformationRegistrationNavigation?.CrMasSupCarRegistrationArName</td>
+                            <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelArName</td>
+                            <td>@item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtArName</td>
+                            <td>
+                                @if (item.CrCasCarInformationPriceStatus == true && item.CrCasCarInformationOwnerStatus == "A" &&
+                               item.CrCasCarInformationBranchStatus == "A" && item.CrCasCarInformationStatus == Status.Active && (item.CrCasCarInformationForSaleStatus == Status.Active||item.CrCasCarInformationForSaleStatus == Status.RendAndForSale))
+                                {
+                                    @localizer["Avaliable"]
+                                }
+                                else
+                                {
+                                    @if (item.CrCasCarInformationStatus == "R")
+                                    {
+                                        @localizer["Car_Rented"]
+                                    }
+                                    else
+                                    {
+                                        @localizer["UnAvaliable"]
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section scripts{
+    <script>
+        window.onload = function ()
+        {
+            var loadTime = window.performance.timing.domContentLoadedEventEnd-window.performance.timing.navigationStart;
+            console.log('Table load time is '+ loadTime);
+        }
+    </script>
+}

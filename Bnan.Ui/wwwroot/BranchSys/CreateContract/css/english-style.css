@@ -1,0 +1,229 @@
+body {
+    direction: rtl;
+}
+
+.form-card7 {
+    padding: 20px 10px 10px 1px;
+}
+
+.form-check label {
+    margin-left: 20px;
+}
+
+.radio-style {
+    text-align: center;
+}
+.textarea-inputs {
+    text-align: left;
+}
+#progressbar #tenant:after {
+    left: 50%
+}
+
+#progressbar #payment:after {
+    width: 60%;
+    left: 0%;
+}
+
+.cancle-icon {
+
+    margin-right: 25px;
+}
+
+.button-card img {
+    transform: rotateY(180deg);
+}
+
+.radio-style {
+    padding-left: 45px;
+    padding-right: 0px;
+}
+
+.col-7 {
+    justify-content: flex-end;
+    display: flex;
+    padding-left: 20px;
+}
+
+.car-catogeries {
+    padding-right: 30px;
+    padding-left: 0px;
+}
+
+.scrollable-content {
+    padding-right: 20px !important;
+}
+
+.table-bordered thead .value-tabel-header {
+    border-left: 1px solid #ff9626a3
+}
+
+textarea {
+    direction: ltr;
+}
+
+.CurrentReadingg_row {
+    text-align: end;
+}
+
+.DaysNoFixPaddin {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  version 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  */
+.AR-select {
+    background-position: right .75rem center !important;
+    text-align: end;
+}
+
+.form-card1 {
+    text-align: end;
+}
+
+.hidden-input-row {
+    height: 20vh;
+    overflow-y: auto;
+    direction: rtl;
+    text-align: start;
+}
+
+.inner-hidden-row-div {
+    direction: ltr;
+}
+
+.table-select-style {
+
+    direction: ltr;
+}
+
+.Checkup-table {
+    direction: rtl;
+}
+
+.inputs-style {
+    direction: ltr;
+}
+
+.car-catogeries {
+    padding-right: 12px !important;
+    padding-left: 12px !important;
+}
+
+.car-data {
+    text-align: end;
+}
+
+.titles {
+    text-align: end;
+}
+
+.otc-row {
+    margin-right: 3rem;
+}
+
+input[type="date"] {
+    padding: 5px 10px;
+    position: relative;
+    text-align: start;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: block;
+    right: 10px;
+    left: auto;
+    position: absolute;
+}
+
+.version2-modal-header {
+    border-bottom: var(--bs-modal-header-border-width) solid #ffffff;
+    direction: ltr;
+}
+.SMS-Whats-Col {
+  
+    direction: ltr;
+
+}
+#tableContainer {
+    direction: rtl;
+}
+.authDaysNum{
+        flex-direction: column-reverse;
+}
+@media (max-width:767px) {
+    .otc-row {
+        margin-right: 0rem;
+    }
+}
+@media (max-width:540px) {
+    .car-rent-data {
+             right: -150%;
+    }
+
+    .docs {
+        transform: translateX(40%);
+    }
+}
+/* /////////////////////media for the seacrh icon list on mobiles///////////////////////// */
+@media (max-width:775px) {
+
+    .dropdown-content {
+        left: 50%;
+        right: 0%;
+        transform: translateX(90%);
+    }
+
+    .payment-dropdown-content {
+        top: 22px;
+    }
+}
+
+@media (max-width: 320px) {
+    .payment-dropdown-content {
+        right: 220px;
+        transform: translateX(90%);
+    }
+}
+
+/* ****************media****************** */
+@media (max-width: 320px) {
+
+    .form-select-last {
+        width: 95px;
+    }
+
+}
+
+@media (max-width: 375px) {
+
+    .extra-small-mobile {
+        display: none;
+    }
+
+}
+
+@media (max-width: 646px) {
+
+    .hide-on-mobile {
+        display: none;
+    }
+
+    .on-mobile {
+        flex-direction: column-reverse;
+        padding-top: 16px;
+    }
+
+    .on-mobile p {
+        margin-left: 0px;
+    }
+}
+
+@media(min-height:990px) {
+
+    footer {
+        width: 100%;
+        padding-bottom: 240px;
+    }
+
+}

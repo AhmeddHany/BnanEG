@@ -1,0 +1,161 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.BS;
+@using Newtonsoft.Json;
+@model BSLayoutVM
+@inject IViewLocalizer localizer
+<!--Rented Cars-->
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+
+<table width="100%" class="table table-hover" id="RentedCarsListTable">
+    <tbody>
+        @foreach (var item in Model.RentedCars)
+        {
+            <tr>
+                <td>
+                    <div class="row flex-row-reverse car-img-data">
+                        <div class="col-md-3">
+                            <div class="d-flex justify-content-center align-items-center h-100">
+                                <img src="@Url.Content(item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionImage)"
+                                     class="carImg w-100" alt="@item.CrCasCarInformationConcatenateArName">
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="row car-data-row ">
+
+                                        <div class="col-lg-5 car-data">
+                                            <p>@item.CrCasCarInformationSerailNo</p>
+                                        </div>
+                                        <div class="col-auto car-data">
+                                            <p>
+                                                @localizer["CurrentMeter"]:
+                                                @item.CrCasCarInformationCurrentMeter
+                                            </p>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col car-data">
+                                            <P>
+                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                {
+                                                    @item.CrCasCarInformationConcatenateEnName
+                                                }
+                                                else
+                                                {
+                                                    @item.CrCasCarInformationConcatenateArName
+                                                }
+                                            </P>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col car-data">
+                                            <p>
+                                                @item.CrCasRenterContractBasics?.FirstOrDefault(x => x.CrCasRenterContractBasicStatus == Status.Active)?.CrCasRenterContractBasicNo
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="row car-data-row flex-row-reverse">
+                                        <div class="col car-data">
+                                            <p>
+                                                @{
+                                                    var Renter = item.CrCasRenterContractBasics?.FirstOrDefault(x => x.CrCasRenterContractBasicStatus == Status.Active)?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation;
+                                                }
+                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                {
+                                                    @Renter.CrMasRenterInformationEnName
+                                                }
+                                                else
+                                                {
+                                                    @Renter.CrMasRenterInformationArName
+                                                }
+                                            </p>
+                                        </div>
+                                        <div class="col-md-auto  car-data">
+                                            @{
+                                                // Calculate the total time span between the end date and now
+                                                var timeSpan = item.CrCasRenterContractBasics.LastOrDefault().CrCasRenterContractBasicExpectedEndDate - DateTime.Now;
+
+                                                // Calculate the days, hours, and minutes difference
+                                                var daysNo = timeSpan?.Days ?? 0; // Ensure daysNo is not null
+                                                var hoursNo = timeSpan?.Hours ?? 0; // Ensure hoursNo is not null
+                                                var minutesNo = timeSpan?.Minutes ?? 0; // Ensure minutesNo is not null
+
+                                                // Determine the display value based on days, hours, and minutes
+                                                string displayValue;
+                                                string direction = "ltr"; // Default direction
+                                                string colorValue = "black";
+                                                if (daysNo < 0)
+                                                {
+                                                    colorValue = "red";
+                                                    if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG") displayValue = "Contract Expired";
+                                                    else displayValue = "العقد انتهي";
+
+                                               }
+                                                else if (daysNo == 0)
+                                                {
+                                                    if (hoursNo < 1)
+                                                    {
+                                                        if (minutesNo <= 0)
+                                                        {
+                                                            colorValue = "red";
+                                                            if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG") displayValue = "Contract Expired";
+                                                            else displayValue = "العقد انتهي";
+                                                        }
+                                                        else
+                                                        {
+                                                            if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
+                                                            {
+                                                                displayValue = $"{minutesNo} Minutes";
+                                                            }
+                                                            else
+                                                            {
+                                                                displayValue = $"{minutesNo} دقيقة";
+                                                                direction = "rtl"; // Set direction for Arabic
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
+                                                        {
+                                                            displayValue = $"{hoursNo} Hours";
+                                                        }
+                                                        else
+                                                        {
+                                                            displayValue = $"{hoursNo} ساعة";
+                                                            direction = "rtl"; // Set direction for Arabic
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
+                                                    {
+                                                        displayValue = $"{daysNo} Day";
+                                                    }
+                                                    else
+                                                    {
+                                                        displayValue = $"{daysNo} يوم";
+                                                        direction = "rtl"; // Set direction for Arabic
+                                                    }
+                                                }
+                                            }
+                                            <p dir="@direction" style="color:@colorValue">
+                                                @displayValue
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

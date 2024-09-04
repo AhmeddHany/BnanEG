@@ -1,0 +1,215 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS
+
+@model MessageToEmployeesVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+@*
+  "EmployeeInformationCode": "Code",
+  "CarContractId": "ID",
+  "EmployeeInformationNationality": "Nationality",
+
+ *@
+<style>
+    #_Nc {
+        text-align: center;
+    }
+</style>
+<style>
+    ._Tr_black {
+        border-image: fill;
+    }
+
+    ._Tr_red {
+        color: red;
+    }
+</style>
+
+@{
+    var class_color_black = "_Tr_black";
+    var class_color_red = "_Tr_red";
+    var color_tr = "";
+
+}
+
+@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+{
+    
+       <div class="col-sm-12">
+        @* For-scrolling *@
+        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
+
+            <thead>
+
+                <tr role="row">
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    @*<th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["RenterInformationId"]</th>*@
+                    <th aria-label="Position: activate to sort column ascending">@localizer["RenterInformationName"]</th>
+                    @*<th aria-label="Position: activate to sort column ascending">@localizer["DateLastContract"]</th>*@
+                    @*<th data-orderable="false">@localizer["RenterInformationAddress"]</th>*@
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["RenterLessorMechanism"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["Rates"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["Status"] </th>
+                    @* <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th> *@
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.CrCasRenterLessor)
+                {
+                    color_tr = class_color_black;
+                    @*<tr class="@color_tr" onclick="location.href='@Url.Action("Edit", "MessageToRenters", new { id = item.CrCasRenterLessorId })'" style="cursor:pointer">*@
+                    <tr class="@color_tr" style="cursor:pointer">
+
+                        <td id="_Nc">@no</td>
+                        @*<td id="_Nc">@item.CrCasRenterLessorId</td>*@
+                        @*<td style="text-align:start"><input type="checkbox" id="@item.CrCasRenterLessorId?.Trim()" name="Renters_checked" value="@item.CrCasRenterLessorId?.Trim()" onclick="CheckBoxClicked(this)" class="CarsDocumentsCheckBox" style="height: 15px;width: 30px;"> @item.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName?.Trim()</td>*@
+                        @{
+                            var phoneNumber_ = item.CrCasRenterLessorNavigation?.CrMasRenterInformationCountreyKey?.Trim() + item.CrCasRenterLessorNavigation?.CrMasRenterInformationMobile?.Trim();
+
+                            <td style="text-align:start"><input type="checkbox" id="@item.CrCasRenterLessorId?.Trim()" name="Renters_checked" value="@phoneNumber_" class="CarsDocumentsCheckBox" style="height: 15px;width: 30px;" /><input type="text" id="@item.CrCasRenterLessorId?.Trim()" name="PhoneNumber" value="@phoneNumber_" readonly style="display:none" /> @item.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName?.Trim()</td>
+                        }
+                        @*<td>@item.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</td>*@
+                        @{
+                            //<td> @item.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostEnShortConcatenate</td>
+                        }
+
+                        <td style="text-align:start">
+                            @foreach (var item2 in ViewData["Rates"] as List<CrMasSysEvaluation>)
+                            {
+                                if (item2.CrMasSysEvaluationsCode == @item.CrCasRenterLessorDealingMechanism)
+                                {
+                                    @item2.CrMasSysEvaluationsEnDescription
+                                }
+                            }
+
+                        </td>
+                        <td style="text-align:start">@item.CrCasRenterLessorEvaluationValue</td>
+
+                        <td style="text-align:start">
+
+                            @if (@item.CrCasRenterLessorStatus == Status.Active)
+                            {
+                                @localizer["Active"]
+                            }
+                            else if (@item.CrCasRenterLessorStatus == Status.Rented)
+                            {
+                                @localizer["Rented_n"]
+                            }
+                            else if (@item.CrCasRenterLessorStatus == Status.Hold)
+                            {
+                                @localizer["Hold"]
+                            }
+                            else if (@item.CrCasRenterLessorStatus == Status.Deleted)
+                            {
+                                @localizer["Deleted"]
+                            }
+                            else
+                            {
+
+                            }
+                        </td>
+                    </tr>
+                   
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="col-sm-12">
+        @* For-scrolling *@
+        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
+            <thead>
+                <tr role="row">
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    @*<th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["RenterInformationId"]</th>*@
+                    <th aria-label="Position: activate to sort column ascending">@localizer["RenterInformationName"]</th>
+                    @*<th aria-label="Position: activate to sort column ascending">@localizer["DateLastContract"]</th>*@
+                    @*<th aria-label="Position: activate to sort column ascending">@localizer["RenterInformationAddress"]</th>*@
+                    <th class="text-end" data-orderable="false">@localizer["RenterLessorMechanism"]</th>
+                    <th id="_Nc" >@localizer["Rates"]</th>
+                    <th class="text-end" data-orderable="false">@localizer["Status"] </th>
+                    @* <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th> *@
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.CrCasRenterLessor)
+                {
+                    
+
+                    color_tr = class_color_black;
+                    @*<tr class="@color_tr" onclick="location.href='@Url.Action("Edit", "MessageToRenters", new { id = item.CrCasRenterLessorId })'" style="cursor:pointer">*@
+                    <tr class="@color_tr" style="cursor:pointer">
+
+                        <td id="_Nc">@no</td>
+                        @*<td id="_Nc">@item.CrCasRenterLessorId</td>*@
+                        @*<td style="text-align:start"><input type="checkbox" id="@item.CrCasRenterLessorId?.Trim()" name="Renters_checked" value="@item.CrCasRenterLessorId?.Trim()" onclick="CheckBoxClicked(this)" class="CarsDocumentsCheckBox" style="height: 15px;width: 30px;"> @item.CrCasRenterLessorNavigation?.CrMasRenterInformationArName?.Trim()</td>*@
+                        @{
+                            var phoneNumber_ = item.CrCasRenterLessorNavigation?.CrMasRenterInformationCountreyKey?.Trim() + item.CrCasRenterLessorNavigation?.CrMasRenterInformationMobile?.Trim();
+
+                            <td style="text-align:start"><input type="checkbox" id="@item.CrCasRenterLessorId?.Trim()" name="Renters_checked" value="@phoneNumber_" class="CarsDocumentsCheckBox" style="height: 15px;width: 30px;" /><input type="text" id="@item.CrCasRenterLessorId?.Trim()" name="PhoneNumber" value="@phoneNumber_" readonly style="display:none" /> @item.CrCasRenterLessorNavigation?.CrMasRenterInformationArName?.Trim()</td>
+                        }
+                        @*<td>@item.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy")</td>*@
+                        @*<td> @item.CrMasRenterPost.CrMasRenterPostEnShortConcatenate </td>*@
+                            @{
+                            //<td> @item.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostArShortConcatenate</td>
+                        }
+                            
+                    <td>
+                            @foreach (var item2 in ViewData["Rates"] as List<CrMasSysEvaluation>)
+                            {
+                                if (item2.CrMasSysEvaluationsCode == @item.CrCasRenterLessorDealingMechanism)
+                                {
+                                    @item2.CrMasSysEvaluationsArDescription
+                                }
+                            }
+                                
+                    </td>
+
+                        <td id="_Nc">@item.CrCasRenterLessorEvaluationValue</td>
+
+                        <td>
+
+                            @if (@item.CrCasRenterLessorStatus == Status.Active)
+                            {
+                                @localizer["Active"]
+                            }
+                            else if (@item.CrCasRenterLessorStatus == Status.Rented)
+                            {
+                                @localizer["Rented_n"]
+                            }
+                            else if (@item.CrCasRenterLessorStatus == Status.Hold)
+                            {
+                                @localizer["Hold"]
+                            }
+                            else if (@item.CrCasRenterLessorStatus == Status.Deleted)
+                            {
+                                @localizer["Deleted"]
+                            }
+                            else
+                            {
+                                    
+                            }
+                        </td>
+                    </tr>
+                    
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}

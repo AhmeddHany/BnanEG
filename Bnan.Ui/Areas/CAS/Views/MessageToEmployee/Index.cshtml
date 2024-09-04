@@ -1,0 +1,685 @@
+﻿@using Bnan.Ui.ViewModels.CAS
+
+@using Bnan.Core.Extensions
+
+@model MessageToEmployeesVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
+    ViewData["Page-title"] = @localizer["MessageToRenters Data"];
+    ViewData["Page-Hint"] = @localizer["MessageToRenters Hint"];
+}
+<style>
+    body {
+        overflow: hidden
+    }
+
+    @@media (max-width: 600px) {
+        #basic-datatable1_wrapper .row:first-child > div {
+            text-align: left;
+            overflow: scroll;
+            text-overflow: ellipsis;
+        }
+
+            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
+                text-align: right;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+        cursor: pointer;
+    }
+
+    /*     td,th {
+            text-align: center;
+        } */
+
+    #_Nc {
+        text-align: center;
+    }
+
+    
+</style>
+
+<style>
+
+    .file-upload {
+        width: 100%;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .file-upload-btn {
+        width: 200px;
+        max-height: 200px;
+        max-width: 200px;
+        margin: 0;
+        color: #fff;
+        background: #727cf5;
+        border: none;
+        padding: 10px;
+        border-radius: 4px;
+        border-bottom: 4px solid #727cf5;
+        transition: all .2s ease;
+        outline: none;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+        .file-upload-btn:hover {
+            background: #5661e3;
+            color: #ffffff;
+            transition: all .2s ease;
+            cursor: pointer;
+        }
+
+    .file-upload-input-picture, .file-upload-input-signature {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 200px;
+        height: 200px;
+        max-height: 200px;
+        max-width: 200px;
+        outline: none;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .image-upload-wrap {
+        max-height: 200px;
+        max-width: 200px;
+        margin-top: 5px;
+        border: 4px dashed rgb(231, 231, 231);
+        position: relative;
+        display: none;
+    }
+
+        .image-dropping,
+        .image-upload-wrap:hover {
+            background-color: rgb(231, 231, 231);
+            border: 4px dashed #ffffff;
+        }
+
+    .image-title-wrap {
+        color: #222;
+    }
+
+    .drag-text {
+        text-align: center;
+    }
+
+        .drag-text h3 {
+            font-weight: 100;
+            text-transform: uppercase;
+            padding: 60px 0;
+            font-size: 17px
+        }
+
+    .file-upload-image {
+        height: 200px;
+        max-width: 200px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding: 20px;
+        border: .5px solid rgb(231, 231, 231);
+    }
+
+    .remove-image {
+        margin: 0;
+        max-height: 200px;
+        max-width: 200px;
+        width: 100%;
+        color: #fff;
+        background: #fa5c7c;
+        border: none;
+        padding: 10px;
+        border-radius: 4px;
+        border-bottom: 4px solid #fa5c7c;
+        transition: all .2s ease;
+        outline: none;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .image-upload-wrap {
+        display: block
+    }
+
+    .file-upload-content {
+        display: none
+    }
+
+    .remove-image:hover {
+        background: #f35474;
+        color: #ffffff;
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+    #CrMasSupCarDistributionYear,
+    #CrMasSupCarDistributionPassengers,
+    #CrMasSupCarDistributionDoor,
+    #CrMasSupCarDistributionBagBags,
+    #CrMasSupCarDistributionSmallBags {
+        width: 50%
+    }
+
+    .text-danger {
+        white-space: nowrap
+    }
+
+    @@media (max-width: 600px) {
+        #CarDisImage {
+            position: absolute;
+            top: 70%;
+            right: 75%;
+            width: 243px;
+        }
+    }
+
+</style>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    /* Button used to open the chat form - fixed at the bottom of the page */
+    .open-button {
+        background-color: #555;
+        color: white;
+        padding: 16px 20px;
+        border: none;
+        cursor: pointer;
+        opacity: 0.8;
+        position: fixed;
+        bottom: 23px;
+        right: 28px;
+        width: 280px;
+    }
+
+    /* The popup chat - hidden by default */
+    .chat-popup {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        right: 15px;
+        border: 3px solid #f1f1f1;
+        z-index: 9;
+    }
+
+
+    /* Add styles to the form container */
+    .form-container_Chat {
+        max-width: 600px;
+        padding: 10px;
+        background-color: white;
+    }
+
+        /* Full-width textarea */
+        .form-container_Chat textarea {
+            width: 80%;
+            padding: 15px;
+            margin: 5px 0 22px 0;
+            border: 3px solid #6169CE;
+            /*background: #f1f1f1;*/
+            /*background: #FAFAFA;*/
+            background: #D4D4D4;
+            resize: none;
+            min-height: 200px;
+        }
+
+            /* When the textarea gets focus, do something */
+            .form-container_Chat textarea:focus {
+                background-color: white;
+                outline: none;
+            }
+
+        /* Set a style for the submit/send button */
+        .form-container_Chat div .btn {
+            background-color: #04AA6D;
+            color: white;
+            padding: 13px 20px;
+            border: none;
+            cursor: pointer;
+            width: 32%;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        /* Add a red background color to the cancel button */
+        .form-container_Chat .cancel {
+            background-color: red;
+        }
+
+
+</style>
+
+<div class="sub-container">
+    <div class="container-fluid">
+        <div class="row">
+            @*filter*@
+            <div class="col-sm-12 col-md-9">
+                <div style="display:flex">
+                    <a type="button" class="btn btn-danger" title="@localizer["Back"]" asp-area="CAS" asp-controller="Home" asp-action="Index">
+                        <i class="mdi mdi-window-close"></i>
+                    </a>
+
+                    <button class='btn btn-primary' onclick="open_chat_popup_Form()" style="margin-inline-start:50px;">
+                        <i>
+                            <img src="~/images/common/pen.png" style="width:22px;margin-inline-end:10px;  filter: invert(93%); opacity:90%;" />
+                        </i>@localizer["MessageToRenters_Button_Message"]
+                    </button>
+                    @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                    {
+                        <div>
+                            <div class="form-check" style="width:80px;margin-top:8px; margin-inline-start:35px;">
+                                <input type="radio" id="customRadioAll_Renters" name="customRadio" onclick="uncheck1()" value="All" class="form-check-input">
+                                <label class="form-check-label" for="customRadioAll_Renters">@localizer["All"]</label>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
+                            <div class="form-check" style="width:80px;margin-top:8px;">
+                                <input type="radio" id="customRadioAll_Renters" name="customRadio" value="All" onclick="uncheck1()" class="form-check-input">
+                                <label class="form-check-label" for="customRadioAll_Renters">@localizer["All"]</label>
+                            </div>
+                        </div>
+                    }
+         
+
+                </div>
+            </div>
+
+            @*search And Fitler Radio Button*@
+            <div class="col-sm-12 col-md-3 p-0">
+                <div class="input-group" style="width: 95%;">
+                    <input class="form-control dropdown-toggle" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
+                    <span class="mdi mdi-magnify search-icon" style="color:#a7a4a4;"></span>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-12 mt-3" id="status-filter">
+
+            </div>
+        </div>
+
+        <div class="chat-popup" id="chat_popup_Form" style="display: none; margin: auto; width: 100%; height: 100%;background-color:rgba(0, 0, 0, 0.6);">
+            <form class="form-container_Chat" id="form_container_Chat_id" style="display:block;margin:auto;width:50%;transform: translate(0%, 70%);border: 2px solid black;">
+                <h1 style="margin:auto;width:35%;">@localizer["MessageToRenters_Button_Chat"]</h1>
+
+                <div class="file-upload" id="file_image_upload" style="display:none">
+                    @*<button class="file-upload-btn" type="button" onclick="$('.file-upload-input-signature').trigger('click')">@localizer["photo"] @ViewBag.type</button>*@
+                    <div class="image-upload-wrap">
+                        <input class="file-upload-input-signature" type="file" onchange="readURL(this, 'signature');" accept="image/*" id="CarDistributionFile" name="DoucmentImg" />
+                        <div class="drag-text">
+                            <h3>@localizer["DragAndDrop"]</h3>
+                        </div>
+                    </div>
+                    <div class="file-upload-content signature">
+                        <img class="file-upload-image signature" id="Image_Id" src="@Url.Content(Model.CrCasBranchDocumentsImage)" />  
+                        <div class="image-title-wrap">
+                            <button type="button" onclick="removeUpload(this)" class="remove-image">@localizer["Remove"]</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-around; gap:10px;">
+                <textarea name="msg" id="textarea_Chat" style="margin-inline-start:55px;margin-top:15px;min-height:10px;border-radius: 50px;" required></textarea>
+                <i style="margin-inline-end:20px;margin-top:34px;">
+                    <img src="~/images/common/image.png" onclick="open_CardImage_popup_Form()" style="width:42px;margin-inline-end:10px;  filter: invert(33%); opacity:90%;" />
+                </i>
+                </div>
+                <div style="display:flex;justify-content:space-around;">
+                    @*<button type="submit" class="btn btn-primary">@localizer["MessageToRenters_Button_send"]</button>*@
+                    <button type="button" class="btn btn-primary" onclick="Chat_popup_submitted()">@localizer["MessageToRenters_Button_send"]</button>
+                    <button type="button" class="btn btn-danger " style="margin-inline-start:-30px;background-color: #DB1A22;" onclick="closeForm()">@localizer["MessageToRenters_Button_Close"]</button>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="chat-popup" id="CardImage_popup_Form" style="display: none; margin: auto; width: 100%; height: 100%;background-color:rgba(0, 0, 0, 0.6);">
+                <form class="" >
+                <div id="CarDisImage" style="background:white;display:block;;margin-top:180px;margin-inline-start:-450px;">
+                        <div class="file-upload">
+                            <button class="file-upload-btn" type="button" onclick="$('.file-upload-input-signature').trigger('click')">@localizer["photo"] @ViewBag.type</button>
+                            <div class="image-upload-wrap">
+                                <input class="file-upload-input-signature" type="file" onchange="readURL(this, 'signature');" accept="image/*" id="CarDistributionFile" name="DoucmentImg" />
+                                <div class="drag-text">
+                                    <h3>@localizer["DragAndDrop"]</h3>
+                                </div>
+                            </div>
+                            <div class="file-upload-content signature">
+                                <img class="file-upload-image signature" id="Image_Id" src="@Url.Content(Model.CrCasBranchDocumentsImage)" />
+                                <div class="image-title-wrap">
+                                    <button type="button" onclick="removeUpload(this)" class="remove-image">@localizer["Remove"]</button>
+                                </div>
+                            </div>
+
+                        <div style="display:flex;justify-content:space-around;margin-top:20px;">
+                            @*<button type="submit" class="btn btn-primary" style="background-color: #04AA6D;color: white;border: none;">@localizer["MessageToRenters_Button_send"]</button>*@
+                            <button type="button" class="btn btn-primary" onclick="Image_popup_submitted()" style="background-color: #04AA6D;color: white;border: none;">@localizer["MessageToRenters_Button_send"]</button>
+                            <button type="button" class="btn btn-danger " style="margin-inline-start:-30px;background-color: #DB1A22;" onclick="closeForm()">@localizer["MessageToRenters_Button_Close"]</button>
+                            </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="dataTable " >
+            <partial name="_DataTableBasic" />
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @*Get MessageToRenters Using filter*@
+    <script>
+        //get MessageToRenters By Status function
+        function GetMessageToRentersFitler(status) {
+            $.ajax({
+                type: "GET",
+                data: {
+                    status: status
+                },
+                url: "@Url.Action("GetMessageToRentersByStatus", "MessageToRenters", new { Area = "CAS" })",
+                success: function (response) {
+                    $(".dataTable").html(response);
+                    set_basic_datatable();
+                },
+            })
+        }
+
+   
+    </script>
+
+    <script>
+        // Function to send a message to WhatsApp
+        async function sendMessageToWhatsApp(Text, numberPhone) {
+            const toNumber = numberPhone; // The recipient's phone number
+            const fromNumber = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJudW1iZXIiOiJKYXNlcjExIiwic2VyaWFsIjoiMTk5ZmUzYjFlYjc2MjNlIiwiaWF0IjoxNzA3NzMxNjI4LCJleHAiOjE3OTQxMzE2Mjh9.O_4RW4vYAays1ZL7D-OlOQh6C5P5xVYrT3pZ2Oi9Yak"; // Your WhatsApp API token
+            const messageText = Text; // The message text with the random code
+            const url = `https://business.enjazatik.com/api/v1/send-message?number=${encodeURIComponent(toNumber)}&message=${encodeURIComponent(messageText)}&token=${encodeURIComponent(fromNumber)}`;
+            try {
+                const response = await fetch(url, { method: 'GET' });
+                const result = await response.json();
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+        }
+
+    </script>
+
+
+    <script>
+
+        var checked = false;
+        function uncheck1() 
+        {
+            if (checked) 
+            {
+                document.getElementById("customRadioAll_Renters").checked = false;
+                checked = false;
+                SetAllChecked("No");
+                return;
+            }
+            checked = true;
+            console.log("customRadioAllClicked");
+            $("#top-search").val("");
+            SetAllChecked("All");
+        }
+
+
+        function SetAllChecked(status)
+        {
+            if (status ==="All") 
+            {
+                yourArray = [];
+                $("input:checkbox[name=Renters_checked]").each(function () {
+                    yourArray.push($(this).val());
+                    $(this).prop("checked", true);
+                });
+                console.log(yourArray);
+            }
+            if (status === "No") {
+                yourArray = [];
+                $("input:checkbox[name=Renters_checked]").each(function () {
+                    yourArray.push($(this).val());
+                    $(this).prop("checked", false);
+                });
+                //console.log(yourArray);
+            }
+        }
+
+    </script>
+
+    <script>
+        function Image_popup_submitted() {
+            yourArray = [];
+            // return list of All CheckBoxes Has Checked
+            $("input:checkbox[name=Renters_checked]:checked").each(function () {
+                yourArray.push($(this).val());
+            });
+            console.log(yourArray);
+            //var Image = document.getElementById("Reasons").value;
+            var Image = document.getElementById('Image_Id').getAttribute('src');
+            var postData = { values: yourArray, Image: Image };
+
+
+            $.ajax({
+                type: "Post",
+                data: postData,
+                url: "@Url.Action("SendImageToRenters", "MessageToRenters", new { Area = "CAS" })",
+                success: function (response) {
+                    console.log(response);
+                    console.log("response success");
+                    if (response.code === 1) {
+                        //window.location = 'yourloginpage.html'
+                        location.href = '@Url.Action("SuccessToast", "MessageToRenters")?';
+                    }
+
+                },
+            })
+        };
+    </script>
+
+    <script>
+        async function Chat_popup_submitted() 
+        {
+            var Image = document.getElementById('Image_Id').getAttribute('src');
+            var textarea_Chat = document.getElementById("textarea_Chat").value;
+
+            if (document.getElementById("file_image_upload").style.display == "none") 
+            {
+                Image = "";
+            }
+
+            yourArray_id = [];
+            yourArray_phoneNumber = [];
+            // return list of All CheckBoxes Has Checked
+            $("input:checkbox[name=Renters_checked]:checked").each(function () {
+                yourArray_id.push($(this).attr('id'));
+                yourArray_phoneNumber.push($(this).val());
+
+                //var phoneNumber = $(this).val();
+                //await sendMessageToWhatsApp(textarea_Chat, phoneNumber);
+            });
+            console.log(yourArray_id);
+            console.log(yourArray_phoneNumber);
+            console.log(yourArray_phoneNumber[0]);
+            console.log({ textarea_Chat, Image });
+            var phoneNumber = yourArray_phoneNumber[0];
+            await sendMessageToWhatsApp(Image, phoneNumber);
+
+
+            
+        }; 
+    </script>
+
+    <script>
+        function open_chat_popup_Form() {
+            yourArray = [];
+            // return list of All CheckBoxes Has Checked
+            $("input:checkbox[name=Renters_checked]:checked").each(function () {
+                yourArray.push($(this).val());
+            });
+            console.log(yourArray);
+            if (yourArray.length > 0) {
+                document.getElementById("chat_popup_Form").style.display = "block";
+                }
+        }
+        function open_CardImage_popup_Form() 
+        {
+            yourArray = [];
+            if (document.getElementById("file_image_upload").style.display == "block") 
+            {
+
+                document.getElementById("file_image_upload").style.display = "none";
+                $("#form_container_Chat_id").css({ "margin-top": "200px", "color": "black" });
+
+            }
+            else
+            {
+                // return list of All CheckBoxes Has Checked
+                $("input:checkbox[name=Renters_checked]:checked").each(function () {
+                    yourArray.push($(this).val());
+                });
+                console.log(yourArray);
+                if (yourArray.length > 0) 
+                {
+                    //document.getElementById("CardImage_popup_Form").style.display = "block";
+                    document.getElementById("file_image_upload").style.display = "block";
+                    $("#form_container_Chat_id").css({ "margin-top": "-200px", "color": "black" });
+                    //$("#form_container_Chat_id").css({ "margin-top": "-200px", "color": "red" });
+                }
+            }
+
+        }
+
+        function closeForm() {
+            document.getElementById("chat_popup_Form").style.display = "none";
+            document.getElementById("CardImage_popup_Form").style.display = "none";
+        }
+    </script>
+
+    @*///////////////*@
+    @*///////////////*@
+    @*///////////////*@
+    <script>
+
+
+        $(".datepicker-icon").click(function () {
+            $(this).prevAll('input').datepicker("show");
+        });
+
+        $("#saveEdit").on("click", function (event) {
+            event.preventDefault();
+            CheckValidation('2201002', '@Status.Save').done(function (data) {
+                if (data) {
+                    $('form').submit();
+                }
+            });
+        })
+
+    </script>
+
+    <script>
+        function readURL(input, type) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var container = $(input).closest('.file-upload');
+                    container.find('.file-upload-image.' + type).attr('src', e.target.result);
+                    container.find('.file-upload-content.' + type).show();
+                    container.find('.image-title.' + type).html(input.files[0].name);
+                    container.find('.image-upload-wrap').hide();
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                removeUpload(input);
+            }
+        }
+
+        function removeUpload(button) {
+            var container = $(button).closest('.file-upload');
+            var type = container.find('.file-upload-content').hasClass('signature') ? 'signature' : 'picture';
+            container.find('.file-upload-input-' + type).val('');
+            container.find('.file-upload-image.' + type).attr('src', '#');
+            container.find('.file-upload-content.' + type).hide();
+            container.find('.image-upload-wrap').show();
+        }
+
+        $('.image-upload-wrap').bind('dragover', function () {
+            $(this).addClass('image-dropping');
+        });
+        $('.image-upload-wrap').bind('dragleave', function () {
+            $(this).removeClass('image-dropping');
+        });
+    </script>
+
+    <script>
+
+        function updateUserStatus(status) {
+            var DocumentsLessor = document.getElementById("CrCasBranchDocumentsLessor").value;
+            var DocumentsBranch = document.getElementById("CrCasBranchDocumentsBranch").value;
+            var DocumentsProcedures = document.getElementById("CrCasBranchDocumentsProcedures").value;
+            $.ajax({
+                type: "DELETE",
+                url: "/CAS/Documents/EditDocumentStatus",
+                data: { status: status, DocumentsLessor: DocumentsLessor, DocumentsBranch: DocumentsBranch, DocumentsProcedures: DocumentsProcedures },
+                success: function (result) {
+                    console.log(result)
+                    $('.modal').modal('hide');
+                    window.location.href = "/CAS/Documents/SuccessToast";
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+        $("#buttonContainer a").on("click", function (event) {
+            var status = $(this).attr("data-error")
+            var Modal = $(this).attr("data-bs-targett")
+            CheckValidation('2201002', status).done(function (data) {
+                console.log(data)
+                if (data) $(Modal).modal('show');
+            });
+        })
+
+        // Event listener for delete Lessor button
+        $('#deleteUserButton').click(function () {
+            updateUserStatus('D');
+        });
+    </script>
+}
+
+<style>
+    .wrapper {
+        margin-bottom: 60px;
+        overflow: hidden;
+        background-image: url("~/Pictures/bg.jpg") !important;
+    }
+
+    .table-bordered td,
+    .table-bordered th {
+        border: none;
+    }
+</style>
+

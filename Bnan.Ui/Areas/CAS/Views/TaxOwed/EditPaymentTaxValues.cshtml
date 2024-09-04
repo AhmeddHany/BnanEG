@@ -1,0 +1,473 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS
+
+@model TaxOwed_VM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
+    ViewData["Page-title"] = @localizer["TaxValues_Edit_Dues_new Data"];
+    ViewData["Page-Hint"] = @localizer["TaxValues_Edit_Dues Hint"];
+}
+
+<style>
+    body {
+        overflow: hidden
+    }
+
+    @@media (max-width: 600px) {
+        #basic-datatable1_wrapper .row:first-child > div {
+            text-align: left;
+            overflow: scroll;
+            text-overflow: ellipsis;
+        }
+
+            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
+                text-align: right;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+        cursor: pointer;
+    }
+
+    /*     td,th {
+                text-align: center;
+            } */
+
+    #_Nc {
+        text-align: center;
+    }
+
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+@*<link href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />*@
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+@*<link href="~/BranchSys/Pages/css/mixed_style.css" rel="styleSheet" />*@
+
+
+@if (requestCulture.RequestCulture.UICulture.Name == "en-US")
+{
+    @*<link href="~/BranchSys/Pages/css/English_style.css" rel="styleSheet" />*@
+    <style>
+        .modal-dialog {
+            max-width: 610px;
+            margin: 2rem auto;
+            margin-left: 625px;
+            margin-top: 140px;
+        }
+
+        .col-md-7 {
+            width: 300px;
+        }
+
+        .col-md-5 {
+            width: 200px;
+        }
+
+        .Direction_Page {
+            direction: rtl;
+        }
+
+        .d-flex {
+            gap: 15px;
+            display: flex;
+            -webkit-align-items: 0;
+        }
+
+        .mgCenter {
+            margin-left: 185px;
+        }
+
+        #SalesPointLessorInformationSigntureImage {
+            position: absolute;
+            top: 39%;
+            left: 50%;
+        }
+
+        .t_mar {
+        @*margin: 35px;*@ margin-right: 20px;
+        @*margin-top: 5px;*@
+        }
+
+        .col-md-label5 {
+            /*width: 28.75%;*/
+            width: 140px;
+            height: 30px;
+        }
+
+        .col-md-input5 {
+            width: 250px;
+            margin-top: -8px;
+            height: 30px;
+        }
+
+        .col-md-label10 {
+            /*width: 28.75%;*/
+            width: 80px;
+            height: 30px;
+        }
+
+        .col-md-input10 {
+            width: 310px;
+            margin-top: -8px;
+            height: 30px;
+        }
+
+        #Date_cusor2 {
+            margin-right: 13px;
+            direction: rtl;
+        }
+    </style>
+}
+else
+{
+    @*<link href="~/BranchSys/Pages/css/style.css" rel="styleSheet" />*@
+
+    <style>
+        .modal-dialog {
+            max-width: 480px;
+            margin: 2rem auto;
+            margin-left: 625px;
+            margin-top: 140px;
+        }
+
+        .col-md-7 {
+            width: 270px;
+        }
+
+        .col-md-5 {
+            width: 150px;
+        }
+
+        .Direction_Page {
+            direction: ltr;
+        }
+
+        .d-flex {
+            gap: 15px;
+            display: flex;
+            -webkit-align-items: 0;
+        }
+
+        .mgCenter {
+            margin-right: 148px;
+        }
+
+        #SalesPointLessorInformationSigntureImage {
+            position: absolute;
+            top: 39%;
+            right: 50%;
+        }
+
+        .t_mar {
+        @*margin: 35px;*@ margin-left: 20px;
+        @*margin-top: 5px;*@
+        }
+
+        .col-md-label5 {
+            /*width: 28.75%;*/
+            width: 90.5px;
+            height: 30px;
+        }
+
+        .col-md-input5 {
+            width: 300px;
+            margin-top: -8px;
+            height: 30px;
+        }
+
+        .col-md-label10 {
+            /*width: 28.75%;*/
+            width: 75px;
+            height: 30px;
+        }
+
+        .col-md-input10 {
+            width: 315px;
+            margin-top: -8px;
+            height: 30px;
+        }
+
+        #Date_cusor2 {
+            margin-left: 13px;
+            direction:ltr;
+        }
+    </style>
+}
+
+<div class="sub-container">
+    <div class="container-fluid">
+
+        <div class="" id="CAS" style="height:540px;width:1667px;margin-inline-start:10px;">
+            @*<form class="needs-validation" novalidate asp-area="CAS" asp-controller="TaxOwed" asp-action="AddPaymentTaxValues" method="post">*@
+            <div  >
+                <div style="height:500px">
+                    @*Document Code*@
+                    <div class="row mt-2" hidden>
+                        <div class="col-md-4">
+                            @*<input type="text" class="form-control" readonly asp-for="CrMasUserInformationLessor" />
+                            <input type="text" class="form-control" readonly asp-for="CrMasUserInformationDefaultBranch" />
+                            <input type="text" class="form-control" readonly asp-for="CrMasUserInformationCode" />*@
+                        </div>
+                    </div>
+                    <div id="master" style="display:flex;justify-content:0;gap:20px;">
+                        <div id="part1_col" style="width:400px;">
+                            @*Pay Code*@
+                            <div class="row mt-2" style="height:35px">
+                                @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                                {
+                                    <div class="col-md-1 formlabel" style="margin-top:7px;width:118px;margin-inline-start:-10px;">
+                                        <label class="form-label">@localizer["TaxOwed_pay_Edit_no_new"]</label>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-1 formlabel" style="margin-top:6px;width:118px;margin-inline-start:-20px;">
+                                        <label class="form-label">@localizer["TaxOwed_pay_Edit_no_new"]</label>
+                                    </div>
+                                }
+                                <div class="col-md-2 col-11" style="width:250px;">
+                                    <input type="text" class="form-control" id="New_TaxOwed_Tax_no" value="@Model.New_TaxOwed_Tax_no" readonly>
+                                    @*@if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                                    {
+                                    <input type="text" class="form-control" asp-for="CrMasUserInformationArName" readonly>
+                                    }
+                                    else
+                                    {
+                                    <input type="text" class="form-control" asp-for="CrMasUserInformationEnName" readonly>
+                                    }*@
+                                </div>
+                            </div>
+                            @*TaxOwed_pay_Add_Quarter*@
+                            <div class="row mt-2" id="DateInputs" style="display:flex;gap: 15px;-webkit-flex-item-align:center;height:20px;">
+                                <div class="col-md-1 formlabel" style="margin-top:7px;width:113px">
+                                    <label class="form-label">@localizer["TaxOwed_pay_Add_Quarter_new"]</label>
+                                </div>
+
+                                <div class="dateRelative col-md-5 col-11" style="display:grid;width:220px;height:20px;margin-inline-start:-10px">
+                                    <input type="text" class="form-control " id="Quarter" name="Quarter" value="@Model.Quarter / @Model.CrCasAccountContractTaxOwed?.FirstOrDefault()?.CrCasAccountContractTaxOwedDate?.ToString(" yyyy",CultureInfo.InvariantCulture)" readonly style="grid-column: 1;grid-row: 1;width:220px;" />
+                                </div>
+                                @*<div style="width:50px;">
+
+                                <a class="btn btn-primary" id="DeleteAllContracts" onclick="DeleteAllContracts()">
+                                <i class="mdi mdi-search-web"></i>
+                                </a>
+                                </div>*@
+                            </div> @*End row*@
+                            @*Value Offer*@
+                            <div class="row mt-2" style="height:20px">
+                                <div class="col-md-1 formlabel" style="margin-top:6px;width:115px">
+                                    <label class="form-label">@localizer["TaxOwed_pay_Invoices_Count"]</label>
+                                </div>
+                                <div class="col-md">
+                                    <input type="text" class="form-control" id="Invoices_Count" name="Invoices_Count" readonly value="@Model.Invoices_Count?.ToString("N0",CultureInfo.InvariantCulture)">
+                                </div>
+                            </div>
+                            @*pay_User*@
+                            <div class="row mt-2" style="height:35px">
+                                @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                                {
+                                    <div class="col-md-1 formlabel" style="margin-top:7px;width:118px;">
+                                        <label class="form-label">@localizer["CompanyOwed_pay_User"]</label>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-1 formlabel" style="margin-top:6px;width:108px;">
+                                        <label class="form-label">@localizer["CompanyOwed_pay_User"]</label>
+                                    </div>
+                                }
+                                <div class="col-md-2 col-11" style="width:250px;">
+                                    @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                                    {
+                                        <input type="text" class="form-control" id="pay_User" name="pay_User" value="@Model.CrCasAccountContractTaxOwed?.FirstOrDefault()?.CrCasAccountContractTaxOwedUserCodeNavigation?.CrMasUserInformationArName" readonly>
+                                    }
+                                    else
+                                    {
+                                        <input type="text" class="form-control" id="pay_User" name="pay_User" value="@Model.CrCasAccountContractTaxOwed?.FirstOrDefault()?.CrCasAccountContractTaxOwedUserCodeNavigation?.CrMasUserInformationEnName" readonly>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div id="part2_col" style="width:700px;">
+                            @*DateTime Inputs*@
+                            <div class="row mt-2" id="DateInputs" style="display:flex;gap: 15px;-webkit-flex-item-align:center;height:35px;margin-inline-start:-20px">
+                                <div class="col-md-1 formlabel" style="margin-top:7px;width:113px">
+                                    <label class="form-label">@localizer["TaxOwed_pay_Date"]</label>
+                                </div>
+
+                                @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                                {
+                                    <div class="dateRelative col-md" style="display:grid;width:220px;height:40px;margin-inline-start:-10px">
+                                        <input type="text" class="form-control " id="endDateInput" name="endDateInput" value="@Model.CrCasSysAdministrativeProcedure_Data?.CrCasSysAdministrativeProceduresDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)" readonly style="grid-column: 1;grid-row: 1;width:220px;" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="dateRelative col-md" style="display:grid;width:230px;height:40px;margin-inline-start:-20px">
+                                        <input type="text" class="form-control " id="endDateInput" name="endDateInput" value="@Model.CrCasSysAdministrativeProcedure_Data?.CrCasSysAdministrativeProceduresDate?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)" readonly style="grid-column: 1;grid-row: 1;width:220px;" />
+                                    </div>
+                                }
+                                @*<div style="width:50px;">
+
+                                <a class="btn btn-primary" id="DeleteAllContracts" onclick="DeleteAllContracts()">
+                                <i class="mdi mdi-search-web"></i>
+                                </a>
+                                </div>*@
+                            </div> @*End row*@
+                            
+                            @*_Total_Value*@
+                            <div class="row mt-2" id="DateInputs" style="display:flex;gap: 15px;-webkit-flex-item-align:center;height:20px;">
+                                <div class="col-md-1 formlabel" style="margin-top:7px;width:213px">
+                                    <label class="form-label">@localizer["TaxOwed_pay_pay_Tax_Total_Value_new"]</label>
+                                </div>
+
+                                <div class="dateRelative col-md-5 col-11" style="display:grid;width:220px;height:20px;margin-inline-start:-10px">
+                                    <input type="text" class="form-control" id="Amount_will_Pay" name="Amount_will_Pay" readonly value="@Model.CrCasSysAdministrativeProcedure_Data?.CrCasSysAdministrativeProceduresDebit?.ToString("N2",CultureInfo.InvariantCulture)">
+                                </div>
+                                @*<div style="width:50px;">
+
+                                <a class="btn btn-primary" id="DeleteAllContracts" onclick="DeleteAllContracts()">
+                                <i class="mdi mdi-search-web"></i>
+                                </a>
+                                </div>*@
+                            </div> @*End row*@
+                            @*Value Offer*@
+                            <div class="row mt-2" id="OfTax_eg" style="display:flex;gap: 15px;-webkit-flex-item-align:center;height:20px;">
+                                <div class="col-md-1 formlabel" style="margin-top:6px;width:155px">
+                                    <label class="form-label">@localizer["TaxOwed_pay_Add_AllValue_OfTax_eg"]</label>
+                                </div>
+                                <div class="col-md">
+                                    <input type="text" class="form-control" id="All_Tax_eg" name="All_Tax_eg" readonly value="@Model.CrCasSysAdministrativeProcedure_Data?.CrCasAccountContractTaxOweds.Sum(x=>x.CrCasAccountContractTaxOwedValue)?.ToString("N2",CultureInfo.InvariantCulture)">
+                                </div>
+                            </div>
+                            @*Reasons*@
+                            <div class="row mt-2">
+                                <div class="col-md-1 formlabel" style="margin-top:7px;width:125px">
+                                    <label class="form-label">@localizer["reasons"]</label>
+                                </div>
+                                <div class="col-md-5 col-11">
+                                    <input type="text" class="form-control" id="Reasons" name="Reasons" autocomplete="off" value="@Model.CrCasSysAdministrativeProcedure_Data?.CrCasSysAdministrativeProceduresReasons" maxlength="100" style="width:500px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="dataTable " id="t_mar2" style="width:1564px;margin-inline-start:-12px">
+                        <partial name="_DataTableEditPaymentTaxValues" />
+                    </div>
+                </div>
+                <div style="margin-top:50px">
+                    @*<button class='btn btn-primary' type="submit" >@localizer["Save"]</button>*@
+                    <button class='btn btn-primary' onclick="DeleteAllContracts()">@localizer["Delete"]</button>
+                    <a type="button" class="btn btn-danger ms-2" title="@localizer["Back"]" asp-area="CAS" asp-controller="TaxOwed" asp-action="Index">
+                        @localizer["Back"]
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<style>
+    .wrapper {
+        margin-bottom: 60px;
+        overflow: hidden;
+        background-image: url("~/Pictures/bg.jpg") !important;
+    }
+
+    .table-bordered td,
+    .table-bordered th {
+        border: none;
+    }
+</style>
+
+
+@section scripts {
+
+    <script>
+        $(document).ready(function () {
+            //$('#t_mar').DataTable({
+            //    "scrollY": "200px",
+            //    "scrollCollapse": true,
+            //});
+            $(window).resize(function () {
+                console.log($(window).height());
+                $('.dataTables_scrollBody').css('height', (50));
+            });
+
+            var cultureInfo_ = '@System.Globalization.CultureInfo.CurrentCulture.Name'; // OK Done OK OK
+            if (cultureInfo_ == "en-US") {
+
+                $('#basic-datatable').dataTable({
+                    "sScrollY": (325),
+                    "bPaginate": false,
+                    "bJQueryUI": true,
+                    "bDestroy": true
+                });
+
+            } else {
+                $('#basic-datatable').dataTable({
+                    "sScrollY": (310),
+                    "bPaginate": false,
+                    "bJQueryUI": true,
+                    "bDestroy": true
+                });
+            }
+        });
+    </script>
+
+    <script>
+        function DeleteAllContracts() {
+
+            var reasons = document.getElementById("Reasons").value;
+            var Serial_pay = document.getElementById("New_TaxOwed_Tax_no").value;
+            var postData = { id: Serial_pay, reasons : reasons };
+
+
+            $.ajax({
+                type: "Post",
+                data: postData,
+                url: "@Url.Action("DeleteAllContracts", "TaxOwed", new { Area = "CAS" })",
+                success: function (response) {
+                    console.log(response);
+                    console.log("response success");
+                    if (response.code === 1) {
+                        //window.location = 'yourloginpage.html'
+                        location.href = '@Url.Action("SuccessToast", "TaxOwed")?';
+                    }
+                    //$("#FromAccountNo").val(response.accountIban);
+                    //@*if ("@requestCulture?.RequestCulture.UICulture.Name" == "ar-EG") {*@
+                    //    $("#FromBank").val(response.bankNo);
+                    //    $("#FromBankk").val(response.arBank);
+                    //}
+                    //else {
+                    //    $("#FromBank").val(response.bankNo);
+                    //    $("#FromBankk").val(response.arBank);
+
+                    //}
+                },
+            })
+        };
+    </script>
+
+
+}

@@ -1,0 +1,313 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.BS;
+@using Newtonsoft.Json;
+@model BSLayoutVM
+@inject IViewLocalizer localizer
+<!--Avaliable Cars-->
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+
+<table width="100%" class="table table-hover" id="AvailableCarsListTable">
+    <tbody>
+        @foreach (var item in Model.AvaliableCars)
+        {
+            <tr>
+                <td>
+                    <div class="row flex-row-reverse ">
+
+                        <div class="col-xl-8">
+                            <div class="row flex-row-reverse car-img-data">
+                                <div class="col-md-4">
+                                    <div class="d-flex justify-content-center align-items-center h-100">
+                                        <img src="@Url.Content(item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionImage)"
+                                             class="carImg w-100" alt="@item.CrCasCarInformationConcatenateArName">
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="row w-100">
+                                        <div class="col">
+                                            <div class="row car-data-row ">
+
+                                                <div class="col-lg-6 car-data">
+                                                    <p>@item.CrCasCarInformationSerailNo</p>
+                                                </div>
+                                                <div class="col-auto car-data">
+                                                    <p>
+                                                        @localizer["CurrentMeter"]:
+                                                        @item.CrCasCarInformationCurrentMeter
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col car-data">
+                                                    <p>
+                                                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                        {
+                                                            @item.CrCasCarInformationConcatenateEnName
+                                                        }
+                                                        else
+                                                        {
+                                                            @item.CrCasCarInformationConcatenateArName
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="row car-data-row">
+                                                <div class="col-lg-11 car-data">
+                                                    <div class="row ">
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-center flex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="@Url.Content(item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelImage?.ToString())" class="iconss w-50">
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-centerflex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="@Url.Content(item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtImage?.ToString())" class="iconss w-50">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-centerflex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="/BranchSys/img/carDataIcons/Rectangle 95.svg"
+                                                                         class="iconss">
+
+                                                                </div>
+                                                                <div class="col-auto p-0">
+                                                                    <p>
+                                                                        @item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionBagBags
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-centerflex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="/BranchSys/img/carDataIcons/Rectangle 96.svg"
+                                                                         class="iconss">
+
+                                                                </div>
+                                                                <div class="col-auto p-0">
+                                                                    <p>
+                                                                        @item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionSmallBags
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-centerflex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="/BranchSys/img/carDataIcons/Rectangle 97.svg"
+                                                                         class="iconss">
+
+                                                                </div>
+                                                                <div class="col-auto p-0">
+                                                                    <p>
+                                                                        @item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionPassengers
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="row justify-content-center align-items-centerflex-nowrap ">
+                                                                <div class="col-auto">
+                                                                    <img src="/BranchSys/img/carDataIcons/Rectangle 98.svg"
+                                                                         class="iconss">
+
+                                                                </div>
+                                                                <div class="col-auto p-0">
+                                                                    <p>
+                                                                        @item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionDoor
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="row flex-nowrap">
+                                @{
+                                    var carPrice = item.CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics.FirstOrDefault(x => x.CrCasPriceCarBasicNo == item.CrCasCarInformationPriceNo);
+                                    var WeeklyRent = carPrice?.CrCasPriceCarBasicWeeklyRent * 7;
+                                    var MonthlyRent = carPrice?.CrCasPriceCarBasicMonthlyRent * 30;
+                                }
+                                <div class="col-auto text-center">
+                                    <p>
+                                        @localizer["Monthly"]
+                                    </p>
+                                    <p>@MonthlyRent?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                    <div class="p-2 extra-details" title="@localizer["Maintenance"]">
+                                        <img src="/BranchSys/img/carDataIcons/Group (1).svg"
+                                             class="Avaliable-car-icondata">
+                                        <div class="dropdown-content" id="dropdown-content">
+                                            @{
+                                                var maintainaces = item.CrCasCarDocumentsMaintenances.Where(x => x.CrCasCarDocumentsMaintenanceProceduresClassification == "13");
+                                            }
+                                            @foreach (var main in maintainaces)
+                                            {
+                                                <div class="row dropdown-content-row pt-2" style="">
+                                                    <div class="col-12 titles ">
+                                                        <p>
+                                                            @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                            {
+                                                                @main.CrCasCarDocumentsMaintenanceProceduresNavigation.CrMasSysProceduresEnName
+                                                            }
+                                                            else
+                                                            {
+                                                                @main.CrCasCarDocumentsMaintenanceProceduresNavigation.CrMasSysProceduresArName
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-auto personal-data-dropdown">
+                                                        <p style="color: @(main.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire || main.CrCasCarDocumentsMaintenanceStatus == Status.Expire ? "red" : "inherit")">
+                                                            @if (main.CrCasCarDocumentsMaintenanceStatus == Status.Active)
+                                                            {
+                                                                @localizer["CActive"] @(" - " + " (" + main.CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture) + ")" + " - " + " (" + main.CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture) + ")")
+                                                            }
+                                                            else if (main.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire)
+                                                            {
+                                                                @localizer["OnExpired"] @(" - " + " (" + main.CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture) + ")" + " - " + " (" + main.CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture) + ")")
+                                                            }
+                                                            else if (main.CrCasCarDocumentsMaintenanceStatus == Status.Expire)
+                                                            {
+                                                                @localizer["Expired"]
+                                                            }
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-auto text-center">
+                                    <p>@localizer["Weekly"]</p>
+                                    <p>@WeeklyRent?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                    <div class="p-2 extra-details" title="@localizer["Documents Cars"]">
+                                        <img src="/BranchSys/img/carDataIcons/Group.svg"
+                                             class="Avaliable-car-icondata">
+                                        <div class="dropdown-content docs">
+                                            @{
+                                                var docs = item.CrCasCarDocumentsMaintenances.Where(x => x.CrCasCarDocumentsMaintenanceProceduresClassification == "12");
+                                            }
+                                            @foreach (var doc in docs)
+                                            {
+                                                <div class="row dropdown-content-row pt-2">
+                                                    <div class="col-12 titles ">
+                                                        <p>
+                                                            @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                            {
+                                                                @doc.CrCasCarDocumentsMaintenanceProceduresNavigation.CrMasSysProceduresEnName
+                                                            }
+                                                            else
+                                                            {
+                                                                @doc.CrCasCarDocumentsMaintenanceProceduresNavigation.CrMasSysProceduresArName
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-auto personal-data-dropdown">
+                                                        <p style="color: @(doc.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire || doc.CrCasCarDocumentsMaintenanceStatus == Status.Expire ? "red" : "inherit")">
+                                                            @if (doc.CrCasCarDocumentsMaintenanceStatus == Status.Active)
+                                                            {
+                                                                @localizer["CActive"] @("- " + "(" + doc.CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture) + ")")
+                                                            }
+                                                            else if (doc.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire)
+                                                            {
+                                                                @localizer["OnExpired"] @("- " + "(" + doc.CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture) + ")")
+                                                            }
+                                                            else if (doc.CrCasCarDocumentsMaintenanceStatus == Status.Expire)
+                                                            {
+                                                                @localizer["Expired"]
+                                                            }
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-auto text-center">
+                                    <p>@localizer["Daily"]</p>
+                                    <p>@carPrice?.CrCasPriceCarBasicDailyRent?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                    <div class="p-2 extra-details" title="@localizer["TermsRented"]">
+                                        <img src="/BranchSys/img/carDataIcons/icon.svg"
+                                             class="Avaliable-car-icondata">
+                                        <div class="dropdown-content rent-data">
+
+                                            <div class="row dropdown-content-row pt-2">
+                                                <div class="col titles">
+                                                    <p> @localizer["DailyFreeKm"] </p>
+                                                </div>
+                                                <div class="col-auto personal-data-dropdown">
+                                                    <p> @carPrice?.CrCasPriceCarBasicNoDailyFreeKm  </p>
+                                                </div>
+                                            </div>
+                                            <div class="row dropdown-content-row pt-2">
+                                                <div class="col titles ">
+                                                    <p>@localizer["FreeAdditionalHours"]</p>
+                                                </div>
+                                                <div class="col-auto personal-data-dropdown">
+                                                    <p> @carPrice?.CrCasPriceCarBasicFreeAdditionalHours </p>
+                                                </div>
+
+                                            </div>
+                                            <div class="row dropdown-content-row pt-2">
+                                                <div class="col titles ">
+                                                    <p>@localizer["AdditionalKmValue"] </p>
+                                                </div>
+                                                <div class="col-auto personal-data-dropdown">
+                                                    <p>@carPrice?.CrCasPriceCarBasicAdditionalKmValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                                </div>
+                                            </div>
+                                            <div class="row dropdown-content-row pt-2">
+                                                <div class="col titles ">
+                                                    <p>@localizer["ExtraHourValue"] </p>
+                                                </div>
+                                                <div class="col-auto personal-data-dropdown">
+                                                    <p>@carPrice?.CrCasPriceCarBasicExtraHourValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                                </div>
+                                            </div>
+                                            <div class="row dropdown-content-row pt-2">
+                                                <div class="col titles ">
+                                                    <p>@localizer["Age"] </p>
+                                                </div>
+                                                <div class="col-auto personal-data-dropdown">
+                                                    <p>@carPrice?.CrCasPriceCarBasicMaxAge - @carPrice?.CrCasPriceCarBasicMinAge </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

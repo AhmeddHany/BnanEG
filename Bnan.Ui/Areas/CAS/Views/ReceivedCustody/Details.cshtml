@@ -1,0 +1,660 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.CAS
+@model Bnan.Ui.ViewModels.CAS.AdmintritiveCustodyVM
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore;
+@inject UserManager<CrMasUserInformation> userManager
+@inject SignInManager<CrMasUserInformation> signinManager
+@inject IViewLocalizer localizer
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    ViewData["Page-title"] = localizer["ReceviedCustodyDetails Data"];
+    ViewData["Page-Hint"] = localizer["ReceviedCustodyDetails Hint"];
+    var user = await userManager.GetUserAsync(User);
+    var userInfo = await userManager.Users
+      .Include(l => l.CrMasUserMainValidations)
+      .Include(l => l.CrMasUserSubValidations)
+      .Include(x => x.CrMasUserBranchValidities)
+      .Include(x => x.CrMasUserContractValidity)
+      .Include(l => l.CrMasUserInformationLessorNavigation)
+      .FirstOrDefaultAsync(l => l.UserName == user.UserName);
+    var lessorInfo = await userManager.Users.Include(l => l.CrMasUserInformationLessorNavigation).ThenInclude(l => l.CrMasLessorImage).FirstOrDefaultAsync(x => x.UserName == user.UserName);
+}
+<style>
+    body {
+        overflow: hidden
+    }
+
+    .row {
+        align-items: center;
+    }
+
+
+
+    ul {
+        list-style-type: none;
+    }
+
+    @@media (max-width: 600px) {
+        #basic-datatable1_wrapper .row:first-child > div {
+            text-align: left;
+            overflow: scroll;
+            text-overflow: ellipsis;
+        }
+
+            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
+                text-align: right;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+    }
+</style>
+
+<style>
+
+    div.scroll {
+        /*        background-color: #fed9ff;
+                            width: 600px;*/
+        /*height: 150px;*/
+        overflow-x: hidden;
+        overflow-y: auto;
+        text-align: center;
+        /*padding: 20px;*/
+        position: relative;
+        /*overflow: auto;*/
+        max-height: 30vh;
+        width: 100%;
+    }
+
+
+    th.scroll_1 {
+        top: 0px;
+        position: sticky;
+        background-color: #E4F3F9;
+    }
+
+
+    ::-webkit-scrollbar {
+        display: block;
+        width: 15px;
+        opacity: 0;
+    }
+
+
+    ::-webkit-scrollbar-thumb {
+        background-color: gray;
+        border-right: none;
+        border-left: none;
+    }
+
+    ::-webkit-scrollbar-track {
+        /*box-shadow: inset 0 0 5px #CBD9DE;*/
+        /*border-radius: 2px;*/
+        /*background-color:transparent;*/
+        background-color: #E4F3F9;
+    }
+
+    ::-webkit-scrollbar-track-piece:end {
+        background: transparent;
+        background-color: lightgray;
+        margin-bottom: 0px;
+    }
+
+    ::-webkit-scrollbar-track-piece:start {
+        background: transparent;
+        background-color: lightgray;
+        margin-top: 50px;
+    }
+
+</style>
+<style>
+    #_Nc {
+        align-items: center;
+    }
+</style>
+
+<button onload="ChangeScroll()" hidden> click</button>
+<div class="sub-container-form">
+    <form id="form" class="needs-validation" novalidate asp-area="CAS" asp-controller="ReceivedCustody" asp-action="ActionCustody" enctype="multipart/form-data">
+        <input type="hidden" id="status" name="status" />
+        <input type="hidden" id="SavePdfArReceipt" name="SavePdfArReceipt" />
+        <input type="hidden" id="SavePdfEnReceipt" name="SavePdfEnReceipt" />
+        <input type="hidden" id="AccountReceiptNo" name="AccountReceiptNo" />
+        <input type="hidden" asp-for="SalesPointNavigation.CrCasAccountSalesPointCode" />
+        <div class="form-contain" style="overflow:hidden;">
+            <div class="row">
+                <div class="row">
+                    <div class="col-md-1">
+                        <label class="form-label">@localizer["ReceviedCustodyNo"]</label>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" asp-for="CrCasSysAdministrativeProceduresNo" readonly />
+                    </div>
+
+                    <div class="col-md-1">
+                        <label class="form-label">@localizer["Date"]</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" asp-for="CrCasSysAdministrativeProceduresDate" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="row">
+                    <div class="col-md-1">
+                        <label class="form-label" for="CrCasCarInformationSerailNo">@localizer["SalesPoint"]</label>
+                    </div>
+                    <div class="col-md-2">
+                        @if (requestCulture.RequestCulture.UICulture.Name == "ar-EG")
+                        {
+                            <input type="text" class="form-control" asp-for="SalesPointNavigation.CrCasAccountSalesPointArName" readonly />
+                        }
+                        else
+                        {
+                            <input type="text" class="form-control" asp-for="SalesPointNavigation.CrCasAccountSalesPointEnName" readonly />
+                        }
+                    </div>
+
+                    <div class="col-md-1">
+                        <label class="form-label" for="CrCasCarInformationDistribution">@localizer["CustodyTotal"]</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" asp-for="TotalAmount" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="row">
+                    <div class="col-md-1">
+                        <label class="form-label" for="CrCasCarInformationSerailNo">@localizer["CreditorTotal"]</label>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" asp-for="CrCasSysAdministrativeProceduresCreditor" readonly />
+                    </div>
+
+                    <div class="col-md-1">
+                        <label class="form-label" for="CrCasCarInformationDistribution">@localizer["DebitTotal"]</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" asp-for="CrCasSysAdministrativeProceduresDebit" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="row">
+                    <div class="col-md-1">
+                        <label class="form-label" for="CrCasCarInformationSerailNo">@localizer["FromDate"]</label>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" asp-for="CrCasSysAdministrativeProceduresDocStartDate" readonly />
+                    </div>
+
+                    <div class="col-md-1">
+                        <label class="form-label" for="CrCasCarInformationDistribution">@localizer["ToDate"]</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" asp-for="CrCasSysAdministrativeProceduresDocEndDate" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="row">
+                    <div class="col-md-1">
+                        <label class="form-label" for="CrCasCarInformationSerailNo">@localizer["reasons"]</label>
+                    </div>
+                    <div class="col-md-5">
+                        @if (Model.CrCasSysAdministrativeProceduresStatus == Status.Insert)
+                        {
+                            <input type="text" class="form-control" id="Reasons" name="Reasons" />
+                        }
+                        else
+                        {
+                            <input type="text" class="form-control" asp-for="CrCasSysAdministrativeProceduresReasons" />
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="dataTable mt-1" style="height:100px;">
+                <div class="col-sm-12 scroll">
+                    <table id="basic-datatable2" class="table dt-responsive no-footer dtr-inline table-hover" style="width:100%">
+                        <div>
+                        <tr role="row">
+                            <th class="scroll_1" id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                            <th class="scroll_1" style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["ReceiptNo"]</th>
+                            <th class="scroll_1" style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["Date"]</th>
+                            <th class="scroll_1" style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["ReferenceNo"]</th>
+                            <th class="scroll_1" style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["ReferenceType"]</th>
+                            <th class="scroll_1" style="text-align:start" aria-label="Office: activate to sort column ascending">@localizer["PaymentMethod"]</th>
+                            <th class="scroll_1" id="_Nc" aria-label="Start date: activate to sort column ascending">@localizer["Creditor"]</th>
+                            <th class="scroll_1" id="_Nc" aria-label="Start date: activate to sort column ascending">@localizer["Debit"]</th>
+                        </tr>
+                </div>
+                <tbody>
+
+                            @{
+                                int no = 1;
+                            }
+                            @foreach (var item in Model.AccountReceipt)
+                            {
+                        <tr>
+                            <td id="_Nc">@no</td>
+                            <td style="text-align:start">@item.CrCasAccountReceiptNo</td>
+                            <td style="text-align:start">@item.CrCasAccountReceiptDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">@item.CrCasAccountReceiptReferenceNo</td>
+                            <td style="text-align:start">
+                                        @if (requestCulture.RequestCulture.UICulture.Name == "ar-EG")
+                                        {
+                                            @item.CrCasAccountReceiptReferenceTypeNavigation.CrMasSupAccountReceiptReferenceArName
+                                        }
+                                        else
+                                        {
+                                            @item.CrCasAccountReceiptReferenceTypeNavigation.CrMasSupAccountReceiptReferenceEnName
+                                        }
+                            </td>
+                            <td style="text-align:start">
+                                        @if (requestCulture.RequestCulture.UICulture.Name == "ar-EG")
+                                        {
+                                            @item.CrCasAccountReceiptPaymentMethodNavigation.CrMasSupAccountPaymentMethodArName
+                                        }
+                                        else
+                                        {
+                                            @item.CrCasAccountReceiptPaymentMethodNavigation.CrMasSupAccountPaymentMethodEnName
+                                        }
+                            </td>
+                            <td id="_Nc">@item.CrCasAccountReceiptPayment?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountReceiptReceipt?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                        </tr>
+                                no++;
+                            }
+
+                </tbody>
+                </table>
+            </div>
+        </div>
+</div>
+
+<div class="mt-4" id="buttonContainer">
+            @if (Model.CrCasSysAdministrativeProceduresStatus == Status.Insert)
+            {
+        <button class="btn btn-primary ms-1" id="Accept">
+                    @localizer["Accept"]
+        </button>
+        <button class="btn btn-primary ms-1" id="Reject">
+                    @localizer["Reject"]
+        </button>
+            }
+    <a type="button" class="btn btn-danger ms-2" asp-area="CAS" asp-controller="ReceivedCustody" asp-action="Index">
+                @localizer["Back"]
+    </a>
+</div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+
+
+    
+    <script>
+        // Payment Receipts
+        const CreateArPaymentReceipt = async () => {
+            const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalBillExchangeReceipt";
+            const imagePath = imageLessor.replace('~', '');
+            const miladiDate = new Date();
+            const miladiOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const miladiDateString = miladiDate.toLocaleDateString('en-US', miladiOptions).split('/').join('/');
+            const hijriDateString = formatHijriDate(miladiDate);
+            // First In Page
+            const AdminstritiveNo = decodeHTMLEntities("@Model.CrCasSysAdministrativeProceduresNo");
+            const AccountPaymentReceiptNo = decodeHTMLEntities("@Model.NewReceiptNo");
+            var selectedArabicName = decodeHTMLEntities("@Model.PaymentMethodAr");
+            var reasonPayment = decodeHTMLEntities("@Model.CrCasSysAdministrativeProceduresReasons");
+            var debit = "@Model.CrCasSysAdministrativeProceduresDebit";
+            var creditor = "@Model.CrCasSysAdministrativeProceduresCreditor";
+            debit = debit.replace(/,/g, '');
+            creditor = creditor.replace(/,/g, '');
+            var AmountPayedInput = parseFloat(creditor) - parseFloat(debit);
+            var AmountPayed = AmountPayedInput.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            if (AmountPayed == "" || AmountPayed == undefined || AmountPayed == NaN) {
+                AmountPayed = "0.00";
+            }
+            const [beforeDecimal, afterDecimal] = splitNumberbeforeAndafterDecimal(AmountPayed);
+            console.log("beforeDecimal", beforeDecimal);
+            console.log("afterDecimal", afterDecimal);
+            const numberToText = await dataChanged(AmountPayed);
+            const [firstHalf, secondHalf] = splitTextInHalf(numberToText.ar_concatenate);
+            console.log("numberToText.ar_concatenate", numberToText.ar_concatenate);
+            var phaseFor = `${AdminstritiveNo}  تسليم عهدة برقم`;
+            // Signture Image
+            const UserNameSendCustody = "@Html.Raw(Model.UserInsertNavigation?.CrMasUserInformationArName)";
+            var UserNameSendCustodySignture = decodeHTMLEntities("@Model.UserInsertNavigation?.CrMasUserInformationSignature").replace('~', '');
+            var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
+            var userSignture = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
+            var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation?.CrMasLessorInformationDirectorArName");
+            var directorOfLessorSignture = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfBranch = decodeHTMLEntities("@Model.BranchInformationNavigation?.CrCasBranchInformationDirectorArName");
+            var directorOfBranchSignture = decodeHTMLEntities("@Model.BranchInformationNavigation?.CrCasBranchInformationDirectorSignature").replace('~', '');
+            var signatureImg1 = new Image();
+            var signatureImg2 = new Image();
+            var signatureImg3 = new Image();
+            var signatureImg4 = new Image();
+            signatureImg1.src = directorOfLessorSignture;
+            signatureImg2.src = userSignture;
+            signatureImg3.src = directorOfBranchSignture;
+            signatureImg4.src = UserNameSendCustodySignture;
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            let canvas_width = 2481;
+            let texts = [
+                { content: AccountPaymentReceiptNo, x: canvas_width - 1860, y: 624 },
+                { content: hijriDateString, x: canvas_width - 300, y: 624 },
+                { content: miladiDateString, x: canvas_width - 305, y: 685 },
+                { content: beforeDecimal, x: canvas_width - 2005, y: 720 },
+                { content: afterDecimal, x: canvas_width - 1940, y: 720 },
+                { content: UserNameSendCustody, x: canvas_width - 400, y: 905 },
+                { content: firstHalf, x: canvas_width - 380, y: 1005 },
+                { content: secondHalf, x: canvas_width - 380, y: 1070 },
+                { content: selectedArabicName, x: canvas_width - 400, y: 1185 },
+                { content: phaseFor, x: canvas_width - 390, y: 1285 },
+                { content: reasonPayment, x: canvas_width - 350, y: 1385 },
+
+                { content: directorOfLessor, x: canvas_width - 320, y: 1568 },
+                { content: userName, x: canvas_width - 1120, y: 1568 },
+                { content: directorOfBranch, x: canvas_width - 290, y: 1705 },
+                { content: UserNameSendCustody, x: canvas_width - 1120, y: 1705 },
+
+            ];
+            let signatures = [
+                { content: signatureImg1, x: canvas_width - 400, y: 1495, width: 200, height: 100 },
+                { content: signatureImg2, x: canvas_width - 1170, y: 1495, width: 200, height: 100 },
+                { content: signatureImg3, x: canvas_width - 400, y: 1630, width: 200, height: 100 },
+                { content: signatureImg4, x: canvas_width - 1170, y: 1630, width: 200, height: 100 },
+            ];
+            let textStyleOptions = {
+                fontWeight: "bold",
+                fontSize: 37,
+                fontFamily: "serif",
+                textColor: "rgba(0, 0, 0)",
+                textAlign: "right"
+            };
+            const responseImage = await fetch(imagePath);
+            const blob = await responseImage.blob();
+            let canvas = document.createElement("canvas");
+            var ctx = canvas.getContext("2d");
+            var img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = function () {
+                let loadedImageWidth = img.width;
+                let loadedImageHeight = img.height;
+                canvas.width = loadedImageWidth;
+                canvas_width = loadedImageWidth;
+                canvas.height = loadedImageHeight;
+                ctx.drawImage(img, 0, 0);
+                texts.forEach(text => {
+                    ctx.font = `${textStyleOptions.fontWeight} ${textStyleOptions.fontSize}px ${textStyleOptions.fontFamily}`;
+                    ctx.fillStyle = textStyleOptions.textColor;
+
+                    let textWidth = ctx.measureText(text.content).width;
+
+                    let x = text.x;
+                    if (textStyleOptions.textAlign === "right") {
+                        x -= textWidth;
+                    } else if (textStyleOptions.textAlign === "center") {
+                        x -= textWidth / 2;
+                    }
+
+                    ctx.fillText(text.content, x, text.y);
+
+                });
+
+                signatures.forEach(signature => {
+                    let signatureWidth = ctx.measureText(signature.content).width;
+                    let x = signature.x;
+                    if (textStyleOptions.textAlign === "right") {
+                        x -= signatureWidth;
+                    } else if (textStyleOptions.textAlign === "center") {
+                        x -= signatureWidth / 2;
+                    }
+                    ctx.drawImage(signature.content, x, signature.y, signature.width, signature.height);
+                });
+
+                canvas.toBlob(async function (blob) {
+                    createPdf(AccountPaymentReceiptNo, blob, "SavePdfArReceipt", "ar");
+                }, 'image/png');
+            };
+            img.src = URL.createObjectURL(blob);
+        };
+        const CreateEnPaymentReceipt = async () => {
+            const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnExternalBillExchangeReceipt";
+            const imagePath = imageLessor.replace('~', '');
+            const miladiDate = new Date();
+            const miladiOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const miladiDateString = miladiDate.toLocaleDateString('en-US', miladiOptions).split('/').join('/');
+            const hijriDateString = formatHijriEnDate(miladiDate);
+            // First In Page
+            const AdminstritiveNo = decodeHTMLEntities("@Model.CrCasSysAdministrativeProceduresNo");
+            const AccountPaymentReceiptNo = decodeHTMLEntities("@Model.NewReceiptNo");
+            var selectedEnName = decodeHTMLEntities("@Model.PaymentMethodEn");
+            var reasonPayment = decodeHTMLEntities("@Model.CrCasSysAdministrativeProceduresReasons");
+            var debit = "@Model.CrCasSysAdministrativeProceduresDebit";
+            var creditor = "@Model.CrCasSysAdministrativeProceduresCreditor";
+            debit = debit.replace(/,/g, '');
+            creditor = creditor.replace(/,/g, '');
+            var AmountPayedInput = parseFloat(creditor) - parseFloat(debit);
+            var AmountPayed = AmountPayedInput.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const [beforeDecimal, afterDecimal] = splitNumberbeforeAndafterDecimal(AmountPayed);
+            console.log("beforeDecimal", beforeDecimal);
+            console.log("afterDecimal", afterDecimal);
+
+            const numberToText = await dataChanged(AmountPayed);
+            const [firstHalf, secondHalf] = splitTextInHalf(numberToText.en_concatenate)
+            console.log("numberToText.en_concatenate", numberToText.en_concatenate);
+            var phaseFor = `Delivery of a bond with a number ${AdminstritiveNo}`;
+            // Signture Image
+            const UserNameSendCustody = "@Html.Raw(Model.UserInsertNavigation?.CrMasUserInformationEnName)";
+            var UserNameSendCustodySignture = decodeHTMLEntities("@Model.UserInsertNavigation?.CrMasUserInformationSignature").replace('~', '');
+            var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
+            var userSignture = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
+            var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation?.CrMasLessorInformationDirectorEnName");
+            var directorOfLessorSignture = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfBranch = decodeHTMLEntities("@Model.BranchInformationNavigation?.CrCasBranchInformationDirectorEnName");
+            var directorOfBranchSignture = decodeHTMLEntities("@Model.BranchInformationNavigation?.CrCasBranchInformationDirectorSignature").replace('~', '');
+            var signatureImg1 = new Image();
+            var signatureImg2 = new Image();
+            var signatureImg3 = new Image();
+            var signatureImg4 = new Image();
+            signatureImg1.src = directorOfLessorSignture;
+            signatureImg2.src = userSignture;
+            signatureImg3.src = directorOfBranchSignture;
+            signatureImg4.src = UserNameSendCustodySignture;
+            // Get Image And Text On
+            // Read the image file as a Blob
+            const responseImage = await fetch(imagePath);
+            const blob = await responseImage.blob();
+            var canvas = document.createElement("canvas");
+            var ctx = canvas.getContext("2d");
+            var img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = function () {
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                ctx.drawImage(img, 0, 0);
+                ctx.font = "bold 33px serif";
+                ctx.textAlign = "left";
+                ctx.fillStyle = "black";
+
+
+                ctx.fillText(miladiDateString, canvas.width - 2200, 700);
+                ctx.fillText(hijriDateString, canvas.width - 2220, 630);
+
+                ctx.font = "bold 37px serif";
+                ctx.fillText(AccountPaymentReceiptNo, canvas.width - 620, 625);
+                // Assuming `ctx` is your canvas context
+                ctx.fillText(beforeDecimal, canvas.width - 450, 720);
+                ctx.fillText(afterDecimal, canvas.width - 270, 720);
+
+                ctx.fillText(UserNameSendCustody, canvas.width - 2170, 900);
+                ctx.fillText(numberToText.en_concatenate, canvas.width - 2100, 1013);
+                ctx.fillText(selectedEnName, canvas.width - 2000, 1200);
+
+                // //Total
+                ctx.fillText(phaseFor, canvas.width - 2250, 1310);
+                ctx.fillText(reasonPayment, canvas.width - 2050, 1420);
+
+                ctx.font = "bold 37px serif";
+
+                ctx.fillText(directorOfLessor, canvas.width - 1990, 1560);
+                ctx.drawImage(signatureImg1, canvas.width - 900, 1505, 200, 100);
+
+                ctx.fillText(userName, canvas.width - 1300, 1560);
+                ctx.drawImage(signatureImg2, canvas.width - 1700, 1505, 200, 100);
+
+                ctx.fillText(directorOfBranch, canvas.width - 2020, 1690);
+                ctx.drawImage(signatureImg3, canvas.width - 1700, 1630, 200, 100);
+
+                ctx.fillText(UserNameSendCustody, canvas.width - 1300, 1690);
+                ctx.drawImage(signatureImg4, canvas.width - 900, 1625, 200, 100);
+
+                canvas.toBlob(async function (blob) {
+                    createPdf(AccountPaymentReceiptNo, blob, "SavePdfEnReceipt", "en");
+                }, 'image/png');
+            };
+            img.src = URL.createObjectURL(blob);
+        };
+    </script>
+    <script>
+        function createPdf(receiptNo, imageBlob, InputPdf, language) {
+            var doc = new jsPDF('p', 'pt', 'a4', true);
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            try {
+                // Convert the image blob to a base64 DataURL
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const imageDataUrl = reader.result;
+                    // Add the image to the PDF
+                    const imgWidth = pageWidth; // Width of the image in the PDF
+                    const imgHeight = pageHeight; // Height of the image in the PDF
+                    const imgXPos = 0; // X position of the image (left edge)
+                    const imgYPos = 0; // Y position of the image (top edge)
+                    doc.addImage(imageDataUrl, 'PNG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
+                    // Convert the PDF to a blob
+                    const pdfBlob = doc.output('blob');
+                    const blobUrl = URL.createObjectURL(pdfBlob);
+                    const pdfBase64 = doc.output('datauristring');
+                    // Set the base64-encoded PDF to the hidden input field
+                    document.getElementById(InputPdf).value = pdfBase64;
+                    document.getElementById("AccountReceiptNo").value = receiptNo;
+                };
+                reader.readAsDataURL(imageBlob); // Start reading the image blob
+            } catch (error) {
+                console.error('Error adding image to PDF:', error);
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the buttons
+            var acceptButton = document.getElementById('Accept');
+            var rejectButton = document.getElementById('Reject');
+
+            // Add click event listeners
+            acceptButton.addEventListener('click', function () {
+                $('#Accept').prop('disabled', true);
+                // Set the status field value to 'z'
+                CreateArPaymentReceipt();
+                CreateEnPaymentReceipt();
+                document.getElementById('status').value = '@Status.Accept';
+                // Submit the form
+                setTimeout(function () {
+                    document.getElementById('form').submit();
+                }, 5000);
+            });
+
+            rejectButton.addEventListener('click', function () {
+                $('#Reject').prop('disabled', true);
+                // Set the status field value to 'q'
+                document.getElementById('status').value = '@Status.Reject';
+                // Submit the form
+                document.getElementById('form').submit();
+            });
+        });
+    </script>
+    <script>
+        // To decode some string
+        function decodeHTMLEntities(text) {
+            var textArea = document.createElement("textarea");
+            textArea.innerHTML = text;
+            return textArea.value;
+        }
+        // Function to format Hijri date
+        function formatHijriDate(date) {
+            const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long', calendar: 'islamic-umalqura' };
+            return date.toLocaleDateString('ar-SA', options).replace(/هـ/g, ''); // Remove "هـ" suffix
+        }
+        function formatHijriEnDate(date) {
+            const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long', calendar: 'islamic-umalqura' };
+            return date.toLocaleDateString('en-US-u-ca-islamic-umalqura', options).replace(/AH/g, ''); // Remove "AH" suffix
+        }
+    </script>
+    <script>
+        async function dataChanged(number) {
+            try {
+                const response = await $.ajax({
+                    url: "/CAS/ReceivedCustody/Get_ConvertedNumber_Action",
+                    type: "GET",
+                    data: { our_No: number },
+                });
+                return response;
+            } catch (error) {
+                console.error("Error occurred: ", error);
+            }
+        }
+    </script>
+    <script>
+        function splitTextInHalf(text) {
+            // Check if text is null, empty, or less than or equal to 100 characters
+            if (text == null || text === "") {
+                return ["", ""];
+            }
+
+            if (text.length <= 100) {
+                return [text, ""];
+            }
+
+            // Find the middle of the text
+            const middleIndex = Math.floor(text.length / 2);
+
+            // Find the closest space to the middle to avoid splitting words
+            const beforeMiddle = text.lastIndexOf(' ', middleIndex);
+            const afterMiddle = text.indexOf(' ', middleIndex + 1);
+
+            // Determine the best split point
+            const splitIndex = (middleIndex - beforeMiddle < afterMiddle - middleIndex)
+                ? beforeMiddle
+                : afterMiddle;
+
+            // Split the text into two parts
+            const firstHalf = text.slice(0, splitIndex).trim();
+            const secondHalf = text.slice(splitIndex).trim();
+
+            return [firstHalf, secondHalf];
+        }
+        function splitNumberbeforeAndafterDecimal(number) {
+            let cleanedValueString = number.replace(/,/g, "");
+            let parts = cleanedValueString.split('.');
+            let beforeDecimal = parts[0];
+            let afterDecimal = parts.length > 1 ? parts[1] : "00";
+            afterDecimal = afterDecimal.padEnd(2, '0');
+            // Add thousands separators to the before decimal part
+            beforeDecimal = beforeDecimal.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return [beforeDecimal, afterDecimal];
+        }
+    </script>
+}

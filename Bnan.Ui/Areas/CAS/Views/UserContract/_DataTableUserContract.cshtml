@@ -1,0 +1,188 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS
+
+@model UserContractVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+@*
+  "RenterInformationCode": "Code",
+  "UserContractId": "ID",
+  "RenterInformationNationality": "Nationality",
+
+ *@
+
+
+@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+{
+
+    <div class="col-sm-12">
+        @* For-scrolling *@
+        <table id="basic-datatable" class="table table-bordered dt-responsive w-100 nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
+
+            <thead>
+                <tr role="row">
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["RenterInformationName"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["LastDateContract"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["UserContract_Contracts_Value"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["UserContract_OpenCountContracts"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["UserContract_closedCountContracts"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Days_Count"]</th>
+                    <th style="text-align:start" data-orderable="false" aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.ContractBasic_Filtered)
+                {
+
+                    @*<tr onclick="location.href='@Url.Action("Edit", "UserContract", new { id = item.CrCasRenterContractBasic4.CrCasRenterPrivateUserInformationId })'" style="cursor:pointer;color:red">*@
+                    <tr onclick="location.href='@Url.Action("Edit", "UserContract", new { id = item.CrCasRenterContractBasicUserInsert })'">
+                        <td id="_Nc">@no</td>
+                        @{
+                            var singleUser = Model.crMasUserInformation.FirstOrDefault(x => x.CrMasUserInformationCode == item.CrCasRenterContractBasicUserInsert);
+
+                            <td style="text-align:start">@singleUser.CrMasUserInformationEnName</td>
+                            <td style="text-align:start">@Model.crCasRenterContractBasics.Where(x=>x.CrCasRenterContractBasicUserInsert == item.CrCasRenterContractBasicUserInsert).Max(x=>x.CrCasRenterContractBasicIssuedDate)?.ToString("dd/MM/yyyy")</td>
+
+
+                            var total = Model.crCasRenterContractBasics?.Find(x => x.CrCasRenterContractBasicUserInsert == item.CrCasRenterContractBasicUserInsert)?.CrCasRenterContractBasicExpectedTotal;
+                            <td id="_Nc">&emsp; @total?.ToString("N2",CultureInfo.InvariantCulture)</td>
+
+
+                            //foreach (var ss in Model.contracts_Counts)
+                            //{
+                            //    if (ss[0] == item.CrCasRenterContractBasicUserInsert)
+                            //    {
+                            //        var singleDataFromCountList = ss;
+
+                            //        <td id="_Nc">&emsp; @decimal.Parse(singleDataFromCountList[2]).ToString("N2",CultureInfo.InvariantCulture)</td>
+                            //    }
+                            //}
+                            <td id="_Nc">&emsp; @Model.ContractStatistics.Count(x=>x.CrCasRenterContractStatisticsUserOpen == item.CrCasRenterContractBasicUserInsert).ToString("N0",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">&emsp; @Model.ContractStatistics.Count(x=>x.CrCasRenterContractStatisticsUserClose == item.CrCasRenterContractBasicUserInsert).ToString("N0",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">&emsp; @Model.ContractStatistics.Where(x=>x.CrCasRenterContractStatisticsUserOpen == item.CrCasRenterContractBasicUserInsert).Sum(y=>y.CrCasRenterContractStatisicsDays)?.ToString("N0",CultureInfo.InvariantCulture)</td>
+
+                            <td style="text-align:start">
+
+                                @if (@singleUser.CrMasUserInformationStatus == Status.Active)
+                                {
+                                    @localizer["Active"]
+                                }
+                                else if (@singleUser.CrMasUserInformationStatus == Status.Rented)
+                                {
+                                    @localizer["Rented_n"]
+                                }
+                                else if (@singleUser.CrMasUserInformationStatus == Status.Hold)
+                                {
+                                    @localizer["Hold"]
+                                }
+                                else if (@singleUser.CrMasUserInformationStatus == Status.Deleted)
+                                {
+                                    @localizer["Deleted"]
+                                }
+                                else
+                                {
+
+                                }
+                            </td>
+                        }
+                    </tr>
+
+
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="col-sm-12">
+        @* For-scrolling *@
+        <table id="basic-datatable" class="table table-bordered dt-responsive w-100 nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
+            <thead>
+                <tr role="row">
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["RenterInformationName"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["LastDateContract"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["UserContract_Contracts_Value"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["UserContract_OpenCountContracts"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["UserContract_closedCountContracts"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Days_Count"]</th>
+                    <th style="text-align:start" data-orderable="false" aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.ContractBasic_Filtered)
+                {
+
+                    @*<tr onclick="location.href='@Url.Action("Edit", "UserContract", new { id = item.CrCasRenterContractBasic4.CrCasRenterPrivateUserInformationId })'" style="cursor:pointer;color:red">*@
+                    <tr onclick="location.href='@Url.Action("Edit", "UserContract", new { id = item.CrCasRenterContractBasicUserInsert })'">
+                        <td id="_Nc">&emsp; @no</td>
+                        @{
+                            var singleUser = Model.crMasUserInformation.FirstOrDefault(x => x.CrMasUserInformationCode == item.CrCasRenterContractBasicUserInsert);
+
+                            <td style="text-align:start">@singleUser.CrMasUserInformationArName</td>
+                            <td style="text-align:start">@Model.crCasRenterContractBasics.Where(x=>x.CrCasRenterContractBasicUserInsert == item.CrCasRenterContractBasicUserInsert).Max(x=>x.CrCasRenterContractBasicIssuedDate)?.ToString("dd/MM/yyyy")</td>
+
+                            var total = Model.crCasRenterContractBasics?.Find(x => x.CrCasRenterContractBasicUserInsert == item.CrCasRenterContractBasicUserInsert)?.CrCasRenterContractBasicExpectedTotal;
+                            <td id="_Nc">&emsp; @total?.ToString("N2",CultureInfo.InvariantCulture)</td>
+
+
+                            //foreach (var ss in Model.contracts_Counts)
+                            //{
+                            //    if (ss[0] == item.CrCasRenterContractBasicUserInsert)
+                            //    {
+                            //        var singleDataFromCountList = ss;
+
+                            //        <td id="_Nc">&emsp; @decimal.Parse(singleDataFromCountList[2]).ToString("N2",CultureInfo.InvariantCulture)</td>
+                            //    }
+                            //}
+                            <td id="_Nc">&emsp; @Model.ContractStatistics.Count(x=>x.CrCasRenterContractStatisticsUserOpen == item.CrCasRenterContractBasicUserInsert).ToString("N0",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">&emsp; @Model.ContractStatistics.Count(x=>x.CrCasRenterContractStatisticsUserClose == item.CrCasRenterContractBasicUserInsert).ToString("N0",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">&emsp; @Model.ContractStatistics.Where(x=>x.CrCasRenterContractStatisticsUserOpen == item.CrCasRenterContractBasicUserInsert).Sum(y=>y.CrCasRenterContractStatisicsDays)?.ToString("N0",CultureInfo.InvariantCulture)</td>
+
+                            <td style="text-align:start">
+
+                                @if (@singleUser.CrMasUserInformationStatus == Status.Active)
+                                {
+                                    @localizer["Active"]
+                                }
+                                else if (@singleUser.CrMasUserInformationStatus == Status.Rented)
+                                {
+                                    @localizer["Rented_n"]
+                                }
+                                else if (@singleUser.CrMasUserInformationStatus == Status.Hold)
+                                {
+                                    @localizer["Hold"]
+                                }
+                                else if (@singleUser.CrMasUserInformationStatus == Status.Deleted)
+                                {
+                                    @localizer["Deleted"]
+                                }
+                                else
+                                {
+
+                                }
+                            </td>
+                        }
+                    </tr>
+
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}

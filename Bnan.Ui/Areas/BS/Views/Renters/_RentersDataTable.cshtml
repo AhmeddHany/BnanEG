@@ -1,0 +1,97 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.BS;
+@model BSLayoutVM
+@inject IViewLocalizer localizer
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+
+
+<table class=" tables-style table table-borderless " id="myTable">
+    <thead>
+        <tr>
+           
+            <th scope="col">@localizer["Evaluation"]</th>
+            <th scope="col">@localizer["ReservedBalance"]</th>
+            <th scope="col">@localizer["AvailableBalance"]</th>
+            <th scope="col">@localizer["Balance"]</th>
+            <th scope="col">@localizer["ContractCountt"]</th>
+            <th scope="col">@localizer["LastVisit"]</th>
+            <th scope="col" class="tenat firstTable-col @(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "text-right" : "text-left")">
+                @localizer["Name"]
+            </th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.RentersLessor)
+        {
+            <tr onclick="location.href='@Url.Action("Details", "Renters", new { id = item.CrCasRenterLessorId })'">
+                @{
+                    var Evaluation = Model.Evaluations.Find(x => x.CrMasSysEvaluationsCode == item.CrCasRenterLessorDealingMechanism);
+                }
+                @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                {
+                    <td>@Evaluation?.CrMasSysEvaluationsArDescription</td>
+                }
+                else
+                {
+                    <td>@Evaluation?.CrMasSysEvaluationsEnDescription</td>
+                }
+                <td>@item.CrCasRenterLessorReservedBalance?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                <td>@item.CrCasRenterLessorAvailableBalance?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                <td>@item.CrCasRenterLessorBalance?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                <td>@item.CrCasRenterLessorContractCount?.ToString("N0", CultureInfo.InvariantCulture)</td>
+                <td>@item.CrCasRenterLessorDateLastContractual?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</td>
+                @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                {
+                    <td class="tenat firstTable-col text-right">
+                        <div class="row flex-nowrap">
+                            <div class="col">
+                                <p> @item.CrCasRenterLessorNavigation?.CrMasRenterInformationArName </p>
+                                <p class="Tenant-id tenat firstTable-col">@item.CrCasRenterLessorId</p>
+                            </div>
+                        </div>
+                    </td>
+                }
+                else
+                {
+                    <td class="tenat firstTable-col text-left">
+                        <div class="row flex-nowrap">
+                            <div class="col">
+                                <p> @item.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName </p>
+                                <p class="Tenant-id tenat firstTable-col">@item.CrCasRenterLessorId</p>
+                            </div>
+                        </div>
+                    </td>
+                }
+                <td>
+                    <div class="status-number gap-2">
+                        @if (item.CrCasRenterLessorStatus == Status.Active)
+                        {
+                            <div class="status blue-state"></div>
+                        }
+                        else if (item.CrCasRenterLessorStatus == Status.Rented)
+                        {
+                            <div class="status green-state"></div>
+                        }
+                        else
+                        {
+                            <div class="status"></div>
+                        }
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>

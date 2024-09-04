@@ -1,0 +1,78 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.BS;
+@using Newtonsoft.Json;
+@model BSLayoutVM
+@inject IViewLocalizer localizer
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+
+@{
+    var addedCategories = new HashSet<string>();
+}
+<div id="carousel4" class="carousel slide" data-bs-ride="carousel">
+    @if (Model.UnAvaliableCars != null)
+    {
+        <div class="carousel-inner" id="carousel-inner3">
+            <div class="row flex-row-reverse g-4">
+                <div class="col-md-auto">
+                    <div class="row buttons text-center flex-column g-1 buttons-car-categories ">
+                        <div class="row buttons text-center flex-column g-1 buttons-car-categories  gap-1 px-2 ">
+                            <button class="btn btn-car-categoray" onclick="loadUnAvaliableCarsByCategory(`00`)"> @localizer["All"] </button>
+                            @foreach (var item in Model.UnAvaliableCars)
+                            {
+                                var categoryCode = item.CrCasCarInformationCategoryNavigation?.CrMasSupCarCategoryCode;
+                                if (!addedCategories.Contains(categoryCode))
+                                {
+                                    addedCategories.Add(categoryCode);
+
+                                    <button class="btn btn-car-categoray" onclick="loadUnAvaliableCarsByCategory(`@categoryCode`)">
+                                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                        {
+                                            @item.CrCasCarInformationCategoryNavigation?.CrMasSupCarCategoryEnName
+                                        }
+                                        else
+                                        {
+                                            @item.CrCasCarInformationCategoryNavigation?.CrMasSupCarCategoryArName
+                                        }
+                                    </button>
+                                }
+                            }
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row px-3 align-items-start carsdiv" id="NotAvailableCarListdiv">
+                        <partial name="_UnAvailableCarByCategory" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.UnAvaliableCars != null)
+{
+    <script>
+        $(document).ready(function () {
+            scrollCategories();
+        });
+    </script>
+}
+<script>
+    function loadUnAvaliableCarsByCategory(code) {
+        console.log(code);
+        $.ajax({
+            url: "/BS/Home/GetUnAvaliableCarsByCategory",
+            type: "GET",
+            data: { code: code },
+            success: function (data) {
+                $("#NotAvailableCarListdiv").html(data);
+            },
+            error: function () {
+                alert("Error loading data.");
+            }
+        });
+    }
+</script>

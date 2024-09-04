@@ -1,0 +1,146 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS
+
+@model CarContractVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+@* 
+  "RenterInformationCode": "Code",
+  "CarContractId": "ID",
+  "RenterInformationNationality": "Nationality",
+ 
+ *@
+
+
+@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+{
+    
+       <div class="col-sm-12">
+        @* For-scrolling *@
+        <table id="basic-datatable" class="table table-bordered dt-responsive w-100 nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
+
+            <thead>
+                <tr role="row">
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["CarContractId"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["RenterInformationName_Car"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["LastDateContract"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Contract_Count"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Days_Count"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["KM_Count"]</th>
+                    @*<th id="_Nc" data-orderable="false" aria-label="Position: activate to sort column ascending">@localizer["KM_Count"]</th>*@
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.crCasCarInformation)
+                {
+
+                    @*<tr onclick="location.href='@Url.Action("Edit", "CarContract", new { id = item.CrCasRenterContractBasic4.CrCasRenterPrivateCarInformationId })'" style="cursor:pointer;color:red">*@
+                    <tr onclick="location.href='@Url.Action("Edit", "CarContract", new { id = item.CrCasCarInformationSerailNo })'">
+                        <td id="_Nc">@no</td>
+                        <td id="_Nc">@item.CrCasCarInformationSerailNo</td>
+
+
+                        @{
+                            var advantage = Model.AdvantagesAll?.Find(x => x.CrCasCarAdvantagesSerialNo == item.CrCasCarInformationSerailNo);
+
+                            if (advantage == null)
+                            {
+                                <td style="text-align:start">@item.CrCasCarInformationConcatenateEnName</td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @item.CrCasCarInformationConcatenateEnName <span>+</span>
+                                </td>
+                            }
+                            
+                            <td style="text-align:start">@item.CrCasCarInformationLastContractDate?.ToString("dd/MM/yyyy")</td>
+
+                            @*<td id="_Nc">&emsp; @item.CrCasRenterContractStatistics?.Count()</td>
+                            <td id="_Nc">&emsp; @item.CrCasRenterContractStatistics?.Sum(x=>x.CrCasRenterContractStatisicsDays)</td>*@
+                            <td id="_Nc">&emsp; @item.CrCasCarInformationConractCount?.ToString("N0",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">&emsp; @item.CrCasCarInformationConractDaysNo?.ToString("N0",CultureInfo.InvariantCulture)</td>
+                            var KM_evaluated = item.CrCasRenterContractBasics?.Sum(X => X.CrCasRenterContractBasicActualFreeKm) + item.CrCasRenterContractBasics?.Sum(X => X.CrCasRenterContractBasicActualExtraKm);
+                            <td id="_Nc">&emsp; @KM_evaluated?.ToString("N0",CultureInfo.InvariantCulture)</td>
+                            
+
+                     }   
+                        </tr>
+                    
+                    
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="col-sm-12">
+        @* For-scrolling *@
+        <table id="basic-datatable" class="table table-bordered dt-responsive w-100 nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
+            <thead>
+                <tr role="row">
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
+                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["CarContractId"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["RenterInformationName_Car"]</th>
+                    <th style="text-align:start" aria-label="Position: activate to sort column ascending">@localizer["LastDateContract"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Contract_Count"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Days_Count"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["KM_Count"]</th>
+                    @*<th id="_Nc" data-orderable="false" aria-label="Position: activate to sort column ascending">@localizer["KM_Count"]</th>*@
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model.crCasCarInformation)
+                {
+
+                    @*<tr onclick="location.href='@Url.Action("Edit", "CarContract", new { id = item.CrCasRenterContractBasic4.CrCasRenterPrivateCarInformationId })'" style="cursor:pointer;color:red">*@
+                    <tr onclick="location.href='@Url.Action("Edit", "CarContract", new { id = item.CrCasCarInformationSerailNo })'">
+                        <td id="_Nc">&emsp; @no</td>
+                        <td id="_Nc">&emsp; @item.CrCasCarInformationSerailNo</td>
+
+                        @{
+                            var advantage = Model.AdvantagesAll?.Find(x => x.CrCasCarAdvantagesSerialNo == item.CrCasCarInformationSerailNo);
+                        }
+                        @if (advantage == null)
+                        {
+                            <td style="text-align:start">@item.CrCasCarInformationConcatenateArName</td>
+                        }
+                        else
+                        {
+                            <td>
+                                @item.CrCasCarInformationConcatenateArName <span>+</span>
+                            </td>
+                        }
+                        <td style="text-align:start">@item.CrCasCarInformationLastContractDate?.ToString("dd/MM/yyyy")</td>
+
+                        @*<td id="_Nc">&emsp; @item.CrCasRenterContractStatistics?.Count()</td>
+                        <td id="_Nc">&emsp; @item.CrCasRenterContractStatistics?.Sum(x=>x.CrCasRenterContractStatisicsDays)</td>*@
+                        <td id="_Nc">&emsp; @item.CrCasCarInformationConractCount?.ToString("N0",CultureInfo.InvariantCulture)</td>
+                        <td id="_Nc">&emsp; @item.CrCasCarInformationConractDaysNo?.ToString("N0",CultureInfo.InvariantCulture)</td>
+                        @{var KM_evaluated = item.CrCasRenterContractBasics?.Sum(X => X.CrCasRenterContractBasicActualFreeKm) + item.CrCasRenterContractBasics?.Sum(X => X.CrCasRenterContractBasicActualExtraKm);
+                            <td id="_Nc">&emsp; @KM_evaluated?.ToString("N0",CultureInfo.InvariantCulture)</td>
+                        }
+                        
+                    </tr>
+
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,129 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.BS;
+@model BSLayoutVM
+@inject IViewLocalizer localizer
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+
+
+
+<table class=" tables-style table table-borderless " id="reportTable">
+    <thead>
+        <tr>
+            <th scope="col">@localizer["ReceiptPdf"]</th>
+            @*  <th scope="col">
+            @localizer["Status"]
+            </th> *@
+            <th scope="col" class="not-in-mobile">@localizer["PreviousBalance"]</th>
+            <th scope="col">@localizer["Debit"]</th>
+            <th scope="col">@localizer["Creditor"]</th>
+            <th scope="col" class="firstTable-col not-in-mobile">
+                @localizer["PaymentMethod"]
+            </th>
+            <th scope="col" class="firstTable-col not-in-mobile">
+                @localizer["ReferenceType"]
+            </th>
+            <th scope="col" class="firstTable-col">@localizer["ReceiptNo"]</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @if (Model.AccountReceipts.Count() > 0)
+        {
+            @foreach (var item in Model.AccountReceipts)
+            {
+                <tr class="modal-trigger" data-id="@item.CrCasAccountReceiptNo">
+
+                    <td>
+                        @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                        {
+                            <a href="@Url.Content(item.CrCasAccountReceiptArPdfFile?.ToString())" target="_blank" class="pdf-link"><img src="/BranchSys/Pages/img/Rectangle 193.png" alt="pdf file link"></a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Content(item.CrCasAccountReceiptEnPdfFile?.ToString())" target="_blank" class="pdf-link"><img src="/BranchSys/Pages/img/Rectangle 193.png" alt="pdf file link"></a>
+                        }
+                    </td>
+                    <td>@item.CrCasAccountReceiptBranchUserPreviousBalance?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                    <td>@item.CrCasAccountReceiptReceipt?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                    <td>@item.CrCasAccountReceiptPayment?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                    @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                    {
+                        <td class="firstTable-col not-in-mobile">
+                            <p>@item.CrCasAccountReceiptSalesPointNavigation?.CrCasAccountSalesPointArName</p>
+                            <p class="secondline-p">@item.CrCasAccountReceiptPaymentMethodNavigation?.CrMasSupAccountPaymentMethodArName</p>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="firstTable-col not-in-mobile">
+                            <p>@item.CrCasAccountReceiptSalesPointNavigation?.CrCasAccountSalesPointEnName</p>
+                            <p class="secondline-p">@item.CrCasAccountReceiptPaymentMethodNavigation?.CrMasSupAccountPaymentMethodEnName</p>
+                        </td>
+                    }
+                    @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                    {
+                        <td class="firstTable-col not-in-mobile">
+                            <p>
+                                @item.CrCasAccountReceiptReferenceNo
+                            </p>
+                            <p class="secondline-p">
+                                @item.CrCasAccountReceiptReferenceTypeNavigation?.CrMasSupAccountReceiptReferenceArName
+                            </p>
+                        </td>
+
+                    }
+                    else
+                    {
+                        <td class="firstTable-col not-in-mobile">
+                            <p>
+                                @item.CrCasAccountReceiptReferenceNo
+                            </p>
+                            <p class="secondline-p">
+                                @item.CrCasAccountReceiptReferenceTypeNavigation?.CrMasSupAccountReceiptReferenceEnName
+                            </p>
+                        </td>
+                    }
+                    <td class="contract_number firstTable-col" data-bs-toggle="modal" data-bs-target="#myModal">
+                        <div class="row flex-nowrap">
+                            <div class="col">
+                                <p class="contract_number">@item.CrCasAccountReceiptNo</p>
+                                <p class="secondline-p">@item.CrCasAccountReceiptDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td scope="row">
+                        <div class="status-number gap-2">
+                            @if (@item.CrCasAccountReceiptIsPassing == Status.Custody)
+                            {
+                                <div class="status blue-state"></div>
+                            }
+                            else if (@item.CrCasAccountReceiptIsPassing == Status.Booked)
+                            {
+                                <div class="status orange-state"></div>
+                            }
+                            else
+                            {
+                                <div class="status red-state"></div>
+                            }
+                            <div>@no</div>
+                        </div>
+                    </td>
+                </tr>
+                no++;
+            }
+        }
+
+    </tbody>
+</table>
+
+
+<input id="TotalCreditor" value="@Model.TotalCreditor" hidden />
+<input id="TotalDebit" value="@Model.TotalDebit" hidden />

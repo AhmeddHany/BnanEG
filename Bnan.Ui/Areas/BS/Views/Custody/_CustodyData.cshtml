@@ -1,0 +1,149 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.BS;
+@using System.Globalization;
+@model BSLayoutVM
+@inject IViewLocalizer localizer
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<div class="row g-0" style="flex-direction:row-reverse">
+    <div class="col-md-6 col-lg-4 col-xl-4 d-flex data-col ">
+        <div class="col-auto ps-0">
+            <P>@localizer["AvailableBalance"]</P>
+        </div>
+        <div class="col-auto personal-data">
+            <P>@Model.UserBalanceAvaliable?.ToString("N2", CultureInfo.InvariantCulture)</P>
+            <input type="hidden" id="HiddenAvailableBalanceForRenterInBranch" name="AvailableBalanceForRenterInBranch" value="@Model.UserBalanceAvaliable?.ToString("N2", CultureInfo.InvariantCulture)" />
+        </div>
+    </div>
+</div>
+<div class="row g-0" style="flex-direction:row-reverse">
+    <div class="col-md-6 col-lg-4 col-xl-4 d-flex data-col ">
+        <div class="col-auto ps-0">
+            <P>@localizer["CreditorTotal"]</P>
+        </div>
+        <div class="col-auto personal-data">
+            <P id="totalPayments">0.00</P>
+            <input type="hidden" id="HiddenTotalPayments" value="0.00" />
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4 col-xl-3 d-flex data-col">
+        <div class="col-auto ps-0">
+            <P>@localizer["DebitTotal"]</P>
+        </div>
+        <div class="col-auto personal-data">
+            <P id="totalReceipts">0.00</P>
+            <input type="hidden" id="HiddenTotalReceipts" value="0.00" />
+        </div>
+    </div>
+    <div class="col-md-4 d-flex data-col">
+        <div class="col-auto ps-0">
+            <P>@localizer["TotalCustody"]</P>
+        </div>
+        <div class="col-auto personal-data">
+            <P id="totalTransfer">0.00</P>
+            <input type="hidden" id="HiddenTotalTransfer" value="0.00" />
+        </div>
+    </div>
+</div>
+
+<div class="row  pb-2">
+    <div class="col d-flex" style="justify-content:flex-start;flex-direction:row-reverse ;flex-wrap: wrap;">
+        <div class="col-auto">
+            <label for="FormControlTextarea2">@localizer["reasons"]</label>
+        </div>
+        <div class="col-lg-6 pt-2">
+            <textarea class="form-control textarea-inputs" id="Reasons" maxlength="100" rows="1" name="Reasons"></textarea>
+        </div>
+    </div>
+</div>
+<div class="row table-row px-3">
+    <div class="col  scroll-table-div  table-responsive-sm  w-100 " id="custody-table-div">
+        <table class=" tables-style table table-borderless">
+            <thead>
+                <tr>
+                    <th scope="col">@localizer["ReceiptPdf"]</th>
+                    <th scope="col">@localizer["Debit"]</th>
+                    <th scope="col">@localizer["Creditor"]</th>
+                    <th scope="col" class="firstTable-col"> @localizer["PaymentMethod"]</th>
+                    <th scope="col" class="firstTable-col">@localizer["Reference"]</th>
+                    <th scope="col" class="firstTable-col">@localizer["Receipt"]</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int no = 1;
+                }
+                @if (Model.CustodyReceipts != null && Model.CustodyReceipts.Count() != 0)
+                {
+                    @foreach (var item in Model.CustodyReceipts)
+                    {
+                        <tr>
+                            <td>
+                                @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                                {
+                                    <a href="@Url.Content(item.CrCasAccountReceiptArPdfFile?.ToString())" target="_blank" class="pdf-link"><img src="/BranchSys/Pages/img/Rectangle 193.png" alt="pdf file link"></a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Content(item.CrCasAccountReceiptEnPdfFile?.ToString())" target="_blank" class="pdf-link"><img src="/BranchSys/Pages/img/Rectangle 193.png" alt="pdf file link"></a>
+                                }
+                            </td>
+                            <td id="Receipt_@item.CrCasAccountReceiptNo">@item.CrCasAccountReceiptReceipt?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                            <td id="Payment_@item.CrCasAccountReceiptNo">@item.CrCasAccountReceiptPayment?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                            @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                            {
+                                <td class="firstTable-col">@item.CrCasAccountReceiptPaymentMethodNavigation?.CrMasSupAccountPaymentMethodArName</td>
+                            }
+                            else
+                            {
+                                <td class="firstTable-col">@item.CrCasAccountReceiptPaymentMethodNavigation?.CrMasSupAccountPaymentMethodEnName</td>
+                            }
+                            @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                            {
+                                <td class="firstTable-col">
+                                    @item.CrCasAccountReceiptReferenceNo
+                                    <p class="secondline-p">@item.CrCasAccountReceiptReferenceTypeNavigation?.CrMasSupAccountReceiptReferenceArName</p>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="firstTable-col">
+                                    @item.CrCasAccountReceiptReferenceNo
+                                    <p class="secondline-p">@item.CrCasAccountReceiptReferenceTypeNavigation?.CrMasSupAccountReceiptReferenceEnName</p>
+                                </td>
+                            }
+                            <td class="firstTable-col">
+                                <div class="row flex-nowrap align-items-center ">
+                                    <div class="col">
+                                        <div class="row justify-content-end">
+                                            <div class="col">
+                                                <label class="form-check-label" for="contract-number-@item.CrCasAccountReceiptNo">@item.CrCasAccountReceiptNo</label>
+                                                <div class="col-auto date-col secondline-p">
+                                                    @item.CrCasAccountReceiptDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)
+                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <input class="form-check-input custody-input" type="checkbox" value="@item.CrCasAccountReceiptNo" data-type="@item.CrCasAccountReceiptType" id="contract-number-@item.CrCasAccountReceiptNo" name="checked-contract" onclick="handleCheckboxChange(this)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    @no
+                                </div>
+                            </td>
+                        </tr>
+                        no++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

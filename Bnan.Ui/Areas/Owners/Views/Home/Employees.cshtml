@@ -1,0 +1,335 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.Owners
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Http.Features;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using System.Globalization;
+@inject IViewLocalizer localizer
+@model OwnersLayoutVM
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<div class="row mt-3 tables-row g-5 mb-5">
+    <div class="container-fluid">
+
+        <div class="col-xl-12">
+            <div class="table-card bg-white p-3">
+                <h3 class="mb-3"> الموظفين </h3>
+                <div class=" scroll-employee-Table table-responsive-sm ">
+                    <table class=" spacing-table table table-borderless employeeTable"
+                           id="outerTable">
+                        <thead class="sticky-top pb-1">
+                            <tr>
+
+                                <th> @localizer["ReservedBalance"] </th>
+                                <th> @localizer["AvailableBalance"] </th>
+                                <th> @localizer["Balance"] </th>
+                                <th> @localizer["ActiveContracts"] </th>
+                                <th> @localizer["Closed Contracts"] </th>
+                                <th class="empolyee-data">@localizer["Name"]</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model.Employees)
+                            {
+                                <tr data-bs-toggle="collapse" data-bs-target="#@item.CrMasUserInformationCode"
+                                    aria-expanded="false" aria-controls="@item.CrMasUserInformationCode">
+                                    <td>
+                                        <p> @item.CrMasUserInformationReservedBalance?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                    </td>
+                                    <td>
+                                        <P>  @item.CrMasUserInformationAvailableBalance?.ToString("N2", CultureInfo.InvariantCulture) </P>
+                                    </td>
+                                    <td>
+                                        <p>  @item.CrMasUserInformationTotalBalance?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                    </td>
+                                    <td>
+                                        <p>  @item.ActiveContract?.ToString("N0")</p>
+                                    </td>
+                                    <td>
+                                        <p>  @item.ClosedContract?.ToString("N0")</p>
+                                    </td>
+                                    <td class="empolyee-data">
+                                        <div class="row  justify-content-end">
+                                            <div class="col-9">
+                                                <div class="row justify-content-end">
+
+                                                    <p class="m-1 employee_Name">
+                                                        @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                                        {
+                                                            @item.CrMasUserInformationArName
+                                                        }
+                                                        else
+                                                        {
+                                                            @item.CrMasUserInformationEnName
+                                                        }
+                                                    </p>
+
+
+                                                    <div class="row Time-position">
+                                                        <div class="col-auto">
+                                                            <span class="m-1 employee_Name employee_Position">
+                                                                @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                                                {
+                                                                    @item.CrMasUserInformationTasksArName
+                                                                }
+                                                                else
+                                                                {
+                                                                    @item.CrMasUserInformationTasksEnName
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-auto ">
+                                                            <span class="employee_Position">
+                                                                @{
+                                                                    // Check if CrMasUserInformationEntryLastDate is not null
+                                                                    if (item.CrMasUserInformationEntryLastDate != null)
+                                                                    {
+                                                                        // Add CrMasUserInformationEntryLastTime to CrMasUserInformationEntryLastDate
+                                                                        var dateTimeWithTime = item.CrMasUserInformationEntryLastDate + item.CrMasUserInformationEntryLastTime;
+                                                                        @dateTimeWithTime?.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)
+                                                                    }
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-auto d-flex justify-content-end">
+                                                <div class="employee">
+                                                    <img src="@Url.Content(item.CrMasUserInformationPicture?.ToString())" alt="#" class="employee w-100">
+                                                    @{
+                                                        if (item.CrMasUserInformationOperationStatus == false)
+                                                        {
+                                                            <div class="active_statue bg-danger"></div>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (item.CrMasUserInformationLastActionDate == null)
+                                                            {
+                                                            // Handle the case where CrMasUserInformationLastActionDate is null
+                                                                <div class="active_statue bg-warning"></div>
+                                                            }
+                                                            else
+                                                            {
+                                                                var timeDifference = DateTime.Now - item.CrMasUserInformationLastActionDate;
+                                                                if (timeDifference?.TotalMinutes > 10)
+                                                                {
+                                                                // Case where the difference is greater than 10 minutes
+                                                                    <div class="active_statue bg-danger"></div>
+                                                                }
+                                                                else
+                                                                {
+                                                                // Case where the difference is less than or equal to 10 minutes
+                                                                    <div class="active_statue"></div>
+                                                                }
+                                                            }
+                                                        }
+                                                        
+                                                    }
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td colspan="6" class="collapse" id="@item.CrMasUserInformationCode"
+                                        style="border:none; box-shadow: none;">
+                                        <table class="table inner-table table-borderless"
+                                               id="innerTable">
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="3"
+                                                        style="border:none; box-shadow: none;">
+                                                        <div class="row">
+                                                            <div class="col-xl-12">
+                                                                <div class="chart-employees-area  pt-2 pb-2">
+                                                                    <canvas id="EmployeebarChart_@item.CrMasUserInformationCode" aria-label="chart"></canvas>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center middel-arrow" data-bs-toggle="collapse" data-bs-target="#@item.CrMasUserInformationCode"
+                                                        aria-expanded="false" aria-controls="@item.CrMasUserInformationCode">
+                                                        <i class="fa-solid fa-chevron-up toggle-arrow "
+                                                           style="cursor: pointer;color: #7c7c7c;font-size: 22px;"></i>
+                                                    </td>
+                                                    <td colspan="3"
+                                                        style="border:none; box-shadow: none;">
+                                                        <div class="row align-items-center ">
+                                                            <div class="col-md-7 col-xl-8">
+                                                                <div class="chart-employees-area  pt-2 pb-2">
+                                                                    <canvas id="EmployeePieChart_@item.CrMasUserInformationCode"></canvas>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="col-md-5 col-xl-4 ">
+                                                                <div class="chart-legend">
+                                                                    <div class="row h-100 gap-2">
+                                                                        <div class="col-12">
+                                                                            <div class="row align-items-baseline justify-content-end  ">
+
+                                                                                <div class="col-auto p-0">@localizer["Expired"]</div>
+                                                                                <div class="col-auto">
+                                                                                    <div class="chartSquare">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-12">
+                                                                            <div class="row align-items-baseline justify-content-end">
+
+                                                                                <div class="col-auto p-0">@localizer["EndingTomorrow"]</div>
+
+                                                                                <div class="col-auto">
+                                                                                    <div class="chartSquare2">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-12">
+                                                                            <div class="row align-items-baseline justify-content-end">
+
+                                                                                <div class="col-auto p-0">
+                                                                                    @localizer["EndingToday"]
+                                                                                </div>
+                                                                                <div class="col-auto">
+                                                                                    <div class="chartSquare3">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-12">
+                                                                            <div class="row align-items-baseline justify-content-end">
+
+                                                                                <div class="col-auto p-0">
+                                                                                    @localizer["EndingLater"]
+                                                                                </div>
+                                                                                <div class="col-auto">
+                                                                                    <div class="chartSquare4">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @foreach (var item in Model.Employees)
+    {
+        <script>
+            (function () {
+                var paymentMethodsEmployeeData = @Html.Raw(Json.Serialize(item.OwnUsersPaymentMethods));
+                console.log(paymentMethodsEmployeeData);
+
+                var labelsEmployee;
+                if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                    labelsEmployee = paymentMethodsEmployeeData.map(function (paymentMethod) {
+                        return paymentMethod.enName;
+                    });
+                } else {
+                    labelsEmployee = paymentMethodsEmployeeData.map(function (paymentMethod) {
+                        return paymentMethod.arName;
+                    });
+                }
+
+                var dataUser = paymentMethodsEmployeeData.map(function (paymentMethod) {
+                    return paymentMethod.value;
+                });
+
+                var barChartUser = document.getElementById("EmployeebarChart_@item.CrMasUserInformationCode").getContext("2d");
+                var myBarChartUser = new Chart(barChartUser, {
+                    type: "bar",
+                    data: {
+                        labels: labelsEmployee,
+                        datasets: [{
+                            data: dataUser,
+                            backgroundColor: [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 206, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(153, 102, 255, 1)",
+                            ],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: { grid: { display: true } },
+                            y: {
+                                grid: { display: true },
+                                beginAtZero: true,
+                                ticks: { font: { size: 11 } }
+                            }
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        barPercentage: 0.6,
+                        categoryPercentage: 0.8
+                    }
+                });
+
+                var pieChartUserEl = document.getElementById('EmployeePieChart_@item.CrMasUserInformationCode');
+                const pieChartDataUser = {
+                    labels: ['@localizer["ExpiredContract"]', '@localizer["ExpiresToday"]', '@localizer["ExpiresTomorrow"]', '@localizer["ExpiresLater"]'],
+                    datasets: [{
+                        data: [@item.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractStatus == "E").Count(),
+            @item.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "2" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
+            @item.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "1" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
+            @item.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "0" && x.CrCasRenterContractAlertContractStatus == "A").Count()
+                                ],
+                        backgroundColor: ['rgba(242, 36, 36, 1)', '#9966FF', 'rgba(242, 143, 36, 1)', 'rgba(54, 162, 235, 1)']
+                    }]
+                };
+
+                var pieChartUser = new Chart(pieChartUserEl, {
+                    type: 'doughnut',
+                    data: pieChartDataUser,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: {
+                                backgroundColor: "#7A7A7A",
+                                bodyFontColor: "#060A10",
+                                borderColor: '#ffffff',
+                                borderWidth: 1,
+                                xPadding: 15,
+                                yPadding: 15,
+                                displayColors: false,
+                                caretPadding: 10,
+                            },
+                            legend: { display: false }
+                        }
+                    }
+                });
+            })();
+        </script>
+    }
+
+}

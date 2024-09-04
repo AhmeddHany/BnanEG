@@ -1,0 +1,286 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.Owners
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Http.Features;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@inject IViewLocalizer localizer
+@model OwnersLayoutVM
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card  mb-4">
+            <!-- Card Body -->
+            <div class="card-body ">
+                <h4> @localizer["Liabilities"] </h4>
+                <div class="row align-items-center">
+                    <div class="col-lg-5">
+                        <div class="row h-100 gap-2">
+                            <div class="col-12">
+                                <div class="row align-items-baseline">
+                                    <div class="col-auto">
+                                        <div class="chartSquare"></div>
+                                    </div>
+                                    <div class="col p-0">@localizer["Debtors"]</div>
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row align-items-baseline">
+                                    <div class="col-auto">
+                                        <div class="chartSquare4"></div>
+                                    </div>
+                                    <div class="col p-0">@localizer["Creditors"]</div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-7 ">
+                        <div class="chart-pie2 pt-2 pb-2">
+                            <canvas id="debtsChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="col-xl-6">
+        <div class="card  mb-4">
+
+            <!-- Card Body -->
+            <div class="card-body  ">
+                <h4>@localizer["Contracts"]</h4>
+                <div class="row align-items-center">
+                    <div class="col-lg-5">
+                        <div class="row h-100 gap-2 contractPieChart-data ">
+                            <div class="col-12">
+                                <div class="row align-items-baseline">
+                                    <div class="col-auto">
+                                        <div class="chartSquare"></div>
+                                    </div>
+                                    <div class="col p-0">@localizer["Expired"]</div>
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row align-items-baseline">
+                                    <div class="col-auto">
+                                        <div class="chartSquare2"></div>
+                                    </div>
+                                    <div class="col p-0">@localizer["EndingToday"]</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row align-items-baseline">
+                                    <div class="col-auto">
+                                        <div class="chartSquare3"></div>
+                                    </div>
+                                    <div class="col p-0">@localizer["EndingTomorrow"]</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row align-items-baseline">
+                                    <div class="col-auto">
+                                        <div class="chartSquare4"></div>
+                                    </div>
+                                    <div class="col p-0">@localizer["EndingLater"]</div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="chart-pie pt-2 pb-2">
+                            <canvas id="myPieChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Area Chart -->
+    <div class="col-xl-6">
+        <div class="card  mb-2">
+            <!-- Card Body -->
+            <div class="card-body ">
+                <h4> @localizer["Balance"]</h4>
+                <div class="row align-items-center chart-area mx-1 px-2">
+                    <canvas id="barChart" style="max-height: 235px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <!--Charts-->
+    <script>
+        // Pie Chart contracts "transformation": "تحويل",
+        const pieChartEl = document.getElementById('myPieChart');
+        const pieChartData = {
+            labels: ['@localizer["ExpiredContract"]', '@localizer["ExpiresTomorrow"]', '@localizer["ExpiresToday"]', '@localizer["ExpiresLater"]'],
+            datasets: [{
+                data: [@Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractStatus == "E").Count(), 
+                @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "1" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
+        @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "2" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
+        @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "0" && x.CrCasRenterContractAlertContractStatus == "A").Count()
+                ,
+                ],
+                backgroundColor: ['rgba(242, 36, 36, 1)', '#9966FF', 'rgba(242, 143, 36, 1)', 'rgba(54, 162, 235, 1)']
+            }]
+        };
+
+        const pieChart = new Chart(pieChartEl, {
+            type: 'doughnut',
+            data: pieChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        backgroundColor: "#7A7A7A",
+                        bodyFontColor: "#060A10",
+                        borderColor: '#ffffff',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Pie Chart debts
+        const debtsChartEl = document.getElementById('debtsChart');
+        // Convert string formatted numbers to actual numbers
+        var debtors = parseFloat('@Model.Debtors?.ToString("N2", CultureInfo.InvariantCulture)'.replace(/,/g, ''));
+        var creditors = parseFloat('@Model.Creditors?.ToString("N2", CultureInfo.InvariantCulture)'.replace(/,/g, ''));
+
+        const debtsChartData = {
+            labels: ['@localizer["Debtors"]', '@localizer["Creditors"]'],
+            datasets: [{
+                data: [debtors, creditors],
+                backgroundColor: ['#FF4069', '#36A2EB'],
+                hoverBackgroundColor: ['#FF4069', '#36A2EB'],
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }]
+        };
+
+        const debtsChart = new Chart(debtsChartEl, {
+            type: 'doughnut',
+            data: debtsChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        backgroundColor: "#7A7A7A",
+                        bodyFontColor: "#060A10",
+                        borderColor: '#ffffff',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                // Format the number with commas
+                                return `${tooltipItem.label}: ${tooltipItem.raw.toLocaleString()}`;
+                            }
+                        }
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Bar Chart
+        $(document).ready(function () {
+            var paymentMethodslessorData = @Html.Raw(Json.Serialize(Model.OwnPaymentMethods));
+            console.log(paymentMethodslessorData);
+            var labelsLessor;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsLessor = paymentMethodslessorData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsLessor = paymentMethodslessorData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+
+            var data = paymentMethodslessorData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            var barChart = document.getElementById("barChart").getContext("2d");
+            var myChart = new Chart(barChart, {
+                type: "bar",
+                data: {
+                    labels: labelsLessor,
+                    datasets: [
+                        {
+                            data: data,
+                            backgroundColor: [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 206, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(153, 102, 255, 1)"
+                            ],
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+
+                        legend: {
+                            display: false
+                        }
+
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: true
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: true
+                            },
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+
+                    }
+                }
+            });
+        });
+    </script>
+}

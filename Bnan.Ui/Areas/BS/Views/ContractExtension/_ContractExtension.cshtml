@@ -1,0 +1,182 @@
+﻿@using Bnan.Ui.ViewModels.BS;
+@model BSLayoutVM
+@inject IViewLocalizer localizer
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless" id="extensionTable">
+    <thead>
+        <tr>
+            <th scope="col">@localizer["Contract"]</th>
+            <th scope="col" class="not-in-mobile @(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "text-right" : "text-left")">
+                @localizer["Car"]
+            </th>
+            <th scope="col" class="not-in-mobile @(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "text-right" : "text-left")">
+                @localizer["Renterr"]
+            </th>
+            <th scope="col">@localizer["Remaining"]</th>
+@*             <th scope="col">@localizer["Date"] </th>
+ *@            <th scope="col" class="firstTable-col">@localizer["ContractNo"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.ExtensionContracts)
+        {
+            <tr style="cursor:pointer">
+
+                <td>
+                    @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
+                    {
+                        <a href="@Url.Content(item.CrCasRenterContractBasicEnPdfFile?.ToString())" target="_blank" class="pdf-link"><img src="/BranchSys/Pages/img/Rectangle 196.svg" alt="pdf file link"></a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Content(item.CrCasRenterContractBasicArPdfFile?.ToString())" target="_blank" class="pdf-link"><img src="/BranchSys/Pages/img/Rectangle 196.svg" alt="pdf file link"></a>
+                    }
+                </td>
+
+                @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
+                {
+                    <td class="car not-in-mobile text-left" onclick="location.href='@Url.Action("Create", "ContractExtension", new { id = item.CrCasRenterContractBasicNo })'">
+                        @item.CrCasRenterContractBasicCarSerailNoNavigation?.CrCasCarInformationConcatenateEnName
+                    </td>
+                }
+                else
+                {
+                    <td class="car not-in-mobile text-right" onclick="location.href='@Url.Action("Create", "ContractExtension", new { id = item.CrCasRenterContractBasicNo })'">
+                        @item.CrCasRenterContractBasicCarSerailNoNavigation?.CrCasCarInformationConcatenateArName
+                    </td>
+                }
+
+                @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
+                {
+                    <td class="name not-in-mobile text-left" onclick="location.href='@Url.Action("Create", "ContractExtension", new { id = item.CrCasRenterContractBasicNo })'">
+                        @item.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation.CrMasRenterInformationEnName
+                    </td>
+                }
+                else
+                {
+                    <td class="name not-in-mobile text-right" onclick="location.href='@Url.Action("Create", "ContractExtension", new { id = item.CrCasRenterContractBasicNo })'">
+                        @item.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation.CrMasRenterInformationArName
+                    </td>
+                }
+                @{
+                    // Calculate the total time span between the end date and now
+                    var timeSpan = item.CrCasRenterContractBasicExpectedEndDate - DateTime.Now;
+
+                    // Calculate the days, hours, and minutes difference
+                    var daysNo = timeSpan?.Days ?? 0; // Ensure daysNo is not null
+                    var hoursNo = timeSpan?.Hours ?? 0; // Ensure hoursNo is not null
+                    var minutesNo = timeSpan?.Minutes ?? 0; // Ensure minutesNo is not null
+
+                    // Determine the display value based on days, hours, and minutes
+                    string displayValue;
+                    string direction = "ltr"; // Default direction
+
+                    if (daysNo < 0)
+                    {
+                        displayValue = "0";
+                    }
+                    else if (daysNo == 0)
+                    {
+                        if (hoursNo < 1)
+                        {
+                            if (minutesNo <= 0)
+                            {
+                                displayValue = "0";
+                            }
+                            else
+                            {
+                                if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
+                                {
+                                    displayValue = $"{minutesNo} Minutes";
+                                }
+                                else
+                                {
+                                    displayValue = $"{minutesNo} دقيقة";
+                                    direction = "rtl"; // Set direction for Arabic
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
+                            {
+                                displayValue = $"{hoursNo} Hours";
+                            }
+                            else
+                            {
+                                displayValue = $"{hoursNo} ساعة";
+                                direction = "rtl"; // Set direction for Arabic
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
+                        {
+                            displayValue = $"{daysNo} Day";
+                        }
+                        else
+                        {
+                            displayValue = $"{daysNo} يوم";
+                            direction = "rtl"; // Set direction for Arabic
+                        }
+                    }
+                }
+                <td onclick="location.href='@Url.Action("Create", "ContractExtension", new { id = item.CrCasRenterContractBasicNo })'" dir="@direction">@displayValue</td>
+                <td class="firstTable-col" onclick="location.href='@Url.Action("Create", "ContractExtension", new { id = item.CrCasRenterContractBasicNo })'">
+                    <div class="row flex-nowrap align-items-center">
+                        <div class="col">
+                            <p class="contract-id">
+                                @item.CrCasRenterContractBasicNo
+                                @if (item.CrCasRenterContractBasicCopy > 0)
+                                {
+                                    <span class="text-danger">(@item.CrCasRenterContractBasicCopy)</span>
+                                }
+                            </p>
+                            <div class="row licence-dates-settel">
+                                <div class="col-auto date-col">
+                                    <div class="d-flex">
+                                        <div class="col settelDate">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</div>
+                                        <div class="col-auto p-0"> @item.CrCasRenterContractBasicExpectedEndDate?.ToString("HH:mm", CultureInfo.InvariantCulture)</div>
+                                    </div>
+                                </div>
+                                <div class="col-auto date-col">
+                                    <div class="d-flex">
+                                        <div class="col settelDate">@item.CrCasRenterContractBasicIssuedDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture) </div>
+                                        <div class="col-auto p-0">@item.CrCasRenterContractBasicIssuedDate?.ToString("HH:mm", CultureInfo.InvariantCulture)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </td>
+                @*  <td onclick="location.href='@Url.Action("Create", "ContractExtension", new { id = item.CrCasRenterContractBasicNo })'">@item.CrCasRenterContractBasicIssuedDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</td>
+            <td onclick="location.href='@Url.Action("Create", "ContractExtension", new { id = item.CrCasRenterContractBasicNo })'">
+            @item.CrCasRenterContractBasicNo
+            @if (item.CrCasRenterContractBasicCopy > 0)
+            {
+            <span class="text-danger">(@item.CrCasRenterContractBasicCopy)</span>
+            }
+            </td> *@
+                <td scope="row" onclick="location.href='@Url.Action("Create", "ContractExtension", new { id = item.CrCasRenterContractBasicNo })'">
+                    <div>
+                        @no
+                    </div>
+                </td>
+
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>
