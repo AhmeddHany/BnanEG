@@ -351,7 +351,7 @@
                                                                id="dayNo" asp-for="ExtensionContract.DaysNo" aria-describedby="inputGroupPrepend" autocomplete="off"
                                                                oninput="this.value=this.value.replace(/[^0-9]/g,'');if(parseInt(this.value)> 365) this.value = '365';" onfocusout="CalculateContract()" maxlength="3" autofocus required>
                                                         <div class="row requird-field-row-last">
-                                                            <div class="invalid-feedback" >
+                                                            <div class="invalid-feedback">
                                                                 <span class="requird-field" id="requird_field_PaymentMethod" asp-validation-for="@Model.ExtensionContract.DaysNo"></span>
                                                             </div>
                                                         </div>
@@ -578,9 +578,9 @@
                                         </div>
                                     </div>
                                     @* <div class="col-3" id="clear">
-                                        <div class="sinature-Btn-Card p-2">
-                                            <img src="~/BranchSys/img/Frame.svg" class="w-100">
-                                        </div>
+                                    <div class="sinature-Btn-Card p-2">
+                                    <img src="~/BranchSys/img/Frame.svg" class="w-100">
+                                    </div>
                                     </div> *@
                                     <div class="col-4" id="Save_Btn">
                                         <div class="sinature-Btn-Card p-2">
@@ -610,7 +610,7 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     @*     <script src="~/BranchSys/Pages/js/Extesnion/extension2.js"></script>
- *@    <script src="~/BranchSys/Pages/js/Extesnion/Loader.js"></script>
+ *@   @*  <script src="~/BranchSys/Pages/js/Extesnion/Loader.js"></script> *@
     <!--makes bootsrab animation works-->
     <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.9.2/dist/umd/popper.min.js"
             integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
@@ -825,7 +825,7 @@
                 uploadContainer.classList.remove('previewing');
                 uploadContainer.innerHTML = '<img class="upload-icon" src="/BranchSys/CreateContract/img/Rectangle 144.png" alt="Upload Icon"><p>' + '@localizer["UploadSignture"]' + '</p>';
             }
-           
+
             $('#PicsignatureModal').modal('hide');
             // Show the spinner
             showSpinner(btnSignture);
@@ -1859,23 +1859,39 @@
             var doc = new jsPDF('p', 'pt', 'a4', true);
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();
+            // قراءة الصورة كـ Data URL
+            const imageDataUrl = await readFileAsDataURL(imageBlob);
+            const imgWidth = pageWidth;
+            const imgHeight = pageHeight;
+            const imgXPos = 0;
+            const imgYPos = 0;
 
-            try {
-                const imageDataUrl = await readFileAsDataURL(imageBlob);
-                const imgWidth = pageWidth;
-                const imgHeight = pageHeight;
-                const imgXPos = 0;
-                const imgYPos = 0;
-                doc.addImage(imageDataUrl, 'PNG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
+            // إضافة الصورة إلى PDF
+            doc.addImage(imageDataUrl, 'PNG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
 
-                const pdfBlob = doc.output('blob');
-                document.getElementById('ExtensionContract_InitialInvoiceNo').value = invoiceNo;
+            // إنشاء PDF جديد
+            const pdfBlob = doc.output('blob');
+            document.getElementById('ExtensionContract_InitialInvoiceNo').value = invoiceNo;
 
-                const mergedPdfBase64 = await mergePdfs(exitingInvoicePdf, pdfBlob);
-                document.getElementById(InputPdf).value = mergedPdfBase64;
-            } catch (error) {
-                console.error('Error creating invoice PDF:', error);
+            // التحقق مما إذا كان exitingInvoicePdf صالحًا قبل الدمج
+            let mergedPdfBase64;
+
+            if (exitingInvoicePdf && exitingInvoicePdf.length > 0) {
+                try {
+                    // دمج الـ PDF الجديد مع الـ exitingInvoicePdf
+                    mergedPdfBase64 = await mergePdfs(exitingInvoicePdf, pdfBlob);
+                } catch (error) {
+                    console.error('Error merging PDFs:', error);
+                    // في حالة وجود خطأ، استخدام الـ PDF الجديد فقط
+                    mergedPdfBase64 = doc.output('datauristring');
+                }
+            } else {
+                // إذا لم يكن exitingInvoicePdf موجودًا، استخدام الـ PDF الجديد فقط
+                mergedPdfBase64 = doc.output('datauristring');
             }
+
+            // تحديث الحقل المخفي بـ Base64 الناتج
+            document.getElementById(InputPdf).value = mergedPdfBase64;
         }
 
         function readFileAsDataURL(file) {

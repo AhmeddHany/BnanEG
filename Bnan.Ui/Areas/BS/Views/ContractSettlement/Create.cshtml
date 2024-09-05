@@ -19,7 +19,6 @@
     var lessorInfo = await userManager.Users.Include(l => l.CrMasUserInformationLessorNavigation).ThenInclude(l => l.CrMasLessorImage).FirstOrDefaultAsync(x => x.UserName == user.UserName);
 }
 <link href="~/BranchSys/Pages/css/style.css" rel="styleSheet">
-<link href="~/BranchSys/css/loader.css" rel="styleSheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
@@ -115,11 +114,11 @@
 
                                             @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
                                             {
-                                                <a href="@Url.Content(Model.ContractSettlement.InvoiceEnPdfPath.ToString())" target="_blank" class="pdf-anchor2"><img src="~/BranchSys/Pages/img/contract.svg" alt="pdf for contract details" class="pdf_img2"></a>
+                                                <a href="@Url.Content(Model.ContractSettlement.InvoiceEnPdfPath.ToString())" target="_blank" class="pdf-anchor2"><img src="~/BranchSys/Pages/img/Invoice.svg" alt="pdf for contract details" class="pdf_img2"></a>
                                             }
                                             else
                                             {
-                                                <a href="@Url.Content(Model.ContractSettlement.InvoiceArPdfPath.ToString())" target="_blank" class="pdf-anchor2"><img src="~/BranchSys/Pages/img/contract.svg" alt="pdf for contract details" class="pdf_img2"></a>
+                                                <a href="@Url.Content(Model.ContractSettlement.InvoiceArPdfPath.ToString())" target="_blank" class="pdf-anchor2"><img src="~/BranchSys/Pages/img/Invoice.svg" alt="pdf for contract details" class="pdf_img2"></a>
                                             }
                                             @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
                                             {
@@ -516,7 +515,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-6">
-                                                <div class="upload__box d-flex">
+                                                <div class="upload__box d-flex gap-3">
                                                     <div class="upload_img-wrap_inner" style="display: flex;
                                                                   flex-wrap: wrap;
                                                                   gap: 10px ">
@@ -531,7 +530,7 @@
                                                             </label>
                                                         </div>
                                                     </div>
-
+                                                    <span class="@(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "ms-3" : "me-3") ">@localizer["Attachments"]</span>
                                                 </div>
                                                 <div class="row">
                                                     <p style="color: red;" id="ExpensesError">  </p>
@@ -653,7 +652,7 @@
                                                             </label>
                                                         </div>
                                                     </div>
-
+                                                    <span class="@(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "ms-3" : "me-3")">@localizer["Attachments"]</span>
                                                 </div>
                                                 <div class="row">
                                                     <p style="color: red;" id='compensationError'> </p>
@@ -734,12 +733,15 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row mb-2">
-                                                    <div class="col-md-5">
-                                                        <button type="button" class="btn check-btn d-flex align-items-center gap-2" data-bs-toggle="modal" href="#TechnicalCheckUp">
-                                                            <img src="~/BranchSys/Pages/img/icon (2).svg">
-                                                            @localizer["TechnicalInspection"]
-                                                        </button>
+                                                <div class="row mb-3 justify-content-end">
+                                                    <div class="col-md-5 d-flex justify-content-end">
+                                                        <!-- إضافة فئة text-end هنا -->
+                                                        <div class="col-md-auto">
+                                                            <button type="button" class="btn check-btn d-flex align-items-center gap-2" data-bs-toggle="modal" href="#TechnicalCheckUp">
+                                                                <img src="~/BranchSys/Pages/img/icon (2).svg">
+                                                                @localizer["TechnicalInspection"]
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="upload__box d-flex">
@@ -762,7 +764,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-xl-6 virtual-check-table">
-                                                <div class="table-scroll " id="SettlementTable">
+                                                <div class="table-scroll" id="SettlementTable">
                                                     <table class="table table-bordered  table-hover Checkup-table ">
                                                         <thead>
                                                             <tr>
@@ -1367,8 +1369,8 @@
     <script src="~/BranchSys/js/javascript/LoaderByPercent.js"></script>
     <script src="~/BranchSys/Pages/js/settlement/Settlement.js"></script>
     <script src="~/BranchSys/CreateContract/js/TechnicalCheckUp.js"></script>
-    <script src="~/BranchSys/Pages/js/Loader.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    @*     <script src="~/BranchSys/Pages/js/Loader.js"></script>
+ *@    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" integrity="sha512-u3fPA7V8qQmhBPNT5quvaXVa1mnnLSXUep5PS1qo5NRzHwG19aHmNJnj1Q8hpA/nBWZtZD4r4AX6YOt5ynLN2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -4622,6 +4624,7 @@
         const createPdfContract = async (imageBlobs, InputPdf, existingContractPdf) => {
             const doc = new jsPDF('p', 'pt', 'a4', true);
 
+            // إضافة الصور إلى مستند PDF جديد
             for (let imageIndex = 0; imageIndex < imageBlobs.length; imageIndex++) {
                 if (imageIndex > 0) {
                     doc.addPage();
@@ -4637,14 +4640,30 @@
                 const imgWidth = pageWidth;
                 const imgHeight = (pageWidth * img.height) / img.width;
 
-                // Calculate the position to center the image vertically
                 const imgYPos = (pageHeight - imgHeight) / 2;
                 const imgXPos = 0;
                 doc.addImage(img, 'JPEG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
             }
+
             const newPdfBlob = doc.output('blob');
-            const mergedPdfBase64 = await mergePdfs(existingContractPdf, newPdfBlob);
-            console.log("mergedPdfBase64", mergedPdfBase64)
+
+            // التحقق مما إذا كان `existingContractPdf` صالحًا قبل الدمج
+            let mergedPdfBase64;
+
+            if (existingContractPdf && existingContractPdf.length > 0) {
+                try {
+                    mergedPdfBase64 = await mergePdfs(existingContractPdf, newPdfBlob);
+                } catch (error) {
+                    console.error("Error merging PDFs:", error);
+                    // إذا حدث خطأ في الدمج، استخدام ملف PDF الجديد فقط
+                    mergedPdfBase64 = doc.output('datauristring');
+                }
+            } else {
+                // إذا لم يكن `existingContractPdf` موجودًا، استخدام العقد الجديد فقط
+                mergedPdfBase64 = doc.output('datauristring');
+            }
+
+            console.log("mergedPdfBase64", mergedPdfBase64);
             document.getElementById(InputPdf).value = mergedPdfBase64;
         };
         // Helper function to create an image element from a blob
@@ -4745,8 +4764,8 @@
                         await getPictureAndCreateArPdfContract();
                         console.log("Arabic PDF contract creation completed successfully.");
 
-                        //await getPictureAndCreateEnPdfContract();
-                        // console.log("English PDF contract creation completed successfully.");
+                        await getPictureAndCreateEnPdfContract();
+                        console.log("English PDF contract creation completed successfully.");
 
                         document.getElementById('ContractSettlement_PaymentMethod').disabled = false;
                         document.getElementById('ContractSettlement_SalesPoint').disabled = false;

@@ -1,9 +1,4 @@
 ﻿using Quartz;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Quartz
 {
@@ -23,6 +18,8 @@ namespace Bnan.Inferastructure.Quartz
             //    .WithSimpleSchedule(x => x
             //        .WithIntervalInMinutes(10)  // Repeat every 10 minutes
             //        .RepeatForever()));         // Repeat indefinitely or adjust as needed
+
+
             // Add RefreshLogin job
             var refreshJobKey = new JobKey("RefreshLoginJob");
             quartzConfigurator.AddJob<RefreshLoginJob>(opts => opts.WithIdentity(refreshJobKey));
@@ -31,7 +28,7 @@ namespace Bnan.Inferastructure.Quartz
                 .WithIdentity("RefreshLoginJob-trigger")
                 .StartNow()
                 .WithSimpleSchedule(x => x
-                    .WithIntervalInMinutes(1)
+                    .WithIntervalInMinutes(10)
                     .RepeatForever()));
 
             // Add UpdateStatusForDocsAndPriceCar job

@@ -324,9 +324,12 @@ image4.addEventListener('click', function () {
     }
 });
 //====================================================================================================
+//$('#Expenses-images').click(function () {
+//    $('.upload__img-box').eq(0).hide();
+//    var x = $('.upload__img-box')
+//})
 $('#Expenses-images').click(function () {
-    $('.upload__img-box').eq(0).hide();
-    var x = $('.upload__img-box')
+    $('#FirstUpload-img').hide()
 })
 $('#compensation-images').click(function () {
     $('#FirstUpload-img2').hide()

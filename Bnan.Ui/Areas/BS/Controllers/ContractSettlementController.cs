@@ -3,7 +3,6 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.BS.CreateContract;
@@ -12,11 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 using NToastNotify;
-using System.Diagnostics.Contracts;
 using System.Globalization;
-using System.Reflection;
 
 namespace Bnan.Ui.Areas.BS.Controllers
 {
@@ -74,7 +70,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
 
 
-            bsLayoutVM.ContractSettlements = contractMap.Where(x => x.AuthEndDate > DateTime.Now).OrderBy(x=>x.CrCasRenterContractBasicExpectedEndDate).ToList();
+            bsLayoutVM.ContractSettlements = contractMap.Where(x => x.AuthEndDate > DateTime.Now).OrderBy(x => x.CrCasRenterContractBasicExpectedEndDate).ToList();
             return View(bsLayoutVM);
         }
         [HttpGet]
@@ -130,13 +126,13 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bsLayoutVM = await GetBranchesAndLayout();
-            var contractList =await _unitOfWork.CrCasRenterContractBasic.FindAllAsync(x => x.CrCasRenterContractBasicNo == id,
+            var contractList = await _unitOfWork.CrCasRenterContractBasic.FindAllAsync(x => x.CrCasRenterContractBasicNo == id,
                                                                                      new[] { "CrCasRenterContractBasic5.CrCasRenterLessorNavigation",
                                                                                              "CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarAdvantages",
                                                                                              "CrCasRenterContractBasic1","CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationDistributionNavigation"});
-            if (contractList.Count() == 0 ) return RedirectToAction("Error", "Account", new { area = "Identity", statusCode = 500 });
+            if (contractList.Count() == 0) return RedirectToAction("Error", "Account", new { area = "Identity", statusCode = 500 });
             var contract = contractList.OrderByDescending(x => x.CrCasRenterContractBasicCopy).FirstOrDefault();
-            if (contract.CrCasRenterContractBasicStatus==Status.Closed) return RedirectToAction("Index", "Home");
+            if (contract.CrCasRenterContractBasicStatus == Status.Closed) return RedirectToAction("Index", "Home");
             var CheckupCars = _unitOfWork.CrMasSupContractCarCheckup.FindAll(x => x.CrMasSupContractCarCheckupStatus == Status.Active, new[] { "CrMasSupContractCarCheckupDetails" }).ToList();
             var authContract = _unitOfWork.CrCasRenterContractAuthorization.Find(x => x.CrCasRenterContractAuthorizationLessor == lessorCode && x.CrCasRenterContractAuthorizationContractNo == contract.CrCasRenterContractBasicNo);
             var contractMap = _mapper.Map<ContractSettlementVM>(contract);
@@ -183,7 +179,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             contractMap.AdvantagesValue = advantages?.ToString("N2", CultureInfo.InvariantCulture);
             contractMap.AdvantagesValueTotal = (advantages * contract.CrCasRenterContractBasicExpectedRentalDays)?.ToString("N2", CultureInfo.InvariantCulture);
             contractMap.ChoicesValue = _unitOfWork.CrCasRenterContractChoice.FindAll(x => x.CrCasRenterContractChoiceNo == contract.CrCasRenterContractBasicNo).Sum(x => x.CrCasContractChoiceValue)?.ToString("N2", CultureInfo.InvariantCulture);
-            contractMap.ContractChoices = _unitOfWork.CrCasRenterContractChoice.FindAll(x => x.CrCasRenterContractChoiceNo == contract.CrCasRenterContractBasicNo && (x.CrCasRenterContractChoiceCode== "5100000003" || x.CrCasRenterContractChoiceCode== "5100000004"), new[] { "CrCasRenterContractChoiceCodeNavigation" }).ToList();
+            contractMap.ContractChoices = _unitOfWork.CrCasRenterContractChoice.FindAll(x => x.CrCasRenterContractChoiceNo == contract.CrCasRenterContractBasicNo && (x.CrCasRenterContractChoiceCode == "5100000003" || x.CrCasRenterContractChoiceCode == "5100000004"), new[] { "CrCasRenterContractChoiceCodeNavigation" }).ToList();
             bsLayoutVM.ContractSettlement = contractMap;
             bsLayoutVM.SalesPoint = SalesPoint;
             bsLayoutVM.PaymentMethods = PaymentMethod;
@@ -191,7 +187,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             return View(bsLayoutVM);
         }
         [HttpPost]
-        public async Task<IActionResult> Create(BSLayoutVM bSLayoutVM, string? SavePdfArInvoice, string? SavePdfEnInvoice, string? SavePdfArReceipt, string? SavePdfEnReceipt, string SavePdfEnContract, string SavePdfArContract, Dictionary<string, CarCheckupDetailsVM>? CheckupDetails,string StaticContractCardImg)
+        public async Task<IActionResult> Create(BSLayoutVM bSLayoutVM, string? SavePdfArInvoice, string? SavePdfEnInvoice, string? SavePdfArReceipt, string? SavePdfEnReceipt, string SavePdfEnContract, string SavePdfArContract, Dictionary<string, CarCheckupDetailsVM>? CheckupDetails, string StaticContractCardImg)
         {
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
@@ -207,13 +203,13 @@ namespace Bnan.Ui.Areas.BS.Controllers
             if (userLogin != null && Renter != null && Car != null && CarPrice != null && Branch != null)
             {
                 SavePdfArContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfArContract);
-                //SavePdfEnContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfEnContract);
+                SavePdfEnContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfEnContract);
                 var pdfArContract = await SavePdfAsync(SavePdfArContract, lessorCode, Branch.CrCasBranchInformationCode, OldContract.CrCasRenterContractBasicNo, "ar", "Contract");
-                //var pdfEnContract = await SavePdfAsync(SavePdfEnContract, lessorCode, Branch.CrCasBranchInformationCode, OldContract.CrCasRenterContractBasicNo, "en", "Contract");
-                var UpdateSettlementContract = await UpdateRenterContractBasicAsync(lessorCode, Branch, OldContract.CrCasRenterContractBasicNo, ContractInfo, userLogin, pdfArContract,"" /*pdfEnContract*/, (decimal)RenterLessor.CrCasRenterLessorAvailableBalance);
+                var pdfEnContract = await SavePdfAsync(SavePdfEnContract, lessorCode, Branch.CrCasBranchInformationCode, OldContract.CrCasRenterContractBasicNo, "en", "Contract");
+                var UpdateSettlementContract = await UpdateRenterContractBasicAsync(lessorCode, Branch, OldContract.CrCasRenterContractBasicNo, ContractInfo, userLogin, pdfArContract, pdfEnContract, (decimal)RenterLessor.CrCasRenterLessorAvailableBalance);
                 if (UpdateSettlementContract == null)
                 {
-                    await RemovePdfs(new[] { pdfArContract /*, pdfEnContract*/ });
+                    await RemovePdfs(new[] { pdfArContract, pdfEnContract });
                     _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return RedirectToAction("Index", "Home");
                 }
@@ -249,7 +245,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 var CheckUpdateRenterBalance = await _contractSettlement.UpdateRenterLessor(UpdateSettlementContract.CrCasRenterContractBasicNo, (decimal)UpdateSettlementContract.CrCasRenterContractBasicActualAmountRequired,
                                                                                        (decimal)UpdateSettlementContract.CrCasRenterContractBasicAmountPaid, (decimal)UpdateSettlementContract.CrCasRenterContractBasicActualTotal,
                                                                                        (decimal)TotalContractValue, (int)UpdateSettlementContract.CrCasRenterContractBasicActualDays, int.Parse(ContractInfo.CurrentMeter));
-               
+
                 var CheckAddAccountContractTaxOwed = await _contractSettlement.AddAccountContractTaxOwed(UpdateSettlementContract.CrCasRenterContractBasicNo, checkAccountInvoiceNo, (decimal)UpdateSettlementContract.CrCasRenterContractBasicActualValueAfterDiscount);
                 var CheckUpdateAlert = await _contractSettlement.RemoveContractAlert(UpdateSettlementContract.CrCasRenterContractBasicNo);
                 var CheckUpdateAuthrization = await _contractSettlement.UpdateAuthrization(UpdateSettlementContract.CrCasRenterContractBasicNo);
@@ -273,7 +269,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     ChechAddAccountContractCompanyOwed = await _contractSettlement.AddAccountContractCompanyOwed(UpdateSettlementContract.CrCasRenterContractBasicNo, ContractInfo.ActualDaysNo, (decimal)UpdateSettlementContract.CrCasRenterContractBasicActualDailyRent);
                 }
 
-                var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, pdfArContract, "pdfEnContract", pdfArInvoice, pdfEnInvoice, pdfArReceipt, pdfEnReceipt, (decimal)UpdateSettlementContract.CrCasRenterContractBasicAmountPaid);
+                var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, pdfArContract, pdfEnContract, pdfArInvoice, pdfEnInvoice, pdfArReceipt, pdfEnReceipt, (decimal)UpdateSettlementContract.CrCasRenterContractBasicAmountPaid);
                 var ChechUpdateRenterStatistics = await _contractSettlement.UpdateRenterStatistics(UpdateSettlementContract);
 
                 bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
@@ -284,14 +280,14 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                if (UpdateSettlementContract != null && CheckAccountReceipt != null && CheckBalances && CheckSalesPoint && CheckBranchValidity && CheckUserInformation && checkAccountInvoiceNo!=null &&
+                if (UpdateSettlementContract != null && CheckAccountReceipt != null && CheckBalances && CheckSalesPoint && CheckBranchValidity && CheckUserInformation && checkAccountInvoiceNo != null &&
                     CheckMasRenter && CheckUpdateAuthrization && CheckUpdateAlert && CheckAddAccountContractTaxOwed && CheckUpdateRenterBalance && CheckDrivers
                     && !string.IsNullOrEmpty(CheckDocAndMaintainance) && CheckCarInfo && CheckCheckUpCar && ChechAddAccountContractCompanyOwed && ChechUpdateRenterStatistics)
                 {
                     if (await _unitOfWork.CompleteAsync() > 0)
                     {
                         if (StaticContractCardImg != null) await WhatsupExtension.SendBase64StringAsImageToWhatsUp(StaticContractCardImg, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ");
-                        // await SendPdfsToWhatsAppAsync(pdfDictionary, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter);
+                        await SendPdfsToWhatsAppAsync(pdfDictionary, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter);
                         _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                         this.SetRenterTempData(Renter.CrMasRenterInformationId, ContractInfo.CrCasRenterContractBasicNo);
                         return RedirectToAction("Index", "Home");
@@ -315,7 +311,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             return await _contractSettlement.UpdateRenterSettlementContract(contractNo, userLogin.CrMasUserInformationCode, ContractInfo.ActualDaysNo, ContractInfo.SettlementMechanism, ContractInfo.CurrentMeter, ContractInfo.AdditionalKm,
                                                                                                        ContractInfo.TaxValue, ContractInfo.DiscountValue, ContractInfo.AmountRequired, ContractInfo.AmountPayed, ContractInfo.ExpensesValue, ContractInfo.ExpensesReasons, ContractInfo.CompensationValue,
                                                                                                        ContractInfo.CompensationReasons, ContractInfo.MaxHours, ContractInfo.MaxMinutes, ContractInfo.ExtraHoursValue, ContractInfo.PrivateDriverValueTotal, ContractInfo.ChoicesValueTotal, ContractInfo.AdvantagesValueTotal,
-                                                                                                       ContractInfo.ContractValue, ContractInfo.ContractValueAfterDiscount, ContractInfo.TotalContract, (decimal)RenterLessorAvailableBalance, pdfArContract, pdfEnContract,ContractInfo.CrCasRenterContractBasicReasons);
+                                                                                                       ContractInfo.ContractValue, ContractInfo.ContractValueAfterDiscount, ContractInfo.TotalContract, (decimal)RenterLessorAvailableBalance, pdfArContract, pdfEnContract, ContractInfo.CrCasRenterContractBasicReasons);
         }
         private async Task<CrCasAccountReceipt> AddAccountReceiptAsync(CrCasRenterContractBasic UpdateContractInfo, string lessorCode, CrCasBranchInformation branch, ContractSettlementVM ContractInfo, CrMasUserInformation userLogin, string pdfArReceipt, string pdfEnReceipt)
         {
@@ -372,7 +368,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 {
                     string pdf = kvp.Key;
                     string documentType = kvp.Value;
-                    string message = WhatsupExtension.GetMessage(documentType, renter);
+                    string message = WhatsupExtension.GetMessage(documentType, renter.CrMasRenterInformationArName, renter.CrMasRenterInformationEnName);
                     await WhatsupExtension.SendFile(_hostingEnvironment, pdf, toNumber, message);
                 };
                 return true;
@@ -447,7 +443,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
             else
             {
-                pdfDictionary = new Dictionary<string, string> { /*{ enContract, "EnContract" },*/ { enInvoice, "EnInvoice" } };
+                pdfDictionary = new Dictionary<string, string> { { enContract, "EnContract" }, { enInvoice, "EnInvoice" } };
                 if (amountPaid > 0) pdfDictionary.Add(enReceipt, "EnReceipt");
             }
             return pdfDictionary;
@@ -581,12 +577,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             return c;
         }
-        private CrCasAccountInvoice GetInvoiceAccount(string LessorCode, string BranchCode,string ProcedureActualInvoice)
+        private CrCasAccountInvoice GetInvoiceAccount(string LessorCode, string BranchCode, string ProcedureActualInvoice)
         {
             DateTime year = DateTime.Now;
             var y = year.ToString("yy");
             var Lrecord = _unitOfWork.CrCasAccountInvoice.FindAll(x => x.CrCasAccountInvoiceLessorCode == LessorCode &&
-                                                                       x.CrCasAccountInvoiceYear == y &&x.CrCasAccountInvoiceType== ProcedureActualInvoice && x.CrCasAccountInvoiceBranchCode == BranchCode)
+                                                                       x.CrCasAccountInvoiceYear == y && x.CrCasAccountInvoiceType == ProcedureActualInvoice && x.CrCasAccountInvoiceBranchCode == BranchCode)
                                                              .Max(x => x.CrCasAccountInvoiceNo.Substring(x.CrCasAccountInvoiceNo.Length - 6, 6));
 
             CrCasAccountInvoice c = new CrCasAccountInvoice();
@@ -604,17 +600,17 @@ namespace Bnan.Ui.Areas.BS.Controllers
         }
         //This For Home , Index To Rate Renter
         [HttpPost]
-        public async Task<JsonResult> UpdateRateForRenter(string ContractNo,string RenterId, string Rate)
+        public async Task<JsonResult> UpdateRateForRenter(string ContractNo, string RenterId, string Rate)
         {
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var Renter = await _unitOfWork.CrMasRenterInformation.FindAsync(x => x.CrMasRenterInformationId == RenterId);
             var Evaluation = await _unitOfWork.CrCasRenterContractEvaluation.FindAsync(x => x.CrCasRenterContractEvaluationContract == ContractNo && x.CrCasRenterContractEvaluationType == "1");
-            if (Renter != null && Evaluation!=null)
+            if (Renter != null && Evaluation != null)
             {
-                var RateForRenter = await _contractSettlement.UpdateRateForRenter(RenterId,lessorCode ,Rate);
-                var RateForRenterEvaluation = await _contractSettlement.UpdateRateForRenterToEvalution(ContractNo,RenterId,lessorCode ,Rate);
-                if (RateForRenter&& RateForRenterEvaluation && await _unitOfWork.CompleteAsync()>0) return Json(true);
+                var RateForRenter = await _contractSettlement.UpdateRateForRenter(RenterId, lessorCode, Rate);
+                var RateForRenterEvaluation = await _contractSettlement.UpdateRateForRenterToEvalution(ContractNo, RenterId, lessorCode, Rate);
+                if (RateForRenter && RateForRenterEvaluation && await _unitOfWork.CompleteAsync() > 0) return Json(true);
             }
             return Json(false);
         }

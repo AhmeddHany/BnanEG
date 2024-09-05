@@ -245,7 +245,7 @@ else
                             <div class="col-2 p-0 text-end">
                                 <p> @localizer["reasons"]</p>
                             </div>
-                            <div class="col-10 personal-data ">
+                            <div class="col-10 personal-data @(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "text-start" : "text-end")">
                                 <div class="notes_box"><p id="Reasons"></p></div>
                             </div>
                         </div>

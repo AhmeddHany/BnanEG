@@ -3,17 +3,14 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.CAS;
-using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 
 namespace Bnan.Ui.Areas.BS.Controllers
@@ -109,7 +106,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var contract = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicNo == id,
                                                                                      new[] { "CrCasRenterContractBasic5.CrCasRenterLessorNavigation",
                                                                                              "CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationDistributionNavigation"}).OrderByDescending(x => x.CrCasRenterContractBasicCopy).FirstOrDefault();
-            if (contract==null) return RedirectToAction("Error", "Account", new { area = "Identity", statusCode = 500 });
+            if (contract == null) return RedirectToAction("Error", "Account", new { area = "Identity", statusCode = 500 });
             if (contract.CrCasRenterContractBasicStatus == Status.Closed) return RedirectToAction("Index", "Home");
             var authContract = _unitOfWork.CrCasRenterContractAuthorization.Find(x => x.CrCasRenterContractAuthorizationLessor == lessorCode &&
                 x.CrCasRenterContractAuthorizationContractNo == contract.CrCasRenterContractBasicNo);
@@ -148,9 +145,9 @@ namespace Bnan.Ui.Areas.BS.Controllers
             return View(bsLayoutVM);
         }
         [HttpPost]
-        public async Task<IActionResult> Create(BSLayoutVM bSLayoutVM, string ExtensionValue, string reasons, string? SavePdfArInvoice, string? SavePdfEnInvoice, string? SavePdfArReceipt, string? SavePdfEnReceipt,string StaticContractCardImg)
+        public async Task<IActionResult> Create(BSLayoutVM bSLayoutVM, string ExtensionValue, string reasons, string? SavePdfArInvoice, string? SavePdfEnInvoice, string? SavePdfArReceipt, string? SavePdfEnReceipt, string StaticContractCardImg)
         {
-            
+
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var ContractInfo = bSLayoutVM.ExtensionContract;
@@ -244,7 +241,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                         if (await _unitOfWork.CompleteAsync() > 0)
                         {
                             if (StaticContractCardImg != null) await WhatsupExtension.SendBase64StringAsImageToWhatsUp(StaticContractCardImg, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ");
-                            //await SendPdfsToWhatsAppAsync(pdfDictionary, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter);
+                            await SendPdfsToWhatsAppAsync(pdfDictionary, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter);
                             _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                             return RedirectToAction("Index", "Home");
 
@@ -271,7 +268,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 {
                     string pdf = kvp.Key;
                     string documentType = kvp.Value;
-                    string message = WhatsupExtension.GetMessage(documentType, renter);
+                    string message = WhatsupExtension.GetMessage(documentType, renter.CrMasRenterInformationArName, renter.CrMasRenterInformationEnName);
                     await WhatsupExtension.SendFile(_hostingEnvironment, pdf, toNumber, message);
                 };
                 return true;

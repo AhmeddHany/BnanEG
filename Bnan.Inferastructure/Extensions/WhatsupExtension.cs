@@ -1,5 +1,4 @@
-﻿using Bnan.Core.Models;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 
 namespace Bnan.Inferastructure.Extensions
 {
@@ -97,34 +96,34 @@ namespace Bnan.Inferastructure.Extensions
             return false;
         }
         // Function to get the appropriate message based on PDF type
-        public static string GetMessage(string pdfPath, CrMasRenterInformation renter)
+        public static string GetMessage(string pdfPath, string renterArName, string renterEnName)
         {
             string fileName = Path.GetFileName(pdfPath);
             string message = "";
 
             if (pdfPath == "ArContract")
             {
-                message = $"عزيزي / {renter.CrMasRenterInformationArName} , يمكنك مراجعة العقد عن طريق تحميل الملف المرفق";
+                message = $"عزيزي / {renterArName} , يمكنك مراجعة العقد عن طريق تحميل الملف المرفق";
             }
             else if (pdfPath == "EnContract")
             {
-                message = $"Dear {renter.CrMasRenterInformationEnName}, you can review the contract by downloading the attached file.";
+                message = $"Dear {renterEnName}, you can review the contract by downloading the attached file.";
             }
             else if (pdfPath == "ArInvoice")
             {
-                message = $"عزيزي / {renter.CrMasRenterInformationArName} , يمكنك مراجعة الفاتورة عن طريق تحميل الملف المرفق";
+                message = $"عزيزي / {renterArName} , يمكنك مراجعة الفاتورة عن طريق تحميل الملف المرفق";
             }
             else if (pdfPath == "EnInvoice")
             {
-                message = $"Dear {renter.CrMasRenterInformationEnName}, you can review the invoice by downloading the attached file.";
+                message = $"Dear {renterEnName}, you can review the invoice by downloading the attached file.";
             }
             else if (pdfPath == "ArReceipt")
             {
-                message = $"عزيزي / {renter.CrMasRenterInformationArName} , يمكنك مراجعة السند عن طريق تحميل الملف المرفق";
+                message = $"عزيزي / {renterArName} , يمكنك مراجعة السند عن طريق تحميل الملف المرفق";
             }
             else if (pdfPath == "EnReceipt")
             {
-                message = $"Dear {renter.CrMasRenterInformationEnName}, you can review the receipt by downloading the attached file.";
+                message = $"Dear {renterEnName}, you can review the receipt by downloading the attached file.";
             }
             return message;
         }
