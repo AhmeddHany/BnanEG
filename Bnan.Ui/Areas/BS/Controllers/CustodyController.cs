@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
-using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.BS;
-using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -87,7 +84,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             bSLayoutVM.CustodyReceipts = _unitOfWork.CrCasAccountReceipt.FindAll(x => x.CrCasAccountReceiptSalesPoint == salesPointCode &&
                                                                                        x.CrCasAccountReceiptLessorCode == lessorCode &&
                                                                                        x.CrCasAccountReceiptBranchCode == branchCode &&
-                                                                                       x.CrCasAccountReceiptIsPassing == "1" && 
+                                                                                       x.CrCasAccountReceiptIsPassing == "1" &&
                                                                                        x.CrCasAccountReceiptUser == userLogin.CrMasUserInformationCode,
                                                                                        new[] {
                                                                                            "CrCasAccountReceiptPaymentMethodNavigation",
@@ -122,7 +119,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     bSLayout.UserBalanceAvaliable = UserBranchValidity.CrMasUserBranchValidityBranchSalesPointAvailable;
                     bSLayout.UserBalanceResereved = UserBranchValidity.CrMasUserBranchValidityBranchSalesPointReserved;
                 }
-                if (bSLayout.UserBalanceAvaliable < decimal.Parse(TotalReceipt, CultureInfo.InvariantCulture))
+                var recevied = decimal.Parse(TotalPayment, CultureInfo.InvariantCulture) - decimal.Parse(TotalReceipt, CultureInfo.InvariantCulture);
+                if (bSLayout.UserBalanceAvaliable < recevied)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AvailableLessThanCustody"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return RedirectToAction("Index", "Home");
@@ -142,8 +140,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var checkUpdateReceipt = true;
             if (adminstritive != null)
             {
-              
-               
+
+
                 string[] receiptValues = ReceiptsNo[0].Split(',');
 
                 foreach (var Receipt in receiptValues)

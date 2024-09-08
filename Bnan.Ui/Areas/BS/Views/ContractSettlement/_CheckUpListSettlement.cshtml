@@ -14,7 +14,7 @@
         {
             <tr>
                 <td class="text-center">
-                    <textarea class="check-table-notes" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].Reason" maxlength="50" autocomplete="off"></textarea>
+                    <textarea class="check-table-notes text-start" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].Reason" maxlength="50" autocomplete="off"></textarea>
                 </td>
                 @{
                     var CarCheckupDetails = item.CrMasSupContractCarCheckupDetails.Where(x => x.CrMasSupContractCarCheckupDetailsStatus == Status.Active);
@@ -32,7 +32,7 @@
                         </select>
                     </td>
                 }
-                <td>
+                <td class="tabel-data-checkbox-td">
                     <div class="options-col">
                         <label class="form-check-label Tires" for="Tires" data-en="@item.CrMasSupContractCarCheckupEnName" data-ar="@item.CrMasSupContractCarCheckupArName">
                             @item.CrMasSupContractCarCheckupEnName
@@ -50,7 +50,7 @@
         {
             <tr>
                 <td class="text-center">
-                    <textarea class="check-table-notes" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].Reason" maxlength="50" autocomplete="off"></textarea>
+                    <textarea class="check-table-notes text-end" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].Reason" maxlength="50" autocomplete="off"></textarea>
                 </td>
                 @{
                     var CarCheckupDetails = item.CrMasSupContractCarCheckupDetails.Where(x => x.CrMasSupContractCarCheckupDetailsStatus == Status.Active);
@@ -68,7 +68,7 @@
                         </select>
                     </td>
                 }
-                <td>
+                <td class="tabel-data-checkbox-td">
                     <div class="options-col">
                         <label class="form-check-label Tires" for="Tires" data-en="@item.CrMasSupContractCarCheckupEnName" data-ar="@item.CrMasSupContractCarCheckupArName">
                             @item.CrMasSupContractCarCheckupArName

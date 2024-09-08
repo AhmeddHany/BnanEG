@@ -17,19 +17,19 @@
 @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
 {
     <link href="~/BranchSys/Pages/css/English_style.css" rel="styleSheet">
-    <style>
+   @*  <style>
         .mgCenter {
             margin-left: 140px
         }
-    </style>
+    </style> *@
 }
 else
 {
-    <style>
+   @*  <style>
         .mgCenter {
             margin-right: 140px
         }
-    </style>
+    </style> *@
 }
 
 
@@ -241,8 +241,8 @@ else
                         </div>
                     </div>
                     <div class="row flex-row-reverse">
-                        <div class="col-md-12 d-flex flex-row-reverse">
-                            <div class="col-2 p-0 text-end">
+                        <div class="col-md-7 d-flex flex-row-reverse">
+                            <div class="col-auto p-0">
                                 <p> @localizer["reasons"]</p>
                             </div>
                             <div class="col-10 personal-data @(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "text-start" : "text-end")">

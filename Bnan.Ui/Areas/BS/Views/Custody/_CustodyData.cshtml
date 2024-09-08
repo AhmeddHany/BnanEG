@@ -56,7 +56,7 @@
             <label for="FormControlTextarea2">@localizer["reasons"]</label>
         </div>
         <div class="col-lg-6 pt-2">
-            <textarea class="form-control textarea-inputs" id="Reasons" maxlength="100" rows="1" name="Reasons"></textarea>
+            <textarea class="form-control textarea-inputs @(requestCulture?.RequestCulture.UICulture.Name != "ar-EG" ? "text-start" : "text-end")" id="Reasons" maxlength="100" rows="1" name="Reasons"></textarea>
         </div>
     </div>
 </div>
