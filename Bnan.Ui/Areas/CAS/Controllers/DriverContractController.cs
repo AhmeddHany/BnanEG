@@ -3,13 +3,11 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 
@@ -75,31 +73,31 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<PartialViewResult> GetDriverContractByStatusAsync(string status)
-        {
+        //[HttpGet]
+        //public async Task<PartialViewResult> GetDriverContractByStatusAsync(string status)
+        //{
 
-            if (!string.IsNullOrEmpty(status))
-            {
-                var DriverContractAllA = _unitOfWork.CrElmPost.FindAll(x => x.CrElmPostRegionsArName != null).ToList();
+        //    if (!string.IsNullOrEmpty(status))
+        //    {
+        //        var DriverContractAllA = _unitOfWork.CrElmPost.FindAll(x => x.CrElmPostRegionsArName != null).ToList();
 
-                var (mainTask, subTask, system, currentUser) = await SetTrace("205", "2205006", "2");
+        //        var (mainTask, subTask, system, currentUser) = await SetTrace("205", "2205006", "2");
 
-                if (status == Status.All)
-                {
+        //        if (status == Status.All)
+        //        {
 
-                    //var DriverContractbyStatusAll = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicStatus != Status.Extension && x.CrCasRenterContractBasicPrivateDriverId != null && currentUser.CrMasUserInformationLessor == x.CrCasRenterContractBasicLessor, new[] { "CrCasRenterContractBasic1", "CrCasRenterContractBasic2", "CrCasRenterContractBasic4", "CrCasRenterContractBasic5.CrCasRenterLessorNavigation", "CrCasRenterContractBasicCarSerailNoNavigation", "CrCasRenterContractBasicNavigation", "CrCasRenterContractBasic5" }).ToList();
-                    var DriverContractbyStatusAll = _unitOfWork.CrCasRenterPrivateDriverInformation.FindAll(x => currentUser.CrMasUserInformationLessor == x.CrCasRenterPrivateDriverInformationLessor && x.CrCasRenterPrivateDriverInformationContractCount > 0).ToList();
+        //            //var DriverContractbyStatusAll = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicStatus != Status.Extension && x.CrCasRenterContractBasicPrivateDriverId != null && currentUser.CrMasUserInformationLessor == x.CrCasRenterContractBasicLessor, new[] { "CrCasRenterContractBasic1", "CrCasRenterContractBasic2", "CrCasRenterContractBasic4", "CrCasRenterContractBasic5.CrCasRenterLessorNavigation", "CrCasRenterContractBasicCarSerailNoNavigation", "CrCasRenterContractBasicNavigation", "CrCasRenterContractBasic5" }).ToList();
+        //            var DriverContractbyStatusAll = _unitOfWork.CrCasRenterPrivateDriverInformation.FindAll(x => currentUser.CrMasUserInformationLessor == x.CrCasRenterPrivateDriverInformationLessor && x.CrCasRenterPrivateDriverInformationContractCount > 0).ToList();
 
-                    return PartialView("_DataTableDriverContract", DriverContractbyStatusAll);
-                }
-                //var DriverContractbyStatus = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasic4.CrCasRenterPrivateDriverInformationStatus == status && x.CrCasRenterContractBasicStatus != Status.Extension && x.CrCasRenterContractBasicPrivateDriverId != null && currentUser.CrMasUserInformationLessor == x.CrCasRenterContractBasicLessor, new[] { "CrCasRenterContractBasic1", "CrCasRenterContractBasic2", "CrCasRenterContractBasic4", "CrCasRenterContractBasic5.CrCasRenterLessorNavigation", "CrCasRenterContractBasicCarSerailNoNavigation", "CrCasRenterContractBasicNavigation", "CrCasRenterContractBasic5" }).ToList();
-                var DriverContractbyStatus = _unitOfWork.CrCasRenterPrivateDriverInformation.FindAll(x => currentUser.CrMasUserInformationLessor == x.CrCasRenterPrivateDriverInformationLessor && x.CrCasRenterPrivateDriverInformationContractCount > 0 && x.CrCasRenterPrivateDriverInformationStatus == status).ToList();
+        //            return PartialView("_DataTableDriverContract", DriverContractbyStatusAll);
+        //        }
+        //        //var DriverContractbyStatus = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasic4.CrCasRenterPrivateDriverInformationStatus == status && x.CrCasRenterContractBasicStatus != Status.Extension && x.CrCasRenterContractBasicPrivateDriverId != null && currentUser.CrMasUserInformationLessor == x.CrCasRenterContractBasicLessor, new[] { "CrCasRenterContractBasic1", "CrCasRenterContractBasic2", "CrCasRenterContractBasic4", "CrCasRenterContractBasic5.CrCasRenterLessorNavigation", "CrCasRenterContractBasicCarSerailNoNavigation", "CrCasRenterContractBasicNavigation", "CrCasRenterContractBasic5" }).ToList();
+        //        var DriverContractbyStatus = _unitOfWork.CrCasRenterPrivateDriverInformation.FindAll(x => currentUser.CrMasUserInformationLessor == x.CrCasRenterPrivateDriverInformationLessor && x.CrCasRenterPrivateDriverInformationContractCount > 0 && x.CrCasRenterPrivateDriverInformationStatus == status).ToList();
 
-                return PartialView("_DataTableDriverContract", DriverContractbyStatus);
-            }
-            return PartialView();
-        }
+        //        return PartialView("_DataTableDriverContract", DriverContractbyStatus);
+        //    }
+        //    return PartialView();
+        //}
 
 
 

@@ -1,9 +1,4 @@
 ﻿using Bnan.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Core.Interfaces
 {
@@ -75,10 +70,6 @@ namespace Bnan.Core.Interfaces
         public IGenric<CrCasPriceCarOption> CrCasPriceCarOption { get; }
         public IGenric<CrMasSysProbabilityMembership> CrMasSysProbabilityMembership { get; }
         public IGenric<CrMasRenterInformation> CrMasRenterInformation { get; }
-        public IGenric<CrElmPersonal> CrElmPersonal { get; }
-        public IGenric<CrElmEmployer> CrElmEmployer { get; }
-        public IGenric<CrElmLicense> CrElmLicense { get; }
-        public IGenric<CrElmPost> CrElmPost { get; }
         public IGenric<CrMasSupRenterSector> CrMasSupRenterSector { get; }
         public IGenric<CrMasSupRenterProfession> CrMasSupRenterProfession { get; }
         public IGenric<CrMasSupRenterEmployer> CrMasSupRenterEmployer { get; }

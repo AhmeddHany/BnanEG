@@ -3,10 +3,8 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.BS;
-using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -52,12 +50,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
             ViewBag.ToDate = ToDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             ViewBag.FromDate = FromDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-            var filterByDateAccountReceipt = accountReceipts.Where(x => x.CrCasAccountReceiptDate >= FromDate && x.CrCasAccountReceiptDate <= ToDate).ToList();
+            var filterByDateAccountReceipt = accountReceipts.Where(x => x.CrCasAccountReceiptDate >= FromDate && x.CrCasAccountReceiptDate <= ToDate && x.CrCasAccountReceiptIsPassing == Status.Custody).ToList();
 
 
             bsLayoutVM.CrMasUserBranchValidity = branchValidity;
-            bsLayoutVM.AccountReceipts = filterByDateAccountReceipt.OrderBy(x=>x.CrCasAccountReceiptDate).ToList();
-            bsLayoutVM.TotalCreditor = bsLayoutVM.AccountReceipts.Where(x=>x.CrCasAccountReceiptIsPassing!="4").Sum(x => x.CrCasAccountReceiptPayment);
+            bsLayoutVM.AccountReceipts = filterByDateAccountReceipt.OrderBy(x => x.CrCasAccountReceiptDate).ToList();
+            bsLayoutVM.TotalCreditor = bsLayoutVM.AccountReceipts.Where(x => x.CrCasAccountReceiptIsPassing != "4").Sum(x => x.CrCasAccountReceiptPayment);
             bsLayoutVM.TotalDebit = bsLayoutVM.AccountReceipts.Where(x => x.CrCasAccountReceiptIsPassing != "4").Sum(x => x.CrCasAccountReceiptReceipt);
             return View(bsLayoutVM);
         }
@@ -75,10 +73,10 @@ namespace Bnan.Ui.Areas.BS.Controllers
             if (status == Status.All) bSLayoutVM.AccountReceipts = accountReceipts.Where(x => x.CrCasAccountReceiptDate?.Date >= DateTime.Parse(StartDate) &&
                                                                                          x.CrCasAccountReceiptDate?.Date <= DateTime.Parse(EndDate)).ToList();
 
-            else if (status== Status.Transfer) bSLayoutVM.AccountReceipts = accountReceipts.Where(x => x.CrCasAccountReceiptDate?.Date >= DateTime.Parse(StartDate) &&
+            else if (status == Status.Transfer) bSLayoutVM.AccountReceipts = accountReceipts.Where(x => x.CrCasAccountReceiptDate?.Date >= DateTime.Parse(StartDate) &&
                                                                                            x.CrCasAccountReceiptDate?.Date <= DateTime.Parse(EndDate) &&
                                                                                           (x.CrCasAccountReceiptIsPassing == Status.Transfer || x.CrCasAccountReceiptIsPassing == Status.Change)).ToList();
-            
+
 
 
             else bSLayoutVM.AccountReceipts = accountReceipts.Where(x => x.CrCasAccountReceiptDate?.Date >= DateTime.Parse(StartDate) &&
@@ -105,12 +103,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             receiptDetails.ReceiptNo = ReceiptNo;
             receiptDetails.Date = receipt.CrCasAccountReceiptDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
-            receiptDetails.Creditor = receipt.CrCasAccountReceiptPayment?.ToString("N2",CultureInfo.InvariantCulture);
-            receiptDetails.Debit = receipt.CrCasAccountReceiptReceipt?.ToString("N2",CultureInfo.InvariantCulture);
+            receiptDetails.Creditor = receipt.CrCasAccountReceiptPayment?.ToString("N2", CultureInfo.InvariantCulture);
+            receiptDetails.Debit = receipt.CrCasAccountReceiptReceipt?.ToString("N2", CultureInfo.InvariantCulture);
             receiptDetails.ReferenceNo = receipt.CrCasAccountReceiptReferenceNo;
             receiptDetails.ReferenceTypeAr = receipt.CrCasAccountReceiptReferenceTypeNavigation?.CrMasSupAccountReceiptReferenceArName;
             receiptDetails.ReferenceTypeEn = receipt.CrCasAccountReceiptReferenceTypeNavigation?.CrMasSupAccountReceiptReferenceEnName;
-            if (receipt.CrCasAccountReceiptBank=="00")
+            if (receipt.CrCasAccountReceiptBank == "00")
             {
                 receiptDetails.AccountBankCode = "";
                 receiptDetails.BankAr = "";

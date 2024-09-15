@@ -137,10 +137,15 @@
                     <div class="row flex-nowrap align-items-center">
                         <div class="col">
                             <p class="contract-id">
-                                @item.CrCasRenterContractBasicNo<span class="text-danger">
+                                @item.CrCasRenterContractBasicNo
+                                <span class="text-danger">
                                     @if (item.CrCasRenterContractBasicCopy > 0)
                                     {
                                         @item.CrCasRenterContractBasicCopy
+                                    }
+                                    @if (item.CrCasRenterContractBasicBranch != Model.SelectedBranch)
+                                    {
+                                        <span>*</span>
                                     }
                                 </span>
                             </p>

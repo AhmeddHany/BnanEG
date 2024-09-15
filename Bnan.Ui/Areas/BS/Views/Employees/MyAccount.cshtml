@@ -212,10 +212,11 @@
                                                                 </label>
                                                             </div>
                                                             <div class="col-lg-1 personal-data">
-                                                                <input type="number" id="auto_logOut" asp-for="@Model.UserInformation.CrMasUserInformationExitTimer" class="account-select" autocomplete="off"
-                                                                       min="1" max="10"
+                                                                <input type="number" id="auto_logOut" asp-for="@Model.UserInformation.CrMasUserInformationExitTimer" class="account-select"
+                                                                       autocomplete="off" min="5" max="10"
                                                                        oninput="if (this.value > 10) this.value = 10;"
-                                                                       onblur="if (this.value === '') this.value = 1;">
+                                                                       onblur="if (this.value === '' || this.value == 0) this.value = 5;
+                                                                       else if (this.value < 5) this.value = 5;">
                                                             </div>
                                                         </div>
 

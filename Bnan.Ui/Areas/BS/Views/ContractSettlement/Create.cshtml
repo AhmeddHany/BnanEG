@@ -2243,6 +2243,7 @@
         }
         $(document).ready(function () {
             $("#AmountPayed").focusout(function () {
+                somethingIsNotOkay = true;
                 var payed = document.getElementById('AmountPayed').value;
                 var BranchCode = @Html.Raw(Json.Serialize(Model?.SelectedBranch));
                 if (AmountRequired < 0) {

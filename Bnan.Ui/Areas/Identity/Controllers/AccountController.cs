@@ -2,11 +2,8 @@
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using Bnan.Inferastructure;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.Areas.CAS.Controllers;
 using Bnan.Ui.ViewModels.Identitiy;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
@@ -14,11 +11,8 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
-using static StackExchange.Redis.Role;
 
 namespace Bnan.Ui.Areas.Identity.Controllers
 {
@@ -44,7 +38,7 @@ namespace Bnan.Ui.Areas.Identity.Controllers
         {
             if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Log in", "Bnan", "", "", "", "");
             else await ViewData.SetPageTitleAsync("تسجيل الدخول", "بنان", "", "", "", "");
-            var user = await _userService.GetUserByUserNameAsync(User.Identity.Name);
+            var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
                 var isAuth = _userService.CheckUserifAuth(User);
@@ -167,7 +161,7 @@ namespace Bnan.Ui.Areas.Identity.Controllers
 
                     //Check if no have branches and have branch auth true set branch auth false
                     var UserInforation = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == model.UserName, new[] { "CrMasUserBranchValidities.CrMasUserBranchValidity1" });
-                    var branchValiditie = UserInforation.CrMasUserBranchValidities.Where(x => x.CrMasUserBranchValidityBranchStatus == Status.Active &&x.CrMasUserBranchValidityBranchRecStatus!=Status.Deleted).Count();
+                    var branchValiditie = UserInforation.CrMasUserBranchValidities.Where(x => x.CrMasUserBranchValidityBranchStatus == Status.Active && x.CrMasUserBranchValidityBranchRecStatus != Status.Deleted).Count();
                     if (UserInforation.CrMasUserInformationAuthorizationBranch == true && branchValiditie == 0) UserInforation.CrMasUserInformationAuthorizationBranch = false;
                     UserInforation.CrMasUserInformationOperationStatus = true;
                     UserInforation.CrMasUserInformationLastActionDate = DateTime.Now;
@@ -280,7 +274,7 @@ namespace Bnan.Ui.Areas.Identity.Controllers
             {
                 return Json(false);
             }
-            user.CrMasUserInformationLastActionDate= DateTime.Now;
+            user.CrMasUserInformationLastActionDate = DateTime.Now;
             await _unitOfWork.CompleteAsync();
             return Json(true);
         }

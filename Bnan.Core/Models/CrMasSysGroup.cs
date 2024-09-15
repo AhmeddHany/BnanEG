@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Bnan.Core.Models
+﻿namespace Bnan.Core.Models
 {
     public partial class CrMasSysGroup
     {
@@ -18,7 +15,6 @@ namespace Bnan.Core.Models
             CrMasSupRenterGenders = new HashSet<CrMasSupRenterGender>();
             CrMasSupRenterMemberships = new HashSet<CrMasSupRenterMembership>();
             CrMasSupRenterNationalities = new HashSet<CrMasSupRenterNationality>();
-            CrMasSupRenterNationalitiesNaqls = new HashSet<CrMasSupRenterNationalitiesNaql>();
             CrMasSupRenterProfessions = new HashSet<CrMasSupRenterProfession>();
         }
 
@@ -41,7 +37,6 @@ namespace Bnan.Core.Models
         public virtual ICollection<CrMasSupRenterGender> CrMasSupRenterGenders { get; set; }
         public virtual ICollection<CrMasSupRenterMembership> CrMasSupRenterMemberships { get; set; }
         public virtual ICollection<CrMasSupRenterNationality> CrMasSupRenterNationalities { get; set; }
-        public virtual ICollection<CrMasSupRenterNationalitiesNaql> CrMasSupRenterNationalitiesNaqls { get; set; }
         public virtual ICollection<CrMasSupRenterProfession> CrMasSupRenterProfessions { get; set; }
     }
 }

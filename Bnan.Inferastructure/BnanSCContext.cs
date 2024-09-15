@@ -50,10 +50,6 @@ namespace Bnan.Core.Models
         public virtual DbSet<CrCasRenterLessor> CrCasRenterLessors { get; set; } = null!;
         public virtual DbSet<CrCasRenterPrivateDriverInformation> CrCasRenterPrivateDriverInformations { get; set; } = null!;
         public virtual DbSet<CrCasSysAdministrativeProcedure> CrCasSysAdministrativeProcedures { get; set; } = null!;
-        public virtual DbSet<CrElmEmployer> CrElmEmployers { get; set; } = null!;
-        public virtual DbSet<CrElmLicense> CrElmLicenses { get; set; } = null!;
-        public virtual DbSet<CrElmPersonal> CrElmPersonals { get; set; } = null!;
-        public virtual DbSet<CrElmPost> CrElmPosts { get; set; } = null!;
         public virtual DbSet<CrMasContractCompany> CrMasContractCompanies { get; set; } = null!;
         public virtual DbSet<CrMasContractCompanyDetailed> CrMasContractCompanyDetaileds { get; set; } = null!;
         public virtual DbSet<CrMasLessorCommunication> CrMasLessorCommunications { get; set; } = null!;
@@ -88,7 +84,6 @@ namespace Bnan.Core.Models
         public virtual DbSet<CrMasSupRenterGender> CrMasSupRenterGenders { get; set; } = null!;
         public virtual DbSet<CrMasSupRenterIdtype> CrMasSupRenterIdtypes { get; set; } = null!;
         public virtual DbSet<CrMasSupRenterMembership> CrMasSupRenterMemberships { get; set; } = null!;
-        public virtual DbSet<CrMasSupRenterNationalitiesNaql> CrMasSupRenterNationalitiesNaqls { get; set; } = null!;
         public virtual DbSet<CrMasSupRenterNationality> CrMasSupRenterNationalities { get; set; } = null!;
         public virtual DbSet<CrMasSupRenterProfession> CrMasSupRenterProfessions { get; set; } = null!;
         public virtual DbSet<CrMasSupRenterSector> CrMasSupRenterSectors { get; set; } = null!;
@@ -3969,190 +3964,6 @@ namespace Bnan.Core.Models
                     .HasConstraintName("fk_CR_Cas_Sys_Administrative_Procedures_CR_Cas_Branch_Information");
             });
 
-            modelBuilder.Entity<CrElmEmployer>(entity =>
-            {
-                entity.HasKey(e => e.CrElmEmployerCode);
-
-                entity.ToTable("CR_Elm_Employer");
-
-                entity.Property(e => e.CrElmEmployerCode)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Elm_Employer_Code")
-                    .IsFixedLength();
-
-                entity.Property(e => e.CrElmEmployerArName)
-                    .HasMaxLength(100)
-                    .HasColumnName("CR_Elm_Employer_Ar_Name");
-
-                entity.Property(e => e.CrElmEmployerEnName)
-                    .HasMaxLength(100)
-                    .HasColumnName("CR_Elm_Employer_En_Name");
-            });
-
-            modelBuilder.Entity<CrElmLicense>(entity =>
-            {
-                entity.HasKey(e => e.CrElmLicensePersonId);
-
-                entity.ToTable("CR_Elm_License");
-
-                entity.Property(e => e.CrElmLicensePersonId)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_License_Person_Id");
-
-                entity.Property(e => e.CrElmLicenseArName)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_License_Ar_Name");
-
-                entity.Property(e => e.CrElmLicenseEnName)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_License_En_Name");
-
-                entity.Property(e => e.CrElmLicenseExpiryDate)
-                    .HasColumnType("date")
-                    .HasColumnName("CR_Elm_License_Expiry_Date");
-
-                entity.Property(e => e.CrElmLicenseIssuedDate)
-                    .HasColumnType("date")
-                    .HasColumnName("CR_Elm_License_Issued_Date");
-
-                entity.Property(e => e.CrElmLicenseNo)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_License_No");
-            });
-
-            modelBuilder.Entity<CrElmPersonal>(entity =>
-            {
-                entity.HasKey(e => e.CrElmPersonalCode);
-
-                entity.ToTable("CR_Elm_Personal");
-
-                entity.Property(e => e.CrElmPersonalCode)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_Personal_Code");
-
-                entity.Property(e => e.CrElmPersonalArGender)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_Personal_Ar_Gender");
-
-                entity.Property(e => e.CrElmPersonalArName)
-                    .HasMaxLength(100)
-                    .HasColumnName("CR_Elm_Personal_Ar_Name");
-
-                entity.Property(e => e.CrElmPersonalArNationality)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_Personal_Ar_Nationality");
-
-                entity.Property(e => e.CrElmPersonalArProfessions)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_Personal_Ar_Professions");
-
-                entity.Property(e => e.CrElmPersonalBirthDate)
-                    .HasColumnType("date")
-                    .HasColumnName("CR_Elm_Personal_Birth_Date");
-
-                entity.Property(e => e.CrElmPersonalCountryKey)
-                    .HasMaxLength(10)
-                    .HasColumnName("CR_Elm_Personal_Country_Key");
-
-                entity.Property(e => e.CrElmPersonalEmail)
-                    .HasMaxLength(100)
-                    .HasColumnName("CR_Elm_Personal_Email");
-
-                entity.Property(e => e.CrElmPersonalEnGender)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_Personal_En_Gender");
-
-                entity.Property(e => e.CrElmPersonalEnName)
-                    .HasMaxLength(100)
-                    .HasColumnName("CR_Elm_Personal_En_Name");
-
-                entity.Property(e => e.CrElmPersonalEnNationality)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_Personal_En_Nationality");
-
-                entity.Property(e => e.CrElmPersonalEnProfessions)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_Personal_En_Professions");
-
-                entity.Property(e => e.CrElmPersonalExpiryIdDate)
-                    .HasColumnType("date")
-                    .HasColumnName("CR_Elm_Personal_Expiry_Id_Date");
-
-                entity.Property(e => e.CrElmPersonalIdCopy).HasColumnName("CR_Elm_Personal_Id_Copy");
-
-                entity.Property(e => e.CrElmPersonalIssuedIdDate)
-                    .HasColumnType("date")
-                    .HasColumnName("CR_Elm_Personal_Issued_Id_Date");
-
-                entity.Property(e => e.CrElmPersonalIssuedPlace)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_Personal_Issued_Place");
-
-                entity.Property(e => e.CrElmPersonalMobile)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_Personal_Mobile");
-
-                entity.Property(e => e.CrElmPersonalSector)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Elm_Personal_Sector");
-            });
-
-            modelBuilder.Entity<CrElmPost>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("CR_Elm_Post");
-
-                entity.Property(e => e.CrElmPostAdditionalNo).HasColumnName("CR_Elm_Post_Additional_No");
-
-                entity.Property(e => e.CrElmPostBuildingNo).HasColumnName("CR_Elm_Post_Building_No");
-
-                entity.Property(e => e.CrElmPostCityArName)
-                    .HasMaxLength(50)
-                    .HasColumnName("CR_Elm_Post_City_Ar_Name");
-
-                entity.Property(e => e.CrElmPostCityEnName)
-                    .HasMaxLength(50)
-                    .HasColumnName("CR_Elm_Post_City_En_Name");
-
-                entity.Property(e => e.CrElmPostCode)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Elm_Post_Code")
-                    .IsFixedLength();
-
-                entity.Property(e => e.CrElmPostDistrictArName)
-                    .HasMaxLength(50)
-                    .HasColumnName("CR_Elm_Post_District_Ar_Name");
-
-                entity.Property(e => e.CrElmPostDistrictEnName)
-                    .HasMaxLength(50)
-                    .HasColumnName("CR_Elm_Post_District_En_Name");
-
-                entity.Property(e => e.CrElmPostRegionsArName)
-                    .HasMaxLength(50)
-                    .HasColumnName("CR_Elm_Post_Regions_Ar_Name");
-
-                entity.Property(e => e.CrElmPostRegionsEnName)
-                    .HasMaxLength(50)
-                    .HasColumnName("CR_Elm_Post_Regions_En_Name");
-
-                entity.Property(e => e.CrElmPostStreetArName)
-                    .HasMaxLength(50)
-                    .HasColumnName("CR_Elm_Post_Street_Ar_Name");
-
-                entity.Property(e => e.CrElmPostStreetEnName)
-                    .HasMaxLength(50)
-                    .HasColumnName("CR_Elm_Post_Street_En_Name");
-
-                entity.Property(e => e.CrElmPostUnitNo)
-                    .HasMaxLength(10)
-                    .HasColumnName("CR_Elm_Post_Unit_No");
-
-                entity.Property(e => e.CrElmPostZipCode).HasColumnName("CR_Elm_Post_Zip_Code");
-            });
-
             modelBuilder.Entity<CrMasContractCompany>(entity =>
             {
                 entity.HasKey(e => e.CrMasContractCompanyNo);
@@ -6385,60 +6196,6 @@ namespace Bnan.Core.Models
                     .WithMany(p => p.CrMasSupRenterMemberships)
                     .HasForeignKey(d => d.CrMasSupRenterMembershipGroupCode)
                     .HasConstraintName("FK_CR_Mas_Sup_Renter_Membership_CR_Mas_Sys_Group");
-            });
-
-            modelBuilder.Entity<CrMasSupRenterNationalitiesNaql>(entity =>
-            {
-                entity.HasKey(e => e.CrMasSupRenterNationalitiesNCode);
-
-                entity.ToTable("CR_Mas_Sup_Renter_Nationalities_Naql");
-
-                entity.Property(e => e.CrMasSupRenterNationalitiesNCode)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Mas_Sup_Renter_Nationalities_N_Code")
-                    .IsFixedLength();
-
-                entity.Property(e => e.CrMasSupRenterNationalitiesNArName)
-                    .HasMaxLength(30)
-                    .HasColumnName("CR_Mas_Sup_Renter_Nationalities_N_Ar_Name");
-
-                entity.Property(e => e.CrMasSupRenterNationalitiesNCounter).HasColumnName("CR_Mas_Sup_Renter_Nationalities_N_Counter");
-
-                entity.Property(e => e.CrMasSupRenterNationalitiesNEnName)
-                    .HasMaxLength(30)
-                    .HasColumnName("CR_Mas_Sup_Renter_Nationalities_N_En_Name");
-
-                entity.Property(e => e.CrMasSupRenterNationalitiesNFlag)
-                    .HasMaxLength(100)
-                    .HasColumnName("CR_Mas_Sup_Renter_Nationalities_N_Flag");
-
-                entity.Property(e => e.CrMasSupRenterNationalitiesNGroupCode)
-                    .HasMaxLength(2)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Mas_Sup_Renter_Nationalities_N_Group_Code")
-                    .IsFixedLength();
-
-                entity.Property(e => e.CrMasSupRenterNationalitiesNNaqlCode).HasColumnName("CR_Mas_Sup_Renter_Nationalities_N_Naql_Code");
-
-                entity.Property(e => e.CrMasSupRenterNationalitiesNNaqlGcc).HasColumnName("CR_Mas_Sup_Renter_Nationalities_N_Naql_GCC");
-
-                entity.Property(e => e.CrMasSupRenterNationalitiesNNaqlId).HasColumnName("CR_Mas_Sup_Renter_Nationalities_N_Naql_Id");
-
-                entity.Property(e => e.CrMasSupRenterNationalitiesNReasons)
-                    .HasMaxLength(100)
-                    .HasColumnName("CR_Mas_Sup_Renter_Nationalities_N_Reasons");
-
-                entity.Property(e => e.CrMasSupRenterNationalitiesNStatus)
-                    .HasMaxLength(1)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Mas_Sup_Renter_Nationalities_N_Status")
-                    .IsFixedLength();
-
-                entity.HasOne(d => d.CrMasSupRenterNationalitiesNGroupCodeNavigation)
-                    .WithMany(p => p.CrMasSupRenterNationalitiesNaqls)
-                    .HasForeignKey(d => d.CrMasSupRenterNationalitiesNGroupCode)
-                    .HasConstraintName("FK_CR_Mas_Sup_Renter_Nationalities_Naql_CR_Mas_Sys_Group");
             });
 
             modelBuilder.Entity<CrMasSupRenterNationality>(entity =>

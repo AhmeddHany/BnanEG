@@ -78,10 +78,6 @@ namespace Bnan.Inferastructure.Repository
         public IGenric<CrCasPriceCarOption> CrCasPriceCarOption { get; private set; }
         public IGenric<CrMasSysProbabilityMembership> CrMasSysProbabilityMembership { get; private set; }
         public IGenric<CrMasRenterInformation> CrMasRenterInformation { get; private set; }
-        public IGenric<CrElmPersonal> CrElmPersonal { get; private set; }
-        public IGenric<CrElmEmployer> CrElmEmployer { get; private set; }
-        public IGenric<CrElmLicense> CrElmLicense { get; private set; }
-        public IGenric<CrElmPost> CrElmPost { get; private set; }
         public IGenric<CrMasSupRenterSector> CrMasSupRenterSector { get; private set; }
         public IGenric<CrMasSupRenterProfession> CrMasSupRenterProfession { get; private set; }
         public IGenric<CrMasSupRenterEmployer> CrMasSupRenterEmployer { get; private set; }
@@ -170,10 +166,6 @@ namespace Bnan.Inferastructure.Repository
             CrCasPriceCarAdditional = new BaseRepository<CrCasPriceCarAdditional>(_context);
             CrMasSysProbabilityMembership = new BaseRepository<CrMasSysProbabilityMembership>(_context);
             CrMasRenterInformation = new BaseRepository<CrMasRenterInformation>(_context);
-            CrElmEmployer = new BaseRepository<CrElmEmployer>(_context);
-            CrElmLicense = new BaseRepository<CrElmLicense>(_context);
-            CrElmPersonal = new BaseRepository<CrElmPersonal>(_context);
-            CrElmPost = new BaseRepository<CrElmPost>(_context);
             CrMasSupRenterSector = new BaseRepository<CrMasSupRenterSector>(_context);
             CrMasSupRenterProfession = new BaseRepository<CrMasSupRenterProfession>(_context);
             CrMasSupRenterEmployer = new BaseRepository<CrMasSupRenterEmployer>(_context);

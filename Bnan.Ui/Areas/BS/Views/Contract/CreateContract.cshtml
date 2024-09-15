@@ -2011,9 +2011,10 @@
                                             <div class="col-auto ">
 
                                                 <select id="country-code" name="country Code" class="country-code-select">
+                                                    <option selected></option>
                                                     @foreach (var item in Model.CallingKeys)
                                                     {
-                                                        <option value="@item.CrMasSysCallingKeysNo?.Trim()">+@item.CrMasSysCallingKeysNo</option>
+                                                        <option value="@item.CrMasSysCallingKeysNo?.Trim()">@item.CrMasSysCallingKeysNo</option>
                                                     }
                                                 </select>
                                                 <input type="tel" id="CheckModal-PhoneInput" name="phone_Number" class="form-control version2-select" maxlength="11" autocomplete="off" autofocus="true">
