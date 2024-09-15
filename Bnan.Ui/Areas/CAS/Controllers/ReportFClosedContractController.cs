@@ -74,20 +74,21 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             //var lastDate = DateTime.Now;
             //var startDate = lastDate.Date.AddMonths(-1);
 
-            var RenterContract_Basic_All = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicStatus == Status.Closed && x.CrCasRenterContractBasicLessor == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterContractBasic1" }).OrderByDescending(x => x.CrCasRenterContractBasicIssuedDate);
+            var RenterContract_Basic_All = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicStatus == Status.Closed && x.CrCasRenterContractBasicLessor == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterContractBasic1" }).OrderByDescending(x => x.CrCasRenterContractBasicActualCloseDateTime);
 
             ReportActiveContractVM reportActiveContractVM = new ReportActiveContractVM();
+
             //--------------------------------
 
             if (RenterContract_Basic_All.Count() > 1)
             {
-                var lastDate = RenterContract_Basic_All.FirstOrDefault(x => x.CrCasRenterContractBasicIssuedDate != null)?.CrCasRenterContractBasicIssuedDate;
+                var lastDate = RenterContract_Basic_All.FirstOrDefault(x => x.CrCasRenterContractBasicActualCloseDateTime != null)?.CrCasRenterContractBasicActualCloseDateTime;
                 //var startDate = RenterContract_Basic_All.LastOrDefault(x => x.CrCasRenterContractBasicIssuedDate != null)?.CrCasRenterContractBasicIssuedDate;
                 if (lastDate != null)
                 {
                     var startDate = lastDate.Value.AddMonths(-1);
                     var llast = lastDate.Value.Date.AddDays(1);
-                    var RenterContract_Basic_All1 = RenterContract_Basic_All.Where(x => x.CrCasRenterContractBasicIssuedDate >= startDate.Date && x.CrCasRenterContractBasicIssuedDate < llast).ToList();
+                    var RenterContract_Basic_All1 = RenterContract_Basic_All.Where(x => x.CrCasRenterContractBasicActualCloseDateTime >= startDate.Date && x.CrCasRenterContractBasicActualCloseDateTime < llast).ToList();
 
                     reportActiveContractVM.crCasRenterContractBasic = RenterContract_Basic_All1;
                     ViewBag.StartDate = startDate.ToString("yyyy-MM-dd");
@@ -139,7 +140,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 _max = DateTime.Parse(_max).Date.AddDays(1).ToString("yyyy-MM-dd");
 
 
-                var RenterContract_Basic_All1 = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicIssuedDate < DateTime.Parse(_max).Date && x.CrCasRenterContractBasicIssuedDate >= DateTime.Parse(_mini).Date && x.CrCasRenterContractBasicStatus == Status.Closed && x.CrCasRenterContractBasicLessor == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterContractBasic1", "CrCasRenterContractBasic4", "CrCasRenterContractBasic3", "CrCasRenterContractBasic5.CrCasRenterLessorNavigation", "CrCasRenterContractBasicCarSerailNoNavigation", "CrCasRenterContractBasicNavigation", "CrCasRenterContractBasic5" }).OrderByDescending(x => x.CrCasRenterContractBasicIssuedDate).ToList();
+                var RenterContract_Basic_All1 = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicActualCloseDateTime < DateTime.Parse(_max).Date && x.CrCasRenterContractBasicActualCloseDateTime >= DateTime.Parse(_mini).Date && x.CrCasRenterContractBasicStatus == Status.Closed && x.CrCasRenterContractBasicLessor == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterContractBasic1", "CrCasRenterContractBasic4", "CrCasRenterContractBasic3", "CrCasRenterContractBasic5.CrCasRenterLessorNavigation", "CrCasRenterContractBasicCarSerailNoNavigation", "CrCasRenterContractBasicNavigation", "CrCasRenterContractBasic5" }).OrderByDescending(x => x.CrCasRenterContractBasicActualCloseDateTime).ToList();
 
                 //var users = _unitOfWork.CrMasUserInformation.FindAll(x => x.CrMasUserInformationLessor == currentUser.CrMasUserInformationLessor).Select(x => (
                 //x.CrMasUserInformationCode,
@@ -172,7 +173,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
             var (mainTask, subTask, system, currentUser) = await SetTrace("205", "2205004", "2");
 
-            var RenterContract_Basic_All = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicStatus == Status.Closed && x.CrCasRenterContractBasicLessor == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterContractBasic1", "CrCasRenterContractBasic4", "CrCasRenterContractBasic3", "CrCasRenterContractBasic5.CrCasRenterLessorNavigation", "CrCasRenterContractBasicCarSerailNoNavigation", "CrCasRenterContractBasicNavigation", "CrCasRenterContractBasic5" }).ToList();
+            var RenterContract_Basic_All = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicStatus == Status.Closed && x.CrCasRenterContractBasicLessor == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterContractBasic1" }).ToList();
 
             if (RenterContract_Basic_All?.Count() < 1)
             {

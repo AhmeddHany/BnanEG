@@ -116,11 +116,17 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var (mainTask, subTask, system, currentUser) = await SetTrace("205", "2205012", "2");
             ViewBag.CurrentLessor = currentUser.CrMasUserInformationLessor;
 
+            ViewBag.EmpId = id;
+
+
             //To Set Title !!!!!!!!!!!!!
             var titles = await setTitle("205", "2205012", "2");
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
 
-            var FinancialTransactionOfEmployeeAll = _unitOfWork.CrCasAccountReceipt.FindAll(x => currentUser.CrMasUserInformationLessor == x.CrCasAccountReceiptLessorCode && (x.CrCasAccountReceiptType == "301" || x.CrCasAccountReceiptType == "302"), new[] { "CrCasAccountReceiptReferenceTypeNavigation", "CrCasAccountReceiptUserNavigation", "CrCasAccountReceiptNavigation", "CrCasAccountReceiptPaymentMethodNavigation" }).Where(x=> id == x.CrCasAccountReceiptUserNavigation?.CrMasUserInformationCode).OrderBy(x => x.CrCasAccountReceiptDate).ToList();
+            var startDate = DateTime.Now.AddDays(-30);
+            var endDate = DateTime.Now;
+
+            var FinancialTransactionOfEmployeeAll = _unitOfWork.CrCasAccountReceipt.FindAll(x => currentUser.CrMasUserInformationLessor == x.CrCasAccountReceiptLessorCode && (x.CrCasAccountReceiptType == "301" || x.CrCasAccountReceiptType == "302") && x.CrCasAccountReceiptDate < endDate && x.CrCasAccountReceiptDate > startDate.Date, new[] { "CrCasAccountReceiptReferenceTypeNavigation", "CrCasAccountReceiptUserNavigation", "CrCasAccountReceiptNavigation", "CrCasAccountReceiptPaymentMethodNavigation" }).Where(x=> id == x.CrCasAccountReceiptUserNavigation?.CrMasUserInformationCode).OrderBy(x => x.CrCasAccountReceiptDate).ToList();
 
 
             FinancialTransactionOfEmployeeVM FT_EmployeeVM = new FinancialTransactionOfEmployeeVM();
@@ -138,9 +144,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var Single_data = _unitOfWork.CrMasUserInformation.Find(x => id == x.CrMasUserInformationCode && x.CrMasUserInformationLessor == currentUser.CrMasUserInformationLessor);
 
 
-            ViewBag.Single_FT_EmployeeId = Single_data.CrMasUserInformationCode;
-            ViewBag.Single_FT_EmployeeNameAr = Single_data.CrMasUserInformationArName;
-            ViewBag.Single_FT_EmployeeNameEn = Single_data.CrMasUserInformationEnName;
+            ViewBag.Single_FT_EmployeeId = Single_data?.CrMasUserInformationCode;
+            ViewBag.Single_FT_EmployeeNameAr = Single_data?.CrMasUserInformationArName;
+            ViewBag.Single_FT_EmployeeNameEn = Single_data?.CrMasUserInformationEnName;
 
 
             ViewBag.AvailableBalance = Single_data?.CrMasUserInformationAvailableBalance?.ToString("N2", CultureInfo.InvariantCulture);
@@ -165,8 +171,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             ViewBag.startDate = DateTime.Parse(_mini).Date.ToString("yyyy-MM-dd");
             ViewBag.EndDate = DateTime.Parse(_max).Date.ToString("yyyy-MM-dd");
-            
 
+            ViewBag.EmpId = id;
 
             //To Set Title !!!!!!!!!!!!!
             var titles = await setTitle("205", "2205012", "2");
@@ -221,6 +227,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         public async Task<IActionResult> Edit2Date(string _max, string _mini,string status , string id)
         {
 
+            ViewBag.EmpId = id;
 
             var (mainTask, subTask, system, currentUser) = await SetTrace("205", "2205012", "2");
             ViewBag.CurrentLessor = currentUser.CrMasUserInformationLessor;
@@ -246,7 +253,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             if (!string.IsNullOrEmpty(_max) && !string.IsNullOrEmpty(_mini) && _max.Length > 0)
             {
                 _max = DateTime.Parse(_max).Date.AddDays(1).ToString("yyyy-MM-dd");
-                var FinancialTransactionOfEmployeeAll = _unitOfWork.CrCasAccountReceipt.FindAll(x => x.CrCasAccountReceiptDate < DateTime.Parse(_max).Date && x.CrCasAccountReceiptDate >= DateTime.Parse(_mini).Date && currentUser.CrMasUserInformationLessor == x.CrCasAccountReceiptLessorCode && (x.CrCasAccountReceiptType == "301" || x.CrCasAccountReceiptType == "302"), new[] { "CrCasAccountReceiptReferenceTypeNavigation", "CrCasAccountReceiptUserNavigation", "CrCasAccountReceiptNavigation", "CrCasAccountReceiptPaymentMethodNavigation" }).Where(x=> id == x.CrCasAccountReceiptUserNavigation?.CrMasUserInformationCode).OrderBy(x => x.CrCasAccountReceiptDate).ToList();
+                var FinancialTransactionOfEmployeeAll = _unitOfWork.CrCasAccountReceipt.FindAll(x => x.CrCasAccountReceiptDate < DateTime.Parse(_max).Date && x.CrCasAccountReceiptDate >= DateTime.Parse(_mini).Date && currentUser.CrMasUserInformationLessor == x.CrCasAccountReceiptLessorCode && (x.CrCasAccountReceiptType == "301" || x.CrCasAccountReceiptType == "302"), new[] { "CrCasAccountReceiptReferenceTypeNavigation", "CrCasAccountReceiptUserNavigation", "CrCasAccountReceiptNavigation", "CrCasAccountReceiptPaymentMethodNavigation" }).Where(x=>  id == x.CrCasAccountReceiptUserNavigation?.CrMasUserInformationCode).OrderBy(x => x.CrCasAccountReceiptDate).ToList();
 
                 FinancialTransactionOfEmployeeVM FT_EmployeeVM = new FinancialTransactionOfEmployeeVM();
                 FT_EmployeeVM.crCasAccountReceipt = FinancialTransactionOfEmployeeAll;
@@ -263,9 +270,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 var Single_data = _unitOfWork.CrMasUserInformation.Find(x => id == x.CrMasUserInformationCode && x.CrMasUserInformationLessor == currentUser.CrMasUserInformationLessor);
 
 
-                ViewBag.Single_FT_EmployeeId = Single_data.CrMasUserInformationCode;
-                ViewBag.Single_FT_EmployeeNameAr = Single_data.CrMasUserInformationArName;
-                ViewBag.Single_FT_EmployeeNameEn = Single_data.CrMasUserInformationEnName;
+                ViewBag.Single_FT_EmployeeId = Single_data?.CrMasUserInformationCode;
+                ViewBag.Single_FT_EmployeeNameAr = Single_data?.CrMasUserInformationArName;
+                ViewBag.Single_FT_EmployeeNameEn = Single_data?.CrMasUserInformationEnName;
 
 
                 ViewBag.AvailableBalance = Single_data?.CrMasUserInformationAvailableBalance?.ToString("N2", CultureInfo.InvariantCulture);

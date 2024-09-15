@@ -777,19 +777,19 @@
 
 
   //FinancialTransactionOfRenter --------
-  "FinancialTransactionOfRenter Hint": "This page allows you to display The Financial Transaction Of ٌRenters",
+  "FinancialTransactionOfRenter Hint": "This page allows you to search, display The Renters assets ,and enter The Detailed Report of The Renter",
   "FinancialTransactionOfRenter Data": "Financial Transaction Of The Renter",
   "Edit FinancialTransactionOfRenter Data": "Details of Financial Transaction Of The Renter",
   "Edit FinancialTransactionOfRenter Hint": "this page allows you to Display Details of Financial Transaction Of The Renter",
 
   //FinancialTransactionOfSalesPoint --------
-  "FinancialTransactionOfSalesPoint Hint": "This page allows you to display The Financial Transaction Of Sales Points",
+  "FinancialTransactionOfSalesPoint Hint": "This page allows you to search, display The Sales Points assets ,and enter The Detailed Report of The Sales Point",
   "FinancialTransactionOfSalesPoint Data": "Financial Transaction Of The Sales Point",
   "Edit FinancialTransactionOfSalesPoint Data": "Details of Financial Transaction Of The Sales Point",
   "Edit FinancialTransactionOfSalesPoint Hint": "this page allows you to Display Details of Financial Transaction Of The Sales Point",
 
   //FinancialTransactionOfEmployee --------
-  "FinancialTransactionOfEmployee Hint": "This page allows you to display The Financial Transaction Of Employees",
+  "FinancialTransactionOfEmployee Hint": "This page allows you to search, display The Employees assets ,and enter The Detailed Report of The Employee",
   "FinancialTransactionOfEmployee Data": "Financial Transaction Of The Employee",
   "Edit FinancialTransactionOfEmployee Data": "Details of Financial Transaction Of The Employee",
   "Edit FinancialTransactionOfEmployee Hint": "this page allows you to Display Details of Financial Transaction Of The Employee",

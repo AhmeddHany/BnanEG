@@ -821,20 +821,21 @@
 
 
   //FinancialTransactionOfRenter --------
-  "FinancialTransactionOfRenter Hint": "تمكنك الصفحة من الإطلاع والبحث وعرض المستأجرين وأرصدتهم والدخول على التقرير التفصيلي للمستأجرين",
-  "FinancialTransactionOfRenter Data": "الحركة المالية للمستأجر",
+  "FinancialTransactionOfRenter Hint": "تمكنك الصفحة من البحث وعرض ارصدة المستأجرين والدخول على التقرير التفصيلي للمستأجر",
+  "FinancialTransactionOfRenter Data": "الحركة المالية للمستأجرين",
+
   "Edit FinancialTransactionOfRenter Data": "البيانات التفصيلية للحركة المالية لمستأجر",
   "Edit FinancialTransactionOfRenter Hint": "تمكنك هذه الصفحة من البحث والإطلاع على تفاصيل القيود لمستأجر",
 
   //FinancialTransactionOfSalesPoint --------
-  "FinancialTransactionOfSalesPoint Hint": "تمكنك الصفحة من الإطلاع والبحث وعرض نقاط البيع وأرصدتهم والدخول على التقرير التفصيلي لنقطة البيع",
+  "FinancialTransactionOfSalesPoint Hint": "تمكنك الصفحة من البحث وعرض ارصدة نقاط البيع والدخول على التقرير التفصيلي لنقطة البيع",
   "FinancialTransactionOfSalesPoint Data": "الحركة المالية لنقاط البيع",
-  "Edit FinancialTransactionOfSalesPoint Data": "البيانات التفصيلية للحركة المالية لنقطة بيع",
-  "Edit FinancialTransactionOfSalesPoint Hint": "تمكنك هذه الصفحة من البحث والإطلاع على تفاصيل القيود لنقطة بيع",
+  "Edit FinancialTransactionOfSalesPoint Data": "البيانات التفصيلية للحركة المالية لنقطة البيع",
+  "Edit FinancialTransactionOfSalesPoint Hint": "تمكنك هذه الصفحة من البحث والإطلاع على تفاصيل القيود لنقطة البيع",
 
   //FinancialTransactionOfEmployee --------
-  "FinancialTransactionOfEmployee Hint": "تمكنك الصفحة من الإطلاع والبحث وعرض للموظفين وأرصدتهم والدخول على التقرير التفصيلي للموظفين",
-  "FinancialTransactionOfEmployee Data": "الحركة المالية للموظف",
+  "FinancialTransactionOfEmployee Hint": "تمكنك الصفحة من البحث وعرض ارصدة الموظفين والدخول على التقرير التفصيلي للموظف",
+  "FinancialTransactionOfEmployee Data": "الحركة المالية للموظفين",
   "Edit FinancialTransactionOfEmployee Data": "البيانات التفصيلية للحركة المالية للموظف",
   "Edit FinancialTransactionOfEmployee Hint": "تمكنك هذه الصفحة من البحث والإطلاع على تفاصيل القيود للموظف",
 

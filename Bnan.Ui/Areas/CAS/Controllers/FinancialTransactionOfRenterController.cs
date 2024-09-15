@@ -122,7 +122,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var titles = await setTitle("205", "2205010", "2");
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
 
-            var FinancialTransactionOfRenterAll = _unitOfWork.CrCasAccountReceipt.FindAll(x => currentUser.CrMasUserInformationLessor == x.CrCasAccountReceiptLessorCode && id == x.CrCasAccountReceiptRenterId && (x.CrCasAccountReceiptType == "301" || x.CrCasAccountReceiptType == "302") && x.CrCasAccountReceiptRenterId != null, new[] { "CrCasAccountReceiptReferenceTypeNavigation", "CrCasAccountReceiptUserNavigation", "CrCasAccountReceiptNavigation" }).OrderBy(x => x.CrCasAccountReceiptDate).ToList();
+            var startDate = DateTime.Now.AddDays(-30);
+            var endDate = DateTime.Now;
+
+            var FinancialTransactionOfRenterAll = _unitOfWork.CrCasAccountReceipt.FindAll(x => currentUser.CrMasUserInformationLessor == x.CrCasAccountReceiptLessorCode && id == x.CrCasAccountReceiptRenterId && (x.CrCasAccountReceiptType == "301" || x.CrCasAccountReceiptType == "302") && x.CrCasAccountReceiptRenterId != null && x.CrCasAccountReceiptDate < endDate && x.CrCasAccountReceiptDate > startDate.Date, new[] { "CrCasAccountReceiptReferenceTypeNavigation", "CrCasAccountReceiptUserNavigation", "CrCasAccountReceiptNavigation" }).OrderBy(x => x.CrCasAccountReceiptDate).ToList();
             var AllRenterLessor = _unitOfWork.CrCasRenterLessor.GetAll().Where(x => FinancialTransactionOfRenterAll.Any(y => y.CrCasAccountReceiptLessorCode == x.CrCasRenterLessorCode && y.CrCasAccountReceiptRenterId == x.CrCasRenterLessorId)).ToList();
 
 
@@ -174,9 +177,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             var Single_data_Account_Reciept = _unitOfWork.CrCasRenterLessor.Find(x => id == x.CrCasRenterLessorId && x.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor);
 
-            ViewBag.Single_FT_RenterId = Single_data.CrMasRenterInformationId;
-            ViewBag.Single_FT_RenterNameAr = Single_data.CrMasRenterInformationArName;
-            ViewBag.Single_FT_RenterNameEn = Single_data.CrMasRenterInformationEnName;
+            ViewBag.Single_FT_RenterId = Single_data?.CrMasRenterInformationId;
+            ViewBag.Single_FT_RenterNameAr = Single_data?.CrMasRenterInformationArName;
+            ViewBag.Single_FT_RenterNameEn = Single_data?.CrMasRenterInformationEnName;
 
             
             ViewBag.AvailableBalance = Single_data_Account_Reciept?.CrCasRenterLessorAvailableBalance?.ToString("N2", CultureInfo.InvariantCulture);

@@ -121,7 +121,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var titles = await setTitle("205", "2205011", "2");
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
 
-            var FinancialTransactionOfSalesPointAll = _unitOfWork.CrCasAccountReceipt.FindAll(x => currentUser.CrMasUserInformationLessor == x.CrCasAccountReceiptLessorCode && (x.CrCasAccountReceiptType == "301" || x.CrCasAccountReceiptType == "302") , new[] { "CrCasAccountReceiptReferenceTypeNavigation", "CrCasAccountReceiptUserNavigation" , "CrCasAccountReceiptSalesPointNavigation" }).Where(x=> id == x.CrCasAccountReceiptSalesPointNavigation?.CrCasAccountSalesPointCode && x.CrCasAccountReceiptSalesPointNavigation?.CrCasAccountSalesPointNo != null).OrderBy(x => x.CrCasAccountReceiptDate).ToList();
+            var startDate = DateTime.Now.AddDays(-30);
+            var endDate = DateTime.Now;
+
+            var FinancialTransactionOfSalesPointAll = _unitOfWork.CrCasAccountReceipt.FindAll(x => currentUser.CrMasUserInformationLessor == x.CrCasAccountReceiptLessorCode && (x.CrCasAccountReceiptType == "301" || x.CrCasAccountReceiptType == "302") && x.CrCasAccountReceiptDate < endDate && x.CrCasAccountReceiptDate > startDate.Date, new[] { "CrCasAccountReceiptReferenceTypeNavigation", "CrCasAccountReceiptUserNavigation" , "CrCasAccountReceiptSalesPointNavigation" }).Where(x=> id == x.CrCasAccountReceiptSalesPointNavigation?.CrCasAccountSalesPointCode && x.CrCasAccountReceiptSalesPointNavigation?.CrCasAccountSalesPointNo != null).OrderBy(x => x.CrCasAccountReceiptDate).ToList();
             
 
             FinancialTransactionOfSalesPointVM FT_SalesPointVM = new FinancialTransactionOfSalesPointVM();
@@ -180,6 +183,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             {
                 return RedirectToAction("Index");
             }
+            ViewBag.startDate = DateTime.Parse(_mini).Date.ToString("yyyy-MM-dd");
+            ViewBag.EndDate = DateTime.Parse(_max).Date.ToString("yyyy-MM-dd");
             //To Set Title !!!!!!!!!!!!!
             var titles = await setTitle("205", "2205011", "2");
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);

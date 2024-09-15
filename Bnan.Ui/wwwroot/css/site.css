@@ -43,17 +43,18 @@ table.dataTable thead .sorting_desc_disabled:before {
 }
 
 #basic-datatable {
-/*  border: none rgb(238, 238, 238);
-*/}
+    /*  border: none rgb(238, 238, 238);
+*/
+}
 
-    #basic-datatable tr:first-child{
-        border:none
+    #basic-datatable tr:first-child {
+        border: none
     }
 
-    #basic-datatable_info {
-        display: none;
-        padding: 0;
-    }
+#basic-datatable_info {
+    display: none;
+    padding: 0;
+}
 
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before, table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control:before {
     background-color: var(--primary-color)
@@ -119,7 +120,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before, table
 }
 /* navbar */
 .navbar-custom {
-    box-shadow: none !important ;
+    box-shadow: none !important;
 }
 
     .navbar-custom .topbar-menu .nav-link {
@@ -192,8 +193,7 @@ body[data-leftbar-compact-mode="condensed"]:not(.authentication-bg) .logo {
     background: white;
     border: solid #EEE 1px;
     height: 67vh;
-    overflow:hidden
-
+    overflow: hidden
 }
 
     .sub-container .row:first-child {
@@ -240,8 +240,8 @@ body[data-leftbar-compact-mode="condensed"]:not(.authentication-bg) .logo {
 /*Session Expire Style*/
 .modal-backdrop.fade.show {
     background-color: transparent;
- 
 }
+
 .modal-content {
     box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.5);
 }
@@ -264,12 +264,12 @@ body[data-leftbar-compact-mode="condensed"]:not(.authentication-bg) .logo {
     border: none;
 }
 
-.form-label{
-    white-space:nowrap;
+.form-label {
+    white-space: nowrap;
 }
 
-#basic-datatable_wrapper .row:nth-child(2) > div{
-    padding:0;
+#basic-datatable_wrapper .row:nth-child(2) > div {
+    padding: 0;
 }
 
 
@@ -289,7 +289,7 @@ body[data-leftbar-compact-mode="condensed"]:not(.authentication-bg) .logo {
     height: 100%;
 }
 
-.form-contain .row{
+.form-contain .row {
     align-items: baseline
 }
 
@@ -299,7 +299,6 @@ body[data-leftbar-compact-mode="condensed"]:not(.authentication-bg) .logo {
     text-transform: uppercase;
     padding: 60px 0;
     font-size: 17px;
-
 }
 
 /*======================================================================
@@ -493,3 +492,104 @@ body[data-leftbar-compact-mode="condensed"]:not(.authentication-bg) .logo {
 
 
 
+/*======================================================================
+//           ========================== Card style ==============================================================================================
+//          =====================================================================*/
+.card-title {
+    color: #FF9626;
+    text-shadow: 1px 4px 4px rgb(187 187 187 / 68%);
+    font-size: 1rem;
+    letter-spacing: 0.32px;
+}
+
+.account-modal-header {
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+    border-bottom: none;
+    padding: 0;
+}
+
+    .account-modal-header .close {
+        padding: 1rem;
+        padding-left: .1rem;
+        margin: -1rem -1rem -2.5rem auto;
+        direction: rtl;
+    }
+
+.account-modal-rows {
+    justify-content: flex-start;
+    flex-direction: row-reverse;
+    font-weight: 500;
+}
+
+
+.signature-modal-content {
+    border-radius: 8px;
+    border: 2px solid #FF9626;
+    background: #FFF;
+    backdrop-filter: blur(10px);
+}
+
+.signature-modal-header {
+    flex-direction: column-reverse;
+    background-color: #FCFCFC;
+}
+
+.form-card {
+    background: rgb(255, 255, 255);
+    border: 1px solid #39629c9c;
+    border-radius: 7px;
+    box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2);
+    padding: 20px 10px 10px 10px;
+    box-sizing: border-box;
+    width: 94%;
+    position: relative;
+    margin: 5px;
+}
+
+.form-card {
+    display: flex;
+    flex-direction: column;
+    color: black;
+}
+
+
+
+
+/*The background card*/
+.card {
+    z-index: 0;
+    border: none;
+    border-radius: 0px;
+    position: relative;
+}
+
+.card-title {
+    color: #FF9626;
+    text-shadow: 1px 4px 4px rgb(187 187 187 / 68%);
+    font-size: 1.2rem;
+}
+
+.modal-header .close {
+    padding: 0;
+    margin: 0;
+}
+
+.report-modal-content {
+    border: 3px solid #FF9626
+}
+
+.close {
+    color: #FF9626
+}
+
+.data-details {
+    border: 1px solid #39629C;
+    margin: 4px;
+    border-radius: 8px;
+    margin: 20px;
+    padding: 8px;
+    font-size: .75rem;
+    box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2);
+}

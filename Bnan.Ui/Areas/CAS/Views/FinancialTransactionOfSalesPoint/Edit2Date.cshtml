@@ -921,15 +921,17 @@ else
     <script>
         $(document).ready(function () {
             var today = new Date();
-            var startDate = new Date();
-            var EndDate = new Date();
-            startDate.setDate(today.getDate() - 30);
+            //var startDate = new Date();
+            //var EndDate = new Date();
+            //startDate.setDate(today.getDate() - 30);
 
 
-            var startDates = $("startDateInput").val();
+            //var startDates = $("startDateInput").val();
+            var startDates = '@ViewBag.startDate';
             var StartformattedDate = new Date(startDates);
 
-            var EndDates = $("endDateInput").val();
+            //var EndDates = $("endDateInput").val();
+            var EndDates = '@ViewBag.EndDate';
             var EndformattedDate = new Date(EndDates);
 
 
@@ -945,20 +947,20 @@ else
 
             $("#startDateInput").datepicker({
                 dateFormat: 'yy/mm/dd',
-                defaultDate: startDate, // Set the minimum date to today
+                defaultDate: StartformattedDate, // Set the minimum date to today
                 maxDate: today,
             }).datepicker("widget").addClass("datepicker-widget");
-            $("#startDateInput").datepicker("setDate", startDate);
+            $("#startDateInput").datepicker("setDate", StartformattedDate);
             $("#startDateInput").click(function () {
                 $(this).datepicker("show");
             });
 
             $("#endDateInput").datepicker({
                 dateFormat: 'yy/mm/dd',
-                defaultDate: today,// Set the minimum date to today
+                defaultDate: EndformattedDate,// Set the minimum date to today
                 maxDate: today,
             }).datepicker("widget").addClass("datepicker-widget");
-            $("#endDateInput").datepicker("setDate", today);
+            $("#endDateInput").datepicker("setDate", EndformattedDate);
             $("#endDateInput").click(function () {
                 $(this).datepicker("show");
             });

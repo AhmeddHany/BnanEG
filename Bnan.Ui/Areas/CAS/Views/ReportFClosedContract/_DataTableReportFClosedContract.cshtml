@@ -53,11 +53,13 @@
                     <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["RenterContractId"]</th>
                     @*<th aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_Branch"]</th>*@
                     @*<th aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_StartDate"]</th>*@
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_EndDate_actuly_new"]</th>
+                    @*<th aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_EndDate_actuly_new"]</th>*@
+                    <th aria-label="Position: activate to sort column ascending">@localizer["SettlementDate"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_DayCount"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_Actuly_Value"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_expenses"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_compensation"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["NetContract"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_Paid_value"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_Remain_value"]</th>
                     @*<th aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_User_proceduer"]</th>*@
@@ -92,13 +94,16 @@
                         <td id="_Nc">@item.CrCasRenterContractBasicActualTotal?.ToString("N2",CultureInfo.InvariantCulture)</td>
                         <td id="_Nc">@item.CrCasRenterContractBasicExpensesValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
                         <td id="_Nc">@item.CrCasRenterContractBasicCompensationValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
-                        <td id="_Nc">@item.CrCasRenterContractBasicAmountPaid?.ToString("N2",CultureInfo.InvariantCulture)</td>
                         <td id="_Nc">
                             @{
-                                var remain = item.CrCasRenterContractBasicActualTotal - item.CrCasRenterContractBasicAmountPaid;
+                                var AmountRequired = item.CrCasRenterContractBasicActualTotal - item.CrCasRenterContractBasicExpensesValue + item.CrCasRenterContractBasicCompensationValue;
+                                var AmountPaid = item.CrCasRenterContractBasicAmountPaidAdvance + item.CrCasRenterContractBasicAmountPaid;
+                                var remain = AmountRequired - AmountPaid;
                             }
-                            @remain?.ToString("N2",CultureInfo.InvariantCulture)
-                            </td>
+                            @AmountRequired?.ToString("N2",CultureInfo.InvariantCulture)
+                        </td>
+                        <td id="_Nc">@AmountPaid?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                        <td id="_Nc">@remain?.ToString("N2",CultureInfo.InvariantCulture)</td>
                         @*<td>@Model?.All_users?.Where(x=>x.Item1 == item.CrCasRenterContractBasicUserInsert)?.FirstOrDefault().Item3</td>*@
 
                         @{
@@ -147,11 +152,13 @@ else
                     <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["RenterContractId"]</th>
                     @*<th aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_Branch"]</th>*@
                     @*<th aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_StartDate"]</th>*@
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_EndDate_actuly_new"]</th>
+                    @*<th aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_EndDate_actuly_new"]</th>*@
+                    <th aria-label="Position: activate to sort column ascending">@localizer["SettlementDate"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_DayCount"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_Actuly_Value"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_expenses"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_compensation"]</th>
+                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["NetContract"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_Paid_value"]</th>
                     <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_Remain_value"]</th>
                     @*<th aria-label="Position: activate to sort column ascending">@localizer["Closed_contract_User_proceduer"]</th>*@
@@ -186,13 +193,17 @@ else
                         <td id="_Nc">@item.CrCasRenterContractBasicActualTotal?.ToString("N2",CultureInfo.InvariantCulture)</td>
                         <td id="_Nc">@item.CrCasRenterContractBasicExpensesValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
                         <td id="_Nc">@item.CrCasRenterContractBasicCompensationValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
-                        <td id="_Nc">@item.CrCasRenterContractBasicAmountPaid?.ToString("N2",CultureInfo.InvariantCulture)</td>
                         <td id="_Nc">
                             @{
-                                var remain = item.CrCasRenterContractBasicActualTotal - item.CrCasRenterContractBasicAmountPaid;
+                                var AmountRequired = item.CrCasRenterContractBasicActualTotal - item.CrCasRenterContractBasicExpensesValue + item.CrCasRenterContractBasicCompensationValue;
+                                var AmountPaid = item.CrCasRenterContractBasicAmountPaidAdvance + item.CrCasRenterContractBasicAmountPaid;
+                                var remain = AmountRequired - AmountPaid;
+
                             }
-                            @remain?.ToString("N2",CultureInfo.InvariantCulture)
-                        </td>
+                            @AmountRequired?.ToString("N2",CultureInfo.InvariantCulture)
+                            </td>
+                        <td id="_Nc">@AmountPaid?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                        <td id="_Nc">@remain?.ToString("N2",CultureInfo.InvariantCulture)</td>
                         @*<td>@Model?.All_users?.Where(x=>x.Item1 == item.CrCasRenterContractBasicUserInsert)?.FirstOrDefault().Item2</td>*@
 
                         @{

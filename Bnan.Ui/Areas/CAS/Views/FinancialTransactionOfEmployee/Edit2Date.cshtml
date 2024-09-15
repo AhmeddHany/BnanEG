@@ -189,7 +189,7 @@
 
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<link href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />
+@*<link href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />*@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 
@@ -360,7 +360,7 @@ else
                 </div>
                 <div class="col-md-4">
                         @*<input type="text" class="form-control" hidden asp-for="CrCasEmployeeLessorDealingMechanism" maxlength="100" width="80%" />*@
-                        @*<input type="text" class="form-control" hidden asp-for="CrCasEmployeeLessorReasons" maxlength="100" width="80%" />*@
+                        <input type="text" class="form-control" id="FTR_Id" hidden value="@ViewBag.EmpId" maxlength="100" width="80%" />
 
                 </div>
             </div> @*End row*@
@@ -903,6 +903,33 @@ else
 
     </script>
 
+        <script>
+        function dateTable_resetStyle(){
+                        $(window).resize(function () {
+                console.log($(window).height());
+                $('.dataTables_scrollBody').css('height', (50));
+            });
+
+            var cultureInfo_ = '@System.Globalization.CultureInfo.CurrentCulture.Name'; // OK Done OK OK
+            if (cultureInfo_ == "en-US") {
+
+            $('#basic-datatable').dataTable({
+                "sScrollY": (340),
+                "bPaginate": false,
+                "bJQueryUI": true,
+                "bDestroy": true
+            });
+           
+            }else{
+            $('#basic-datatable').dataTable({
+                "sScrollY": (300),
+                "bPaginate": false,
+                "bJQueryUI": true,
+                "bDestroy": true
+            });
+            }
+        }
+    </script>
 
     @*Get AccountBank Using filter*@
 
@@ -1023,8 +1050,9 @@ else
                 url: "@Url.Action("GetAllContractsByDate_status", "FinancialTransactionOfEmployee", new { Area = "CAS" })",
             success: function (response) {
                 $(".dataTable").html(response);
-                set_basic_datatable();
-                },
+                //set_basic_datatable();
+                dateTable_resetStyle();
+            },
             })
         }
             //on Click Filter Radio Button GetLessorsByStatus

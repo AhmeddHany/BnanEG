@@ -151,8 +151,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             ViewBag.BankEn = Bank?.CrMasSupAccountBankEnName;
 
             var DrivingType = _unitOfWork.CrMasSupRenterDrivingLicense.Find(x => x.CrMasSupRenterDrivingLicenseCode == contract.CrCasRenterLessorNavigation.CrMasRenterInformationDrivingLicenseType);
-            ViewBag.DrivingTypeAr = DrivingType.CrMasSupRenterDrivingLicenseArName;
-            ViewBag.DrivingTypeEn = DrivingType.CrMasSupRenterDrivingLicenseEnName;
+            ViewBag.DrivingTypeAr = DrivingType?.CrMasSupRenterDrivingLicenseArName;
+            ViewBag.DrivingTypeEn = DrivingType?.CrMasSupRenterDrivingLicenseEnName;
 
             int countRenterLessorInformations = 0;
             ViewBag.RenterLessorInformations_Count = countRenterLessorInformations;
