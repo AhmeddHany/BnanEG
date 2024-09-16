@@ -39,7 +39,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             //To Set Title 
             var titles = await setTitle("501", "5501004", "5");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
+            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
 
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
@@ -122,7 +122,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             //To Set Title 
             var titles = await setTitle("501", "5501004", "5");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
+            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bsLayoutVM = await GetBranchesAndLayout();

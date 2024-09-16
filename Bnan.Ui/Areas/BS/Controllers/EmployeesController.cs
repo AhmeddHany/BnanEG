@@ -3,19 +3,13 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.BS;
-using Bnan.Ui.ViewModels.CAS;
-using Bnan.Ui.ViewModels.Identitiy;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 using NToastNotify;
-using System.Globalization;
 
 namespace Bnan.Ui.Areas.BS.Controllers
 {
@@ -42,7 +36,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
         public async Task<IActionResult> MyAccount()
         { //To Set Title 
             var titles = await setTitle("501", "5501013", "5");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
+            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             var bsLayoutVM = await GetBranchesAndLayout();
             var userLogin = await _userManager.GetUserAsync(User);
             var user = await _userService.GetUserByUserNameAsync(userLogin.CrMasUserInformationCode);
@@ -52,7 +46,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             return View(bsLayoutVM);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(BSLayoutVM model, IFormFile Profile_Photo, IFormFile signature_img,string signatureImg1)
+        public async Task<IActionResult> Edit(BSLayoutVM model, IFormFile Profile_Photo, IFormFile signature_img, string signatureImg1)
         {
             var userLogin = await _userManager.GetUserAsync(User);
             var user = await _userService.GetUserByUserNameAsync(userLogin.CrMasUserInformationCode);
@@ -84,13 +78,13 @@ namespace Bnan.Ui.Areas.BS.Controllers
             // Signture 
             if (!string.IsNullOrEmpty(signatureImg1))
             {
-                filePathSignture = await FileExtensions.SaveSigntureImage(_webHostEnvironment, signatureImg1, user.CrMasUserInformationCode, user.CrMasUserInformationSignature,"Users");
+                filePathSignture = await FileExtensions.SaveSigntureImage(_webHostEnvironment, signatureImg1, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, "Users");
             }
             else
             {
                 filePathSignture = user.CrMasUserInformationSignature;
             }
-            
+
             if (user != null)
             {
                 user.CrMasUserInformationDefaultLanguage = UserModel.CrMasUserInformationDefaultLanguage;

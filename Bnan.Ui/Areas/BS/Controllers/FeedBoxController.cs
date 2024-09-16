@@ -4,14 +4,11 @@ using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.BS;
-using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Globalization;
 
 namespace Bnan.Ui.Areas.BS.Controllers
 {
@@ -37,7 +34,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var userLogin = await _userManager.GetUserAsync(User);
             //To Set Title 
             var titles = await setTitle("501", "5501010", "5");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
+            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bSLayoutVM = await GetBranchesAndLayout();
 
@@ -49,7 +46,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             //Get ACcount Receipt
             DateTime year = DateTime.Now;
             var y = year.ToString("yy");
-            var autoinc1 = GetFeedBoxAccountReceipt(lessorCode, bSLayoutVM.SelectedBranch,"301").CrCasAccountReceiptNo;
+            var autoinc1 = GetFeedBoxAccountReceipt(lessorCode, bSLayoutVM.SelectedBranch, "301").CrCasAccountReceiptNo;
             var AccountReceiptNo = y + "-" + "1" + "301" + "-" + lessorCode + bSLayoutVM.SelectedBranch + "-" + autoinc1;
             ViewBag.AccountReceiptNo = AccountReceiptNo;
             ViewBag.ReferenceNo = adminstrive.CrCasSysAdministrativeProceduresNo;
@@ -58,7 +55,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             return View(bSLayoutVM);
         }
         [HttpPost]
-        public async Task<IActionResult> AcceptOrNot(string AdministrativeNo, string status,string branch, string reasons, string AccountReceiptNo, string SavePdfArReceipt, string SavePdfEnReceipt)
+        public async Task<IActionResult> AcceptOrNot(string AdministrativeNo, string status, string branch, string reasons, string AccountReceiptNo, string SavePdfArReceipt, string SavePdfEnReceipt)
         {
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
@@ -95,7 +92,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             if (CheckUpdateAdminstrive && CheckAddReceipt && CheckUpdateBranch &&
                    CheckUpdateSalesPoint && CheckUpdateUser && CheckUpdateBranchValidity)
             {
-                if (await _unitOfWork.CompleteAsync()>0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 else _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             }
             else _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -103,12 +100,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
             return RedirectToAction("Index", "Home");
 
         }
-        private CrCasAccountReceipt GetFeedBoxAccountReceipt(string LessorCode, string BranchCode,string procedure)
+        private CrCasAccountReceipt GetFeedBoxAccountReceipt(string LessorCode, string BranchCode, string procedure)
         {
             DateTime year = DateTime.Now;
             var y = year.ToString("yy");
             var Lrecord = _unitOfWork.CrCasAccountReceipt.FindAll(x => x.CrCasAccountReceiptLessorCode == LessorCode &&
-                                                                       x.CrCasAccountReceiptYear == y && x.CrCasAccountReceiptBranchCode == BranchCode&&x.CrCasAccountReceiptType==procedure)
+                                                                       x.CrCasAccountReceiptYear == y && x.CrCasAccountReceiptBranchCode == BranchCode && x.CrCasAccountReceiptType == procedure)
                                                              .Max(x => x.CrCasAccountReceiptNo.Substring(x.CrCasAccountReceiptNo.Length - 6, 6));
 
             CrCasAccountReceipt c = new CrCasAccountReceipt();

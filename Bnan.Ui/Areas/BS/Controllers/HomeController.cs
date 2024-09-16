@@ -3,21 +3,15 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.Areas.CAS.Controllers;
 using Bnan.Ui.ViewModels.BS;
-using Bnan.Ui.ViewModels.CAS;
-using Bnan.Ui.ViewModels.Owners;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 using NToastNotify;
 using System.Globalization;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Bnan.Ui.Areas.BS.Controllers
 {
@@ -36,8 +30,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             //To Set Title 
             var userLogin = await _userManager.GetUserAsync(User);
-            if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Branches", "", "", "", "", userLogin.CrMasUserInformationEnName);
-            else await ViewData.SetPageTitleAsync("الفروع", "", "", "", "", userLogin.CrMasUserInformationArName);
+            if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Branches", "Home", "", "", "", userLogin.CrMasUserInformationEnName);
+            else await ViewData.SetPageTitleAsync("الفروع", "الرئيسية", "", "", "", userLogin.CrMasUserInformationArName);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bSLayoutVM = await GetBranchesAndLayout();
             var Cars = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationBranch == bSLayoutVM.SelectedBranch, new[] { "CrCasCarInformationDistributionNavigation" }).ToList();
@@ -129,7 +123,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             {
                 var userLogin = await _userManager.GetUserAsync(User);
                 if (userLogin == null) throw new Exception("User not found.");
-                
+
 
                 var lessorCode = userLogin.CrMasUserInformationLessor;
                 var BranchCode = userLogin.CrMasUserInformationDefaultBranch;
@@ -139,14 +133,14 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation", "CrCasCarInformationCategoryNavigation" });
 
                 if (RentedCars == null) throw new Exception("No rented cars found.");
-                
+
 
                 var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsync(x =>
                     x.CrCasBranchInformationLessor == lessorCode &&
                     x.CrCasBranchInformationStatus != Status.Deleted);
 
                 if (branches == null) throw new Exception("No branches found.");
-                
+
 
                 BSLayoutVM bSLayoutVM = new BSLayoutVM()
                 {
@@ -162,7 +156,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
             catch (Exception ex)
             {
-                    return PartialView("_Error", ex.Message);
+                return PartialView("_Error", ex.Message);
             }
         }
         [HttpGet]
