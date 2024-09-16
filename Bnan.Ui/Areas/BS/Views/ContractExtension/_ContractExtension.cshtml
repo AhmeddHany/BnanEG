@@ -82,7 +82,12 @@
 
                     if (daysNo < 0)
                     {
-                        displayValue = "0";
+                        if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG") displayValue = "Expire";
+                        else
+                        {
+                            displayValue = "منتهي";
+                            direction = "rtl"; // Set direction for Arabic
+                        }
                     }
                     else if (daysNo == 0)
                     {
@@ -90,7 +95,12 @@
                         {
                             if (minutesNo <= 0)
                             {
-                                displayValue = "0";
+                                if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG") displayValue = "Expire";
+                                else
+                                {
+                                    displayValue = "منتهي";
+                                    direction = "rtl"; // Set direction for Arabic
+                                }
                             }
                             else
                             {
