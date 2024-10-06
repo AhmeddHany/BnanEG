@@ -2646,9 +2646,9 @@
 
                 if (!videoElement) {
                     IDuploadContainer.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <video id="videoElement" autoplay></video>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <video id="videoElement" autoplay></video>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
                     videoElement = document.getElementById('videoElement');
                     photo = document.getElementById('photo');
 
@@ -5793,22 +5793,9 @@
                     selectedArabicName = "";
                 }
                 var reasonPayment = document.getElementById("FormControl-last-Textarea").value;
-                // Signture Image
-                const RenterName = decodeHTMLEntities(RenterInformation.personalArName);
-                var renterSignture = RenterInformation.signture.replace('~', '');
-                var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
-                var userSignture = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
-                var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorArName");
-                var directorOfLessorSignture = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
-                var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
-                var directorOfBranchSignture = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
-                const signatureImg1 = await loadImage(directorOfLessorSignture);
-                const signatureImg2 = await loadImage(userSignture);
-                const signatureImg3 = await loadImage(directorOfBranchSignture);
-                var signatureImg4 = "";
-                if (renterSignture) {
-                    signatureImg4 = await loadImage(renterSignture);
-                }                // Get Image And Text On
+                // // Signture Image
+                const namesAndsignatures = await loadArSignatures();
+                // Get Image And Text On
                 // Read the image file as a Blob
                 const responseImage = await fetch(imagePath);
                 const blob = await responseImage.blob();
@@ -5826,7 +5813,7 @@
                     ctx.fillStyle = "black";
                     // Receipt and type and renter and car name
                     ctx.fillText(InvoiceAccountNo, canvas.width - 110, 610);
-                    ctx.fillText(RenterName, canvas.width - 125, 1075);
+                    ctx.fillText(namesAndsignatures.renterName, canvas.width - 125, 1075);
                     ctx.fillText(CarName, canvas.width - 125, 1175);
 
                     ctx.font = "bold 42px serif";
@@ -5972,16 +5959,17 @@
                     ctx.fillText(tTotalTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1880, 2250);
                     ctx.fillText(TotalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 2180, 2250);
                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total
+
                     // director and renter and user
-                    ctx.fillText(directorOfLessor, canvas.width - 340, 3050);
-                    ctx.fillText(userName, canvas.width - 1140, 3050);
-                    ctx.fillText(directorOfBranch, canvas.width - 340, 3190);
-                    ctx.fillText(RenterName, canvas.width - 1140, 3200);
-                    if (signatureImg4) {
-                        ctx.drawImage(signatureImg4, canvas.width - 1350, 3125, 200, 100);
+                    ctx.fillText(namesAndsignatures.directorOfLessor, canvas.width - 340, 3050);
+                    ctx.fillText(namesAndsignatures.userName, canvas.width - 1140, 3050);
+                    ctx.fillText(namesAndsignatures.directorOfBranch, canvas.width - 340, 3190);
+                    ctx.fillText(namesAndsignatures.renterName, canvas.width - 1140, 3200);
+                    if(namesAndsignatures.signatureImg4){
+                        ctx.drawImage(namesAndsignatures.signatureImg4, canvas.width - 1350, 3125, 200, 100);
                     }
+
                     canvas.toBlob(async function (blob) {
-                        var message = ` عزيزي / ${RenterName} , يمكنك مراجعة الفاتورة عن طريق تحميل الملف المرفق `
                         createPdfAndSendToWhatsApp(null, InvoiceAccountNo, blob, "SavePdfArInvoice", "ar");
                     }, 'image/png');
                 };
@@ -6047,22 +6035,7 @@
                 }
                 var reasonPayment = document.getElementById("FormControl-last-Textarea").value;
                 // Signture Image
-                const RenterName = decodeHTMLEntities(RenterInformation.personalEnName);
-                var renterSignture = RenterInformation.signture.replace('~', '');
-                var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
-                var userSignture = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
-                var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorEnName");
-                var directorOfLessorSignture = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
-                var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorEnName");
-                var directorOfBranchSignture = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
-                const signatureImg1 = await loadImage(directorOfLessorSignture);
-                const signatureImg2 = await loadImage(userSignture);
-                const signatureImg3 = await loadImage(directorOfBranchSignture);
-                var signatureImg4 = "";
-                if (renterSignture) {
-                    signatureImg4 = await loadImage(renterSignture);
-                }
-
+                const namesAndsignatures = await loadEnSignatures();
 
                 // Get Image And Text On
                 // Read the image file as a Blob
@@ -6082,7 +6055,7 @@
                     ctx.fillStyle = "black";
                     // Receipt and type and renter and car name
                     ctx.fillText(InvoiceAccountNo, canvas.width - 2370, 610);
-                    ctx.fillText(RenterName, canvas.width - 2360, 1070);
+                    ctx.fillText(namesAndsignatures.renterName, canvas.width - 2360, 1070);
                     ctx.fillText(CarName, canvas.width - 2360, 1180);
 
                     ctx.font = "bold 42px serif";
@@ -6234,15 +6207,14 @@
 
 
                     // director and renter and user
-                    ctx.fillText(directorOfLessor, canvas.width - 1980, 3050);
-                    ctx.fillText(directorOfBranch, canvas.width - 2020, 3180);
-                    ctx.fillText(userName, canvas.width - 1275, 3050);
-                    ctx.fillText(RenterName, canvas.width - 1275, 3180);
-                    if (signatureImg4) {
-                        ctx.drawImage(signatureImg4, canvas.width - 1250, 3125, 200, 100);
+                    ctx.fillText(namesAndsignatures.directorOfLessor, canvas.width - 1980, 3050);
+                    ctx.fillText(namesAndsignatures.directorOfBranch, canvas.width - 2020, 3180);
+                    ctx.fillText(namesAndsignatures.userName, canvas.width - 1275, 3050);
+                    ctx.fillText(namesAndsignatures.renterName, canvas.width - 1275, 3180);
+                    if(namesAndsignatures.signatureImg4){
+                        ctx.drawImage(namesAndsignatures.signatureImg4, canvas.width - 1250, 3125, 200, 100);
                     }
                     canvas.toBlob(async function (blob) {
-                        var message = `Dear / ${RenterName}, you can review the invoice by downloading the attached file.`
                         createPdfAndSendToWhatsApp(null, InvoiceAccountNo, blob, "SavePdfEnInvoice", "en");
                     }, 'image/png');
                 };
@@ -6294,21 +6266,9 @@
                 var phaseFor = `${contractNo}  دفعة تحت الحساب لعقد ايجار السيارة لعقد`;
 
                 // Signture Image
-                const RenterName = decodeHTMLEntities(RenterInformation.personalArName);
-                var renterSignture = RenterInformation.signture.replace('~', '');
-                var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
-                var userSignture = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
-                var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorArName");
-                var directorOfLessorSignture = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
-                var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
-                var directorOfBranchSignture = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
-                const signatureImg1 = await loadImage(directorOfLessorSignture);
-                const signatureImg2 = await loadImage(userSignture);
-                const signatureImg3 = await loadImage(directorOfBranchSignture);
-                var signatureImg4 = "";
-                if (renterSignture) {
-                    signatureImg4 = await loadImage(renterSignture);
-                }
+
+                const namesAndsignatures = await loadArSignatures();
+
                 // Get Image And Text On
                 // Read the image file as a Blob
                 let canvas_width = 2481;
@@ -6318,27 +6278,25 @@
                     { content: miladiDateString, x: canvas_width - 305, y: 685 },
                     { content: beforeDecimal, x: canvas_width - 2005, y: 720 },
                     { content: afterDecimal, x: canvas_width - 1940, y: 720 },
-                    { content: RenterName, x: canvas_width - 480, y: 905 },
+                    { content: namesAndsignatures.renterName, x: canvas_width - 480, y: 905 },
                     { content: firstHalf, x: canvas_width - 380, y: 1005 },
                     { content: secondHalf, x: canvas_width - 380, y: 1070 },
                     { content: selectedArabicName, x: canvas_width - 400, y: 1185 },
                     { content: phaseFor, x: canvas_width - 390, y: 1285 },
                     { content: reasonPayment, x: canvas_width - 350, y: 1385 },
 
-                    { content: directorOfLessor, x: canvas_width - 320, y: 1568 },
-                    { content: userName, x: canvas_width - 1120, y: 1568 },
-                    { content: directorOfBranch, x: canvas_width - 290, y: 1705 },
-                    { content: RenterName, x: canvas_width - 1120, y: 1705 },
+                    { content: namesAndsignatures.directorOfLessor, x: canvas_width - 320, y: 1568 },
+                    { content: namesAndsignatures.userName, x: canvas_width - 1120, y: 1568 },
+                    { content: namesAndsignatures.directorOfBranch, x: canvas_width - 290, y: 1705 },
+                    { content: namesAndsignatures.renterName, x: canvas_width - 1120, y: 1705 },
 
                 ];
                 let signatures = [
-                    { content: signatureImg1, x: canvas_width - 400, y: 1495, width: 200, height: 100 },
-                    { content: signatureImg2, x: canvas_width - 1170, y: 1495, width: 200, height: 100 },
-                    { content: signatureImg3, x: canvas_width - 400, y: 1630, width: 200, height: 100 }
+                    { content: namesAndsignatures.signatureImg1, x: canvas_width - 400, y: 1495, width: 200, height: 100 },
+                    { content: namesAndsignatures.signatureImg2, x: canvas_width - 1170, y: 1495, width: 200, height: 100 },
+                    { content: namesAndsignatures.signatureImg3, x: canvas_width - 400, y: 1630, width: 200, height: 100 },
+                    { content: namesAndsignatures.signatureImg4, x: canvas_width - 1170, y: 1630, width: 200, height: 100 }
                 ];
-                if (signatureImg4 !== "") {
-                    signatures.push({ content: signatureImg4, x: canvas_width - 1170, y: 1630, width: 200, height: 100 });
-                }
                 let textStyleOptions = {
                     fontWeight: "bold",
                     fontSize: 37,
@@ -6387,7 +6345,9 @@
                         } else if (textStyleOptions.textAlign === "center") {
                             x -= signatureWidth / 2;
                         }
-                        ctx.drawImage(signature.content, x, signature.y, signature.width, signature.height);
+                        if (signature.content) {
+                            ctx.drawImage(signature.content, x, signature.y, signature.width, signature.height);
+                        }
                     });
 
                     canvas.toBlob(async function (blob) {
@@ -6422,24 +6382,7 @@
                 const AmountPayed = parseFloat(AmountPayedInput).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 const numberToText = await dataChanged(AmountPayed);
                 // Signture Image
-                const RenterName = decodeHTMLEntities(RenterInformation.personalEnName);
-                var renterSignture = RenterInformation.signture.replace('~', '');
-                var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
-                var userSignture = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
-                var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorEnName");
-                var directorOfLessorSignture = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
-                var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorEnName");
-                var directorOfBranchSignture = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
-                const signatureImg1 = await loadImage(directorOfLessorSignture);
-                const signatureImg2 = await loadImage(userSignture);
-                const signatureImg3 = await loadImage(directorOfBranchSignture);
-                var signatureImg4 = "";
-                if (renterSignture) {
-                    signatureImg4 = await loadImage(renterSignture);
-                }
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+                const namesAndsignatures = await loadEnSignatures();
                 // Get Image And Text On
                 // Read the image file as a Blob
                 const responseImage = await fetch(imagePath);
@@ -6470,7 +6413,7 @@
                     ctx.fillText(beforeDecimalNumber, canvas.width - 450, 720);
                     ctx.fillText(afterDecimalNumber, canvas.width - 270, 720);
 
-                    ctx.fillText(RenterName, canvas.width - 2050, 900);
+                    ctx.fillText(namesAndsignatures.renterName, canvas.width - 2050, 900);
                     ctx.fillText(numberToText.en_concatenate, canvas.width - 2100, 1013);
                     ctx.fillText(selectedEnglishName, canvas.width - 2000, 1200);
 
@@ -6480,18 +6423,30 @@
                     ctx.fillText(reasonPayment, canvas.width - 2050, 1420);
                     ctx.font = "bold 37px serif";
 
-                    ctx.fillText(directorOfLessor, canvas.width - 1990, 1560);
-                    ctx.drawImage(signatureImg1, canvas.width - 1700, 1505, 200, 100);
-
-                    ctx.fillText(userName, canvas.width - 1300, 1560);
-                    ctx.drawImage(signatureImg2, canvas.width - 900, 1505, 200, 100);
-
-                    ctx.fillText(directorOfBranch, canvas.width - 2020, 1690);
-                    ctx.drawImage(signatureImg3, canvas.width - 1700, 1630, 200, 100);
-                    ctx.fillText(RenterName, canvas.width - 1300, 1690);
-                    if (signatureImg4 !== "") {
-                        ctx.drawImage(signatureImg4, canvas.width - 900, 1630, 200, 100);
+                    // Draw director of lessor
+                    ctx.fillText(namesAndsignatures.directorOfLessor, canvas.width - 1990, 1560);
+                    if (namesAndsignatures.signatureImg1) {
+                        ctx.drawImage(namesAndsignatures.signatureImg1, canvas.width - 1700, 1505, 200, 100);
                     }
+
+                    // Draw user
+                    ctx.fillText(namesAndsignatures.userName, canvas.width - 1300, 1560);
+                    if (namesAndsignatures.signatureImg2) {
+                        ctx.drawImage(namesAndsignatures.signatureImg2, canvas.width - 900, 1505, 200, 100);
+                    }
+
+                    // Draw director of branch
+                    ctx.fillText(namesAndsignatures.directorOfBranch, canvas.width - 2020, 1690);
+                    if (namesAndsignatures.signatureImg3) {
+                        ctx.drawImage(namesAndsignatures.signatureImg3, canvas.width - 1700, 1630, 200, 100);
+                    }
+
+                    // Draw renter
+                    ctx.fillText(namesAndsignatures.renterName, canvas.width - 1300, 1690);
+                    if (namesAndsignatures.signatureImg4) {
+                        ctx.drawImage(namesAndsignatures.signatureImg4, canvas.width - 900, 1630, 200, 100);
+                    }
+                    
                     canvas.toBlob(async function (blob) {
                         createPdfAndSendToWhatsApp(accountReceiptNo, null, blob, "SavePdfEnReceipt", "en");
                     }, 'image/png');
@@ -6516,13 +6471,14 @@
     <!--Create Ar Contract Pdf-->
     <script>
         function loadImage(src) {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 const img = new Image();
-                img.onload = () => resolve(img);
-                img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
+                img.onload = () => resolve(img); // Resolve with the loaded image
+                img.onerror = () => resolve(); // Resolve with an empty string if loading fails
                 img.src = src;
             });
         }
+
         async function loadArSignatures() {
             console.log("RenterInformation.signture", RenterInformation.signture);
             var renterName = RenterInformation.personalArName;
@@ -6534,36 +6490,59 @@
             var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
             var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
 
-            const promises = [
-                loadImage(directorOfLessorSignature),
-                loadImage(userSignature),
-                loadImage(directorOfBranchSignature)
-            ];
+            const promises = [];
+
+            // Check each signature and push to promises if it exists
+            if (directorOfLessorSignature) {
+                promises.push(loadImage(directorOfLessorSignature));
+            }
+
+            if (userSignature) {
+                promises.push(loadImage(userSignature));
+            }
+
+            if (directorOfBranchSignature) {
+                promises.push(loadImage(directorOfBranchSignature));
+            }
 
             if (renterSignature) {
                 promises.push(loadImage(renterSignature));
             }
 
-            const [signatureImg1, signatureImg2, signatureImg3, signatureImg4] = await Promise.all(promises);
+            // Wait for all valid signatures to load
+            const signatureImages = await Promise.all(promises);
 
             return {
                 renterName: renterName,
                 userName: userName,
                 directorOfLessor: directorOfLessor,
                 directorOfBranch: directorOfBranch,
-                signatureImg1: signatureImg1,
-                signatureImg2: signatureImg2,
-                signatureImg3: signatureImg3,
-                signatureImg4: renterSignature ? signatureImg4 : null
+                signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
+                signatureImg2: signatureImages[1] || '',
+                signatureImg3: signatureImages[2] || '',
+                signatureImg4: signatureImages[3] || ''
             };
         }
         function DrawArNameAndSignture(signatures, ctx, canvas) {
+            // Draw director of lessor
             ctx.fillText(signatures.directorOfLessor, canvas.width - 315, 3055);
-            ctx.drawImage(signatures.signatureImg1, canvas.width - 820, 2980, 200, 100);
+            if (signatures.signatureImg1) {
+                ctx.drawImage(signatures.signatureImg1, canvas.width - 820, 2980, 200, 100);
+            }
+
+            // Draw user
             ctx.fillText(signatures.userName, canvas.width - 1120, 3055);
-            ctx.drawImage(signatures.signatureImg2, canvas.width - 1620, 2980, 200, 100);
+            if (signatures.signatureImg2) {
+                ctx.drawImage(signatures.signatureImg2, canvas.width - 1620, 2980, 200, 100);
+            }
+
+            // Draw director of branch
             ctx.fillText(signatures.directorOfBranch, canvas.width - 280, 3190);
-            ctx.drawImage(signatures.signatureImg3, canvas.width - 820, 3120, 200, 100);
+            if (signatures.signatureImg3) {
+                ctx.drawImage(signatures.signatureImg3, canvas.width - 820, 3120, 200, 100);
+            }
+
+            // Draw renter
             ctx.fillText(signatures.renterName, canvas.width - 1140, 3190);
             if (signatures.signatureImg4) {
                 ctx.drawImage(signatures.signatureImg4, canvas.width - 1620, 3120, 200, 100);
@@ -7449,36 +7428,60 @@
             var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
             // Adding console logs for debugging
             console.log("Loading signatures...");
-            const promises = [
-                loadImage(directorOfLessorSignature),
-                loadImage(userSignature),
-                loadImage(directorOfBranchSignature)
-            ];
+            const promises = [];
+
+            // Check each signature and push to promises if it exists
+            if (directorOfLessorSignature) {
+                promises.push(loadImage(directorOfLessorSignature));
+            }
+
+            if (userSignature) {
+                promises.push(loadImage(userSignature));
+            }
+
+            if (directorOfBranchSignature) {
+                promises.push(loadImage(directorOfBranchSignature));
+            }
 
             if (renterSignature) {
                 promises.push(loadImage(renterSignature));
             }
-            const [signatureImg1, signatureImg2, signatureImg3, signatureImg4] = await Promise.all(promises);
+
+            // Wait for all valid signatures to load
+            const signatureImages = await Promise.all(promises);
+
             return {
                 renterName: renterName,
                 userName: userName,
                 directorOfLessor: directorOfLessor,
                 directorOfBranch: directorOfBranch,
-                signatureImg1: signatureImg1,
-                signatureImg2: signatureImg2,
-                signatureImg3: signatureImg3,
-                signatureImg4: renterSignature ? signatureImg4 : ""
+                signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
+                signatureImg2: signatureImages[1] || '',
+                signatureImg3: signatureImages[2] || '',
+                signatureImg4: signatureImages[3] || ''
             };
         }
         function DrawEnNameAndSignture(signatures, ctx, canvas) {
+            // Draw director of lessor
             ctx.fillText(signatures.directorOfLessor, canvas.width - 2000, 3055);
-            ctx.drawImage(signatures.signatureImg1, canvas.width - 1700, 2980, 200, 100);
-            ctx.fillText(signatures.userName, canvas.width - 1300, 3055);
-            ctx.drawImage(signatures.signatureImg2, canvas.width - 900, 2980, 200, 100);
-            ctx.fillText(signatures.directorOfBranch, canvas.width - 2000, 3190);
-            ctx.drawImage(signatures.signatureImg3, canvas.width - 1700, 3120, 200, 100);
-            ctx.fillText(signatures.renterName, canvas.width - 1300, 3190);
+            if (signatures.signatureImg1) {
+                ctx.drawImage(signatures.signatureImg1, canvas.width - 1700, 2980, 200, 100);
+            }
 
+            // Draw user
+            ctx.fillText(signatures.userName, canvas.width - 1300, 3055);
+            if (signatures.signatureImg2) {
+                ctx.drawImage(signatures.signatureImg2, canvas.width - 900, 2980, 200, 100);
+            }
+
+            // Draw director of branch
+            ctx.fillText(signatures.directorOfBranch, canvas.width - 2000, 3190);
+            if (signatures.signatureImg3) {
+                ctx.drawImage(signatures.signatureImg3, canvas.width - 1700, 3120, 200, 100);
+            }
+
+            // Draw renter
+            ctx.fillText(signatures.renterName, canvas.width - 1300, 3190);
             if (signatures.signatureImg4) {
                 ctx.drawImage(signatures.signatureImg4, canvas.width - 900, 3120, 200, 100);
             }

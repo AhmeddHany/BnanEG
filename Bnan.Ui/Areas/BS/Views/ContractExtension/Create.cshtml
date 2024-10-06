@@ -1233,7 +1233,6 @@
             const AccountReceiptNo = "@ViewBag.AccountReceiptNo";
             const InvoiceAccountNo = "@ViewBag.InvoiceAccount";
             const referenceType = "تمديد عقد";
-            const RenterName = '@Html.Raw(Model.ExtensionContract?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationArName)';
             const CarName = '@Html.Raw(Model.ExtensionContract?.CrCasRenterContractBasicCarSerailNoNavigation?.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionConcatenateArName)';
 
             // last in page
@@ -1265,14 +1264,9 @@
                 selectedArabicText = "";
             }
             //get Data Director lessor and branch and get renter and user
-            var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
-            var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorArName");
-            var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
             var reasonPayment = document.getElementById("reasons").value;
             // Signture Image
-            renterSignture = renterSignture.replace('~', '');
-            var signatureImg = new Image();
-            signatureImg.src = renterSignture;
+            var namesAndSignatures = await loadArSignatures();
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -1294,7 +1288,7 @@
                 ctx.fillStyle = "black";
                 // Receipt and type and renter and car name
                 ctx.fillText(InvoiceAccountNo, canvas.width - 110, 610);
-                ctx.fillText(RenterName, canvas.width - 125, 1075);
+                ctx.fillText(namesAndSignatures.renterName, canvas.width - 125, 1075);
                 ctx.fillText(CarName, canvas.width - 125, 1175);
 
                 ctx.font = "bold 42px serif";
@@ -1376,12 +1370,12 @@
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total
 
                 // director and renter and user
-                ctx.fillText(directorOfLessor, canvas.width - 340, 3050);
-                ctx.fillText(userName, canvas.width - 1140, 3050);
-                ctx.fillText(directorOfBranch, canvas.width - 340, 3190);
-                ctx.fillText(RenterName, canvas.width - 1140, 3200);
-                if (signatureImg) {
-                    ctx.drawImage(signatureImg, canvas.width - 1350, 3125, 200, 100);
+                ctx.fillText(namesAndSignatures.directorOfLessor, canvas.width - 340, 3050);
+                ctx.fillText(namesAndSignatures.userName, canvas.width - 1140, 3050);
+                ctx.fillText(namesAndSignatures.directorOfBranch, canvas.width - 340, 3190);
+                ctx.fillText(namesAndSignatures.renterName, canvas.width - 1140, 3200);
+                if (namesAndSignatures.signatureImg4) {
+                    ctx.drawImage(namesAndSignatures.signatureImg4, canvas.width - 1350, 3125, 200, 100);
                 }
                 canvas.toBlob(async function (blob) {
                     var exitingInvoicePdf = decodeHTMLEntities("@Model.ExtensionContract.ArInvoicePdf.Replace("~", "")")
@@ -1423,7 +1417,6 @@
             const AccountReceiptNo = "@ViewBag.AccountReceiptNo";
             const InvoiceAccountNo = "@ViewBag.InvoiceAccount";
             const referenceType = "Extension Contract";
-            const RenterName = '@Html.Raw(Model.ExtensionContract?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName)';
             const CarName = '@Html.Raw(Model.ExtensionContract?.CrCasRenterContractBasicCarSerailNoNavigation?.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionConcatenateEnName)';
 
             // last in page
@@ -1449,14 +1442,10 @@
             if (selectedEnglishName == "" || selectedEnglishName == undefined || selectedEnglishName == NaN) {
                 selectedEnglishName = "";
             }
-            var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
-            var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorEnName");
-            var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorEnName");
             var reasonPayment = document.getElementById("reasons").value;
+
             // Signture Image
-            renterSignture = renterSignture.replace('~', '');
-            var signatureImg = new Image();
-            signatureImg.src = renterSignture;
+            const namesAndsignatures = await loadArSignatures();
             // Get Image And Text On
             // Read the image file as a Blob
             const responseImage = await fetch(imagePath);
@@ -1475,7 +1464,7 @@
                 ctx.fillStyle = "black";
                 // Receipt and type and renter and car name
                 ctx.fillText(InvoiceAccountNo, canvas.width - 2370, 610);
-                ctx.fillText(RenterName, canvas.width - 2360, 1070);
+                ctx.fillText(namesAndsignatures.renterName, canvas.width - 2360, 1070);
                 ctx.fillText(CarName, canvas.width - 2360, 1180);
 
                 ctx.font = "bold 42px serif";
@@ -1555,12 +1544,12 @@
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total
 
                 // director and renter and user
-                ctx.fillText(directorOfLessor, canvas.width - 1980, 3050);
-                ctx.fillText(directorOfBranch, canvas.width - 2020, 3180);
-                ctx.fillText(userName, canvas.width - 1275, 3050);
-                ctx.fillText(RenterName, canvas.width - 1275, 3180);
-                if (signatureImg) {
-                    ctx.drawImage(signatureImg, canvas.width - 1250, 3125, 200, 100);
+                ctx.fillText(namesAndsignatures.directorOfLessor, canvas.width - 1980, 3050);
+                ctx.fillText(namesAndsignatures.directorOfBranch, canvas.width - 2020, 3180);
+                ctx.fillText(namesAndsignatures.userName, canvas.width - 1275, 3050);
+                ctx.fillText(namesAndsignatures.renterName, canvas.width - 1275, 3180);
+                if (namesAndsignatures.signatureImg4) {
+                    ctx.drawImage(namesAndsignatures.signatureImg4, canvas.width - 1250, 3125, 200, 100);
                 }
                 canvas.toBlob(async function (blob) {
                     var exitingInvoicePdf = decodeHTMLEntities("@Model.ExtensionContract.EnInvoicePdf.Replace("~", "")")
@@ -1596,6 +1585,7 @@
             var totalDiscount = total * discountValue;
             return totalDiscount;
         }
+
         const sendArReceiptToWhatsApp = async () => {
             const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalCatchReceipt";
             const imagePath = imageLessor.replace('~', '');
@@ -1620,22 +1610,8 @@
             const [firstHalf, secondHalf] = splitTextInHalf(numberToText.ar_concatenate)
             var phaseFor = `${contractNo}  دفعة تحت الحساب لعقد ايجار السيارة لعقد`;
             // Signture Image
-            const RenterName = '@Html.Raw(Model.ExtensionContract?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationArName)';
-            renterSignture = renterSignture.replace('~', '');
-            var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
-            var userSignture = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
-            var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorArName");
-            var directorOfLessorSignture = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
-            var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
-            var directorOfBranchSignture = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
-            var signatureImg1 = new Image();
-            var signatureImg2 = new Image();
-            var signatureImg3 = new Image();
-            var signatureImg4 = new Image();
-            signatureImg1.src = directorOfLessorSignture;
-            signatureImg2.src = userSignture;
-            signatureImg3.src = directorOfBranchSignture;
-            signatureImg4.src = renterSignture;
+            const namesAndsignatures = await loadArSignatures();
+
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -1648,24 +1624,24 @@
                 { content: miladiDateString, x: canvas_width - 305, y: 685 },
                 { content: beforeDecimal, x: canvas_width - 2005, y: 720 },
                 { content: afterDecimal, x: canvas_width - 1940, y: 720 },
-                { content: RenterName, x: canvas_width - 480, y: 905 },
+                { content: namesAndsignatures.renterName, x: canvas_width - 480, y: 905 },
                 { content: firstHalf, x: canvas_width - 380, y: 1005 },
                 { content: secondHalf, x: canvas_width - 380, y: 1070 },
                 { content: selectedArabicName, x: canvas_width - 400, y: 1185 },
                 { content: phaseFor, x: canvas_width - 390, y: 1285 },
                 { content: reasonPayment, x: canvas_width - 350, y: 1385 },
 
-                { content: directorOfLessor, x: canvas_width - 320, y: 1568 },
-                { content: userName, x: canvas_width - 1120, y: 1568 },
-                { content: directorOfBranch, x: canvas_width - 290, y: 1705 },
-                { content: RenterName, x: canvas_width - 1120, y: 1705 },
+                { content: namesAndsignatures.directorOfLessor, x: canvas_width - 320, y: 1568 },
+                { content: namesAndsignatures.userName, x: canvas_width - 1120, y: 1568 },
+                { content: namesAndsignatures.directorOfBranch, x: canvas_width - 290, y: 1705 },
+                { content: namesAndsignatures.renterName, x: canvas_width - 1120, y: 1705 },
 
             ];
             let signatures = [
-                { content: signatureImg1, x: canvas_width - 400, y: 1495, width: 200, height: 100 },
-                { content: signatureImg2, x: canvas_width - 1170, y: 1495, width: 200, height: 100 },
-                { content: signatureImg3, x: canvas_width - 400, y: 1630, width: 200, height: 100 },
-                { content: signatureImg4, x: canvas_width - 1170, y: 1630, width: 200, height: 100 },
+                { content: namesAndsignatures.signatureImg1, x: canvas_width - 400, y: 1495, width: 200, height: 100 },
+                { content: namesAndsignatures.signatureImg2, x: canvas_width - 1170, y: 1495, width: 200, height: 100 },
+                { content: namesAndsignatures.signatureImg3, x: canvas_width - 400, y: 1630, width: 200, height: 100 },
+                { content: namesAndsignatures.signatureImg4, x: canvas_width - 1170, y: 1630, width: 200, height: 100 },
             ];
             let textStyleOptions = {
                 fontWeight: "bold",
@@ -1715,7 +1691,9 @@
                     } else if (textStyleOptions.textAlign === "center") {
                         x -= signatureWidth / 2;
                     }
-                    ctx.drawImage(signature.content, x, signature.y, signature.width, signature.height);
+                    if (signature.content) {
+                        ctx.drawImage(signature.content, x, signature.y, signature.width, signature.height);
+                    }
                 });
 
                 canvas.toBlob(async function (blob) {
@@ -1748,23 +1726,7 @@
             const AmountPayed = parseFloat(AmountPayedInput).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const numberToText = await dataChanged(AmountPayed);
             // Signture Image
-            // Signture Image
-            const RenterName = '@Html.Raw(Model.ExtensionContract?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName)';
-            renterSignture = renterSignture.replace('~', '');
-            var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
-            var userSignture = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
-            var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorEnName");
-            var directorOfLessorSignture = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
-            var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorEnName");
-            var directorOfBranchSignture = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
-            var signatureImg1 = new Image();
-            var signatureImg2 = new Image();
-            var signatureImg3 = new Image();
-            var signatureImg4 = new Image();
-            signatureImg1.src = directorOfLessorSignture;
-            signatureImg2.src = userSignture;
-            signatureImg3.src = directorOfBranchSignture;
-            signatureImg4.src = renterSignture;
+            const namesAndsignatures = await loadArSignatures();
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -1798,7 +1760,7 @@
                 ctx.fillText(beforeDecimal, canvas.width - 450, 720);
                 ctx.fillText(afterDecimal, canvas.width - 270, 720);
 
-                ctx.fillText(RenterName, canvas.width - 2050, 900);
+                ctx.fillText(namesAndsignatures.renterName, canvas.width - 2050, 900);
                 ctx.fillText(numberToText.en_concatenate, canvas.width - 2100, 1013);
                 ctx.fillText(selectedEnglishName, canvas.width - 2000, 1200);
 
@@ -1808,27 +1770,145 @@
                 ctx.fillText(reasonPayment, canvas.width - 2050, 1420);
                 ctx.font = "bold 37px serif";
 
-                ctx.fillText(directorOfLessor, canvas.width - 1990, 1560);
-                ctx.drawImage(signatureImg1, canvas.width - 900, 1505, 200, 100);
+                // ctx.fillText(namesAndsignatures.directorOfLessor, canvas.width - 1990, 1560);
+                // ctx.drawImage(namesAndsignatures.signatureImg1, canvas.width - 900, 1505, 200, 100);
 
-                ctx.fillText(userName, canvas.width - 1300, 1560);
-                ctx.drawImage(signatureImg2, canvas.width - 1700, 1505, 200, 100);
+                // ctx.fillText(namesAndsignatures.userName, canvas.width - 1300, 1560);
+                // ctx.drawImage(namesAndsignatures.signatureImg2, canvas.width - 1700, 1505, 200, 100);
 
-                ctx.fillText(directorOfBranch, canvas.width - 2020, 1690);
-                ctx.drawImage(signatureImg3, canvas.width - 1700, 1630, 200, 100);
+                // ctx.fillText(directorOfBranch, canvas.width - 2020, 1690);
+                // ctx.drawImage(signatureImg3, canvas.width - 1700, 1630, 200, 100);
 
-                ctx.fillText(RenterName, canvas.width - 1300, 1690);
-                ctx.drawImage(signatureImg4, canvas.width - 1360, 1625, 200, 100);
+                // ctx.fillText(RenterName, canvas.width - 1300, 1690);
+                // ctx.drawImage(signatureImg4, canvas.width - 1360, 1625, 200, 100);
 
+                // Draw director of lessor
+                ctx.fillText(namesAndsignatures.directorOfLessor, canvas.width - 1990, 1560);
+                if (namesAndsignatures.signatureImg1) {
+                    ctx.drawImage(namesAndsignatures.signatureImg1, canvas.width - 1700, 1505, 200, 100);
+                }
+
+                // Draw user
+                ctx.fillText(namesAndsignatures.userName, canvas.width - 1300, 1560);
+                if (namesAndsignatures.signatureImg2) {
+                    ctx.drawImage(namesAndsignatures.signatureImg2, canvas.width - 900, 1505, 200, 100);
+                }
+
+                // Draw director of branch
+                ctx.fillText(namesAndsignatures.directorOfBranch, canvas.width - 2020, 1690);
+                if (namesAndsignatures.signatureImg3) {
+                    ctx.drawImage(namesAndsignatures.signatureImg3, canvas.width - 1700, 1630, 200, 100);
+                }
+
+                // Draw renter
+                ctx.fillText(namesAndsignatures.renterName, canvas.width - 1300, 1690);
+                if (namesAndsignatures.signatureImg4) {
+                    ctx.drawImage(namesAndsignatures.signatureImg4, canvas.width - 900, 1630, 200, 100);
+                }
 
                 canvas.toBlob(async function (blob) {
                     formData.append("file", blob, "En_Catch_Receipt.png"); // Append the modified image blob with a filename
-                    var message = `Dear / ${RenterName}, you can review the catch receipt by downloading the attached file.`
                     await createReceiptPdf(accountReceiptNo, blob, "SavePdfEnReceipt");
                 }, 'image/png');
             };
             img.src = URL.createObjectURL(blob);
         };
+    </script>
+    <script>
+        function loadImage(src) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img); // Resolve with the loaded image
+                img.onerror = () => resolve(); // Resolve with an empty string if loading fails
+                img.src = src;
+            });
+        }
+        async function loadArSignatures() {
+            var renterName = '@Html.Raw(Model.ExtensionContract?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationArName)';
+            var renterSignature = renterSignture.replace('~', '');
+            var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
+            var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
+            var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorArName");
+            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
+            var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
+
+            const promises = [];
+            // Check each signature and push to promises if it exists
+            if (directorOfLessorSignature) {
+                promises.push(loadImage(directorOfLessorSignature));
+            }
+
+            if (userSignature) {
+                promises.push(loadImage(userSignature));
+            }
+
+            if (directorOfBranchSignature) {
+                promises.push(loadImage(directorOfBranchSignature));
+            }
+
+            if (renterSignature) {
+                promises.push(loadImage(renterSignature));
+            }
+
+            // Wait for all valid signatures to load
+            const signatureImages = await Promise.all(promises);
+
+            return {
+                renterName: renterName,
+                userName: userName,
+                directorOfLessor: directorOfLessor,
+                directorOfBranch: directorOfBranch,
+                signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
+                signatureImg2: signatureImages[1] || '',
+                signatureImg3: signatureImages[2] || '',
+                signatureImg4: signatureImages[3] || ''
+            };
+        }
+        async function loadEnSignatures() {
+            var renterName = '@Html.Raw(Model.ExtensionContract?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName)';
+            var renterSignature = renterSignture.replace('~', '');
+            var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
+            var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
+            var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorEnName");
+            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorEnName");
+            var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
+            // Adding console logs for debugging
+            console.log("Loading signatures...");
+            const promises = [];
+
+            // Check each signature and push to promises if it exists
+            if (directorOfLessorSignature) {
+                promises.push(loadImage(directorOfLessorSignature));
+            }
+
+            if (userSignature) {
+                promises.push(loadImage(userSignature));
+            }
+
+            if (directorOfBranchSignature) {
+                promises.push(loadImage(directorOfBranchSignature));
+            }
+
+            if (renterSignature) {
+                promises.push(loadImage(renterSignature));
+            }
+
+            // Wait for all valid signatures to load
+            const signatureImages = await Promise.all(promises);
+
+            return {
+                renterName: renterName,
+                userName: userName,
+                directorOfLessor: directorOfLessor,
+                directorOfBranch: directorOfBranch,
+                signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
+                signatureImg2: signatureImages[1] || '',
+                signatureImg3: signatureImages[2] || '',
+                signatureImg4: signatureImages[3] || ''
+            };
+        }
     </script>
     <script type="text/javascript">
         async function createReceiptPdf(receiptNo, imageBlob, InputPdf) {
