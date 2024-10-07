@@ -25,7 +25,7 @@ namespace Bnan.Ui.ViewModels.BS.CreateContract
         public string? CrMasRenterInformationIssuePlace { get; set; }
         //[Required(ErrorMessage = "requiredFiled")]
         public string? CrMasRenterInformationDrivingLicenseNo { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         public string? CrMasRenterInformationDrivingLicenseType { get; set; }
         public DateTime? CrMasRenterInformationDrivingLicenseDate { get; set; }
         //[Required(ErrorMessage = "requiredFiled")]

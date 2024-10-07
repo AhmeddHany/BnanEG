@@ -1,4 +1,4 @@
-﻿@using Bnan.Core.Extensions;
+﻿﻿@using Bnan.Core.Extensions;
 @using Bnan.Ui.ViewModels.BS;
 @using Microsoft.AspNetCore.Identity;
 @using Microsoft.EntityFrameworkCore;
@@ -2646,9 +2646,9 @@
 
                 if (!videoElement) {
                     IDuploadContainer.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <video id="videoElement" autoplay></video>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <video id="videoElement" autoplay></video>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
                     videoElement = document.getElementById('videoElement');
                     photo = document.getElementById('photo');
 
@@ -3665,16 +3665,16 @@
                 RenterInformation.personalEnNationality = document.getElementById("nationality-tenant").value;
                 RenterInformation.employerEnName = document.getElementById("tenant-workplace").value;
                 RenterInformation.cityEn = document.getElementById("Region-city-tenant").value;
-                setTimeout(() => {
-                    $("#EN-name-tenant").focus();
-                }, 500);
+                // setTimeout(() => {
+                //     $("#EN-name-tenant").focus();
+                // }, 500);
             } else {
                 RenterInformation.personalArNationality = document.getElementById("nationality-tenant").value;
                 RenterInformation.employerArName = document.getElementById("tenant-workplace").value;
                 RenterInformation.cityAr = document.getElementById("Region-city-tenant").value;
-                setTimeout(() => {
-                    $("#AR-name-tenant").focus();
-                }, 500);
+                // setTimeout(() => {
+                //     $("#AR-name-tenant").focus();
+                // }, 500);
             }
             ShowPrivateAndRenterIsDriver();
             console.log("RenterInformation", RenterInformation);
@@ -4236,16 +4236,16 @@
                 AddDriverInformation.personalEnNationality = document.getElementById("nationality-addDriver").value;
                 AddDriverInformation.employerEnName = document.getElementById("addDriver-workplace").value;
                 AddDriverInformation.cityEn = document.getElementById("Region-city-addDriver").value;
-                setTimeout(() => {
-                    $("#EN-name-addDriver").focus();
-                }, 500);
+                // setTimeout(() => {
+                //     $("#EN-name-addDriver").focus();
+                // }, 500);
             } else {
                 AddDriverInformation.personalArNationality = document.getElementById("nationality-addDriver").value;
                 AddDriverInformation.employerArName = document.getElementById("addDriver-workplace").value;
                 AddDriverInformation.cityAr = document.getElementById("Region-city-addDriver").value;
-                setTimeout(() => {
-                    $("#AR-name-addDriver").focus();
-                }, 500);
+                // setTimeout(() => {
+                //     $("#AR-name-addDriver").focus();
+                // }, 500);
             }
             console.log("AddDriverInformation", AddDriverInformation);
         }
@@ -4300,23 +4300,20 @@
                         SetInformationForRenterIfNotExist();
                         var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
                         var currentDate = new Date(dateTimeNow);
-                        var city = RenterInformation.cityCode;
-                        var employeerWorkPlace = $("tenant-workplace").val();
+                        var city = $("#Region-city-tenant-code").val();
+                        var employeerWorkPlace = $("#tenant-workplace").val();
                         var id = true;
                         var address = true;
                         var employeer = true;
                         var chechAuthUser;
                         CheckSigntureImgForRenter();
-                        // var ExpiryIdDateRenter = new Date(RenterInformation.expiryIdDate);
-                        // if (ExpiryIdDateRenter < currentDate) {
-                        //     id = false;
-                        // }
                         if (city == null || city == "") {
                             address = false;
                         }
                         if (employeerWorkPlace == null || employeerWorkPlace == "") {
                             employeer = false;
                         }
+
                         // This Check to If Renter Need Private Driver Or not
                         var privateDriverRadio1 = document.getElementById("PrivateDriver");
                         var privateDriverID = $("#Private-Driver-selectt").val();
@@ -4353,6 +4350,7 @@
                                             return
                                         }
                                         else if (check == "employeer") {
+                                            $("#tenant-workplace").focus();
                                             $("#PrivateDriverRequired").text('').css("color", "");
                                             toastr.options = { "positionClass": '@localizer["toastPostion"]', };
                                             toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
@@ -4367,6 +4365,13 @@
                                         }
                                     }
                                 });
+                            }
+                            else{
+                                $("#PrivateDriverRequired").text('').css("color", "");
+                                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                                next_fs.show();
+                                current_fs.hide();
+                                tab++;
                             }
                         }
                     }
@@ -4467,7 +4472,7 @@
                         if (DriverInformation == null) {
                             SetInformationForDriverIfNotExist();
                         }
-                        enableAllInputsForDriver();
+                        // enableAllInputsForDriver();
                         var additionalDriver = document.getElementById("addational-driver");
                         var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
                         var BirthDateDriver = new Date($("#birth-date-driver").val());
@@ -4475,16 +4480,22 @@
                         var city = $("#Region-city-driver-code").val();
                         var licenseType = $("#licence-driver-type").val();
                         var licenseNo = $("#licence-driver-number").val();
+                        var licenseDate = $("#ExpiryDrivingLicenseDate-driver").val();
                         var employerCode = $("#driver-workplace").val();
 
                         var minAge = CarInformation.carPrice.crCasPriceCarBasicMinAge;
                         var maxAge = CarInformation.carPrice.crCasPriceCarBasicMaxAge;
+                        
                         // All Values Bool to send it to backend to check auth user
                         var id = true;
                         var address = true;
                         var license = true;
                         var isAgeInRange = DriverAge >= minAge && DriverAge <= maxAge;
                         var employer = true;
+                        console.log("minAge", minAge)
+                        console.log("maxAge", maxAge)
+                        console.log("DriverAge", DriverAge)
+                        console.log("isAgeInRange", isAgeInRange)
 
 
                         // Driver Address
@@ -4492,11 +4503,15 @@
                             address = false;
                         }
                         // Driver license
-                        if (licenseType === '2' || licenseType === '1' || licenseType == null || licenseType == "" || licenseNo == null || licenseNo == "") {
+                        if (licenseType === '2' || licenseType === '1' || licenseType == null || licenseType == "" || licenseNo == null || licenseNo == ""||licenseDate==""||licenseDate==null) {
                             license = false;
                         }
+                        console.log("licenseType",licenseType)
+                        console.log("licenseNo",licenseNo)
+                        console.log("licenseDate", licenseDate)
+                        console.log("license", license)
                         // Driver employeer
-                        if (employerCode === '1800000002' || employerCode === '1800000001' || employerCode == "" || employerCode == null) {
+                        if (employerCode == "" || employerCode == null) {
                             employer = false;
                         }
                         var check = "";
@@ -4512,7 +4527,15 @@
                                 toastr.error('@localizer["AddressIsExpriredAndYouNotAuth"]');
                                 return
                             }
+                            else if (employer == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityEmployer" == "False") {
+                                $("#driver-workplace").focus();
+                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                                toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
+                                return
+                            }
                             else if (license == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityDrivingLicense" == "False") {
+                                console.log("555555")
+                                $("#licence-driver-number").focus();
                                 toastr.options = { "positionClass": '@localizer["toastPostion"]', };
                                 toastr.error('@localizer["LicenseIsExpriredAndYouNotAuth"]');
                                 return
@@ -4520,11 +4543,6 @@
                             else if (isAgeInRange == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityAge" == "False") {
                                 toastr.options = { "positionClass": '@localizer["toastPostion"]', };
                                 toastr.error('@localizer["AgeIsExpriredAndYouNotAuth"]');
-                                return
-                            }
-                            else if (employer == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityEmployer" == "False") {
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
                                 return
                             }
                             else {
@@ -4626,7 +4644,8 @@
                         var city = $("#Region-city-addDriver-code").val();
                         var licenseType = $("#licence-addDriver-type").val();
                         var licenseNo = $("#licence-addDriver-number").val();
-                        var employerCode = $("#addDriver-workplace-code").val();
+                        var licenseDate = $("#ExpiryDrivingLicenseDate-addDriver").val();
+                        var employerCode = $("#addDriver-workplace").val();
                         var minAge = CarInformation.carPrice.crCasPriceCarBasicMinAge;
                         var maxAge = CarInformation.carPrice.crCasPriceCarBasicMaxAge;
                         // All Values Bool to send it to backend to check auth user
@@ -4641,11 +4660,11 @@
                         }
                         // AddDriver license
                         // Driver license
-                        if (licenseType === '2' || licenseType === '1' || licenseType == null || licenseType == "" || licenseNo == null || licenseNo == "") {
+                        if (licenseType === '2' || licenseType === '1' || licenseType == null || licenseType == "" || licenseNo == null || licenseNo == "" || licenseDate == "" || licenseDate == null) {
                             license = false;
                         }
                         // AddDriver employeer
-                        if (employerCode === '1800000002' || employerCode === '1800000001' || employerCode == "" || employerCode == null) {
+                        if (employerCode == "" || employerCode == null) {
                             employer = false;
                         }
 
@@ -4662,7 +4681,14 @@
                                 toastr.error('@localizer["AddressIsExpriredAndYouNotAuth"]');
                                 return
                             }
+                            else if (employer == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityEmployer" == "False") {
+                                $("#addDriver-workplace").focus();
+                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                                toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
+                                return
+                            }
                             else if (license == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityDrivingLicense" == "False") {
+                                $("#licence-addDriver-number").focus();
                                 toastr.options = { "positionClass": '@localizer["toastPostion"]', };
                                 toastr.error('@localizer["LicenseIsExpriredAndYouNotAuth"]');
                                 return
@@ -4670,11 +4696,6 @@
                             else if (isAgeInRange == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityAge" == "False") {
                                 toastr.options = { "positionClass": '@localizer["toastPostion"]', };
                                 toastr.error('@localizer["AgeIsExpriredAndYouNotAuth"]');
-                                return
-                            }
-                            else if (employer == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityEmployer" == "False") {
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
                                 return
                             }
                             else {
@@ -5965,7 +5986,7 @@
                     ctx.fillText(namesAndsignatures.userName, canvas.width - 1140, 3050);
                     ctx.fillText(namesAndsignatures.directorOfBranch, canvas.width - 340, 3190);
                     ctx.fillText(namesAndsignatures.renterName, canvas.width - 1140, 3200);
-                    if(namesAndsignatures.signatureImg4){
+                    if (namesAndsignatures.signatureImg4) {
                         ctx.drawImage(namesAndsignatures.signatureImg4, canvas.width - 1350, 3125, 200, 100);
                     }
 
@@ -6211,7 +6232,7 @@
                     ctx.fillText(namesAndsignatures.directorOfBranch, canvas.width - 2020, 3180);
                     ctx.fillText(namesAndsignatures.userName, canvas.width - 1275, 3050);
                     ctx.fillText(namesAndsignatures.renterName, canvas.width - 1275, 3180);
-                    if(namesAndsignatures.signatureImg4){
+                    if (namesAndsignatures.signatureImg4) {
                         ctx.drawImage(namesAndsignatures.signatureImg4, canvas.width - 1250, 3125, 200, 100);
                     }
                     canvas.toBlob(async function (blob) {
@@ -6446,7 +6467,7 @@
                     if (namesAndsignatures.signatureImg4) {
                         ctx.drawImage(namesAndsignatures.signatureImg4, canvas.width - 900, 1630, 200, 100);
                     }
-                    
+
                     canvas.toBlob(async function (blob) {
                         createPdfAndSendToWhatsApp(accountReceiptNo, null, blob, "SavePdfEnReceipt", "en");
                     }, 'image/png');
@@ -8706,9 +8727,18 @@
         // Phone No0 dont start with zero
         document.getElementById('CheckModal-PhoneInput').addEventListener('input', function () {
             let inputValue = this.value;
+            inputValue = inputValue.replace(/\D/g, '');
             if (inputValue.startsWith('0')) {
-                this.value = inputValue.replace(/^0+/, '');
+                inputValue = inputValue.replace(/^0+/, '');
             }
+            this.value = inputValue;
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get today's date in the format yyyy-mm-dd
+            var today = new Date().toISOString().split('T')[0];
+            // Set the min attribute of the date input to today's date
+            document.getElementById('ExpiryDrivingLicenseDate-driver').setAttribute('min', today);
+            document.getElementById('ExpiryDrivingLicenseDate-addDriver').setAttribute('min', today);
         });
     </script>
     <script>
