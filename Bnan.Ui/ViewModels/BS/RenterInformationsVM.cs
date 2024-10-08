@@ -42,6 +42,8 @@
         public string? CityEn { get; set; }
         public string? PostArNameConcenate { get; set; }
         public string? PostEnNameConcenate { get; set; }
+        public string? PostArDistictName { get; set; }
+        public string? PostEnDistictName { get; set; }
         //Cas Renter
         public DateTime? FirstVisit { get; set; }
         public DateTime? LastContract { get; set; }

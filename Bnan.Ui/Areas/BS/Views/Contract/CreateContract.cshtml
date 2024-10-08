@@ -430,7 +430,7 @@
 
                                                             <div class="col-md-6">
                                                                 <label for="tenant-workplace" class="form-label">@localizer["RenterEmployerName"]</label>
-                                                                <input type="text" id="tenant-workplace" class="form-control  inputs-style" maxlength="100">
+                                                                <input type="text" id="tenant-workplace" asp-for="Contract.RenterInfo.CrMasRenterInformationEmployerName" class="form-control  inputs-style" maxlength="100">
                                                                 <input type="hidden" id="tenant-workplace-code" asp-for="Contract.RenterInfo.CrMasRenterInformationEmployer">
                                                                 <div id="autocomplete-workplace1" class="autocomplete-items"></div>
                                                                 <div class="row requird-field-row">
@@ -839,7 +839,7 @@
                                                             </div>
                                                             <div class="col-md-6">
                                                                 <label for="driver-workplace" class="form-label">@localizer["RenterEmployerName"]</label>
-                                                                <input type="text" id="driver-workplace" class="form-control inputs-style" maxlength="100" maxlength="100">
+                                                                <input type="text" id="driver-workplace" asp-for="Contract.DriverInfo.CrMasRenterInformationEmployerName" class="form-control inputs-style" maxlength="100" maxlength="100">
                                                                 <input type="hidden" id="driver-workplace-code" asp-for="Contract.DriverInfo.CrMasRenterInformationEmployer">
                                                                 <div id="autocomplete-workplace2" class="autocomplete-items"></div>
                                                                 <div class="row requird-field-row">
@@ -1283,7 +1283,7 @@
                                                             </div>
                                                             <div class="col-md-6">
                                                                 <label for="addDriver-workplace" class="form-label">@localizer["RenterEmployerName"]</label>
-                                                                <input type="text" id="addDriver-workplace" class="form-control inputs-style" maxlength="100">
+                                                                <input type="text" id="addDriver-workplace" asp-for="Contract.AddDriverInfo.CrMasRenterInformationEmployerName" class="form-control inputs-style" maxlength="100">
                                                                 <input type="hidden" id="addDriver-workplace-code" asp-for="Contract.AddDriverInfo.CrMasRenterInformationEmployer">
                                                                 <div id="autocomplete-workplace3" class="autocomplete-items"></div>
                                                                 <div class="row requird-field-row">
@@ -2646,9 +2646,9 @@
 
                 if (!videoElement) {
                     IDuploadContainer.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <video id="videoElement" autoplay></video>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <video id="videoElement" autoplay></video>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            `;
                     videoElement = document.getElementById('videoElement');
                     photo = document.getElementById('photo');
 
@@ -3056,6 +3056,8 @@
             cityEn: null,
             postArNameConcenate: null,
             postEnNameConcenate: null,
+            postEnDistictName: null,
+            postArDistictName: null,
             firstVisit: null,
             lastContract: null,
             contractCount: null,
@@ -3575,8 +3577,8 @@
             if (RenterInformation != null) {
                 document.getElementById("AR-name-tenant").value = RenterInformation.personalArName;
                 document.getElementById("EN-name-tenant").value = RenterInformation.personalEnName;
-                document.getElementById("AR-adress-tenant").value = RenterInformation.postArNameConcenate;
-                document.getElementById("EN-adress-tenant").value = RenterInformation.postEnNameConcenate;
+                document.getElementById("AR-adress-tenant").value = RenterInformation.postArDistictName;
+                document.getElementById("EN-adress-tenant").value = RenterInformation.postEnDistictName;
                 document.getElementById("Region-city-tenant-code").value = RenterInformation.cityCode;
                 document.getElementById("nationality-tenant-code").value = RenterInformation.nationalityCode;
                 document.getElementById("tenant-workplace-code").value = RenterInformation.employerCode;
@@ -3597,7 +3599,9 @@
                 }
                 if ("@requestCulture?.RequestCulture.UICulture.Name" == "en-US") {
                     document.getElementById("nationality-tenant").value = RenterInformation.personalEnNationality;
-                    document.getElementById("tenant-workplace").value = RenterInformation.employerEnName;
+                    if(RenterInformation.employerCode!="1800000001"&&RenterInformation.employerCode!="1800000002"){
+                        document.getElementById("tenant-workplace").value = RenterInformation.employerEnName;
+                    }
                     document.getElementById("Region-city-tenant").value = RenterInformation.cityEn;
                     setTimeout(() => {
                         $("#EN-name-tenant").focus();
@@ -3605,7 +3609,9 @@
                 }
                 else {
                     document.getElementById("nationality-tenant").value = RenterInformation.personalArNationality;
-                    document.getElementById("tenant-workplace").value = RenterInformation.employerArName;
+                    if(RenterInformation.employerCode!="1800000001"&&RenterInformation.employerCode!="1800000002"){
+                        document.getElementById("tenant-workplace").value = RenterInformation.employerArName;
+                    }
                     document.getElementById("Region-city-tenant").value = RenterInformation.cityAr;
                     setTimeout(() => {
                         $("#AR-name-tenant").focus();
@@ -3629,8 +3635,20 @@
             RenterInformation.birthDate = document.getElementById("birth-date").value;
             RenterInformation.personalArName = document.getElementById("AR-name-tenant").value;
             RenterInformation.personalEnName = document.getElementById("EN-name-tenant").value;
-            RenterInformation.postArNameConcenate = document.getElementById("AR-adress-tenant").value;
-            RenterInformation.postEnNameConcenate = document.getElementById("EN-adress-tenant").value;
+            
+            RenterInformation.postArDistictName = document.getElementById("AR-adress-tenant").value;
+            RenterInformation.postEnDistictName = document.getElementById("EN-adress-tenant").value;
+
+            RenterInformation.postArNameConcenate = document.getElementById("Region-city-tenant").value;
+            if (RenterInformation.postArDistictName) {
+                RenterInformation.postArNameConcenate += " - " + RenterInformation.postArDistictName;
+            }
+
+            RenterInformation.postEnNameConcenate = document.getElementById("Region-city-tenant").value;
+            if (RenterInformation.postEnDistictName) {
+                RenterInformation.postEnNameConcenate += " - " + RenterInformation.postEnDistictName;
+            }
+
             RenterInformation.cityCode = document.getElementById("Region-city-tenant-code").value;
             RenterInformation.nationalityCode = document.getElementById("nationality-tenant-code").value;
             RenterInformation.employerCode = document.getElementById("tenant-workplace-code").value;
@@ -3879,8 +3897,8 @@
             if (DriverInformation != null) {
                 document.getElementById("AR-name-driver").value = DriverInformation.personalArName;
                 document.getElementById("EN-name-driver").value = DriverInformation.personalEnName;
-                document.getElementById("AR-adress-driver").value = DriverInformation.postArNameConcenate;
-                document.getElementById("EN-adress-driver").value = DriverInformation.postEnNameConcenate;
+                document.getElementById("AR-adress-driver").value = DriverInformation.postArDistictName;
+                document.getElementById("EN-adress-driver").value = DriverInformation.postEnDistictName;
                 document.getElementById("nationality-driver-code").value = DriverInformation.nationalityCode;
                 document.getElementById("Region-city-driver-code").value = DriverInformation.cityCode;
                 document.getElementById("driver-workplace-code").value = DriverInformation.employerCode;
@@ -3903,16 +3921,18 @@
                 }
                 if ("@requestCulture?.RequestCulture.UICulture.Name" == "en-US") {
                     document.getElementById("nationality-driver").value = DriverInformation.personalEnNationality;
-                    document.getElementById("driver-workplace").value = DriverInformation.employerEnName;
-                    document.getElementById("Region-city-driver").value = DriverInformation.cityEn;
+                    if (DriverInformation.employerCode != "1800000001" && DriverInformation.employerCode != "1800000002") {
+                        document.getElementById("driver-workplace").value = DriverInformation.employerEnName;
+                    } document.getElementById("Region-city-driver").value = DriverInformation.cityEn;
                     setTimeout(() => {
                         $("#EN-name-driver").focus();
                     }, 500);
                 }
                 else {
                     document.getElementById("nationality-driver").value = DriverInformation.personalArNationality;
-                    document.getElementById("driver-workplace").value = DriverInformation.employerArName;
-                    document.getElementById("Region-city-driver").value = DriverInformation.cityAr;
+                    if (DriverInformation.employerCode != "1800000001" && DriverInformation.employerCode != "1800000002") {
+                        document.getElementById("driver-workplace").value = DriverInformation.employerArName;
+                    } document.getElementById("Region-city-driver").value = DriverInformation.cityAr;
                     setTimeout(() => {
                         $("#AR-name-driver").focus();
                     }, 500);
@@ -3934,8 +3954,8 @@
             document.getElementById("nationality-type-driver").value = DriverInformation.renterIDType;
             document.getElementById("AR-name-driver").value = DriverInformation.personalArName;
             document.getElementById("EN-name-driver").value = DriverInformation.personalEnName;
-            document.getElementById("AR-adress-driver").value = DriverInformation.postArNameConcenate;
-            document.getElementById("EN-adress-driver").value = DriverInformation.postEnNameConcenate;
+            document.getElementById("AR-adress-driver").value = DriverInformation.postArDistictName;
+            document.getElementById("EN-adress-driver").value = DriverInformation.postEnDistictName;
             document.getElementById("nationality-driver-code").value = DriverInformation.nationalityCode;
             document.getElementById("Region-city-driver-code").value = DriverInformation.cityCode;
             document.getElementById("driver-workplace-code").value = DriverInformation.employerCode;
@@ -3983,8 +4003,21 @@
             DriverInformation.birthDate = document.getElementById("birth-date-driver").value;
             DriverInformation.personalArName = document.getElementById("AR-name-driver").value;
             DriverInformation.personalEnName = document.getElementById("EN-name-driver").value;
-            DriverInformation.postArNameConcenate = document.getElementById("AR-adress-driver").value;
-            DriverInformation.postEnNameConcenate = document.getElementById("EN-adress-driver").value;
+
+            DriverInformation.postArDistictName = document.getElementById("AR-adress-driver").value;
+            DriverInformation.postEnDistictName = document.getElementById("EN-adress-driver").value;
+
+            DriverInformation.postArNameConcenate = document.getElementById("Region-city-driver").value;
+            if (DriverInformation.postArDistictName) {
+                DriverInformation.postArNameConcenate += " - " + DriverInformation.postArDistictName;
+            }
+
+            DriverInformation.postEnNameConcenate = document.getElementById("Region-city-driver").value;
+            if (DriverInformation.postEnDistictName) {
+                DriverInformation.postEnNameConcenate += " - " + DriverInformation.postEnDistictName;
+            }
+
+            
             DriverInformation.cityCode = document.getElementById("Region-city-driver-code").value;
             DriverInformation.nationalityCode = document.getElementById("nationality-driver-code").value;
             DriverInformation.employerCode = document.getElementById("driver-workplace-code").value;
@@ -4139,8 +4172,8 @@
             if (AddDriverInformation != null) {
                 document.getElementById("AR-name-addDriver").value = AddDriverInformation.personalArName;
                 document.getElementById("EN-name-addDriver").value = AddDriverInformation.personalEnName;
-                document.getElementById("AR-adress-addDriver").value = AddDriverInformation.postArNameConcenate;
-                document.getElementById("EN-adress-addDriver").value = AddDriverInformation.postEnNameConcenate;
+                document.getElementById("AR-adress-addDriver").value = AddDriverInformation.postArDistictName;
+                document.getElementById("EN-adress-addDriver").value = AddDriverInformation.postEnDistictName;
                 document.getElementById("nationality-addDriver-code").value = AddDriverInformation.nationalityCode;
                 document.getElementById("Region-city-addDriver-code").value = AddDriverInformation.cityCode;
                 document.getElementById("addDriver-workplace-code").value = AddDriverInformation.employerCode;
@@ -4162,7 +4195,9 @@
                 }
                 if ("@requestCulture?.RequestCulture.UICulture.Name" == "en-US") {
                     document.getElementById("nationality-addDriver").value = AddDriverInformation.personalEnNationality;
-                    document.getElementById("addDriver-workplace").value = AddDriverInformation.employerEnName;
+                    if (AddDriverInformation.employerCode != "1800000001" && AddDriverInformation.employerCode != "1800000002") {
+                        document.getElementById("addDriver-workplace").value = AddDriverInformation.employerEnName;
+                    } 
                     document.getElementById("Region-city-addDriver").value = AddDriverInformation.cityEn;
                     setTimeout(() => {
                         $("#EN-name-addDriver").focus();
@@ -4170,7 +4205,9 @@
                 }
                 else {
                     document.getElementById("nationality-addDriver").value = AddDriverInformation.personalArNationality;
-                    document.getElementById("addDriver-workplace").value = AddDriverInformation.employerArName;
+                    if (AddDriverInformation.employerCode != "1800000001" && AddDriverInformation.employerCode != "1800000002") {
+                        document.getElementById("addDriver-workplace").value = AddDriverInformation.employerArName;
+                    } 
                     document.getElementById("Region-city-addDriver").value = AddDriverInformation.cityAr;
                     setTimeout(() => {
                         $("#AR-name-addDriver").focus();
@@ -4193,8 +4230,19 @@
             AddDriverInformation.birthDate = document.getElementById("birth-date-AddDriver").value;
             AddDriverInformation.personalArName = document.getElementById("AR-name-addDriver").value;
             AddDriverInformation.personalEnName = document.getElementById("EN-name-addDriver").value;
-            AddDriverInformation.postArNameConcenate = document.getElementById("AR-adress-addDriver").value;
-            AddDriverInformation.postEnNameConcenate = document.getElementById("EN-adress-addDriver").value;
+            
+            AddDriverInformation.postArDistictName = document.getElementById("AR-adress-addDriver").value;
+            AddDriverInformation.postEnDistictName = document.getElementById("EN-adress-addDriver").value;
+
+            AddDriverInformation.postArNameConcenate = document.getElementById("Region-city-addDriver").value;
+            if (AddDriverInformation.postArDistictName) {
+                AddDriverInformation.postArNameConcenate += " - " + AddDriverInformation.postArDistictName;
+            }
+
+            AddDriverInformation.postEnNameConcenate = document.getElementById("Region-city-addDriver").value;
+            if (AddDriverInformation.postEnDistictName) {
+                AddDriverInformation.postEnNameConcenate += " - " + AddDriverInformation.postEnDistictName;
+            }
             AddDriverInformation.cityCode = document.getElementById("Region-city-addDriver-code").value;
             AddDriverInformation.nationalityCode = document.getElementById("nationality-addDriver-code").value;
             AddDriverInformation.employerCode = document.getElementById("addDriver-workplace-code").value;
@@ -4302,6 +4350,8 @@
                         var currentDate = new Date(dateTimeNow);
                         var city = $("#Region-city-tenant-code").val();
                         var employeerWorkPlace = $("#tenant-workplace").val();
+                        console.log("employeerWorkPlace", employeerWorkPlace);
+                        console.log("employeerWorkPlaceCode", $("#tenant-workplace-code").val());
                         var id = true;
                         var address = true;
                         var employeer = true;
@@ -4366,7 +4416,7 @@
                                     }
                                 });
                             }
-                            else{
+                            else {
                                 $("#PrivateDriverRequired").text('').css("color", "");
                                 $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                                 next_fs.show();
@@ -4485,7 +4535,7 @@
 
                         var minAge = CarInformation.carPrice.crCasPriceCarBasicMinAge;
                         var maxAge = CarInformation.carPrice.crCasPriceCarBasicMaxAge;
-                        
+
                         // All Values Bool to send it to backend to check auth user
                         var id = true;
                         var address = true;
@@ -4503,11 +4553,11 @@
                             address = false;
                         }
                         // Driver license
-                        if (licenseType === '2' || licenseType === '1' || licenseType == null || licenseType == "" || licenseNo == null || licenseNo == ""||licenseDate==""||licenseDate==null) {
+                        if (licenseType === '2' || licenseType === '1' || licenseType == null || licenseType == "" || licenseNo == null || licenseNo == "" || licenseDate == "" || licenseDate == null) {
                             license = false;
                         }
-                        console.log("licenseType",licenseType)
-                        console.log("licenseNo",licenseNo)
+                        console.log("licenseType", licenseType)
+                        console.log("licenseNo", licenseNo)
                         console.log("licenseDate", licenseDate)
                         console.log("license", license)
                         // Driver employeer
@@ -5439,6 +5489,7 @@
 
                 // Contract Value Total
                 contractValue = rentValue + choicesValue + additionalValue + advantagesValueTotal + additionalDriverValue + privateDriverValue + FeesTammValue;
+                console.log("contractValue", contractValue);
                 document.getElementById('contractValue').textContent = contractValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 $("#Contract_ContractValueBeforeDiscount").val(contractValue);
                 // get discount and totalContract Value
@@ -5536,7 +5587,7 @@
         function CalculateDiscount() {
             var DiscountInput = document.getElementById("Discount_Input").value;
             if (parseFloat(DiscountInput) != null && parseFloat(DiscountInput) != "" && parseFloat(DiscountInput) != 0 && parseFloat(DiscountInput) != undefined) {
-                discountValue = contractValue * (parseFloat(DiscountInput) / 100);
+                discountValue = (contractValue * (parseFloat(DiscountInput) / 100)).toFixed(2);
                 totalContract = contractValue - discountValue;
             }
             else {
@@ -5544,6 +5595,8 @@
                 discountValue = 0;
 
             }
+            console.log("discountValue", discountValue);
+            console.log("totalContract", totalContract);
             document.getElementById("totalContract").textContent = totalContract.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $("#Contract_ContractValueAfterDiscount").val(totalContract);
             $("#Contract_DiscountValue").val(discountValue);
@@ -5553,13 +5606,16 @@
         function CalculateTax() {
             var TaxPercent = parseInt(CarInformation.carPrice.crCasPriceCarBasicRentalTaxRate);
             if (TaxPercent != null && TaxPercent != "" && TaxPercent != undefined && TaxPercent != 0) {
-                taxValue = totalContract * (TaxPercent / 100);
+                taxValue = (totalContract * (TaxPercent / 100)).toFixed(2);
                 TotalActualContract = parseFloat(taxValue) + parseFloat(totalContract);
             }
             else {
                 taxValue = 0;
                 TotalActualContract = parseFloat(totalContract);
             }
+            console.log("taxValue", taxValue);
+            console.log("TotalActualContract", TotalActualContract);
+
             document.getElementById('Taxvalue').textContent = taxValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('TotalActualContract').textContent = TotalActualContract.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $("#Contract_TaxValue").val(taxValue);
@@ -5572,6 +5628,10 @@
             else {
                 TotalAmount = Math.abs(parseFloat(RenterBalance) - parseFloat(TotalActualContract));
             }
+            console.log("RenterBalance", RenterBalance);
+            console.log("TotalActualContract", TotalActualContract);
+            console.log("TotalAmount", TotalAmount);
+
             document.getElementById("TotalAmount").textContent = TotalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $("#Contract_TotalContractAmount").val(TotalAmount);
         }
@@ -5997,7 +6057,7 @@
                 img.src = URL.createObjectURL(blob);
             } catch (error) {
                 console.error("Error creating Arabic Invoice contract:", error);
-                window.location.href = "/BS/Contract/FailedToast?type=arinvoice";
+                //window.location.href = "/BS/Contract/FailedToast?type=arinvoice";
             }
         };
         function calculateAndDrawAr(ctx, canvas, itemName, itemValue, days, discountInput, taxPercent, yHeight) {
@@ -6242,7 +6302,7 @@
                 img.src = URL.createObjectURL(blob);
             } catch (error) {
                 console.error("Error creating English Invoice:", error);
-                window.location.href = "/BS/Contract/FailedToast?type=eninvoice";
+                //window.location.href = "/BS/Contract/FailedToast?type=eninvoice";
             }
         };
         function calculateAndDrawEn(ctx, canvas, itemName, itemValue, days, discountInput, taxPercent, yHeight) {
@@ -6378,7 +6438,7 @@
                 img.src = URL.createObjectURL(blob);
             } catch (error) {
                 console.error("Error creating Arabic Receipt:", error);
-                window.location.href = "/BS/Contract/FailedToast?type=arreceipt";
+                //window.location.href = "/BS/Contract/FailedToast?type=arreceipt";
             }
         };
         async function sendEnReceiptToWhatsApp() {
@@ -6475,7 +6535,7 @@
                 img.src = URL.createObjectURL(blob);
             } catch (error) {
                 console.error("Error creating English Receipt:", error);
-                window.location.href = "/BS/Contract/FailedToast?type=enreceipt";
+                //window.location.href = "/BS/Contract/FailedToast?type=enreceipt";
             }
         };
         function calculateTotalAmountPerDay(rent, auth, feature, privateDriver, additionalDriver, additionals, choices, days) {
@@ -6503,13 +6563,20 @@
         async function loadArSignatures() {
             console.log("RenterInformation.signture", RenterInformation.signture);
             var renterName = RenterInformation.personalArName;
-            var renterSignature = RenterInformation.signture.replace('~', '');
+            var renterSignature = RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null;
+
             var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
-            var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
+            var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature") ? decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '') : null;
+
             var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorArName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector")
+                ? decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '')
+                : null;
+
             var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
-            var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
+            var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature")
+                ? decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '')
+                : null;
 
             const promises = [];
 
@@ -7430,7 +7497,7 @@
                 await createPdfContract(imageBlobs, "SavePdfArContract");
             } catch (error) {
                 console.error("Error creating Arabic PDF contract:", error);
-                // window.location.href = "/BS/Contract/FailedToast?type=arcontract";
+                // //window.location.href = "/BS/Contract/FailedToast?type=arcontract";
             }
         }
 
@@ -7440,13 +7507,21 @@
         async function loadEnSignatures() {
             console.log("RenterInformation.signture", RenterInformation.signture)
             var renterName = RenterInformation.personalEnName;
-            var renterSignature = RenterInformation.signture.replace('~', '');
+            var renterSignature = RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null;
+
             var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
-            var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
+            var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature") ? decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '') : null;
+
             var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorEnName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector")
+                ? decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '')
+                : null;
+
             var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorEnName");
-            var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
+            var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature")
+                ? decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '')
+                : null;
+
             // Adding console logs for debugging
             console.log("Loading signatures...");
             const promises = [];
@@ -8336,7 +8411,7 @@
             } catch (error) {
                 console.error("Error creating English PDF contract:", error);
                 // إعادة التوجيه إلى صفحة الخطأ
-                window.location.href = "/BS/Contract/FailedToast?type=encontract";
+                //window.location.href = "/BS/Contract/FailedToast?type=encontract";
             }
         }
     </script>
@@ -8428,7 +8503,7 @@
                         } catch (error) {
                             console.error("Error during the PDF contract creation:", error);
                             // Redirect to error handling page or show an error message
-                            window.location.href = "/BS/Contract/FailedToast?type=createpdf";
+                            //window.location.href = "/BS/Contract/FailedToast?type=createpdf";
                         }
                     } else {
                         CheckIfCanPayLessThanTotalAmount();

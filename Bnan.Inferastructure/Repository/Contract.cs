@@ -1,16 +1,7 @@
 ﻿using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using Microsoft.AspNetCore.Components.RenderTree;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -25,22 +16,18 @@ namespace Bnan.Inferastructure.Repository
         // For New System
         public async Task<CrMasRenterInformation> AddRenterToMASRenterInformation(CrMasRenterInformation model, string EmployerName)
         {
-            var employerCode = "";
-            var sectorCode = "";
+            if (model == null) return null;
+            var firstChar = model.CrMasRenterInformationId.Substring(0, 1);
+            var sectorCode = GetSector(firstChar, "");
 
-            if (model != null)
-            {
-                var firstChar = model.CrMasRenterInformationId.Substring(0, 1);
-                sectorCode = GetSector(firstChar, "");
-                if (string.IsNullOrEmpty(model.CrMasRenterInformationEmployer)) employerCode = GetEmployer(firstChar, EmployerName);
-                else employerCode = model.CrMasRenterInformationEmployer;
-            }
 
 
             model.CrMasRenterInformationStatus = "A";
             model.CrMasRenterInformationCommunicationLanguage = "1";
             model.CrMasRenterInformationSector = "1";
-            model.CrMasRenterInformationEmployer = employerCode;
+            model.CrMasRenterInformationEmployer = GetEmployer(firstChar, EmployerName);
+            if (string.IsNullOrEmpty(model.CrMasRenterInformationProfession)) model.CrMasRenterInformationProfession = "1400000002";
+            if (string.IsNullOrEmpty(model.CrMasRenterInformationGender)) model.CrMasRenterInformationGender = "1100000002";
             model.CrMasRenterInformationUpDateLicenseData = DateTime.Now.Date;
             model.CrMasRenterInformationUpDatePersonalData = DateTime.Now.Date;
             model.CrMasRenterInformationUpDateWorkplaceData = DateTime.Now.Date;
@@ -62,7 +49,7 @@ namespace Bnan.Inferastructure.Repository
                 var CityRegionEn = region.CrMasSupPostCityConcatenateEnName != null ? region.CrMasSupPostCityConcatenateEnName : string.Empty;
 
                 arAdress = arAdress != null ? arAdress : string.Empty;
-                enAdress = enAdress != null ? arAdress : string.Empty;
+                enAdress = enAdress != null ? enAdress : string.Empty;
 
                 concatenatedArAddress = string.Join(" - ", CityRegionAr, arAdress);
                 concatenatedEnAddress = string.Join(" - ", CityRegionEn, enAdress);
@@ -72,7 +59,7 @@ namespace Bnan.Inferastructure.Repository
                     CrMasRenterPostCity = cityCode,
                     CrMasRenterPostRegions = region.CrMasSupPostCityRegionsCode,
                     CrMasRenterPostArDistrict = arAdress,
-                    CrMasRenterPostEnDistrict = arAdress,
+                    CrMasRenterPostEnDistrict = enAdress,
                     CrMasRenterPostArConcatenate = concatenatedArAddress,
                     CrMasRenterPostEnConcatenate = concatenatedEnAddress,
                     CrMasRenterPostStatus = Status.Active,
@@ -192,9 +179,9 @@ namespace Bnan.Inferastructure.Repository
                 var CityRegionEn = region.CrMasSupPostCityConcatenateEnName != null ? region.CrMasSupPostCityConcatenateEnName : string.Empty;
 
                 arAdress = arAdress != null ? arAdress : string.Empty;
-                enAdress = enAdress != null ? arAdress : string.Empty;
-                
-                concatenatedArAddress = string.Join(" - ", CityRegionAr,arAdress);
+                enAdress = enAdress != null ? enAdress : string.Empty;
+
+                concatenatedArAddress = string.Join(" - ", CityRegionAr, arAdress);
                 concatenatedEnAddress = string.Join(" - ", CityRegionEn, enAdress);
 
                 if (renterPost != null && region != null)
@@ -343,7 +330,7 @@ namespace Bnan.Inferastructure.Repository
             if (await _unitOfWork.CrCasRenterContractAuthorization.AddAsync(authorization) != null) return true;
             return false;
         }
-        public async Task<CrCasRenterContractBasic> AddRenterContractBasic(string LessorCode, string BranchCode, string ContractNo, string RenterId,string sectorCodeForRenter, string DriverId, string PrivateDriver,
+        public async Task<CrCasRenterContractBasic> AddRenterContractBasic(string LessorCode, string BranchCode, string ContractNo, string RenterId, string sectorCodeForRenter, string DriverId, string PrivateDriver,
                                                        string AdditionalDriver, string SerialNo, string PriceNo, string DaysNo, string UserFreeHour, string UserFreeKm,
                                                        string CurrentMeter, string OptionsTotal, string AdditionalTotal, string ContractValueAfterDiscount,
                                                        string DiscountValue, string ContractValueBeforeDiscount, string TaxValue, string TotalAmount, string UserInsert,
@@ -355,7 +342,7 @@ namespace Bnan.Inferastructure.Repository
             var renterlessorInfo = await _unitOfWork.CrCasRenterLessor.FindAsync(x => x.CrCasRenterLessorId == RenterId);
             var carInfo = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == SerialNo);
             var carPrice = _unitOfWork.CrCasPriceCarBasic.Find(x => x.CrCasPriceCarBasicNo == PriceNo);
-            var lessor= await _unitOfWork.CrMasLessorInformation.FindAsync(x => x.CrMasLessorInformationCode == LessorCode);
+            var lessor = await _unitOfWork.CrMasLessorInformation.FindAsync(x => x.CrMasLessorInformationCode == LessorCode);
 
 
             renterContractBasic.CrCasRenterContractBasicNo = ContractNo;
@@ -372,7 +359,7 @@ namespace Bnan.Inferastructure.Repository
             renterContractBasic.CrCasRenterContractBasicAllowCanceled = renterContractBasic.CrCasRenterContractBasicExpectedStartDate?.AddHours(Convert.ToDouble(carPrice.CrCasPriceCarBasicCancelHour));
             renterContractBasic.CrCasRenterContractBasicRenterId = RenterId;
             renterContractBasic.CrCasRenterContractBasicCarSerailNo = SerialNo;
-            renterContractBasic.CrCasRenterContractBasicOwner = lessor.CrMasLessorInformationOwnerId;
+            renterContractBasic.CrCasRenterContractBasicOwner = carInfo.CrCasCarInformationOwner;
             if (RenterId != DriverId)
             {
                 if (!string.IsNullOrEmpty(DriverId)) renterContractBasic.CrCasRenterContractBasicDriverId = DriverId;
@@ -449,10 +436,10 @@ namespace Bnan.Inferastructure.Repository
             else
             {
                 renterContractBasic.CrCasRenterContractBasicPreviousBalance = 0;
-                renterContractBasic.CrCasRenterContractBasicAmountRequired =  0;
+                renterContractBasic.CrCasRenterContractBasicAmountRequired = 0;
             }
-        
-           
+
+
 
 
             if (!string.IsNullOrEmpty(AmountPayed)) renterContractBasic.CrCasRenterContractBasicAmountPaidAdvance = decimal.Parse(AmountPayed, CultureInfo.InvariantCulture);
@@ -613,7 +600,7 @@ namespace Bnan.Inferastructure.Repository
         }
 
         public async Task<CrCasAccountReceipt> AddAccountReceipt(string ContractNo, string LessorCode, string BranchCode, string PaymentMethod, string Account, string SerialNo, string SalesPointNo, decimal TotalPayed,
-                                                                                                                        string RenterId, string sector , string UserId, string PassingType, string Reasons, string pdfPathAr, string pdfPathEn)
+                                                                                                                        string RenterId, string sector, string UserId, string PassingType, string Reasons, string pdfPathAr, string pdfPathEn)
         {
             CrCasAccountReceipt crCasAccountReceipt = new CrCasAccountReceipt();
             var User = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == UserId && x.CrMasUserInformationLessor == LessorCode);
@@ -662,9 +649,9 @@ namespace Bnan.Inferastructure.Repository
             }
             crCasAccountReceipt.CrCasAccountReceiptBranchUserPreviousBalance = userBranchValidityBalance;
             crCasAccountReceipt.CrCasAccountReceiptRenterId = RenterId;
-            if (Renter!=null) crCasAccountReceipt.CrCasAccountReceiptRenterPreviousBalance = Renter.CrCasRenterLessorBalance ?? 0;
+            if (Renter != null) crCasAccountReceipt.CrCasAccountReceiptRenterPreviousBalance = Renter.CrCasRenterLessorBalance ?? 0;
             else crCasAccountReceipt.CrCasAccountReceiptRenterPreviousBalance = 0;
-            
+
             crCasAccountReceipt.CrCasAccountReceiptPayment = TotalPayed;
             crCasAccountReceipt.CrCasAccountReceiptReceipt = 0;
             crCasAccountReceipt.CrCasAccountReceiptIsPassing = PassingType;

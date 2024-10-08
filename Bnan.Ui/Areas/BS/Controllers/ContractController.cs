@@ -68,12 +68,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             // Fetch all data
             var RenterIdTypes = _unitOfWork.CrMasSupRenterIdtype.FindAll(x => x.CrMasSupRenterIdtypeStatus != Status.Deleted).ToList();
-            var RenterProffesions = _unitOfWork.CrMasSupRenterProfession.FindAll(x => x.CrMasSupRenterProfessionsStatus != Status.Deleted).ToList();
+            var RenterProffesions = _unitOfWork.CrMasSupRenterProfession.FindAll(x => x.CrMasSupRenterProfessionsStatus != Status.Deleted && x.CrMasSupRenterProfessionsCode != "1400000001" && x.CrMasSupRenterProfessionsCode != "1400000002").ToList();
 
 
             var Nationailties = _unitOfWork.CrMasSupRenterNationality.FindAll(x => x.CrMasSupRenterNationalitiesStatus != Status.Deleted).ToList();
             var Cities = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityStatus != Status.Deleted).ToList();
-            var Workplaces = _unitOfWork.CrMasSupRenterEmployer.FindAll(l => l.CrMasSupRenterEmployerStatus != Status.Deleted).ToList();
+            var Workplaces = _unitOfWork.CrMasSupRenterEmployer.FindAll(l => l.CrMasSupRenterEmployerStatus != Status.Deleted && l.CrMasSupRenterEmployerCode != "1800000001" && l.CrMasSupRenterEmployerCode != "1800000002").ToList();
             var Genders = _unitOfWork.CrMasSupRenterGender.FindAll(l => l.CrMasSupRenterGenderStatus != Status.Deleted && l.CrMasSupRenterGenderCode != "1100000002" && l.CrMasSupRenterGenderCode != "1100000001").ToList();
             var CallingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(l => l.CrMasSysCallingKeysStatus != Status.Deleted).OrderByDescending(x => x.CrMasSysCallingKeysCount).ToList();
             var DrivingLicenses = _unitOfWork.CrMasSupRenterDrivingLicense.FindAll(l => l.CrMasSupRenterDrivingLicenseStatus != Status.Deleted && l.CrMasSupRenterDrivingLicenseCode != "1").ToList();
@@ -757,6 +757,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 LicenseIssuedDate = renterInfo?.CrMasRenterInformationIssueIdDate,
                 PostArNameConcenate = renterPost?.CrMasRenterPostArConcatenate,
                 PostEnNameConcenate = renterPost?.CrMasRenterPostEnConcatenate,
+                PostArDistictName = renterPost?.CrMasRenterPostArDistrict,
+                PostEnDistictName = renterPost?.CrMasRenterPostEnDistrict,
                 CityCode = City?.CrMasSupPostCityCode,
                 CityAr = City?.CrMasSupPostCityConcatenateArName,
                 CityEn = City?.CrMasSupPostCityConcatenateEnName,
