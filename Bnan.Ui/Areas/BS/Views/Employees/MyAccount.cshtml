@@ -461,7 +461,7 @@
                 canvas.height = img.height;
                 const context = canvas.getContext("2d");
                 context.drawImage(img, 0, 0, canvas.width, canvas.height);
-                const base64 = canvas.toDataURL("image/jpeg");
+                const base64 = canvas.toDataURL("image/png");
                 $("#PicsignatureModal").modal("hide");
                 return base64;
             } else {
