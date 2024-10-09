@@ -1,6 +1,6 @@
-﻿using Bnan.Core.Interfaces;
-using Bnan.Core.Models;
+﻿using Bnan.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
 
 namespace Bnan.Inferastructure.Repository
@@ -301,36 +301,35 @@ namespace Bnan.Inferastructure.Repository
                 return null;
             }
         }
+        public async Task<List<T>> FindAllAsNoTrackingAsync(Expression<Func<T, bool>> predicate, string[] includes = null)
+        {
+            IQueryable<T> query = _context.Set<T>();
 
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
 
-        //public string UploadPhoto(IFormFile image, string path)
-        //{
-        //    IFormFile formFile = image;
-        //    var fileName = Guid.NewGuid().ToString() + formFile.FileName;
-        //    var folderPath = Path.Combine(_environment.WebRootPath, path);
-        //    var ImagePath = Path.Combine(folderPath, fileName);
-        //    var ImageUrl = Path.Combine(path, fileName);
-        //    if (!Directory.Exists(folderPath))
-        //    {
-        //        Directory.CreateDirectory(folderPath);
-        //    }
-        //    using (var fileStream = new FileStream(ImagePath, FileMode.Create))
-        //    {
-        //        formFile.CopyToAsync(fileStream);
-        //        fileStream.Flush();
-        //    }
-        //    return ImageUrl;
-        //}
+            // Use AsNoTracking for this specific method
+            query = query.AsNoTracking();
+            return await query.Where(predicate).ToListAsync();
+        }
+        public IQueryable<T> GetTableAsTracking()
+        {
+            return _context.Set<T>().AsQueryable();
 
-        //public void DeletePhoto(string imagePath)
-        //{
-        //    var PathImage = Path.Combine(_environment.WebRootPath, imagePath);
-        //    if (System.IO.File.Exists(PathImage))
-        //        System.IO.File.Delete(PathImage);
-        //}
-
-
-
+        }
+        public IQueryable<T> GetTableNoTracking()
+        {
+            return _context.Set<T>().AsNoTracking().AsQueryable();
+        }
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _context.Database.BeginTransactionAsync();
+        }
 
     }
 }

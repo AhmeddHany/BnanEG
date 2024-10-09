@@ -128,14 +128,14 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 var lessorCode = userLogin.CrMasUserInformationLessor;
                 var BranchCode = userLogin.CrMasUserInformationDefaultBranch;
 
-                var RentedCars = await _unitOfWork.CrCasCarInformation.FindAllAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && x.CrCasCarInformationStatus == Status.Rented,
+                var RentedCars = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && x.CrCasCarInformationStatus == Status.Rented,
                     new[] { "CrCasCarInformationDistributionNavigation","CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics", "CrCasRenterContractBasics.CrCasRenterContractBasic5.CrCasRenterLessorNavigation",
                 "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation", "CrCasCarInformationCategoryNavigation" });
 
                 if (RentedCars == null) throw new Exception("No rented cars found.");
 
 
-                var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsync(x =>
+                var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x =>
                     x.CrCasBranchInformationLessor == lessorCode &&
                     x.CrCasBranchInformationStatus != Status.Deleted);
 
@@ -165,7 +165,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var BranchCode = userLogin.CrMasUserInformationDefaultBranch;
-            var RentedCars = await _unitOfWork.CrCasCarInformation.FindAllAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && x.CrCasCarInformationStatus == Status.Rented,
+            var RentedCars = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && x.CrCasCarInformationStatus == Status.Rented,
                                                                                  new[] { "CrCasCarInformationDistributionNavigation", "CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics",
                                                                                      "CrCasRenterContractBasics.CrCasRenterContractBasic5.CrCasRenterLessorNavigation",
                                                                                      "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation","CrCasCarInformationCategoryNavigation" });
@@ -173,11 +173,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             if (code != "00")
             {
-                RentedCars = RentedCars.Where(x => x.CrCasCarInformationCategory == code);
+                RentedCars = RentedCars.Where(x => x.CrCasCarInformationCategory == code).ToList();
             }
 
 
-            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
+            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
 
             BSLayoutVM bSLayoutVM = new BSLayoutVM()
             {
@@ -199,7 +199,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var BranchCode = userLogin.CrMasUserInformationDefaultBranch;
-            var carsUnAvailable = await _unitOfWork.CrCasCarInformation.FindAllAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && (x.CrCasCarInformationStatus == Status.Hold ||
+            var carsUnAvailable = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && (x.CrCasCarInformationStatus == Status.Hold ||
                                                                                            x.CrCasCarInformationStatus == Status.Maintaince || x.CrCasCarInformationPriceStatus == false ||
                                                                                            x.CrCasCarInformationBranchStatus != Status.Active || x.CrCasCarInformationOwnerStatus != Status.Active ||
                                                                                           (x.CrCasCarInformationStatus == Status.Active && x.CrCasCarInformationForSaleStatus == Status.ForSale)),
@@ -207,7 +207,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                                                                                               "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation","CrCasCarInformationCategoryNavigation",
                                                                                               "CrCasCarInformationFuelNavigation","CrCasCarInformationCvtNavigation"});
 
-            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
+            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
 
             BSLayoutVM bSLayoutVM = new BSLayoutVM()
             {
@@ -225,7 +225,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var BranchCode = userLogin.CrMasUserInformationDefaultBranch;
-            var carsUnAvailable = await _unitOfWork.CrCasCarInformation.FindAllAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && (x.CrCasCarInformationStatus == Status.Hold ||
+            var carsUnAvailable = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && (x.CrCasCarInformationStatus == Status.Hold ||
                                                                                            x.CrCasCarInformationStatus == Status.Maintaince || x.CrCasCarInformationPriceStatus == false ||
                                                                                            x.CrCasCarInformationBranchStatus != Status.Active || x.CrCasCarInformationOwnerStatus != Status.Active ||
                                                                                           (x.CrCasCarInformationStatus == Status.Active && x.CrCasCarInformationForSaleStatus == Status.ForSale)),
@@ -237,7 +237,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             {
                 carsUnAvailable = carsUnAvailable.Where(x => x.CrCasCarInformationCategory == code).ToList();
             }
-            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
+            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
 
             BSLayoutVM bSLayoutVM = new BSLayoutVM()
             {
@@ -257,13 +257,13 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var BranchCode = userLogin.CrMasUserInformationDefaultBranch;
 
-            var carsAvailable = await _unitOfWork.CrCasCarInformation.FindAllAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && x.CrCasCarInformationStatus == Status.Active &&
+            var carsAvailable = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && x.CrCasCarInformationStatus == Status.Active &&
                                                                                 x.CrCasCarInformationPriceStatus == true && x.CrCasCarInformationBranchStatus == Status.Active &&
                                                                                 x.CrCasCarInformationOwnerStatus == Status.Active &&
                                                                                (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale),
                                                                                new[] { "CrCasCarInformationDistributionNavigation", "CrCasCarInformationCategoryNavigation", "CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics",
                                                                                    "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation" ,"CrCasCarInformationFuelNavigation","CrCasCarInformationCvtNavigation"});
-            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
+            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
             BSLayoutVM bSLayoutVM = new BSLayoutVM()
             {
                 CrCasBranchInformations = branches.ToList(),
@@ -282,7 +282,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var BranchCode = userLogin.CrMasUserInformationDefaultBranch;
 
-            var carsAvailable = await _unitOfWork.CrCasCarInformation.FindAllAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && x.CrCasCarInformationStatus == Status.Active &&
+            var carsAvailable = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && x.CrCasCarInformationStatus == Status.Active &&
                                                                                 x.CrCasCarInformationPriceStatus == true && x.CrCasCarInformationBranchStatus == Status.Active &&
                                                                                 x.CrCasCarInformationOwnerStatus == Status.Active &&
                                                                                (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale),
@@ -293,7 +293,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 carsAvailable = carsAvailable.Where(x => x.CrCasCarInformationCategory == code).ToList();
             }
 
-            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
+            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
             BSLayoutVM bSLayoutVM = new BSLayoutVM()
             {
                 CrCasBranchInformations = branches.ToList(),
@@ -325,9 +325,6 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
             return Json(check);
         }
-
-
-
         private List<PaymentMethodBranchDataVM> ChartsPaymentMethodBranch(List<CrCasAccountReceipt> AccountReceipt)
         {
             List<PaymentMethodBranchDataVM> paymentMethodBranch = new List<PaymentMethodBranchDataVM>();
