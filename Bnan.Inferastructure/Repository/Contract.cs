@@ -45,14 +45,15 @@ namespace Bnan.Inferastructure.Repository
                 var concatenatedArAddress = "";
                 var concatenatedEnAddress = "";
 
-                var CityRegionAr = region.CrMasSupPostCityConcatenateArName != null ? region.CrMasSupPostCityConcatenateArName : string.Empty;
-                var CityRegionEn = region.CrMasSupPostCityConcatenateEnName != null ? region.CrMasSupPostCityConcatenateEnName : string.Empty;
+                var CityRegionAr = !string.IsNullOrEmpty(region.CrMasSupPostCityConcatenateArName) ? region.CrMasSupPostCityConcatenateArName : string.Empty;
+                var CityRegionEn = !string.IsNullOrEmpty(region.CrMasSupPostCityConcatenateEnName) ? region.CrMasSupPostCityConcatenateEnName : string.Empty;
 
-                arAdress = arAdress != null ? arAdress : string.Empty;
-                enAdress = enAdress != null ? enAdress : string.Empty;
+                arAdress = !string.IsNullOrEmpty(arAdress) ? arAdress : string.Empty;
+                enAdress = !string.IsNullOrEmpty(enAdress) ? enAdress : string.Empty;
 
-                concatenatedArAddress = string.Join(" - ", CityRegionAr, arAdress);
-                concatenatedEnAddress = string.Join(" - ", CityRegionEn, enAdress);
+                // Concatenate only non-empty values, removing the need for the separator if either is null or empty
+                concatenatedArAddress = string.Join(" - ", new[] { CityRegionAr, arAdress }.Where(s => !string.IsNullOrEmpty(s)));
+                concatenatedEnAddress = string.Join(" - ", new[] { CityRegionEn, enAdress }.Where(s => !string.IsNullOrEmpty(s)));
                 CrMasRenterPost crMasRenterPost = new CrMasRenterPost
                 {
                     CrMasRenterPostCode = RenterId,
@@ -175,14 +176,15 @@ namespace Bnan.Inferastructure.Repository
                 var concatenatedArAddress = "";
                 var concatenatedEnAddress = "";
 
-                var CityRegionAr = region.CrMasSupPostCityConcatenateArName != null ? region.CrMasSupPostCityConcatenateArName : string.Empty;
-                var CityRegionEn = region.CrMasSupPostCityConcatenateEnName != null ? region.CrMasSupPostCityConcatenateEnName : string.Empty;
+                var CityRegionAr = !string.IsNullOrEmpty(region.CrMasSupPostCityConcatenateArName) ? region.CrMasSupPostCityConcatenateArName : string.Empty;
+                var CityRegionEn = !string.IsNullOrEmpty(region.CrMasSupPostCityConcatenateEnName) ? region.CrMasSupPostCityConcatenateEnName : string.Empty;
 
-                arAdress = arAdress != null ? arAdress : string.Empty;
-                enAdress = enAdress != null ? enAdress : string.Empty;
+                arAdress = !string.IsNullOrEmpty(arAdress) ? arAdress : string.Empty;
+                enAdress = !string.IsNullOrEmpty(enAdress) ? enAdress : string.Empty;
 
-                concatenatedArAddress = string.Join(" - ", CityRegionAr, arAdress);
-                concatenatedEnAddress = string.Join(" - ", CityRegionEn, enAdress);
+                // Concatenate only non-empty values, removing the need for the separator if either is null or empty
+                concatenatedArAddress = string.Join(" - ", new[] { CityRegionAr, arAdress }.Where(s => !string.IsNullOrEmpty(s)));
+                concatenatedEnAddress = string.Join(" - ", new[] { CityRegionEn, enAdress }.Where(s => !string.IsNullOrEmpty(s)));
 
                 if (renterPost != null && region != null)
                 {

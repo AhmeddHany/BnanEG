@@ -86,13 +86,7 @@ namespace Bnan.Ui.Areas.Identity.Controllers
         {
             if (ModelState.IsValid)
             {
-
-
                 var user = _unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.UserName, new[] { "CrMasUserInformationLessorNavigation", "CrMasUserBranchValidities.CrMasUserBranchValidity1" });
-
-
-
-
                 if (user == null)
                 {
                     ModelState.AddModelError(nameof(model.UserName), _localizer["UserNameInvalid"]);

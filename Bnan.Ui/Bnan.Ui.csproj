@@ -27,6 +27,11 @@
   <ItemGroup>
     <Content Remove="Areas\BS\Views\Shared\_ViewImports.cshtml" />
     <Content Remove="Areas\BS\Views\Shared\_ViewStart.cshtml" />
+    <Content Remove="wwwroot\BranchSys\js\javascript\idleTimeoutHandler.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\BranchSys\js\javascript\idleTimeoutHandler.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -107,6 +112,7 @@
     <None Include="wwwroot\BranchSys\img\rate\Bad.svg" />
     <None Include="wwwroot\BranchSys\img\rate\excellent.svg" />
     <None Include="wwwroot\BranchSys\img\rate\good.svg" />
+    <None Include="wwwroot\BranchSys\js\javascript\idleTimeoutHandler.js" />
     <None Include="wwwroot\BranchSys\Pages\img\signature\file-signature_9795523 1.svg" />
     <None Include="wwwroot\BranchSys\Pages\img\signature\Frame.svg" />
     <None Include="wwwroot\BranchSys\Pages\img\signature\Pic.svg" />

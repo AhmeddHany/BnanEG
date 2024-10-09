@@ -176,117 +176,16 @@
             crossorigin="anonymous"></script>
     <!--makes bootsrab animation works-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
+    @*Auto Logout*@
+    <script src="~/BranchSys/js/javascript/idleTimeoutHandler.js"></script>
     <!--===============================================================================================-->
     <!--===============================================================================================-->
-
-    <script>
-
+    @*Auto Logout*@
+    <script type="text/javascript">
         $(document).ready(function () {
-            var exitUser = "@user.CrMasUserInformationExitTimer";
-            let timeout = parseInt(exitUser) * 60 * 1000;
-            let timer;
-            let countdownStartTime;
-            let countdownDuration = 60; // Countdown duration in seconds
-
-            // Function to start the countdown
-            function startCountdown() {
-                countdownStartTime = Date.now();
-                timer = setInterval(updateCountdown, 1000);
-            }
-
-            function clearCountdown() {
-                clearInterval(timer);
-            }
-
-            // Function to update the countdown display
-            function updateCountdown() {
-                let countdownElem = $('#countdown');
-                let elapsedTime = Math.floor((Date.now() - countdownStartTime) / 1000);
-                let timeLeft = countdownDuration - elapsedTime;
-
-                if (timeLeft > 0) {
-                    countdownElem.text(timeLeft);
-                } else {
-                    clearInterval(timer);
-                    logout();
-                }
-            }
-
-            // Function to logout the user
-            function logout() {
-                $.ajax({
-                    type: "GET",
-                    url: "/Identity/Account/Logout", // Adjust URL based on your route
-                    success: function (response) {
-                        window.location.href = '/Identity/Account/Login';
-                    }
-                });
-            }
-
-            // Add event listener to detect no activity
-            let idleTimeout = null;
-
-            function resetIdleTimeout() {
-                clearCountdown();
-                clearTimeout(idleTimeout);
-                $('#popup').modal("hide");
-                updateLastAction();
-                idleTimeout = setTimeout(showPopup, timeout);
-            }
-
-            function showPopup() {
-                if ($('#popup').is(':visible')) {
-                    return; // Popup already displayed, so ignore this event
-                }
-
-                $('#countdown').text(countdownDuration);
-                $('#popup').modal("show");
-                startCountdown();
-            }
-
-            $(document).on('click', resetIdleTimeout);
-
-            // Add event listener to continue button
-            $('#continueBtn').click(resetIdleTimeout);
-
-            // Add event listener to logout button
-            $('#logoutBtn').click(function () {
-                clearTimeout(idleTimeout);
-                logout();
-            });
-
-            // Function to update last action date in the database
-            function updateLastAction() {
-                $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("UpdateLastActionDate", "Account", new { Area = "Identity" })",
-                    success: function (response) {
-                        console.log(response);
-                        if (!response) {
-                            setTimeout(function () {
-                                window.location.href = '/Identity/Account/Login';
-                            }, 500); // Redirect after 1 second
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("An error occurred:", error);
-                    }
-                });
-            }
-
-            // Handle visibility change
-            document.addEventListener('visibilitychange', function () {
-                if (document.visibilityState === 'visible') {
-                    if (!$('#popup').is(':visible')) {
-                        startCountdown();
-                    }
-                } else {
-                    clearCountdown();
-                }
-            });
-            // Initialize idle timeout
-            idleTimeout = setTimeout(showPopup, timeout);
+            var exitUser = "@user.CrMasUserInformationExitTimer"; // Get the dynamic value
+            // Call the idle timeout handler function
+            initializeIdleTimeoutHandler(exitUser);
         });
     </script>
 }
