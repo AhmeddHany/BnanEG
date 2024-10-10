@@ -184,7 +184,7 @@
                         <label class="form-label" for="CrCasCarInformationDistribution">@localizer["AmountTransfer"]</label>
                     </div>
                     <div class="col-md-1">
-                        <input type="text" class="form-control" asp-for="Amount" maxlength="10" oninput="handleAmountPayed(this)" style="width:120%" />
+                        <input type="text" class="form-control" id="Amount" asp-for="Amount" maxlength="10" oninput="handleAmountPayed(this)" style="width:120%" />
                         <div style="margin-top:2px">
                             <div style="height: 1.35em">
                                 <span asp-validation-for="@Model.Amount" class="text-danger"></span>
@@ -262,6 +262,7 @@
             // Remove non-digit characters and additional decimal points
             input.value = input.value.replace(/[^0-9\.]/g, '');
             const decimalIndex = input.value.indexOf('.');
+
             // Limit to 9 digits before and after the decimal point
             if (decimalIndex !== -1) {
                 const digitsBeforeDecimal = input.value.substring(0, decimalIndex);
@@ -510,14 +511,22 @@
             var form = document.getElementById('msform');
             var submitButton = document.getElementById('submitForm');
             submitButton.addEventListener('click', function (event) {
+                var input = document.getElementById("Amount").value;
                 event.preventDefault();
                 if ($("#msform").valid()) {
-                    $('.main').show(); // Show the main container with fade effect
-                    ArReceipt();
-                    EnReceipt();
-                    setTimeout(function () {
-                        form.submit();
-                    },5000); 
+                    if (!input || parseFloat(input) === 0) {
+                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                        toastr.error('@localizer["PleaseEnterValue"]');
+                        return;
+                    }
+                    else {
+                        $('.main').show(); // Show the main container with fade effect
+                        ArReceipt();
+                        EnReceipt();
+                        setTimeout(function () {
+                            form.submit();
+                        }, 5000);
+                    }
                 }
             });
         });

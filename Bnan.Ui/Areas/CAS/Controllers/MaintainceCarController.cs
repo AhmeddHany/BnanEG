@@ -66,7 +66,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var Docs = _unitOfWork.CrCasCarDocumentsMaintenance.FindAll(l => l.CrCasCarDocumentsMaintenanceLessor == lessorCode && (l.CrCasCarDocumentsMaintenanceStatus == Status.Renewed || l.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire || l.CrCasCarDocumentsMaintenanceStatus == Status.Expire) && l.CrCasCarDocumentsMaintenanceCarStatus != Status.Deleted && l.CrCasCarDocumentsMaintenanceCarStatus != Status.Sold && l.CrCasCarDocumentsMaintenanceProceduresClassification == "13",
                                                                               new[] { "CrCasCarDocumentsMaintenanceProceduresNavigation", "CrCasCarDocumentsMaintenanceSerailNoNavigation" });
 
-            if (Docs.Count()==0)
+            if (Docs.Count() == 0)
             {
                 var Docs_active = _unitOfWork.CrCasCarDocumentsMaintenance.FindAll(l => l.CrCasCarDocumentsMaintenanceLessor == lessorCode && l.CrCasCarDocumentsMaintenanceStatus == Status.Active && l.CrCasCarDocumentsMaintenanceCarStatus != Status.Deleted && l.CrCasCarDocumentsMaintenanceCarStatus != Status.Sold && l.CrCasCarDocumentsMaintenanceProceduresClassification == "13",
                                                                   new[] { "CrCasCarDocumentsMaintenanceProceduresNavigation", "CrCasCarDocumentsMaintenanceSerailNoNavigation" });
@@ -115,7 +115,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             ViewBag.KmEndsAt = DocumentCar.CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0");
 
             var DocumentsCarVM = _mapper.Map<DocumentsMaintainceCarVM>(DocumentCar);
-            if (DocumentsCarVM.CrCasCarDocumentsMaintenanceStatus==Status.Expire || DocumentsCarVM.CrCasCarDocumentsMaintenanceStatus == Status.Renewed)
+            if (DocumentsCarVM.CrCasCarDocumentsMaintenanceStatus == Status.Expire || DocumentsCarVM.CrCasCarDocumentsMaintenanceStatus == Status.Renewed)
             {
                 DocumentsCarVM.CrCasCarDocumentsMaintenanceConsumptionKm = null;
                 DocumentsCarVM.CrCasCarDocumentsMaintenanceKmEndsAt = null;
@@ -130,7 +130,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             if (ModelState.IsValid)
             {
                 var documentsMaintainceCar = _mapper.Map<CrCasCarDocumentsMaintenance>(documentsMaintainceCarVM);
-                if (await _documentsMaintainance.UpdateMaintainceCar(documentsMaintainceCar))
+                if (await _documentsMaintainance.UpdateMaintainceCar(documentsMaintainceCar) &&
+                    await _documentsMaintainance.CheckMaintainceAndDocsCar(documentsMaintainceCar.CrCasCarDocumentsMaintenanceSerailNo, documentsMaintainceCar.CrCasCarDocumentsMaintenanceLessor, "13", documentsMaintainceCar.CrCasCarDocumentsMaintenanceProcedures))
                 {
                     await _unitOfWork.CompleteAsync();
                     //SaveTracing
@@ -185,6 +186,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                         CarDocument.CrCasCarDocumentsMaintenanceNo = null;
                         CarDocument.CrCasCarDocumentsMaintenanceReasons = null;
                         _unitOfWork.CrCasCarDocumentsMaintenance.Update(CarDocument);
+                        car.CrCasCarInformationMaintenanceStatus = false;
+                        _unitOfWork.CrCasCarInformation.Update(car);
+
                         await _unitOfWork.CompleteAsync();
                         // SaveTracing
                         var (mainTask, subTask, system, currentUser) = await SetTrace("202", "2202003", "2");

@@ -107,8 +107,8 @@
                 {
                     var receptInvoice = Model.CrCasAccountInvoice.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo && x.CrCasAccountInvoiceType == "308");
                     var recepttaxation = Model.CrCasAccountInvoice.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo && x.CrCasAccountInvoiceType != "308");
-                    var km_Active = item.CrCasRenterContractBasicTotalDailyFreeKm * item.CrCasRenterContractBasicExpectedRentalDays;
-                    var km_Not_Active = item.CrCasRenterContractBasicTotalDailyFreeKm + item.CrCasRenterContractBasicActualExtraKm;
+                    var km_Active = 0;
+                    var km_Not_Active = item.CrCasRenterContractBasicActualCurrentReadingMeter - item.CrCasRenterContractBasicCurrentReadingMeter;
                     @if (item.CrCasRenterContractBasicStatus == @Status.Expire || item.CrCasRenterContractBasicStatus == @Status.Deleted)
                     {
                         @*<tr onclick="location.href='@Url.Action("Edit", "RenterContract", new { id = item.CrCasRenterLessorId })'" style="cursor:pointer;color:red">*@
@@ -122,31 +122,31 @@
                             {
                                 <td id="_Nc">@item.CrCasRenterContractBasicNo</td>
                             }
-                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy - HH:mm",CultureInfo.InvariantCulture)</td>
-                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("dd/MM/yyyy - HH:mm",CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy - HH:mm", CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("dd/MM/yyyy - HH:mm", CultureInfo.InvariantCulture)</td>
 
                             @if (@item.CrCasRenterContractBasicStatus == @Status.Active)
                             {
-                                <td id="_Nc">@item.CrCasRenterContractBasicExpectedRentalDays?.ToString("N2",CultureInfo.InvariantCulture).Replace(".00","")</td>
+                                <td id="_Nc">@item.CrCasRenterContractBasicExpectedRentalDays?.ToString("N2", CultureInfo.InvariantCulture).Replace(".00", "")</td>
                             }
                             else
                             {
-                                <td id="_Nc">@item.CrCasRenterContractBasicActualDays?.ToString("N2",CultureInfo.InvariantCulture).Replace(".00","")</td>
+                                <td id="_Nc">@item.CrCasRenterContractBasicActualDays?.ToString("N2", CultureInfo.InvariantCulture).Replace(".00", "")</td>
                             }
                             @*<td id="_Nc">@Model.CasRenterContractVM.CrCasRenterContractStatistics?.Where(x=>x.CrCasRenterContractStatisticsNo==item.CrCasRenterContractBasicNo)?.OrderByDescending(x=>x.CrCasRenterContractStatisticsDate)?.FirstOrDefault()?.CrCasRenterContractStatisicsDays</td>*@
 
                             <td style="text-align:start">@item.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationPlateEnNo</td>
 
                             <td id="_Nc">
-                                @item.CrCasRenterContractBasicExpectedTotal?.ToString("N2",CultureInfo.InvariantCulture)
+                                @item.CrCasRenterContractBasicExpectedTotal?.ToString("N2", CultureInfo.InvariantCulture)
                             </td>
                             @if (@item.CrCasRenterContractBasicStatus == @Status.Active)
                             {
-                                <td id="_Nc">@km_Active?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                                <td id="_Nc">@km_Active</td>
                             }
                             else
                             {
-                                <td id="_Nc">@km_Not_Active?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                                <td id="_Nc">@km_Not_Active?.ToString("N2", CultureInfo.InvariantCulture)</td>
                             }
 
 
@@ -236,31 +236,31 @@
                             {
                                 <td id="_Nc">@item.CrCasRenterContractBasicNo</td>
                             }
-                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy - HH:mm",CultureInfo.InvariantCulture)</td>
-                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("dd/MM/yyyy - HH:mm",CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy - HH:mm", CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("dd/MM/yyyy - HH:mm", CultureInfo.InvariantCulture)</td>
 
                             @if (@item.CrCasRenterContractBasicStatus == @Status.Active)
                             {
-                                <td id="_Nc">@item.CrCasRenterContractBasicExpectedRentalDays?.ToString("N2",CultureInfo.InvariantCulture).Replace(".00","")</td>
+                                <td id="_Nc">@item.CrCasRenterContractBasicExpectedRentalDays?.ToString("N2", CultureInfo.InvariantCulture).Replace(".00", "")</td>
                             }
                             else
                             {
-                                <td id="_Nc">@item.CrCasRenterContractBasicActualDays?.ToString("N2",CultureInfo.InvariantCulture).Replace(".00","")</td>
+                                <td id="_Nc">@item.CrCasRenterContractBasicActualDays?.ToString("N2", CultureInfo.InvariantCulture).Replace(".00", "")</td>
                             }
                             @*<td id="_Nc">@Model.CasRenterContractVM.CrCasRenterContractStatistics?.Where(x=>x.CrCasRenterContractStatisticsNo==item.CrCasRenterContractBasicNo)?.OrderByDescending(x=>x.CrCasRenterContractStatisticsDate)?.FirstOrDefault()?.CrCasRenterContractStatisicsDays</td>*@
 
                             <td style="text-align:start">@item.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationPlateEnNo</td>
 
                             <td id="_Nc">
-                                @item.CrCasRenterContractBasicExpectedTotal?.ToString("N2",CultureInfo.InvariantCulture)
+                                @item.CrCasRenterContractBasicExpectedTotal?.ToString("N2", CultureInfo.InvariantCulture)
                             </td>
                             @if (@item.CrCasRenterContractBasicStatus == @Status.Active)
                             {
-                                <td id="_Nc">@km_Active?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                                <td id="_Nc">@km_Active</td>
                             }
                             else
                             {
-                                <td id="_Nc">@km_Not_Active?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                                <td id="_Nc">@km_Not_Active?.ToString("N2", CultureInfo.InvariantCulture)</td>
                             }
                             <td style="text-align:start">
 
@@ -375,8 +375,8 @@ else
                 {
                     var receptInvoice = Model.CrCasAccountInvoice.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo && x.CrCasAccountInvoiceType == "308");
                     var recepttaxation = Model.CrCasAccountInvoice.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo && x.CrCasAccountInvoiceType != "308");
-                    var km_Active = item.CrCasRenterContractBasicTotalDailyFreeKm * item.CrCasRenterContractBasicExpectedRentalDays;
-                    var km_Not_Active = item.CrCasRenterContractBasicTotalDailyFreeKm + item.CrCasRenterContractBasicActualExtraKm;
+                    var km_Active = 0;
+                    var km_Not_Active = item.CrCasRenterContractBasicActualCurrentReadingMeter - item.CrCasRenterContractBasicCurrentReadingMeter;
                     @if (item.CrCasRenterContractBasicStatus == @Status.Expire || item.CrCasRenterContractBasicStatus == @Status.Deleted)
                     {
                         @*<tr onclick="location.href='@Url.Action("Edit", "RenterContract", new { id = item.CrCasRenterLessorId })'" style="cursor:pointer;color:red">*@
@@ -390,29 +390,29 @@ else
                             {
                                 <td id="_Nc">@item.CrCasRenterContractBasicNo</td>
                             }
-                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("yyyy/MM/dd - HH:mm",CultureInfo.InvariantCulture)</td>
-                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("yyyy/MM/dd - HH:mm",CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("yyyy/MM/dd - HH:mm", CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("yyyy/MM/dd - HH:mm", CultureInfo.InvariantCulture)</td>
                             @if (@item.CrCasRenterContractBasicStatus == @Status.Active)
                             {
-                                <td id="_Nc">@item.CrCasRenterContractBasicExpectedRentalDays?.ToString("N2",CultureInfo.InvariantCulture).Replace(".00","")</td>
+                                <td id="_Nc">@item.CrCasRenterContractBasicExpectedRentalDays?.ToString("N2", CultureInfo.InvariantCulture).Replace(".00", "")</td>
                                 //String.Format( "{0:#,##0.##}", رقم ال int )
                             }
                             else
                             {
-                                <td id="_Nc">@item.CrCasRenterContractBasicActualDays?.ToString("N2",CultureInfo.InvariantCulture).Replace(".00","")</td>
+                                <td id="_Nc">@item.CrCasRenterContractBasicActualDays?.ToString("N2", CultureInfo.InvariantCulture).Replace(".00", "")</td>
                             }
                             @*<td id="_Nc">@Model.CasRenterContractVM.CrCasRenterContractStatistics?.Where(x=>x.CrCasRenterContractStatisticsNo==item.CrCasRenterContractBasicNo)?.OrderByDescending(x=>x.CrCasRenterContractStatisticsDate)?.FirstOrDefault()?.CrCasRenterContractStatisicsDays</td>*@
                             <td style="text-align:start">@item.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationPlateArNo</td>
 
-                            <td id="_Nc">@item.CrCasRenterContractBasicExpectedTotal?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasRenterContractBasicExpectedTotal?.ToString("N2", CultureInfo.InvariantCulture)</td>
 
                             @if (@item.CrCasRenterContractBasicStatus == @Status.Active)
                             {
-                                <td id="_Nc">@km_Active?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                                <td id="_Nc">@km_Active</td>
                             }
                             else
                             {
-                                <td id="_Nc">@km_Not_Active?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                                <td id="_Nc">@km_Not_Active?.ToString("N2", CultureInfo.InvariantCulture)</td>
                             }
                             <td style="text-align:start">
 
@@ -503,29 +503,29 @@ else
                             {
                                 <td id="_Nc">@item.CrCasRenterContractBasicNo</td>
                             }
-                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("yyyy/MM/dd - HH:mm",CultureInfo.InvariantCulture)</td>
-                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("yyyy/MM/dd - HH:mm",CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("yyyy/MM/dd - HH:mm", CultureInfo.InvariantCulture)</td>
+                            <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("yyyy/MM/dd - HH:mm", CultureInfo.InvariantCulture)</td>
                             @if (@item.CrCasRenterContractBasicStatus == @Status.Active)
                             {
-                                <td id="_Nc">@item.CrCasRenterContractBasicExpectedRentalDays?.ToString("N2",CultureInfo.InvariantCulture).Replace(".00","")</td>
+                                <td id="_Nc">@item.CrCasRenterContractBasicExpectedRentalDays?.ToString("N2", CultureInfo.InvariantCulture).Replace(".00", "")</td>
                             }
                             else
                             {
-                                <td id="_Nc">@item.CrCasRenterContractBasicActualDays?.ToString("N2",CultureInfo.InvariantCulture).Replace(".00","")</td>
+                                <td id="_Nc">@item.CrCasRenterContractBasicActualDays?.ToString("N2", CultureInfo.InvariantCulture).Replace(".00", "")</td>
                             }
                             @*<td id="_Nc">@Model.CasRenterContractVM.CrCasRenterContractStatistics?.Where(x=>x.CrCasRenterContractStatisticsNo==item.CrCasRenterContractBasicNo)?.OrderByDescending(x=>x.CrCasRenterContractStatisticsDate)?.FirstOrDefault()?.CrCasRenterContractStatisicsDays</td>*@
 
                             <td style="text-align:start">@item.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationPlateArNo</td>
 
-                            <td id="_Nc">@item.CrCasRenterContractBasicExpectedTotal?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasRenterContractBasicExpectedTotal?.ToString("N2", CultureInfo.InvariantCulture)</td>
 
                             @if (@item.CrCasRenterContractBasicStatus == @Status.Active)
                             {
-                                <td id="_Nc">@km_Active?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                                <td id="_Nc">@km_Active</td>
                             }
                             else
                             {
-                                <td id="_Nc">@km_Not_Active?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                                <td id="_Nc">@km_Not_Active?.ToString("N2", CultureInfo.InvariantCulture)</td>
                             }
                             <td style="text-align:start">
 

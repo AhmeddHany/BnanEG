@@ -3,19 +3,13 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Globalization;
-using Bnan.Ui.ViewModels.BS;
-using System.Diagnostics.Contracts;
-using System.Numerics;
 
 
 
@@ -65,11 +59,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             var (mainTask, subTask, system, currentUser) = await SetTrace("203", "2203001", "2");
 
-           
+
             var titles = await setTitle("203", "2203001", "2");
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
 
-            var RenterLessorInformationAll = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] {  "CrCasRenterLessorNavigation.CrMasRenterPost", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }).ToList();
+            var RenterLessorInformationAll = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }).ToList();
 
             //if (RenterLessorInformationAll?.Count() < 1)
             //{
@@ -77,7 +71,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             //    return RedirectToAction("FailedMessageReport_NoData");
             //}
 
-            var rates = _unitOfWork.CrMasSysEvaluation.FindAll(x=>x.CrMasSysEvaluationsClassification=="1").ToList();
+            var rates = _unitOfWork.CrMasSysEvaluation.FindAll(x => x.CrMasSysEvaluationsClassification == "1").ToList();
             ViewData["Rates"] = rates;
 
 
@@ -107,10 +101,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
                 if (status == Status.All)
                 {
-                    var RenterLessorInformationbyStatusAll = _unitOfWork.CrCasRenterLessor.FindAll(l => (l.CrCasRenterLessorStatus == Status.Active || l.CrCasRenterLessorStatus == Status.Rented) && l.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] {"CrCasRenterLessorNavigation.CrMasRenterPost", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }).ToList();
+                    var RenterLessorInformationbyStatusAll = _unitOfWork.CrCasRenterLessor.FindAll(l => (l.CrCasRenterLessorStatus == Status.Active || l.CrCasRenterLessorStatus == Status.Rented) && l.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }).ToList();
                     return PartialView("_DataTableRenterLessorInformation", RenterLessorInformationbyStatusAll);
                 }
-                var RenterLessorInformationbyStatus = _unitOfWork.CrCasRenterLessor.FindAll(l => l.CrCasRenterLessorStatus == status && l.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] {"CrCasRenterLessorNavigation.CrMasRenterPost", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }).ToList();
+                var RenterLessorInformationbyStatus = _unitOfWork.CrCasRenterLessor.FindAll(l => l.CrCasRenterLessorStatus == status && l.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }).ToList();
                 return PartialView("_DataTableRenterLessorInformation", RenterLessorInformationbyStatus);
             }
             return PartialView();
@@ -133,7 +127,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var (mainTask, subTask, system, currentUser) = await SetTrace("203", "2203001", "2");
 
 
-            var contract =  _unitOfWork.CrCasRenterLessor.Find(x=>x.CrCasRenterLessorId == id && x.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterLessorStatisticsNationalitiesNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorIdtrypeNavigation" , "CrCasRenterLessorSectorNavigation", "CrCasRenterLessorStatisticsGenderNavigation", "CrCasRenterLessorMembershipNavigation" });
+            var contract = _unitOfWork.CrCasRenterLessor.Find(x => x.CrCasRenterLessorId == id && x.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterLessorStatisticsNationalitiesNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorIdtrypeNavigation", "CrCasRenterLessorSectorNavigation", "CrCasRenterLessorStatisticsGenderNavigation", "CrCasRenterLessorMembershipNavigation" });
             if (contract == null)
             {
                 ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
@@ -142,11 +136,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var Mechanism = _unitOfWork.CrMasSysEvaluation.FindAll(x => x.CrMasSysEvaluationsClassification == "1" && x.CrMasSysEvaluationsStatus == "A").ToList();
             ViewData["Mechanism"] = Mechanism;
 
-            var workPlace = _unitOfWork.CrMasSupRenterEmployer.Find(x=>x.CrMasSupRenterEmployerCode==contract.CrCasRenterLessorNavigation.CrMasRenterInformationEmployer);
+            var workPlace = _unitOfWork.CrMasSupRenterEmployer.Find(x => x.CrMasSupRenterEmployerCode == contract.CrCasRenterLessorNavigation.CrMasRenterInformationEmployer);
             ViewBag.workPlaceAr = workPlace?.CrMasSupRenterEmployerArName;
             ViewBag.workPlaceEn = workPlace?.CrMasSupRenterEmployerEnName;
 
-            var Bank = _unitOfWork.CrMasSupAccountBanks.Find(x=>x.CrMasSupAccountBankCode == contract.CrCasRenterLessorNavigation.CrMasRenterInformationBank);
+            var Bank = _unitOfWork.CrMasSupAccountBanks.Find(x => x.CrMasSupAccountBankCode == contract.CrCasRenterLessorNavigation.CrMasRenterInformationBank);
             ViewBag.BankAr = Bank?.CrMasSupAccountBankArName;
             ViewBag.BankEn = Bank?.CrMasSupAccountBankEnName;
 
@@ -180,7 +174,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 {
                     var contract = _mapper.Map<CrCasRenterLessor>(model);
 
-                    var singlExist = _unitOfWork.CrCasRenterLessor.Find(x=>x.CrCasRenterLessorId == contract.CrCasRenterLessorId && x.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor);
+                    var singlExist = _unitOfWork.CrCasRenterLessor.Find(x => x.CrCasRenterLessorId == contract.CrCasRenterLessorId && x.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor);
                     if (singlExist != null)
                     {
                         singlExist.CrCasRenterLessorDealingMechanism = contract.CrCasRenterLessorDealingMechanism;

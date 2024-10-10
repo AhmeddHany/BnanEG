@@ -1,13 +1,6 @@
 ﻿using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -52,7 +45,7 @@ namespace Bnan.Inferastructure.Repository
                 return false;
             }
         }
-        public async Task<bool> AddMaintainaceCar(string serialNumber,string lessorCode,string branchCode, int currentMeter)
+        public async Task<bool> AddMaintainaceCar(string serialNumber, string lessorCode, string branchCode, int currentMeter)
         {
             var lessorMechanisms = _unitOfWork.CrCasLessorMechanism.FindAll(l => l.CrCasLessorMechanismCode == lessorCode && l.CrCasLessorMechanismProceduresClassification == "13");
             try
@@ -69,7 +62,7 @@ namespace Bnan.Inferastructure.Repository
                             CrCasCarDocumentsMaintenanceIsActivation = item.CrCasLessorMechanismActivate,
                             CrCasCarDocumentsMaintenanceLessor = item.CrCasLessorMechanismCode,
                             CrCasCarDocumentsMaintenanceBranch = branchCode,
-                            CrCasCarDocumentsMaintenanceCurrentMeter =currentMeter,
+                            CrCasCarDocumentsMaintenanceCurrentMeter = currentMeter,
                             CrCasCarDocumentsMaintenanceStatus = "N",
                         };
 
@@ -85,6 +78,25 @@ namespace Bnan.Inferastructure.Repository
                 return false;
             }
         }
+
+        public async Task<bool> CheckMaintainceAndDocsCar(string serialNumber, string lessorCode, string classificationCode, string procudureCode)
+        {
+            var docsAndMaintaince = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsNoTrackingAsync(x => x.CrCasCarDocumentsMaintenanceSerailNo == serialNumber &&
+                                                                                                           x.CrCasCarDocumentsMaintenanceLessor == lessorCode &&
+                                                                                                           x.CrCasCarDocumentsMaintenanceProceduresClassification == classificationCode && x.CrCasCarDocumentsMaintenanceProcedures != procudureCode);
+            var carInfo = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == serialNumber && x.CrCasCarInformationLessor == lessorCode);
+
+            var main = docsAndMaintaince.Any(x => x.CrCasCarDocumentsMaintenanceStatus == Status.Expire || x.CrCasCarDocumentsMaintenanceStatus == Status.Renewed);
+            if (!main)
+            {
+                if (classificationCode == "12") carInfo.CrCasCarInformationDocumentationStatus = true;
+                else carInfo.CrCasCarInformationMaintenanceStatus = true;
+                if (_unitOfWork.CrCasCarInformation.Update(carInfo) != null) return true;
+                else return false;
+            }
+            return true;
+        }
+
         public async Task<bool> UpdateDocumentCar(CrCasCarDocumentsMaintenance crCasCarDocumentsMaintenance)
         {
             if (crCasCarDocumentsMaintenance != null)
@@ -92,13 +104,13 @@ namespace Bnan.Inferastructure.Repository
                 var CarDocument = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAsync(l => l.CrCasCarDocumentsMaintenanceBranch == crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceBranch
                                                                                && l.CrCasCarDocumentsMaintenanceLessor == crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceLessor
                                                                                && l.CrCasCarDocumentsMaintenanceProcedures == crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceProcedures
-                                                                               && l.CrCasCarDocumentsMaintenanceSerailNo==crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceSerailNo);
-                if (CarDocument!=null)
+                                                                               && l.CrCasCarDocumentsMaintenanceSerailNo == crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceSerailNo);
+                if (CarDocument != null)
                 {
                     var AboutToExpire = _unitOfWork.CrCasLessorMechanism.FindAsync(l => l.CrCasLessorMechanismCode == CarDocument.CrCasCarDocumentsMaintenanceLessor
                                                                                && l.CrCasLessorMechanismProcedures == CarDocument.CrCasCarDocumentsMaintenanceProcedures
                                                                                && l.CrCasLessorMechanismProceduresClassification == CarDocument.CrCasCarDocumentsMaintenanceProceduresClassification).Result.CrCasLessorMechanismDaysAlertAboutExpire;
-                    if (crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceStatus==Status.Renewed || crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceStatus == Status.Expire)
+                    if (crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceStatus == Status.Renewed || crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceStatus == Status.Expire)
                     {
                         CarDocument.CrCasCarDocumentsMaintenanceSerailNo = crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceSerailNo;
                         CarDocument.CrCasCarDocumentsMaintenanceStartDate = crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceStartDate;
@@ -136,7 +148,7 @@ namespace Bnan.Inferastructure.Repository
                                                                                && l.CrCasLessorMechanismProcedures == CarDocument.CrCasCarDocumentsMaintenanceProcedures
                                                                                && l.CrCasLessorMechanismProceduresClassification == CarDocument.CrCasCarDocumentsMaintenanceProceduresClassification)
                                                                                .Result.CrCasLessorMechanismKmAlertAboutExpire;
-                    if (crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceStatus==Status.Renewed || crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceStatus == Status.Expire)
+                    if (crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceStatus == Status.Renewed || crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceStatus == Status.Expire)
                     {
                         CarDocument.CrCasCarDocumentsMaintenanceSerailNo = crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceSerailNo;
                         CarDocument.CrCasCarDocumentsMaintenanceStartDate = crCasCarDocumentsMaintenance.CrCasCarDocumentsMaintenanceStartDate;
@@ -160,5 +172,6 @@ namespace Bnan.Inferastructure.Repository
             }
             return false;
         }
+
     }
 }

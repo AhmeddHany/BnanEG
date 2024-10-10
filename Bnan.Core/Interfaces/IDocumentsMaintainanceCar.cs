@@ -1,9 +1,4 @@
 ﻿using Bnan.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Core.Interfaces
 {
@@ -13,6 +8,7 @@ namespace Bnan.Core.Interfaces
         Task<bool> AddMaintainaceCar(string serialNumber, string lessorCode, string branchCode, int currentMeter);
         Task<bool> UpdateDocumentCar(CrCasCarDocumentsMaintenance crCasCarDocumentsMaintenance);
         Task<bool> UpdateMaintainceCar(CrCasCarDocumentsMaintenance crCasCarDocumentsMaintenance);
+        Task<bool> CheckMaintainceAndDocsCar(string serialNumber, string lessorCode, string classificationCode, string procudureCode);
 
     }
 }

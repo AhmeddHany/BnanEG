@@ -358,6 +358,7 @@ namespace Bnan.Inferastructure.Repository
             renterContractBasic.CrCasRenterContractBasicExpectedStartDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
             renterContractBasic.CrCasRenterContractBasicExpectedRentalDays = int.Parse(DaysNo);
             renterContractBasic.CrCasRenterContractBasicExpectedEndDate = renterContractBasic.CrCasRenterContractBasicExpectedStartDate?.AddDays(int.Parse(DaysNo));
+            renterContractBasic.CrCasRenterContractBasicActualCloseDateTime = renterContractBasic.CrCasRenterContractBasicExpectedEndDate;
             renterContractBasic.CrCasRenterContractBasicAllowCanceled = renterContractBasic.CrCasRenterContractBasicExpectedStartDate?.AddHours(Convert.ToDouble(carPrice.CrCasPriceCarBasicCancelHour));
             renterContractBasic.CrCasRenterContractBasicRenterId = RenterId;
             renterContractBasic.CrCasRenterContractBasicCarSerailNo = SerialNo;

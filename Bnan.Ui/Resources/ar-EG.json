@@ -1293,6 +1293,7 @@
   "toastMessageBranchHold": "عفواً ....... الفرع موقوف لا يمكن انشاء عقد",
   "toastRequiredField": "من فضلك تأكد من ملئ جميع الحقول",
   "SomethingWrongPleaseCallAdmin": "هناك خطأ ما حدث يرجى التواصل مع الادارة",
+  "PleaseEnterValue": "يرجى التأكد من ادخال قيمة صحيحة",
   "ToastSave": "تم الحفظ بنجاح",
   "ToastEdit": "تم التعديل بنجاح",
   "ToastDelete": "تم الحذف بنجاح",

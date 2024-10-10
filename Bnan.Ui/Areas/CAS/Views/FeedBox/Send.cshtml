@@ -14,7 +14,7 @@
 
 <title>@ViewData["Title"]</title>
 <div class="sub-container-form" id="CAS">
-    <form class="needs-validation" novalidate asp-area="CAS" asp-controller="FeedBox" asp-action="Send" method="post">
+    <form id="formValidition" class="needs-validation" novalidate asp-area="CAS" asp-controller="FeedBox" asp-action="Send" method="post">
         <div class="form-contain">
             @*Document Code*@
             <div class="row mt-2" hidden>
@@ -69,7 +69,7 @@
             </div>
         </div>
         <div>
-            <button class='btn btn-primary' type="submit" >@localizer["Save"]</button>
+            <a class='btn btn-primary' onclick="submitForm()">@localizer["Save"]</a>
             <a type="button" class="btn btn-danger ms-2" title="@localizer["Back"]" asp-area="CAS" asp-controller="FeedBox" asp-action="FeedBox">
                 @localizer["Back"]
             </a>
@@ -101,6 +101,19 @@
             } else {
                 // Limit to 9 digits before the decimal point
                 input.value = input.value.substr(0, 9);
+            }
+        }
+
+
+        function submitForm() {
+            var input = document.getElementById("FeedValue").value;
+            if (!input || parseFloat(input) === 0) {
+                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                toastr.error('@localizer["PleaseEnterValue"]');
+                return;
+            }
+            else {
+                $("#formValidition").submit();
             }
         }
     </script>

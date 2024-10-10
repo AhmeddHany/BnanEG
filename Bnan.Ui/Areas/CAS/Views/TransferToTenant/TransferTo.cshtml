@@ -282,8 +282,6 @@
 
             // Retrieve userDiscount from the model
             var amount = @Html.Raw(Json.Serialize(Model?.Amount));
-            console.log("amount", amount);
-
             // Ensure the value is between 0 and 100
             const numericValue = parseFloat(input.value);
             if (isNaN(numericValue) || isNaN(amount)) {
@@ -418,7 +416,7 @@
             const AmountPayed = parseFloat(AmountPayedInput).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const [beforeDecimal, afterDecimal] = splitNumberbeforeAndafterDecimal(AmountPayed);
             const numberToText = await dataChanged(AmountPayed);
-            const [firstHalf, secondHalf] = splitTextInHalf(numberToText.en_concatenate)   
+            const [firstHalf, secondHalf] = splitTextInHalf(numberToText.en_concatenate)
             var phaseFor = `Transfer to renter , Referance No ${reverseReferenceNo} `;
 
             // Signture Image
@@ -523,14 +521,22 @@
             var form = document.getElementById('msform');
             var submitButton = document.getElementById('submitForm');
             submitButton.addEventListener('click', function (event) {
+                var input = document.getElementById("Amount").value;
                 event.preventDefault();
                 if ($("#msform").valid()) {
-                    $('.main').show(); // Show the main container with fade effect
-                    ArReceipt();
-                    EnReceipt();
-                    setTimeout(function () {
-                        form.submit();
-                    }, 5000);
+                    if (!input || parseFloat(input) === 0) {
+                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                        toastr.error('@localizer["PleaseEnterValue"]');
+                        return;
+                    }
+                    else {
+                        $('.main').show(); // Show the main container with fade effect
+                        ArReceipt();
+                        EnReceipt();
+                        setTimeout(function () {
+                            form.submit();
+                        }, 5000);
+                    }
                 }
             });
         });

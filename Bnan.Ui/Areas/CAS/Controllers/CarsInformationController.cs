@@ -3,21 +3,17 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using NToastNotify;
-using NuGet.Packaging;
 using System.Diagnostics;
 using System.Globalization;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Bnan.Ui.Areas.CAS.Controllers
 {
@@ -99,7 +95,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
                 return View(carsInformation_IndexVM);
             }
-            finally {
+            finally
+            {
                 sw2.Stop();
                 Console.WriteLine($"Took {sw.ElapsedMilliseconds} MilliSeconds");
                 Console.WriteLine($"Took {sw2.ElapsedMilliseconds} MilliSeconds");
@@ -178,8 +175,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 }
                 return PartialView();
             }
-            finally {
-                
+            finally
+            {
+
                 Console.WriteLine($"Took {sw.ElapsedMilliseconds} MilliSeconds");
                 //Dispose(); 
             }

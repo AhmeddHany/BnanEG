@@ -57,7 +57,7 @@
                             <td>@item.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</td>
                             @if (item.CrCasRenterLessorNavigation.CrMasRenterPost != null)
                             {
-                                <td> @item.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostEnShortConcatenate</td>
+                                <td> @item.CrCasRenterLessorNavigation.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateEnName</td>
                             }
                             else
                             {
@@ -103,7 +103,7 @@
                             <td>@item.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</td>
                             @if (item.CrCasRenterLessorNavigation.CrMasRenterPost != null)
                             {
-                                <td> @item.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostEnShortConcatenate</td>
+                                <td> @item.CrCasRenterLessorNavigation.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateEnName</td>
                             }
                             else
                             {
@@ -180,7 +180,7 @@ else
                             <td>@item.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy")</td>
                             @if (item.CrCasRenterLessorNavigation.CrMasRenterPost != null)
                             {
-                                <td> @item.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostArShortConcatenate</td>
+                                <td> @item.CrCasRenterLessorNavigation.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateArName</td>
                             }
                             else
                             {
@@ -226,7 +226,7 @@ else
                             <td>@item.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy")</td>
                             @if (item.CrCasRenterLessorNavigation.CrMasRenterPost != null)
                             {
-                                <td> @item.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostArShortConcatenate</td>
+                                <td> @item.CrCasRenterLessorNavigation.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateArName</td>
                             }
                             else
                             {

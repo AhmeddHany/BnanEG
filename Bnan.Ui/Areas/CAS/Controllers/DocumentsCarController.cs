@@ -3,7 +3,6 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +10,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Globalization;
 
 namespace Bnan.Ui.Areas.CAS.Controllers
 {
@@ -110,9 +108,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             ViewBag.date = DocumentCar.CrCasCarDocumentsMaintenanceDate?.ToString("dd/MM/yyyy");
             ViewBag.startDate = DocumentCar.CrCasCarDocumentsMaintenanceStartDate?.ToString("dd/MM/yyyy");
             ViewBag.endDate = DocumentCar.CrCasCarDocumentsMaintenanceEndDate?.ToString("dd/MM/yyyy");
-            
+
             var DocumentsCarVM = _mapper.Map<DocumentsMaintainceCarVM>(DocumentCar);
-            if (DocumentsCarVM.CrCasCarDocumentsMaintenanceStatus==Status.Expire || DocumentsCarVM.CrCasCarDocumentsMaintenanceStatus == Status.Renewed)
+            if (DocumentsCarVM.CrCasCarDocumentsMaintenanceStatus == Status.Expire || DocumentsCarVM.CrCasCarDocumentsMaintenanceStatus == Status.Renewed)
             {
                 ViewBag.date = null;
                 ViewBag.startDate = null;
@@ -120,7 +118,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 DocumentsCarVM.CrCasCarDocumentsMaintenanceNo = null;
                 DocumentsCarVM.CrCasCarDocumentsMaintenanceDate = null;
                 DocumentsCarVM.CrCasCarDocumentsMaintenanceStartDate = null;
-                DocumentsCarVM.CrCasCarDocumentsMaintenanceEndDate= null;
+                DocumentsCarVM.CrCasCarDocumentsMaintenanceEndDate = null;
                 DocumentsCarVM.CrCasCarDocumentsMaintenanceImage = null;
             }
             return View(DocumentsCarVM);
@@ -149,7 +147,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 {
                     documentsMaintainceCar.CrCasCarDocumentsMaintenanceImage = null;
                 }
-                if (await _documentsMaintainance.UpdateDocumentCar(documentsMaintainceCar))
+                if (await _documentsMaintainance.UpdateDocumentCar(documentsMaintainceCar) &&
+                    await _documentsMaintainance.CheckMaintainceAndDocsCar(documentsMaintainceCar.CrCasCarDocumentsMaintenanceSerailNo, documentsMaintainceCar.CrCasCarDocumentsMaintenanceLessor, "12", documentsMaintainceCar.CrCasCarDocumentsMaintenanceProcedures))
                 {
                     await _unitOfWork.CompleteAsync();
                     //SaveTracing
@@ -172,16 +171,18 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
 
         [HttpDelete]
-        public async Task<bool> EditDocumentStatus(string DocumentCarLessor, string DocumentCarBranch, string DocumentCarProcedures,string SerialNumber, string status)
+        public async Task<bool> EditDocumentStatus(string DocumentCarLessor, string DocumentCarBranch, string DocumentCarProcedures, string SerialNumber, string status)
         {
             string sAr = "";
             string sEn = "";
             var lessor = await _unitOfWork.CrMasLessorInformation.GetByIdAsync(DocumentCarLessor);
-            var CarDocument = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAsync(x=>x.CrCasCarDocumentsMaintenanceLessor== DocumentCarLessor&&
-                                                                                        x.CrCasCarDocumentsMaintenanceBranch== DocumentCarBranch &&
-                                                                                        x.CrCasCarDocumentsMaintenanceProcedures== DocumentCarProcedures&&
-                                                                                        x.CrCasCarDocumentsMaintenanceSerailNo== SerialNumber);
-
+            var CarDocument = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAsync(x => x.CrCasCarDocumentsMaintenanceLessor == DocumentCarLessor &&
+                                                                                        x.CrCasCarDocumentsMaintenanceBranch == DocumentCarBranch &&
+                                                                                        x.CrCasCarDocumentsMaintenanceProcedures == DocumentCarProcedures &&
+                                                                                        x.CrCasCarDocumentsMaintenanceSerailNo == SerialNumber);
+            var car = _unitOfWork.CrCasCarInformation.Find(x => x.CrCasCarInformationLessor == lessor.CrMasLessorInformationCode &&
+                                                              x.CrCasCarInformationBranch == CarDocument.CrCasCarDocumentsMaintenanceBranch &&
+                                                              x.CrCasCarInformationSerailNo == CarDocument.CrCasCarDocumentsMaintenanceSerailNo);
             if (lessor != null)
             {
                 if (await CheckUserSubValidationProcdures("2202002", status))
@@ -201,6 +202,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                         CarDocument.CrCasCarDocumentsMaintenanceImage = null;
                         CarDocument.CrCasCarDocumentsMaintenanceNo = null;
                         _unitOfWork.CrCasCarDocumentsMaintenance.Update(CarDocument);
+                        car.CrCasCarInformationDocumentationStatus = false;
+                        _unitOfWork.CrCasCarInformation.Update(car);
                         await _unitOfWork.CompleteAsync();
                         await FileExtensions.RemoveFile(_webHostEnvironment, foldername, fileNameImg, ".png");
 
