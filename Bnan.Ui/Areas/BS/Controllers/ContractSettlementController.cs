@@ -270,7 +270,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 }
 
                 var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, pdfArContract, pdfEnContract, pdfArInvoice, pdfEnInvoice, pdfArReceipt, pdfEnReceipt, (decimal)UpdateSettlementContract.CrCasRenterContractBasicAmountPaid);
-                var ChechUpdateRenterStatistics = await _contractSettlement.UpdateRenterStatistics(UpdateSettlementContract);
+                var ChechUpdateRenterStatistics = await _contractSettlement.UpdateRenterStatistics(UpdateSettlementContract, userLogin.CrMasUserInformationCode, CheckAddAccountContractTaxOwed);
 
                 bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
                 if (!checkPdf)
@@ -281,7 +281,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 }
 
                 if (UpdateSettlementContract != null && CheckAccountReceipt != null && CheckBalances && CheckSalesPoint && CheckBranchValidity && CheckUserInformation && checkAccountInvoiceNo != null &&
-                    CheckMasRenter && CheckUpdateAuthrization && CheckUpdateAlert && CheckAddAccountContractTaxOwed && CheckUpdateRenterBalance && CheckDrivers
+                    CheckMasRenter && CheckUpdateAuthrization && CheckUpdateAlert && CheckAddAccountContractTaxOwed != null && CheckUpdateRenterBalance && CheckDrivers
                     && !string.IsNullOrEmpty(CheckDocAndMaintainance) && CheckCarInfo && CheckCheckUpCar && ChechAddAccountContractCompanyOwed && ChechUpdateRenterStatistics)
                 {
                     if (await _unitOfWork.CompleteAsync() > 0)

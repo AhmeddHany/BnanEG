@@ -10,8 +10,8 @@
 <table class=" tables-style table table-borderless" id="extensionTable">
     <thead>
         <tr>
-            <th scope="col">@localizer["Contract"]</th>
-            <th scope="col" class="not-in-mobile @(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "text-right" : "text-left")">
+@*             <th scope="col">@localizer["Contract"]</th>
+ *@            <th scope="col" class="not-in-mobile @(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "text-right" : "text-left")">
                 @localizer["Car"]
             </th>
             <th scope="col" class="not-in-mobile @(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "text-right" : "text-left")">
@@ -31,7 +31,7 @@
         {
             <tr style="cursor:pointer">
 
-                <td>
+                @*<td>
                     @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
                     {
                         <a href="@Url.Content(item.CrCasRenterContractBasicEnPdfFile?.ToString())" target="_blank" class="pdf-link"><img src="/BranchSys/Pages/img/Rectangle 196.svg" alt="pdf file link"></a>
@@ -40,7 +40,7 @@
                     {
                         <a href="@Url.Content(item.CrCasRenterContractBasicArPdfFile?.ToString())" target="_blank" class="pdf-link"><img src="/BranchSys/Pages/img/Rectangle 196.svg" alt="pdf file link"></a>
                     }
-                </td>
+                </td>*@
 
                 @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
                 {

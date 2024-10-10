@@ -14,7 +14,7 @@ namespace Bnan.Inferastructure.Repository
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> AddAccountContractTaxOwed(string ContractNo, string InvoiceNo, decimal ContractValue)
+        public async Task<string> AddAccountContractTaxOwed(string ContractNo, string InvoiceNo, decimal ContractValue)
         {
             var OldContract = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicNo == ContractNo).OrderByDescending(x => x.CrCasRenterContractBasicCopy).FirstOrDefault();
 
@@ -27,8 +27,8 @@ namespace Bnan.Inferastructure.Repository
             crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedDate = DateTime.Now.Date;
             crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedIsPaid = false;
 
-            if (await _unitOfWork.CrCasAccountContractTaxOwed.AddAsync(crCasAccountContractTaxOwed) != null) return true;
-            return false;
+            if (await _unitOfWork.CrCasAccountContractTaxOwed.AddAsync(crCasAccountContractTaxOwed) != null) return crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedValue?.ToString("N2");
+            return null;
         }
 
         public async Task<CrCasAccountReceipt> AddAccountReceipt(string ContractNo, string LessorCode, string BranchCode, string PaymentMethod, string Account, string SerialNo, string SalesPointNo,
@@ -301,7 +301,7 @@ namespace Bnan.Inferastructure.Repository
             OldContract.CrCasRenterContractBasicActualDays = (int)Math.Floor(actualDays);
             OldContract.CrCasRenterContractBasicActualExtraHours = int.Parse(MaxHours);
             OldContract.CrCasRenterContractBasicActualCurrentReadingMeter = int.Parse(CurrentMeter);
-            OldContract.CrCasRenterContractBasicActualFreeKm = int.Parse(ActualDaysNo) * OldContract.CrCasRenterContractBasicDailyFreeKm;
+            OldContract.CrCasRenterContractBasicActualFreeKm = int.Parse(ActualDaysNo) * OldContract.CrCasRenterContractBasicTotalDailyFreeKm;
             OldContract.CrCasRenterContractBasicActualExtraKm = int.Parse(AdditionalKm);
             OldContract.CrCasRenterContractBasicActualDailyRent = OldContract.CrCasRenterContractBasicDailyRent;
             OldContract.CrCasRenterContractBasicActualRentValue = int.Parse(ActualDaysNo) * OldContract.CrCasRenterContractBasicDailyRent;
@@ -468,7 +468,7 @@ namespace Bnan.Inferastructure.Repository
 
             return c;
         }
-        public async Task<bool> UpdateRenterStatistics(CrCasRenterContractBasic Contract)
+        public async Task<bool> UpdateRenterStatistics(CrCasRenterContractBasic Contract, string userCodeClose, string BnanValue)
         {
             var Statistic = await _unitOfWork.CrCasRenterContractStatistic.FindAsync(x => x.CrCasRenterContractStatisticsNo == Contract.CrCasRenterContractBasicNo);
             if (Contract != null)
@@ -491,14 +491,19 @@ namespace Bnan.Inferastructure.Repository
                 Statistic.CrCasRenterContractStatisticsTaxValue = Contract.CrCasRenterContractBasicActualTaxValue;
                 Statistic.CrCasRenterContractStatisticsExpensesValue = Contract.CrCasRenterContractBasicExpensesValue;
                 Statistic.CrCasRenterContractStatisticsCompensationValue = Contract.CrCasRenterContractBasicCompensationValue;
-                var CompanyContractBnan = await _unitOfWork.CrCasAccountContractCompanyOwed.FindAsync(x => x.CrCasAccountContractCompanyOwedNo == Contract.CrCasRenterContractBasicNo);
-                if (CompanyContractBnan != null) Statistic.CrCasRenterContractStatisticsBnanValue = CompanyContractBnan.CrCasAccountContractCompanyOwedAmount;
-
+                Statistic.CrCasRenterContractStatisticsUserClose = userCodeClose;
+                Statistic.CrCasRenterContractStatisticsDayClose = GetDay((DateTime)(Contract.CrCasRenterContractBasicActualCloseDateTime));
+                Statistic.CrCasRenterContractStatisticsTimeClose = GetTimeCategory((DateTime)(Contract.CrCasRenterContractBasicActualCloseDateTime));
+                Statistic.CrCasRenterContractStatisticsBnanValue = decimal.Parse(BnanValue);
+                Statistic.CrCasRenterContractStatisticsKm = GetKmCategory(((decimal)Contract.CrCasRenterContractBasicActualCurrentReadingMeter - (decimal)Contract.CrCasRenterContractBasicCurrentReadingMeter), (int)Contract.CrCasRenterContractBasicActualDays);
                 if (_unitOfWork.CrCasRenterContractStatistic.Update(Statistic) != null) return true;
                 return false;
             }
             return false;
         }
+
+
+
         public string GetCountDaysCategory(int daysNo)
         {
             if (daysNo >= 1 && daysNo <= 3)
@@ -577,6 +582,91 @@ namespace Bnan.Inferastructure.Repository
                 return "9"; // العمر أكثر من 60
             }
         }
+        public string GetDay(DateTime date)
+        {
+            // Get the day of the week
+            DayOfWeek dayOfWeek = date.DayOfWeek;
+            // Adjust the day of the week to start from 1 for Saturday and end at 7 for Friday
+            int adjustedDayOfWeek = ((int)dayOfWeek + 2) % 7;
+            // If the day is Sunday (0), it should be represented as 7
+            if (adjustedDayOfWeek == 0)
+            {
+                adjustedDayOfWeek = 7;
+            }
+            return adjustedDayOfWeek.ToString();
+        }
+        public string GetTimeCategory(DateTime date)
+        {
+            int hour = date.Hour;
+
+            if (hour >= 0 && hour <= 2)
+            {
+                return "1"; // من 00:00 إلى 02:59
+            }
+            else if (hour >= 3 && hour <= 5)
+            {
+                return "2"; // من 03:00 إلى 05:59
+            }
+            else if (hour >= 6 && hour <= 8)
+            {
+                return "3"; // من 06:00 إلى 08:59
+            }
+            else if (hour >= 9 && hour <= 11)
+            {
+                return "4"; // من 09:00 إلى 11:59
+            }
+            else if (hour >= 12 && hour <= 14)
+            {
+                return "5"; // من 12:00 إلى 14:59
+            }
+            else if (hour >= 15 && hour <= 17)
+            {
+                return "6"; // من 15:00 إلى 17:59
+            }
+            else if (hour >= 18 && hour <= 20)
+            {
+                return "7"; // من 18:00 إلى 20:59
+            }
+            else if (hour >= 21 && hour <= 23)
+            {
+                return "8"; // من 21:00 إلى 23:59
+            }
+            else
+            {
+                return ""; // Handle the case where hour is out of range
+            }
+        }
+        public string GetKmCategory(decimal value, int days)
+        {
+            var kmPerDay = value / days;
+            if (kmPerDay < 100)
+            {
+                return "1";
+            }
+            else if (kmPerDay > 101 && kmPerDay <= 200)
+            {
+                return "2";
+            }
+            else if (kmPerDay > 201 && kmPerDay <= 300)
+            {
+                return "3";
+            }
+            else if (kmPerDay > 301 && kmPerDay <= 400)
+            {
+                return "4";
+            }
+            else if (kmPerDay > 401 && kmPerDay <= 500)
+            {
+                return "5";
+            }
+            else
+            {
+                return "6";
+            }
+        }
+
+
+
         private CrCasAccountInvoice GetAccountInvoice(string LessorCode, string BranchCode, string ProcedureCode)
         {
             DateTime year = DateTime.Now;

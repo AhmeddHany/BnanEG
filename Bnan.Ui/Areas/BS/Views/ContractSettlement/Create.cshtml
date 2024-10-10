@@ -102,14 +102,14 @@
                                 <fieldset id="firstFieldset">
                                     <div class="form-card SettlementCard1 ">
                                         <div class="d-flex mb-3 gap-3">
-                                           @*  @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
                                             {
                                                 <a href="@Url.Content(Model.ContractSettlement.CrCasRenterContractBasicEnPdfFile.ToString())" target="_blank" class="pdf-anchor"><img src="~/BranchSys/Pages/img/contract.svg" alt="pdf for contract details" class="pdf_img"></a>
                                             }
                                             else
                                             {
                                                 <a href="@Url.Content(Model.ContractSettlement.CrCasRenterContractBasicArPdfFile.ToString())" target="_blank" class="pdf-anchor"><img src="~/BranchSys/Pages/img/contract.svg" alt="pdf for contract details" class="pdf_img"></a>
-                                            } *@
+                                            }
 
                                             @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
                                             {
@@ -210,24 +210,23 @@
                                                             </div>
 
                                                         </div>
-                                                        @* <div class="row dropdown-content-row">
-                                                        <div class="col-auto ">
-                                                        <p> : @localizer["EndAuth"]</p>
-                                                        </div>
-                                                        <div class="col personal-data">
-                                                        <p>@Model.ContractSettlement.AuthEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</p>
-                                                        </div>
-                                                        </div> *@
                                                         <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
-                                                                <p> : @localizer["FreeAdditionalHours"]</p>
+                                                                <p> : @localizer["FreeAdditionalHoursForCar"]</p>
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p>
-
-
-                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicTotalFreeHours </span>
-
+                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicFreeHours</span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row dropdown-content-row">
+                                                            <div class="col-auto ">
+                                                                <p> : @localizer["FreeAdditionalHoursForUser"]</p>
+                                                            </div>
+                                                            <div class="col personal-data">
+                                                                <p>
+                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicUserFreeHours</span>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -241,11 +240,21 @@
                                                         </div>
                                                         <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
-                                                                <p> : @localizer["DailyFreeKm"]</p>
+                                                                <p> : @localizer["DailyFreeKmForCar"]</p>
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p>
-                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicTotalDailyFreeKm </span>
+                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicDailyFreeKm </span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row dropdown-content-row">
+                                                            <div class="col-auto ">
+                                                                <p> : @localizer["DailyFreeKmForUser"]</p>
+                                                            </div>
+                                                            <div class="col personal-data">
+                                                                <p>
+                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicDailyFreeKmUser </span>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -870,7 +879,7 @@
                                                         </div>
                                                         <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
-                                                                <p>: @localizer["AmountPaid"]</p>
+                                                                <p>: @localizer["AmountReserved"]</p>
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p>@Model.ContractSettlement.CrCasRenterContractBasicAmountPaidAdvance?.ToString("N2", CultureInfo.InvariantCulture)</p>
@@ -1076,7 +1085,7 @@
                                         <div class="row data-col-Settl g-3">
                                             <div class="col-lg-4">
                                                 <div class="data-col-Settl">
-                                                    <div class="col-auto "><p>@localizer["PreviousBalance"]</p></div>
+                                                    <div class="col-auto "><p>@localizer["AvailableBalance"]</p></div>
                                                     <div class="col-auto personal-data p-0"><p>@Model.ContractSettlement.CrCasRenterContractBasic5.CrCasRenterLessorAvailableBalance?.ToString("N2", CultureInfo.InvariantCulture)</p></div>
                                                 </div>
 
@@ -1995,9 +2004,7 @@
                             current_fs.style.display = "none";
                             clearPaymentData();
                             CaculateContractSettelement();
-                            if(AmountRequired>0){
-                                $("#AmountPayed").focus();
-                            }
+                            $("#AmountPayed").focus();
                         }
                         else {
                             $("#examinationError").text('@localizer["checkUpMessageRequired"]')
