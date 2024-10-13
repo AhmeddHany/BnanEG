@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using NToastNotify;
@@ -299,6 +298,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(RegisterViewModel model, string CreditLimit, bool CrMasUserInformationAuthorizationAdmin, bool CrMasUserInformationAuthorizationOwner, bool CrMasUserInformationAuthorizationBranch, List<string> CheckboxBranchesWithData)
         {
+            ModelState.Remove("CrMasUserInformationId");
             if (ModelState.IsValid)
             {
 

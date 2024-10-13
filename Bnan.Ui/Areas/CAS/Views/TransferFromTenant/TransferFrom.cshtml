@@ -187,7 +187,7 @@
                         <input type="text" class="form-control" id="Amount" asp-for="Amount" maxlength="10" oninput="handleAmountPayed(this)" style="width:120%" />
                         <div style="margin-top:2px">
                             <div style="height: 1.35em">
-                                <span asp-validation-for="@Model.Amount" class="text-danger"></span>
+                                <span asp-validation-for="@Model.Amount" id="AmountValidition" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -515,8 +515,7 @@
                 event.preventDefault();
                 if ($("#msform").valid()) {
                     if (!input || parseFloat(input) === 0) {
-                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                        toastr.error('@localizer["PleaseEnterValue"]');
+                        $('#AmountValidition').text("@localizer["requiredFiled"]")
                         return;
                     }
                     else {

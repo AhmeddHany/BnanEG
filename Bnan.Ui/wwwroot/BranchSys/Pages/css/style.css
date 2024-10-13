@@ -155,8 +155,16 @@ nav {
     font-weight: 400;
 }
 
-
-
+.options-col {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    margin-bottom: 5px;
+}
+    .options-col label {
+        margin-right: 5px; /* Ù„Ø¶Ø¨Ø· Ø§Ù„Ù…Ø³Ø§ÙØ© Ø¨ÙŠÙ† Ø§Ù„Ù€ label ÙˆØ§Ù„Ù€ input */
+        margin-bottom: 0;
+    }
 .account-titles {
     text-align: end;
 }

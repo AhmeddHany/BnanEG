@@ -3992,6 +3992,7 @@
                 $('#divGenderDriver').remove();
             }
             $(".hidden-input-row-driver").show();
+            console.log("DriverInformation", DriverInformation);
         }
         function SetInformationForDriverIfNotExist() {
             // Personal Information
@@ -4522,7 +4523,6 @@
                         if (DriverInformation == null) {
                             SetInformationForDriverIfNotExist();
                         }
-                        // enableAllInputsForDriver();
                         var additionalDriver = document.getElementById("addational-driver");
                         var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
                         var BirthDateDriver = new Date($("#birth-date-driver").val());
@@ -4596,6 +4596,7 @@
                                 return
                             }
                             else {
+                                enableAllInputsForDriver();
                                 if (additionalDriver.checked) {
                                     $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                                     next_fs.show();
@@ -4632,6 +4633,7 @@
                             }
                         }
                         else {
+                            enableAllInputsForDriver();
                             if (additionalDriver.checked) {
                                 $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                                 next_fs.show();

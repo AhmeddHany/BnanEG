@@ -29,9 +29,16 @@ body {
 
     gap: 10px;
 }
-
+.table-select-style {
+    text-align: left;
+}
+.Settlement-input-checkbox {
+    margin:0;
+}
+.options-col label {
+    margin-left:10px
+}
 .cancle-icon {
-
     margin-right: 25px;
 }
 textarea{

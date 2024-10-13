@@ -42,6 +42,7 @@ namespace Bnan.Ui.ViewModels.CAS
         public string? FromAccountBankSelected { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? Amount { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
         public string? RenterInformationIban { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? FromBank { get; set; }

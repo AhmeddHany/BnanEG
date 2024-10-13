@@ -457,13 +457,13 @@
         $(document).ready(function () {
             var today = new Date();
             var startDate = new Date();
-            var EndDate = new Date();
+            var EndDate = new Date("@ViewBag.endDate");
 
             var startDates = $("CrCasCarDocumentsMaintenanceStartDate").val();
             var StartformattedDate = new Date(startDates);
 
             var EndDates = $("CrCasCarDocumentsMaintenanceEndDate").val();
-            var EndformattedDate = new Date(EndDates);
+            var EndformattedDate = new Date(EndDate);
 
             if (!StartformattedDate || StartformattedDate === "") {
                 StartformattedDate = today; // Set date to today if it's empty or null

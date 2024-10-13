@@ -56,6 +56,9 @@
                 </div>
                 <div class="col-md-2 col-8">
                     <input type="text" class="form-control" id="FeedValue" name="FeedValue" maxlength="9" oninput="validateInput9Digit(this)">
+                    <div style="height: 1.35em">
+                        <span id="FeedValueValidition" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
             @*Reasons*@
@@ -108,13 +111,18 @@
         function submitForm() {
             var input = document.getElementById("FeedValue").value;
             if (!input || parseFloat(input) === 0) {
-                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                toastr.error('@localizer["PleaseEnterValue"]');
+                $('#FeedValueValidition').text("@localizer["requiredFiled"]")
                 return;
             }
             else {
                 $("#formValidition").submit();
             }
         }
+        document.getElementById("FeedValue").addEventListener('input', function () {
+            var input = this.value;
+            if (input && parseFloat(input) !== 0) {
+                $('#FeedValueValidition').text(''); // Clear the error message
+            }
+        });
     </script>
 }
