@@ -1649,35 +1649,36 @@
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // const year = now.getFullYear().toString().padStart(4, '0');
-            // const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            // const day = now.getDate().toString().padStart(2, '0');
-            // const dateValue = `${year}-${month}-${day}`;
-            var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")'); // or "@DateTime.Now" if you prefer local server time
+        function customizeDate(){
+            // الحصول على الوقت الحالي
+            var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
             const now = new Date(dateTimeNow);
+
+            // تحويل تاريخ انتهاء العقد إلى كائن تاريخ
             const endDateString = "@Model.ContractSettlement.CrCasRenterContractBasicExpectedEndDate?.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)";
-            const endDate = new Date(endDateString);
+            let endDate = new Date(endDateString);
+            const startDateString = "@Model.ContractSettlement.CrCasRenterContractBasicExpectedStartDate?.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)";
+            let startDate = new Date(startDateString);
+            // التحقق من أن endDate تاريخ صحيح
+            if (!isNaN(endDate.getTime())) {
+                if (endDate < now) {
+                    // إذا كان تاريخ النهاية أقل من الآن، نضع الآن كقيمة
+                    const dateValue = now.toISOString().split('T')[0];  // yyyy-MM-dd
+                    document.getElementById("contract_real_endTime").value = dateValue;
+                    document.getElementById("contract_real_endTime").min = startDate.toISOString().split('T')[0];  // الحد الأدنى هو الآن
+                    document.getElementById("contract_real_endTime").max = now.toISOString().split('T')[0];  // الحد الأقصى هو endDate + 1
 
-            if (endDate < now) {
-                const year = now.getFullYear().toString().padStart(4, '0');
-                const month = (now.getMonth() + 1).toString().padStart(2, '0');
-                const day = now.getDate().toString().padStart(2, '0');
-                const dateValue = `${year}-${month}-${day}`;
-                document.getElementById("contract_real_endTime").value = dateValue;
+                } else {
+                    // إذا كان تاريخ النهاية أكبر من الآن، نضع endDate كقيمة
+                    const dateValue = now.toISOString().split('T')[0];  // yyyy-MM-dd
+                    document.getElementById("contract_real_endTime").min = startDate.toISOString().split('T')[0];  // الحد الأدنى هو الآن
+                    document.getElementById("contract_real_endTime").max = endDate.toISOString().split('T')[0];  // الحد الأقصى هو endDate + 1
+                    document.getElementById("contract_real_endTime").value = dateValue;
+                }
             } else {
-                const year = endDate.getFullYear().toString().padStart(4, '0');
-                const month = (endDate.getMonth() + 1).toString().padStart(2, '0');
-                const day = endDate.getDate().toString().padStart(2, '0');
-                const dateValue = `${year}-${month}-${day}`;
-                document.getElementById("contract_real_endTime").value = dateValue;
+                console.error("Invalid end date provided.");
             }
-            document.getElementById("contract_real_endTime").min = now.toISOString().split('T')[0];
-            if (endDate > now) {
-                document.getElementById("contract_real_endTime").max = endDate.toISOString().split('T')[0];
-            }
-        });
-
+        }
         var diffMinutes = 0;
         var diffHours = 0;
         var diff = 0;
@@ -1768,6 +1769,7 @@
             document.getElementById("contract_real_endTime").addEventListener("change", calculateDifference);
             // Call calculateDifference function when the page loads
             calculateDifference();
+            customizeDate();
         });
     </script>
     <script>

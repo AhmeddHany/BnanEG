@@ -3,14 +3,10 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Ui.ViewModels.BS;
-using Bnan.Ui.ViewModels.CAS;
-using Bnan.Ui.ViewModels.MAS;
 using Bnan.Ui.ViewModels.Owners;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Globalization;
 
 namespace Bnan.Ui.Areas.Base.Controllers
@@ -137,7 +133,7 @@ namespace Bnan.Ui.Areas.Base.Controllers
         }
 
         [HttpGet]
-        public async Task<bool> CheckAuth(string branchCode, string salespoint,string Balance,string CarsCount,string status)
+        public async Task<bool> CheckAuth(string branchCode, string salespoint, string Balance, string CarsCount, string status)
         {
             return false;
         }
@@ -268,8 +264,8 @@ namespace Bnan.Ui.Areas.Base.Controllers
             var now = DateTime.Now;
             var currentMonth = now.Month;
             var beforeMonth = currentMonth - 1;
-            double contractBeforeMonth = contracts.FindAll(x => x.CrCasRenterContractBasicIssuedDate.Value.Month == beforeMonth).Count();
-            double contractCurrentMonth = contracts.FindAll(x => x.CrCasRenterContractBasicIssuedDate.Value.Month == currentMonth).Count();
+            double contractBeforeMonth = contracts.FindAll(x => x.CrCasRenterContractBasicIssuedDate?.Month == beforeMonth).Count();
+            double contractCurrentMonth = contracts.FindAll(x => x.CrCasRenterContractBasicIssuedDate?.Month == currentMonth).Count();
             if (contractBeforeMonth == 0 || contractCurrentMonth == 0) return 0;
             double rate = contractCurrentMonth / contractBeforeMonth;
             return rate;
@@ -279,8 +275,8 @@ namespace Bnan.Ui.Areas.Base.Controllers
             var now = DateTime.Now;
             var currentMonth = now.Month;
             var beforeMonth = currentMonth - 1;
-            double carsBeforeMonth = cars.FindAll(x => x.CrCasCarInformationJoinedFleetDate.Value.Month == beforeMonth).Count();
-            double carsCurrentMonth = cars.FindAll(x => x.CrCasCarInformationJoinedFleetDate.Value.Month == currentMonth).Count();
+            double carsBeforeMonth = cars.FindAll(x => x.CrCasCarInformationJoinedFleetDate?.Month == beforeMonth).Count();
+            double carsCurrentMonth = cars.FindAll(x => x.CrCasCarInformationJoinedFleetDate?.Month == currentMonth).Count();
             if (carsBeforeMonth == 0 || carsCurrentMonth == 0) return 0;
             double rate = carsCurrentMonth / carsBeforeMonth;
             return rate;
@@ -290,8 +286,8 @@ namespace Bnan.Ui.Areas.Base.Controllers
             var now = DateTime.Now;
             var currentMonth = now.Month;
             var beforeMonth = currentMonth - 1;
-            double rentersBeforeMonth = renters.FindAll(x => x.CrCasRenterLessorDateFirstInteraction.Value.Month == beforeMonth).Count();
-            double rentersCurrentMonth = renters.FindAll(x => x.CrCasRenterLessorDateFirstInteraction.Value.Month == currentMonth).Count();
+            double rentersBeforeMonth = renters.FindAll(x => x.CrCasRenterLessorDateFirstInteraction?.Month == beforeMonth).Count();
+            double rentersCurrentMonth = renters.FindAll(x => x.CrCasRenterLessorDateFirstInteraction?.Month == currentMonth).Count();
             if (rentersBeforeMonth == 0 || rentersCurrentMonth == 0) return 0;
             double rate = rentersCurrentMonth / rentersBeforeMonth;
             return rate;
