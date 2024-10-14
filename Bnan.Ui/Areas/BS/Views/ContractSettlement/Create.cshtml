@@ -1670,7 +1670,7 @@
 
                 } else {
                     // إذا كان تاريخ النهاية أكبر من الآن، نضع endDate كقيمة
-                    const dateValue = now.toISOString().split('T')[0];  // yyyy-MM-dd
+                    const dateValue = endDate.toISOString().split('T')[0];  // yyyy-MM-dd
                     document.getElementById("contract_real_endTime").min = startDate.toISOString().split('T')[0];  // الحد الأدنى هو الآن
                     document.getElementById("contract_real_endTime").max = endDate.toISOString().split('T')[0];  // الحد الأقصى هو endDate + 1
                     document.getElementById("contract_real_endTime").value = dateValue;
@@ -1686,6 +1686,7 @@
         var settlementDay = 0;
 
         document.addEventListener("DOMContentLoaded", function () {
+            customizeDate();
             const elementToHide = document.getElementById("mechanismSettlement");
             var SettelmentAuth = "@userInfo?.CrMasUserContractValidity?.CrMasUserContractValidityEnd";
             const startContractDateString = "@Model.ContractSettlement.CrCasRenterContractBasicExpectedStartDate?.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture)";
@@ -1708,7 +1709,6 @@
 
             function calculateDifference() {
                 const settlementDateString = document.getElementById("contract_real_endTime").value;
-
                 const settlementDateTimeString = settlementDateString + "T" + timeString;
                 const settlementDateTime = new Date(settlementDateTimeString);
 
@@ -1768,8 +1768,8 @@
 
             document.getElementById("contract_real_endTime").addEventListener("change", calculateDifference);
             // Call calculateDifference function when the page loads
-            calculateDifference();
             customizeDate();
+            calculateDifference();
         });
     </script>
     <script>
