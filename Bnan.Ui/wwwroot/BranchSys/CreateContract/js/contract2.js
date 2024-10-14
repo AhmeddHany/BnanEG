@@ -18,36 +18,76 @@ function ImgUpload() {
             var filesArr = Array.prototype.slice.call(files);
             var uploadBtnBox = document.getElementById('checking-img');
             var uploadBtnBox2 = document.querySelector('.upload__btn');
+
+            // التحكم في إظهار وإخفاء زر التحميل بناءً على العدد
             if (imgCheckUpArray.length + filesArr.length >= maxLength) {
-                //uploadBtnBox.disabled = true;
                 uploadBtnBox2.style.display = "none";
             } else {
-                //uploadBtnBox.disabled = false;
                 uploadBtnBox2.style.display = "block";
             }
+
+            // معالجة كل ملف
             for (var i = 0; i < Math.min(filesArr.length, maxLength - imgCheckUpArray.length); i++) {
                 (function (f) {
+                    // التحقق من أنه ملف صورة
                     if (!f.type.match('image.*')) {
                         return;
-                    }
+                        console.log(11111111);
 
-                    var reader = new FileReader();
-                    reader.onload = function (e) {
-                        var html =
-                            "<div class='upload__img-box'><div style='background-image: url(" +
-                            e.target.result +
-                            ")' data-number='" +
-                            $('.upload__img-close').length +
-                            "' data-file='" +
-                            f.name +
-                            "' class='img-bg'><div class='upload__img-close'><img src='/BranchSys/CreateContract/delete.png'></div></div></div>";
-                        imgWrap.append(html);
-                        imgCheckUpArray.push({
-                            f: f,
-                            url: e.target.result
+                    }
+                    console.log(2222222);
+                    console.log("Image Type:", f.type);
+                    // إذا كانت الصورة بصيغة HEIC/HEIF، قم بالتحويل
+                    if (f.type === 'image/heic' || f.type === 'image/heif') {
+                        console.log(333333333);
+
+                        heic2any({
+                            blob: f,
+                            toType: "image/jpeg" // يمكنك تغييره إلى "image/png" إذا رغبت
+                        }).then(function (convertedBlob) {
+                            var reader = new FileReader();
+                            console.log(444444444);
+
+                            reader.onload = function (e) {
+                                console.log("تم تحميل الصورة المحولة:", e.target.result);
+                                var html =
+                                    "<div class='upload__img-box'><div style='background-image: url(" +
+                                    e.target.result +
+                                    ")' data-number='" +
+                                    $('.upload__img-close').length +
+                                    "' data-file='" +
+                                    f.name +
+                                    "' class='img-bg'><div class='upload__img-close'><img src='/BranchSys/CreateContract/delete.png'></div></div></div>";
+                                imgWrap.append(html);
+                                imgCheckUpArray.push({
+                                    f: f,
+                                    url: e.target.result
+                                });
+                            };
+                            reader.readAsDataURL(convertedBlob);
+                        }).catch(function (error) {
+                            console.error("Error converting HEIC image:", error);
                         });
-                    };
-                    reader.readAsDataURL(f);
+                    } else {
+                        // إذا كانت الصورة ليست HEIC/HEIF، التعامل العادي
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var html =
+                                "<div class='upload__img-box'><div style='background-image: url(" +
+                                e.target.result +
+                                ")' data-number='" +
+                                $('.upload__img-close').length +
+                                "' data-file='" +
+                                f.name +
+                                "' class='img-bg'><div class='upload__img-close'><img src='/BranchSys/CreateContract/delete.png'></div></div></div>";
+                            imgWrap.append(html);
+                            imgCheckUpArray.push({
+                                f: f,
+                                url: e.target.result
+                            });
+                        };
+                        reader.readAsDataURL(f);
+                    }
                 })(filesArr[i]);
             }
         });

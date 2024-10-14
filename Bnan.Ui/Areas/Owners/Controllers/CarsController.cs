@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
@@ -34,8 +33,8 @@ namespace Bnan.Ui.Areas.Owners.Controllers
             var lessorCode = userLogin.CrMasUserInformationLessor;
             if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Owners", "Indicators", "Cars", "", "", userLogin.CrMasUserInformationEnName);
             else await ViewData.SetPageTitleAsync("الملاك", "مؤشرات", "السيارات", "", "", userLogin.CrMasUserInformationArName);
-            var ownersLayoutVM = OwnersDashboadInfo(lessorCode);
-            var Contracts = _unitOfWork.CrCasRenterContractStatistic.FindAll(x => x.CrCasRenterContractStatisticsLessor == lessorCode, new[] { "CrCasRenterContractStatisticsModelNavigation", "CrCasRenterContractStatisticsCategoryNavigation", "CrCasRenterContractStatisticsBrandNavigation" }).ToList();
+            var ownersLayoutVM = await OwnersDashboadInfo(lessorCode);
+            var Contracts = await _unitOfWork.CrCasRenterContractStatistic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractStatisticsLessor == lessorCode, new[] { "CrCasRenterContractStatisticsModelNavigation", "CrCasRenterContractStatisticsCategoryNavigation", "CrCasRenterContractStatisticsBrandNavigation" });
             ownersLayoutVM.ModelCarStaticitis = GetModelCarList(Contracts);
             ownersLayoutVM.CategoryCarStaticitis = GetCategoryCarList(Contracts);
             ownersLayoutVM.BrandCarStaticitis = GetBrandCarList(Contracts);
@@ -59,7 +58,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 StaticsVMs.Add(ownStatictsVM);
             }
-            return StaticsVMs.OrderByDescending(x => x.Count).Where(x=>x.Count>0).Take(3).ToList();
+            return StaticsVMs.OrderByDescending(x => x.Count).Where(x => x.Count > 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetCategoryCarList(List<CrCasRenterContractStatistic> Contracts)
         {

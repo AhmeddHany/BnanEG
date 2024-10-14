@@ -34,13 +34,13 @@ namespace Bnan.Ui.Areas.Owners.Controllers
             var lessorCode = userLogin.CrMasUserInformationLessor;
             if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Owners", "Indicators", "Renters", "", "", userLogin.CrMasUserInformationEnName);
             else await ViewData.SetPageTitleAsync("الملاك", "المؤشرات", "المستأجرين", "", "", userLogin.CrMasUserInformationArName);
-            var ownersLayoutVM = OwnersDashboadInfo(lessorCode);
-            var Renters = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == x.CrCasRenterLessorCode, new[] { "CrCasRenterLessorStatisticsNationalitiesNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorMembershipNavigation", "CrCasRenterLessorStatisticsCityNavigation" }).ToList();
-            var Contracts = _unitOfWork.CrCasRenterContractStatistic.FindAll(x => x.CrCasRenterContractStatisticsLessor == lessorCode, new[] { "CrCasRenterContractStatisticsNavigation.CrCasRenterLessorStatisticsNationalitiesNavigation",
+            var ownersLayoutVM = await OwnersDashboadInfo(lessorCode);
+            var Renters = await _unitOfWork.CrCasRenterLessor.FindAllAsNoTrackingAsync(x => x.CrCasRenterLessorCode == x.CrCasRenterLessorCode, new[] { "CrCasRenterLessorStatisticsNationalitiesNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorMembershipNavigation", "CrCasRenterLessorStatisticsCityNavigation" });
+            var Contracts = await _unitOfWork.CrCasRenterContractStatistic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractStatisticsLessor == lessorCode, new[] { "CrCasRenterContractStatisticsNavigation.CrCasRenterLessorStatisticsNationalitiesNavigation",
                                                                                                                                                "CrCasRenterContractStatisticsNavigation.CrCasRenterLessorMembershipNavigation",
                                                                                                                                                "CrCasRenterContractStatisticsNavigation.CrCasRenterLessorStatisticsJobsNavigation",
                                                                                                                                                "CrCasRenterContractStatisticsNavigation.CrCasRenterLessorStatisticsCityNavigation",
-                                                                                                                                               "CrCasRenterContractStatisticsBranchCityNavigation"}).ToList();
+                                                                                                                                               "CrCasRenterContractStatisticsBranchCityNavigation"});
             ownersLayoutVM.NationalityStaticitis = GetSNationalityList(Contracts, lessorCode);
             ownersLayoutVM.MembershipStaticitis = GetMemberShipList(Contracts, lessorCode);
             ownersLayoutVM.ProfessionStaticitis = GetProffesionsList(Contracts, lessorCode);

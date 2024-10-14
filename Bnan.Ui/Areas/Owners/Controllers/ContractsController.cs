@@ -33,8 +33,8 @@ namespace Bnan.Ui.Areas.Owners.Controllers
             var lessorCode = userLogin.CrMasUserInformationLessor;
             if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Owners", "Indicators", "Contracts", "", "", userLogin.CrMasUserInformationEnName);
             else await ViewData.SetPageTitleAsync("الملاك", "مؤشرات", "العقود", "", "", userLogin.CrMasUserInformationArName);
-            var ownersLayoutVM = OwnersDashboadInfo(lessorCode);
-            var Contracts = _unitOfWork.CrCasRenterContractStatistic.FindAll(x => x.CrCasRenterContractStatisticsLessor == lessorCode, new[] { "CrCasRenterContractStatistics" }).ToList();
+            var ownersLayoutVM = await OwnersDashboadInfo(lessorCode);
+            var Contracts = await _unitOfWork.CrCasRenterContractStatistic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractStatisticsLessor == lessorCode, new[] { "CrCasRenterContractStatistics" });
 
             ownersLayoutVM.ContractsCount = Contracts.Count;
             ownersLayoutVM.BranchStaticitis = GetBranchContractsList(Contracts);
