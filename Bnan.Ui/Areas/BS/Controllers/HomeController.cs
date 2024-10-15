@@ -26,6 +26,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             _localizer = localizer;
             _toastNotification = toastNotification;
         }
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             //To Set Title 
@@ -34,53 +35,69 @@ namespace Bnan.Ui.Areas.BS.Controllers
             else await ViewData.SetPageTitleAsync("الفروع", "الرئيسية", "", "", "", userLogin.CrMasUserInformationArName);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bSLayoutVM = await GetBranchesAndLayout();
-            var Cars = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationBranch == bSLayoutVM.SelectedBranch, new[] { "CrCasCarInformationDistributionNavigation" }).ToList();
-            var carsRented = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == bSLayoutVM.SelectedBranch && x.CrCasCarInformationStatus == Status.Rented, new[] { "CrCasCarInformationDistributionNavigation", "CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics" }).ToList();
+            var Cars = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode &&
+                                                                                             x.CrCasCarInformationStatus != Status.Deleted &&
+                                                                                             x.CrCasCarInformationStatus != Status.Sold &&
+                                                                                             x.CrCasCarInformationBranch == bSLayoutVM.SelectedBranch,
+                                                                                        new[] { "CrCasCarInformationDistributionNavigation" });
+            // Filter rented cars
+            var carsRented = Cars.Where(x => x.CrCasCarInformationStatus == Status.Rented).ToList();
 
-            var carsAvailable = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == bSLayoutVM.SelectedBranch && x.CrCasCarInformationStatus == Status.Active &&
-                                                                                x.CrCasCarInformationPriceStatus == true && x.CrCasCarInformationBranchStatus == Status.Active &&
-                                                                                x.CrCasCarInformationOwnerStatus == Status.Active &&
-                                                                               (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale),
-                                                                               new[] { "CrCasCarInformationDistributionNavigation", "CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics" }).ToList();
-            var carsUnAvailable = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == bSLayoutVM.SelectedBranch && (x.CrCasCarInformationStatus == Status.Hold ||
-                                                                                x.CrCasCarInformationStatus == Status.Maintaince || x.CrCasCarInformationPriceStatus == false ||
-                                                                                x.CrCasCarInformationBranchStatus != Status.Active || x.CrCasCarInformationOwnerStatus != Status.Active ||
-                                                                               (x.CrCasCarInformationStatus == Status.Active && x.CrCasCarInformationForSaleStatus == Status.ForSale)),
-                                                                               new[] { "CrCasCarInformationDistributionNavigation", "CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics" }).ToList();
+            // Filter available cars
+            var carsAvailable = Cars.Where(x => x.CrCasCarInformationStatus == Status.Active &&
+                                                x.CrCasCarInformationPriceStatus == true &&
+                                                x.CrCasCarInformationBranchStatus == Status.Active &&
+                                                x.CrCasCarInformationOwnerStatus == Status.Active &&
+                                                (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale)).ToList();
+
+            // Filter unavailable cars
+            var carsUnavailable = Cars.Where(x => x.CrCasCarInformationStatus == Status.Hold ||
+                                                    x.CrCasCarInformationStatus == Status.Maintaince ||
+                                                    x.CrCasCarInformationPriceStatus == false ||
+                                                    x.CrCasCarInformationBranchStatus != Status.Active ||
+                                                    x.CrCasCarInformationOwnerStatus != Status.Active ||
+                                                    (x.CrCasCarInformationStatus == Status.Active && x.CrCasCarInformationForSaleStatus == Status.ForSale)).ToList();
             //var documentsMaintenance = _unitOfWork.CrCasCarDocumentsMaintenance.FindAll(x => x.CrCasCarDocumentsMaintenanceLessor == lessorCode && x.CrCasCarDocumentsMaintenanceBranch == bSLayoutVM.SelectedBranch, new[] { "CrCasCarDocumentsMaintenanceProceduresNavigation" }).ToList();
             ViewBag.carCount = Cars.Count();
             ViewBag.AvaliableCars = carsAvailable.Count();
-            ViewBag.UnAvaliableCars = carsUnAvailable.Count();
+            ViewBag.UnAvaliableCars = carsUnavailable.Count();
             ViewBag.RentedCars = carsRented.Count();
             var userInfo = _unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == userLogin.CrMasUserInformationCode, new[] { "CrMasUserBranchValidities" });
             var branchValidity = userInfo.CrMasUserBranchValidities.FirstOrDefault(x => x.CrMasUserBranchValidityBranch == bSLayoutVM.SelectedBranch);
 
-            ViewBag.Adminstritive = _unitOfWork.CrCasSysAdministrativeProcedure.FindAll(x => x.CrCasSysAdministrativeProceduresLessor == lessorCode &&
-                                                                                x.CrCasSysAdministrativeProceduresTargeted == userLogin.CrMasUserInformationCode &&
-                                                                                x.CrCasSysAdministrativeProceduresCode == "303" &&
-                                                                                x.CrCasSysAdministrativeProceduresStatus == Status.Insert).Count();
 
-            var Contracts = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicBranch == bSLayoutVM.SelectedBranch).ToList();
-            var AlertContract = _unitOfWork.CrCasRenterContractAlert.FindAll(x => x.CrCasRenterContractAlertLessor == lessorCode && x.CrCasRenterContractAlertBranch == bSLayoutVM.SelectedBranch).ToList();
+            var adminstriveAll = await _unitOfWork.CrCasSysAdministrativeProcedure.FindAllAsNoTrackingAsync(x => x.CrCasSysAdministrativeProceduresLessor == lessorCode &&
+                                                                                                                x.CrCasSysAdministrativeProceduresTargeted == userLogin.CrMasUserInformationCode &&
+                                                                                                                x.CrCasSysAdministrativeProceduresCode == "303" &&
+                                                                                                                x.CrCasSysAdministrativeProceduresStatus == Status.Insert);
+            ViewBag.Adminstritive = adminstriveAll.Count();
+            var Contracts = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicBranch == bSLayoutVM.SelectedBranch);
+            var AlertContract = await _unitOfWork.CrCasRenterContractAlert.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractAlertLessor == lessorCode && x.CrCasRenterContractAlertBranch == bSLayoutVM.SelectedBranch);
 
             //For Charts 
-            var AccountReceipt = _unitOfWork.CrCasAccountReceipt.FindAll(x => x.CrCasAccountReceiptLessorCode == lessorCode && x.CrCasAccountReceiptBranchCode == bSLayoutVM.SelectedBranch &&
-                                                                           x.CrCasAccountReceiptIsPassing == "1" && x.CrCasAccountReceiptPaymentMethod != "30").ToList();
+            var AccountReceipt = await _unitOfWork.CrCasAccountReceipt.FindAllAsNoTrackingAsync(x => x.CrCasAccountReceiptLessorCode == lessorCode && x.CrCasAccountReceiptBranchCode == bSLayoutVM.SelectedBranch &&
+                                                                           x.CrCasAccountReceiptIsPassing == "1" && x.CrCasAccountReceiptPaymentMethod != "30");
 
-            var PaymentMethods = _unitOfWork.CrMasSupAccountPaymentMethod.FindAll(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active &&
-                                                                                       (x.CrMasSupAccountPaymentMethodClassification == "1" || x.CrMasSupAccountPaymentMethodClassification == "2")).ToList();
+            var PaymentMethods = await _unitOfWork.CrMasSupAccountPaymentMethod.FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active &&
+                                                                                       (x.CrMasSupAccountPaymentMethodClassification == "1" || x.CrMasSupAccountPaymentMethodClassification == "2"));
 
-            var paymentMethodBranch = ChartsPaymentMethodBranch(AccountReceipt);
-            var paymentMethodUser = ChartsPaymentMethodUser(AccountReceipt, userLogin.CrMasUserInformationCode);
+            var paymentMethodBranch = await ChartsPaymentMethodBranch(AccountReceipt);
+            var paymentMethodUser = await ChartsPaymentMethodUser(AccountReceipt, userLogin.CrMasUserInformationCode);
 
-            ViewBag.RenterLessorCount = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == lessorCode).Count();
-            ViewBag.ContractForSettelment = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicLessor == lessorCode && (x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire)).Count();
-            ViewBag.ContractForExtension = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicBranch == bSLayoutVM.SelectedBranch && x.CrCasRenterContractBasicStatus == Status.Active).Count();
+            var renterLessorList = await _unitOfWork.CrCasRenterLessor.FindAllAsNoTrackingAsync(x => x.CrCasRenterLessorCode == lessorCode);
+            ViewBag.RenterLessorCount = renterLessorList.Count();
 
-            ViewBag.AcccountReceiptCount = _unitOfWork.CrCasAccountReceipt.FindAll(x => x.CrCasAccountReceiptLessorCode == lessorCode &&
-                                                                                     x.CrCasAccountReceiptBranchCode == bSLayoutVM.SelectedBranch && x.CrCasAccountReceiptUser == userLogin.CrMasUserInformationCode).Count();
-            ViewBag.AcccountReceiptPassingCount = _unitOfWork.CrCasAccountReceipt.FindAll(x => x.CrCasAccountReceiptLessorCode == lessorCode &&
-                                                                                     x.CrCasAccountReceiptBranchCode == bSLayoutVM.SelectedBranch && x.CrCasAccountReceiptUser == userLogin.CrMasUserInformationCode && x.CrCasAccountReceiptIsPassing == "1").Count();
+            var contractForSettelmentList = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && (x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire));
+            ViewBag.ContractForSettelment = contractForSettelmentList.Count();
+
+            var contractForExtensionList = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicBranch == bSLayoutVM.SelectedBranch && x.CrCasRenterContractBasicStatus == Status.Active);
+            ViewBag.ContractForExtension = contractForExtensionList.Count();
+
+            var acccountReceiptList = await _unitOfWork.CrCasAccountReceipt.FindAllAsNoTrackingAsync(x => x.CrCasAccountReceiptLessorCode == lessorCode && x.CrCasAccountReceiptBranchCode == bSLayoutVM.SelectedBranch && x.CrCasAccountReceiptUser == userLogin.CrMasUserInformationCode);
+            ViewBag.AcccountReceiptCount = acccountReceiptList.Count();
+
+            var AcccountReceiptPassingList = await _unitOfWork.CrCasAccountReceipt.FindAllAsNoTrackingAsync(x => x.CrCasAccountReceiptLessorCode == lessorCode && x.CrCasAccountReceiptBranchCode == bSLayoutVM.SelectedBranch && x.CrCasAccountReceiptUser == userLogin.CrMasUserInformationCode && x.CrCasAccountReceiptIsPassing == "1");
+            ViewBag.AcccountReceiptPassingCount = AcccountReceiptPassingList.Count();
 
 
 
@@ -105,6 +122,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             return View(bSLayoutVM);
         }
+        [HttpGet]
         public async Task<IActionResult> ChangeBranch(string selectedBranch)
         {
             var userLogin = await _userManager.GetUserAsync(User);
@@ -190,9 +208,6 @@ namespace Bnan.Ui.Areas.BS.Controllers
             };
             return PartialView("_RentedCarByCategory", bSLayoutVM);
         }
-
-
-
         [HttpGet]
         public async Task<PartialViewResult> GetUnAvaliableCars()
         {
@@ -249,7 +264,6 @@ namespace Bnan.Ui.Areas.BS.Controllers
             };
             return PartialView("_UnAvailableCarByCategory", bSLayoutVM);
         }
-
         [HttpGet]
         public async Task<PartialViewResult> GetAvaliableCars()
         {
@@ -310,7 +324,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
-            var documents = _unitOfWork.CrCasBranchDocument.FindAll(x => x.CrCasBranchDocumentsLessor == lessorCode && x.CrCasBranchDocumentsBranch == selectedBranch);
+            var documents = await _unitOfWork.CrCasBranchDocument.FindAllAsNoTrackingAsync(x => x.CrCasBranchDocumentsLessor == lessorCode && x.CrCasBranchDocumentsBranch == selectedBranch);
             var documentNotActive = documents.Where(x => x.CrCasBranchDocumentsStatus == Status.Renewed || x.CrCasBranchDocumentsStatus == Status.Expire).ToList();
             var userContractValidity = _unitOfWork.CrMasUserContractValidity.Find(x => x.CrMasUserContractValidityUserId == userLogin.Id);
             var check = "true";
@@ -325,11 +339,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
             return Json(check);
         }
-        private List<PaymentMethodBranchDataVM> ChartsPaymentMethodBranch(List<CrCasAccountReceipt> AccountReceipt)
+        private async Task<List<PaymentMethodBranchDataVM>> ChartsPaymentMethodBranch(List<CrCasAccountReceipt> AccountReceipt)
         {
             List<PaymentMethodBranchDataVM> paymentMethodBranch = new List<PaymentMethodBranchDataVM>();
             if (AccountReceipt == null) return paymentMethodBranch;
-            var PaymentMethods = _unitOfWork.CrMasSupAccountPaymentMethod.FindAll(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active && (x.CrMasSupAccountPaymentMethodClassification == "1" || x.CrMasSupAccountPaymentMethodClassification == "2")).ToList();
+            var PaymentMethods = await _unitOfWork.CrMasSupAccountPaymentMethod.FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active &&
+                                                                                                            (x.CrMasSupAccountPaymentMethodClassification == "1" || x.CrMasSupAccountPaymentMethodClassification == "2"));
             foreach (var paymentMethod in PaymentMethods)
             {
                 // Assuming you have properties for Arabic and English names in your CrMasSupAccountPaymentMethod model
@@ -377,11 +392,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             return paymentMethodBranch;
         }
-        private List<PaymentMethodBranchDataVM> ChartsPaymentMethodUser(List<CrCasAccountReceipt> AccountReceipt, string UserCode)
+        private async Task<List<PaymentMethodBranchDataVM>> ChartsPaymentMethodUser(List<CrCasAccountReceipt> AccountReceipt, string UserCode)
         {
             List<PaymentMethodBranchDataVM> paymentMethodUser = new List<PaymentMethodBranchDataVM>();
             if (AccountReceipt == null) return paymentMethodUser;
-            var PaymentMethods = _unitOfWork.CrMasSupAccountPaymentMethod.FindAll(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active && (x.CrMasSupAccountPaymentMethodClassification == "1" || x.CrMasSupAccountPaymentMethodClassification == "2")).ToList();
+            var PaymentMethods = await _unitOfWork.CrMasSupAccountPaymentMethod.FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active && (x.CrMasSupAccountPaymentMethodClassification == "1" || x.CrMasSupAccountPaymentMethodClassification == "2"));
             foreach (var paymentMethod in PaymentMethods)
             {
                 // Assuming you have properties for Arabic and English names in your CrMasSupAccountPaymentMethod model
