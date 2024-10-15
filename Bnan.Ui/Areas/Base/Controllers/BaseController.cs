@@ -154,15 +154,11 @@ namespace Bnan.Ui.Areas.Base.Controllers
             if (selectBranch == null || selectBranch == "000") selectBranch = "100";
             var checkBranch = branches.Find(x => x.CrCasBranchInformationCode == selectBranch);
             if (checkBranch == null) selectBranch = branches.FirstOrDefault()?.CrCasBranchInformationCode;
-
             var branch = _unitOfWork.CrCasBranchInformation.Find(x => x.CrCasBranchInformationCode == selectBranch && x.CrCasBranchInformationLessor == lessorCode, new[] { "CrCasBranchPost", "CrCasBranchPost.CrCasBranchPostCityNavigation", "CrCasBranchInformationLessorNavigation" });
-
-
-
-            var Documents = _unitOfWork.CrCasBranchDocument.FindAll(x => x.CrCasBranchDocumentsLessor == lessorCode && x.CrCasBranchDocumentsBranch == branch.CrCasBranchInformationCode).ToList();
-            var DocumentsCar = _unitOfWork.CrCasCarDocumentsMaintenance.FindAll(x => x.CrCasCarDocumentsMaintenanceLessor == lessorCode && x.CrCasCarDocumentsMaintenanceBranch == branch.CrCasBranchInformationCode && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12").ToList();
-            var MaintainceCar = _unitOfWork.CrCasCarDocumentsMaintenance.FindAll(x => x.CrCasCarDocumentsMaintenanceLessor == lessorCode && x.CrCasCarDocumentsMaintenanceBranch == branch.CrCasBranchInformationCode && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").ToList();
-            var PriceCar = _unitOfWork.CrCasPriceCarBasic.FindAll(x => x.CrCasPriceCarBasicLessorCode == lessorCode).ToList();
+            var Documents = await _unitOfWork.CrCasBranchDocument.FindAllAsNoTrackingAsync(x => x.CrCasBranchDocumentsLessor == lessorCode && x.CrCasBranchDocumentsBranch == branch.CrCasBranchInformationCode);
+            var DocumentsCar = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsNoTrackingAsync(x => x.CrCasCarDocumentsMaintenanceLessor == lessorCode && x.CrCasCarDocumentsMaintenanceBranch == branch.CrCasBranchInformationCode && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12");
+            var MaintainceCar = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsNoTrackingAsync(x => x.CrCasCarDocumentsMaintenanceLessor == lessorCode && x.CrCasCarDocumentsMaintenanceBranch == branch.CrCasBranchInformationCode && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13");
+            var PriceCar = await _unitOfWork.CrCasPriceCarBasic.FindAllAsNoTrackingAsync(x => x.CrCasPriceCarBasicLessorCode == lessorCode);
             var c = Documents.Where(x => x.CrCasBranchDocumentsStatus == Status.AboutToExpire).Count();
             var BsLayoutVM = new BSLayoutVM();
             BsLayoutVM.CrCasBranchInformations = branches;
@@ -185,14 +181,15 @@ namespace Bnan.Ui.Areas.Base.Controllers
         }
 
 
-        public string GetNextAccountReceiptNo(string LessorCode, string BranchCode, string procedure)
+        public async Task<string> GetNextAccountReceiptNo(string LessorCode, string BranchCode, string procedure)
         {
             DateTime year = DateTime.Now;
             var y = year.ToString("yy");
-            var Lrecord = _unitOfWork.CrCasAccountReceipt.FindAll(x => x.CrCasAccountReceiptLessorCode == LessorCode &&
-                                                                       x.CrCasAccountReceiptYear == y && x.CrCasAccountReceiptBranchCode == BranchCode && x.CrCasAccountReceiptType == procedure)
-                                                             .Max(x => x.CrCasAccountReceiptNo.Substring(x.CrCasAccountReceiptNo.Length - 6, 6));
+            var Records = await _unitOfWork.CrCasAccountReceipt.FindAllAsNoTrackingAsync(x => x.CrCasAccountReceiptLessorCode == LessorCode &&
+                                                                       x.CrCasAccountReceiptYear == y && x.CrCasAccountReceiptBranchCode == BranchCode && x.CrCasAccountReceiptType == procedure);
 
+
+            var Lrecord = Records.Max(x => x.CrCasAccountReceiptNo.Substring(x.CrCasAccountReceiptNo.Length - 6, 6));
             string Serial;
             if (Lrecord != null)
             {
@@ -206,14 +203,15 @@ namespace Bnan.Ui.Areas.Base.Controllers
             var AccountReceiptNo = y + "-" + "1" + procedure + "-" + LessorCode + BranchCode + "-" + Serial;
             return AccountReceiptNo;
         }
-        public string GetNextAdministrativeNo(string LessorCode, string BranchCode, string procedure)
+        public async Task<string> GetNextAdministrativeNo(string LessorCode, string BranchCode, string procedure)
         {
             DateTime year = DateTime.Now;
             var y = year.ToString("yy");
-            var Lrecord = _unitOfWork.CrCasSysAdministrativeProcedure.FindAll(x => x.CrCasSysAdministrativeProceduresLessor == LessorCode &&
+            var Records = await _unitOfWork.CrCasSysAdministrativeProcedure.FindAllAsNoTrackingAsync(x => x.CrCasSysAdministrativeProceduresLessor == LessorCode &&
                 x.CrCasSysAdministrativeProceduresCode == procedure
                 && x.CrCasSysAdministrativeProceduresSector == "1"
-                && x.CrCasSysAdministrativeProceduresYear == y).Max(x => x.CrCasSysAdministrativeProceduresNo.Substring(x.CrCasSysAdministrativeProceduresNo.Length - 6, 6));
+                && x.CrCasSysAdministrativeProceduresYear == y);
+            var Lrecord = Records.Max(x => x.CrCasSysAdministrativeProceduresNo.Substring(x.CrCasSysAdministrativeProceduresNo.Length - 6, 6));
             string Serial;
             if (Lrecord != null)
             {

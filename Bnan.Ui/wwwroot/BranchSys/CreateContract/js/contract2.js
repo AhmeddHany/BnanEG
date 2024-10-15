@@ -6,16 +6,25 @@ function HideFirstImg() {
     var firstImg = document.getElementById('upload-img1');
     firstImg.style.display = 'none';
 }
+function isHEICSupported() {
+    var canvas = document.createElement("canvas");
+    return canvas.toDataURL("image/heic").indexOf("data:image/heic") === 0;
+}
 var imgCheckUpArray = [];
 function ImgUpload() {
     var imgWrap = '';
 
+
     $('.upload__inputfile').each(function () {
         $(this).on('change', function (e) {
+            console.log("File upload triggered"); // تأكد من أن التحميل يبدأ
+
             imgWrap = $(this).closest('.upload__box').find('.upload_img-wrap_inner');
             var maxLength = 12;
             var files = e.target.files;
             var filesArr = Array.prototype.slice.call(files);
+            console.log("Files selected:", filesArr); // عرض الملفات المختارة في الـ console
+
             var uploadBtnBox = document.getElementById('checking-img');
             var uploadBtnBox2 = document.querySelector('.upload__btn');
 
@@ -29,27 +38,50 @@ function ImgUpload() {
             // معالجة كل ملف
             for (var i = 0; i < Math.min(filesArr.length, maxLength - imgCheckUpArray.length); i++) {
                 (function (f) {
-                    // التحقق من أنه ملف صورة
-                    if (!f.type.match('image.*')) {
-                        return;
-                        console.log(11111111);
+                    console.log("Processing file:", f); // تأكد من أن الملف يتم معالجته
 
-                    }
-                    console.log(2222222);
-                    console.log("Image Type:", f.type);
-                    // إذا كانت الصورة بصيغة HEIC/HEIF، قم بالتحويل
-                    if (f.type === 'image/heic' || f.type === 'image/heif') {
-                        console.log(333333333);
+                    //// التحقق من أنه ملف صورة
+                    //if (!f.type.match('image.*')) {
+                    //    console.log("File is not an image:", f.type);
+                    //    return;
+                    //}
 
-                        heic2any({
-                            blob: f,
-                            toType: "image/jpeg" // يمكنك تغييره إلى "image/png" إذا رغبت
-                        }).then(function (convertedBlob) {
+                    // إذا كانت الصورة بصيغة HEIC/HEIF
+                    if (f.type === 'image/heic' || f.type === 'image/heif' || f.name.endsWith('.heic') || f.name.endsWith('.heif')) {
+                        console.log("Processing HEIC/HEIF file:", f.name);
+
+                        if (!isHEICSupported()) {
+                            // التحويل باستخدام heic2any
+                            heic2any({
+                                blob: f,
+                                toType: "image/jpeg" // يمكنك تغييره إلى "image/png" إذا رغبت
+                            }).then(function (convertedBlob) {
+                                var reader = new FileReader();
+                                reader.onload = function (e) {
+                                    console.log("HEIC/HEIF file converted:", e.target.result);
+                                    var html =
+                                        "<div class='upload__img-box'><div style='background-image: url(" +
+                                        e.target.result +
+                                        ")' data-number='" +
+                                        $('.upload__img-close').length +
+                                        "' data-file='" +
+                                        f.name +
+                                        "' class='img-bg'><div class='upload__img-close'><img src='/BranchSys/CreateContract/delete.png'></div></div></div>";
+                                    imgWrap.append(html);
+                                    imgCheckUpArray.push({
+                                        f: f,
+                                        url: e.target.result
+                                    });
+                                };
+                                reader.readAsDataURL(convertedBlob);
+                            }).catch(function (error) {
+                                console.error("Error converting HEIC image:", error);
+                            });
+                        } else {
+                            // إذا كان المتصفح يدعم HEIC، يمكن التعامل مع الملف مباشرة
+                            console.log("Browser supports HEIC, no conversion needed");
                             var reader = new FileReader();
-                            console.log(444444444);
-
                             reader.onload = function (e) {
-                                console.log("تم تحميل الصورة المحولة:", e.target.result);
                                 var html =
                                     "<div class='upload__img-box'><div style='background-image: url(" +
                                     e.target.result +
@@ -64,12 +96,11 @@ function ImgUpload() {
                                     url: e.target.result
                                 });
                             };
-                            reader.readAsDataURL(convertedBlob);
-                        }).catch(function (error) {
-                            console.error("Error converting HEIC image:", error);
-                        });
+                            reader.readAsDataURL(f);
+                        }
                     } else {
                         // إذا كانت الصورة ليست HEIC/HEIF، التعامل العادي
+                        console.log("Processing non-HEIC/HEIF image:", f.name);
                         var reader = new FileReader();
                         reader.onload = function (e) {
                             var html =
@@ -88,6 +119,7 @@ function ImgUpload() {
                         };
                         reader.readAsDataURL(f);
                     }
+                    console.log(imgCheckUpArray);
                 })(filesArr[i]);
             }
         });

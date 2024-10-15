@@ -3,14 +3,11 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Globalization;
@@ -61,9 +58,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var titles = await setTitle("204", "2204004", "2");
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
 
-            var RenterAvaiable = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == lessorCode, new[] {"CrCasRenterLessorNavigation" });
+            var RenterAvaiable = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == lessorCode, new[] { "CrCasRenterLessorNavigation" });
 
-            var Evaluation = _unitOfWork.CrMasSysEvaluation.FindAll(x=>x.CrMasSysEvaluationsClassification=="1").ToList();
+            var Evaluation = _unitOfWork.CrMasSysEvaluation.FindAll(x => x.CrMasSysEvaluationsClassification == "1").ToList();
 
             TransferFromTenantVM transferFromTenantVM = new TransferFromTenantVM();
             transferFromTenantVM.renterLessor = RenterAvaiable;
@@ -86,9 +83,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                                                                                                                            "CrCasRenterLessorNavigation" });
             var RenterVM = _mapper.Map<RenterLessorVM>(Renter);
             var procedureCodeForReceipt = "301";
-            RenterVM.AccountReceiptNo = GetNextAccountReceiptNo(lessorCode, "100", procedureCodeForReceipt);
+            RenterVM.AccountReceiptNo = await GetNextAccountReceiptNo(lessorCode, "100", procedureCodeForReceipt);
             var procedureCodeForAdministritive = "306";
-            RenterVM.AdminstritiveNo = GetNextAdministrativeNo(lessorCode, "100", procedureCodeForAdministritive);
+            RenterVM.AdminstritiveNo = await GetNextAdministrativeNo(lessorCode, "100", procedureCodeForAdministritive);
             RenterVM.CrCasBranchInformation = _unitOfWork.CrCasBranchInformation.Find(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationCode == "100");
             RenterVM.CrMasSysEvaluation = _unitOfWork.CrMasSysEvaluation.Find(x => x.CrMasSysEvaluationsCode == RenterVM.CrCasRenterLessorDealingMechanism);
             RenterVM.Banks = _unitOfWork.CrMasSupAccountBanks.FindAll(x => x.CrMasSupAccountBankStatus == Status.Active && x.CrMasSupAccountBankCode != "00").ToList();
@@ -121,7 +118,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             if (!string.IsNullOrEmpty(SavePdfArReceipt)) SavePdfArReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfArReceipt, lessorCode, "100", AccountReceiptNo, "ar", "Receipt");
             if (!string.IsNullOrEmpty(SavePdfEnReceipt)) SavePdfEnReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfEnReceipt, lessorCode, "100", AccountReceiptNo, "en", "Receipt");
             var CheckAddReceipt = await _tranferToRenter.AddAccountReceiptTransferToRenter(AccountReceiptNo, AddAdminstritive.CrCasSysAdministrativeProceduresNo, Renter.CrCasRenterLessorId, userLogin.CrMasUserInformationCode, "301", "16", lessorCode,
-                                                                                        renterLessorVM.FromBank, renterLessorVM.FromAccountBankSelected, "0", renterLessorVM.Amount, SavePdfArReceipt, SavePdfEnReceipt,renterLessorVM.Reasons);
+                                                                                        renterLessorVM.FromBank, renterLessorVM.FromAccountBankSelected, "0", renterLessorVM.Amount, SavePdfArReceipt, SavePdfEnReceipt, renterLessorVM.Reasons);
 
             var CheckUpdateMasRenter = await _tranferToRenter.UpdateRenterInformation(Renter.CrCasRenterLessorId, renterLessorVM.RenterInformationIban, renterLessorVM.BankSelected);
             var CheckUpdateRenterLessor = await _tranferToRenter.UpdateCasRenterLessorTransferFrom(Renter.CrCasRenterLessorId, lessorCode, renterLessorVM.Amount);

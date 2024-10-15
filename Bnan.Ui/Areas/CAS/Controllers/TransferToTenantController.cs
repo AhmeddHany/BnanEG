@@ -3,13 +3,11 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Globalization;
@@ -64,7 +62,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             var RenterAvaiable = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == lessorCode &&
                                                                           x.CrCasRenterLessorAvailableBalance > 0 &&
-                                                                          x.CrCasRenterLessorStatus == Status.Active, new[] {"CrCasRenterLessorNavigation" }).ToList();
+                                                                          x.CrCasRenterLessorStatus == Status.Active, new[] { "CrCasRenterLessorNavigation" }).ToList();
             if (RenterAvaiable?.Count() < 1)
             {
                 return RedirectToAction("FailedMessageReport_NoData");
@@ -90,12 +88,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                                                                                                                            "CrCasRenterLessorNavigation" });
             var RenterVM = _mapper.Map<RenterLessorVM>(Renter);
             var procedureCodeForReceipt = "302";
-            RenterVM.AccountReceiptNo = GetNextAccountReceiptNo(lessorCode, "100", procedureCodeForReceipt);
+            RenterVM.AccountReceiptNo = await GetNextAccountReceiptNo(lessorCode, "100", procedureCodeForReceipt);
             var procedureCodeForAdministritive = "305";
-            RenterVM.AdminstritiveNo = GetNextAdministrativeNo(lessorCode, "100", procedureCodeForAdministritive);
+            RenterVM.AdminstritiveNo = await GetNextAdministrativeNo(lessorCode, "100", procedureCodeForAdministritive);
             RenterVM.CrMasSysEvaluation = _unitOfWork.CrMasSysEvaluation.Find(x => x.CrMasSysEvaluationsCode == RenterVM.CrCasRenterLessorDealingMechanism);
-            RenterVM.Banks = _unitOfWork.CrMasSupAccountBanks.FindAll(x => x.CrMasSupAccountBankStatus == Status.Active&&x.CrMasSupAccountBankCode!="00").ToList();
-            RenterVM.AccountBanks = _unitOfWork.CrCasAccountBank.FindAll(x => x.CrCasAccountBankStatus == Status.Active&&x.CrCasAccountBankNo!="00" && x.CrCasAccountBankLessor == lessorCode).ToList();
+            RenterVM.Banks = _unitOfWork.CrMasSupAccountBanks.FindAll(x => x.CrMasSupAccountBankStatus == Status.Active && x.CrMasSupAccountBankCode != "00").ToList();
+            RenterVM.AccountBanks = _unitOfWork.CrCasAccountBank.FindAll(x => x.CrCasAccountBankStatus == Status.Active && x.CrCasAccountBankNo != "00" && x.CrCasAccountBankLessor == lessorCode).ToList();
             RenterVM.CrCasBranchInformation = _unitOfWork.CrCasBranchInformation.Find(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationCode == "100");
             RenterVM.RenterInformationIban = Renter.CrCasRenterLessorNavigation.CrMasRenterInformationIban;
             RenterVM.BankSelected = Renter.CrCasRenterLessorNavigation.CrMasRenterInformationBank;
@@ -105,7 +103,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         [HttpPost]
         public async Task<IActionResult> TransferTo(RenterLessorVM renterLessorVM, string AccountReceiptNo, string SavePdfArReceipt, string SavePdfEnReceipt)
         {
-            
+
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             //save Tracing
@@ -119,18 +117,18 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var Renter = _unitOfWork.CrCasRenterLessor.Find(x => x.CrCasRenterLessorId == renterLessorVM.CrCasRenterLessorId && x.CrCasRenterLessorCode == lessorCode, new[] {"CrCasRenterContractBasicCrCasRenterContractBasic5s",
                                                                                                                            "CrCasRenterLessorNavigation" });
             var AddAdminstritive = await _tranferToRenter.SaveAdminstritiveTransferRenter(renterLessorVM.AdminstritiveNo, userLogin.CrMasUserInformationCode, "305", "30", lessorCode, Renter.CrCasRenterLessorId,
-                                                                                            decimal.Parse(renterLessorVM.Amount, CultureInfo.InvariantCulture), 0,renterLessorVM.Reasons);
+                                                                                            decimal.Parse(renterLessorVM.Amount, CultureInfo.InvariantCulture), 0, renterLessorVM.Reasons);
 
             SavePdfArReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfArReceipt);
             SavePdfEnReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfEnReceipt);
             if (!string.IsNullOrEmpty(SavePdfArReceipt)) SavePdfArReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfArReceipt, lessorCode, "100", AccountReceiptNo, "ar", "Receipt");
             if (!string.IsNullOrEmpty(SavePdfEnReceipt)) SavePdfEnReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfEnReceipt, lessorCode, "100", AccountReceiptNo, "en", "Receipt");
-            var CheckAddReceipt = await _tranferToRenter.AddAccountReceiptTransferToRenter(AccountReceiptNo,AddAdminstritive.CrCasSysAdministrativeProceduresNo, Renter.CrCasRenterLessorId, userLogin.CrMasUserInformationCode,"302", "17", lessorCode,
-                                                                                        renterLessorVM.FromBank, renterLessorVM.FromAccountBankSelected, renterLessorVM.Amount, "0",SavePdfArReceipt,SavePdfEnReceipt,
+            var CheckAddReceipt = await _tranferToRenter.AddAccountReceiptTransferToRenter(AccountReceiptNo, AddAdminstritive.CrCasSysAdministrativeProceduresNo, Renter.CrCasRenterLessorId, userLogin.CrMasUserInformationCode, "302", "17", lessorCode,
+                                                                                        renterLessorVM.FromBank, renterLessorVM.FromAccountBankSelected, renterLessorVM.Amount, "0", SavePdfArReceipt, SavePdfEnReceipt,
                                                                                         renterLessorVM.Reasons);
             var CheckUpdateMasRenter = await _tranferToRenter.UpdateRenterInformation(Renter.CrCasRenterLessorId, renterLessorVM.RenterInformationIban, renterLessorVM.BankSelected);
             var CheckUpdateRenterLessor = await _tranferToRenter.UpdateCasRenterLessorTransferTo(Renter.CrCasRenterLessorId, lessorCode, renterLessorVM.Amount);
-            if (AddAdminstritive!=null&& CheckAddReceipt&& CheckUpdateMasRenter&& CheckUpdateRenterLessor)
+            if (AddAdminstritive != null && CheckAddReceipt && CheckUpdateMasRenter && CheckUpdateRenterLessor)
             {
                 if (await _unitOfWork.CompleteAsync() > 1) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 else _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -143,7 +141,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         {
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
-            var account= await _unitOfWork.CrCasAccountBank.FindAsync(x=>x.CrCasAccountBankCode == AccountNo&&x.CrCasAccountBankLessor== lessorCode, new[] { "CrCasAccountBankNoNavigation" });
+            var account = await _unitOfWork.CrCasAccountBank.FindAsync(x => x.CrCasAccountBankCode == AccountNo && x.CrCasAccountBankLessor == lessorCode, new[] { "CrCasAccountBankNoNavigation" });
             var result = new
             {
                 accountNo = account.CrCasAccountBankCode,

@@ -1,14 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Extensions
 {
@@ -123,15 +115,8 @@ namespace Bnan.Inferastructure.Extensions
                 base64 = base64.Split(',')[1];
             }
 
-            // Remove all non-base64 characters
+            // Remove any non-base64 characters except A-Z, a-z, 0-9, +, /, and = (valid base64 characters)
             base64 = Regex.Replace(base64, @"[^A-Za-z0-9+/=]", string.Empty);
-
-            // Fix padding
-            int paddingCount = base64.Count(c => c == '=');
-            if (paddingCount > 2)
-            {
-                base64 = base64.TrimEnd('=').PadRight(base64.Length - paddingCount + 2, '=');
-            }
 
             // Ensure the base64 string length is a multiple of 4
             if (base64.Length % 4 != 0)
@@ -139,15 +124,16 @@ namespace Bnan.Inferastructure.Extensions
                 base64 = base64.PadRight(base64.Length + (4 - base64.Length % 4) % 4, '=');
             }
 
-            // Validate the base64 string
+            // Validate if it's a correct Base64 string
             return IsValidBase64(base64) ? base64 : null;
         }
+
         private static bool IsValidBase64(string base64)
         {
             Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
             return Convert.TryFromBase64String(base64, buffer, out _);
         }
-        public static async Task<string?> SaveSigntureImage(this IWebHostEnvironment webHostEnvironment, string img, string RenterId, string oldPath,string folderName)
+        public static async Task<string?> SaveSigntureImage(this IWebHostEnvironment webHostEnvironment, string img, string RenterId, string oldPath, string folderName)
         {
             byte[] imgBytes = Convert.FromBase64String(img.Split(",")[1]); // Split to remove the prefix "data:application/pdf;base64,"
             string wwwrootPath = webHostEnvironment.WebRootPath;

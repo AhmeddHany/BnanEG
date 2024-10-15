@@ -1539,7 +1539,7 @@
                                                                 <label class="upload__btn" id="upload__btn">
                                                                     <div class="upload-container-checking">
                                                                         <img class="upload-icon" src="~/BranchSys/CreateContract/Group (1).png" alt="Upload Icon">
-                                                                        <input type="file" multiple accept="image/heif, image/heic, image/*" data-max_length="12" id="checking-img" class="upload__inputfile " onclick="HideFirstImg()">
+                                                                        <input type="file" multiple accept=".heif, .heic, image/*" data-max_length="12" id="checking-img" class="upload__inputfile " onclick="HideFirstImg()">
                                                                     </div>
                                                                 </label>
                                                             </div>
@@ -2647,9 +2647,9 @@
 
                 if (!videoElement) {
                     IDuploadContainer.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <video id="videoElement" autoplay></video>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <video id="videoElement" autoplay></video>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            `;
                     videoElement = document.getElementById('videoElement');
                     photo = document.getElementById('photo');
 
@@ -3600,7 +3600,7 @@
                 }
                 if ("@requestCulture?.RequestCulture.UICulture.Name" == "en-US") {
                     document.getElementById("nationality-tenant").value = RenterInformation.personalEnNationality;
-                    if(RenterInformation.employerCode!="1800000001"&&RenterInformation.employerCode!="1800000002"){
+                    if (RenterInformation.employerCode != "1800000001" && RenterInformation.employerCode != "1800000002") {
                         document.getElementById("tenant-workplace").value = RenterInformation.employerEnName;
                     }
                     document.getElementById("Region-city-tenant").value = RenterInformation.cityEn;
@@ -3610,7 +3610,7 @@
                 }
                 else {
                     document.getElementById("nationality-tenant").value = RenterInformation.personalArNationality;
-                    if(RenterInformation.employerCode!="1800000001"&&RenterInformation.employerCode!="1800000002"){
+                    if (RenterInformation.employerCode != "1800000001" && RenterInformation.employerCode != "1800000002") {
                         document.getElementById("tenant-workplace").value = RenterInformation.employerArName;
                     }
                     document.getElementById("Region-city-tenant").value = RenterInformation.cityAr;
@@ -3636,7 +3636,7 @@
             RenterInformation.birthDate = document.getElementById("birth-date").value;
             RenterInformation.personalArName = document.getElementById("AR-name-tenant").value;
             RenterInformation.personalEnName = document.getElementById("EN-name-tenant").value;
-            
+
             RenterInformation.postArDistictName = document.getElementById("AR-adress-tenant").value;
             RenterInformation.postEnDistictName = document.getElementById("EN-adress-tenant").value;
 
@@ -4019,7 +4019,7 @@
                 DriverInformation.postEnNameConcenate += " - " + DriverInformation.postEnDistictName;
             }
 
-            
+
             DriverInformation.cityCode = document.getElementById("Region-city-driver-code").value;
             DriverInformation.nationalityCode = document.getElementById("nationality-driver-code").value;
             DriverInformation.employerCode = document.getElementById("driver-workplace-code").value;
@@ -4199,7 +4199,7 @@
                     document.getElementById("nationality-addDriver").value = AddDriverInformation.personalEnNationality;
                     if (AddDriverInformation.employerCode != "1800000001" && AddDriverInformation.employerCode != "1800000002") {
                         document.getElementById("addDriver-workplace").value = AddDriverInformation.employerEnName;
-                    } 
+                    }
                     document.getElementById("Region-city-addDriver").value = AddDriverInformation.cityEn;
                     setTimeout(() => {
                         $("#EN-name-addDriver").focus();
@@ -4209,7 +4209,7 @@
                     document.getElementById("nationality-addDriver").value = AddDriverInformation.personalArNationality;
                     if (AddDriverInformation.employerCode != "1800000001" && AddDriverInformation.employerCode != "1800000002") {
                         document.getElementById("addDriver-workplace").value = AddDriverInformation.employerArName;
-                    } 
+                    }
                     document.getElementById("Region-city-addDriver").value = AddDriverInformation.cityAr;
                     setTimeout(() => {
                         $("#AR-name-addDriver").focus();
@@ -4232,7 +4232,7 @@
             AddDriverInformation.birthDate = document.getElementById("birth-date-AddDriver").value;
             AddDriverInformation.personalArName = document.getElementById("AR-name-addDriver").value;
             AddDriverInformation.personalEnName = document.getElementById("EN-name-addDriver").value;
-            
+
             AddDriverInformation.postArDistictName = document.getElementById("AR-adress-addDriver").value;
             AddDriverInformation.postEnDistictName = document.getElementById("EN-adress-addDriver").value;
 
@@ -7096,20 +7096,15 @@
                     img.onload = function () {
                         canvas.width = img.width;
                         canvas.height = img.height;
-
                         ctx.drawImage(img, 0, 0);
-
                         ctx.font = "bold 35px serif";
                         ctx.textAlign = "right";
                         ctx.fillStyle = "black";
-
                         GetCheckUpItems(ctx, canvas);
-
                         // Last
                         DrawArNameAndSignture(signtures, ctx, canvas);
                         canvas.toBlob(async function (blob) {
                             // Return the blob
-
                             resolve(blob);
                         }, "image/png");
                     };
@@ -7120,23 +7115,62 @@
             });
         };
         // Page5
-        async function GetCheckUpPicture() {
-            // Array to store the Image objects
+        const GetCheckUpPicture = async () => {
             const images = [];
-            // Iterate over the CheckUpImages list
-            imgCheckUpArray.forEach(file => {
-                // Create a new Image object
+
+            for (const file of imgCheckUpArray) {
                 const img = new Image();
 
-                // Set the src attribute of the Image object to the file URL
-                img.src = URL.createObjectURL(file.f);
+                const imgLoadPromise = new Promise((resolve, reject) => {
+                    img.onload = () => {
+                        console.log("Image loaded successfully:", file.f.name);
+                        resolve(img);
+                    };
 
-                // Push the Image object to the images array
-                images.push(img);
-            });
-            // Return the array of Image objects
-            return images;
-        }
+                    img.onerror = (error) => {
+                        console.error("Error loading image:", file.f.name, error);
+                        reject(new Error("Failed to load image"));
+                    };
+                });
+
+                // إذا كانت الصورة بصيغة HEIC أو HEIF، قم بالتحويل أولاً
+                if (file.f.type === 'image/heic' || file.f.type === 'image/heif' || file.f.name.endsWith('.heic') || file.f.name.endsWith('.heif')) {
+                    try {
+                        console.log("Processing HEIC/HEIF file:", file.f.name);
+
+                        // تحويل HEIC/HEIF إلى JPEG أو PNG
+                        const convertedBlob = await heic2any({
+                            blob: file.f,
+                            toType: "image/jpeg" // يمكنك تغييره إلى "image/png" حسب الحاجة
+                        });
+
+                        // قراءة الصورة المحولة
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            img.src = e.target.result; // تعيين الصورة المحولة
+                        };
+                        reader.readAsDataURL(convertedBlob);
+
+                    } catch (error) {
+                        console.error("Error converting HEIC image:", error);
+                        continue; // تجاوز الصورة إذا فشل التحويل
+                    }
+                } else {
+                    // إذا كانت الصورة ليست بصيغة HEIC/HEIF، قم بتعيين الـ URL مباشرة
+                    img.src = URL.createObjectURL(file.f);
+                }
+
+                try {
+                    const loadedImg = await imgLoadPromise;
+                    images.push(loadedImg); // إضافة الصورة المحملة
+                } catch (error) {
+                    console.error(error); // التعامل مع أي أخطاء في التحميل
+                }
+            }
+            console.log("images:", images);
+
+            return images; // إعادة الصور المحملة
+        };
         const CreateArPageContract5 = async () => {
             return new Promise(async (resolve, reject) => {
                 try {
@@ -7167,24 +7201,13 @@
                         ctx.textAlign = "right";
                         ctx.fillStyle = "black";
                         //
-                        if (pictures[0]) {
-                            ctx.drawImage(pictures[0], canvas.width - 1015, 750, 650, 650);
-                        }
-                        if (pictures[1]) {
-                            ctx.drawImage(pictures[1], canvas.width - 1015, 1470, 650, 650);
-                        }
-                        if (pictures[2]) {
-                            ctx.drawImage(pictures[2], canvas.width - 1015, 2185, 650, 650);
-                        }
-                        if (pictures[3]) {
-                            ctx.drawImage(pictures[3], canvas.width - 2015, 750, 650, 650);
-                        }
-                        if (pictures[4]) {
-                            ctx.drawImage(pictures[4], canvas.width - 2015, 1470, 650, 650);
-                        }
-                        if (pictures[5]) {
-                            ctx.drawImage(pictures[5], canvas.width - 2015, 2185, 650, 650);
-                        }
+                        // Draw pictures on the canvas
+                        if (pictures[0]) ctx.drawImage(pictures[0], canvas.width - 1015, 750, 650, 650);
+                        if (pictures[1]) ctx.drawImage(pictures[1], canvas.width - 1015, 1470, 650, 650);
+                        if (pictures[2]) ctx.drawImage(pictures[2], canvas.width - 1015, 2185, 650, 650);
+                        if (pictures[3]) ctx.drawImage(pictures[3], canvas.width - 2015, 750, 650, 650);
+                        if (pictures[4]) ctx.drawImage(pictures[4], canvas.width - 2015, 1470, 650, 650);
+                        if (pictures[5]) ctx.drawImage(pictures[5], canvas.width - 2015, 2185, 650, 650);
                         // Last
                         DrawArNameAndSignture(signtures, ctx, canvas);
                         canvas.toBlob(async function (blob) {
@@ -8050,22 +8073,12 @@
             });
         };
         // Page5
-        async function GetENCheckUpPicture() {
-            // Array to store the Image objects
-            const images = [];
-            imgCheckUpArray.forEach(file => {
-                const img = new Image();
-                img.src = URL.createObjectURL(file.f);
-                images.push(img);
-            });
-            return images;
-        }
         const CreateEnPageContract5 = async () => {
             return new Promise(async (resolve, reject) => {
                 var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage5";
                 var imagePath = image.replace('~', '');
                 // Get ALl Date for Page 5
-                var pictures = await GetENCheckUpPicture();
+                var pictures = await GetCheckUpPicture();
                 // Last Director and manger and user and renter with signture
                 var signtures = await loadEnSignatures();
                 ///////////////////////////////////////////////////////
@@ -8089,24 +8102,13 @@
                     ctx.textAlign = "left";
                     ctx.fillStyle = "black";
                     //
-                    if (pictures[0]) {
-                        ctx.drawImage(pictures[0], canvas.width - 1015, 750, 650, 650);
-                    }
-                    if (pictures[1]) {
-                        ctx.drawImage(pictures[1], canvas.width - 1015, 1470, 650, 650);
-                    }
-                    if (pictures[2]) {
-                        ctx.drawImage(pictures[2], canvas.width - 1015, 2185, 650, 650);
-                    }
-                    if (pictures[3]) {
-                        ctx.drawImage(pictures[3], canvas.width - 2015, 750, 650, 650);
-                    }
-                    if (pictures[4]) {
-                        ctx.drawImage(pictures[4], canvas.width - 2015, 1470, 650, 650);
-                    }
-                    if (pictures[5]) {
-                        ctx.drawImage(pictures[5], canvas.width - 2015, 2185, 650, 650);
-                    }
+                    if (pictures[0]) ctx.drawImage(pictures[0], canvas.width - 1015, 750, 650, 650);
+                    if (pictures[1]) ctx.drawImage(pictures[1], canvas.width - 1015, 1470, 650, 650);
+                    if (pictures[2]) ctx.drawImage(pictures[2], canvas.width - 1015, 2185, 650, 650);
+                    if (pictures[3]) ctx.drawImage(pictures[3], canvas.width - 2015, 750, 650, 650);
+                    if (pictures[4]) ctx.drawImage(pictures[4], canvas.width - 2015, 1470, 650, 650);
+                    if (pictures[5]) ctx.drawImage(pictures[5], canvas.width - 2015, 2185, 650, 650);
+                    
                     // Last
                     DrawEnNameAndSignture(signtures, ctx, canvas);
                     canvas.toBlob(async function (blob) {
@@ -8124,7 +8126,7 @@
                 var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage6";
                 var imagePath = image.replace('~', '');
                 // Get ALl Date for Page 6
-                var pictures = await GetENCheckUpPicture();
+                var pictures = await GetCheckUpPicture();
                 // Last Director and manger and user and renter with signture
                 var signtures = await loadEnSignatures();
                 ///////////////////////////////////////////////////////
@@ -8148,24 +8150,13 @@
                     ctx.textAlign = "left";
                     ctx.fillStyle = "black";
                     ////////////
-                    if (pictures[6]) {
-                        ctx.drawImage(pictures[6], canvas.width - 1015, 750, 650, 650);
-                    }
-                    if (pictures[7]) {
-                        ctx.drawImage(pictures[7], canvas.width - 1015, 1470, 650, 650);
-                    }
-                    if (pictures[8]) {
-                        ctx.drawImage(pictures[8], canvas.width - 1015, 2185, 650, 650);
-                    }
-                    if (pictures[9]) {
-                        ctx.drawImage(pictures[9], canvas.width - 2015, 750, 650, 650);
-                    }
-                    if (pictures[10]) {
-                        ctx.drawImage(pictures[10], canvas.width - 2015, 1470, 650, 650);
-                    }
-                    if (pictures[11]) {
-                        ctx.drawImage(pictures[11], canvas.width - 2015, 2185, 650, 650);
-                    }
+                    if (pictures[6])  ctx.drawImage(pictures[6], canvas.width - 1015, 750, 650, 650);
+                    if (pictures[7])  ctx.drawImage(pictures[7], canvas.width - 1015, 1470, 650, 650);
+                    if (pictures[8])  ctx.drawImage(pictures[8], canvas.width - 1015, 2185, 650, 650);
+                    if (pictures[9])  ctx.drawImage(pictures[9], canvas.width - 2015, 750, 650, 650);
+                    if (pictures[10])  ctx.drawImage(pictures[10], canvas.width - 2015, 1470, 650, 650);
+                    if (pictures[11]) ctx.drawImage(pictures[11], canvas.width - 2015, 2185, 650, 650);
+                    
                     // Last
                     DrawEnNameAndSignture(signtures, ctx, canvas);
                     canvas.toBlob(async function (blob) {
