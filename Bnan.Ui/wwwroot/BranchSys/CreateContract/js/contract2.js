@@ -47,7 +47,7 @@ function ImgUpload() {
                     //}
 
                     // إذا كانت الصورة بصيغة HEIC/HEIF
-                    if (f.type === 'image/heic' || f.type === 'image/heif' || f.name.endsWith('.heic') || f.name.endsWith('.heif')) {
+                    if (f.type.toLowerCase() === 'image/heic' || f.type.toLowerCase() === 'image/heif' || f.name.toLowerCase().endsWith('.heic') || f.name.toLowerCase().endsWith('.heif')) {
                         console.log("Processing HEIC/HEIF file:", f.name);
 
                         if (!isHEICSupported()) {

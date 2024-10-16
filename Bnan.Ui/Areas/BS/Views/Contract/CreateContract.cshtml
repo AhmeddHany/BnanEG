@@ -7134,7 +7134,7 @@
                 });
 
                 // إذا كانت الصورة بصيغة HEIC أو HEIF، قم بالتحويل أولاً
-                if (file.f.type === 'image/heic' || file.f.type === 'image/heif' || file.f.name.endsWith('.heic') || file.f.name.endsWith('.heif')) {
+                if (file.f.type.toLowerCase() === 'image/heic' || file.f.type.toLowerCase() === 'image/heif' || file.f.name.toLowerCase().endsWith('.heic') || file.f.name.toLowerCase().endsWith('.heif')) {
                     try {
                         console.log("Processing HEIC/HEIF file:", file.f.name);
 
@@ -8431,12 +8431,16 @@
                 // Calculate the position to center the image vertically
                 const imgYPos = (pageHeight - imgHeight) / 2;
                 const imgXPos = 0;
+
+                // Add the image to the PDF
                 doc.addImage(img, 'JPEG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
-                // Convert the PDF to a blob
-                const pdfBase64 = doc.output('datauristring');
-                // Set the base64-encoded PDF to the hidden input field
-                document.getElementById(InputPdf).value = pdfBase64;
             }
+
+            // Convert the PDF to a base64 data URL
+            let pdfBase64 = doc.output('datauristring');
+            document.getElementById(InputPdf).value = pdfBase64;
+            console.log("InputPdf:", InputPdf);
+            console.log("pdfBase64:", pdfBase64);
         };
         // Helper function to create an image element from a blob
         const createImageFromBlob = (blob) => {

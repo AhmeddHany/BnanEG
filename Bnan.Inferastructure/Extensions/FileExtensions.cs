@@ -115,19 +115,26 @@ namespace Bnan.Inferastructure.Extensions
                 base64 = base64.Split(',')[1];
             }
 
-            // Remove any non-base64 characters except A-Z, a-z, 0-9, +, /, and = (valid base64 characters)
+            // Remove all non-base64 characters
             base64 = Regex.Replace(base64, @"[^A-Za-z0-9+/=]", string.Empty);
+
+            // Fix padding
+            int paddingCount = base64.Count(c => c == '=');
+            if (paddingCount > 2)
+            {
+                base64 = base64.TrimEnd('=').PadRight(base64.Length - paddingCount + 2, '=');
+            }
 
             // Ensure the base64 string length is a multiple of 4
             if (base64.Length % 4 != 0)
             {
                 base64 = base64.PadRight(base64.Length + (4 - base64.Length % 4) % 4, '=');
             }
+            IsValidBase64(base64);
 
-            // Validate if it's a correct Base64 string
-            return IsValidBase64(base64) ? base64 : null;
+            // Validate the base64 string
+            return base64;
         }
-
         private static bool IsValidBase64(string base64)
         {
             Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
