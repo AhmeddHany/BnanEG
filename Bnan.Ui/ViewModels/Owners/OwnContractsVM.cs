@@ -20,6 +20,8 @@ namespace Bnan.Ui.ViewModels.Owners
         public string? CrCasRenterContractUserReference { get; set; }
         public string? CrCasRenterContractBasicUserInsert { get; set; }
         public string? CrCasRenterContractBasicStatus { get; set; }
+        public decimal? CrCasRenterContractBasicActualTotal { get; set; }
+        public decimal? CrCasRenterContractBasicCompensationValue { get; set; }
         public virtual CrCasBranchInformation? CrCasRenterContractBasic1 { get; set; }
         public virtual CrCasRenterLessor? CrCasRenterContractBasic2 { get; set; }
         public virtual CrCasOwner? CrCasRenterContractBasic3 { get; set; }

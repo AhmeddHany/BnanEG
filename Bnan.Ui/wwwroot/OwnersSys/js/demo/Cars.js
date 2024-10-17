@@ -1,18 +1,9 @@
 //First_Brand_Charts ///////////////////////////////////////////////////////////////////////
 var palette = anychart.palettes.distinctColors();
 var percentage = 42; 
-var label = anychart.standalones.label();
-label
-  .useHtml(true)
-  .text(
-    '<span style = "color: #313136; font-weight:600">' + percentage + '%</span>'
-  )
-  .position('center')
-  .anchor('center')
-  .hAlign('center')
-  .vAlign('middle');
+
 var data = anychart.data.set([
-  ['هيونداي', percentage],
+  [' سيدان متوسطة', percentage],
   [' اخري', 100 - percentage]
 ]);
 
@@ -29,23 +20,12 @@ chart.container('First_Brand_Charts');
 chart.legend(false);
 chart.labels(false)
 chart.tooltip(false)
-chart.center().content(label);
 chart.draw();
 //Second_Brand_Charts ///////////////////////////////////////////////////////////////////////
 var palette = anychart.palettes.distinctColors();
 var percentage = 35.58; 
-var label = anychart.standalones.label();
-label
-  .useHtml(true)
-  .text(
-    '<span style = "color: #313136; font-weight:600">' + percentage + '%</span>'
-  )
-  .position('center')
-  .anchor('center')
-  .hAlign('center')
-  .vAlign('middle');
 var data = anychart.data.set([
-  ['فورد', percentage],
+  [' سيدان صغيرة', percentage],
   [' اخري', 100 - percentage]
 ]);
 
@@ -61,24 +41,13 @@ chart.container('Second_Brand_Charts');
 chart.legend(false);
 chart.labels(false)
 chart.tooltip(false)
-chart.center().content(label);
 chart.draw();
 
 //Third_Brand_Charts ///////////////////////////////////////////////////////////////////////
 var palette = anychart.palettes.distinctColors();
 var percentage = 25; 
-var label = anychart.standalones.label();
-label
-  .useHtml(true)
-  .text(
-    '<span style = "color: #313136; font-weight:600">' + percentage + '%</span>'
-  )
-  .position('center')
-  .anchor('center')
-  .hAlign('center')
-  .vAlign('middle');
 var data = anychart.data.set([
-  ['مرسيدس', percentage],
+  [' اقتصادية', percentage],
   [' اخري', 100 - percentage]
 ]);
 
@@ -94,23 +63,13 @@ chart.container('Third_Brand_Charts');
 chart.legend(false);
 chart.labels(false)
 chart.tooltip(false)
-chart.center().content(label);
 chart.draw();
 
 
 //First_year_Charts ///////////////////////////////////////////////////////////////////////
 var palette = anychart.palettes.distinctColors();
 var percentage = 42; 
-var label = anychart.standalones.label();
-label
-  .useHtml(true)
-  .text(
-    '<span style = "color: #313136; font-weight:600">' + percentage + '%</span>'
-  )
-  .position('center')
-  .anchor('center')
-  .hAlign('center')
-  .vAlign('middle');
+
 var data = anychart.data.set([
   ['2020', percentage],
   [' اخري', 100 - percentage]
@@ -129,21 +88,11 @@ chart.container('First_year_Charts');
 chart.legend(false);
 chart.labels(false)
 chart.tooltip(false)
-chart.center().content(label);
 chart.draw();
 //Second_year_Charts ///////////////////////////////////////////////////////////////////////
 var palette = anychart.palettes.distinctColors();
 var percentage = 35.58; 
-var label = anychart.standalones.label();
-label
-  .useHtml(true)
-  .text(
-    '<span style = "color: #313136; font-weight:600">' + percentage + '%</span>'
-  )
-  .position('center')
-  .anchor('center')
-  .hAlign('center')
-  .vAlign('middle');
+
 var data = anychart.data.set([
   ['2021', percentage],
   [' اخري', 100 - percentage]
@@ -161,22 +110,12 @@ chart.container('Second_year_Charts');
 chart.legend(false);
 chart.labels(false)
 chart.tooltip(false)
-chart.center().content(label);
 chart.draw();
 
 //Third_year_Charts ///////////////////////////////////////////////////////////////////////
 var palette = anychart.palettes.distinctColors();
 var percentage = 25; 
-var label = anychart.standalones.label();
-label
-  .useHtml(true)
-  .text(
-    '<span style = "color: #313136; font-weight:600">' + percentage + '%</span>'
-  )
-  .position('center')
-  .anchor('center')
-  .hAlign('center')
-  .vAlign('middle');
+
 var data = anychart.data.set([
   ['2018', percentage],
   [' اخري', 100 - percentage]
@@ -194,6 +133,5 @@ chart.container('Third_year_Charts');
 chart.legend(false);
 chart.labels(false)
 chart.tooltip(false)
-chart.center().content(label);
 chart.draw();
 

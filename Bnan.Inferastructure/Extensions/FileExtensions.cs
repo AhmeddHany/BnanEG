@@ -130,10 +130,9 @@ namespace Bnan.Inferastructure.Extensions
             {
                 base64 = base64.PadRight(base64.Length + (4 - base64.Length % 4) % 4, '=');
             }
-            IsValidBase64(base64);
 
             // Validate the base64 string
-            return base64;
+            return IsValidBase64(base64) ? base64 : null;
         }
         private static bool IsValidBase64(string base64)
         {

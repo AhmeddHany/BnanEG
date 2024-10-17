@@ -7,6 +7,7 @@ var data = anychart.data.set([
   [' اخري', 100 - percentage]
 ]);
 
+
 // set the colors according to the brands
 palette.items([
   { color: '#9747FF' },
@@ -86,7 +87,7 @@ var palette = anychart.palettes.distinctColors();
 var percentage = 35.5; // Define the percentage value
 
 var data = anychart.data.set([
-  ['جيد ', percentage],
+  ['صبياء', percentage],
   [' اخري', 100 - percentage]
 ]);
 
@@ -111,7 +112,7 @@ chart.draw();
 var palette = anychart.palettes.distinctColors();
 var percentage = 20.5; // Define the percentage value
 var data = anychart.data.set([
-  ['ممتاز', percentage],
+  ['الرياض', percentage],
   [' اخري', 100 - percentage]
 ]);
 
@@ -137,7 +138,7 @@ chart.draw();
 var palette = anychart.palettes.distinctColors();
 var percentage = 15.5; // Define the percentage value
 var data = anychart.data.set([
-  ['مقبول', percentage],
+  ['الخبر', percentage],
   [' اخري', 100 - percentage]
 ]);
 

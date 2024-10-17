@@ -39,7 +39,7 @@ section {
 body {
     margin: 0;
     font-size: 1rem;
-    font-weight: 400;
+    font-weight: 500;
     line-height: 1.5;
     color: #858796;
     text-align: left;
@@ -58,26 +58,10 @@ progress {
   }
   
   
-.sidebar .nav-item .nav-link[data-bs-toggle=collapse]::after {
-    width: 1rem;
-    text-align: center;
-    float: left;
-    vertical-align: 0;
-    border: 0;
-    font-weight: 900;
-    content: '\f107';
-    font-family: 'Font Awesome 5 Free'
-}
+
 
 .sidebar .nav-item .nav-link[data-bs-toggle=collapse].collapsed::after {
     content: '\f104'
-}
-
-.sidebar .nav-item .collapse {
-    position: absolute;
-    right: calc(.4rem + 1.5rem / 2);
-    z-index: 1;
-    top: 50px
 }
 
 [type=number]::-webkit-inner-spin-button,
@@ -606,8 +590,7 @@ progress {
 .card-body {
     flex: 1 1 auto;
     min-height: 1px;
-    padding: .9rem;
-    padding-bottom: .1rem;
+    padding: .7rem 
 }
 
 .card-title {
@@ -1050,7 +1033,8 @@ a:focus {
     text-align: center;
     color: #fff;
     background: rgba(90, 92, 105, .5);
-    line-height: 46px
+    line-height: 46px;
+    z-index:999
 }
 
 .scroll-to-top:focus,
@@ -1375,8 +1359,6 @@ a:focus {
 
 .sidebar .nav-item .collapse .collapse-inner {
     text-align: end;
-    border-radius: .35rem;
-    box-shadow: 0 .15rem 1.75rem 0 rgba(58, 59, 69, .15)
 }
 
 .sidebar .nav-item .collapsing {
@@ -1388,7 +1370,7 @@ a:focus {
 .sidebar .nav-item .collapsing .collapse-inner {
     padding: .5rem 0;
     min-width: 10rem;
-    font-size: .85rem;
+    font-size: 1rem;
     margin: 0 0 1rem
 }
 
@@ -1414,9 +1396,7 @@ a:focus {
     text-decoration: none;
     border-radius: .35rem;
     white-space: nowrap;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-weight: 600;
 }
 
 .sidebar .nav-item .collapse .collapse-inner .collapse-item:hover,
@@ -1431,8 +1411,9 @@ a:focus {
 
 .sidebar .nav-item .collapse .collapse-inner .collapse-item.active,
 .sidebar .nav-item .collapsing .collapse-inner .collapse-item.active {
-    color: #4e73df;
-    font-weight: 700
+    color: #fff;
+    text-align: end;
+    background-color: #39629C;
 }
 
 .sidebar #sidebarToggle {
@@ -1601,23 +1582,9 @@ a:focus {
         width: 12rem !important
     }
 
-    .sidebar.toggled .nav-item .collapse {
-        position: absolute;
-        right: calc(5rem + 1.5rem / 2);
-        z-index: 10;
-        top: 2px;
-        -webkit-animation-name: growIn;
-        animation-name: growIn;
-        -webkit-animation-duration: .2s;
-        animation-duration: .2s;
-        -webkit-animation-timing-function: transform cubic-bezier(.18, 1.25, .4, 1), opacity cubic-bezier(0, 1, .4, 1);
-        animation-timing-function: transform cubic-bezier(.18, 1.25, .4, 1), opacity cubic-bezier(0, 1, .4, 1)
-    }
 
     .sidebar.toggled .nav-item .collapse .collapse-inner {
-        box-shadow: 0 .15rem 1.75rem 0 rgba(58, 59, 69, .15);
-        border-radius: .35rem;
-
+       font-size: .75rem;
     }
 
     .sidebar.toggled .nav-item .collapsing {
@@ -1720,7 +1687,8 @@ a:focus {
 }
 
 .sidebar-dark .sidebar-brand {
-    color: black
+    color: black;
+    font-size: .75rem;
 }
 
 
@@ -1894,7 +1862,7 @@ a:focus {
 
 @media (min-width:1200px) {
     .chart-area {
-        height: 15.6rem
+        height: 11rem
     }
 }
 
@@ -1906,14 +1874,19 @@ a:focus {
     height: 15rem;
     width: 100%
 }
+.chart-pie2 {
+    text-align: center;
+    display: flex;
+    flex-direction: column-reverse;
+}
 
 @media (min-width:768px) {
     .chart-pie {
-        height: calc(18.7rem - 80px) !important
+        height: calc(18.7rem - 120px) !important
     }
 
     .chart-pie2 {
-        height: calc(18.7rem - 80px) !important;
+        height: calc(18.7rem - 120px) !important;
     }
 }
 
@@ -2000,7 +1973,7 @@ body.sidebar-toggled footer.sticky-footer {
 .sidebar-dark .nav-item.active .nav-link span {
     color: #fff;
     text-align: end;
-    font-size: .8rem;
+    font-size: 1rem;
 }
 
 @media (min-width:768px){

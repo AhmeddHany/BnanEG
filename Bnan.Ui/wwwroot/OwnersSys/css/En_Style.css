@@ -85,7 +85,10 @@ body {
     content: url("../img/chevrons-right.svg") !important;
 
 }
-
+.lang-button-col {
+    right: auto;
+    left: 0px;
+}
 @media (max-width:768px) {
     .sidebar .nav-item .collapse {
         position: absolute;

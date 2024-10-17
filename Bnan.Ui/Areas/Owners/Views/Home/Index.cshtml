@@ -10,7 +10,646 @@
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
 
-<div class="row">
+
+
+
+
+<div class="row mb-3 g-3">
+    <div class="col-xl-4">
+        <div class="card charts-card">
+            <!-- Card Body -->
+            <div class="card-body ">
+                <h5> @localizer["Balance"]</h5>
+                <div class="row align-items-center chart-area mx-1 px-2">
+                    <canvas id="barChart" style="max-height: 10rem;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+ <div class="col-lg-6 col-xl-4">
+        <div class="card charts-card">
+            <!-- Card Body -->
+            <div class="card-body ">
+                <h5> @localizer["Liabilities"] </h5>
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="chart-pie2" id="chart-creditor">
+                            <span class="chart-label">@localizer["Creditors"]</span>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="chart-pie2" id="chart-debtors">
+                            <span class="chart-label">@localizer["Debtors"]</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pie Chart -->
+ <div class="col-lg-6 col-xl-4">
+        <div class="card charts-card">
+            <!-- Card Body -->
+            <div class="card-body  ">
+                <h5> @localizer["ActiveContractsCount"] </h5>
+                <div class="row align-items-center">
+                    <div class="col-lg-12 ">
+                        <div class="chart-pie pt-2 pb-2">
+                            <canvas id="myPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row tables-row g-3 mb-3">
+    <div class="col-xl-6">
+        <div class="table-card bg-white pt-3">
+            <div class="scrollTable">
+                <h5 id="Branches-card-title"> @localizer["Branches"] </h5>
+                <table class="spacing-table  table-borderless" id="Branches-data">
+                    <thead class="sticky-top pb-1">
+                        <tr>
+                            <th scope="col"></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @{
+                            var noAuto = 1;
+                        }
+                        @foreach (var item in Model.BranchsInformations)
+                        {
+                            <tr data-content="data@noAuto">
+                                <td>
+                                    <p class="FirstLineP">
+                                        @if (@requestCulture?.RequestCulture.UICulture.Name == "en-US") {
+                                            @item.CrCasBranchInformationEnShortName
+                                        }
+                                        else
+                                        {
+                                            @item.CrCasBranchInformationArShortName
+                                        }
+                                    </p>
+                                    <p class="secondLineP">
+                                        @if (@requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                        {
+                                            @item.CrCasBranchInformationDirectorEnName
+                                        }
+                                        else
+                                        {
+                                            @item.CrCasBranchInformationDirectorArName
+                                        }
+                                    </p>
+                                </td>
+                                <td class="notify-td">
+                                    <div class="filter-number-td">
+                                        <div class="filters filter2-div"></div>
+                                        <div>@noAuto</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            noAuto++; // زيادة قيمة noAuto في كل تكرار
+                        }
+                    </tbody>
+                </table>
+                <div id="contentContainer" style="display:none;"></div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-xl-6">
+        <div class="table-card bg-white pt-3">
+            <div class="scrollTable">
+                <h5 id="employee-card-title"> الموظفين </h5>
+                <table class="spacing-table  table-borderless" id="employee-data">
+                    <thead class="sticky-top pb-1">
+                        <tr>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr data-content="data1">
+                            <td>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <div class="col">
+                                        <p class="FirstLineP"> بدر ريان مشاري الشريم </p>
+                                        <p class="secondLineP"> مدير عام </p>
+                                        <div class="d-flex justify-content-end gap-4">
+                                            <p class="secondLineP">22/09/2024</p>
+                                            <p class="secondLineP time"> 11:30 pm</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto d-flex justify-content-end gap-1">
+                                        <div class="employee">
+                                            <img src="/OwnersSys/img/pic (3).svg" alt="empolyee-photo"
+                                                 class="employee border-0 w-100 h-100">
+                                            <div class="active_statue bg-success"></div>
+                                        </div>
+                                        <img src="/OwnersSys/img/Frame 2608948 (2).svg">
+
+                                    </div>
+
+                                </div>
+                            </td>
+                            <td class="notify-td">
+                                1
+                            </td>
+                        </tr>
+                        <tr data-content="data2">
+                            <td>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <div class="col">
+                                        <p class="FirstLineP"> عمار عبدالغفور مسفر السبيعي </p>
+                                        <p class="secondLineP"> مدير الشئون المالية </p>
+                                        <div class="d-flex justify-content-end gap-4">
+                                            <p class="secondLineP">22/09/2024</p>
+                                            <p class="secondLineP time"> 11:30 pm</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto d-flex justify-content-end gap-1">
+                                        <div class="employee">
+                                            <img src="/OwnersSys/img/pic (3).svg" alt="empolyee-photo"
+                                                 class="employee border-0 w-100 h-100">
+                                            <div class="active_statue bg-success"></div>
+                                        </div>
+                                        <img src="/OwnersSys/img/Frame 2608948.svg">
+
+                                    </div>
+
+                                </div>
+                            </td>
+                            <td class="notify-td">
+                                2
+                            </td>
+                        </tr>
+                        <tr data-content="data3">
+                            <td>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <div class="col">
+                                        <p class="FirstLineP"> عبدالخالق يعقوب أنس إسماعيل</p>
+                                        <p class="secondLineP"> مدير أسطول السيارات</p>
+                                        <div class="d-flex justify-content-end gap-4">
+                                            <p class="secondLineP">22/09/2024</p>
+                                            <p class="secondLineP time"> 11:30 pm</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto d-flex justify-content-end gap-1">
+                                        <div class="employee">
+                                            <img src="/OwnersSys/img/pic (3).svg" alt="empolyee-photo"
+                                                 class="employee border-0 w-100 h-100">
+                                            <div class="active_statue bg-danger"></div>
+                                        </div>
+                                        <img src="/OwnersSys/img/Frame 2608948 (2).svg">
+
+                                    </div>
+
+                                </div>
+                            </td>
+                            <td class="notify-td">
+                                3
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div id="contentContainer2" style="display:none;"></div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+@section scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <!--Charts-->
+    <script>
+        // Pie Chart contracts "transformation": "تحويل",
+        const pieChartEl = document.getElementById('myPieChart');
+        const pieChartData = {
+            labels: ['@localizer["ExpiredContract"]', '@localizer["ExpiresTomorrow"]', '@localizer["ExpiresToday"]', '@localizer["ExpiresLater"]'],
+            datasets: [{
+                data: [@Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractStatus == "E").Count(),
+        @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "1" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
+        @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "2" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
+        @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "0" && x.CrCasRenterContractAlertContractStatus == "A").Count()
+                        ,
+                ],
+                backgroundColor: ['rgba(242, 36, 36, 1)', '#9966FF', 'rgba(242, 143, 36, 1)', 'rgba(54, 162, 235, 1)']
+            }]
+        };
+
+        const pieChart = new Chart(pieChartEl, {
+            type: 'doughnut',
+            data: pieChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        backgroundColor: "#7A7A7A",
+                        bodyFontColor: "#060A10",
+                        borderColor: '#ffffff',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // // Pie Chart debts
+        // const debtsChartEl = document.getElementById('debtsChart');
+        // // Convert string formatted numbers to actual numbers
+        // var debtors = parseFloat('@Model.Debtors?.ToString("N2", CultureInfo.InvariantCulture)'.replace(/,/g, ''));
+        // var creditors = parseFloat('@Model.Creditors?.ToString("N2", CultureInfo.InvariantCulture)'.replace(/,/g, ''));
+
+        // const debtsChartData = {
+        //     labels: ['@localizer["Debtors"]', '@localizer["Creditors"]'],
+        //     datasets: [{
+        //         data: [debtors, creditors],
+        //         backgroundColor: ['#FF4069', '#36A2EB'],
+        //         hoverBackgroundColor: ['#FF4069', '#36A2EB'],
+        //         hoverBorderColor: "rgba(234, 236, 244, 1)",
+        //     }]
+        // };
+
+        // const debtsChart = new Chart(debtsChartEl, {
+        //     type: 'doughnut',
+        //     data: debtsChartData,
+        //     options: {
+        //         responsive: true,
+        //         maintainAspectRatio: false,
+        //         plugins: {
+        //             tooltip: {
+        //                 backgroundColor: "#7A7A7A",
+        //                 bodyFontColor: "#060A10",
+        //                 borderColor: '#ffffff',
+        //                 borderWidth: 1,
+        //                 xPadding: 15,
+        //                 yPadding: 15,
+        //                 displayColors: false,
+        //                 caretPadding: 10,
+        //                 callbacks: {
+        //                     label: function (tooltipItem) {
+        //                         // Format the number with commas
+        //                         return `${tooltipItem.label}: ${tooltipItem.raw.toLocaleString()}`;
+        //                     }
+        //                 }
+        //             },
+        //             legend: {
+        //                 display: false
+        //             }
+        //         }
+        //     }
+        // });
+
+        // Bar Chart
+        $(document).ready(function () {
+            var paymentMethodslessorData = @Html.Raw(Json.Serialize(Model.OwnPaymentMethods));
+            console.log(paymentMethodslessorData);
+            var labelsLessor;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsLessor = paymentMethodslessorData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsLessor = paymentMethodslessorData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+
+            var data = paymentMethodslessorData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            var barChart = document.getElementById("barChart").getContext("2d");
+            var myChart = new Chart(barChart, {
+                type: "bar",
+                data: {
+                    labels: labelsLessor,
+                    datasets: [
+                        {
+                            data: data,
+                            backgroundColor: [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 206, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(153, 102, 255, 1)"
+                            ],
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+
+                        legend: {
+                            display: false
+                        }
+
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: true
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: true
+                            },
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+
+                    }
+                }
+            });
+        });
+
+        var creditors = parseFloat('@Model.Creditors?.ToString("N2", CultureInfo.InvariantCulture)'.replace(/,/g, ''));
+        var debtors = parseFloat('@Model.Debtors?.ToString("N2", CultureInfo.InvariantCulture)'.replace(/,/g, ''));
+        var total = Math.abs(creditors) + Math.abs(debtors);  // إجمالي دائنون ومدينون
+        var creditorPercentage = ( Math.abs(creditors) / total) * 100;  // النسبة المئوية للدائنون
+        var debtorPercentage = ( Math.abs(debtors) / total) * 100;  // النسبة المئوية للمدينون
+        // دائنون
+        var palette = anychart.palettes.distinctColors();
+        var label = anychart.standalones.label();
+        label
+            .useHtml(true)
+            .text(
+                '<span style = "color: #313136; font-weight:600 ; font-family: "Cairo", sans-serif;">' + creditors.toFixed(2) + '</span>'
+            )
+            .position('center')
+            .anchor('center')
+            .hAlign('center')
+            .vAlign('middle');
+        var data = anychart.data.set([
+            ['فورد', creditorPercentage],
+            [' اخري', 100 - creditorPercentage]
+        ]);
+
+        palette.items([
+            { color: '#FF9FB3' },
+            { color: '#E6E6E6' },
+        ]);
+
+        var chart = anychart.pie(data)
+        chart.palette(palette);
+        chart.innerRadius('70%');
+        chart.container('chart-creditor');
+        chart.legend(false);
+        chart.labels(false)
+        chart.tooltip(false)
+        chart.center().content(label);
+        chart.draw();
+
+        // مدينون
+        var palette = anychart.palettes.distinctColors();
+        var label = anychart.standalones.label();
+        label
+            .useHtml(true)
+            .text(
+                '<span style = "color: #313136; font-weight:600 ; font-family: "Cairo", sans-serif;">' + debtors.toFixed(2) + '</span>'
+            )
+            .position('center')
+            .anchor('center')
+            .hAlign('center')
+            .vAlign('middle');
+        var data = anychart.data.set([
+            ['فورد', debtorPercentage],
+            [' اخري', 100 - debtorPercentage]
+        ]);
+
+        palette.items([
+            { color: '#9AD0F4' },
+            { color: '#E6E6E6' },
+        ]);
+
+        var chart = anychart.pie(data)
+        chart.palette(palette);
+        chart.innerRadius('70%');
+        chart.container('chart-debtors');
+        chart.legend(false);
+        chart.labels(false)
+        chart.tooltip(false)
+        chart.center().content(label);
+        chart.draw();
+
+        //
+    </script>
+    <script>
+        document.querySelectorAll('#Branches-data tr').forEach(function (row) {
+            row.addEventListener('click', function () {
+                document.getElementById('Branches-data').style.display = 'none';
+                document.getElementById('Branches-card-title').style.display = 'none';
+
+                const dataKey = row.getAttribute('data-content');
+
+                displayNewData(dataKey);
+            });
+        });
+
+        function displayBranchData(dataKey) {
+            const branches = @Html.Raw(Json.Serialize(Model.BranchsInformations)); // Serialize your model into JS object
+            const branch = branches.find(b => b.CrCasBranchInformationCode == dataKey); // Assuming you have an 'Id' field in your model
+
+            if (branch) {
+                // Display the branch details dynamically based on the selected branch
+                const contentContainer = document.getElementById('contentContainer');
+                contentContainer.style.display = 'block';
+                contentContainer.innerHTML = `
+                        <div class="row mx-1">
+                            <div class="col">
+                                <h5 class="tr-title">${branch.CrCasBranchInformationArShortName} - ${branch.CrCasBranchInformationDirectorArName}</h5>
+                                <p class="secondLineP">${/* branch.Location */}</p>
+                            </div>
+                            <div class="col-auto">
+                                <img id="backButton" style="cursor:pointer;" onclick="goBack1()" src="/OwnersSys/img/back icon.svg">
+                            </div>
+                        </div>
+
+                        <div class="row mx-1 g-2">
+                            <div class="col-lg-6">
+                                <div class="card border-left-primary h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col-sm-6 data-card">
+                                                <span>العقود</span>
+                                            </div>
+                                            <div class="col-sm-6 data-icon">
+                                                <span class="data-card"> ${/* branch.ContractCount */} </span>
+                                            </div>
+                                        </div>
+                                        <hr class="card-hr">
+                                        <div class="row">
+                                            <div class="col-md-6 data-card2"><span>المغلقة</span> <span>${/* branch.ClosedContracts */}</span></div>
+                                            <div class="col-md-auto data-card2"><span>القائمة</span> <span>${/* branch.OpenContracts */}</span></div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col-md-6 data-card2"><span>المعلقة</span> <span>${/* branch.PendingContracts */}</span></div>
+                                            <div class="col-md-auto data-card2"><span>المحفوظة</span> <span>${/* branch.SavedContracts */}</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="card border-left-primary h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col-sm-6 data-card">
+                                                <span>الرصيد</span>
+                                            </div>
+                                            <div class="col-sm-6 data-icon">
+                                                <span class="data-card"> ${/* branch.Balance.toLocaleString() */} </span>
+                                            </div>
+                                        </div>
+                                        <hr class="card-hr">
+                                        <div class="row">
+                                            <div class="col data-card2"><span>متاح</span> <span>${/* branch.AvailableBalance */}</span></div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col data-card2"><span>محجوز</span> <span>${/* branch.ReservedBalance */}</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mx-1 g-2 mt-1">
+                            <div class="col-lg-6">
+                                <div class="card border-left-primary h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col data-card">
+                                                <span>التنبيهات</span>
+                                            </div>
+                                        </div>
+                                        <hr class="card-hr">
+                                        <div class="row">
+                                            <div class="col-md-7 data-card2"><span>مستندات الشركة</span></div>
+                                            <div class="col aboutToEnd">${/* branch.CompanyDocumentsAboutToEnd */}</div>
+                                            <div class="col ended">${/* branch.CompanyDocumentsEnded */}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-7 data-card2"><span>وثائق السيارات</span></div>
+                                            <div class="col aboutToEnd">${/* branch.CarDocumentsAboutToEnd */}</div>
+                                            <div class="col ended">${/* branch.CarDocumentsEnded */}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-7 data-card2"><span>صيانة السيارات</span></div>
+                                            <div class="col aboutToEnd">${/* branch.CarMaintenanceAboutToEnd */}</div>
+                                            <div class="col ended">${/* branch.CarMaintenanceEnded */}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="card border-left-primary h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col-sm-6 data-card">
+                                                <span>السيارات</span>
+                                            </div>
+                                            <div class="col-sm-6 data-icon">
+                                                <span class="data-card">${/* branch.CarCount */}</span>
+                                            </div>
+                                        </div>
+                                        <hr class="card-hr">
+                                        <div class="row">
+                                            <div class="col data-card2"><span>مؤجرة</span> <span>${/* branch.CarsRented */}</span></div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col data-card2"><span>متاحة</span> <span>${/* branch.CarsAvailable */}</span></div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col data-card2"><span>غير متاحة</span> <span>${/* branch.CarsNotAvailable */}</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            } else {
+                console.error("Branch not found");
+            }
+        }
+        function goBack1() {
+            document.getElementById('contentContainer').style.display = 'none';
+            document.getElementById('backButton').style.display = 'none';
+
+            document.getElementById('Branches-data').style.display = 'table';
+            document.getElementById('Branches-card-title').style.display = 'block';
+
+        }
+
+    </script>
+    <script>
+        document.querySelectorAll('#employee-data tr').forEach(function (row) {
+            row.addEventListener('click', function () {
+                document.getElementById('employee-data').style.display = 'none';
+                document.getElementById('employee-card-title').style.display = 'none';
+
+                const dataKey = row.getAttribute('data-content');
+
+                displayNewData2(dataKey);
+            });
+        });
+
+        function displayNewData2(dataKey) {
+            const contentContainer = document.getElementById('contentContainer2');
+            contentContainer.style.display = 'block';
+
+            let newContent = '';
+            if (dataKey === 'data1') {
+                newContent = '<div class="row mx-1"><div class="col d-flex gap-2 align-items-center"><div class="col-auto d-flex justify-content-end gap-1"><img src="/OwnersSys/img/Frame 2608948 (2).svg"><div class="employee"><img src="/OwnersSys/img/pic (3).svg" alt="employee-photo" class="employee border-0 w-100 h-100"><div class="active_statue bg-success"></div></div></div><div class="col"><p class="FirstLineP"> بدر ريان مشاري الشريم </p><div class="d-flex gap-3"><p class="secondLineP"> مدير عام </p><div class="d-flex gap-1"><p class="secondLineP time"> 11:30pm</p><p class="secondLineP">22/09/2024</p></div></div></div></div><div class="col-auto"><img id="backButton2" style="cursor:pointer;" onclick="goBack2()" src="/OwnersSys/img/back icon.svg"></div></div><div class="row mx-1 g-2 mt-2"><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>العقود</span></div><div class="col-sm-6 data-icon"><span class="data-card">200</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>مغلقة</span> <span>51</span></div></div><div class="row mt-2"><div class="col data-card2"><span>قائمة</span> <span>70</span></div></div></div></div></div><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>الرصيد</span></div><div class="col-sm-6 data-icon"><span class="data-card">1,235,879.02</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>متاح</span> <span>120,865</span></div></div><div class="row mt-2"><div class="col data-card2"><span>محجوز</span> <span>1,115,014.02</span></div></div></div></div></div></div>'
+            } else if (dataKey === 'data2') {
+                newContent = '<div class="row mx-1"><div class="col d-flex gap-2 align-items-center"><div class="col-auto d-flex justify-content-end gap-1"><img src="/OwnersSys/img/Frame 2608948.svg"><div class="employee"><img src="/OwnersSys/img/pic (3).svg" alt="employee-photo" class="employee border-0 w-100 h-100"><div class="active_statue bg-success"></div></div></div><div class="col"><p class="FirstLineP"> عمار عبدالغفور مسفر السبيعي</p><div class="d-flex gap-3"><p class="secondLineP"> مدير عام </p><div class="d-flex gap-1"><p class="secondLineP time"> 11:30pm</p><p class="secondLineP">22/09/2024</p></div></div></div></div><div class="col-auto"><img id="backButton2" style="cursor:pointer;" onclick="goBack2()" src="/OwnersSys/img/back icon.svg"></div></div><div class="row mx-1 g-2 mt-2"><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>العقود</span></div><div class="col-sm-6 data-icon"><span class="data-card">200</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>مغلقة</span> <span>51</span></div></div><div class="row mt-2"><div class="col data-card2"><span>قائمة</span> <span>70</span></div></div></div></div></div><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>الرصيد</span></div><div class="col-sm-6 data-icon"><span class="data-card">1,235,879.02</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>متاح</span> <span>120,865</span></div></div><div class="row mt-2"><div class="col data-card2"><span>محجوز</span> <span>1,115,014.02</span></div></div></div></div></div></div>'
+
+            } else if (dataKey === 'data3') {
+                newContent = '<div class="row mx-1"><div class="col d-flex gap-2 align-items-center"><div class="col-auto d-flex justify-content-end gap-1"><img src="/OwnersSys/img/Frame 2608948 (2).svg"><div class="employee"><img src="/OwnersSys/img/pic (3).svg" alt="employee-photo" class="employee border-0 w-100 h-100"><div class="active_statue bg-danger"></div></div></div><div class="col"><p class="FirstLineP"> عبدالخالق يعقوب أنس إسماعيل</p><div class="d-flex gap-3"><p class="secondLineP"> مدير عام </p><div class="d-flex gap-1"><p class="secondLineP time"> 11:30pm</p><p class="secondLineP">22/09/2024</p></div></div></div></div><div class="col-auto"><img id="backButton2" style="cursor:pointer;" onclick="goBack2()" src="/OwnersSys/img/back icon.svg"></div></div><div class="row mx-1 g-2 mt-2"><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>العقود</span></div><div class="col-sm-6 data-icon"><span class="data-card">200</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>مغلقة</span> <span>51</span></div></div><div class="row mt-2"><div class="col data-card2"><span>قائمة</span> <span>70</span></div></div></div></div></div><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>الرصيد</span></div><div class="col-sm-6 data-icon"><span class="data-card">1,235,879.02</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>متاح</span> <span>120,865</span></div></div><div class="row mt-2"><div class="col data-card2"><span>محجوز</span> <span>1,115,014.02</span></div></div></div></div></div></div>'
+
+            }
+
+            contentContainer.innerHTML = newContent;
+        }
+        function goBack2() {
+            document.getElementById('contentContainer2').style.display = 'none';
+            document.getElementById('backButton2').style.display = 'none';
+
+            document.getElementById('employee-data').style.display = 'table';
+            document.getElementById('employee-card-title').style.display = 'block';
+
+        }
+
+    </script>
+} 
+
+@* <div class="row">
     <div class="col-xl-6">
         <div class="card  mb-4">
             <!-- Card Body -->
@@ -283,4 +922,4 @@
             });
         });
     </script>
-}
+} *@

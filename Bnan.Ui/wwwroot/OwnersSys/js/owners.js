@@ -2,18 +2,12 @@
   // WOW active
   new WOW().init();
   "use strict";
+
   if (window.innerWidth <= 767)
     {
       l("body").addClass("sidebar-toggled");
       l(".sidebar").addClass("toggled");
     }
-    setTimeout(function() {
-      if (window.innerWidth > 767) {
-        l("body").toggleClass("sidebar-toggled");
-        l(".sidebar").toggleClass("toggled");
-      }
-    }, 100);
-
     l("#sidebarToggle, #sidebarToggleTop").on("click", function (e) {
       new WOW({
         boxClass: 'wow',
@@ -29,9 +23,7 @@
       }).init();
     l("body").toggleClass("sidebar-toggled");
     l(".sidebar").toggleClass("toggled");
-    if (l(".sidebar").hasClass("toggled")) {
-      l(".sidebar .collapse").collapse("hide");
-    }
+   
   });
 
   

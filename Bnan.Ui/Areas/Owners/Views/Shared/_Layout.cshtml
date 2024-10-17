@@ -57,12 +57,12 @@
     }
 </head>
 
-<body id="page-top" class="sidebar-toggled">
+<body id="page-top">
     <!-- Page Wrapper -->
 
     <div id="wrapper">
         <!-- Sidebar -->
-        <ul class="navbar-nav  sidebar sidebar-dark accordion toggled" id="accordionSidebar">
+        <ul class="navbar-nav  sidebar sidebar-dark accordion " id="accordionSidebar">
 
             <div class="d-flex flex-column justify-content-between h-100 ">
                 <div>
@@ -74,7 +74,7 @@
                     <div class="col lang-button-col">
                         @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
                         {
-                            <label for="myCheckbox" class="lang-button" id="checkboxLabel">
+                            <label for="myCheckbox" class="lang-button m-2" id="checkboxLabel">
                                 العربية <i class="fa-solid fa-globe lang_globe"></i>
                             </label>
                         }
@@ -84,25 +84,11 @@
                                 English <i class="fa-solid fa-globe lang_globe"></i>
                             </label>
                         }
-                        <i class="fa-solid fa-gear dropdown-toggle" href="#" id="userDropdown" role="button"
-                           data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        </i>
-                        <!-- Dropdown - User Information -->
-                        <div class="dropdown-menu dropdown-menu-right shadow  user-dropdown"
-                             aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="/Identity/Account/Systems">
-                                @localizer["Systems"]
-                            </a>
-                            <a class="dropdown-item" href="/Identity/Account/Logout">
-                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                @localizer["Logout"]
-                            </a>
-                        </div>
-
                     </div>
 
-                    <a class="sidebar-brand d-flex align-items-center justify-content-center"
-                       style="margin-top: 10rem;">
+                    <a class="sidebar-brand d-flex align-items-center justify-content-center" style="margin-top: 15rem;"
+                       href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">
                         <div class="row flex-column align-items-center">
                             <div class="col-12 d-flex align-items-center justify-content-center ">
                                 <div class="Profile">
@@ -133,9 +119,44 @@
                             </div>
                         </div>
                     </a>
-
-
-
+                    <!-- Dropdown - User Information -->
+                    <div class="dropdown-menu dropdown-menu-right shadow  user-dropdown" aria-labelledby="userDropdown">
+                        <p class="welcome-Message">
+                            @localizer["Welcome"]
+                            @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
+                            {
+                                @user.CrMasUserInformationEnName
+                            }
+                            else
+                            {
+                                @user.CrMasUserInformationArName
+                            }
+                        </p>
+                        <a class="dropdown-item" href="/Identity/Account/Systems">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <img src="/OwnersSys/img/Frame (7).svg">
+                                </div>
+                                <div class="col">
+                                    <p>
+                                        @localizer["Systems"]
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                        <a class="dropdown-item" href="/Identity/Account/Logout">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <img src="/OwnersSys/img/Frame (8).svg">
+                                </div>
+                                <div class="col">
+                                    <p>
+                                        @localizer["Logout"]
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                     <!-- Nav Item - Dashboard -->
             <li class="nav-item mt-5 @(ViewBag.Dashboard == true ? "active" : "")">
                 <a class="nav-link" href="/Owners/Home/Index">
@@ -143,365 +164,217 @@
                 </a>
             </li>
             <!-- Heading -->
-
-            <li class="nav-item mt-2 @(ViewBag.Branches == true ? "active" : "")">
-                <a class="nav-link" id="Branches" href="/Owners/Home/Branches">
-                    <span>@localizer["Branches"]</span>
+            <li class="nav-item">
+                <a class="nav-link " href="#" data-bs-toggle="collapse" data-bs-target="#collapseUtilities"
+                   aria-expanded="true" aria-controls="collapseUtilities">
+                    <span style="color: #39629c;"> @localizer["Indicators"] </span>
                 </a>
-            </li>
-
-            <!-- Heading -->
-            <li class="nav-item mt-2 @(ViewBag.Employees == true ? "active" : "")">
-                <a class="nav-link" href="/Owners/Home/Employees">
-                    <span>@localizer["Employees"]</span>
-                </a>
-            </li>
-
-            <li class="nav-item @(ViewBag.Indicators == true ? "active" : "")">
-                <a class="nav-link @(ViewBag.Indicators == true ? "" : "collapsed")" href="#" data-bs-toggle="collapse"
-                   data-bs-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-                    <span>@localizer["Indicators"]</span>
-                </a>
-                <div id="collapseUtilities" class="collapse @(ViewBag.Indicators == true ? "show" : "")" aria-labelledby="headingUtilities"
-                     data-parent="#accordionSidebar">
+                <div class="collapse show">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item @(ViewBag.Tenants == true ? "active" : "")" href="/Owners/Renters/Indicators">
-                            <img src="/OwnersSys/img/Frame (3).svg"> @localizer["Tenants"]
-                        </a>
-                        <a class="collapse-item @(ViewBag.Contracts == true ? "active" : "")" href="/Owners/Contracts/Indicators">
-                            <img src="/OwnersSys/img/Frame (2).svg"> @localizer["Contracts"]
-                        </a>
-                        <a class="collapse-item @(ViewBag.Cars == true ? "active" : "")" href="/Owners/Cars/Indicators">
-                            <img src="/OwnersSys/img/Frame(4).svg"> @localizer["Cars"]
-                        </a>
+                        <a class="collapse-item" href="tenant.html"> @localizer["Tenants"] <img src="/OwnersSys/img/Frame (6).svg"></a>
+                        <a class="collapse-item" href="Contracts.html">  @localizer["Contracts"] <img src="/OwnersSys/img/Frame (5).svg"></a>
+                        <a class="collapse-item" href="Cars.html">  @localizer["Cars"] <img src="/OwnersSys/img/Frame (4).svg"> </a>
                     </div>
                 </div>
             </li>
-
-
-
-
-
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
-    </div>
-    <div>
-        <div class="row flex-column align-items-center justify-content-center mb-lg-5">
-            <div class="col-12 d-flex align-items-center justify-content-center ">
-                <div class="Profile company-logo">
-                    <img src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" alt="company logo" class="mb-3 w-100">
+            <div>
+                <div class="row flex-column align-items-center justify-content-center mb-lg-5">
+                    <div class="col-12 d-flex align-items-center justify-content-center ">
+                        <div class="Profile company-logo">
+                            <img src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" alt="company logo" class="mb-3 w-100">
+                        </div>
+                    </div>
+                    <div class="sidebar-brand-text col-12 text-center">
+                        <h6 class="company_name ">
+                                    @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
+                                    {
+                                        @userInfo.CrMasUserInformationLessorNavigation.CrMasLessorInformationEnLongName
+                                    }
+                                    else
+                                    {
+                                        @userInfo.CrMasUserInformationLessorNavigation.CrMasLessorInformationArLongName
+                                    }
+                        </h6>
+                    </div>
                 </div>
             </div>
-            <div class="sidebar-brand-text col-12 text-center">
-                <h6 class="company_name ">
-                                @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
-                                {
-                                    @userInfo.CrMasUserInformationLessorNavigation.CrMasLessorInformationEnLongName
-                                }
-                                else
-                                {
-                                    @userInfo.CrMasUserInformationLessorNavigation.CrMasLessorInformationArLongName
-                                }
-                </h6>
-            </div>
-        </div>
-    </div>
-    </div>
+        </ul>
+        <!-- End of Sidebar -->
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div class="layer"></div>
 
-    </ul>
-    <!-- End of Sidebar -->
-    <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
-        <div class="layer"></div>
+            <!-- Main Content -->
+            <div id="content">
 
-        <!-- Main Content -->
-        <div id="content">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-transparent topbar static-top  align-items-baseline">
 
-            <!-- Topbar -->
-            <nav class="navbar navbar-expand navbar-light bg-transparent topbar static-top  align-items-baseline">
-
-                <div class="col bars-button">
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars toggleButton"></i>
-                    </button>
-                </div>
+                    <div class="col bars-button">
+                        <!-- Sidebar Toggle (Topbar) -->
+                        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                            <i class="fa fa-bars toggleButton"></i>
+                        </button>
+                    </div>
 
 
-            </nav>
-            <!-- End of Topbar -->
-            <!-- Begin Page Content -->
-            <div class="container-fluid">
+                </nav>
+                <!-- End of Topbar -->
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- Content Row -->
+                    <div class="row mb-4 g-3">
+                        <div class=" col-sm-6 col-lg-3">
+                            <div class="card border-left-primary h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-sm-6 data-card">
+                                            <span>@localizer["Contracts"]</span>
+                                            <span class=" data-card-number">@Model.OwnContracts?.Count().ToString("N0", CultureInfo.InvariantCulture)</span>
 
-
-
-                <!-- Content Row -->
-                <div class="row mb-4 g-3">
-                    <div class=" col-sm-6 col-lg-4 col-xl-2  ">
-                        <div class="card border-left-primary h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col-sm-6 data-card">
-                                        <span>@localizer["Contracts"]</span>
-                                    </div>
-                                    <div class="col-sm-6 data-icon">
-                                        <div class="rate-card_icon">
-                                            <img src="/OwnersSys/img/ContractIcon.svg" alt="contracts_icon">
                                         </div>
+                                        <div class="col-sm-6 data-icon">
+                                            <div class="rate-card_icon">
+                                                <img src="/OwnersSys/img/contract.svg"
+                                                     alt="contracts_icon">
+                                            </div>
 
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row ">
-                                    <div class="col-sm-12 data-card">
-                                        <span> @Model.OwnContracts?.Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                                    <hr class="card-hr">
+                                    <div class="row">
+                                        <div class="col data-card2">
+                                            <span>@localizer["List_count"]</span> <span>@Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus != Status.Closed).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                                        </div>
                                     </div>
-
-                                </div>
-                                <hr class="card-hr">
-                                <div class="row mt-2">
-                                    <div class="col data-card2">
-                                        <span>@localizer["Closed_count"]</span> <span>@Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col data-card2">
-                                        <span>@localizer["List_count"]</span> <span>@Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus != Status.Closed).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col data-card2">
-                                        <span>@localizer["Canceled_count"]</span> <span>0</span>
+                                    <div class="row mt-2">
+                                        <div class="col data-card2">
+                                            <span>@localizer["Closed_count"]</span> <span>@Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class=" col-sm-6  col-lg-4  col-xl-2  ">
-                        <div class="card border-left-success h-100 py-2 ">
-                            <div class="card-body ">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col-sm-8 data-card">
-                                        <span>@localizer["Cars"]</span>
-                                    </div>
-                                    <div class="col-sm-4 data-icon">
-                                        <div class="rate-card_icon">
-                                            <img src="/OwnersSys/img/CarsIcon.svg" alt="car_icon">
+                        <div class=" col-sm-6 col-lg-3">
+                            <div class="card border-left-success h-100 py-2 ">
+                                <div class="card-body ">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-sm-8 data-card">
+                                            <span>@localizer["Cars"]</span>
+                                            <span> @Model.OwnCars?.Count().ToString("N0", CultureInfo.InvariantCulture)</span>
                                         </div>
-
+                                        <div class="col-sm-4 data-icon">
+                                            <div class="rate-card_icon">
+                                                <img src="/OwnersSys/img/car.svg" alt="car_icon">
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row ">
-                                    <div class="col-sm-12 data-card ">
-                                        <span> @Model.OwnCars?.Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                                    <hr class="card-hr">
+                                    <div class="row">
+                                        <div class="col data-card2">
+                                            <span>@localizer["Rented"]</span> <span>@Model.OwnCars?.FindAll(x => x.CrCasCarInformationStatus == Status.Rented).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                                        </div>
                                     </div>
-
-                                </div>
-                                <hr class="card-hr">
-                                <div class="row mt-2">
-                                    <div class="col data-card2">
-                                        <span>@localizer["Rented"]</span> <span>@Model.OwnCars?.FindAll(x => x.CrCasCarInformationStatus == Status.Rented).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col data-card2">
-                                        <span>@localizer["Available"]</span>
-                                        <span>
+                                    <div class="row mt-2">
+                                        <div class="col data-card2">
+                                            <span>@localizer["Available"]</span>
+                                            <span>
                                                 @Model.OwnCars?.FindAll(x => x.CrCasCarInformationStatus == Status.Active &&
                                                          x.CrCasCarInformationPriceStatus == true && x.CrCasCarInformationBranchStatus == Status.Active &&
                                                          x.CrCasCarInformationOwnerStatus == Status.Active &&
                                                          (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale)).Count().ToString("N0", CultureInfo.InvariantCulture)
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col data-card2">
-                                        <span>@localizer["UnAvailable"]</span> <span>
-                                                @Model.OwnCars?.FindAll(x => (x.CrCasCarInformationStatus == Status.Hold ||
-                                                         x.CrCasCarInformationStatus == Status.Maintaince || x.CrCasCarInformationPriceStatus == false ||
-                                                         x.CrCasCarInformationBranchStatus != Status.Active || x.CrCasCarInformationOwnerStatus != Status.Active ||
-                                                         (x.CrCasCarInformationStatus == Status.Active && x.CrCasCarInformationForSaleStatus == Status.ForSale))).Count().ToString("N0", CultureInfo.InvariantCulture)
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class=" col-sm-6 col-lg-4   col-xl-2  ">
-                        <div class="card border-left-success h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col-sm-8 data-card">
-                                        <span>@localizer["Tenants"]</span>
-                                    </div>
-                                    <div class="col-sm-4 data-icon">
-                                        <div class="rate-card_icon">
-                                            <img src="/OwnersSys/img/tenantIcon.svg" alt="tenant_icon">
+                                            </span>
                                         </div>
-
-                                    </div>
-                                </div>
-                                <div class="row ">
-                                    <div class="col-sm-12 data-card ">
-                                        <span>@Model.OwnRenters?.Count().ToString("N0", CultureInfo.InvariantCulture)</span>
-                                    </div>
-
-                                </div>
-                                <hr class="card-hr">
-                                <div class="row">
-                                    <div class="col data-card2">
-                                        <span>@localizer["With_contracts"]</span> <span>@Model.OwnRenters?.FindAll(x => x.CrCasRenterLessorStatus == Status.Rented).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col data-card2">
-                                        <span>@localizer["Without_contracts"]</span> <span>@Model.OwnRenters?.FindAll(x => x.CrCasRenterLessorStatus == Status.Active).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class=" col-sm-6 col-lg-4   col-xl-2  ">
-                        <div class="card border-left-success h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col-sm-8 data-card">
-                                        <span>@localizer["Balance"]</span>
-                                    </div>
-                                    <div class="col-sm-4 data-icon">
-                                        <div class="rate-card_icon">
-                                            <img src="/OwnersSys/img/balance.svg" alt="balance_icon">
+                        <div class=" col-sm-6 col-lg-3">
+                            <div class="card border-left-success h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-sm-8 data-card">
+                                            <span>@localizer["Tenants"]</span>
+                                            <span>@Model.OwnRenters?.Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+
                                         </div>
+                                        <div class="col-sm-4 data-icon">
+                                            <div class="rate-card_icon">
+                                                <img src="/OwnersSys/img/tenant.svg" alt="tenant_icon">
+                                            </div>
 
-                                    </div>
-                                </div>
-                                <div class="row ">
-                                    <div class="col-sm-12  data-card">
-                                        <span>@Model.TotalBalance?.ToString("N2", CultureInfo.InvariantCulture)</span>
-                                    </div>
-
-                                </div>
-                                <hr class="card-hr">
-                                <div class="row">
-                                    <div class="col data-card2">
-                                        <span>
-                                                @localizer["Available_balance"]
-                                        </span>
-                                        <span>
-                                                @Model.AvaliableBalance?.ToString("N2", CultureInfo.InvariantCulture)
-                                        </span>
-
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col data-card2">
-                                        <span>@localizer["Reserved_balance"]</span>
-                                        <span>@Model.ReservedBalance?.ToString("N2", CultureInfo.InvariantCulture)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class=" col-sm-6 col-lg-4   col-xl-2  ">
-                        <div class="card border-left-success h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col-sm-8 data-card">
-                                        <span>@localizer["Documents"]</span>
-                                    </div>
-                                    <div class="col-sm-4 data-icon">
-                                        <div class="rate-card_icon">
-                                            <img src="/OwnersSys/img/Frame.svg" alt="balance-icon">
                                         </div>
-
-                                    </div>
-                                </div>
-                                <div class="row ">
-                                    <div class="col-sm-12  data-card">
-                                        <span>@Model.BranchDocuments?.Count().ToString("N0", CultureInfo.InvariantCulture)</span>
                                     </div>
 
-                                </div>
-                                <td></td>
-                                <hr class="card-hr">
-                                <div class="row">
-                                    <div class="col data-card2">
-                                        <span>@localizer["EndingSoon"]</span>
-                                        <span>
-                                                @Model.BranchDocuments?.FindAll(x => x.CrCasBranchDocumentsStatus == Status.AboutToExpire).Count().ToString("N0", CultureInfo.InvariantCulture)
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col data-card2">
-                                        <span>@localizer["Expiredd"]</span>
-                                        <span>
-                                                @Model.BranchDocuments?.FindAll(x => x.CrCasBranchDocumentsStatus == Status.Expire).Count().ToString("N0", CultureInfo.InvariantCulture)
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class=" col-sm-6 col-lg-4   col-xl-2  ">
-                        <div class="card border-left-success h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col-sm-8 data-card">
-                                        <span>@localizer["MaintainceAndDocumentsOfCars"]</span>
-                                    </div>
-                                    <div class="col-sm-4 data-icon">
-                                        <div class="rate-card_icon">
-                                            <img src="/OwnersSys/img/Frame (1).svg" alt="balance-icon">
+                                    <hr class="card-hr">
+                                    <div class="row">
+                                        <div class="col data-card2">
+                                            <span>@localizer["With_contracts"]</span> <span>@Model.OwnRenters?.FindAll(x => x.CrCasRenterLessorStatus == Status.Rented).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
                                         </div>
-
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col data-card2">
+                                            <span>@localizer["Without_contracts"]</span> <span>@Model.OwnRenters?.FindAll(x => x.CrCasRenterLessorStatus == Status.Active).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row ">
-                                    <div class="col-sm-12  data-card">
-                                        <span>@Model.CarDocumentsAndMaintainces?.Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                            </div>
+                        </div>
+                        <div class=" col-sm-6 col-lg-3">
+                            @{
+                                var compenations = Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Sum(x => x.CrCasRenterContractBasicCompensationValue);
+                                var Revenues =Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Sum(x => x.CrCasRenterContractBasicActualTotal);
+                                var TotalRevenes = compenations + Revenues;
+                            }
+                            <div class="card border-left-success h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-sm-8 data-card">
+                                            <span>@localizer["Revenue"]</span>
+                                            <span class="data-card-number">@TotalRevenes?.ToString("N0", CultureInfo.InvariantCulture)</span>
+                                        </div>
+                                        <div class="col-sm-4 data-icon">
+                                            <div class="rate-card_icon">
+                                                <img src="/OwnersSys/img/revenue.svg" alt="balance-icon">
+                                            </div>
+                                        </div>
                                     </div>
-
-                                </div>
-                                <hr class="card-hr">
-                                <div class="row">
-                                    <div class="col data-card2">
-                                        <span>@localizer["EndingSoon"]</span>
-                                        <span>@Model.CarDocumentsAndMaintainces?.FindAll(x => x.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                                    <hr class="card-hr">
+                                    <div class="row">
+                                        <div class="col data-card2">
+                                            <span>@localizer["Contracts"]</span>
+                                            <span>@Revenues?.ToString("N0", CultureInfo.InvariantCulture)</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col data-card2">
-                                        <span>@localizer["Expiredd"]</span>
-                                        <span>@Model.CarDocumentsAndMaintainces?.FindAll(x => x.CrCasCarDocumentsMaintenanceStatus == Status.Expire).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                                    <div class="row mt-2">
+                                        <div class="col data-card2">
+                                            <span>@localizer["Compensations"]</span>
+                                            <span>@compenations?.ToString("N0", CultureInfo.InvariantCulture)</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <partial name="_ExpirationModalOWN" />
-                <!-- Content Row -->
-                <hr class="card-hr">
+                    <partial name="_ExpirationModalOWN" />
+                    <!-- Content Row -->
                     @RenderBody()
-
+                </div>
+                <!-- /.container-fluid -->
             </div>
-            <!-- /.container-fluid -->
-
+            <!-- End of Main Content -->
         </div>
-        <!-- End of Main Content -->
-
-    </div>
-    <!-- End of Content Wrapper -->
+        <!-- End of Content Wrapper -->
     </div>
     <!-- End of Page Wrapper -->
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
@@ -528,7 +401,9 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- charts.js core JavaScript-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
-
+    <!-- Anycharts.js core JavaScript-->
+    <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-core.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-pie.min.js"></script>
     <!--jquery-->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
