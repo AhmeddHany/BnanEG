@@ -1,17 +1,7 @@
-﻿using Bnan.Core.Models;
-
-namespace Bnan.Ui.ViewModels.Owners
+﻿namespace Bnan.Ui.ViewModels.Owners
 {
     public class OwnBranchVM
     {
-        public OwnBranchVM()
-        {
-
-            CrCasCarInformations = new HashSet<CrCasCarInformation>();
-            CrCasRenterContractBasics = new HashSet<CrCasRenterContractBasic>();
-
-        }
-
         public string CrCasBranchInformationLessor { get; set; } = null!;
         public string CrCasBranchInformationCode { get; set; } = null!;
         public string? CrCasBranchInformationArName { get; set; }
@@ -24,9 +14,23 @@ namespace Bnan.Ui.ViewModels.Owners
         public decimal? CrCasBranchInformationReservedBalance { get; set; }
         public decimal? CrCasBranchInformationAvailableBalance { get; set; }
         public string? CrCasBranchInformationStatus { get; set; }
-        public string? CrCasBranchInformationReasons { get; set; }
-        public virtual CrCasBranchPost CrCasBranchPost { get; set; } = null!;
-        public virtual ICollection<CrCasCarInformation> CrCasCarInformations { get; set; }
-        public virtual ICollection<CrCasRenterContractBasic> CrCasRenterContractBasics { get; set; }
+        public string? BranchPostAr { get; set; }
+        public string? BranchPostEn { get; set; }
+        public int? ContractsCount { get; set; }
+        public int? ClosedContractsCount { get; set; }
+        public int? ActiveContractsCount { get; set; }
+        public int? SuspendedContractsCount { get; set; }
+        public int? SavedContractsCount { get; set; }
+        public int? DocsForCompanyExpireCount { get; set; }
+        public int? DocsForCompanyAboutExpireCount { get; set; }
+        public int? DocsForCarExpireCount { get; set; }
+        public int? DocsForCarAboutExpireCount { get; set; }
+        public int? MainForCarExpireCount { get; set; }
+        public int? MainForCarAboutExpireCount { get; set; }
+        public int? CarsCount { get; set; }
+        public int? ActiveCarsCount { get; set; }
+        public int? RentedCarsCount { get; set; }
+        public int? UnActiveCarsCount { get; set; }
+        public bool? HaveCustodyNotAccepted { get; set; }
     }
 }

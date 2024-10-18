@@ -85,7 +85,7 @@
                         }
                         @foreach (var item in Model.BranchsInformations)
                         {
-                            <tr data-content="data@noAuto">
+                            <tr data-content="@item.CrCasBranchInformationCode">
                                 <td>
                                     <p class="FirstLineP">
                                         @if (@requestCulture?.RequestCulture.UICulture.Name == "en-US") {
@@ -109,12 +109,12 @@
                                 </td>
                                 <td class="notify-td">
                                     <div class="filter-number-td">
-                                        <div class="filters filter2-div"></div>
+                                        <div class="filters @((bool)item.HaveCustodyNotAccepted ? "filter2-div" : "")"></div>
                                         <div>@noAuto</div>
                                     </div>
                                 </td>
                             </tr>
-                            noAuto++; // زيادة قيمة noAuto في كل تكرار
+                            noAuto++;
                         }
                     </tbody>
                 </table>
@@ -461,30 +461,47 @@
         //
     </script>
     <script>
-        document.querySelectorAll('#Branches-data tr').forEach(function (row) {
-            row.addEventListener('click', function () {
-                document.getElementById('Branches-data').style.display = 'none';
-                document.getElementById('Branches-card-title').style.display = 'none';
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('#Branches-data tr').forEach(function (row) {
+                row.addEventListener('click', function () {
+                    console.log(5555555555555);
+                    document.getElementById('Branches-data').style.display = 'none';
+                    document.getElementById('Branches-card-title').style.display = 'none';
 
-                const dataKey = row.getAttribute('data-content');
-
-                displayNewData(dataKey);
+                    const dataKey = row.getAttribute('data-content');
+                    console.log("dataKey", dataKey);
+                    displayBranchData(dataKey);
+                });
             });
         });
 
         function displayBranchData(dataKey) {
             const branches = @Html.Raw(Json.Serialize(Model.BranchsInformations)); // Serialize your model into JS object
-            const branch = branches.find(b => b.CrCasBranchInformationCode == dataKey); // Assuming you have an 'Id' field in your model
-
+            const branch = branches.find(b => b.crCasBranchInformationCode == dataKey); // Assuming you have an 'Id' field in your model
+            console.log("branches", branches)
+            console.log("branch", branch)
             if (branch) {
+                var branchPost;
+                var branchName;
+                var branchDirectorName;
                 // Display the branch details dynamically based on the selected branch
+                if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                    branchPost = branch.branchPostEn
+                    branchName = branch.crCasBranchInformationEnShortName
+                    branchDirectorName = branch.crCasBranchInformationDirectorEnName
+                }
+                else {
+                    branchPost = branch.branchPostAr
+                    branchName = branch.crCasBranchInformationArShortName
+                    branchDirectorName = branch.crCasBranchInformationDirectorArName
+                }
                 const contentContainer = document.getElementById('contentContainer');
                 contentContainer.style.display = 'block';
                 contentContainer.innerHTML = `
                         <div class="row mx-1">
                             <div class="col">
-                                <h5 class="tr-title">${branch.CrCasBranchInformationArShortName} - ${branch.CrCasBranchInformationDirectorArName}</h5>
-                                <p class="secondLineP">${/* branch.Location */}</p>
+                                <h5 class="tr-title">${branchName} - ${branchDirectorName}</h5>
+                                <p class="secondLineP">${branchPost}</p>
                             </div>
                             <div class="col-auto">
                                 <img id="backButton" style="cursor:pointer;" onclick="goBack1()" src="/OwnersSys/img/back icon.svg">
@@ -497,20 +514,20 @@
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-sm-6 data-card">
-                                                <span>العقود</span>
+                                                <span>@localizer["Contracts"]</span>
                                             </div>
                                             <div class="col-sm-6 data-icon">
-                                                <span class="data-card"> ${/* branch.ContractCount */} </span>
+                                                <span class="data-card"> ${branch.contractsCount} </span>
                                             </div>
                                         </div>
                                         <hr class="card-hr">
                                         <div class="row">
-                                            <div class="col-md-6 data-card2"><span>المغلقة</span> <span>${/* branch.ClosedContracts */}</span></div>
-                                            <div class="col-md-auto data-card2"><span>القائمة</span> <span>${/* branch.OpenContracts */}</span></div>
+                                                    <div class="col-md-6 data-card2"><span>@localizer["Contracts"]</span> <span>${branch.closedContractsCount}</span></div>
+                                                    <div class="col-md-auto data-card2"><span>@localizer["List_count"]</span> <span>${branch.activeContractsCount}</span></div>
                                         </div>
                                         <div class="row mt-2">
-                                            <div class="col-md-6 data-card2"><span>المعلقة</span> <span>${/* branch.PendingContracts */}</span></div>
-                                            <div class="col-md-auto data-card2"><span>المحفوظة</span> <span>${/* branch.SavedContracts */}</span></div>
+                                                    <div class="col-md-6 data-card2"><span>@localizer["Suspended_count"]</span> <span>${branch.suspendedContractsCount}</span></div>
+                                                    <div class="col-md-auto data-card2"><span>@localizer["Saved_count"]</span> <span>${branch.savedContractsCount}</span></div>
                                         </div>
                                     </div>
                                 </div>
@@ -521,18 +538,18 @@
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-sm-6 data-card">
-                                                <span>الرصيد</span>
+                                                <span>@localizer["Balance"]</span>
                                             </div>
                                             <div class="col-sm-6 data-icon">
-                                                <span class="data-card"> ${/* branch.Balance.toLocaleString() */} </span>
+                                                <span class="data-card">${branch.crCasBranchInformationTotalBalance.toLocaleString('en-US', {minimumFractionDigits: 2,maximumFractionDigits: 2})}</span>
                                             </div>
                                         </div>
                                         <hr class="card-hr">
                                         <div class="row">
-                                            <div class="col data-card2"><span>متاح</span> <span>${/* branch.AvailableBalance */}</span></div>
+                                            <div class="col data-card2"><span>@localizer["Available_balance"]</span> <span>${branch.crCasBranchInformationAvailableBalance.toLocaleString('en-US', {minimumFractionDigits: 2,maximumFractionDigits: 2})}</span></div>
                                         </div>
                                         <div class="row mt-2">
-                                            <div class="col data-card2"><span>محجوز</span> <span>${/* branch.ReservedBalance */}</span></div>
+                                            <div class="col data-card2"><span>@localizer["Reserved_balance"]</span> <span>${branch.crCasBranchInformationReservedBalance.toLocaleString('en-US', {minimumFractionDigits: 2,maximumFractionDigits: 2})}</span></div>
                                         </div>
                                     </div>
                                 </div>
@@ -545,24 +562,24 @@
                                     <div class="card-body">
                                         <div class="row align-items-center">
                                             <div class="col data-card">
-                                                <span>التنبيهات</span>
+                                                 <span>@localizer["Alerts"]</span>
                                             </div>
                                         </div>
                                         <hr class="card-hr">
                                         <div class="row">
-                                            <div class="col-md-7 data-card2"><span>مستندات الشركة</span></div>
-                                            <div class="col aboutToEnd">${/* branch.CompanyDocumentsAboutToEnd */}</div>
-                                            <div class="col ended">${/* branch.CompanyDocumentsEnded */}</div>
+                                            <div class="col-md-7 data-card2"><span>@localizer["ContractCompany"]</span></div>
+                                            <div class="col aboutToEnd">${branch.docsForCompanyAboutExpireCount}</div>
+                                            <div class="col ended">${branch.docsForCompanyExpireCount}</div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-7 data-card2"><span>وثائق السيارات</span></div>
-                                            <div class="col aboutToEnd">${/* branch.CarDocumentsAboutToEnd */}</div>
-                                            <div class="col ended">${/* branch.CarDocumentsEnded */}</div>
+                                            <div class="col-md-7 data-card2"><span>@localizer["DocumentsCar_Cas Data"]</span></div>
+                                            <div class="col aboutToEnd">${branch.docsForCarAboutExpireCount}</div>
+                                            <div class="col ended">${branch.docsForCarExpireCount}</div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-7 data-card2"><span>صيانة السيارات</span></div>
-                                            <div class="col aboutToEnd">${/* branch.CarMaintenanceAboutToEnd */}</div>
-                                            <div class="col ended">${/* branch.CarMaintenanceEnded */}</div>
+                                            <div class="col-md-7 data-card2"><span>@localizer["MaintainceCar Data"]</span></div>
+                                            <div class="col aboutToEnd">${branch.mainForCarAboutExpireCount}</div>
+                                            <div class="col ended">${branch.mainForCarExpireCount}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -573,21 +590,21 @@
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-sm-6 data-card">
-                                                <span>السيارات</span>
+                                                <span>@localizer["Cars"]</span>
                                             </div>
                                             <div class="col-sm-6 data-icon">
-                                                <span class="data-card">${/* branch.CarCount */}</span>
+                                                <span class="data-card">${branch.carsCount}</span>
                                             </div>
                                         </div>
                                         <hr class="card-hr">
                                         <div class="row">
-                                            <div class="col data-card2"><span>مؤجرة</span> <span>${/* branch.CarsRented */}</span></div>
+                                            <div class="col data-card2"><span>@localizer["Rented"]</span> <span>${branch.rentedCarsCount}</span></div>
                                         </div>
                                         <div class="row mt-2">
-                                            <div class="col data-card2"><span>متاحة</span> <span>${/* branch.CarsAvailable */}</span></div>
+                                            <div class="col data-card2"><span>@localizer["Available"]</span> <span>${branch.activeCarsCount}</span></div>
                                         </div>
                                         <div class="row mt-2">
-                                            <div class="col data-card2"><span>غير متاحة</span> <span>${/* branch.CarsNotAvailable */}</span></div>
+                                            <div class="col data-card2"><span>@localizer["UnAvailable"]</span> <span>${branch.unActiveCarsCount}</span></div>
                                         </div>
                                     </div>
                                 </div>

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Bnan.Core.Extensions
+﻿namespace Bnan.Core.Extensions
 {
     public static class Status
     {
@@ -29,6 +23,8 @@ namespace Bnan.Core.Extensions
         public static string Save { get; set; } = "S";
         public static string Closed { get; set; } = "F";
         public static string Cancel { get; set; } = "C";
+        public static string Saved { get; set; } = "S";
+        public static string Suspend { get; set; } = "L";
         public static string Extension { get; set; } = "Y";
         public static string UnDeleted { get; set; } = "UD";
         public static string UnHold { get; set; } = "UH";

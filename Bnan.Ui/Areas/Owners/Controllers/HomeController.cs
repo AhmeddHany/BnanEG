@@ -44,12 +44,62 @@ namespace Bnan.Ui.Areas.Owners.Controllers
             var Renters = await _unitOfWork.CrCasRenterLessor.FindAllAsNoTrackingAsync(x => x.CrCasRenterLessorStatus == Status.Active && x.CrCasRenterLessorCode == lessorCode);
             ownersLayoutVM.Debtors = Renters.Where(x => x.CrCasRenterLessorAvailableBalance < 0).Sum(x => x.CrCasRenterLessorAvailableBalance);
             ownersLayoutVM.Creditors = Renters.Where(x => x.CrCasRenterLessorAvailableBalance > 0).Sum(x => x.CrCasRenterLessorAvailableBalance);
-            var branchs = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode, new[] { "CrCasCarInformations", "CrCasRenterContractBasics", "CrCasBranchPost.CrCasBranchPostCityNavigation" });
-            var BranchsInforamtions = _mapper.Map<List<OwnBranchVM>>(branchs);
-            ownersLayoutVM.BranchsInformations = BranchsInforamtions;
+
+            ownersLayoutVM.BranchsInformations = await GetInfoForBranches(lessorCode);
             return View(ownersLayoutVM);
         }
+        public async Task<List<OwnBranchVM>> GetInfoForBranches(string lessorCode)
+        {
+            List<OwnBranchVM> OwnBranches = new List<OwnBranchVM>();
 
+            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(
+                x => x.CrCasBranchInformationLessor == lessorCode,
+                new[] { "CrCasCarInformations", "CrCasRenterContractBasics", "CrCasBranchPost.CrCasBranchPostCityNavigation" }
+            );
+
+            foreach (var branch in branches)
+            {
+                var OwnBranch = _mapper.Map<OwnBranchVM>(branch);
+
+                OwnBranch.BranchPostAr = branch.CrCasBranchPost?.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateArName;
+                OwnBranch.BranchPostEn = branch.CrCasBranchPost?.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateEnName;
+
+                OwnBranch.ContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus != Status.Extension).Count() ?? 0;
+                OwnBranch.ActiveContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus == Status.Active).Count() ?? 0;
+                OwnBranch.ClosedContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Count() ?? 0;
+                OwnBranch.SavedContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus == Status.Saved).Count() ?? 0;
+                OwnBranch.SuspendedContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus == Status.Suspend).Count() ?? 0;
+
+                var docsCompany = await _unitOfWork.CrCasBranchDocument.FindAllAsNoTrackingAsync(x => x.CrCasBranchDocumentsLessor == lessorCode && x.CrCasBranchDocumentsBranch == branch.CrCasBranchInformationCode);
+                OwnBranch.DocsForCompanyExpireCount = docsCompany.Where(x => x.CrCasBranchDocumentsStatus == Status.Expire).Count();
+                OwnBranch.DocsForCompanyAboutExpireCount = docsCompany.Where(x => x.CrCasBranchDocumentsStatus == Status.AboutToExpire).Count();
+
+                var docsCar = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsNoTrackingAsync(x => x.CrCasCarDocumentsMaintenanceLessor == lessorCode &&
+                                                                                                            x.CrCasCarDocumentsMaintenanceBranch == branch.CrCasBranchInformationCode);
+                OwnBranch.DocsForCarExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.Expire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12").Count();
+                OwnBranch.DocsForCarAboutExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12").Count();
+                OwnBranch.MainForCarExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.Expire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").Count();
+                OwnBranch.MainForCarAboutExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").Count();
+
+                OwnBranch.CarsCount = branch.CrCasCarInformations?.Count(x => x.CrCasCarInformationStatus != Status.Sold) ?? 0;
+                OwnBranch.RentedCarsCount = branch.CrCasCarInformations?.Count(x => x.CrCasCarInformationStatus == Status.Rented) ?? 0;
+                OwnBranch.ActiveCarsCount = branch.CrCasCarInformations?.Count(x => x.CrCasCarInformationStatus == Status.Active &&
+                                                     x.CrCasCarInformationPriceStatus == true &&
+                                                     x.CrCasCarInformationBranchStatus == Status.Active &&
+                                                     x.CrCasCarInformationOwnerStatus == Status.Active &&
+                                                     (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale)) ?? 0;
+                OwnBranch.UnActiveCarsCount = OwnBranch.CarsCount - OwnBranch.RentedCarsCount - OwnBranch.ActiveCarsCount;
+                var checkIfThereCustody = await _unitOfWork.CrCasSysAdministrativeProcedure.FindAllAsNoTrackingAsync(x => x.CrCasSysAdministrativeProceduresBranch == branch.CrCasBranchInformationCode &&
+                                                                                                                        x.CrCasSysAdministrativeProceduresCode == "304" &&
+                                                                                                                        x.CrCasSysAdministrativeProceduresStatus == Status.Insert);
+                OwnBranch.HaveCustodyNotAccepted = checkIfThereCustody.Count() > 0;
+                // Add the mapped OwnBranchVM to the list
+                OwnBranches.Add(OwnBranch);
+            }
+
+            // Return the list of OwnBranchVM
+            return OwnBranches;
+        }
         // Branches
         public async Task<IActionResult> Branches()
         {

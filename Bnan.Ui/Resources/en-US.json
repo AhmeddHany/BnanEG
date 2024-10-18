@@ -2337,6 +2337,8 @@
     "List_count": "Active",
     "Canceled_count": "Canceled",
     "Closed_count": "Closed",
+    "Saved_count": "Saved",
+    "Suspended_count": "Suspended",
     "Rented": "Rented",
     "Available": "Available",
     "UnAvailable": " Un Available",
