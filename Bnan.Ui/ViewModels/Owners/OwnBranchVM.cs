@@ -32,5 +32,6 @@
         public int? RentedCarsCount { get; set; }
         public int? UnActiveCarsCount { get; set; }
         public bool? HaveCustodyNotAccepted { get; set; }
+        public bool? RedPointInBranch { get; set; }
     }
 }

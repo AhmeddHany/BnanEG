@@ -26,7 +26,7 @@
             </div>
         </div>
     </div>
- <div class="col-lg-6 col-xl-4">
+    <div class="col-lg-6 col-xl-4">
         <div class="card charts-card">
             <!-- Card Body -->
             <div class="card-body ">
@@ -48,7 +48,7 @@
         </div>
     </div>
     <!-- Pie Chart -->
- <div class="col-lg-6 col-xl-4">
+    <div class="col-lg-6 col-xl-4">
         <div class="card charts-card">
             <!-- Card Body -->
             <div class="card-body  ">
@@ -88,7 +88,8 @@
                             <tr data-content="@item.CrCasBranchInformationCode">
                                 <td>
                                     <p class="FirstLineP">
-                                        @if (@requestCulture?.RequestCulture.UICulture.Name == "en-US") {
+                                        @if (@requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                        {
                                             @item.CrCasBranchInformationEnShortName
                                         }
                                         else
@@ -109,7 +110,7 @@
                                 </td>
                                 <td class="notify-td">
                                     <div class="filter-number-td">
-                                        <div class="filters @((bool)item.HaveCustodyNotAccepted ? "filter2-div" : "")"></div>
+                                        <div class="filters @((bool)item.RedPointInBranch ? "" : "filter2-div")"></div>
                                         <div>@noAuto</div>
                                     </div>
                                 </td>
@@ -126,7 +127,7 @@
     <div class="col-xl-6">
         <div class="table-card bg-white pt-3">
             <div class="scrollTable">
-                <h5 id="employee-card-title"> الموظفين </h5>
+                <h5 id="employee-card-title"> @localizer["Employees"] </h5>
                 <table class="spacing-table  table-borderless" id="employee-data">
                     <thead class="sticky-top pb-1">
                         <tr>
@@ -136,87 +137,62 @@
                     </thead>
 
                     <tbody>
-                        <tr data-content="data1">
-                            <td>
-                                <div class="d-flex gap-2 align-items-center">
-                                    <div class="col">
-                                        <p class="FirstLineP"> بدر ريان مشاري الشريم </p>
-                                        <p class="secondLineP"> مدير عام </p>
-                                        <div class="d-flex justify-content-end gap-4">
-                                            <p class="secondLineP">22/09/2024</p>
-                                            <p class="secondLineP time"> 11:30 pm</p>
+                        @{
+                            var AutoNo = 1;
+                        }
+                        @foreach (var Employee in Model.Employees)
+                        {
+                            <tr data-content="@Employee.CrMasUserInformationCode">
+                                <td>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <div class="col">
+                                            <p class="FirstLineP">
+                                                @if (@requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                {
+                                                    @Employee.CrMasUserInformationEnName
+                                                }
+                                                else
+                                                {
+                                                    @Employee.CrMasUserInformationArName
+                                                }
+                                            </p>
+                                            <p class="secondLineP">
+                                                @if (@requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                {
+                                                    @Employee.CrMasUserInformationTasksEnName
+                                                }
+                                                else
+                                                {
+                                                    @Employee.CrMasUserInformationTasksArName
+                                                }
+                                            </p>
+                                            <div class="d-flex justify-content-end gap-4">
+                                                <p class="secondLineP">@Employee.CrMasUserInformationEntryLastDate?.ToString("yyyy/MM/dd")</p>
+                                                @if (Employee.CrMasUserInformationEntryLastTime != null)
+                                                {
+                                                    // Convert TimeSpan to DateTime for AM/PM formatting
+                                                    var time = DateTime.Today.Add(Employee.CrMasUserInformationEntryLastTime.Value);
+                                                    <p class="secondLineP time">@time.ToString("hh:mm tt")</p>
+                                                }
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-auto d-flex justify-content-end gap-1">
-                                        <div class="employee">
-                                            <img src="/OwnersSys/img/pic (3).svg" alt="empolyee-photo"
-                                                 class="employee border-0 w-100 h-100">
-                                            <div class="active_statue bg-success"></div>
+                                        <div class="col-auto d-flex justify-content-end gap-1">
+                                            <div class="employee">
+                                                <img src="@Url.Content(Employee.CrMasUserInformationPicture?.ToString())" alt="empolyee-photo" class="employee border-0 w-100 h-100">
+                                                <div class="active_statue @((bool) Employee.OnlineOrOflline ? "bg-success" : "bg-danger")"></div>
+                                            </div>
+                                            <img src="@((bool)Employee.HaveCustodyNotAccepted ? "/OwnersSys/img/Frame 2608948 (2).svg" : "") ">
+                                            <img src="@((bool)Employee.CreditLimitExceeded ? "/OwnersSys/img/Frame 2608948.svg" : "") ">
                                         </div>
-                                        <img src="/OwnersSys/img/Frame 2608948 (2).svg">
 
                                     </div>
-
-                                </div>
-                            </td>
-                            <td class="notify-td">
-                                1
-                            </td>
-                        </tr>
-                        <tr data-content="data2">
-                            <td>
-                                <div class="d-flex gap-2 align-items-center">
-                                    <div class="col">
-                                        <p class="FirstLineP"> عمار عبدالغفور مسفر السبيعي </p>
-                                        <p class="secondLineP"> مدير الشئون المالية </p>
-                                        <div class="d-flex justify-content-end gap-4">
-                                            <p class="secondLineP">22/09/2024</p>
-                                            <p class="secondLineP time"> 11:30 pm</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto d-flex justify-content-end gap-1">
-                                        <div class="employee">
-                                            <img src="/OwnersSys/img/pic (3).svg" alt="empolyee-photo"
-                                                 class="employee border-0 w-100 h-100">
-                                            <div class="active_statue bg-success"></div>
-                                        </div>
-                                        <img src="/OwnersSys/img/Frame 2608948.svg">
-
-                                    </div>
-
-                                </div>
-                            </td>
-                            <td class="notify-td">
-                                2
-                            </td>
-                        </tr>
-                        <tr data-content="data3">
-                            <td>
-                                <div class="d-flex gap-2 align-items-center">
-                                    <div class="col">
-                                        <p class="FirstLineP"> عبدالخالق يعقوب أنس إسماعيل</p>
-                                        <p class="secondLineP"> مدير أسطول السيارات</p>
-                                        <div class="d-flex justify-content-end gap-4">
-                                            <p class="secondLineP">22/09/2024</p>
-                                            <p class="secondLineP time"> 11:30 pm</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto d-flex justify-content-end gap-1">
-                                        <div class="employee">
-                                            <img src="/OwnersSys/img/pic (3).svg" alt="empolyee-photo"
-                                                 class="employee border-0 w-100 h-100">
-                                            <div class="active_statue bg-danger"></div>
-                                        </div>
-                                        <img src="/OwnersSys/img/Frame 2608948 (2).svg">
-
-                                    </div>
-
-                                </div>
-                            </td>
-                            <td class="notify-td">
-                                3
-                            </td>
-                        </tr>
+                                </td>
+                                <td class="notify-td">
+                                    @AutoNo
+                                </td>
+                            </tr>
+                            AutoNo++;
+                        }
                     </tbody>
                 </table>
 
@@ -241,7 +217,7 @@
         @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "1" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
         @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "2" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
         @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "0" && x.CrCasRenterContractAlertContractStatus == "A").Count()
-                        ,
+                                                        ,
                 ],
                 backgroundColor: ['rgba(242, 36, 36, 1)', '#9966FF', 'rgba(242, 143, 36, 1)', 'rgba(54, 162, 235, 1)']
             }]
@@ -392,15 +368,15 @@
         var creditors = parseFloat('@Model.Creditors?.ToString("N2", CultureInfo.InvariantCulture)'.replace(/,/g, ''));
         var debtors = parseFloat('@Model.Debtors?.ToString("N2", CultureInfo.InvariantCulture)'.replace(/,/g, ''));
         var total = Math.abs(creditors) + Math.abs(debtors);  // إجمالي دائنون ومدينون
-        var creditorPercentage = ( Math.abs(creditors) / total) * 100;  // النسبة المئوية للدائنون
-        var debtorPercentage = ( Math.abs(debtors) / total) * 100;  // النسبة المئوية للمدينون
+        var creditorPercentage = (Math.abs(creditors) / total) * 100;  // النسبة المئوية للدائنون
+        var debtorPercentage = (Math.abs(debtors) / total) * 100;  // النسبة المئوية للمدينون
         // دائنون
         var palette = anychart.palettes.distinctColors();
         var label = anychart.standalones.label();
         label
             .useHtml(true)
             .text(
-                '<span style = "color: #313136; font-weight:600 ; font-family: "Cairo", sans-serif;">' + creditors.toFixed(2) + '</span>'
+                '<span style = "color: #313136; font-weight:600 ; font-family: "Cairo", sans-serif;">' + creditors.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</span>'
             )
             .position('center')
             .anchor('center')
@@ -432,7 +408,7 @@
         label
             .useHtml(true)
             .text(
-                '<span style = "color: #313136; font-weight:600 ; font-family: "Cairo", sans-serif;">' + debtors.toFixed(2) + '</span>'
+                '<span style = "color: #313136; font-weight:600 ; font-family: "Cairo", sans-serif;">' + Math.abs(debtors).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</span>'
             )
             .position('center')
             .anchor('center')
@@ -498,119 +474,119 @@
                 const contentContainer = document.getElementById('contentContainer');
                 contentContainer.style.display = 'block';
                 contentContainer.innerHTML = `
-                        <div class="row mx-1">
-                            <div class="col">
-                                <h5 class="tr-title">${branchName} - ${branchDirectorName}</h5>
-                                <p class="secondLineP">${branchPost}</p>
-                            </div>
-                            <div class="col-auto">
-                                <img id="backButton" style="cursor:pointer;" onclick="goBack1()" src="/OwnersSys/img/back icon.svg">
-                            </div>
-                        </div>
+                                                        <div class="row mx-1">
+                                                            <div class="col">
+                                                                <h5 class="tr-title">${branchName} - ${branchDirectorName}</h5>
+                                                                <p class="secondLineP">${branchPost}</p>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <img id="backButton" style="cursor:pointer;" onclick="goBack1()" src="/OwnersSys/img/back icon.svg">
+                                                            </div>
+                                                        </div>
 
-                        <div class="row mx-1 g-2">
-                            <div class="col-lg-6">
-                                <div class="card border-left-primary h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col-sm-6 data-card">
-                                                <span>@localizer["Contracts"]</span>
-                                            </div>
-                                            <div class="col-sm-6 data-icon">
-                                                <span class="data-card"> ${branch.contractsCount} </span>
-                                            </div>
-                                        </div>
-                                        <hr class="card-hr">
-                                        <div class="row">
-                                                    <div class="col-md-6 data-card2"><span>@localizer["Contracts"]</span> <span>${branch.closedContractsCount}</span></div>
-                                                    <div class="col-md-auto data-card2"><span>@localizer["List_count"]</span> <span>${branch.activeContractsCount}</span></div>
-                                        </div>
-                                        <div class="row mt-2">
-                                                    <div class="col-md-6 data-card2"><span>@localizer["Suspended_count"]</span> <span>${branch.suspendedContractsCount}</span></div>
-                                                    <div class="col-md-auto data-card2"><span>@localizer["Saved_count"]</span> <span>${branch.savedContractsCount}</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                                        <div class="row mx-1 g-2">
+                                                            <div class="col-lg-6">
+                                                                <div class="card border-left-primary h-100 py-2">
+                                                                    <div class="card-body">
+                                                                        <div class="row no-gutters align-items-center">
+                                                                            <div class="col-sm-6 data-card">
+                                                                                <span>@localizer["Contracts"]</span>
+                                                                            </div>
+                                                                            <div class="col-sm-6 data-icon">
+                                                                                <span class="data-card"> ${branch.contractsCount} </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr class="card-hr">
+                                                                        <div class="row">
+                                                                                    <div class="col-md-6 data-card2"><span>@localizer["Contracts"]</span> <span>${branch.closedContractsCount}</span></div>
+                                                                                    <div class="col-md-auto data-card2"><span>@localizer["List_count"]</span> <span>${branch.activeContractsCount}</span></div>
+                                                                        </div>
+                                                                        <div class="row mt-2">
+                                                                                    <div class="col-md-6 data-card2"><span>@localizer["Suspended_count"]</span> <span>${branch.suspendedContractsCount}</span></div>
+                                                                                    <div class="col-md-auto data-card2"><span>@localizer["Saved_count"]</span> <span>${branch.savedContractsCount}</span></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                            <div class="col-lg-6">
-                                <div class="card border-left-primary h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col-sm-6 data-card">
-                                                <span>@localizer["Balance"]</span>
-                                            </div>
-                                            <div class="col-sm-6 data-icon">
-                                                <span class="data-card">${branch.crCasBranchInformationTotalBalance.toLocaleString('en-US', {minimumFractionDigits: 2,maximumFractionDigits: 2})}</span>
-                                            </div>
-                                        </div>
-                                        <hr class="card-hr">
-                                        <div class="row">
-                                            <div class="col data-card2"><span>@localizer["Available_balance"]</span> <span>${branch.crCasBranchInformationAvailableBalance.toLocaleString('en-US', {minimumFractionDigits: 2,maximumFractionDigits: 2})}</span></div>
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="col data-card2"><span>@localizer["Reserved_balance"]</span> <span>${branch.crCasBranchInformationReservedBalance.toLocaleString('en-US', {minimumFractionDigits: 2,maximumFractionDigits: 2})}</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                                            <div class="col-lg-6">
+                                                                <div class="card border-left-primary h-100 py-2">
+                                                                    <div class="card-body">
+                                                                        <div class="row no-gutters align-items-center">
+                                                                            <div class="col-sm-6 data-card">
+                                                                                <span>@localizer["Balance"]</span>
+                                                                            </div>
+                                                                            <div class="col-sm-6 data-icon">
+                                                                                <span class="data-card">${branch.crCasBranchInformationTotalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr class="card-hr">
+                                                                        <div class="row">
+                                                                            <div class="col data-card2"><span>@localizer["Available_balance"]</span> <span>${branch.crCasBranchInformationAvailableBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                                                                        </div>
+                                                                        <div class="row mt-2">
+                                                                            <div class="col data-card2"><span>@localizer["Reserved_balance"]</span> <span>${branch.crCasBranchInformationReservedBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-                        <div class="row mx-1 g-2 mt-1">
-                            <div class="col-lg-6">
-                                <div class="card border-left-primary h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row align-items-center">
-                                            <div class="col data-card">
-                                                 <span>@localizer["Alerts"]</span>
-                                            </div>
-                                        </div>
-                                        <hr class="card-hr">
-                                        <div class="row">
-                                            <div class="col-md-7 data-card2"><span>@localizer["ContractCompany"]</span></div>
-                                            <div class="col aboutToEnd">${branch.docsForCompanyAboutExpireCount}</div>
-                                            <div class="col ended">${branch.docsForCompanyExpireCount}</div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-7 data-card2"><span>@localizer["DocumentsCar_Cas Data"]</span></div>
-                                            <div class="col aboutToEnd">${branch.docsForCarAboutExpireCount}</div>
-                                            <div class="col ended">${branch.docsForCarExpireCount}</div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-7 data-card2"><span>@localizer["MaintainceCar Data"]</span></div>
-                                            <div class="col aboutToEnd">${branch.mainForCarAboutExpireCount}</div>
-                                            <div class="col ended">${branch.mainForCarExpireCount}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                                        <div class="row mx-1 g-2 mt-1">
+                                                            <div class="col-lg-6">
+                                                                <div class="card border-left-primary h-100 py-2">
+                                                                    <div class="card-body">
+                                                                        <div class="row align-items-center">
+                                                                            <div class="col data-card">
+                                                                                 <span>@localizer["Alerts"]</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr class="card-hr">
+                                                                        <div class="row">
+                                                                            <div class="col-md-7 data-card2"><span>@localizer["ContractCompany"]</span></div>
+                                                                            <div class="col aboutToEnd">${branch.docsForCompanyAboutExpireCount}</div>
+                                                                            <div class="col ended">${branch.docsForCompanyExpireCount}</div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-7 data-card2"><span>@localizer["DocumentsCar_Cas Data"]</span></div>
+                                                                            <div class="col aboutToEnd">${branch.docsForCarAboutExpireCount}</div>
+                                                                            <div class="col ended">${branch.docsForCarExpireCount}</div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-7 data-card2"><span>@localizer["MaintainceCar Data"]</span></div>
+                                                                            <div class="col aboutToEnd">${branch.mainForCarAboutExpireCount}</div>
+                                                                            <div class="col ended">${branch.mainForCarExpireCount}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                            <div class="col-lg-6">
-                                <div class="card border-left-primary h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col-sm-6 data-card">
-                                                <span>@localizer["Cars"]</span>
-                                            </div>
-                                            <div class="col-sm-6 data-icon">
-                                                <span class="data-card">${branch.carsCount}</span>
-                                            </div>
-                                        </div>
-                                        <hr class="card-hr">
-                                        <div class="row">
-                                            <div class="col data-card2"><span>@localizer["Rented"]</span> <span>${branch.rentedCarsCount}</span></div>
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="col data-card2"><span>@localizer["Available"]</span> <span>${branch.activeCarsCount}</span></div>
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="col data-card2"><span>@localizer["UnAvailable"]</span> <span>${branch.unActiveCarsCount}</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                                                            <div class="col-lg-6">
+                                                                <div class="card border-left-primary h-100 py-2">
+                                                                    <div class="card-body">
+                                                                        <div class="row no-gutters align-items-center">
+                                                                            <div class="col-sm-6 data-card">
+                                                                                <span>@localizer["Cars"]</span>
+                                                                            </div>
+                                                                            <div class="col-sm-6 data-icon">
+                                                                                <span class="data-card">${branch.carsCount}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr class="card-hr">
+                                                                        <div class="row">
+                                                                            <div class="col data-card2"><span>@localizer["Rented"]</span> <span>${branch.rentedCarsCount}</span></div>
+                                                                        </div>
+                                                                        <div class="row mt-2">
+                                                                            <div class="col data-card2"><span>@localizer["Available"]</span> <span>${branch.activeCarsCount}</span></div>
+                                                                        </div>
+                                                                        <div class="row mt-2">
+                                                                            <div class="col data-card2"><span>@localizer["UnAvailable"]</span> <span>${branch.unActiveCarsCount}</span></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    `;
             } else {
                 console.error("Branch not found");
             }
@@ -626,45 +602,128 @@
 
     </script>
     <script>
-        document.querySelectorAll('#employee-data tr').forEach(function (row) {
-            row.addEventListener('click', function () {
-                document.getElementById('employee-data').style.display = 'none';
-                document.getElementById('employee-card-title').style.display = 'none';
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('#employee-data tr').forEach(function (row) {
+                row.addEventListener('click', function () {
+                    document.getElementById('employee-data').style.display = 'none';
+                    document.getElementById('employee-card-title').style.display = 'none';
 
-                const dataKey = row.getAttribute('data-content');
+                    const dataKey = row.getAttribute('data-content'); // Assuming 'data-content' contains the employee ID.
 
-                displayNewData2(dataKey);
+                    displayNewData2(dataKey);
+                });
             });
         });
-
         function displayNewData2(dataKey) {
+            const employees = @Html.Raw(Json.Serialize(Model.Employees)); // Convert Model.Employees to a JavaScript array.
+            const employee = employees.find(b => b.crMasUserInformationCode == dataKey); // Find the employee by ID.
+
+            if (!employee) {
+                console.error('Employee not found');
+                return;
+            }
+            var name;
+            var position;
+            // Display the branch details dynamically based on the selected branch
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                name = employee.crMasUserInformationEnName
+                position = employee.crMasUserInformationTasksEnName
+            }
+            else {
+                name = employee.crMasUserInformationArName
+                position = employee.crMasUserInformationTasksArName
+            }
+            // First image (for "haveCustodyNotAccepted")
+            let firstImage = employee.haveCustodyNotAccepted
+                ? `<img src="/OwnersSys/img/Frame 2608948 (2).svg">`
+                : '';
+
+            // Second image (for "creditLimitExceeded")
+            let secondImage = employee.creditLimitExceeded
+                ? `<img src="/OwnersSys/img/Frame 2608948.svg">`
+                : '';
+            let onlineOrOffline = employee.onlineOrOflline ? 'bg-success' : 'bg-danger';
             const contentContainer = document.getElementById('contentContainer2');
             contentContainer.style.display = 'block';
 
-            let newContent = '';
-            if (dataKey === 'data1') {
-                newContent = '<div class="row mx-1"><div class="col d-flex gap-2 align-items-center"><div class="col-auto d-flex justify-content-end gap-1"><img src="/OwnersSys/img/Frame 2608948 (2).svg"><div class="employee"><img src="/OwnersSys/img/pic (3).svg" alt="employee-photo" class="employee border-0 w-100 h-100"><div class="active_statue bg-success"></div></div></div><div class="col"><p class="FirstLineP"> بدر ريان مشاري الشريم </p><div class="d-flex gap-3"><p class="secondLineP"> مدير عام </p><div class="d-flex gap-1"><p class="secondLineP time"> 11:30pm</p><p class="secondLineP">22/09/2024</p></div></div></div></div><div class="col-auto"><img id="backButton2" style="cursor:pointer;" onclick="goBack2()" src="/OwnersSys/img/back icon.svg"></div></div><div class="row mx-1 g-2 mt-2"><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>العقود</span></div><div class="col-sm-6 data-icon"><span class="data-card">200</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>مغلقة</span> <span>51</span></div></div><div class="row mt-2"><div class="col data-card2"><span>قائمة</span> <span>70</span></div></div></div></div></div><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>الرصيد</span></div><div class="col-sm-6 data-icon"><span class="data-card">1,235,879.02</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>متاح</span> <span>120,865</span></div></div><div class="row mt-2"><div class="col data-card2"><span>محجوز</span> <span>1,115,014.02</span></div></div></div></div></div></div>'
-            } else if (dataKey === 'data2') {
-                newContent = '<div class="row mx-1"><div class="col d-flex gap-2 align-items-center"><div class="col-auto d-flex justify-content-end gap-1"><img src="/OwnersSys/img/Frame 2608948.svg"><div class="employee"><img src="/OwnersSys/img/pic (3).svg" alt="employee-photo" class="employee border-0 w-100 h-100"><div class="active_statue bg-success"></div></div></div><div class="col"><p class="FirstLineP"> عمار عبدالغفور مسفر السبيعي</p><div class="d-flex gap-3"><p class="secondLineP"> مدير عام </p><div class="d-flex gap-1"><p class="secondLineP time"> 11:30pm</p><p class="secondLineP">22/09/2024</p></div></div></div></div><div class="col-auto"><img id="backButton2" style="cursor:pointer;" onclick="goBack2()" src="/OwnersSys/img/back icon.svg"></div></div><div class="row mx-1 g-2 mt-2"><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>العقود</span></div><div class="col-sm-6 data-icon"><span class="data-card">200</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>مغلقة</span> <span>51</span></div></div><div class="row mt-2"><div class="col data-card2"><span>قائمة</span> <span>70</span></div></div></div></div></div><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>الرصيد</span></div><div class="col-sm-6 data-icon"><span class="data-card">1,235,879.02</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>متاح</span> <span>120,865</span></div></div><div class="row mt-2"><div class="col data-card2"><span>محجوز</span> <span>1,115,014.02</span></div></div></div></div></div></div>'
+            let newContent = `
+                                                <div class="row mx-1">
+                                                    <div class="col d-flex gap-2 align-items-center">
+                                                        <div class="col-auto d-flex justify-content-end gap-1">
+                                                                    ${firstImage}
+                                                                    ${secondImage}
+                                                            <div class="employee">
+                                                                <img src="/OwnersSys/img/pic (3).svg" alt="employee-photo" class="employee border-0 w-100 h-100">
+                                                                <div class="active_statue ${onlineOrOffline}"></div>
 
-            } else if (dataKey === 'data3') {
-                newContent = '<div class="row mx-1"><div class="col d-flex gap-2 align-items-center"><div class="col-auto d-flex justify-content-end gap-1"><img src="/OwnersSys/img/Frame 2608948 (2).svg"><div class="employee"><img src="/OwnersSys/img/pic (3).svg" alt="employee-photo" class="employee border-0 w-100 h-100"><div class="active_statue bg-danger"></div></div></div><div class="col"><p class="FirstLineP"> عبدالخالق يعقوب أنس إسماعيل</p><div class="d-flex gap-3"><p class="secondLineP"> مدير عام </p><div class="d-flex gap-1"><p class="secondLineP time"> 11:30pm</p><p class="secondLineP">22/09/2024</p></div></div></div></div><div class="col-auto"><img id="backButton2" style="cursor:pointer;" onclick="goBack2()" src="/OwnersSys/img/back icon.svg"></div></div><div class="row mx-1 g-2 mt-2"><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>العقود</span></div><div class="col-sm-6 data-icon"><span class="data-card">200</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>مغلقة</span> <span>51</span></div></div><div class="row mt-2"><div class="col data-card2"><span>قائمة</span> <span>70</span></div></div></div></div></div><div class="col-lg-6"><div class="card border-left-primary h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col-sm-6 data-card"><span>الرصيد</span></div><div class="col-sm-6 data-icon"><span class="data-card">1,235,879.02</span></div></div><hr class="card-hr"><div class="row"><div class="col data-card2"><span>متاح</span> <span>120,865</span></div></div><div class="row mt-2"><div class="col data-card2"><span>محجوز</span> <span>1,115,014.02</span></div></div></div></div></div></div>'
-
-            }
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <p class="FirstLineP">${name}</p>
+                                                            <div class="d-flex gap-3">
+                                                                <p class="secondLineP">${position}</p>
+                                                                <div class="d-flex gap-1">
+                                                                    <p class="secondLineP time">${employee.entryLastTimeString}</p>
+                                                                    <p class="secondLineP">${employee.entryLastDateString}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <img id="backButton2" style="cursor:pointer;" onclick="goBack2()" src="/OwnersSys/img/back icon.svg">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mx-1 g-2 mt-2">
+                                                        <div class="col-lg-6">
+                                                            <div class="card border-left-primary h-100 py-2">
+                                                                <div class="card-body">
+                                                                    <div class="row no-gutters align-items-center">
+                                                                        <div class="col-sm-6 data-card"><span>@localizer["Contracts"]</span></div>
+                                                                        <div class="col-sm-6 data-icon"><span class="data-card">${employee.contractsCount}</span></div>
+                                                                    </div>
+                                                                    <hr class="card-hr">
+                                                                    <div class="row">
+                                                                        <div class="col data-card2"><span>@localizer["Closed"]</span> <span>${employee.closedContract}</span></div>
+                                                                    </div>
+                                                                    <div class="row mt-2">
+                                                                        <div class="col data-card2"><span>@localizer["Active"]</span> <span>${employee.activeContract}</span></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <div class="card border-left-primary h-100 py-2">
+                                                                <div class="card-body">
+                                                                    <div class="row no-gutters align-items-center">
+                                                                        <div class="col-sm-6 data-card"><span>@localizer["Balance"]</span></div>
+                                                                        <div class="col-sm-6 data-icon"><span class="data-card">${employee.crMasUserInformationTotalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                                                                    </div>
+                                                                    <hr class="card-hr">
+                                                                    <div class="row">
+                                                                        <div class="col data-card2"><span>@localizer["Availablebalance"]</span> <span>${employee.crMasUserInformationAvailableBalance.toLocaleString()}</span></div>
+                                                                    </div>
+                                                                    <div class="row mt-2">
+                                                                        <div class="col data-card2"><span>@localizer["Reservedbalance"]</span> <span>${employee.crMasUserInformationReservedBalance.toLocaleString()}</span></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `;
 
             contentContainer.innerHTML = newContent;
         }
+
         function goBack2() {
             document.getElementById('contentContainer2').style.display = 'none';
             document.getElementById('backButton2').style.display = 'none';
 
             document.getElementById('employee-data').style.display = 'table';
             document.getElementById('employee-card-title').style.display = 'block';
-
         }
 
     </script>
-} 
+}
 
 @* <div class="row">
     <div class="col-xl-6">
@@ -787,7 +846,7 @@
         const pieChartData = {
             labels: ['@localizer["ExpiredContract"]', '@localizer["ExpiresTomorrow"]', '@localizer["ExpiresToday"]', '@localizer["ExpiresLater"]'],
             datasets: [{
-                data: [@Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractStatus == "E").Count(), 
+                data: [@Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractStatus == "E").Count(),
                 @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "1" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
         @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "2" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
         @Model.AlertContracts?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "0" && x.CrCasRenterContractAlertContractStatus == "A").Count()

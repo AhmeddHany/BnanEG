@@ -46,6 +46,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
             ownersLayoutVM.Creditors = Renters.Where(x => x.CrCasRenterLessorAvailableBalance > 0).Sum(x => x.CrCasRenterLessorAvailableBalance);
 
             ownersLayoutVM.BranchsInformations = await GetInfoForBranches(lessorCode);
+            ownersLayoutVM.Employees = await GetInfoForEmployees(lessorCode);
             return View(ownersLayoutVM);
         }
         public async Task<List<OwnBranchVM>> GetInfoForBranches(string lessorCode)
@@ -89,16 +90,58 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                                                      x.CrCasCarInformationOwnerStatus == Status.Active &&
                                                      (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale)) ?? 0;
                 OwnBranch.UnActiveCarsCount = OwnBranch.CarsCount - OwnBranch.RentedCarsCount - OwnBranch.ActiveCarsCount;
-                var checkIfThereCustody = await _unitOfWork.CrCasSysAdministrativeProcedure.FindAllAsNoTrackingAsync(x => x.CrCasSysAdministrativeProceduresBranch == branch.CrCasBranchInformationCode &&
+                var checkIfThereCustody = await _unitOfWork.CrCasSysAdministrativeProcedure.FindAllAsNoTrackingAsync(x => x.CrCasSysAdministrativeProceduresLessor == lessorCode &&
+                                                                                                                        x.CrCasSysAdministrativeProceduresBranch == branch.CrCasBranchInformationCode &&
                                                                                                                         x.CrCasSysAdministrativeProceduresCode == "304" &&
                                                                                                                         x.CrCasSysAdministrativeProceduresStatus == Status.Insert);
-                OwnBranch.HaveCustodyNotAccepted = checkIfThereCustody.Count() > 0;
+                OwnBranch.HaveCustodyNotAccepted = OwnBranch.CrCasBranchInformationReservedBalance > 0;
+                if (OwnBranch.CrCasBranchInformationReservedBalance > 0 ||
+                    OwnBranch.DocsForCompanyAboutExpireCount > 0 ||
+                    OwnBranch.DocsForCompanyExpireCount > 0 ||
+                    OwnBranch.MainForCarExpireCount > 0) OwnBranch.RedPointInBranch = false;
+                else OwnBranch.RedPointInBranch = true;
                 // Add the mapped OwnBranchVM to the list
                 OwnBranches.Add(OwnBranch);
             }
 
             // Return the list of OwnBranchVM
             return OwnBranches;
+        }
+        public async Task<List<OwnEmployeesVM>> GetInfoForEmployees(string lessorCode)
+        {
+            List<OwnEmployeesVM> OwnEmployees = new List<OwnEmployeesVM>();
+
+            var employees = await _unitOfWork.CrMasUserInformation.FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode);
+            foreach (var employee in employees)
+            {
+                var OwnEmployee = _mapper.Map<OwnEmployeesVM>(employee);
+                var contracts = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicUserInsert == employee.CrMasUserInformationCode && x.CrCasRenterContractBasicLessor == lessorCode);
+                OwnEmployee.ActiveContract = contracts.Count(x => x.CrCasRenterContractBasicStatus != Status.Closed && x.CrCasRenterContractBasicStatus != Status.Extension);
+                OwnEmployee.ClosedContract = contracts.Count(x => x.CrCasRenterContractBasicStatus == Status.Closed);
+                OwnEmployee.ContractsCount = OwnEmployee.ActiveContract + OwnEmployee.ClosedContract;
+                var checkIfThereCustody = await _unitOfWork.CrCasSysAdministrativeProcedure.FindAllAsNoTrackingAsync(x => x.CrCasSysAdministrativeProceduresLessor == lessorCode &&
+                                                                                                                       x.CrCasSysAdministrativeProceduresCode == "304" &&
+                                                                                                                       x.CrCasSysAdministrativeProceduresUserInsert == employee.CrMasUserInformationCode &&
+                                                                                                                       x.CrCasSysAdministrativeProceduresStatus == Status.Insert);
+                OwnEmployee.HaveCustodyNotAccepted = OwnEmployee.CrMasUserInformationReservedBalance > 0;
+                OwnEmployee.CreditLimitExceeded = OwnEmployee.CrMasUserInformationCreditLimit < OwnEmployee.CrMasUserInformationAvailableBalance;
+                OwnEmployee.EntryLastDateString = OwnEmployee.CrMasUserInformationEntryLastDate?.ToString("yyyy/MM/dd");
+                if (OwnEmployee.CrMasUserInformationEntryLastTime != null)
+                {
+                    var time = DateTime.Today.Add(OwnEmployee.CrMasUserInformationEntryLastTime.Value);
+                    OwnEmployee.EntryLastTimeString = time.ToString("hh:mm tt");
+                }
+                if (OwnEmployee.CrMasUserInformationLastActionDate == null) OwnEmployee.OnlineOrOflline = false;
+                else
+                {
+                    var timeDifference = DateTime.Now - OwnEmployee.CrMasUserInformationLastActionDate;
+                    if (timeDifference?.TotalMinutes > 10) OwnEmployee.OnlineOrOflline = false;
+                    else OwnEmployee.OnlineOrOflline = true;
+
+                }
+                OwnEmployees.Add(OwnEmployee);
+            }
+            return OwnEmployees;
         }
         // Branches
         public async Task<IActionResult> Branches()

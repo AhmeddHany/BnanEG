@@ -15,7 +15,7 @@
 <div class="row text-end ">
     <div class="container-fluid">
         <div class="row text-end  ">
-            <div class="col-lg-4">
+            <div class="col-xl-4">
                 <div class="card  mb-5">
                     <div class="card-header py-1">
                         <h5 class="m-0 font-weight-bold "> @localizer["MostActiveBranches"] </h5>
@@ -30,7 +30,7 @@
                         {
                             indexBranch++;  // Initialize index variable
 
-                            <div class=" mb-2">
+                            <div style="margin-bottom: 1.4rem !important;">
                                 <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
                                 <div class="row">
                                     <div class="col-auto">
@@ -61,101 +61,6 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="card  mb-5">
-                    <div class="card-header py-1">
-                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveDays"]</h5>
-                        <hr class="card-hr">
-
-                    </div>
-                    <div class="card-body">
-                        @{
-                            int indexDays = 0;  // Initialize index variable
-                        }
-                        @foreach (var item in Model.DaysStaticitis)
-                        {
-                            indexDays++;  // Initialize index variable
-
-                            <div class=" mb-2">
-                                <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
-                                <div class="row">
-                                    <div class="col-auto">
-                                        <span>
-                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
-                                            {
-                                                @item.ArName
-                                            }
-                                            else
-                                            {
-                                                @item.EnName
-                                            }
-                                        </span>
-                                    </div>
-                                    <div class="col d-flex align-items-center">
-                                        <div class="progress">
-                                            <div class="progress-bar progress@(indexDays)" role="progressbar"
-                                                 style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
-                                                 aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card  mb-5">
-                    <div class="card-header py-1">
-                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveTime"] </h5>
-                        <hr class="card-hr">
-
-                    </div>
-                    <div class="card-body">
-                        @{
-                            int indexTime = 0;  // Initialize index variable
-                        }
-                        @foreach (var item in Model.TimeStaticitis)
-                        {
-                            indexTime++;  // Initialize index variable
-
-                            <div class=" mb-2">
-                                <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
-                                <div class="row">
-                                    <div class="col-auto">
-                                        <span>
-                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
-                                            {
-                                                @item.ArName
-                                            }
-                                            else
-                                            {
-                                                @item.EnName
-                                            }
-                                        </span>
-                                    </div>
-                                    <div class="col d-flex align-items-center">
-                                        <div class="progress">
-                                            <div class="progress-bar progress@(indexTime)" role="progressbar"
-                                                 style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
-                                                 aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-<div class="row  text-end  ">
-    <div class="container-fluid">
-        <div class="row  text-end ">
             <div class="col-xl-4">
                 <div class="card mb-2">
                     <div class="card-header py-1">
@@ -202,52 +107,6 @@
                 </div>
             </div>
             <div class="col-xl-4">
-                <div class="card mb-2">
-                    <div class="card-header py-1">
-                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveDaysCount"] </h5>
-                        <hr class="card-hr">
-
-                    </div>
-
-                    <div class="card-body">
-                        <div class="row">
-                            @{
-                                var indexDaysCount = 0;
-                                var idDaysCount = "";
-                                var popularChartsDivDaysCount = "";
-                                foreach (var item in Model.DaysCountStaticitis)
-                                {
-                                    if (indexDaysCount == 0) idDaysCount = "First_DaysCount_Charts";
-                                    else if (indexDaysCount == 1)
-                                    {
-                                        idDaysCount = "Second_DaysCount_Charts";
-                                        popularChartsDivDaysCount = "popularCharts_div";
-                                    }
-                                    else if (indexDaysCount == 2) idDaysCount = "Third_DaysCount_Charts";
-                                    <div class="col-sm-4  m-0 @popularChartsDivDaysCount">
-                                        <p class="text-center">
-                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
-                                            {
-                                                @item.ArName
-                                            }
-                                            else
-                                            {
-                                                @item.EnName
-                                            }
-                                        </p>
-                                        <div id="@idDaysCount"></div>
-                                        <p class="text-center m-0">@item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</p>
-                                    </div>
-                                    indexDaysCount++;
-                                }
-                            }
-                        </div>
-
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-4">
                 <div class="card  mb-2">
                     <div class="card-header py-1">
                         <h5 class="m-0 font-weight-bold "> @localizer["MostActiveDistance"] </h5>
@@ -285,6 +144,146 @@
                                         <p class="text-center m-0">@item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</p>
                                     </div>
                                     indexDistanceKM++;
+                                }
+                            }
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row  text-end  ">
+    <div class="container-fluid">
+        <div class="row  text-end ">
+            <div class="col-xl-4">
+                <div class="card  mb-5">
+                    <div class="card-header py-1">
+                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveDays"]</h5>
+                        <hr class="card-hr">
+
+                    </div>
+                    <div class="card-body">
+                        @{
+                            int indexDays = 0;  // Initialize index variable
+                        }
+                        @foreach (var item in Model.DaysStaticitis)
+                        {
+                            indexDays++;  // Initialize index variable
+
+                            <div style="margin-bottom: 1.4rem !important;">
+                                <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <span>
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                            {
+                                                @item.ArName
+                                            }
+                                            else
+                                            {
+                                                @item.EnName
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="col d-flex align-items-center">
+                                        <div class="progress">
+                                            <div class="progress-bar progress@(indexDays)" role="progressbar"
+                                                 style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
+                                                 aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="card  mb-5">
+                    <div class="card-header py-1">
+                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveTime"] </h5>
+                        <hr class="card-hr">
+
+                    </div>
+                    <div class="card-body">
+                        @{
+                            int indexTime = 0;  // Initialize index variable
+                        }
+                        @foreach (var item in Model.TimeStaticitis)
+                        {
+                            indexTime++;  // Initialize index variable
+
+                            <div style="margin-bottom: 1.4rem !important;">
+                                <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <span>
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                            {
+                                                @item.ArName
+                                            }
+                                            else
+                                            {
+                                                @item.EnName
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="col d-flex align-items-center">
+                                        <div class="progress">
+                                            <div class="progress-bar progress@(indexTime)" role="progressbar"
+                                                 style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
+                                                 aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="card mb-2">
+                    <div class="card-header py-1">
+                        <h5 class="m-0 font-weight-bold "> @localizer["MostActiveDaysCount"] </h5>
+                        <hr class="card-hr">
+
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            @{
+                                var indexDaysCount = 0;
+                                var idDaysCount = "";
+                                var popularChartsDivDaysCount = "";
+                                foreach (var item in Model.DaysCountStaticitis)
+                                {
+                                    if (indexDaysCount == 0) idDaysCount = "First_DaysCount_Charts";
+                                    else if (indexDaysCount == 1)
+                                    {
+                                        idDaysCount = "Second_DaysCount_Charts";
+                                        popularChartsDivDaysCount = "popularCharts_div";
+                                    }
+                                    else if (indexDaysCount == 2) idDaysCount = "Third_DaysCount_Charts";
+                                    <div class="col-sm-4  m-0 @popularChartsDivDaysCount">
+                                        <p class="text-center">
+                                            @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
+                                            {
+                                                @item.ArName
+                                            }
+                                            else
+                                            {
+                                                @item.EnName
+                                            }
+                                        </p>
+                                        <div id="@idDaysCount"></div>
+                                        <p class="text-center m-0">@item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</p>
+                                    </div>
+                                    indexDaysCount++;
                                 }
                             }
                         </div>

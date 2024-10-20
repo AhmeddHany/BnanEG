@@ -2348,6 +2348,8 @@
     "Balance": "Balance",
     "Available_balance": "Available balance",
     "Reserved_balance": "Reserved balance",
+    "Availablebalance": "Available",
+    "Reservedbalance": "Reserved",
     "Up_rate": "Up rate",
     "Liabilities": "Renters Liabilities",
     "Revenue": "Revenue",

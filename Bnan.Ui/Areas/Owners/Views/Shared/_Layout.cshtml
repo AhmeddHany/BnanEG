@@ -165,15 +165,15 @@
             </li>
             <!-- Heading -->
             <li class="nav-item">
-                <a class="nav-link " href="#" data-bs-toggle="collapse" data-bs-target="#collapseUtilities"
+                <a class="nav-link @(ViewBag.Indicators == true ? "active" : "")" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUtilities"
                    aria-expanded="true" aria-controls="collapseUtilities">
                     <span style="color: #39629c;"> @localizer["Indicators"] </span>
                 </a>
                 <div class="collapse show">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="tenant.html"> @localizer["Tenants"] <img src="/OwnersSys/img/Frame (6).svg"></a>
-                        <a class="collapse-item" href="Contracts.html">  @localizer["Contracts"] <img src="/OwnersSys/img/Frame (5).svg"></a>
-                        <a class="collapse-item" href="Cars.html">  @localizer["Cars"] <img src="/OwnersSys/img/Frame (4).svg"> </a>
+                        <a class="collapse-item @(ViewBag.Tenants == true ? "active" : "")"  href="/Owners/Renters/Indicators"> @localizer["Tenants"] <img src="/OwnersSys/img/Frame (6).svg"></a>
+                        <a class="collapse-item @(ViewBag.Contracts == true ? "active" : "")"  href="/Owners/Contracts/Indicators">  @localizer["Contracts"] <img src="/OwnersSys/img/Frame (5).svg"></a>
+                        <a class="collapse-item @(ViewBag.Cars == true ? "active" : "")"  href="/Owners/Cars/Indicators">  @localizer["Cars"] <img src="/OwnersSys/img/Frame (4).svg"> </a>
                     </div>
                 </div>
             </li>
