@@ -37,7 +37,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
             var ownersLayoutVM = await OwnersDashboadInfo(lessorCode);
             var Renters = await _unitOfWork.CrCasRenterLessor.FindAllAsNoTrackingAsync(x => x.CrCasRenterLessorCode == x.CrCasRenterLessorCode, new[] { "CrCasRenterLessorStatisticsNationalitiesNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorMembershipNavigation", "CrCasRenterLessorStatisticsCityNavigation" });
             var Contracts = await _unitOfWork.CrCasRenterContractStatistic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractStatisticsLessor == lessorCode, new[] { "CrCasRenterContractStatisticsNavigation.CrCasRenterLessorStatisticsNationalitiesNavigation",
-                                                                                                                                               "CrCasRenterContractStatisticsNavigation.CrCasRenterLessorMembershipNavigation",
+                                                                                                                                               "CrCasRenterContractStatisticsMembershipNavigation",
                                                                                                                                                "CrCasRenterContractStatisticsNavigation.CrCasRenterLessorStatisticsJobsNavigation",
                                                                                                                                                "CrCasRenterContractStatisticsNavigation.CrCasRenterLessorStatisticsCityNavigation",
                                                                                                                                                "CrCasRenterContractStatisticsBranchCityNavigation"});
@@ -69,15 +69,15 @@ namespace Bnan.Ui.Areas.Owners.Controllers
         }
         private List<OwnStatictsVM> GetMemberShipList(List<CrCasRenterContractStatistic> Contracts, string lessorCode)
         {
-            var RenterContractsStatics = Contracts.Where(x => x.CrCasRenterContractStatisticsNavigation?.CrCasRenterLessorMembershipNavigation?.CrMasSupRenterMembershipStatus != Status.Deleted).DistinctBy(x => x.CrCasRenterContractStatisticsMembership).ToList();
+            var RenterContractsStatics = Contracts.Where(x => x.CrCasRenterContractStatisticsMembershipNavigation?.CrMasSupRenterMembershipStatus != Status.Deleted).DistinctBy(x => x.CrCasRenterContractStatisticsMembership).ToList();
             List<OwnStatictsVM> MemperShipstatictsVMs = new List<OwnStatictsVM>();
             foreach (var renterContract in RenterContractsStatics)
             {
-                var Count = Contracts.Count(x => x.CrCasRenterContractStatisticsMembership == renterContract.CrCasRenterContractStatisticsNavigation?.CrCasRenterLessorMembershipNavigation?.CrMasSupRenterMembershipCode);
+                var Count = Contracts.Count(x => x.CrCasRenterContractStatisticsMembership == renterContract.CrCasRenterContractStatisticsMembershipNavigation?.CrMasSupRenterMembershipCode);
                 OwnStatictsVM ownStatictsVM = new OwnStatictsVM();
-                ownStatictsVM.ArName = renterContract.CrCasRenterContractStatisticsNavigation?.CrCasRenterLessorMembershipNavigation?.CrMasSupRenterMembershipArName;
-                ownStatictsVM.EnName = renterContract.CrCasRenterContractStatisticsNavigation?.CrCasRenterLessorMembershipNavigation?.CrMasSupRenterMembershipEnName;
-                ownStatictsVM.Code = renterContract.CrCasRenterContractStatisticsNavigation?.CrCasRenterLessorMembershipNavigation?.CrMasSupRenterMembershipCode;
+                ownStatictsVM.ArName = renterContract.CrCasRenterContractStatisticsMembershipNavigation?.CrMasSupRenterMembershipArName;
+                ownStatictsVM.EnName = renterContract.CrCasRenterContractStatisticsMembershipNavigation?.CrMasSupRenterMembershipEnName;
+                ownStatictsVM.Code = renterContract.CrCasRenterContractStatisticsMembershipNavigation?.CrMasSupRenterMembershipCode;
                 ownStatictsVM.Count = Count;
                 var Percent = (decimal)Count / Contracts.Count() * 100;
                 ownStatictsVM.Percent = Math.Round(Percent, 2);

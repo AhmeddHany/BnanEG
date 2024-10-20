@@ -1665,13 +1665,13 @@
                     // إذا كان تاريخ النهاية أقل من الآن، نضع الآن كقيمة
                     const dateValue = now.toISOString().split('T')[0];  // yyyy-MM-dd
                     document.getElementById("contract_real_endTime").value = dateValue;
-                    document.getElementById("contract_real_endTime").min = startDate.toISOString().split('T')[0];  // الحد الأدنى هو الآن
+                    document.getElementById("contract_real_endTime").min = now.toISOString().split('T')[0];  // الحد الأدنى هو الآن
                     document.getElementById("contract_real_endTime").max = now.toISOString().split('T')[0];  // الحد الأقصى هو endDate + 1
 
                 } else {
                     // إذا كان تاريخ النهاية أكبر من الآن، نضع endDate كقيمة
                     const dateValue = endDate.toISOString().split('T')[0];  // yyyy-MM-dd
-                    document.getElementById("contract_real_endTime").min = startDate.toISOString().split('T')[0];  // الحد الأدنى هو الآن
+                    document.getElementById("contract_real_endTime").min = now.toISOString().split('T')[0];  // الحد الأدنى هو الآن
                     document.getElementById("contract_real_endTime").max = endDate.toISOString().split('T')[0];  // الحد الأقصى هو endDate + 1
                     document.getElementById("contract_real_endTime").value = dateValue;
                 }
