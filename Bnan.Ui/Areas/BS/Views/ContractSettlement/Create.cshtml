@@ -1388,13 +1388,11 @@
             // "Check All" checkbox functionality
             $('#CheckAll').on('change', function () {
                 // Set all checkboxes with the class 'CheckUp' to the same state as "Check All"
-                console.log("111111")
                 $('.CheckUp').prop('checked', $(this).prop('checked'));
             });
 
             // Uncheck the "Check All" checkbox if any individual checkbox is unchecked
             $(document).on('change', '.CheckUp', function () {
-                console.log("00000")
                 if (!$(this).prop('checked')) {
                     $('#CheckAll').prop('checked', false);
                 }
@@ -1716,9 +1714,6 @@
                 const diffDays = Math.floor(timeDiff / (1000 * 3600 * 24)); // Difference in days
                 diffHours = Math.floor((timeDiff % (1000 * 3600 * 24)) / (1000 * 3600)); // Remaining difference in hours
                 diffMinutes = Math.floor((timeDiff % (1000 * 3600)) / (1000 * 60)); // Remaining difference in minutes
-                console.log("settlementDateTime", settlementDateTime)
-                console.log("timeDiff", timeDiff)
-                console.log("diffDays", diffDays)
                 diff = parseInt(diffHours) - parseInt(TotalFreeHours);
                 $("#daysNo").text(diffDays);
                 totalDaysNo = diffDays;
@@ -1730,12 +1725,6 @@
                     ('0' + actualEndContractDate.getHours()).slice(-2) + ':' + ('0' + actualEndContractDate.getMinutes()).slice(-2) + ':00';
                 $("#DaysNoContract").text(diffDays);
                 $("#EndContract").text(formattedEndContractDate);
-
-                console.log("totalDaysNo", totalDaysNo)
-
-
-
-
                 ////////////////////////////////////////////////////////////
                 if (endContractDate < now && (diff > 0 || (diff === 0 && diffMinutes > 0))) {
                     $("#diffHours").text(diff.toString().padStart(2, '0'));
@@ -1891,7 +1880,6 @@
                     // Push the object into the array
                     checkUpData.push(rowData);
                     CarCheckUp = checkUpData;
-                    console.log("CarCheckUp", CarCheckUp);
                 }
             });
         }
@@ -2230,9 +2218,6 @@
         function CheckIfCanPayLessThanTotalAmount() {
             var userCashBranchAmount = @Html.Raw(Json.Serialize(userInfo?.CrMasUserBranchValidities?.FirstOrDefault(x => x.CrMasUserBranchValidityBranch == Model?.SelectedBranch).CrMasUserBranchValidityBranchCashAvailable));
             var AmountPayed = document.getElementById("AmountPayed").value;
-            console.log("userCashBranchAmount", userCashBranchAmount)
-            console.log("AmountRequired", AmountRequired)
-            console.log("AmountPayed", AmountPayed)
             if (AmountRequired < 0) {
                 if (parseFloat(userCashBranchAmount) < parseFloat(AmountPayed)) {
                     toastr.options = { "positionClass": '@localizer["toastPostion"]', };
@@ -2359,7 +2344,6 @@
                     ctx.textAlign = "left";
                     ctx.fillText(RenterEnName, canvas.width - 3950, 3050);
                     ctx.fillText(contractNo, canvas.width - 4400, 940);
-                    console.log("phoneNumber", phoneNumber)
                     canvas.toBlob(async function (blob) {
                         const base64String = await blobToBase64(blob);
                         document.getElementById("StaticContractCardImg").value = base64String;
@@ -3570,9 +3554,6 @@
                     // get data For Page 1
                     var Data = getArDataOfPage1();
                     var signtures = await loadArSignatures();
-                    console.log("imagePath", imagePath);
-                    console.log("signtures", signtures);
-
                     // Last Director and manger and user and renter with signture
                     // Text on Image
                     // Get Image And Text On
@@ -4029,11 +4010,9 @@
 
                 // Check conditions and add functions with their orders accordingly
                 if (!isNaN(parsedExpensesValue) && parsedExpensesValue > 0) {
-                    console.log("ExpensesValue", ExpensesValue);
                     createPageFunctions.push({ func: CreateArPageContract2, order: 2 });
                 }
                 if (!isNaN(parsedCompensationValue) && parsedCompensationValue > 0) {
-                    console.log("compensationValue", compensationValue);
                     createPageFunctions.push({ func: CreateArPageContract3, order: 3 });
                 }
                 if (imgCheckUpArray.length > 6) {
@@ -4598,11 +4577,9 @@
 
                 // Check conditions and add functions with their orders accordingly
                 if (!isNaN(parsedExpensesValue) && parsedExpensesValue > 0) {
-                    console.log("ExpensesValue", ExpensesValue);
                     createPageFunctions.push({ func: CreateEnPageContract2, order: 2 });
                 }
                 if (!isNaN(parsedCompensationValue) && parsedCompensationValue > 0) {
-                    console.log("compensationValue", compensationValue);
                     createPageFunctions.push({ func: CreateEnPageContract3, order: 3 });
                 }
                 if (imgCheckUpArray.length > 6) {
@@ -4718,8 +4695,6 @@
 
                 const mergedPdfBytes = await existingPdfDoc.save();
                 const base64String = arrayBufferToBase64(mergedPdfBytes);
-
-                console.log("base64String", base64String);
                 return base64String;
             } catch (error) {
                 console.error('Error in mergePdfs:', error);
