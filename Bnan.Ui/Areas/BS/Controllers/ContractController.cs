@@ -45,38 +45,40 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var isArabic = cultureName == "ar-EG";
             var bSLayoutVM = await GetBranchesAndLayout();
 
-            var drivers = _unitOfWork.CrCasRenterPrivateDriverInformation.FindAll(x => x.CrCasRenterPrivateDriverInformationLessor == lessorCode && x.CrCasRenterPrivateDriverInformationStatus == Status.Active).ToList();
+            var drivers = await _unitOfWork.CrCasRenterPrivateDriverInformation.FindAllAsNoTrackingAsync(x => x.CrCasRenterPrivateDriverInformationLessor == lessorCode && x.CrCasRenterPrivateDriverInformationStatus == Status.Active);
 
-            var carsAvailable = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == bSLayoutVM.SelectedBranch && x.CrCasCarInformationStatus == Status.Active &&
+            var carsAvailable = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == bSLayoutVM.SelectedBranch && x.CrCasCarInformationStatus == Status.Active &&
                                                                                  x.CrCasCarInformationPriceStatus == true && x.CrCasCarInformationOwnerStatus == Status.Active &&
                                                                                 (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale),
                                                                                 new[] { "CrCasCarInformationDistributionNavigation", "CrCasCarInformationCategoryNavigation", "CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics",
-                                                                                        "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation" ,"CrCasCarInformationFuelNavigation","CrCasCarInformationCvtNavigation"}).ToList();
+                                                                                        "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation" ,"CrCasCarInformationFuelNavigation","CrCasCarInformationCvtNavigation"});
 
             var categoryCars = carsAvailable.Select(item => item.CrCasCarInformationCategoryNavigation).Distinct().OrderBy(item => item.CrMasSupCarCategoryCode).ToList();
-            var CheckupCars = _unitOfWork.CrMasSupContractCarCheckup.FindAll(x => x.CrMasSupContractCarCheckupStatus == Status.Active, new[] { "CrMasSupContractCarCheckupDetails" }).ToList();
+            var CheckupCars = await _unitOfWork.CrMasSupContractCarCheckup.FindAllAsNoTrackingAsync(x => x.CrMasSupContractCarCheckupStatus == Status.Active, new[] { "CrMasSupContractCarCheckupDetails" });
             ViewBag.StartDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm", CultureInfo.InvariantCulture);
 
             //Check Account Bank And Sales Point and payment method
-            var AccountBanks = _unitOfWork.CrCasAccountBank.FindAll(x => x.CrCasAccountBankLessor == lessorCode && x.CrCasAccountBankStatus == Status.Active, new[] { "CrCasAccountSalesPoints" }).ToList();
-            var PaymentMethod = _unitOfWork.CrMasSupAccountPaymentMethod.FindAll(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active).ToList();
-            var SalesPoint = _unitOfWork.CrCasAccountSalesPoint.FindAll(x => x.CrCasAccountSalesPointLessor == lessorCode &&
+            var AccountBanks = await _unitOfWork.CrCasAccountBank.FindAllAsNoTrackingAsync(x => x.CrCasAccountBankLessor == lessorCode && x.CrCasAccountBankStatus == Status.Active, new[] { "CrCasAccountSalesPoints" });
+            var PaymentMethod = await _unitOfWork.CrMasSupAccountPaymentMethod.FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active);
+            var SalesPoint = await _unitOfWork.CrCasAccountSalesPoint.FindAllAsNoTrackingAsync(x => x.CrCasAccountSalesPointLessor == lessorCode &&
                                                                              x.CrCasAccountSalesPointBrn == bSLayoutVM.SelectedBranch &&
                                                                              x.CrCasAccountSalesPointBankStatus == Status.Active &&
                                                                              x.CrCasAccountSalesPointStatus == Status.Active &&
-                                                                             x.CrCasAccountSalesPointBranchStatus == Status.Active).ToList();
+                                                                             x.CrCasAccountSalesPointBranchStatus == Status.Active);
 
             // Fetch all data
-            var RenterIdTypes = _unitOfWork.CrMasSupRenterIdtype.FindAll(x => x.CrMasSupRenterIdtypeStatus != Status.Deleted).ToList();
-            var RenterProffesions = _unitOfWork.CrMasSupRenterProfession.FindAll(x => x.CrMasSupRenterProfessionsStatus != Status.Deleted && x.CrMasSupRenterProfessionsCode != "1400000001" && x.CrMasSupRenterProfessionsCode != "1400000002").ToList();
+            var RenterIdTypes = await _unitOfWork.CrMasSupRenterIdtype.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterIdtypeStatus != Status.Deleted);
+            var RenterProffesions = await _unitOfWork.CrMasSupRenterProfession.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterProfessionsStatus != Status.Deleted &&
+                                                                                                           x.CrMasSupRenterProfessionsCode != "1400000001" && x.CrMasSupRenterProfessionsCode != "1400000002");
 
 
-            var Nationailties = _unitOfWork.CrMasSupRenterNationality.FindAll(x => x.CrMasSupRenterNationalitiesStatus != Status.Deleted).ToList();
-            var Cities = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityStatus != Status.Deleted).ToList();
-            var Workplaces = _unitOfWork.CrMasSupRenterEmployer.FindAll(l => l.CrMasSupRenterEmployerStatus != Status.Deleted && l.CrMasSupRenterEmployerCode != "1800000001" && l.CrMasSupRenterEmployerCode != "1800000002").ToList();
-            var Genders = _unitOfWork.CrMasSupRenterGender.FindAll(l => l.CrMasSupRenterGenderStatus != Status.Deleted && l.CrMasSupRenterGenderCode != "1100000002" && l.CrMasSupRenterGenderCode != "1100000001").ToList();
-            var CallingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(l => l.CrMasSysCallingKeysStatus != Status.Deleted).OrderByDescending(x => x.CrMasSysCallingKeysCount).ToList();
-            var DrivingLicenses = _unitOfWork.CrMasSupRenterDrivingLicense.FindAll(l => l.CrMasSupRenterDrivingLicenseStatus != Status.Deleted && l.CrMasSupRenterDrivingLicenseCode != "1").ToList();
+            var Nationailties = await _unitOfWork.CrMasSupRenterNationality.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterNationalitiesStatus != Status.Deleted);
+            var Cities = await _unitOfWork.CrMasSupPostCity.FindAllAsNoTrackingAsync(l => l.CrMasSupPostCityStatus != Status.Deleted);
+            var Workplaces = await _unitOfWork.CrMasSupRenterEmployer.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterEmployerStatus != Status.Deleted && l.CrMasSupRenterEmployerCode != "1800000001" && l.CrMasSupRenterEmployerCode != "1800000002");
+            var Genders = await _unitOfWork.CrMasSupRenterGender.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterGenderStatus != Status.Deleted && l.CrMasSupRenterGenderCode != "1100000002" && l.CrMasSupRenterGenderCode != "1100000001");
+            var CallingKeysAll = await _unitOfWork.CrMasSysCallingKeys.FindAllAsNoTrackingAsync(l => l.CrMasSysCallingKeysStatus != Status.Deleted);
+            var CallingKeys = CallingKeysAll.OrderByDescending(x => x.CrMasSysCallingKeysCount).ToList();
+            var DrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterDrivingLicenseStatus != Status.Deleted && l.CrMasSupRenterDrivingLicenseCode != "1");
             // Transform data based on culture
             var nationalitiesArray = Nationailties.Select(c => new { text = isArabic ? c.CrMasSupRenterNationalitiesArName : c.CrMasSupRenterNationalitiesEnName, value = c.CrMasSupRenterNationalitiesCode }).ToList();
             var citiesArray = Cities.Select(c => new { text = isArabic ? c.CrMasSupPostCityConcatenateArName : c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode }).ToList();

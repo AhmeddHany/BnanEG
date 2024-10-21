@@ -300,7 +300,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 switch (contract.CrCasRenterContractStatisticsKm)
                 {
                     case "1":
-                        ownStatictsVM.ArName = "100 أقل من";
+                        ownStatictsVM.ArName = "أقل من 100";
                         ownStatictsVM.EnName = "Less Than 100";
                         break;
                     case "2":

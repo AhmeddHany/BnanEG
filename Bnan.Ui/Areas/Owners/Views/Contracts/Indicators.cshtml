@@ -30,7 +30,7 @@
                         {
                             indexBranch++;  // Initialize index variable
 
-                            <div style="margin-bottom: 1.4rem !important;">
+                            <div class="mb-2">
                                 <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
                                 <div class="row">
                                     <div class="col-auto">
@@ -68,24 +68,19 @@
                         <hr class="card-hr">
 
                     </div>
-
                     <div class="card-body">
-                        <div class="row">
-                            @{
-                                var indexAmountValue = 0;
-                                var idAmountValue = "";
-                                var popularChartsDivAmountValue = "";
-                                foreach (var item in Model.AmountValueStaticitis)
-                                {
-                                    if (indexAmountValue == 0) idAmountValue = "First_AmountValue_Charts";
-                                    else if (indexAmountValue == 1)
-                                    {
-                                        idAmountValue = "Second_AmountValue_Charts";
-                                        popularChartsDivAmountValue = "popularCharts_div";
-                                    }
-                                    else if (indexAmountValue == 2) idAmountValue = "Third_AmountValue_Charts";
-                                    <div class="col-sm-4  m-0 @popularChartsDivAmountValue">
-                                        <p class="text-center">
+                        @{
+                            int indexAmountValue = 0;  // Initialize index variable
+                        }
+                        @foreach (var item in Model.AmountValueStaticitis)
+                        {
+                            indexAmountValue++;  // Initialize index variable
+
+                            <div class="mb-2">
+                                <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <span>
                                             @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
                                             {
                                                 @item.ArName
@@ -94,15 +89,21 @@
                                             {
                                                 @item.EnName
                                             }
-                                        </p>
-                                        <div id="@idAmountValue"></div>
-                                        <p class="text-center m-0">@item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</p>
+                                        </span>
                                     </div>
-                                    indexAmountValue++;
-                                }
-                            }
+                                    <div class="col d-flex align-items-center">
+                                        <div class="progress">
+                                            <div class="progress-bar progress@(indexAmountValue)" role="progressbar"
+                                                 style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
+                                                 aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
 
-                        </div>
+                                </div>
+                            </div>
+                        }
+
+
                     </div>
                 </div>
             </div>
@@ -111,26 +112,20 @@
                     <div class="card-header py-1">
                         <h5 class="m-0 font-weight-bold "> @localizer["MostActiveDistance"] </h5>
                         <hr class="card-hr">
-
                     </div>
-
                     <div class="card-body">
-                        <div class="row">
-                            @{
-                                var indexDistanceKM = 0;
-                                var idDistanceKM = "";
-                                var popularChartsDivDistanceKM = "";
-                                foreach (var item in Model.DistanceKMStaticitis)
-                                {
-                                    if (indexDistanceKM == 0) idDistanceKM = "First_DistanceKM_Charts";
-                                    else if (indexDistanceKM == 1)
-                                    {
-                                        idDistanceKM = "Second_DistanceKM_Charts";
-                                        popularChartsDivDistanceKM = "popularCharts_div";
-                                    }
-                                    else if (indexDistanceKM == 2) idDistanceKM = "Third_DistanceKM_Charts";
-                                    <div class="col-sm-4  m-0 @popularChartsDivDistanceKM">
-                                        <p class="text-center">
+                        @{
+                            int indexDistanceKM = 0;  // Initialize index variable
+                        }
+                        @foreach (var item in Model.DistanceKMStaticitis)
+                        {
+                            indexDistanceKM++;  // Initialize index variable
+
+                            <div class="mb-2">
+                                <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <span>
                                             @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
                                             {
                                                 @item.ArName
@@ -139,14 +134,19 @@
                                             {
                                                 @item.EnName
                                             }
-                                        </p>
-                                        <div id="@idDistanceKM"></div>
-                                        <p class="text-center m-0">@item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</p>
+                                        </span>
                                     </div>
-                                    indexDistanceKM++;
-                                }
-                            }
-                        </div>
+                                    <div class="col d-flex align-items-center">
+                                        <div class="progress">
+                                            <div class="progress-bar progress@(indexDistanceKM)" role="progressbar"
+                                                 style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
+                                                 aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
 
 
                     </div>
@@ -166,18 +166,22 @@
 
                     </div>
                     <div class="card-body">
-                        @{
-                            int indexDays = 0;  // Initialize index variable
-                        }
-                        @foreach (var item in Model.DaysStaticitis)
-                        {
-                            indexDays++;  // Initialize index variable
-
-                            <div style="margin-bottom: 1.4rem !important;">
-                                <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
-                                <div class="row">
-                                    <div class="col-auto">
-                                        <span>
+                        <div class="row">
+                            @{
+                                var indexDays = 0;
+                                var idDays = "";
+                                var popularChartsDivDays = "";
+                                foreach (var item in Model.DaysStaticitis)
+                                {
+                                    if (indexDays == 0) idDays = "First_Days_Charts";
+                                    else if (indexDays == 1)
+                                    {
+                                        idDays = "Second_Days_Charts";
+                                        popularChartsDivDays = "popularCharts_div";
+                                    }
+                                    else if (indexDays == 2) idDays = "Third_Days_Charts";
+                                    <div class="col-sm-4  m-0 @popularChartsDivDays">
+                                        <p class="text-center">
                                             @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
                                             {
                                                 @item.ArName
@@ -186,19 +190,14 @@
                                             {
                                                 @item.EnName
                                             }
-                                        </span>
+                                        </p>
+                                        <div id="@idDays"></div>
+                                        <p class="text-center m-0">@item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</p>
                                     </div>
-                                    <div class="col d-flex align-items-center">
-                                        <div class="progress">
-                                            <div class="progress-bar progress@(indexDays)" role="progressbar"
-                                                 style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
-                                                 aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        }
+                                    indexDays++;
+                                }
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -210,18 +209,22 @@
 
                     </div>
                     <div class="card-body">
-                        @{
-                            int indexTime = 0;  // Initialize index variable
-                        }
-                        @foreach (var item in Model.TimeStaticitis)
-                        {
-                            indexTime++;  // Initialize index variable
-
-                            <div style="margin-bottom: 1.4rem !important;">
-                                <h4 class="small font-weight-bold progress-rate"> @item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</h4>
-                                <div class="row">
-                                    <div class="col-auto">
-                                        <span>
+                        <div class="row">
+                            @{
+                                var indexTime = 0;
+                                var idTime = "";
+                                var popularChartsDivTime = "";
+                                foreach (var item in Model.TimeStaticitis)
+                                {
+                                    if (indexTime == 0) idTime = "First_Time_Charts";
+                                    else if (indexTime == 1)
+                                    {
+                                        idTime = "Second_Time_Charts";
+                                        popularChartsDivTime = "popularCharts_div";
+                                    }
+                                    else if (indexTime == 2) idTime = "Third_Time_Charts";
+                                    <div class="col-sm-4  m-0 @popularChartsDivTime">
+                                        <p class="text-center">
                                             @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
                                             {
                                                 @item.ArName
@@ -230,19 +233,14 @@
                                             {
                                                 @item.EnName
                                             }
-                                        </span>
+                                        </p>
+                                        <div id="@idTime"></div>
+                                        <p class="text-center m-0">@item.Percent.ToString("N2", CultureInfo.InvariantCulture)%</p>
                                     </div>
-                                    <div class="col d-flex align-items-center">
-                                        <div class="progress">
-                                            <div class="progress-bar progress@(indexTime)" role="progressbar"
-                                                 style="width: @item.Percent.ToString("N2",CultureInfo.InvariantCulture)%" aria-valuenow="@item.Percent.ToString("N2",CultureInfo.InvariantCulture)"
-                                                 aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        }
+                                    indexTime++;
+                                }
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -302,47 +300,47 @@
     <script>
 
         document.addEventListener("DOMContentLoaded", function () {
-            /////////////////////////////////AmountValue////////////////////////
-            var AmountValueModel = @Html.Raw(Json.Serialize(Model.AmountValueStaticitis));
-            for (var i = 0; i < AmountValueModel.length; i++) {
-                var positionAmountValue = "";
-                var colorAmountValue = "";
+            /////////////////////////////////Days////////////////////////
+            var DaysModel = @Html.Raw(Json.Serialize(Model.DaysStaticitis));
+            for (var i = 0; i < DaysModel.length; i++) {
+                var positionDays = "";
+                var colorDays = "";
                 if (i == 0) {
-                    positionAmountValue = "First_AmountValue_Charts";
-                    colorAmountValue = "#9747FF";
+                    positionDays = "First_Days_Charts";
+                    colorDays = "#9747FF";
                 }
                 else if (i == 1) {
-                    positionAmountValue = "Second_AmountValue_Charts";
-                    colorAmountValue = "#FF9F40";
+                    positionDays = "Second_Days_Charts";
+                    colorDays = "#FF9F40";
                 }
                 else if (i == 2) {
-                    positionAmountValue = "Third_AmountValue_Charts";
-                    colorAmountValue = "#4BC0C0";
+                    positionDays = "Third_Days_Charts";
+                    colorDays = "#4BC0C0";
                 }
-                var AmountValue = AmountValueModel[i];
-                console.log("AmountValue", AmountValue);
-                // First_AmountValue_Charts ///////////////////////////////////////////////////////////////////////
+                var Days = DaysModel[i];
+                console.log("Days", Days);
+                // First_Days_Charts ///////////////////////////////////////////////////////////////////////
                 var palette = anychart.palettes.distinctColors();
-                var percentage = AmountValue.percent; // Define the percentage value
+                var percentage = Days.percent; // Define the percentage value
                 var label = anychart.standalones.label();
                 label.useHtml(true).text('<span style = "color: #313136; font-weight:600">' + '</span>').position('center').anchor('center').hAlign('center').vAlign('middle');
                 var data;
                 if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
                     data = anychart.data.set([
-                        [AmountValue.enName, AmountValue.percent],
-                        [' اخري', 100 - AmountValue.percent]
+                        [Days.enName, Days.percent],
+                        [' اخري', 100 - Days.percent]
                     ]);
                 }
                 else {
                     data = anychart.data.set([
-                        [AmountValue.arName, AmountValue.percent],
-                        [' Others', 100 - AmountValue.percent]
+                        [Days.arName, Days.percent],
+                        [' Others', 100 - Days.percent]
                     ]);
                 }
 
                 // set the colors according to the brands
                 palette.items([
-                    { color: colorAmountValue },
+                    { color: colorDays },
                     { color: '#CCC' },
                 ]);
 
@@ -352,7 +350,7 @@
                 // set the chart radius making a donut chart
                 chart.palette(palette);
                 chart.innerRadius('80%');
-                chart.container(positionAmountValue);
+                chart.container(positionDays);
                 chart.legend(false);
                 chart.labels(false)
                 chart.tooltip(false)
@@ -417,46 +415,46 @@
                 chart.draw();
             }
             /////////////////////////////////DistanceKM////////////////////////
-            var DistanceKMModel = @Html.Raw(Json.Serialize(Model.DistanceKMStaticitis));
-            for (var i = 0; i < DistanceKMModel.length; i++) {
-                var positionDistanceKM = "";
-                var colorDistanceKM = "";
+            var TimeModel = @Html.Raw(Json.Serialize(Model.TimeStaticitis));
+            for (var i = 0; i < TimeModel.length; i++) {
+                var positionTime = "";
+                var colorTime = "";
                 if (i == 0) {
-                    positionDistanceKM = "First_DistanceKM_Charts";
-                    colorDistanceKM = "#9747FF";
+                    positionTime = "First_Time_Charts";
+                    colorTime = "#9747FF";
                 }
                 else if (i == 1) {
-                    positionDistanceKM = "Second_DistanceKM_Charts";
-                    colorDistanceKM = "#FF9F40";
+                    positionTime = "Second_Time_Charts";
+                    colorTime = "#FF9F40";
                 }
                 else if (i == 2) {
-                    positionDistanceKM = "Third_DistanceKM_Charts";
-                    colorDistanceKM = "#4BC0C0";
+                    positionTime = "Third_Time_Charts";
+                    colorTime = "#4BC0C0";
                 }
-                var DistanceKM = DistanceKMModel[i];
-                console.log("DistanceKM", DistanceKM);
-                // First_DistanceKM_Charts ///////////////////////////////////////////////////////////////////////
+                var Time = TimeModel[i];
+                console.log("Time", Time);
+                // First_Time_Charts ///////////////////////////////////////////////////////////////////////
                 var palette = anychart.palettes.distinctColors();
-                var percentage = DistanceKM.percent; // Define the percentage value
+                var percentage = Time.percent; // Define the percentage value
                 var label = anychart.standalones.label();
                 label.useHtml(true).text('<span style = "color: #313136; font-weight:600">' + '</span>').position('center').anchor('center').hAlign('center').vAlign('middle');
                 var data;
                 if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
                     data = anychart.data.set([
-                        [DistanceKM.enName, DistanceKM.percent],
-                        [' اخري', 100 - DistanceKM.percent]
+                        [Time.enName, Time.percent],
+                        [' اخري', 100 - Time.percent]
                     ]);
                 }
                 else {
                     data = anychart.data.set([
-                        [DistanceKM.arName, DistanceKM.percent],
-                        [' Others', 100 - DistanceKM.percent]
+                        [Time.arName, Time.percent],
+                        [' Others', 100 - Time.percent]
                     ]);
                 }
 
                 // set the colors according to the brands
                 palette.items([
-                    { color: colorDistanceKM },
+                    { color: colorTime },
                     { color: '#CCC' },
                 ]);
 
@@ -466,7 +464,7 @@
                 // set the chart radius making a donut chart
                 chart.palette(palette);
                 chart.innerRadius('80%');
-                chart.container(positionDistanceKM);
+                chart.container(positionTime);
                 chart.legend(false);
                 chart.labels(false)
                 chart.tooltip(false)

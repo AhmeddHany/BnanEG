@@ -288,7 +288,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     if (await _unitOfWork.CompleteAsync() > 0)
                     {
                         if (StaticContractCardImg != null) await WhatsupExtension.SendBase64StringAsImageToWhatsUp(StaticContractCardImg, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ");
-                        //await SendPdfsToWhatsAppAsync(pdfDictionary, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter);
+                        await SendPdfsToWhatsAppAsync(pdfDictionary, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter);
                         _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                         this.SetRenterTempData(Renter.CrMasRenterInformationId, ContractInfo.CrCasRenterContractBasicNo);
                         return RedirectToAction("Index", "Home");
