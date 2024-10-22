@@ -181,8 +181,18 @@
                                                 <img src="@Url.Content(Employee.CrMasUserInformationPicture?.ToString())" alt="empolyee-photo" class="employee border-0 w-100 h-100">
                                                 <div class="active_statue @((bool) Employee.OnlineOrOflline ? "bg-success" : "bg-danger")"></div>
                                             </div>
-                                            <img src="@((bool)Employee.HaveCustodyNotAccepted ? "/OwnersSys/img/Frame 2608948 (2).svg" : "") ">
-                                            <img src="@((bool)Employee.CreditLimitExceeded ? "/OwnersSys/img/Frame 2608948.svg" : "") ">
+                                            @if ((bool)Employee.HaveCustodyNotAccepted && (bool)Employee.CreditLimitExceeded)
+                                            {
+                                                <img src="/OwnersSys/img/Frame 2608955.svg" />
+                                            }
+                                            else if ((bool)Employee.HaveCustodyNotAccepted)
+                                            {
+                                                <img src="/OwnersSys/img/Frame 2608948 (2).svg" />
+                                            }
+                                            else if ((bool)Employee.CreditLimitExceeded)
+                                            {
+                                                <img src="/OwnersSys/img/Frame 2608948.svg" />
+                                            }
                                         </div>
 
                                     </div>
@@ -460,6 +470,10 @@
                 var branchPost;
                 var branchName;
                 var branchDirectorName;
+                var redPointForBalance='';
+                var redPointForDocsOrMaintaince='';
+                var redPointForSuspendedContracts='';
+                var redPointForUnActiveCarsCount='';
                 // Display the branch details dynamically based on the selected branch
                 if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
                     branchPost = branch.branchPostEn
@@ -470,6 +484,19 @@
                     branchPost = branch.branchPostAr
                     branchName = branch.crCasBranchInformationArShortName
                     branchDirectorName = branch.crCasBranchInformationDirectorArName
+                }
+                //Check To put red point in the headline
+                if (branch.haveCustodyNotAccepted) {
+                    redPointForBalance = '<div class="filters filter2-div"></div>'; // Add quotes
+                }
+                if (branch.mainForCarExpireCount > 0 || branch.docsForCarExpireCount > 0 || branch.docsForCompanyExpireCount > 0) {
+                    redPointForDocsOrMaintaince = '<div class="filters filter2-div"></div>'; // Add quotes
+                }
+                if (branch.suspendedContractsCount > 0) {
+                    redPointForSuspendedContracts = '<div class="filters filter2-div"></div>'; // Add quotes
+                }
+                if (branch.unActiveCarsCount > 0) {
+                    redPointForUnActiveCarsCount = '<div class="filters filter2-div"></div>'; // Add quotes
                 }
                 const contentContainer = document.getElementById('contentContainer');
                 contentContainer.style.display = 'block';
@@ -490,6 +517,7 @@
                                                                     <div class="card-body">
                                                                         <div class="row no-gutters align-items-center">
                                                                             <div class="col-sm-6 data-card">
+                                                                                ${redPointForSuspendedContracts}
                                                                                 <span>@localizer["Contracts"]</span>
                                                                             </div>
                                                                             <div class="col-sm-6 data-icon">
@@ -498,7 +526,7 @@
                                                                         </div>
                                                                         <hr class="card-hr">
                                                                         <div class="row">
-                                                                                    <div class="col-md-6 data-card2"><span>@localizer["Contracts"]</span> <span>${branch.closedContractsCount}</span></div>
+                                                                                    <div class="col-md-6 data-card2"><span>@localizer["Closed_count"]</span> <span>${branch.closedContractsCount}</span></div>
                                                                                     <div class="col-md-auto data-card2"><span>@localizer["List_count"]</span> <span>${branch.activeContractsCount}</span></div>
                                                                         </div>
                                                                         <div class="row mt-2">
@@ -514,6 +542,7 @@
                                                                     <div class="card-body">
                                                                         <div class="row no-gutters align-items-center">
                                                                             <div class="col-sm-6 data-card">
+                                                                                ${redPointForBalance}
                                                                                 <span>@localizer["Balance"]</span>
                                                                             </div>
                                                                             <div class="col-sm-6 data-icon">
@@ -537,9 +566,11 @@
                                                                 <div class="card border-left-primary h-100 py-2">
                                                                     <div class="card-body">
                                                                         <div class="row align-items-center">
-                                                                            <div class="col data-card">
+                                                                            <div class="col-7 data-card">
+                                                                                ${redPointForDocsOrMaintaince}
                                                                                  <span>@localizer["Alerts"]</span>
                                                                             </div>
+                                                                            <div class="col"style="font-size : 12px">@localizer["AboutToExpire"]</div> <div class="col" style="font-size : 12px" >@localizer["Expired"]</div>
                                                                         </div>
                                                                         <hr class="card-hr">
                                                                         <div class="row">
@@ -566,6 +597,7 @@
                                                                     <div class="card-body">
                                                                         <div class="row no-gutters align-items-center">
                                                                             <div class="col-sm-6 data-card">
+                                                                                ${redPointForUnActiveCarsCount}
                                                                                 <span>@localizer["Cars"]</span>
                                                                             </div>
                                                                             <div class="col-sm-6 data-icon">
@@ -617,8 +649,13 @@
         function displayNewData2(dataKey) {
             const employees = @Html.Raw(Json.Serialize(Model.Employees)); // Convert Model.Employees to a JavaScript array.
             const employee = employees.find(b => b.crMasUserInformationCode == dataKey); // Find the employee by ID.
+            var pictureOfEmployee = employee.crMasUserInformationPicture;
 
-            if (!employee) {
+            // إزالة أول حرف "~" إذا كان موجودًا
+            if (pictureOfEmployee.startsWith('~')) {
+                pictureOfEmployee = pictureOfEmployee.substring(1);
+ 
+            } if (!employee) {
                 console.error('Employee not found');
                 return;
             }
@@ -634,14 +671,26 @@
                 position = employee.crMasUserInformationTasksArName
             }
             // First image (for "haveCustodyNotAccepted")
+            var imageMain = '';
             let firstImage = employee.haveCustodyNotAccepted
                 ? `<img src="/OwnersSys/img/Frame 2608948 (2).svg">`
                 : '';
 
             // Second image (for "creditLimitExceeded")
             let secondImage = employee.creditLimitExceeded
-                ? `<img src="/OwnersSys/img/Frame 2608948.svg">`
+                ? `<img src="/OwnersSys/img/Frame 2608948.svg" >`
                 : '';
+
+            // إذا كانت كلتا الصورتين موجودتين، عرض الصورة الأخيرة
+            if (firstImage && secondImage) {
+                imageMain = `<img src="/OwnersSys/img/Frame 2608955.svg">`;
+            } else if (firstImage) {
+                // إذا كانت الصورة الأولى فقط موجودة
+                imageMain = firstImage;
+            } else if (secondImage) {
+                // إذا كانت الصورة الثانية فقط موجودة
+                imageMain = secondImage;
+            }
             let onlineOrOffline = employee.onlineOrOflline ? 'bg-success' : 'bg-danger';
             const contentContainer = document.getElementById('contentContainer2');
             contentContainer.style.display = 'block';
@@ -650,13 +699,12 @@
                                                 <div class="row mx-1">
                                                     <div class="col d-flex gap-2 align-items-center">
                                                         <div class="col-auto d-flex justify-content-end gap-1">
-                                                                    ${firstImage}
-                                                                    ${secondImage}
-                                                            <div class="employee">
-                                                                <img src="/OwnersSys/img/pic (3).svg" alt="employee-photo" class="employee border-0 w-100 h-100">
-                                                                <div class="active_statue ${onlineOrOffline}"></div>
-
-                                                            </div>
+                                                        ${imageMain}
+                                                        <div class="employee">
+                                                        <img src="${pictureOfEmployee}" alt="employee-photo" class="employee border-0 w-100 h-100">
+                                                        <div class="active_statue bg-success">
+                                                        </div>
+                                                        </div>
                                                         </div>
                                                         <div class="col">
                                                             <p class="FirstLineP">${name}</p>
@@ -677,7 +725,8 @@
                                                             <div class="card border-left-primary h-100 py-2">
                                                                 <div class="card-body">
                                                                     <div class="row no-gutters align-items-center">
-                                                                        <div class="col-sm-6 data-card"><span>@localizer["Contracts"]</span></div>
+                                                                        <div class="col-sm-6 data-card">
+                                                                        <span>@localizer["Contracts"]</span></div>
                                                                         <div class="col-sm-6 data-icon"><span class="data-card">${employee.contractsCount}</span></div>
                                                                     </div>
                                                                     <hr class="card-hr">
@@ -694,7 +743,9 @@
                                                             <div class="card border-left-primary h-100 py-2">
                                                                 <div class="card-body">
                                                                     <div class="row no-gutters align-items-center">
-                                                                        <div class="col-sm-6 data-card"><span>@localizer["Balance"]</span></div>
+                                                                        <div class="col-sm-6 data-card">
+                                                                        <span>@localizer["Balance"]</span>
+                                                                        </div>
                                                                         <div class="col-sm-6 data-icon"><span class="data-card">${employee.crMasUserInformationTotalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
                                                                     </div>
                                                                     <hr class="card-hr">

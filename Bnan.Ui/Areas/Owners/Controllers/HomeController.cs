@@ -96,8 +96,8 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                                                                                                                         x.CrCasSysAdministrativeProceduresStatus == Status.Insert);
                 OwnBranch.HaveCustodyNotAccepted = OwnBranch.CrCasBranchInformationReservedBalance > 0;
                 if (OwnBranch.CrCasBranchInformationReservedBalance > 0 ||
-                    OwnBranch.DocsForCompanyAboutExpireCount > 0 ||
                     OwnBranch.DocsForCompanyExpireCount > 0 ||
+                    OwnBranch.DocsForCarExpireCount > 0 ||
                     OwnBranch.MainForCarExpireCount > 0) OwnBranch.RedPointInBranch = false;
                 else OwnBranch.RedPointInBranch = true;
                 // Add the mapped OwnBranchVM to the list
