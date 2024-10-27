@@ -147,7 +147,7 @@ namespace Bnan.Ui.Areas.Base.Controllers
             var branchesValidite = userInformation.CrMasUserBranchValidities.Where(x => x.CrMasUserBranchValidityBranchStatus == Status.Active);
 
             List<CrCasBranchInformation> branches = branchesValidite != null
-                ? branchesValidite.Select(item => item.CrMasUserBranchValidity1).ToList()
+                ? branchesValidite.Select(item => item.CrMasUserBranchValidity1).Where(x => x.CrCasBranchInformationStatus != Status.Deleted).ToList()
                 : new List<CrCasBranchInformation>();
 
             var selectBranch = userLogin.CrMasUserInformationDefaultBranch;

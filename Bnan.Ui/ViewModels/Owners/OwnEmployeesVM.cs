@@ -25,6 +25,7 @@ namespace Bnan.Ui.ViewModels.Owners
         public DateTime? CrMasUserInformationLastActionDate { get; set; }
         public bool CrMasUserInformationOperationStatus { get; set; }
         public string? CrMasUserInformationPicture { get; set; }
+        public string? CrMasUserInformationStatus { get; set; }
 
         public int? ClosedContract { get; set; }
         public int? ContractsCount { get; set; }

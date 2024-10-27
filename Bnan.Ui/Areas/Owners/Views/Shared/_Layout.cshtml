@@ -171,9 +171,9 @@
                 </a>
                 <div class="collapse show">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item @(ViewBag.Tenants == true ? "active" : "")"  href="/Owners/Renters/Indicators"> @localizer["Tenants"] <img src="/OwnersSys/img/Frame (6).svg"></a>
-                        <a class="collapse-item @(ViewBag.Contracts == true ? "active" : "")"  href="/Owners/Contracts/Indicators">  @localizer["Contracts"] <img src="/OwnersSys/img/Frame (5).svg"></a>
-                        <a class="collapse-item @(ViewBag.Cars == true ? "active" : "")"  href="/Owners/Cars/Indicators">  @localizer["Cars"] <img src="/OwnersSys/img/Frame (4).svg"> </a>
+                        <a class="collapse-item @(ViewBag.Tenants == true ? "active" : "")" href="/Owners/Renters/Indicators"> @localizer["Tenants"] <img src="/OwnersSys/img/Frame (6).svg"></a>
+                        <a class="collapse-item @(ViewBag.Contracts == true ? "active" : "")" href="/Owners/Contracts/Indicators">  @localizer["Contracts"] <img src="/OwnersSys/img/Frame (5).svg"></a>
+                        <a class="collapse-item @(ViewBag.Cars == true ? "active" : "")" href="/Owners/Cars/Indicators">  @localizer["Cars"] <img src="/OwnersSys/img/Frame (4).svg"> </a>
                     </div>
                 </div>
             </li>
@@ -247,14 +247,12 @@
                                     </div>
                                     <hr class="card-hr">
                                     <div class="row">
-                                        <div class="col data-card2">
-                                            <span>@localizer["List_count"]</span> <span>@Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus != Status.Closed).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
-                                        </div>
+                                        <div class="col-md-6 data-card2"><span>@localizer["Closed_count"]</span> <span>@Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Count().ToString("N0", CultureInfo.InvariantCulture)</span></div>
+                                        <div class="col-md-auto data-card2"><span>@localizer["Suspended_count"]</span> <span>@Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Suspend).Count().ToString("N0", CultureInfo.InvariantCulture)</span></div>
                                     </div>
                                     <div class="row mt-2">
-                                        <div class="col data-card2">
-                                            <span>@localizer["Closed_count"]</span> <span>@Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
-                                        </div>
+                                        <div class="col-md-6 data-card2"><span>@localizer["List_count"]</span> <span>@Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Active).Count().ToString("N0", CultureInfo.InvariantCulture)</span></div>
+                                        <div class="col-md-auto data-card2"><span>@localizer["Saved_count"]</span> <span>@Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Saved).Count().ToString("N0", CultureInfo.InvariantCulture)</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -327,7 +325,7 @@
                         <div class=" col-sm-6 col-lg-3">
                             @{
                                 var compenations = Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Sum(x => x.CrCasRenterContractBasicCompensationValue);
-                                var Revenues =Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Sum(x => x.CrCasRenterContractBasicActualTotal);
+                                var Revenues = Model.OwnContracts?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Sum(x => x.CrCasRenterContractBasicActualTotal);
                                 var TotalRevenes = compenations + Revenues;
                             }
                             <div class="card border-left-success h-100 py-2">

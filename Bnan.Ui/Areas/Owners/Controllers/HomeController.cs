@@ -54,7 +54,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
             List<OwnBranchVM> OwnBranches = new List<OwnBranchVM>();
 
             var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(
-                x => x.CrCasBranchInformationLessor == lessorCode,
+                x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted,
                 new[] { "CrCasCarInformations", "CrCasRenterContractBasics", "CrCasBranchPost.CrCasBranchPostCityNavigation" }
             );
 
@@ -82,7 +82,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 OwnBranch.MainForCarExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.Expire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").Count();
                 OwnBranch.MainForCarAboutExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").Count();
 
-                OwnBranch.CarsCount = branch.CrCasCarInformations?.Count(x => x.CrCasCarInformationStatus != Status.Sold) ?? 0;
+                OwnBranch.CarsCount = branch.CrCasCarInformations?.Count(x => x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationStatus != Status.Deleted) ?? 0;
                 OwnBranch.RentedCarsCount = branch.CrCasCarInformations?.Count(x => x.CrCasCarInformationStatus == Status.Rented) ?? 0;
                 OwnBranch.ActiveCarsCount = branch.CrCasCarInformations?.Count(x => x.CrCasCarInformationStatus == Status.Active &&
                                                      x.CrCasCarInformationPriceStatus == true &&
@@ -96,8 +96,8 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                                                                                                                         x.CrCasSysAdministrativeProceduresStatus == Status.Insert);
                 OwnBranch.HaveCustodyNotAccepted = OwnBranch.CrCasBranchInformationReservedBalance > 0;
                 if (OwnBranch.CrCasBranchInformationReservedBalance > 0 ||
+                    OwnBranch.DocsForCompanyAboutExpireCount > 0 ||
                     OwnBranch.DocsForCompanyExpireCount > 0 ||
-                    OwnBranch.DocsForCarExpireCount > 0 ||
                     OwnBranch.MainForCarExpireCount > 0) OwnBranch.RedPointInBranch = false;
                 else OwnBranch.RedPointInBranch = true;
                 // Add the mapped OwnBranchVM to the list
@@ -111,7 +111,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
         {
             List<OwnEmployeesVM> OwnEmployees = new List<OwnEmployeesVM>();
 
-            var employees = await _unitOfWork.CrMasUserInformation.FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode);
+            var employees = await _unitOfWork.CrMasUserInformation.FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && x.CrMasUserInformationStatus != Status.Deleted);
             foreach (var employee in employees)
             {
                 var OwnEmployee = _mapper.Map<OwnEmployeesVM>(employee);
