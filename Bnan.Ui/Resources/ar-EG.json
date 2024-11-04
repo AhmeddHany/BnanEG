@@ -1180,6 +1180,7 @@
   "requiredNumber": "الحقل يجب ان يكون رقم",
   "PleaseEnterRequiredInfo": "من فضلك ادخل البيانات المطلوبة",
   "requiredFiledEmail": "من فضلك ادخل البريد الالكتروني بشكل صحيح",
+  "PleaseEnterCorrectFormatDate": "الرجاء إدخال التاريخ بالتنسيق yyyy/MM/dd",
 
 
   // buttons

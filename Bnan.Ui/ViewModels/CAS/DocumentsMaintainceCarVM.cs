@@ -1,5 +1,4 @@
 ﻿using Bnan.Core.Models;
-using Bnan.Ui.ViewModels.MAS;
 using System.ComponentModel.DataAnnotations;
 
 namespace Bnan.Ui.ViewModels.CAS
@@ -13,8 +12,11 @@ namespace Bnan.Ui.ViewModels.CAS
         public string? CrCasCarDocumentsMaintenanceLessor { get; set; }
         public string? CrCasCarDocumentsMaintenanceBranch { get; set; }
         public string? CrCasCarDocumentsMaintenanceNo { get; set; }
+        [RegularExpression(@"^\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])$", ErrorMessage = "PleaseEnterCorrectFormatDate")]
         public DateTime? CrCasCarDocumentsMaintenanceDate { get; set; }
+        [RegularExpression(@"^\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])$", ErrorMessage = "PleaseEnterCorrectFormatDate")]
         public DateTime? CrCasCarDocumentsMaintenanceStartDate { get; set; }
+        [RegularExpression(@"^\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])$", ErrorMessage = "PleaseEnterCorrectFormatDate")]
         public DateTime? CrCasCarDocumentsMaintenanceEndDate { get; set; }
         public DateTime? CrCasCarDocumentsMaintenanceDateAboutToFinish { get; set; }
         public int? CrCasCarDocumentsMaintenanceReadKm { get; set; }
@@ -29,6 +31,6 @@ namespace Bnan.Ui.ViewModels.CAS
 
         public virtual CrCasBranchInformation? CrCasCarDocumentsMaintenanceNavigation { get; set; }
         public virtual CrMasSysProcedure? CrCasCarDocumentsMaintenanceProceduresNavigation { get; set; }
-        public virtual CrCasCarInformation? CrCasCarDocumentsMaintenanceSerailNoNavigation { get; set; } 
+        public virtual CrCasCarInformation? CrCasCarDocumentsMaintenanceSerailNoNavigation { get; set; }
     }
 }

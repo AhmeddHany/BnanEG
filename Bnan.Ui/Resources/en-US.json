@@ -1237,6 +1237,7 @@
   "requiredNumber": "The filed Must be Number",
   "PleaseEnterRequiredInfo": "Please Enter Required Information",
   "requiredFiledEmail": "Please enter a valid email address.",
+  "PleaseEnterCorrectFormatDate": "Please enter the date in the format yyyy/MM/dd",
 
 
 
