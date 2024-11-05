@@ -1,20 +1,16 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Numerics;
 namespace Bnan.Ui.Areas.MAS.Controllers
 {
@@ -27,21 +23,21 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly IUserService _userService;
-        private readonly IMasRenterDrivingLicense _carColor;
+        private readonly IMasRenterDrivingLicense _masRenterDrivingLicense;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<RenterDrivingLicenseController> _localizer;
 
 
         public RenterDrivingLicenseController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IMasRenterDrivingLicense carColor,
+            IMapper mapper, IUserService userService, IMasRenterDrivingLicense masRenterDrivingLicense,
             IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterDrivingLicenseController> localizer) : base(userManager, unitOfWork, mapper)
         {
             this.userManager = userManager;
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             _userService = userService;
-            _carColor = carColor;
+            _masRenterDrivingLicense = masRenterDrivingLicense;
             _userLoginsService = userLoginsService;
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
@@ -49,50 +45,50 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
 
         [HttpGet]
-
         public async Task<IActionResult> Index()
         {
+            var user = await _userManager.GetUserAsync(User);
+
             var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106003", "1");
             //sidebar Active
-            ViewBag.id = "#sidebarUsersServices";
-            ViewBag.no = "1";
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
+            await _userLoginsService.SaveTracing(user.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
             subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
             subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
 
 
             var titles = await setTitle("106", "1106003", "1");
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var contracts = await _unitOfWork.CrMasSupRenterDrivingLicense.GetAllAsync();
-            var contract = contracts.Where(x => x.CrMasSupRenterDrivingLicenseStatus == "A").ToList();
-            var CarsInfo_count_all = _carColor.GetAllRenterDrivingLicensesCount();
-            Tuple<IEnumerable<CrMasSupRenterDrivingLicense>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupRenterDrivingLicense>, List<List<string>>>(contract, CarsInfo_count_all);
-            return View(tb);
+            var RenterDrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterDrivingLicenseStatus == Status.Active, new[] { "CrMasRenterInformations" });
+            return View(RenterDrivingLicenses);
         }
 
         [HttpGet]
-        public PartialViewResult GetRenterDrivingLicenseByStatus(string status)
+        public async Task<PartialViewResult> GetRenterDrivingLicenseByStatus(string status, string search)
         {
             //sidebar Active
-            ViewBag.id = "#sidebarUsersServices";
-            ViewBag.no = "1";
+
             if (!string.IsNullOrEmpty(status))
             {
+                var RenterDrivingLicensesAll = await _unitOfWork.CrMasSupRenterDrivingLicense.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterDrivingLicenseCode != "1" && x.CrMasSupRenterDrivingLicenseCode != "2" &&
+                                                                                                                           (x.CrMasSupRenterDrivingLicenseStatus == Status.Active ||
+                                                                                                                            x.CrMasSupRenterDrivingLicenseStatus == Status.Deleted ||
+                                                                                                                            x.CrMasSupRenterDrivingLicenseStatus == Status.Hold), new[] { "CrMasRenterInformations" });
+
                 if (status == Status.All)
                 {
-
-
-                    var RenterDrivingLicensebyStatusAll = _unitOfWork.CrMasSupRenterDrivingLicense.FindAll(l => l.CrMasSupRenterDrivingLicenseStatus == Status.Hold || l.CrMasSupRenterDrivingLicenseStatus == Status.Active);
-                    var CarsInfo_count_all1 = _carColor.GetAllRenterDrivingLicensesCount();
-                    Tuple<IEnumerable<CrMasSupRenterDrivingLicense>, List<List<string>>> tb1 = new Tuple<IEnumerable<CrMasSupRenterDrivingLicense>, List<List<string>>>(RenterDrivingLicensebyStatusAll, CarsInfo_count_all1);
-                    return PartialView("_DataTableRenterDrivingLicense", tb1);
+                    var FilterAll = RenterDrivingLicensesAll.FindAll(x => x.CrMasSupRenterDrivingLicenseStatus != Status.Deleted &&
+                                                                         (x.CrMasSupRenterDrivingLicenseArName.Contains(search) ||
+                                                                          x.CrMasSupRenterDrivingLicenseEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupRenterDrivingLicenseCode.Contains(search)));
+                    return PartialView("_DataTableRenterDrivingLicense", FilterAll);
                 }
-                var RenterDrivingLicensebyStatus = _unitOfWork.CrMasSupRenterDrivingLicense.FindAll(l => l.CrMasSupRenterDrivingLicenseStatus == status).ToList();
-                var CarsInfo_count_all = _carColor.GetAllRenterDrivingLicensesCount();
-                Tuple<IEnumerable<CrMasSupRenterDrivingLicense>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupRenterDrivingLicense>, List<List<string>>>(RenterDrivingLicensebyStatus, CarsInfo_count_all);
-                return PartialView("_DataTableRenterDrivingLicense", tb);
+                var FilterByStatus = RenterDrivingLicensesAll.FindAll(x => x.CrMasSupRenterDrivingLicenseStatus == status &&
+                                                                            (
+                                                                           x.CrMasSupRenterDrivingLicenseArName.Contains(search) ||
+                                                                           x.CrMasSupRenterDrivingLicenseEnName.ToLower().Contains(search.ToLower()) ||
+                                                                           x.CrMasSupRenterDrivingLicenseCode.Contains(search)));
+                return PartialView("_DataTableRenterDrivingLicense", FilterByStatus);
             }
             return PartialView();
         }
@@ -102,88 +98,83 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> AddRenterDrivingLicense()
         {
             //sidebar Active
-            ViewBag.id = "#sidebarUsersServices";
-            ViewBag.no = "1";
-            // Set Title !!!!!!!!!!!!!!!!!!!!!!!!!!
-            var titles = await setTitle("106", "1106003", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
 
-            var RenterDrivingLicenseCode = "";
+            // Set Title 
+            await SetPageTitleAddAsync();
+            RenterDrivingLicenseVM renterDrivingLicenseVM = new RenterDrivingLicenseVM();
             var RenterDrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.GetAllAsync();
-            if (RenterDrivingLicenses.Count() != 0)
-            {
-                RenterDrivingLicenseCode = (BigInteger.Parse(RenterDrivingLicenses.LastOrDefault().CrMasSupRenterDrivingLicenseCode) + 1).ToString();
-            }
-            else
-            {
-                RenterDrivingLicenseCode = "1";
-            }
-            ViewBag.RenterDrivingLicenseCode = RenterDrivingLicenseCode;
-            return View();
+            renterDrivingLicenseVM.CrMasSupRenterDrivingLicenseCode = (RenterDrivingLicenses.ToList().Count > 0)
+            ? (BigInteger.Parse(RenterDrivingLicenses.Last().CrMasSupRenterDrivingLicenseCode) + 1).ToString()
+            : "1";
+            return View(renterDrivingLicenseVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddRenterDrivingLicense(RenterDrivingLicenseVM RenterDrivingLicenses)
+        public async Task<IActionResult> AddRenterDrivingLicense(RenterDrivingLicenseVM renterDrivingLicenseVM)
         {
-            //sidebar Active
-            ViewBag.id = "#sidebarUsersServices";
-            ViewBag.no = "1";
-            string currentCulture = CultureInfo.CurrentCulture.Name;
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid || renterDrivingLicenseVM == null)
             {
-                if (RenterDrivingLicenses != null)
-                {
-                    var RenterDrivingLicenseVMT = _mapper.Map<CrMasSupRenterDrivingLicense>(RenterDrivingLicenses);
-                    var All_RenterDrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.GetAllAsync();
-                    var existingRenterDrivingLicense_En = All_RenterDrivingLicenses.FirstOrDefault(x =>
-                        x.CrMasSupRenterDrivingLicenseEnName == RenterDrivingLicenseVMT.CrMasSupRenterDrivingLicenseEnName);
-                    var existingRenterDrivingLicense_Ar = All_RenterDrivingLicenses.FirstOrDefault(x =>
-                        x.CrMasSupRenterDrivingLicenseArName == RenterDrivingLicenseVMT.CrMasSupRenterDrivingLicenseArName);
-
-                    // Generate code for the second time
-                    var RenterDrivingLicenseCode = (BigInteger.Parse(All_RenterDrivingLicenses.LastOrDefault().CrMasSupRenterDrivingLicenseCode) + 1).ToString();
-                    RenterDrivingLicenses.CRMasSupRenterDrivingLicenseCode = RenterDrivingLicenseCode;
-                    ViewBag.RenterDrivingLicenseCode = RenterDrivingLicenseCode;
-                    if (RenterDrivingLicenseVMT.CrMasSupRenterDrivingLicenseArName != null && RenterDrivingLicenseVMT.CrMasSupRenterDrivingLicenseEnName != null)
-                    {
-                        if (existingRenterDrivingLicense_Ar != null && existingRenterDrivingLicense_En != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(RenterDrivingLicenses);
-                        }
-                        else if (existingRenterDrivingLicense_En != null)
-                        {
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(RenterDrivingLicenses);
-                        }
-                        else if (existingRenterDrivingLicense_Ar != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            return View(RenterDrivingLicenses);
-                        }
-                    }
-
-                    RenterDrivingLicenseVMT.CrMasSupRenterDrivingLicenseStatus = "A";
-                    //RenterDrivingLicenseVMT.CrMasSupRenterDrivingLicenseGroup = "33";
-                    await _unitOfWork.CrMasSupRenterDrivingLicense.AddAsync(RenterDrivingLicenseVMT);
-
-                    _unitOfWork.Complete();
-
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106003", "1");
-                    var RecordAr = RenterDrivingLicenseVMT.CrMasSupRenterDrivingLicenseArName;
-                    var RecordEn = RenterDrivingLicenseVMT.CrMasSupRenterDrivingLicenseEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "اضافة", "Add", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-                }
-                return RedirectToAction("Index");
+                await SetPageTitleAddAsync();
+                return View("AddRenterDrivingLicense", renterDrivingLicenseVM);
             }
-            return View("AddRenterDrivingLicense", RenterDrivingLicenses);
+
+            // Map ViewModel to Entity
+            var renterDrivingLicenseEntity = _mapper.Map<CrMasSupRenterDrivingLicense>(renterDrivingLicenseVM);
+
+            // Check if the entity already exists
+            if (await _masRenterDrivingLicense.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+            {
+                await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                await SetPageTitleAddAsync();
+                return View("AddRenterDrivingLicense", renterDrivingLicenseVM);
+            }
+
+            // Generate and set the Driving License Code
+            renterDrivingLicenseVM.CrMasSupRenterDrivingLicenseCode = await GenerateLicenseCodeAsync();
+
+            // Set status and add the record
+            renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseStatus = "A";
+            await _unitOfWork.CrMasSupRenterDrivingLicense.AddAsync(renterDrivingLicenseEntity);
+            if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+
+            // Log the addition
+            var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106003", "1");
+            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseArName, renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseEnName,
+                                                 "اضافة", "Add", mainTask.CrMasSysMainTasksCode, subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName,
+                                                 mainTask.CrMasSysMainTasksEnName, subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            return RedirectToAction("Index");
+        }
+        private async Task AddModelErrorsAsync(CrMasSupRenterDrivingLicense entity)
+        {
+            if (await _masRenterDrivingLicense.ExistsByArabicNameAsync(entity.CrMasSupRenterDrivingLicenseArName))
+            {
+                ModelState.AddModelError("ExistAr", _localizer["Existing"]);
+            }
+
+            if (await _masRenterDrivingLicense.ExistsByEnglishNameAsync(entity.CrMasSupRenterDrivingLicenseEnName))
+            {
+                ModelState.AddModelError("ExistEn", _localizer["Existing"]);
+            }
+
+            if (await _masRenterDrivingLicense.ExistsByNaqlCodeAsync((int)entity.CrMasSupRenterDrivingLicenseNaqlCode))
+            {
+                ModelState.AddModelError("ExistCode", _localizer["Existing"]);
+            }
+
+            if (await _masRenterDrivingLicense.ExistsByNaqlIdAsync((int)entity.CrMasSupRenterDrivingLicenseNaqlId))
+            {
+                ModelState.AddModelError("ExistId", _localizer["Existing"]);
+            }
+        }
+        private async Task SetPageTitleAddAsync()
+        {
+            var titles = await setTitle("106", "1106003", "1");
+            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
+        }
+        private async Task<string> GenerateLicenseCodeAsync()
+        {
+            var allLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupRenterDrivingLicenseCode) + 1).ToString() : "1";
         }
 
 
@@ -205,7 +196,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return View("Index");
             }
             int countRenterDrivingLicenses = 0;
-            countRenterDrivingLicenses = _carColor.GetOneRenterDrivingLicenseCount(id);
+            //countRenterDrivingLicenses = _carColor.GetOneRenterDrivingLicenseCount(id);
             ViewBag.RenterDrivingLicenses_Count = countRenterDrivingLicenses;
             var model = _mapper.Map<RenterDrivingLicenseVM>(contract);
 
@@ -263,7 +254,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 else if (status == Status.Deleted)
                 {
                     int CountRenterDrivingLicenses = 0;
-                    CountRenterDrivingLicenses = _carColor.GetOneRenterDrivingLicenseCount(code);
+                    //CountRenterDrivingLicenses = _carColor.GetOneRenterDrivingLicenseCount(code);
                     if (CountRenterDrivingLicenses == 0)
                     {
                         sAr = "حذف";
@@ -301,36 +292,37 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CheckChangedField(string Exist_lang, string dataField)
+        [HttpGet]
+        public async Task<JsonResult> CheckChangedField(string Exist_lang, string dataField)
         {
             var All_RenterDrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.GetAllAsync();
+            var errors = new List<ErrorResponse>();
 
-            if (dataField != null && All_RenterDrivingLicenses != null)
+            if (!string.IsNullOrEmpty(dataField) && All_RenterDrivingLicenses != null)
             {
-                if (Exist_lang == "ExistAr")
+                // Check for existing Arabic driving license
+                if (Exist_lang == "ExistAr" && All_RenterDrivingLicenses.Any(x => x.CrMasSupRenterDrivingLicenseArName == dataField))
                 {
-                    var existingRenterDrivingLicense_Ar = All_RenterDrivingLicenses.FirstOrDefault(x =>
-                        x.CrMasSupRenterDrivingLicenseArName == dataField);
-                    if (existingRenterDrivingLicense_Ar != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
+                    errors.Add(new ErrorResponse { Field = "RenterDrivingLicenseNameAr", Message = _localizer["Existing"] });
                 }
-                else if (Exist_lang == "ExistEn")
+                // Check for existing English driving license
+                else if (Exist_lang == "ExistEn" && All_RenterDrivingLicenses.Any(x => x.CrMasSupRenterDrivingLicenseEnName == dataField))
                 {
-                    var existingRenterDrivingLicense_En = All_RenterDrivingLicenses.FirstOrDefault(x =>
-                        x.CrMasSupRenterDrivingLicenseEnName == dataField);
-                    if (existingRenterDrivingLicense_En != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
+                    errors.Add(new ErrorResponse { Field = "RenterDrivingLicenseNameEn", Message = _localizer["Existing"] });
                 }
-
+                // Check for existing rental system number
+                else if (Exist_lang == "ExistCode" && int.TryParse(dataField, out var code) && All_RenterDrivingLicenses.Any(x => x.CrMasSupRenterDrivingLicenseNaqlCode == code))
+                {
+                    errors.Add(new ErrorResponse { Field = "RenterDrivingLicenseNaqlCode", Message = _localizer["Existing"] });
+                }
+                // Check for existing rental system ID
+                else if (Exist_lang == "ExistId" && int.TryParse(dataField, out var id) && All_RenterDrivingLicenses.Any(x => x.CrMasSupRenterDrivingLicenseNaqlId == id))
+                {
+                    errors.Add(new ErrorResponse { Field = "RenterDrivingLicenseNaqlId", Message = _localizer["Existing"] });
+                }
             }
-            return View();
+
+            return Json(new { errors });
         }
 
 
@@ -343,4 +335,4 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             return View();
         }
     }
- }
+}

@@ -1,9 +1,11 @@
 ﻿using Bnan.Core;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Interfaces.UpdateDataBaseJobs;
 using Bnan.Core.Models;
 using Bnan.Core.Repository;
 using Bnan.Inferastructure.Repository;
+using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Inferastructure.Repository.UpdateDataBaseJobs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;

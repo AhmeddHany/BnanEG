@@ -1,4 +1,10 @@
 {
+  "MasSystem": {
+    "BnanCompanyMas": "شركة غيوم الودق لتقنية المعلومات",
+    "RentalSystemCode": "رمز نظام التأجير",
+    "RentalSystemNo": "رقم نظام التأجير",
+    "BackToHome": "العودة للقائمة الرئيسية"
+  },
 
   "Arabic": "العربية",
   "English": "الانجليزية",
@@ -523,13 +529,13 @@
 
   //RenterDrivingLicenses------
   "RenterDrivingLicense Hint": ".تمكنك هذه الصفحة من عرض وإضافة وتعديل انواع رخصة القيادة",
-  "RenterDrivingLicense Data": "عرض انواع رخصة القيادة",
-  "RenterDrivingLicenseNameEn": "نوع رخصة القيادة بالانجليزي",
+  "RenterDrivingLicense Data": "رخص القيادة",
+  "RenterDrivingLicenseNameEn": "رخصة القيادة انجليزي",
   "RenterDrivingLicenseName": "نوع رخصة القيادة",
-  "RenterDrivingLicenseNameAr": "نوع رخصة القيادة بالعربي",
+  "RenterDrivingLicenseNameAr": "رخصة القيادة عربي",
   "RenterDrivingLicenseCode": "الرمز",
   "Add RenterDrivingLicense Hint": ".تمكنك هذه الصفحة من إضافة نوع رخصة قيادة جديدة",
-  "Add RenterDrivingLicense Data": "اضافة نوع رخصة قيادة",
+  "Add RenterDrivingLicense Data": "إضافة رخصة قيادة",
   "Edit RenterDrivingLicense Hint": ".تمكنك هذه الصفحة من تعديل نوع رخصة القيادة ",
   "Edit RenterDrivingLicense Data": "تعديل نوع رخصة القيادة",
   "RenterDrivingLicenseImg": "صورة نوع رخصة القيادة",
@@ -1169,6 +1175,7 @@
   "requiredNoLengthFiled50": "هذا الحقل يلازم اقل من 50 خانة",
   "requiredNoLengthFiled60": "هذا الحقل يلازم اقل من 60 خانة",
   "requiredNoLengthFiled10": "هذا الحقل يلازم 10 ارقام ويبدأ برقم 7",
+  "requiredNoLengthFiled100": "هذا الحقل يلازم 100 خانة",
   //"NotStartWith7": "هذا الحقل يلازم 10 ارقام و لا يمكن ان يبدأ برقم 7",
   "NotStartWith7": "هذا الحقل لا يمكن ان يبدأ برقم 7",
   "requiredNoStartWithFiled7": "هذا الحقل مطلوب و يبدء برقم7",

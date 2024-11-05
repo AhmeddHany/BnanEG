@@ -1,185 +1,61 @@
 ﻿
 
 @using Bnan.Core.Extensions
-@model Tuple<IEnumerable<CrMasSupRenterDrivingLicense>, List<List<string>>>
+@model List<CrMasSupRenterDrivingLicense>
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
-@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-{
-    <div class="col-sm-12">
-        @* For-scrolling *@
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
-            <thead>
-                <tr>
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["RenterDrivingLicenseCode"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["RenterDrivingLicenseName"]</th>
-                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Count"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model.Item1)
-                {
-                    @if (item.CrMasSupRenterDrivingLicenseStatus == @Status.Deleted || item.CrMasSupRenterDrivingLicenseStatus == @Status.Hold)
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterDrivingLicense", new { id = item.CrMasSupRenterDrivingLicenseCode })'" style="cursor:pointer;color:red">
-                            <td id="_Nc">@no</td>
-                            <td id="_Nc">@item.CrMasSupRenterDrivingLicenseCode</td>
-                            <td>@item.CrMasSupRenterDrivingLicenseEnName</td>
-                            <td id="_Nc">
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if (row[0] == @item.CrMasSupRenterDrivingLicenseCode)
-                                        {
-                                            @row[1]
-                                        }
-
-                                    }
-                                }
-                            </td>
-                            <td>
-
-                                @if (@item.CrMasSupRenterDrivingLicenseStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else if (@item.CrMasSupRenterDrivingLicenseStatus == Status.Hold)
-                                {
-                                    @localizer["Hold"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterDrivingLicense", new { id = item.CrMasSupRenterDrivingLicenseCode })'">
-                            <td id="_Nc">@no</td>
-                            <td id="_Nc">@item.CrMasSupRenterDrivingLicenseCode</td>
-                            <td>@item.CrMasSupRenterDrivingLicenseEnName</td>
-                            <td id="_Nc">
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if (row[0] == @item.CrMasSupRenterDrivingLicenseCode)
-                                        {
-                                            @row[1]
-                                        }
-
-                                    }
-                                }
-                            </td>
-                            <td>
-
-                                @if (@item.CrMasSupRenterDrivingLicenseStatus == Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    no++;
-                }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-            <thead>
-                <tr>
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["RenterDrivingLicenseCode"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["RenterDrivingLicenseName"]</th>
-                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Count"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model.Item1)
-                {
-                    @if (item.CrMasSupRenterDrivingLicenseStatus == @Status.Deleted || item.CrMasSupRenterDrivingLicenseStatus == @Status.Hold)
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterDrivingLicense", new { id = item.CrMasSupRenterDrivingLicenseCode })'" style="cursor:pointer;color:red">
-                            <td id="_Nc">&emsp; @no</td>
-                            <td id="_Nc">&emsp; @item.CrMasSupRenterDrivingLicenseCode</td>
-                            <td>&emsp; @item.CrMasSupRenterDrivingLicenseArName</td>
-                            <td id="_Nc">
-                                &emsp;
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if (row[0] == @item.CrMasSupRenterDrivingLicenseCode)
-                                        {
-                                            @row[1]
-                                        }
-
-                                    }
-                                }
-                            </td>
-                            <td>
-                                &emsp;
-                                @if (@item.CrMasSupRenterDrivingLicenseStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else if (@item.CrMasSupRenterDrivingLicenseStatus == Status.Hold)
-                                {
-                                    @localizer["Hold"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterDrivingLicense", new { id = item.CrMasSupRenterDrivingLicenseCode })'">
-                            <td id="_Nc">&emsp; @no</td>
-                            <td id="_Nc">&emsp; @item.CrMasSupRenterDrivingLicenseCode</td>
-                            <td>&emsp; @item.CrMasSupRenterDrivingLicenseArName</td>
-                            <td id="_Nc">
-                                &emsp;
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if (row[0] == @item.CrMasSupRenterDrivingLicenseCode)
-                                        {
-                                            @row[1]
-                                        }
-
-                                    }
-                                }
-                            </td>
-                            <td>
-                                &emsp;
-                                @if (@item.CrMasSupRenterDrivingLicenseStatus == Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    no++;
-                }
-            </tbody>
-        </table>
-    </div>
-}
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["Count"]</th>
+            <th> @localizer["RentalSystemCode"]</th>
+            <th> @localizer["RentalSystemNo"] </th>
+            <th> @localizer["DrivingLicenseType"]</th>
+            <th class="DifferAlign"> @localizer["RenterDrivingLicenseCode"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "RenterDrivingLicense", new { id = item.CrMasSupRenterDrivingLicenseCode })'">
+                <td><p>@item.CrMasRenterInformations.Count()</p></td>
+                <td>
+                    <p>@item.CrMasSupRenterDrivingLicenseNaqlCode</p>
+                </td>
+                <td>
+                    <p>@item.CrMasSupRenterDrivingLicenseNaqlId</p>
+                </td>
+                <td>
+                    <p>
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US"? item.CrMasSupRenterDrivingLicenseEnName: item.CrMasSupRenterDrivingLicenseArName)
+                    </p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@item.CrMasSupRenterDrivingLicenseCode</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasSupRenterDrivingLicenseStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasSupRenterDrivingLicenseStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasSupRenterDrivingLicenseStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+        
+    </tbody>
+</table>

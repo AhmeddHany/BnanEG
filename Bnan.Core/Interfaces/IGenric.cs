@@ -7,6 +7,7 @@ public interface IGenric<T> where T : class
     Task<T> GetByIdAsync(string id);
     IEnumerable<T> GetAll(string[] includes = null);
     Task<IEnumerable<T>> GetAllAsync();
+    Task<IEnumerable<T>> GetAllAsyncAsNoTrackingAsync();
     T Find(Expression<Func<T, bool>> predicate, string[] includes = null);
     Task<T> FindAsync(Expression<Func<T, bool>> predicate, string[] includes = null);
     IEnumerable<T> FindAll(Expression<Func<T, bool>> criteria, string[] includes = null);

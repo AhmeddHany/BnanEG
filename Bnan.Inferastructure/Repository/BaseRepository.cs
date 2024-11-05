@@ -51,7 +51,10 @@ namespace Bnan.Inferastructure.Repository
                 return null;
             }
         }
-
+        public async Task<IEnumerable<T>> GetAllAsyncAsNoTrackingAsync()
+        {
+            return await _context.Set<T>().AsNoTracking().ToListAsync();
+        }
         public T GetById(string id)
         {
             try

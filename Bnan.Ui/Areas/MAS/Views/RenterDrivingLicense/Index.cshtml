@@ -1,9 +1,5 @@
-﻿
-
-@using Bnan.Core.Extensions
-@* @model IEnumerable<CrMasSupRenterDrivingLicense>
-*@
-@model Tuple<IEnumerable<CrMasSupRenterDrivingLicense>, List<List<string>>>
+﻿@using Bnan.Core.Extensions
+@model List<CrMasSupRenterDrivingLicense>
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
@@ -12,120 +8,96 @@
     ViewData["Page-title"] = @localizer["RenterDrivingLicense Data"];
     ViewData["Page-Hint"] = @localizer["RenterDrivingLicense Hint"];
 }
-<style>
-    body {
-        overflow: hidden
-    }
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3 mb-2">
+                <div class="col">
+                    <h3>@localizer["RenterDrivingLicense Data"]</h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
 
-    @@media (max-width: 600px) {
-        #basic-datatable1_wrapper .row:first-child > div {
-            text-align: left;
-        }
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search" class="form-control inputs search-input" name="search" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
 
-            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
-                text-align: right;
-            }
-    }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f9f9f9;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-    /*     td,th {
-            text-align: center;
-        } */
-
-    #_Nc {
-        text-align: center;
-    }
-</style>
-
-<div class="sub-container">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div class="col-sm-12 col-md-9">
-                <div class="col-sm-12 col-md-4 p-0">
-                    <a type="button" class="btn btn-danger" title="@localizer["Back"]" asp-area="MAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
-                    <a class="btn btn-secondary InsertBtn" onclick="CheckValidation('1106003', '@Status.Insert', '@Url.Action("AddRenterDrivingLicense", "RenterDrivingLicense")')">
-                        @localizer["Add RenterDrivingLicense Data"]
-                    </a> 
                 </div>
             </div>
+            <div class="row mb-3">
+                <div class="col-12 filters-col">
+                    <div class="filters-custom-order">
+                        <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioAll" name="customRadio" value="All" checked />
+                    </div>
 
-            @*search And Fitler Radio Button*@
-            <div class="col-sm-12 col-md-3 p-0">
-                <input class="form-control" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
-            </div>
-            <div class="col-sm-12 col-md-12 mt-3" id="status-filter">
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioAll" name="customRadio" value="All" class="form-check-input">
-                    <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioActive" name="customRadio" value="A" class="form-check-input">
-                    <label class="form-check-label" for="customRadioActive">@localizer["Active"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioStoped" name="customRadio" value="H" class="form-check-input">
-                    <label class="form-check-label" for="customRadioStoped">@localizer["Stoped"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioRemoved" name="customRadio" value="D" class="form-check-input">
-                    <label class="form-check-label" for="customRadioRemoved">@localizer["Deleted"]</label>
-                </div>
+                    <div class="filters-custom-order">
+                        <label class="form-check-label filter2" for="customRadioActive">@localizer["Active"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioActive" name="customRadio" value="A" />
+                    </div>
 
+                    <div class="filters-custom-order">
+                        <label class="form-check-label  filter1" for="customRadioStoped">@localizer["Stoped"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioStoped" name="customRadio" value="H" />
+                    </div>
+                    <div class="filters-custom-order">
+                        <label class="form-check-label filter3" for="customRadioRemoved">@localizer["Deleted"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioRemoved" name="customRadio" value="D" />
+                    </div>
+
+                </div>
             </div>
-        </div>
-        <div class=dataTable>
-            <partial name="_DataTableRenterDrivingLicense" />
-        </div>
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
+                    <partial name="_DataTableRenterDrivingLicense" />
+                </div>
+            </div>
+        </form>
+        <a onclick="CheckValidation('1106003', '@Status.Insert', '@Url.Action("AddRenterDrivingLicense", "RenterDrivingLicense")')" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add RenterDrivingLicense Data"]" class="new-Page-icon" style="cursor: pointer">
+            <img src="~/MasSystem/images/new driver lecience.svg" alt="new item">
+        </a>
+        <a asp-area="MAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="main-page-icon">
+            <img src="~/MasSystem/images/back to main.svg" alt="man">
+        </a>
     </div>
 </div>
 
 @section scripts {
     @*Get RenterDrivingLicense Using filter*@
     <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
         //get RenterDrivingLicense By Status function
-        function GetRenterDrivingLicenseFitler(status) {
+        function GetRenterDrivingLicenseFitler(status,search) {
             $.ajax({
                 type: "GET",
                 data: {
-                    status: status
+                    status: status , search :search
                 },
                 url: "@Url.Action("GetRenterDrivingLicenseByStatus", "RenterDrivingLicense", new { Area = "MAS" })",
                 success: function (response) {
                     $(".dataTable").html(response);
-                    set_basic_datatable();
                 },
             })
         }
 
-        //on Click Filter Radio Button GetRenterDrivingLicenseByStatus
         $("input[name='customRadio']").on("click", function () {
-            GetRenterDrivingLicenseFitler($(this).val())
-        })
+            const status = $(this).val();
+            const search = $("#search").val(); // الحصول على قيمة البحث
+            GetRenterDrivingLicenseFitler(status, search);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#search").on("keyup", function () {
+            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+            const search = $(this).val(); // الحصول على قيمة البحث
+            GetRenterDrivingLicenseFitler(status, search);
+        });
     </script>
 }
-
-
-<style>
-    .wrapper {
-        margin-bottom: 60px;
-        overflow: hidden;
-        background-image: url("~/Pictures/bg.jpg") !important;
-    }
-
-    .table-bordered td,
-    .table-bordered th {
-        border: none;
-    }
-</style>
-
