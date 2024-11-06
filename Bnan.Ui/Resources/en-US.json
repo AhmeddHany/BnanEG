@@ -381,7 +381,7 @@
   "HintSureToHoldCarBrand": "Car Brand data will be holded, which results in the system being holded as well.",
 
   "HintSureTo_Cannot_deleteCarBrand": "Sorry You Can't Delete this Car Brand because there are Count of this =",
-  "SureTo_Cannot_delete": "Sorry You Can't Delete this",
+  "SureTo_Cannot_delete": "Can't Delete It",
 
 
   //Car Fuels------
@@ -528,7 +528,7 @@
   "Add RenterDrivingLicense Hint": "This page allows you to add Renter Driving License data.",
   "Add RenterDrivingLicense Data": "Add Renter Driving License",
   "Edit RenterDrivingLicense Hint": "The page allows you to modify Renter Driving License data.",
-  "Edit RenterDrivingLicense Data": "modify Renter Driving License",
+  "Edit RenterDrivingLicense Data": "Update Driving License",
   "RenterDrivingLicenseImg": "Renter Driving License Img",
 
   "HintSureToRetriveHRenterDrivingLicense": "The retrieval of Renter Driving License data will result to be restored in the system.",
@@ -1226,6 +1226,7 @@
   "requiredAgeAtLeast15": "Renter must be at least 15 years old.",
   "requiredNoLengthFiled": "Please enter exactly {0} numbers.",
   "requiredNoLengthFiled15": "Please enter exactly 15 numbers.",
+  "requiredNoLengthFiledd10": "Please enter exactly 10 numbers.",
   "requiredNoLengthFiled30": "Please enter No More Than 30 Digits.",
   "requiredNoLengthFiled40": "Please enter No More Than 40 Digits.",
   "requiredNoLengthFiled50": "Please enter No More Than 50 Digits.",

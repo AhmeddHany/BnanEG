@@ -5,13 +5,9 @@
 
 @{
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
 }
 
-<style>
-    .invalid-feedback {
-        display: block !important; /* Temporarily force it to be visible */
-    }
-</style>
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
@@ -54,13 +50,13 @@
                                                 @localizer["RenterDrivingLicenseNameAr"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" asp-for="CrMasSupRenterDrivingLicenseArName" id="RenterDrivingLicenseNameAr" maxlength="50" class="form-control inputs arabic-input" onchange="Check_onChange_input('ExistAr',document.getElementById('RenterDrivingLicenseNameAr').value)" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <input type="text" asp-for="CrMasSupRenterDrivingLicenseArName" id="CrMasSupRenterDrivingLicenseArName" maxlength="50" class="form-control inputs arabic-input"  oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseArName" id="RenterDrivingLicenseNameAr-Error" class="text-danger"></span>
-                                                    @Html.ValidationMessage("ExistAr", null, new { @class = "text-danger" })
-
-                                                </div>
+                                                    <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseArName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupRenterDrivingLicenseArName-Error"></span>
+@*                                                     @Html.ValidationMessage("CrMasSupRenterDrivingLicenseArName", null, new { @class = "text-danger" })
+ *@                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -68,12 +64,13 @@
                                                 @localizer["RenterDrivingLicenseNameEn"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupRenterDrivingLicenseEnName" maxlength="50" id="RenterDrivingLicenseNameEn" onchange="Check_onChange_input('ExistEn',document.getElementById('RenterDrivingLicenseNameEn').value)" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupRenterDrivingLicenseEnName" maxlength="50" id="CrMasSupRenterDrivingLicenseEnName"  oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseEnName" id="RenterDrivingLicenseNameEn-Error" class="text-danger"></span>
-                                                    @Html.ValidationMessage("ExistEn", null, new { @class = "text-danger" })
-                                                </div>
+                                                    <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseEnName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupRenterDrivingLicenseEnName-Error"></span>
+@*                                                     @Html.ValidationMessage("CrMasSupRenterDrivingLicenseEnName", null, new { @class = "text-danger" })
+ *@                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -82,22 +79,24 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="rental-system-number" class="form-label">@localizer["RentalSystemNo"]</label>
-                                            <input type="text" class="form-control inputs number-input" asp-for="CrMasSupRenterDrivingLicenseNaqlCode" id="RenterDrivingLicenseNaqlCode" maxlength="10" onchange="Check_onChange_input('ExistCode',document.getElementById('RenterDrivingLicenseNaqlCode').value)" oninput="validateNumberLength(this)">
+                                            <input type="tel" class="form-control inputs number-input" asp-for="CrMasSupRenterDrivingLicenseNaqlCode" id="CrMasSupRenterDrivingLicenseNaqlCode" maxlength="10"  oninput="validateNumberLength(this)">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseNaqlCode" id="RenterDrivingLicenseNaqlCode-Error" class="text-danger"></span>
-                                                    @Html.ValidationMessage("ExistCode", null, new { @class = "text-danger" })
-                                                </div>
+                                                    <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseNaqlCode" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupRenterDrivingLicenseNaqlCode-Error"></span>
+@*                                                     @Html.ValidationMessage("CrMasSupRenterDrivingLicenseNaqlCode", null, new { @class = "text-danger" })
+ *@                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="rental-system-pin" class="form-label">@localizer["RentalSystemCode"]</label>
-                                            <input type="text" class="form-control number-input inputs" asp-for="CrMasSupRenterDrivingLicenseNaqlId" id="RenterDrivingLicenseNaqlId" maxlength="10" onchange="Check_onChange_input('ExistId',document.getElementById('RenterDrivingLicenseNaqlId').value)" oninput="validateNumberLength(this)">
+                                            <input type="tel" class="form-control number-input inputs" asp-for="CrMasSupRenterDrivingLicenseNaqlId" id="CrMasSupRenterDrivingLicenseNaqlId" maxlength="10"  oninput="validateNumberLength(this)">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseNaqlId" id="RenterDrivingLicenseNaqlId-Error" class="text-danger"></span>
-                                                    @Html.ValidationMessage("ExistId", null, new { @class = "text-danger" })
-                                                </div>
+                                                    <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseNaqlId" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupRenterDrivingLicenseNaqlId-Error"></span>
+@*                                                     @Html.ValidationMessage("CrMasSupRenterDrivingLicenseNaqlId", null, new { @class = "text-danger" })
+ *@                                                </div>
                                             </div>
                                         </div>
 
@@ -130,31 +129,67 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
+        $(document).ready(function () {
 
-        function Check_onChange_input(Exist_lang, dataField) {
-            $.ajax({
-                type: "GET",
-                url: "/MAS/RenterDrivingLicense/CheckChangedField",
-                data: { Exist_lang: Exist_lang, dataField: dataField },
-                success: function (result) {
-                    console.log("feedback", result);
-                    // Hide all previous error messages
-                    $('.invalid-feedback').hide();
+            // This To Focus On input when page load
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                $("#CrMasSupRenterDrivingLicenseEnName").focus();
+            }
+            else {
+                $("#CrMasSupRenterDrivingLicenseArName").focus();
+            }
+            //////////////////////////////////////////
 
-                    // Show new error messages if they exist
-                    if (result.errors && result.errors.length > 0) {
-                        result.errors.forEach(function (error) {
-                            // Use the ID from the error object to find the correct element
-                            $(`#${error.field}-Error`).text(error.message).show();
-                        });
+
+            function Check_onChange_input(existName, dataField) {
+                $.ajax({
+                    type: "GET",
+                    url: "/MAS/RenterDrivingLicense/CheckChangedField",
+                    data: { existName: existName, dataField: dataField },
+                    success: function (result) {
+                        console.log("feedback", result);
+                        // Hide all previous error messages
+                        $('.invalid-feedback').hide();
+
+                        // Show new error messages if they exist
+                        if (result.errors && result.errors.length > 0) {
+                            result.errors.forEach(function (error) {
+                                // Use the ID from the error object to find the correct element
+                                $(`#${error.field}-Error`).text(error.message).show();
+                            });
+                        } else {
+                            // Hide the error message if no errors
+                            $(`#${existName}-Error`).text("");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
                     }
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
-        }
+                });
+            }
 
+
+            $('#CrMasSupRenterDrivingLicenseArName').on('change', function () {
+                var newValue = $(this).val();
+                console.log("newValue", newValue)
+                Check_onChange_input('CrMasSupRenterDrivingLicenseArName', newValue);
+            });
+
+            $('#CrMasSupRenterDrivingLicenseEnName').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupRenterDrivingLicenseEnName', newValue);
+            });
+
+            $('#CrMasSupRenterDrivingLicenseNaqlCode').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupRenterDrivingLicenseNaqlCode', newValue);
+            });
+
+            $('#CrMasSupRenterDrivingLicenseNaqlId').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupRenterDrivingLicenseNaqlId', newValue);
+            });
+        });
 
     </script>
 }

@@ -2,7 +2,7 @@
 
 
 body {
-    direction: ltr;
+    direction: ltr !important;
 }
 .menu-links{
 direction: ltr;

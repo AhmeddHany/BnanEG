@@ -26,7 +26,7 @@
         @foreach (var item in Model)
         {
             <tr onclick="location.href='@Url.Action("Edit", "RenterDrivingLicense", new { id = item.CrMasSupRenterDrivingLicenseCode })'">
-                <td><p>@item.CrMasRenterInformations.Count()</p></td>
+                <td><p>@item.CrMasRenterInformations.Count().ToString("N0")</p></td>
                 <td>
                     <p>@item.CrMasSupRenterDrivingLicenseNaqlCode</p>
                 </td>

@@ -40,11 +40,11 @@
     <link href="https://fonts.googleapis.com/css?family=Cairo:500,400,700" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="~/MasSystem/css/Layout.css">
+    <link rel="stylesheet" href="~/MasSystem/css/content.css">
     @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
     {
         <link rel="stylesheet" href="~/MasSystem/css/english.css">
     }
-    <link rel="stylesheet" href="~/MasSystem/css/content.css">
     <link rel="shortcut icon" type="image/ico" href="~/Bnan.png">
 </head>
 <body>
@@ -167,13 +167,6 @@
                     </nav>
                 </div>
                 @RenderBody()
-                <!-- end of main sidebar -->
-                @* <div class="col my-2 home-wrapper1">
-                    <img src="~/MasSystem/images/Frame 2608906.svg" class="up">
-                    <img src="~/MasSystem/images/car.svg" class="car">
-                    <img src="~/MasSystem/images/Mask group down (1).svg" class="down">
-                </div> *@
-                <!-- end of content -->
             </div>
         </div>
     </div>
@@ -194,12 +187,11 @@
         function CheckValidation(subTaskCodeProcdure, status, url) {
             return $.ajax({
                 type: "GET",
-                async: false,
                 data: {
                     subTaskCodeProcdure: subTaskCodeProcdure,
                     status: status
                 },
-                url: "@Url.Action("CheckUserSubValidationProcdures", "LessorsKSA")",
+                url: "/MAS/RenterDrivingLicense/CheckUserSubValidationProcdures",
                 success: function (response) {
                     if (response == true) {
                         if (url != null) {

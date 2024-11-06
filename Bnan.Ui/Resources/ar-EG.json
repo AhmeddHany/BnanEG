@@ -388,7 +388,7 @@
   "HintSureToHoldCarBrand": "سيترتب على إيقاف بيانات ماركة السيارة إيقافها على النظام",
 
   "HintSureTo_Cannot_deleteCarBrand": "للأسف لا تستطيع حذف ماركة السيارة هذه لأنه يوجد منها عدد =",
-  "SureTo_Cannot_delete": "للأسف لا تستطيع حذفه",
+  "SureTo_Cannot_delete": "لا يمكن حذفه",
 
 
   //Car Fuels------
@@ -537,9 +537,8 @@
   "Add RenterDrivingLicense Hint": ".تمكنك هذه الصفحة من إضافة نوع رخصة قيادة جديدة",
   "Add RenterDrivingLicense Data": "إضافة رخصة قيادة",
   "Edit RenterDrivingLicense Hint": ".تمكنك هذه الصفحة من تعديل نوع رخصة القيادة ",
-  "Edit RenterDrivingLicense Data": "تعديل نوع رخصة القيادة",
+  "Edit RenterDrivingLicense Data": "تحديث رخصة القيادة",
   "RenterDrivingLicenseImg": "صورة نوع رخصة القيادة",
-
   "HintSureToRetriveHRenterDrivingLicense": "سيترتب على استرجاع إيقاف بيانات نوع رخصة القيادة وجودها على النظام.",
   "HintSureToRetriveDRenterDrivingLicense": "سيترتب على استرجاع حذف بيانات نوع رخصة القيادة وجودها على النظام.",
 
@@ -1169,6 +1168,7 @@
   "requiredValidDate": "من فضلك ادخل تاريخ صحيح",
   "requiredAgeAtLeast15": "المستأجر يجب ان يكون 15 سنة على الاقل",
   "requiredNoLengthFiled": "هذا الحقل يلازم {0} ارقام",
+  "requiredNoLengthFiledd10": "هذا الحقل يلازم 10 ارقام",
   "requiredNoLengthFiled15": "هذا الحقل يلازم 15 ارقام",
   "requiredNoLengthFiled30": "هذا الحقل يلازم اقل من 30 خانة",
   "requiredNoLengthFiled40": "هذا الحقل يلازم اقل من 40 خانة",
@@ -1198,16 +1198,16 @@
   "Reactive": "ارجاع",
   "FinishRepair": "تم الاصلاح",
   "Okay": "موافق",
-  "Cancel": "الغاء الامر",
+  "Cancel": "إلغاء الأمر",
   "Save": "حفظ",
   //Modal
   "SureToRetriveHold": "تأكيد التفعيل",
   "HintSureToRetriveH": "سيترتب على تفعيل بيانات الموظف تفعيل جميع الصلاحيات المخولة له",
   "SureToRetriveDelete": "تأكيد الارجاع",
   "HintSureToRetriveD": "سيترتب على إرجاع بيانات الموظف الدخول على النظام بموجب الصلاحيات المخولة له",
-  "SureTodelete": "تأكيد الحذف...",
+  "SureTodelete": "تأكيد الحذف",
   "HintSureTodelete": "سيترتب على حذف بيانات الموظف عدم الدخول على النظام مع الاحتفاظ بجميع الإجراءات المالية و الإدارية",
-  "SureToHold": "تأكيد الايقاف...",
+  "SureToHold": "تأكيد الايقاف",
   "HintSureToHold": "سيترتب على إيقاف بيانات الموظف تقليص بعض الصلاحيات مع إمكانية تسليم العهد المالية",
   "CancelOffer": "تأكيد الالغاء",
   "ConfirmOffers": "تأكيد تنفيذ البيع",
