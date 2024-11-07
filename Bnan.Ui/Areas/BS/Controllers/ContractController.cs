@@ -53,7 +53,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
                                                                                 new[] { "CrCasCarInformationDistributionNavigation", "CrCasCarInformationCategoryNavigation", "CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics",
                                                                                         "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation" ,"CrCasCarInformationFuelNavigation","CrCasCarInformationCvtNavigation"});
 
-            var categoryCars = carsAvailable.Select(item => item.CrCasCarInformationCategoryNavigation).Distinct().OrderBy(item => item.CrMasSupCarCategoryCode).ToList();
+            //var categoryCars = carsAvailable.Select(item => item.CrCasCarInformationCategoryNavigation).Distinct().OrderBy(item => item.CrMasSupCarCategoryCode).ToList();
+            var categoryCars = carsAvailable
+                .GroupBy(item => new { item.CrCasCarInformationCategoryNavigation?.CrMasSupCarCategoryCode })
+                .Select(group => group.First().CrCasCarInformationCategoryNavigation)
+                .OrderBy(category => category.CrMasSupCarCategoryCode)
+                .ToList();
             var CheckupCars = await _unitOfWork.CrMasSupContractCarCheckup.FindAllAsNoTrackingAsync(x => x.CrMasSupContractCarCheckupStatus == Status.Active, new[] { "CrMasSupContractCarCheckupDetails" });
             ViewBag.StartDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm", CultureInfo.InvariantCulture);
 

@@ -8809,9 +8809,14 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Get today's date in the format yyyy-mm-dd
             var today = new Date().toISOString().split('T')[0];
-            // Set the min attribute of the date input to today's date
-            document.getElementById('ExpiryDrivingLicenseDate-driver').setAttribute('min', today);
-            document.getElementById('ExpiryDrivingLicenseDate-addDriver').setAttribute('min', today);
+
+            // Get the date input elements
+            var expiryDateDriver = document.getElementById('ExpiryDrivingLicenseDate-driver');
+            var expiryDateAddDriver = document.getElementById('ExpiryDrivingLicenseDate-addDriver');
+
+            // Set the min attribute and default value (value attribute) to today's date
+            expiryDateDriver.setAttribute('min', today);
+            expiryDateAddDriver.setAttribute('min', today);
         });
     </script>
     <script>
