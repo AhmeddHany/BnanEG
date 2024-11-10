@@ -241,7 +241,7 @@
                                                             <span class="requird-field" id="requird-field_RenterIDType" asp-validation-for="@Model.Contract.RenterInfo.CrMasRenterInformationIdtype"></span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-auto">
+                                                    @* <div class="col-auto" hidden>
                                                         <button type="button" class="btn check-btn payment-button" id="UploadRenderIdPhoto" onclick="setupIDPhotoUpload('UploadRenderIdPhoto','RenterIdImg')">
                                                             <div class="row align-items-center">
                                                                 <div class="col-auto">
@@ -255,7 +255,7 @@
                                                             </div>
                                                         </button>
                                                         <input hidden asp-for="Contract.RenterInfo.CrMasRenterInformationRenterIdImage" id="RenterIdImg" />
-                                                    </div>
+                                                    </div> *@
 
                                                 </div>
                                             </div>
@@ -689,7 +689,7 @@
                                                             <span class="requird-field" id="requird-field_DriverIDType" asp-validation-for="Contract.DriverInfo.CrMasRenterInformationIdtype"></span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-auto">
+                                                    @* <div class="col-auto" hidden>
                                                         <button type="button" class="btn check-btn payment-button " id="DriverIdBtn" onclick="setupIDPhotoUpload('DriverIdBtn','DriverIdImg')">
                                                             <div class="row align-items-center">
                                                                 <div class="col-auto">
@@ -703,7 +703,7 @@
                                                             </div>
                                                         </button>
                                                         <input hidden asp-for="Contract.DriverInfo.CrMasRenterInformationRenterIdImage" id="DriverIdImg" />
-                                                    </div>
+                                                    </div> *@
                                                 </div>
                                             </div>
                                             <div class="col-lg-6">
@@ -950,7 +950,7 @@
                                                                     <label class="form-check-label" for="addational-driver"> @localizer["AdditionalDriverr"]</label>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-lg-4 ">
+                                                           @*  <div class="col-lg-4 ">
                                                                 <button type="button" class="btn check-btn payment-button " id="UploadDriverLicensePhoto" onclick="setupIDPhotoUpload('UploadDriverLicensePhoto','LicenseImage-driver')">
                                                                     <div class="row align-items-center">
                                                                         <div class="col">
@@ -964,7 +964,7 @@
                                                                     </div>
                                                                 </button>
                                                             </div>
-                                                            <input hidden asp-for="Contract.DriverInfo.CrMasRenterInformationRenterLicenseImage" id="LicenseImage-driver" />
+                                                            <input hidden asp-for="Contract.DriverInfo.CrMasRenterInformationRenterLicenseImage" id="LicenseImage-driver" /> *@
                                                         </div>
                                                         <div class="row my-3">
                                                             <div class="col-lg-12">
@@ -1139,7 +1139,7 @@
                                                             <span class="requird-field" id="requird-field_AddDriverIDType" asp-validation-for="Contract.AddDriverInfo.CrMasRenterInformationIdtype"></span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-auto">
+                                                    @* <div class="col-auto">
                                                         <button type="button" class="btn check-btn payment-button " id="AddDriverIdBtn" onclick="setupIDPhotoUpload('AddDriverIdBtn','AddDriverIdImg')">
                                                             <div class="row align-items-center">
                                                                 <div class="col-auto">
@@ -1153,7 +1153,7 @@
                                                             </div>
                                                         </button>
                                                         <input hidden asp-for="Contract.AddDriverInfo.CrMasRenterInformationRenterIdImage" id="AddDriverIdImg" />
-                                                    </div>
+                                                    </div> *@
                                                 </div>
                                             </div>
                                             <div class="col-lg-6">
@@ -1388,7 +1388,7 @@
                                                                     <span class="requird-field" asp-validation-for="Contract.AddDriverInfo.CrMasRenterInformationEmail"></span>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-lg-4 ">
+                                                          @*   <div class="col-lg-4 ">
                                                                 <button type="button" class="btn check-btn payment-button " id="UploadAddDriverLicensePhoto" onclick="setupIDPhotoUpload('UploadAddDriverLicensePhoto','LicenseImage-addDriver')">
                                                                     <div class="row align-items-center">
                                                                         <div class="col">
@@ -1402,7 +1402,7 @@
                                                                     </div>
                                                                 </button>
                                                             </div>
-                                                            <input hidden asp-for="Contract.AddDriverInfo.CrMasRenterInformationRenterLicenseImage" id="LicenseImage-addDriver" />
+                                                            <input hidden asp-for="Contract.AddDriverInfo.CrMasRenterInformationRenterLicenseImage" id="LicenseImage-addDriver" /> *@
                                                         </div>
                                                         <div class="row my-3">
                                                             <div class="col-lg-12">
@@ -1901,7 +1901,7 @@
                                                 <div class="col-auto">
                                                     <p id="payment-method">@localizer["PaymentMethod"]</p>
                                                 </div>
-                                                <div class="col-auto personal-data">
+                                                <div class="col-md-6 personal-data">
                                                     <div class="offset">
                                                         <select class="form-select-last form-select" asp-for="Contract.PaymentMethod" style="font-size:14px;" disabled>
                                                             <option selected disabled></option>
@@ -1926,9 +1926,9 @@
                                                 <div class="col-auto">
                                                     <p id="selling-point"> @localizer["SalesPoint"] </p>
                                                 </div>
-                                                <div class="col-auto personal-data">
+                                                <div class="col-md-8 personal-data">
                                                     <div class="offset">
-                                                        <select class="form-select-last form-select" asp-for="Contract.SalesPoint" style="font-size:14px;width:240px!important" disabled>
+                                                        <select class="form-select-last form-select" asp-for="Contract.SalesPoint"  disabled>
                                                         </select>
                                                     </div>
                                                     <span class="requird-field" id="requird_field_SalesPoint" asp-validation-for="@Model.Contract.SalesPoint"></span>

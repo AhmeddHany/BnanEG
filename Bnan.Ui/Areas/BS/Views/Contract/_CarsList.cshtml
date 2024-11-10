@@ -16,32 +16,30 @@
     <tr style="border-bottom: 1px solid #39629C;cursor: pointer;" >
         <td>
             <div class="row flex-row-reverse">
-                <div class="col-xl-8 next">
+                <div class="col next">
                     <div class="CarInfo" data-serial-number="@item.CrCasCarInformationSerailNo" data-price-number="@item.CrCasCarInformationPriceNo" hidden> </div>
                     <div class="row flex-row-reverse car-img-data">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="d-flex justify-content-center align-items-center h-100">
                                 <img src="@Url.Content(item.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionImage)"
                                      class="carImg" alt="@item.CrCasCarInformationConcatenateArName">
                             </div>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <div class="row w-100">
                                 <div class="col">
-                                    <div class="row car-data-row ">
-
-                                        <div class="col-lg-6 car-data">
-                                            <p>
-                                                @item.CrCasCarInformationSerailNo
-                                            </p>
-                                        </div>
+                                    <div class="row justify-content-end">
                                         <div class="col-auto car-data">
                                             <p>
                                                 @localizer["CurrentMeter"]:
                                                 @item.CrCasCarInformationCurrentMeter
                                             </p>
                                         </div>
-
+                                        <div class="col-lg-auto car-data">
+                                            <p>
+                                                @item.CrCasCarInformationSerailNo
+                                            </p>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col car-data">
@@ -57,20 +55,20 @@
                                             </P>
                                         </div>
                                     </div>
-                                    <div class="row car-data-row">
-                                        <div class="col-lg-11 car-data">
-                                            <div class="row ">
+                                    <div class="row justify-content-end">
+                                        <div class="col-lg-9 car-data">
+                                            <div class="row">
                                                 <div class="col">
                                                     <div class="row justify-content-center align-items-center flex-nowrap ">
                                                         <div class="col-auto">
-                                                            <img src="@Url.Content(item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelImage?.ToString())" class="iconss w-50">
+                                                            <img src="@Url.Content(item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelImage?.ToString())" class="iconss CarFuel">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="row justify-content-center align-items-centerflex-nowrap ">
                                                         <div class="col-auto">
-                                                            <img src="@Url.Content(item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtImage?.ToString())" class="iconss w-50">
+                                                            <img src="@Url.Content(item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtImage?.ToString())" class="iconss CarFuel">
                                                         </div>
 
                                                     </div>
@@ -138,7 +136,7 @@
                     </div>
 
                 </div>
-                <div class="col-xl-4">
+                <div class="col-xl-auto">
                     <div class="row flex-nowrap">
                         @{
                             var carPrice = item.CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics.FirstOrDefault(x => x.CrCasPriceCarBasicNo == item.CrCasCarInformationPriceNo);

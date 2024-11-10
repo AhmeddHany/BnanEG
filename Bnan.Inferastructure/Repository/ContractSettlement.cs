@@ -276,10 +276,13 @@ namespace Bnan.Inferastructure.Repository
             RenterLessor.CrCasRenterLessorContractKm += (NewCurrentMeter - car.CrCasCarInformationCurrentMeter);
             RenterLessor.CrCasRenterLessorMembership = UpdateMembershipForRenter(RenterLessor);
 
-            var contracts = _unitOfWork.CrCasRenterContractBasic.FindAll(x => (x.CrCasRenterContractBasicRenterId == RenterLessor.CrCasRenterLessorId ||
-                                                                               x.CrCasRenterContractBasicDriverId == RenterLessor.CrCasRenterLessorId ||
-                                                                               x.CrCasRenterContractBasicAdditionalDriverId == RenterLessor.CrCasRenterLessorId) && x.CrCasRenterContractBasicLessor == OldContract.CrCasRenterContractBasicLessor
-                                                                            && x.CrCasRenterContractBasicStatus != Status.Closed).Count();
+            //var contracts = _unitOfWork.CrCasRenterContractBasic.FindAll(x => (x.CrCasRenterContractBasicRenterId == RenterLessor.CrCasRenterLessorId ||
+            //                                                                   x.CrCasRenterContractBasicDriverId == RenterLessor.CrCasRenterLessorId ||
+            //                                                                   x.CrCasRenterContractBasicAdditionalDriverId == RenterLessor.CrCasRenterLessorId) && x.CrCasRenterContractBasicLessor == OldContract.CrCasRenterContractBasicLessor
+            //                                                                && x.CrCasRenterContractBasicStatus == Status.Active).Count();
+            var contracts = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicRenterId == RenterLessor.CrCasRenterLessorId &&
+                                                                              x.CrCasRenterContractBasicLessor == OldContract.CrCasRenterContractBasicLessor &&
+                                                                              x.CrCasRenterContractBasicStatus == Status.Active).Count();
             if (contracts == 1) RenterLessor.CrCasRenterLessorStatus = Status.Active;
             if (_unitOfWork.CrCasRenterLessor.Update(RenterLessor) != null) return true;
             return false;

@@ -745,6 +745,10 @@ input[type=checkbox] {
             background-color: rgba(255, 150, 38, 0.493);
         }
 
+::-webkit-scrollbar {
+    width: 9px;
+    height: 4px;
+}
 .car-catogeries {
     /* padding-right: 0px;
     padding-left: 30px; */
@@ -752,6 +756,14 @@ input[type=checkbox] {
     min-height: 450px;
     overflow-y: hidden;
 }
+.CarFuel {
+    width: 25px !important;
+}
+
+.carImg {
+    width: 100%;
+}
+
 
 .customized-button {
     --bs-btn-color: black;
@@ -1437,9 +1449,6 @@ input[type=checkbox] {
     text-align: right;
 }
 
-.iconss {
-    width: 100%;
-}
 
 /* ////////////////////////////////////// version 2 ///////////////////////////////////////////////// */
 
@@ -1696,9 +1705,6 @@ fieldset:disabled .btn {
     margin-left: 3rem;
 }
 
-.carImg {
-    width: 90%;
-}
 
 .contract-value {
     justify-content: end;
@@ -1811,7 +1817,18 @@ fieldset:disabled .btn {
         width: 200px;
     }
 }
+@media (max-width: 1300px) {
+    .car-catogeries-div {
+        flex-direction: row;
+        gap: 4px;
+        flex-wrap: nowrap;
+    }
 
+    .car-catogeries {
+        height: fit-content;
+        min-height: fit-content;
+    }
+}
 /* ************************************************************************************************************************************************************************************* */
 
 #referenceDiv {
