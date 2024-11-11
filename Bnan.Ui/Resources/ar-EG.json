@@ -1331,6 +1331,11 @@
   "Existing": "هذا الحقل مسجل من قبل",
   "Exist": "ExistAr",
   "CarIsRented": "عفوا ... هذه السيارة تم تأجيرها بالفعل ، يرجى اختيار سيارة اخرى",
+  "AuthEmplpoyee_Enter": "عفوا لا يمكنك الدخول ليس لديك صلاحية",
+  "AuthEmplpoyee_No_auth": "عفوا ليس لديك صلاحية",
+  "AuthEmplpoyee_AddMore": "لا يمكن إضافة سجل جديد",
+  "AuthEmplpoyee_NoUpdate": "لا يمكن تحديث هذا السجل",
+  "toastor_Exist": "هذا السجل مسجل من قبل",
 
   // LessorImages
   "LessorsImages Hint": "تمكنك هذه الصفحة من عرض بيانات الشركات وتعديل الصور المساندة للشركات",

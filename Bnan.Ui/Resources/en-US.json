@@ -1291,7 +1291,7 @@
 
 
 
-  //taostr
+  //toastr Message
   "toastMessage": "You do not have the authority",
   "toastMessageCreateContract": "Sorry.......There is no authority to create a contract",
   "toastRequiredField": "Please fill in all the required fields.",
@@ -1337,7 +1337,11 @@
   "Existing": "This field is Existed.",
   "Exist": "ExistEn",
   "CarIsRented": "Sorry... this car has already been rented, please choose another car",
-
+  "AuthEmplpoyee_Enter": "Sorry. You can't enter. You don't have Permission.",
+  "AuthEmplpoyee_No_auth": "Sorry. You don't have Permission.",
+  "AuthEmplpoyee_AddMore": "Sorry. You can't Add New Record.",
+  "AuthEmplpoyee_NoUpdate": "Sorry. You can't Update This Record.",
+  "toastor_Exist": "Error : This Record is Recorded before",
   // LessorImages
   "LessorsImages Hint": "The page allows you to display lessors data , and modify lessors images",
   "Edit Lessor Images Data": "Edit",

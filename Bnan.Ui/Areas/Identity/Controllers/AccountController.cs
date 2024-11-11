@@ -103,7 +103,9 @@ namespace Bnan.Ui.Areas.Identity.Controllers
                     {
                         ModelState.AddModelError("Hint", _localizer["PasswordInvalid"]);
                     }
-                    return View(model);
+                    if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Log in", "Bnan", "", "", "", "");
+                    else await ViewData.SetPageTitleAsync("تسجيل الدخول", "بنان", "", "", "", "");
+                    return View("Login",model);
                 }
                 //else if (await _authService.CheckPassword(model.UserName, model.Password) == true)
                 //{

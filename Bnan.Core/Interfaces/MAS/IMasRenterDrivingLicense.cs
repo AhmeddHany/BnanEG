@@ -7,9 +7,10 @@ namespace Bnan.Core.Interfaces.MAS
         Task<List<CrMasSupRenterDrivingLicense>> GetAllAsync();
         Task AddAsync(CrMasSupRenterDrivingLicense entity);
         Task<bool> ExistsByDetailsAsync(CrMasSupRenterDrivingLicense entity);
-        Task<bool> ExistsByArabicNameAsync(string arabicName);
-        Task<bool> ExistsByEnglishNameAsync(string englishName);
-        Task<bool> ExistsByNaqlCodeAsync(int naqlCode);
-        Task<bool> ExistsByNaqlIdAsync(int naqlId);
+
+        Task<bool> ExistsByArabicNameAsync(string arabicName, string code);
+        Task<bool> ExistsByEnglishNameAsync(string englishName, string code);
+        Task<bool> ExistsByNaqlCodeAsync(int naqlCode, string code);
+        Task<bool> ExistsByNaqlIdAsync(int naqlId, string code);
     }
 }

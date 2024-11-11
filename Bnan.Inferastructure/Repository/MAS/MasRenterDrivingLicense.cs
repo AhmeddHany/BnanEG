@@ -39,32 +39,33 @@ namespace Bnan.Inferastructure.Repository.MAS
                 )
             );
         }
-        public async Task<bool> ExistsByArabicNameAsync(string arabicName)
+
+        public async Task<bool> ExistsByArabicNameAsync(string arabicName, string code)
         {
             if (string.IsNullOrEmpty(arabicName)) return false;
             return await _unitOfWork.CrMasSupRenterDrivingLicense
-                .FindAsync(x => x.CrMasSupRenterDrivingLicenseArName == arabicName) != null;
+                .FindAsync(x => x.CrMasSupRenterDrivingLicenseArName == arabicName && x.CrMasSupRenterDrivingLicenseCode != code) != null;
         }
 
-        public async Task<bool> ExistsByEnglishNameAsync(string englishName)
+        public async Task<bool> ExistsByEnglishNameAsync(string englishName, string code)
         {
             if (string.IsNullOrEmpty(englishName)) return false;
             return await _unitOfWork.CrMasSupRenterDrivingLicense
-                .FindAsync(x => x.CrMasSupRenterDrivingLicenseEnName == englishName) != null;
+                .FindAsync(x => x.CrMasSupRenterDrivingLicenseEnName == englishName && x.CrMasSupRenterDrivingLicenseCode != code) != null;
         }
 
-        public async Task<bool> ExistsByNaqlCodeAsync(int naqlCode)
+        public async Task<bool> ExistsByNaqlCodeAsync(int naqlCode, string code)
         {
-            if (naqlCode == 0) return true;
+            if (naqlCode == 0) return false;
             return await _unitOfWork.CrMasSupRenterDrivingLicense
-                .FindAsync(x => x.CrMasSupRenterDrivingLicenseNaqlCode == naqlCode) != null;
+                .FindAsync(x => x.CrMasSupRenterDrivingLicenseNaqlCode == naqlCode && x.CrMasSupRenterDrivingLicenseCode != code) != null;
         }
 
-        public async Task<bool> ExistsByNaqlIdAsync(int naqlId)
+        public async Task<bool> ExistsByNaqlIdAsync(int naqlId, string code)
         {
-            if (naqlId == 0) return true;
+            if (naqlId == 0) return false;
             return await _unitOfWork.CrMasSupRenterDrivingLicense
-                .FindAsync(x => x.CrMasSupRenterDrivingLicenseNaqlId == naqlId) != null;
+                .FindAsync(x => x.CrMasSupRenterDrivingLicenseNaqlId == naqlId && x.CrMasSupRenterDrivingLicenseCode != code) != null;
         }
     }
 }

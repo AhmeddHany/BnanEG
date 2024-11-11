@@ -4,7 +4,7 @@
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
     ViewData["Page-title"] = @localizer["RenterDrivingLicense Data"];
     ViewData["Page-Hint"] = @localizer["RenterDrivingLicense Hint"];
 }
@@ -30,7 +30,7 @@
                 <div class="col-12 filters-col">
                     <div class="filters-custom-order">
                         <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
-                        <input class="form-check-input custom" type="radio" id="customRadioAll" name="customRadio" value="All"  />
+                        <input class="form-check-input custom" type="radio" id="customRadioAll" name="customRadio" value="All" />
                     </div>
 
                     <div class="filters-custom-order">
@@ -55,7 +55,7 @@
                 </div>
             </div>
         </form>
-        <a onclick="CheckValidation('1106003', '@Status.Insert', '@Url.Action("AddRenterDrivingLicense", "RenterDrivingLicense")')" data-bs-toggle="tooltip" data-bs-placement="top"
+        <a asp-area="MAS" asp-controller="RenterDrivingLicense" asp-action="AddRenterDrivingLicense" data-bs-toggle="tooltip" data-bs-placement="top"
            data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add RenterDrivingLicense Data"]" class="new-Page-icon" style="cursor: pointer">
             <img src="~/MasSystem/images/new driver lecience.svg" alt="new item">
         </a>
@@ -67,6 +67,19 @@
 </div>
 
 @section scripts {
+
+    <script>
+        // لجعل الحالة حسب ما هي جاية من index نشط او الكل
+        $(document).ready(function () {
+            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+        });
+        ///////
+
+        function showErrorToast_NoUpdate() {
+            toastr.options = { "positionClass": '@localizer["toastPostion"]' };
+            toastr.error('@localizer["AuthEmplpoyee_NoUpdate"]');
+        }
+    </script>
     @*Get RenterDrivingLicense Using filter*@
     <script>
         // To Handle Background
@@ -74,11 +87,11 @@
     </script>
     <script>
         //get RenterDrivingLicense By Status function
-        function GetRenterDrivingLicenseFitler(status,search) {
+        function GetRenterDrivingLicenseFitler(status, search) {
             $.ajax({
                 type: "GET",
                 data: {
-                    status: status , search :search
+                    status: status, search: search
                 },
                 url: "@Url.Action("GetRenterDrivingLicenseByStatus", "RenterDrivingLicense", new { Area = "MAS" })",
                 success: function (response) {

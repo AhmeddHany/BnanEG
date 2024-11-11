@@ -1,6 +1,4 @@
-﻿
-
-@using Bnan.Core.Extensions
+﻿@using Bnan.Core.Extensions
 @model List<CrMasSupRenterDrivingLicense>
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
@@ -14,7 +12,7 @@
             <th>@localizer["Count"]</th>
             <th> @localizer["RentalSystemCode"]</th>
             <th> @localizer["RentalSystemNo"] </th>
-            <th> @localizer["DrivingLicenseType"]</th>
+            <th class="DifferAlign"> @localizer["DrivingLicenseType"]</th>
             <th class="DifferAlign"> @localizer["RenterDrivingLicenseCode"]</th>
             <th></th>
         </tr>
@@ -25,7 +23,7 @@
         }
         @foreach (var item in Model)
         {
-            <tr onclick="location.href='@Url.Action("Edit", "RenterDrivingLicense", new { id = item.CrMasSupRenterDrivingLicenseCode })'">
+            <tr onclick="if (parseInt(@item.CrMasSupRenterDrivingLicenseCode) > 2) {location.href='@Url.Action("Edit", "RenterDrivingLicense", new { id = item.CrMasSupRenterDrivingLicenseCode })';} else{showErrorToast_NoUpdate();}">
                 <td><p>@item.CrMasRenterInformations.Count().ToString("N0")</p></td>
                 <td>
                     <p>@item.CrMasSupRenterDrivingLicenseNaqlCode</p>
@@ -33,9 +31,9 @@
                 <td>
                     <p>@item.CrMasSupRenterDrivingLicenseNaqlId</p>
                 </td>
-                <td>
+                <td class="DifferAlign">
                     <p>
-                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US"? item.CrMasSupRenterDrivingLicenseEnName: item.CrMasSupRenterDrivingLicenseArName)
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupRenterDrivingLicenseEnName : item.CrMasSupRenterDrivingLicenseArName)
                     </p>
                 </td>
                 <td class="DifferAlign">
@@ -56,6 +54,6 @@
             </tr>
             no++;
         }
-        
+
     </tbody>
 </table>

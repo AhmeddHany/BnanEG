@@ -4,6 +4,7 @@ using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Interfaces.UpdateDataBaseJobs;
 using Bnan.Core.Models;
 using Bnan.Core.Repository;
+using Bnan.Inferastructure.Filters;
 using Bnan.Inferastructure.Repository;
 using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Inferastructure.Repository.UpdateDataBaseJobs;
@@ -98,6 +99,13 @@ namespace Bnan.Inferastructure
                        }
                    };
                });
+
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<SetCurrentPathMASFilter>(); // إضافة الفلتر للمناطق المطلوبة فقط//////////////////////
+            });
+            builder.Services.AddScoped<SetCurrentPathMASFilter>(); // تسجيل الفلتر كمخدم////////////////////////////
+
             builder.Services.AddHttpClient();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<IUpdateStatusForContracts, UpdateStatusForContracts>();
@@ -159,6 +167,7 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasCarAdvantage, MasCarAdvantage>();
             builder.Services.AddScoped<IMasCarRegistration, MasCarRegistration>();
             builder.Services.AddScoped<ICarBrand, CarBrand>();
+            builder.Services.AddScoped<IMasBase, MasBase>();
 
             builder.Services.AddScoped<IRenterInformation, RenterInformation>();
 
