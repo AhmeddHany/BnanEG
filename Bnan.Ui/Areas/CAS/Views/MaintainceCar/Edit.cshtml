@@ -71,7 +71,7 @@
 
 
 <div class="sub-container-form" id="CAS">
-    <form class="needs-validation" novalidate asp-area="CAS" asp-controller="MaintainceCar" asp-action="Edit" enctype="multipart/form-data">
+    <form id="myForm" class="needs-validation" novalidate asp-area="CAS" asp-controller="MaintainceCar" asp-action="Edit" enctype="multipart/form-data">
         <div class="form-contain">
             @*Document Code*@
             <div class="row mt-2" hidden>
@@ -274,10 +274,10 @@
                         <label class="form-label" asp-for="CrCasCarDocumentsMaintenanceStartDate">@localizer["StartDate"]</label>
                     </div>
                     <div class="col-md-2 col-11 dateRelative">
-                        <input type="text" class="form-control" asp-for="CrCasCarDocumentsMaintenanceStartDate">
+                        <input type="text" class="form-control" asp-for="CrCasCarDocumentsMaintenanceStartDate" onblur="validateDateFormat(this, 'startDateErrorSpan')">
                         <div style="margin-top:2px">
                             <div style="height: 1.35em">
-                                <span asp-validation-for="@Model.CrCasCarDocumentsMaintenanceStartDate" class="text-danger"></span>
+                                <span id="startDateErrorSpan" asp-validation-for="@Model.CrCasCarDocumentsMaintenanceStartDate" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -285,10 +285,10 @@
                         <label class="form-label" for="LessorDirNameEn">@localizer["EndMaintaince"]</label>
                     </div>
                     <div class="col-md-2 col-11 dateRelative">
-                        <input type="text" class="form-control" asp-for="CrCasCarDocumentsMaintenanceEndDate">
+                        <input type="text" class="form-control" asp-for="CrCasCarDocumentsMaintenanceEndDate" onblur="validateDateFormat(this, 'endDateErrorSpan')">
                         <div style="margin-top:2px">
                             <div style="height: 1.35em">
-                                <span asp-validation-for="@Model.CrCasCarDocumentsMaintenanceEndDate" class="text-danger"></span>
+                                <span id="endDateErrorSpan" asp-validation-for="@Model.CrCasCarDocumentsMaintenanceEndDate" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -415,6 +415,22 @@
 </div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function validateDateFormat(input, spanId) {
+            const datePattern = /^\d{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])$/;
+            const errorSpan = document.getElementById(spanId);
+
+            if (!datePattern.test(input.value)) {
+                // إذا لم يكن التنسيق صحيحًا، أضف الرسالة داخل الـ span المحدد
+                errorSpan.innerText = '@localizer["PleaseEnterCorrectFormatDate"]';
+                input.classList.add("is-invalid");
+            } else {
+                // إزالة رسالة الخطأ إذا كان التنسيق صحيحًا
+                errorSpan.innerText = "";
+                input.classList.remove("is-invalid");
+            }
+        }
+    </script>
     <script>
         var currentMeterInput = document.querySelector('input[name="CrCasCarDocumentsMaintenanceCurrentMeter"]');
         currentMeterInput.addEventListener('change', function () {
@@ -593,30 +609,33 @@
         $("#saveEdit").on("click", function (event) {
             event.preventDefault();
             CheckValidation('2202003', '@Status.Save').done(function (data) {
-                if (data) {
-                    var status = document.getElementById("CrCasCarDocumentsMaintenanceStatus").value;
-                    if (status == "N") {
-                        //Check If Validiton of current meter okay or not
-                        var currentMeterMessage = document.getElementById("currentMeterValue").innerHTML;
-                        var currentMeterinput = document.getElementById("CrCasCarDocumentsMaintenanceCurrentMeter");
-                        var ConsumptionKmMessage = document.getElementById("ConsumptionKmMessage");
-                        var ConsumptionKmInput = document.getElementById("CrCasCarDocumentsMaintenanceConsumptionKm");
-                        if (currentMeterMessage != null && currentMeterMessage != "") {
-                            currentMeterinput.focus();
-                        }
-                        else if (ConsumptionKmInput.value == null || ConsumptionKmInput.value == "") {
-                            ConsumptionKmMessage.innerHTML = '@localizer["requiredFiled"]';
-                            ConsumptionKmInput.focus();
+                if ($("#myForm").valid()) {
+                    if (data) {
+                        var status = document.getElementById("CrCasCarDocumentsMaintenanceStatus").value;
+                        if (status == "N") {
+                            //Check If Validiton of current meter okay or not
+                            var currentMeterMessage = document.getElementById("currentMeterValue").innerHTML;
+                            var currentMeterinput = document.getElementById("CrCasCarDocumentsMaintenanceCurrentMeter");
+                            var ConsumptionKmMessage = document.getElementById("ConsumptionKmMessage");
+                            var ConsumptionKmInput = document.getElementById("CrCasCarDocumentsMaintenanceConsumptionKm");
+                            if (currentMeterMessage != null && currentMeterMessage != "") {
+                                currentMeterinput.focus();
+                            }
+                            else if (ConsumptionKmInput.value == null || ConsumptionKmInput.value == "") {
+                                ConsumptionKmMessage.innerHTML = '@localizer["requiredFiled"]';
+                                ConsumptionKmInput.focus();
+                            }
+                            else {
+                                $('form').submit();
+                            }
                         }
                         else {
                             $('form').submit();
                         }
-                    }
-                    else {
-                        $('form').submit();
-                    }
 
+                    }
                 }
+                
             });
         })
     </script>

@@ -90,7 +90,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var contractForSettelmentList = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && (x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire));
             ViewBag.ContractForSettelment = contractForSettelmentList.Count();
 
-            var contractForExtensionList = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicBranch == bSLayoutVM.SelectedBranch && x.CrCasRenterContractBasicStatus == Status.Active);
+            var contractForExtensionList = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicBranch == bSLayoutVM.SelectedBranch &&
+                                                                                                               x.CrCasRenterContractBasicStatus == Status.Active && x.CrCasRenterContractBasicExpectedEndDate >= DateTime.Now);
             ViewBag.ContractForExtension = contractForExtensionList.Count();
 
             var acccountReceiptList = await _unitOfWork.CrCasAccountReceipt.FindAllAsNoTrackingAsync(x => x.CrCasAccountReceiptLessorCode == lessorCode && x.CrCasAccountReceiptBranchCode == bSLayoutVM.SelectedBranch && x.CrCasAccountReceiptUser == userLogin.CrMasUserInformationCode);

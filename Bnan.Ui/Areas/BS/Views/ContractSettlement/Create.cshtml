@@ -1709,9 +1709,11 @@
                 const settlementDateString = document.getElementById("contract_real_endTime").value;
                 const settlementDateTimeString = settlementDateString + "T" + timeString;
                 const settlementDateTime = new Date(settlementDateTimeString);
-
                 const timeDiff = Math.abs(settlementDateTime.getTime() - startContractDate.getTime());
-                const diffDays = Math.floor(timeDiff / (1000 * 3600 * 24)); // Difference in days
+                let diffDays = Math.floor(timeDiff / (1000 * 3600 * 24)); // Difference in days
+                if (diffDays === 0) {
+                    diffDays = 1;
+                }
                 diffHours = Math.floor((timeDiff % (1000 * 3600 * 24)) / (1000 * 3600)); // Remaining difference in hours
                 diffMinutes = Math.floor((timeDiff % (1000 * 3600)) / (1000 * 60)); // Remaining difference in minutes
                 diff = parseInt(diffHours) - parseInt(TotalFreeHours);

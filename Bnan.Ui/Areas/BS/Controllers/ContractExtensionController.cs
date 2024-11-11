@@ -45,9 +45,9 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bsLayoutVM = await GetBranchesAndLayout();
-            var contracts = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicStatus == Status.Active &&
-                                                                           x.CrCasRenterContractBasicBranch == bsLayoutVM.SelectedBranch &&
-                                                                           x.CrCasRenterContractBasicLessor == lessorCode, new[] { "CrCasRenterContractBasicCarSerailNoNavigation", "CrCasRenterContractBasic5.CrCasRenterLessorNavigation" });
+            var contracts = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicBranch == bsLayoutVM.SelectedBranch &&
+                                                                              x.CrCasRenterContractBasicStatus == Status.Active && x.CrCasRenterContractBasicExpectedEndDate >= DateTime.Now
+                                                                            , new[] { "CrCasRenterContractBasicCarSerailNoNavigation", "CrCasRenterContractBasic5.CrCasRenterLessorNavigation" });
             var contractMap = _mapper.Map<List<ContractForExtensionVM>>(contracts);
             foreach (var contract in contractMap)
             {
@@ -107,7 +107,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                                                                                      new[] { "CrCasRenterContractBasic5.CrCasRenterLessorNavigation",
                                                                                              "CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationDistributionNavigation"}).OrderByDescending(x => x.CrCasRenterContractBasicCopy).FirstOrDefault();
             if (contract == null) return RedirectToAction("Error", "Account", new { area = "Identity", statusCode = 500 });
-            if (contract.CrCasRenterContractBasicStatus == Status.Closed) return RedirectToAction("Index", "Home");
+            if (contract.CrCasRenterContractBasicStatus == Status.Closed || contract.CrCasRenterContractBasicExpectedEndDate <= DateTime.Now) return RedirectToAction("Index", "Home");
             var authContract = _unitOfWork.CrCasRenterContractAuthorization.Find(x => x.CrCasRenterContractAuthorizationLessor == lessorCode &&
                 x.CrCasRenterContractAuthorizationContractNo == contract.CrCasRenterContractBasicNo);
             var contractMap = _mapper.Map<ContractForExtensionVM>(contract);

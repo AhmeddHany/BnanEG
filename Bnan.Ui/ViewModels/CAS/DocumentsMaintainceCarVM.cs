@@ -12,11 +12,10 @@ namespace Bnan.Ui.ViewModels.CAS
         public string? CrCasCarDocumentsMaintenanceLessor { get; set; }
         public string? CrCasCarDocumentsMaintenanceBranch { get; set; }
         public string? CrCasCarDocumentsMaintenanceNo { get; set; }
-        [RegularExpression(@"^\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])$", ErrorMessage = "PleaseEnterCorrectFormatDate")]
         public DateTime? CrCasCarDocumentsMaintenanceDate { get; set; }
-        [RegularExpression(@"^\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])$", ErrorMessage = "PleaseEnterCorrectFormatDate")]
+        [Required(ErrorMessage = "requiredFiled")]
         public DateTime? CrCasCarDocumentsMaintenanceStartDate { get; set; }
-        [RegularExpression(@"^\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])$", ErrorMessage = "PleaseEnterCorrectFormatDate")]
+        [Required(ErrorMessage = "requiredFiled")]
         public DateTime? CrCasCarDocumentsMaintenanceEndDate { get; set; }
         public DateTime? CrCasCarDocumentsMaintenanceDateAboutToFinish { get; set; }
         public int? CrCasCarDocumentsMaintenanceReadKm { get; set; }
