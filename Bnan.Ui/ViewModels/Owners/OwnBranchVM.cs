@@ -21,6 +21,7 @@
         public int? ActiveContractsCount { get; set; }
         public int? SuspendedContractsCount { get; set; }
         public int? SavedContractsCount { get; set; }
+        public int? ExpiredContractsCount { get; set; }
         public int? DocsForCompanyExpireCount { get; set; }
         public int? DocsForCompanyAboutExpireCount { get; set; }
         public int? DocsForCarExpireCount { get; set; }

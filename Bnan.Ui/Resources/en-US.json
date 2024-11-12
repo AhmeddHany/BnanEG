@@ -3,7 +3,12 @@
     "BnanCompanyMas": "Ghyoum Al-Wadaq Information Technology Company",
     "RentalSystemCode": "Rental System Code",
     "RentalSystemNo": "Rental System No",
-    "BackToHome": "Back To Home"
+    "BackToHome": "Back To Home",
+    "AuthEmplpoyee_Enter": "Sorry. You can't enter. You don't have Permission.",
+    "AuthEmplpoyee_No_auth": "Sorry. You don't have Permission.",
+    "AuthEmplpoyee_AddMore": "Sorry. You can't Add New Record.",
+    "AuthEmplpoyee_NoUpdate": "Sorry. You can't Update This Record.",
+    "toastor_Exist": "Error : This Record is Recorded before"
   },
   "Arabic": "Arabic",
   "English": "English",
@@ -1337,11 +1342,7 @@
   "Existing": "This field is Existed.",
   "Exist": "ExistEn",
   "CarIsRented": "Sorry... this car has already been rented, please choose another car",
-  "AuthEmplpoyee_Enter": "Sorry. You can't enter. You don't have Permission.",
-  "AuthEmplpoyee_No_auth": "Sorry. You don't have Permission.",
-  "AuthEmplpoyee_AddMore": "Sorry. You can't Add New Record.",
-  "AuthEmplpoyee_NoUpdate": "Sorry. You can't Update This Record.",
-  "toastor_Exist": "Error : This Record is Recorded before",
+  
   // LessorImages
   "LessorsImages Hint": "The page allows you to display lessors data , and modify lessors images",
   "Edit Lessor Images Data": "Edit",
@@ -2072,6 +2073,7 @@
   "ExpiresLater": "Expires Later",
   "ExpiresToday": "Expires Today",
   "ExpiredContract": "Expired Contract",
+  "ExpiredC": "Expired",
   "ContractNo": "Contract No",
   "EndContract": "End Contract",
   "StartContract": "Start Contract",

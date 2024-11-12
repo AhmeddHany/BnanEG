@@ -488,7 +488,7 @@
                 var branchDirectorName;
                 var redPointForBalance = '';
                 var redPointForDocsOrMaintaince = '';
-                var redPointForSuspendedContracts = '';
+                var redPointForExpiredContracts = '';
                 var redPointForUnActiveCarsCount = '';
                 var redMessageForHoldBranch = '';
                 // Display the branch details dynamically based on the selected branch
@@ -509,8 +509,8 @@
                 if (branch.mainForCarExpireCount > 0 || branch.docsForCarExpireCount > 0 || branch.docsForCompanyExpireCount > 0) {
                     redPointForDocsOrMaintaince = '<div class="filters filter2-div"></div>'; // Add quotes
                 }
-                if (branch.suspendedContractsCount > 0) {
-                    redPointForSuspendedContracts = '<div class="filters filter2-div"></div>'; // Add quotes
+                if (branch.expiredContractsCount > 0) {
+                    redPointForExpiredContracts = '<div class="filters filter2-div"></div>'; // Add quotes
                 }
                 if (branch.unActiveCarsCount > 0) {
                     redPointForUnActiveCarsCount = '<div class="filters filter2-div"></div>'; // Add quotes
@@ -538,7 +538,7 @@
                                                                                             <div class="card-body">
                                                                                                 <div class="row no-gutters align-items-center">
                                                                                                     <div class="col-sm-6 data-card">
-                                                                                                        ${redPointForSuspendedContracts}
+                                                                                                        ${redPointForExpiredContracts}
                                                                                                         <span>@localizer["Contracts"]</span>
                                                                                                     </div>
                                                                                                     <div class="col-sm-6 data-icon">
@@ -553,6 +553,9 @@
                                                                                                 <div class="row mt-2">
                                                                                                             <div class="col-md-6 data-card2"><span>@localizer["List_count"]</span> <span>${branch.activeContractsCount}</span></div>
                                                                                                             <div class="col-md-auto data-card2"><span>@localizer["Saved_count"]</span> <span>${branch.savedContractsCount}</span></div>
+                                                                                                </div>
+                                                                                                <div class="row mt-2">
+                                                                                                            <div class="col-md-6 data-card2"><span>@localizer["ExpiredC"]</span> <span>${branch.expiredContractsCount}</span></div>
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
@@ -577,6 +580,9 @@
                                                                                                 <div class="row mt-2">
                                                                                                     <div class="col data-card2"><span>@localizer["Reserved_balance"]</span> <span>${branch.crCasBranchInformationReservedBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
                                                                                                 </div>
+                                                                                                <div class="row mt-2">
+                                                                                                            <div class="col-md-6 data-card2"><span></span> <span></span></div>
+                                                                                                </div>
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -595,7 +601,7 @@
                                                                                                 </div>
                                                                                                 <hr class="card-hr">
                                                                                                 <div class="row">
-                                                                                                    <div class="col-md-7 data-card2"><span>@localizer["ContractCompany"]</span></div>
+                                                                                                    <div class="col-md-7 data-card2"><span>@localizer["ContractBranch"]</span></div>
                                                                                                     <div class="col aboutToEnd">${branch.docsForCompanyAboutExpireCount}</div>
                                                                                                     <div class="col ended">${branch.docsForCompanyExpireCount}</div>
                                                                                                 </div>

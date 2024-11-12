@@ -55,7 +55,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
 
             var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(
                 x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted,
-                new[] { "CrCasCarInformations", "CrCasRenterContractBasics", "CrCasBranchPost.CrCasBranchPostCityNavigation" }
+                new[] { "CrCasCarInformations", "CrCasRenterContractBasics", "CrCasBranchPost.CrCasBranchPostCityNavigation", "CrCasRenterContractAlerts" }
             );
 
             foreach (var branch in branches)
@@ -70,6 +70,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 OwnBranch.ClosedContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Count() ?? 0;
                 OwnBranch.SavedContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus == Status.Saved).Count() ?? 0;
                 OwnBranch.SuspendedContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus == Status.Suspend).Count() ?? 0;
+                OwnBranch.ExpiredContractsCount = branch.CrCasRenterContractAlerts?.Where(x => x.CrCasRenterContractAlertContractStatus == Status.Expire).Count() ?? 0;
 
                 var docsCompany = await _unitOfWork.CrCasBranchDocument.FindAllAsNoTrackingAsync(x => x.CrCasBranchDocumentsLessor == lessorCode && x.CrCasBranchDocumentsBranch == branch.CrCasBranchInformationCode);
                 OwnBranch.DocsForCompanyExpireCount = docsCompany.Where(x => x.CrCasBranchDocumentsStatus == Status.Expire).Count();
@@ -98,7 +99,9 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 if (OwnBranch.CrCasBranchInformationReservedBalance > 0 ||
                     OwnBranch.DocsForCompanyAboutExpireCount > 0 ||
                     OwnBranch.DocsForCompanyExpireCount > 0 ||
-                    OwnBranch.MainForCarExpireCount > 0) OwnBranch.RedPointInBranch = false;
+                    OwnBranch.MainForCarExpireCount > 0 ||
+                    OwnBranch.UnActiveCarsCount > 0 ||
+                    OwnBranch.ExpiredContractsCount > 0) OwnBranch.RedPointInBranch = false;
                 else OwnBranch.RedPointInBranch = true;
                 // Add the mapped OwnBranchVM to the list
                 OwnBranches.Add(OwnBranch);

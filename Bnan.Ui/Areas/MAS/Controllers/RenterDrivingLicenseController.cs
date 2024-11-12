@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
 using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS;
@@ -23,20 +23,19 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IUserLoginsService _userLoginsService;
         private readonly IUserService _userService;
         private readonly IMasRenterDrivingLicense _masRenterDrivingLicense;
-        private readonly IMasBase _masBase;
+        private readonly IBaseRepo _baseRepo;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<RenterDrivingLicenseController> _localizer;
 
-
         public RenterDrivingLicenseController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IMasRenterDrivingLicense masRenterDrivingLicense, IMasBase masBase,
+            IMapper mapper, IUserService userService, IMasRenterDrivingLicense masRenterDrivingLicense, IBaseRepo BaseRepo,
             IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterDrivingLicenseController> localizer) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
             _masRenterDrivingLicense = masRenterDrivingLicense;
             _userLoginsService = userLoginsService;
-            _masBase = masBase;
+            _baseRepo = BaseRepo;
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
@@ -46,14 +45,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var user = await _userManager.GetUserAsync(User);
-
-            // Set trace details
-            var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106003", "1");
 
             // Set page titles
-            var titles = await setTitle("106", "1106003", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
+            await SetPageTitleAsync(string.Empty);
 
             // Retrieve active driving licenses
             var renterDrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense
@@ -104,7 +98,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
             // Check Validition
-            if (!await _masBase.CheckValidation(user.CrMasUserInformationCode, "1106003", Status.Insert))
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, "1106003", Status.Insert))
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "RenterDrivingLicense");
@@ -114,11 +108,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             if (int.Parse(await GenerateLicenseCodeAsync()) > 9)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                await SetPageTitleAsync(OperationsString.AddAr, OperationsString.AddEn);
+                await SetPageTitleAsync(Status.Insert);
                 return RedirectToAction("Index", "RenterDrivingLicense");
             }
             // Set Title 
-            await SetPageTitleAsync(OperationsString.AddAr, OperationsString.AddEn);
+            await SetPageTitleAsync(Status.Insert);
             RenterDrivingLicenseVM renterDrivingLicenseVM = new RenterDrivingLicenseVM();
             var RenterDrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.GetAllAsync();
             renterDrivingLicenseVM.CrMasSupRenterDrivingLicenseCode = (RenterDrivingLicenses.ToList().Count > 0)
@@ -130,9 +124,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRenterDrivingLicense(RenterDrivingLicenseVM renterDrivingLicenseVM)
         {
+            var user = await _userManager.GetUserAsync(User);
+
             if (!ModelState.IsValid || renterDrivingLicenseVM == null)
             {
-                await SetPageTitleAsync(OperationsString.AddAr, OperationsString.AddEn);
+                await SetPageTitleAsync(Status.Insert);
                 return View("AddRenterDrivingLicense", renterDrivingLicenseVM);
             }
             try
@@ -140,21 +136,21 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 // Map ViewModel to Entity
                 var renterDrivingLicenseEntity = _mapper.Map<CrMasSupRenterDrivingLicense>(renterDrivingLicenseVM);
 
-                if (renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlCode == null) renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlCode = 0;
-                if (renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlId == null) renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlId = 0;
+                renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlCode ??= 0;
+                renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlId ??= 0;
 
                 // Check if the entity already exists
                 if (await _masRenterDrivingLicense.ExistsByDetailsAsync(renterDrivingLicenseEntity))
                 {
                     await AddModelErrorsAsync(renterDrivingLicenseEntity);
-                    await SetPageTitleAsync(OperationsString.AddAr, OperationsString.AddEn);
+                    await SetPageTitleAsync(Status.Insert);
                     return View("AddRenterDrivingLicense", renterDrivingLicenseVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
                 if (int.Parse(await GenerateLicenseCodeAsync()) > 9)
                 {
-                    _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    await SetPageTitleAsync(OperationsString.AddAr, OperationsString.AddEn);
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    await SetPageTitleAsync(Status.Insert);
                     return View("AddRenterDrivingLicense", renterDrivingLicenseVM);
                 }
                 // Generate and set the Driving License Code
@@ -163,35 +159,28 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseStatus = "A";
                 await _unitOfWork.CrMasSupRenterDrivingLicense.AddAsync(renterDrivingLicenseEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                // Log the addition
-                var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106003", "1");
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseArName, renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseEnName,
-                                                     "اضافة", "Add", mainTask.CrMasSysMainTasksCode, subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName,
-                                                     mainTask.CrMasSysMainTasksEnName, subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+
+
+                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                await SetPageTitleAsync(OperationsString.AddAr, OperationsString.AddEn);
+                await SetPageTitleAsync(Status.Insert);
                 return View("AddRenterDrivingLicense", renterDrivingLicenseVM);
             }
-        }
-        private async Task<string> GenerateLicenseCodeAsync()
-        {
-            var allLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.GetAllAsync();
-            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupRenterDrivingLicenseCode) + 1).ToString() : "1";
         }
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            //To Set Title !!!!!!!!!!!!!
-            var titles = await setTitle("106", "1106003", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
-
+            await SetPageTitleAsync(Status.Save);
             // if value with code less than 2 Deleted
-            if (int.Parse(id) < 2 + 1) return RedirectToAction("Index", "RenterDrivingLicense");
-
+            if (int.Parse(id) < 2 + 1)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_NoUpdate"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "RenterDrivingLicense");
+            }
             var contract = await _unitOfWork.CrMasSupRenterDrivingLicense.FindAsync(x => x.CrMasSupRenterDrivingLicenseCode == id, new[] { "CrCasRenterPrivateDriverInformations", "CrMasRenterInformations" });
             if (contract == null)
             {
@@ -199,6 +188,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "RenterDrivingLicense");
             }
             var model = _mapper.Map<RenterDrivingLicenseVM>(contract);
+            model.CrMasSupRenterDrivingLicenseNaqlCode ??= 0;
+            model.CrMasSupRenterDrivingLicenseNaqlId ??= 0;
             model.RentersHaveLicenceCount = contract.CrCasRenterPrivateDriverInformations.Count + contract.CrMasRenterInformations.Count;
             return View(model);
         }
@@ -210,107 +201,59 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             if (user == null && renterDrivingLicenseVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                await SetPageTitleAsync(OperationsString.UpdateAr, OperationsString.UpdateEn);
+                await SetPageTitleAsync(Status.Save);
                 return RedirectToAction("Index", "RenterDrivingLicense");
             }
             try
             {
-                await SetPageTitleAsync(OperationsString.UpdateAr, OperationsString.UpdateEn);
                 //Check Validition
-                if (!await _masBase.CheckValidation(user.CrMasUserInformationCode, "1106003", Status.UpdateStatus))
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, "1106003", Status.UpdateStatus))
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return View("Edit", renterDrivingLicenseVM);
                 }
                 var renterDrivingLicenseEntity = _mapper.Map<CrMasSupRenterDrivingLicense>(renterDrivingLicenseVM);
-
-
-                if (renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlCode == null) renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlCode = 0;
-                if (renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlId == null) renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlId = 0;
+                renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlCode ??= 0;
+                renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseNaqlId ??= 0;
 
                 // Check if the entity already exists
                 if (await _masRenterDrivingLicense.ExistsByDetailsAsync(renterDrivingLicenseEntity))
                 {
+                    await SetPageTitleAsync(Status.Save);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return RedirectToAction("Edit", "RenterDrivingLicense", new { id = renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseCode });
+                    return View("Edit", renterDrivingLicenseVM);
                 }
+
                 _unitOfWork.CrMasSupRenterDrivingLicense.Update(renterDrivingLicenseEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
 
-                // SaveTracing
-                var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106003", "1");
-                var RecordAr = renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseArName;
-                var RecordEn = renterDrivingLicenseEntity.CrMasSupRenterDrivingLicenseEnName;
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, OperationsString.UpdateAr, OperationsString.UpdateEn, mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Save);
                 return RedirectToAction("Index", "RenterDrivingLicense");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                await SetPageTitleAsync(OperationsString.UpdateAr, OperationsString.UpdateEn);
+                await SetPageTitleAsync(Status.Save);
                 return View("Edit", renterDrivingLicenseVM);
             }
         }
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            string sAr = "";
-            string sEn = "";
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
-            var Licence = await _unitOfWork.CrMasSupRenterDrivingLicense.GetByIdAsync(code);
-            if (Licence == null) return "false";
+            var licence = await _unitOfWork.CrMasSupRenterDrivingLicense.GetByIdAsync(code);
+            if (licence == null) return "false";
 
-            var LicenceVm = _mapper.Map<RenterDrivingLicenseVM>(Licence);
             try
             {
-                if (status == Status.Hold)
-                {
-                    if (!await _masBase.CheckValidation(user.CrMasUserInformationCode, "1106003", Status.Hold)) return "false_auth";
-                    sAr = "ايقاف";
-                    sEn = "Hold";
-                    Licence.CrMasSupRenterDrivingLicenseStatus = Status.Hold;
-                }
-                else if (status == Status.Deleted)
-                {
-                    if (!await _masBase.CheckValidation(user.CrMasUserInformationCode, "1106003", Status.Deleted)) return "false_auth";
-                    var RentersLicence = await _unitOfWork.CrMasRenterInformation.CountAsync(x => x.CrMasRenterInformationDrivingLicenseType == code);
-                    if (RentersLicence == 0)
-                    {
-                        sAr = "حذف";
-                        sEn = "Remove";
-                        Licence.CrMasSupRenterDrivingLicenseStatus = Status.Deleted;
-                    }
-                    else return "udelete";
-                }
-                else if (status == Status.UnHold)
-                {
-                    if (!await _masBase.CheckValidation(user.CrMasUserInformationCode, "1106003", Status.UnHold)) return "false_auth";
-                    sAr = "استرجاع الايقاف";
-                    sEn = "Retrive Hold";
-                    Licence.CrMasSupRenterDrivingLicenseStatus = Status.Active;
-                }
-                else if (status == Status.UnDeleted)
-                {
-                    if (!await _masBase.CheckValidation(user.CrMasUserInformationCode, "1106003", Status.UnDeleted)) return "false_auth";
-                    sAr = "استرجاع الحذف";
-                    sEn = "Retrive Delete";
-                    Licence.CrMasSupRenterDrivingLicenseStatus = Status.Active;
-                }
-                _unitOfWork.CrMasSupRenterDrivingLicense.Update(Licence);
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, "1106003", status)) return "false_auth";
+                if (status == Status.Deleted && !await _masRenterDrivingLicense.CheckIfCanDeleteIt(licence.CrMasSupRenterDrivingLicenseCode)) return "udelete";
+                licence.CrMasSupRenterDrivingLicenseStatus = status;
+                _unitOfWork.CrMasSupRenterDrivingLicense.Update(licence);
                 _unitOfWork.Complete();
-
-                // SaveTracing
-                var RecordAr = Licence.CrMasSupRenterDrivingLicenseArName;
-                var RecordEn = Licence.CrMasSupRenterDrivingLicenseEnName;
-                var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106003", "1");
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
+                await SaveTracingForLicenseChange(user, licence, status);
                 return "true";
             }
             catch (Exception ex)
@@ -318,6 +261,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return "false";
             }
         }
+
+        //Error exist message when run post action to get what is the exist field << Help Up in Back End
         private async Task AddModelErrorsAsync(CrMasSupRenterDrivingLicense entity)
         {
 
@@ -341,6 +286,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 ModelState.AddModelError("CrMasSupRenterDrivingLicenseNaqlId", _localizer["Existing"]);
             }
         }
+
+        //Error exist message when change input without run post action >> help us in front end
         [HttpGet]
         public async Task<JsonResult> CheckChangedField(string existName, string dataField)
         {
@@ -373,10 +320,36 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             return Json(new { errors });
         }
-        private async Task SetPageTitleAsync(string ArOperation, string EnOperation)
+
+        //Helper Methods 
+        private async Task<string> GenerateLicenseCodeAsync()
         {
-            var titles = await setTitle("106", "1106003", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], ArOperation, EnOperation, titles[3]);
+            var allLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupRenterDrivingLicenseCode) + 1).ToString() : "1";
+        }
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupRenterDrivingLicense licence, string status)
+        {
+            var recordAr = licence.CrMasSupRenterDrivingLicenseArName;
+            var recordEn = licence.CrMasSupRenterDrivingLicenseEnName;
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106003", "1");
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
         }
     }
 }

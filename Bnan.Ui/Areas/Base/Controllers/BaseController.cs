@@ -2,6 +2,7 @@
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
+using Bnan.Inferastructure.Extensions;
 using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.Owners;
 using Microsoft.AspNetCore.Identity;
@@ -23,35 +24,41 @@ namespace Bnan.Ui.Areas.Base.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+        // Set Title
         public async Task<string[]> setTitle(string mainTaskCode, string subTaskCode, string systemCode)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-
-            string MainTaskName;
-            string SubTaskName;
-            string SystemName;
-            string userName;
-
             string currentCulture = CultureInfo.CurrentCulture.Name;
-            if (currentCulture == "en-US")
-            {
-                MainTaskName = _unitOfWork.CrMasSysMainTasks.GetById(mainTaskCode).CrMasSysMainTasksEnName;
-                SubTaskName = _unitOfWork.CrMasSysSubTasks.GetById(subTaskCode).CrMasSysSubTasksEnName;
-                SystemName = _unitOfWork.CrMasSysSystems.GetById(systemCode).CrMasSysSystemEnName;
-                userName = currentUser.CrMasUserInformationEnName;
-            }
-            else
-            {
-                MainTaskName = _unitOfWork.CrMasSysMainTasks.GetById(mainTaskCode).CrMasSysMainTasksArName;
-                SubTaskName = _unitOfWork.CrMasSysSubTasks.GetById(subTaskCode).CrMasSysSubTasksArName;
-                SystemName = _unitOfWork.CrMasSysSystems.GetById(systemCode).CrMasSysSystemArName;
-                userName = currentUser.CrMasUserInformationArName;
 
-            }
+            // جلب البيانات دفعة واحدة
+            var mainTask = _unitOfWork.CrMasSysMainTasks.GetById(mainTaskCode);
+            var subTask = _unitOfWork.CrMasSysSubTasks.GetById(subTaskCode);
+            var system = _unitOfWork.CrMasSysSystems.GetById(systemCode);
 
-            string[] titles = { SystemName, MainTaskName, SubTaskName, userName };
-            return titles;
+            string MainTaskName = currentCulture == "en-US" ? mainTask.CrMasSysMainTasksEnName : mainTask.CrMasSysMainTasksArName;
+            string SubTaskName = currentCulture == "en-US" ? subTask.CrMasSysSubTasksEnName : subTask.CrMasSysSubTasksArName;
+            string SystemName = currentCulture == "en-US" ? system.CrMasSysSystemEnName : system.CrMasSysSystemArName;
+            string userName = currentCulture == "en-US" ? currentUser.CrMasUserInformationEnName : currentUser.CrMasUserInformationArName;
+
+            return new string[] { SystemName, MainTaskName, SubTaskName, userName };
         }
+        public async Task SetPageTitleAsync(string status)
+        {
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+            var titles = await setTitle("106", "1106003", "1");
+            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], operationAr, operationEn, titles[3]);
+        }
+        protected (string Arabic, string English) GetStatusTranslation(string status)
+        {
+            if (status == Status.ViewInformation) return ("عرض بيانات", "View Information");
+            else if (status == Status.Insert) return ("اضافة", "Insert");
+            else if (status == Status.Save) return ("تحديث", "Update");
+            else if (status == Status.Deleted) return ("حذف", "Remove");
+            else if (status == Status.UnHold) return ("استرجاع الايقاف", "Retrieve Hold");
+            else if (status == Status.UnDeleted) return ("استرجاع الحذف", "Retrieve Delete");
+            else return ("", "");
+        }
+
 
         public async Task<(CrMasSysMainTask, CrMasSysSubTask, CrMasSysSystem, CrMasUserInformation)> SetTrace(string mainTaskCode, string subTaskCode, string systemCode)
         {
@@ -132,13 +139,6 @@ namespace Bnan.Ui.Areas.Base.Controllers
             return true;
         }
 
-        [HttpGet]
-        public async Task<bool> CheckAuth(string branchCode, string salespoint, string Balance, string CarsCount, string status)
-        {
-            return false;
-        }
-
-
         public async Task<BSLayoutVM> GetBranchesAndLayout()
         {
             var userLogin = await _userManager.GetUserAsync(User);
@@ -179,8 +179,6 @@ namespace Bnan.Ui.Areas.Base.Controllers
             BsLayoutVM.Alerts.AlertOrNot = TotalCount;
             return BsLayoutVM;
         }
-
-
         public async Task<string> GetNextAccountReceiptNo(string LessorCode, string BranchCode, string procedure)
         {
             DateTime year = DateTime.Now;

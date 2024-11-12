@@ -87,7 +87,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var renterLessorList = await _unitOfWork.CrCasRenterLessor.FindAllAsNoTrackingAsync(x => x.CrCasRenterLessorCode == lessorCode);
             ViewBag.RenterLessorCount = renterLessorList.Count();
 
-            var contractForSettelmentList = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && (x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire));
+            var contractForSettelmentList = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicBranch == bSLayoutVM.SelectedBranch &&
+                                                                                                                    (x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire));
             ViewBag.ContractForSettelment = contractForSettelmentList.Count();
 
             var contractForExtensionList = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicBranch == bSLayoutVM.SelectedBranch &&

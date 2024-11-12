@@ -2080,39 +2080,39 @@
             var rentValue = totalDaysNo * parseFloat(rentalPricePerDay);
             var settelementRentValue = settlementDay * parseFloat(rentalPricePerDay)
             rentValueTotal = rentValue + settelementRentValue;
-            document.getElementById('RentalValue').textContent = rentValueTotal.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('RentalValue').textContent = rentValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             // FeesTamm
             var FeesTamm = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicAuthorizationValue));
             FeesTammValue = parseFloat(FeesTamm);
-            document.getElementById('DelegationValue').textContent = FeesTammValue.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('DelegationValue').textContent = FeesTammValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             // Advantages
             var AdvantagesValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.AdvantagesValue));
             advantagesValueTotal = totalDaysNo * parseFloat(AdvantagesValue);
-            document.getElementById('Features').textContent = advantagesValueTotal.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('Features').textContent = advantagesValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $("#ContractSettlement_AdvantagesValueTotal").val(advantagesValueTotal.toFixed(2));
 
             //AdditionalDriver
             var AdditionalDriver = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicAdditionalDriverValue));
             AdditionalDriverValue = parseFloat(AdditionalDriver);
-            document.getElementById('AdditionalDriver').textContent = AdditionalDriverValue.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('AdditionalDriver').textContent = AdditionalDriverValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             //PrivateDriver
             var PrivateDriverValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicPrivateDriverValue));
             PrivateDriverValueTotal = totalDaysNo * parseFloat(PrivateDriverValue);
-            document.getElementById('PrivateDriver').textContent = PrivateDriverValueTotal.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('PrivateDriver').textContent = PrivateDriverValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $("#ContractSettlement_PrivateDriverValueTotal").val(PrivateDriverValueTotal.toFixed(2));
 
             // Additionals
             var Additionals = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicAdditionalValue));
             AdditionalValue = parseFloat(Additionals);
-            document.getElementById('Additionals').textContent = AdditionalValue.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('Additionals').textContent = AdditionalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             //Choices
             var ChoicesValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.ChoicesValue));
             ChoicesValueTotal = totalDaysNo * parseFloat(ChoicesValue);
-            document.getElementById('Choices').textContent = ChoicesValueTotal.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('Choices').textContent = ChoicesValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $("#ContractSettlement_ChoicesValueTotal").val(ChoicesValueTotal.toFixed(2));
 
             // Additional Hours Value Total
@@ -2121,13 +2121,13 @@
             // Additional KMs Value Total
             if (AdditionalKm != null && AdditionalKm.toString() != "" && AdditionalKm != undefined) {
                 getAdditionalKmValue();
-                $("#ExcessKilos").text(AdditionalKm.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }));
+                $("#ExcessKilos").text(AdditionalKm.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }));
                 $("#ContractSettlement_AdditionalKm").val(AdditionalKm);
             }
             //Get ContractValue
 
             ContractValue = rentValueTotal + FeesTammValue + advantagesValueTotal + AdditionalDriverValue + PrivateDriverValueTotal + AdditionalValue + ChoicesValueTotal + AdditionalHoursValueTotal + AdditionalKMValueTotal;
-            document.getElementById('ContractValue').textContent = ContractValue.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('ContractValue').textContent = ContractValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $("#ContractSettlement_ContractValue").val(ContractValue.toFixed(2));
 
             // get ContractValueAfterDiscount
@@ -2137,18 +2137,18 @@
 
             ContractValueAfterDiscount = ContractValue - discountValue;
             $("#ContractSettlement_ContractValueAfterDiscount").val(ContractValueAfterDiscount.toFixed(2));
-            document.getElementById('ContractValueAfterDiscount').textContent = ContractValueAfterDiscount.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('ContractValueAfterDiscount').textContent = ContractValueAfterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             // get Tax Value
             var taxRate = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicTaxRate));
             taxValue = ContractValueAfterDiscount * (parseFloat(taxRate) / 100);
             $("#ContractSettlement_TaxValue").val(taxValue.toFixed(2));
 
-            document.getElementById('TaxValue').textContent = taxValue.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('TaxValue').textContent = taxValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             // get TotalContract
             TotalContract = ContractValueAfterDiscount + taxValue;
             $("#ContractSettlement_TotalContract").val(TotalContract.toFixed(2));
-            document.getElementById('TotalContract').textContent = TotalContract.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('TotalContract').textContent = TotalContract.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             // expenses Value
             var expensesInput = $("#expensesValue-input").val();
@@ -2157,7 +2157,7 @@
             } else {
                 ExpensesValue = 0;
             }
-            document.getElementById('TotalExpenseValue').textContent = ExpensesValue.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('TotalExpenseValue').textContent = ExpensesValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             // compensation Value
             var compensationInput = $("#compensation-input").val();
@@ -2166,7 +2166,7 @@
             } else {
                 compensationValue = 0;
             }
-            document.getElementById('TotalCompensationValue').textContent = compensationValue.toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('TotalCompensationValue').textContent = compensationValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             // AmountRequired
             var previousBalance = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasic5.CrCasRenterLessorAvailableBalance));
@@ -2185,7 +2185,7 @@
             }
 
             $("#ContractSettlement_AmountRequired").val(AmountRequired.toFixed(2));
-            document.getElementById('AmountRequired').textContent = Math.abs(AmountRequired).toFixed(2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('AmountRequired').textContent = Math.abs(AmountRequired).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
         function getAdditionalHoursValue() {
             // Additional Hours Value Total

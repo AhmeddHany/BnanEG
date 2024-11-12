@@ -67,5 +67,11 @@ namespace Bnan.Inferastructure.Repository.MAS
             return await _unitOfWork.CrMasSupRenterDrivingLicense
                 .FindAsync(x => x.CrMasSupRenterDrivingLicenseNaqlId == naqlId && x.CrMasSupRenterDrivingLicenseCode != code) != null;
         }
+
+        public async Task<bool> CheckIfCanDeleteIt(string code)
+        {
+            var rentersLicenceCount = await _unitOfWork.CrMasRenterInformation.CountAsync(x => x.CrMasRenterInformationDrivingLicenseType == code);
+            return rentersLicenceCount == 0;
+        }
     }
 }

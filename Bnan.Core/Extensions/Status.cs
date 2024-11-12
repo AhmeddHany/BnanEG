@@ -21,6 +21,7 @@
         public static string Reject { get; set; } = "Z";
         public static string All { get; set; } = "All";
         public static string Save { get; set; } = "S";
+        public static string ViewInformation { get; set; } = "VI";
         public static string Closed { get; set; } = "F";
         public static string Cancel { get; set; } = "C";
         public static string Saved { get; set; } = "S";

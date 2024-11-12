@@ -377,9 +377,9 @@
                         : "/MasSystem/images/delete.svg";
 
                     DeleteState(isDeleted);
-                    // setTimeout(function () {
-                    //     location.href = '@Url.Action("Index", "RenterDrivingLicense")';
-                    // }, 3000); // التأخير لمدة 3 ثوانٍ
+                    setTimeout(function () {
+                        location.href = '@Url.Action("Index", "RenterDrivingLicense")';
+                    }, 2000);
                 }
                 else {
                     modalIcon.src = isDeleted
@@ -470,9 +470,9 @@
                         : "/MasSystem/images/stop.svg";
 
                     StopState(isStoped);
-                    // setTimeout(function () {
-                    //     location.href = '@Url.Action("Index", "RenterDrivingLicense")';
-                    // }, 3000); // التأخير لمدة 3 ثوانٍ
+                    setTimeout(function () {
+                        location.href = '@Url.Action("Index", "RenterDrivingLicense")';
+                    }, 2000);
                 }
             }, 500);
         }

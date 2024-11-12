@@ -1,11 +1,13 @@
 ﻿using Bnan.Core;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Interfaces.UpdateDataBaseJobs;
 using Bnan.Core.Models;
 using Bnan.Core.Repository;
 using Bnan.Inferastructure.Filters;
 using Bnan.Inferastructure.Repository;
+using Bnan.Inferastructure.Repository.Base;
 using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Inferastructure.Repository.UpdateDataBaseJobs;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -108,6 +110,9 @@ namespace Bnan.Inferastructure
 
             builder.Services.AddHttpClient();
             builder.Services.AddHttpContextAccessor();
+            // New Mas
+            builder.Services.AddScoped<IBaseRepo, BaseRepo>();
+            // New Mas
             builder.Services.AddScoped<IUpdateStatusForContracts, UpdateStatusForContracts>();
             builder.Services.AddScoped<IUpdateStatusForDocsAndPriceCar, UpdateStatusForDocsAndPriceCar>();
             builder.Services.AddScoped<IUpdateStatusForUser, UpdateStatusForUser>();
@@ -167,8 +172,6 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasCarAdvantage, MasCarAdvantage>();
             builder.Services.AddScoped<IMasCarRegistration, MasCarRegistration>();
             builder.Services.AddScoped<ICarBrand, CarBrand>();
-            builder.Services.AddScoped<IMasBase, MasBase>();
-
             builder.Services.AddScoped<IRenterInformation, RenterInformation>();
 
 

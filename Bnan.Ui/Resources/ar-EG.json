@@ -3,7 +3,12 @@
     "BnanCompanyMas": "شركة غيوم الودق لتقنية المعلومات",
     "RentalSystemCode": "رمز نظام التأجير",
     "RentalSystemNo": "رقم نظام التأجير",
-    "BackToHome": "العودة للقائمة الرئيسية"
+    "BackToHome": "العودة للقائمة الرئيسية",
+    "AuthEmplpoyee_Enter": "عفوا لا يمكنك الدخول ليس لديك صلاحية",
+    "AuthEmplpoyee_No_auth": "عفوا ليس لديك صلاحية",
+    "AuthEmplpoyee_AddMore": "لا يمكن إضافة سجل جديد",
+    "AuthEmplpoyee_NoUpdate": "لا يمكن تحديث هذا السجل",
+    "toastor_Exist": "هذا السجل مسجل من قبل"
   },
 
   "Arabic": "العربية",
@@ -1331,12 +1336,7 @@
   "Existing": "هذا الحقل مسجل من قبل",
   "Exist": "ExistAr",
   "CarIsRented": "عفوا ... هذه السيارة تم تأجيرها بالفعل ، يرجى اختيار سيارة اخرى",
-  "AuthEmplpoyee_Enter": "عفوا لا يمكنك الدخول ليس لديك صلاحية",
-  "AuthEmplpoyee_No_auth": "عفوا ليس لديك صلاحية",
-  "AuthEmplpoyee_AddMore": "لا يمكن إضافة سجل جديد",
-  "AuthEmplpoyee_NoUpdate": "لا يمكن تحديث هذا السجل",
-  "toastor_Exist": "هذا السجل مسجل من قبل",
-
+  
   // LessorImages
   "LessorsImages Hint": "تمكنك هذه الصفحة من عرض بيانات الشركات وتعديل الصور المساندة للشركات",
   "Edit Lessor Images Data": "تعديل",
@@ -2057,6 +2057,7 @@
   "ExpiresLater": "تنتهي لاحقا",
   "ExpiresToday": "تنتهي اليوم",
   "ExpiredContract": "العقود المنتهية",
+  "ExpiredC": "المنتهية",
   "ContractNo": "رقم العقد",
   "EndContract": "نهاية العقد",
   "StartContract": "بداية العقد",

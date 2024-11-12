@@ -26,10 +26,10 @@
             <tr onclick="if (parseInt(@item.CrMasSupRenterDrivingLicenseCode) > 2) {location.href='@Url.Action("Edit", "RenterDrivingLicense", new { id = item.CrMasSupRenterDrivingLicenseCode })';} else{showErrorToast_NoUpdate();}">
                 <td><p>@item.CrMasRenterInformations.Count().ToString("N0")</p></td>
                 <td>
-                    <p>@item.CrMasSupRenterDrivingLicenseNaqlCode</p>
+                    <p>@(item.CrMasSupRenterDrivingLicenseNaqlCode ?? 0)</p>
                 </td>
                 <td>
-                    <p>@item.CrMasSupRenterDrivingLicenseNaqlId</p>
+                    <p>@(item.CrMasSupRenterDrivingLicenseNaqlId ?? 0)</p>
                 </td>
                 <td class="DifferAlign">
                     <p>
