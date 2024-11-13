@@ -8,6 +8,7 @@ using Bnan.Ui.ViewModels.Owners;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Quartz;
 using System.Globalization;
 
 namespace Bnan.Ui.Areas.Base.Controllers
@@ -42,17 +43,37 @@ namespace Bnan.Ui.Areas.Base.Controllers
 
             return new string[] { SystemName, MainTaskName, SubTaskName, userName };
         }
-        public async Task SetPageTitleAsync(string status)
+
+        // Set Title
+        public async Task<string[]> setTitle(string subTaskCode)
+        {
+            if (subTaskCode.Length == 7)
+            {
+                var currentUser = await _userManager.GetUserAsync(User);
+                string currentCulture = CultureInfo.CurrentCulture.Name;
+
+                // جلب البيانات دفعة واحدة
+                var subTask = _unitOfWork.CrMasSysSubTasks.GetById(subTaskCode);
+
+                string SubTaskName = currentCulture == "en-US" ? subTask.CrMasSysSubTasksConcatenateEnName : subTask.CrMasSysSubTasksConcatenateArName;
+                string userName = currentCulture == "en-US" ? currentUser.CrMasUserInformationEnName : currentUser.CrMasUserInformationArName;
+
+                return new string[] { SubTaskName, userName };
+            }
+            return new string[] { "0", "0" };
+        }
+
+        public async Task SetPageTitleAsync(string status,string subTaskCode)
         {
             var (operationAr, operationEn) = GetStatusTranslation(status);
-            var titles = await setTitle("106", "1106003", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], operationAr, operationEn, titles[3]);
+            var titles = await setTitle(subTaskCode);
+            await ViewData.SetPageTitleAsync(titles[0], operationAr, operationEn, titles[1]);
         }
         protected (string Arabic, string English) GetStatusTranslation(string status)
         {
             if (status == Status.ViewInformation) return ("عرض بيانات", "View Information");
             else if (status == Status.Insert) return ("اضافة", "Insert");
-            else if (status == Status.Save) return ("تحديث", "Update");
+            else if (status == Status.Update) return ("تحديث", "Update");
             else if (status == Status.Deleted) return ("حذف", "Remove");
             else if (status == Status.UnHold) return ("استرجاع الايقاف", "Retrieve Hold");
             else if (status == Status.UnDeleted) return ("استرجاع الحذف", "Retrieve Delete");
@@ -67,6 +88,21 @@ namespace Bnan.Ui.Areas.Base.Controllers
             var system = _unitOfWork.CrMasSysSystems.GetById(systemCode);
             var currentUser = await _userManager.GetUserAsync(User);
             return (mainTask, subTask, system, currentUser);
+        }
+
+        public async Task<(CrMasSysMainTask, CrMasSysSubTask, CrMasSysSystem, CrMasUserInformation)> SetTrace(string subTaskCode)
+        {
+            if (subTaskCode.Length == 7)
+            {
+                string systemCode = subTaskCode.Substring(0, 1).Trim();
+                string mainTaskCode = subTaskCode.Substring(1, 3).Trim();
+                var mainTask = _unitOfWork.CrMasSysMainTasks.GetById(mainTaskCode);
+                var subTask = _unitOfWork.CrMasSysSubTasks.GetById(subTaskCode);
+                var system = _unitOfWork.CrMasSysSystems.GetById(systemCode);
+                var currentUser = await _userManager.GetUserAsync(User);
+                return (mainTask, subTask, system, currentUser);
+            }
+            return (null, null, null, null);
         }
 
         //Check The Sub Validation of User With Default ActionResult(Index, Home, MAS)

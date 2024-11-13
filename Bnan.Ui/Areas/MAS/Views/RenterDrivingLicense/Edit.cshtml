@@ -7,6 +7,7 @@
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
+<link href="~/css/toastr.css" rel="stylesheet" />
 
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
@@ -66,8 +67,6 @@
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseArName" class="text-danger"></span>
                                                     <span class="text-danger" id="CrMasSupRenterDrivingLicenseArName-Error"></span>
-                                                    @Html.ValidationMessage("CrMasSupRenterDrivingLicenseArName", null, new { @class = "text-danger" })
-
                                                 </div>
                                             </div>
                                         </div>
@@ -81,8 +80,6 @@
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseEnName" class="text-danger"></span>
                                                     <span class="text-danger" id="CrMasSupRenterDrivingLicenseEnName-Error"></span>
-                                                    @Html.ValidationMessage("CrMasSupRenterDrivingLicenseEnName", null, new { @class = "text-danger" })
-
                                                 </div>
                                             </div>
                                         </div>
@@ -98,7 +95,6 @@
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseNaqlCode" class="text-danger"></span>
                                                     <span class="text-danger" id="CrMasSupRenterDrivingLicenseNaqlCode-Error"></span>
-                                                    @Html.ValidationMessage("CrMasSupRenterDrivingLicenseNaqlCode", null, new { @class = "text-danger" })
                                                 </div>
                                             </div>
                                         </div>
@@ -109,7 +105,6 @@
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasSupRenterDrivingLicenseNaqlId" class="text-danger"></span>
                                                     <span class="text-danger" id="CrMasSupRenterDrivingLicenseNaqlId-Error"></span>
-                                                    @Html.ValidationMessage("CrMasSupRenterDrivingLicenseNaqlId", null, new { @class = "text-danger" })
                                                 </div>
                                             </div>
                                         </div>
@@ -170,6 +165,8 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
+
     <script>
         // To Handle Background
         $("#wrapper").addClass("Branches-wrapper");
@@ -260,7 +257,7 @@
                         toastr.options = { "positionClass": '@localizer["toastPostion"]' };
 
                         if (result == "true") {
-                            toastr.success('@localizer["ToastEdit"]');
+                            //@*toastr.success('@localizer["ToastSave"]');*@
                             resolve(true);
                         } else if (result == "false_auth") {
                             toastr.error('@localizer["AuthEmplpoyee_No_auth"]');
@@ -378,8 +375,8 @@
 
                     DeleteState(isDeleted);
                     setTimeout(function () {
-                        location.href = '@Url.Action("Index", "RenterDrivingLicense")';
-                    }, 2000);
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterDrivingLicense")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
                 }
                 else {
                     modalIcon.src = isDeleted
@@ -471,8 +468,8 @@
 
                     StopState(isStoped);
                     setTimeout(function () {
-                        location.href = '@Url.Action("Index", "RenterDrivingLicense")';
-                    }, 2000);
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterDrivingLicense")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
                 }
             }, 500);
         }

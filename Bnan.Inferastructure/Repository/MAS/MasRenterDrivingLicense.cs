@@ -33,12 +33,13 @@ namespace Bnan.Inferastructure.Repository.MAS
                 x.CrMasSupRenterDrivingLicenseCode != entity.CrMasSupRenterDrivingLicenseCode && // Exclude the current entity being updated
                 (
                     x.CrMasSupRenterDrivingLicenseArName == entity.CrMasSupRenterDrivingLicenseArName ||
-                    x.CrMasSupRenterDrivingLicenseEnName == entity.CrMasSupRenterDrivingLicenseEnName ||
+                    x.CrMasSupRenterDrivingLicenseEnName.ToLower().Equals(entity.CrMasSupRenterDrivingLicenseEnName.ToLower()) ||
                     (x.CrMasSupRenterDrivingLicenseNaqlCode == entity.CrMasSupRenterDrivingLicenseNaqlCode && entity.CrMasSupRenterDrivingLicenseNaqlCode != 0) ||
                     (x.CrMasSupRenterDrivingLicenseNaqlId == entity.CrMasSupRenterDrivingLicenseNaqlId && entity.CrMasSupRenterDrivingLicenseNaqlId != 0)
                 )
             );
         }
+
 
         public async Task<bool> ExistsByArabicNameAsync(string arabicName, string code)
         {
@@ -50,8 +51,8 @@ namespace Bnan.Inferastructure.Repository.MAS
         public async Task<bool> ExistsByEnglishNameAsync(string englishName, string code)
         {
             if (string.IsNullOrEmpty(englishName)) return false;
-            return await _unitOfWork.CrMasSupRenterDrivingLicense
-                .FindAsync(x => x.CrMasSupRenterDrivingLicenseEnName == englishName && x.CrMasSupRenterDrivingLicenseCode != code) != null;
+            var allLicenses = await GetAllAsync();
+            return allLicenses.Any(x => x.CrMasSupRenterDrivingLicenseEnName.ToLower().Equals(englishName.ToLower()) && x.CrMasSupRenterDrivingLicenseCode != code);
         }
 
         public async Task<bool> ExistsByNaqlCodeAsync(int naqlCode, string code)
