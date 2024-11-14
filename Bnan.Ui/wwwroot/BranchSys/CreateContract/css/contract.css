@@ -66,7 +66,28 @@ body {
     text-align: end;
     width: 100%;
 }
+/*Change Place of Mobile and code*/
+.hidden-input-row .requird-field-row .requird-field {
+    text-align: start;
+}
 
+.tel-input {
+    border-radius: 0px 8px 8px 0px !important;
+}
+
+#phone2 {
+    height: 37px;
+}
+
+.counterCode {
+    border-radius: 8px 0px 0px 8px !important;
+    border-right: none;
+    background-color: white;
+    color: var(--primary-color);
+    direction: ltr;
+    height: 35px;
+}
+/*---------------------------*/
 
 .form-control1 {
     width: 100px;

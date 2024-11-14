@@ -57,12 +57,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
                                                     x.CrCasCarInformationBranchStatus != Status.Active ||
                                                     x.CrCasCarInformationOwnerStatus != Status.Active ||
                                                     (x.CrCasCarInformationStatus == Status.Active && x.CrCasCarInformationForSaleStatus == Status.ForSale)).ToList();
-            //var documentsMaintenance = _unitOfWork.CrCasCarDocumentsMaintenance.FindAll(x => x.CrCasCarDocumentsMaintenanceLessor == lessorCode && x.CrCasCarDocumentsMaintenanceBranch == bSLayoutVM.SelectedBranch, new[] { "CrCasCarDocumentsMaintenanceProceduresNavigation" }).ToList();
             ViewBag.carCount = Cars.Count();
             ViewBag.AvaliableCars = carsAvailable.Count();
             ViewBag.UnAvaliableCars = carsUnavailable.Count();
             ViewBag.RentedCars = carsRented.Count();
-            var userInfo = _unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == userLogin.CrMasUserInformationCode, new[] { "CrMasUserBranchValidities" });
+            var userInfo = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == userLogin.CrMasUserInformationCode, new[] { "CrMasUserBranchValidities" });
             var branchValidity = userInfo.CrMasUserBranchValidities.FirstOrDefault(x => x.CrMasUserBranchValidityBranch == bSLayoutVM.SelectedBranch);
 
 

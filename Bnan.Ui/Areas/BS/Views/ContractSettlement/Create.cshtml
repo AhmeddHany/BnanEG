@@ -882,7 +882,7 @@
                                                                 <p>: @localizer["AmountReserved"]</p>
                                                             </div>
                                                             <div class="col personal-data">
-                                                                <p>@Model.ContractSettlement.CrCasRenterContractBasicAmountPaidAdvance?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                                <p>@Model.ContractSettlement?.CrCasRenterContractBasic5?.CrCasRenterLessorReservedBalance?.ToString("N2", CultureInfo.InvariantCulture)</p>
                                                             </div>
                                                         </div>
                                                         <div class="row dropdown-content-row">
@@ -890,7 +890,7 @@
                                                                 <p>: @localizer["DiscountRate"]</p>
                                                             </div>
                                                             <div class="col personal-data">
-                                                                <p>%@Model.ContractSettlement.CrCasRenterContractBasicUserDiscountRate?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                                <p>%@Model.ContractSettlement?.CrCasRenterContractBasicUserDiscountRate?.ToString("N2", CultureInfo.InvariantCulture)</p>
                                                             </div>
                                                         </div>
                                                         <div class="row dropdown-content-row">
@@ -898,7 +898,7 @@
                                                                 <p>: @localizer["TaxRate"]</p>
                                                             </div>
                                                             <div class="col personal-data">
-                                                                <p>%@Model.ContractSettlement.CrCasRenterContractBasicTaxRate?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                                                <p>%@Model.ContractSettlement?.CrCasRenterContractBasicTaxRate?.ToString("N2", CultureInfo.InvariantCulture) </p>
                                                             </div>
                                                         </div>
                                                         <div class="row dropdown-content-row">
@@ -906,7 +906,7 @@
                                                                 <p> : @localizer["ExtraHours"]</p>
                                                             </div>
                                                             <div class="col personal-data">
-                                                                <p>@Model.ContractSettlement.CrCasRenterContractBasicHourMax?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                                                <p>@Model.ContractSettlement?.CrCasRenterContractBasicHourMax?.ToString("N2", CultureInfo.InvariantCulture) </p>
                                                             </div>
                                                         </div>
                                                         <div class="row dropdown-content-row">
@@ -914,7 +914,7 @@
                                                                 <p> : @localizer["ExtraHourValue"]</p>
                                                             </div>
                                                             <div class="col personal-data">
-                                                                <p>@Model.ContractSettlement.CrCasRenterContractBasicHourValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                                                <p>@Model.ContractSettlement?.CrCasRenterContractBasicHourValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
                                                             </div>
 
                                                         </div>
@@ -931,7 +931,7 @@
                                                                 <p> : @localizer["AdditionalKmValue"]  </p>
                                                             </div>
                                                             <div class="col personal-data">
-                                                                <p>@Model.ContractSettlement.CrCasRenterContractBasicKmValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                                                <p>@Model.ContractSettlement?.CrCasRenterContractBasicKmValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1916,7 +1916,7 @@
                             $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                             next_fs.style.display = "flex";
                             current_fs.style.display = "none";
-
+                            $("#compensation-input").focus();
                         } else if (!ExpensesCheckbox.checked && !CompensationCheckbox.checked) {
                             clearExpensesData();
                             clearCompensationData();
@@ -1926,12 +1926,14 @@
                             $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                             next_fs.style.display = "flex";
                             current_fs.style.display = "none";
+                            $("#CurrentMeter").focus();
                         }
                         else {
                             next_fs = current_fs.nextElementSibling;
                             $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                             next_fs.style.display = "flex";
                             current_fs.style.display = "none";
+                            $("#expensesValue-input").focus();
                         }
                     }
                     if (current_fs.id === 'SecondFieldset') {
@@ -1945,6 +1947,7 @@
                             $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                             next_fs.style.display = "flex";
                             current_fs.style.display = "none";
+                            $("#CurrentMeter").focus();
                         }
                         else {
                             $("#requird_field_CompensationValue").text('').css("color", "");
@@ -1953,6 +1956,7 @@
                             $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                             next_fs.style.display = "flex";
                             current_fs.style.display = "none";
+                            $("#compensation-input").focus();
                         }
                     }
                     if (current_fs.id === 'ThirdFieldset') {
@@ -1960,8 +1964,7 @@
                         $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                         next_fs.style.display = "flex";
                         current_fs.style.display = "none";
-
-
+                        $("#CurrentMeter").focus();
                     }
                     if (current_fs.id === 'FourthFieldset') {
                         var allChecked = true;
@@ -2002,7 +2005,6 @@
                             $("#examinationError").text('@localizer["checkUpMessageRequired"]')
                         }
                     }
-
                 }
             });
         });

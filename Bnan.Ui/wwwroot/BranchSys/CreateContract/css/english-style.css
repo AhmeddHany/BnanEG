@@ -151,6 +151,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .authDaysNum{
         flex-direction: column-reverse;
 }
+/*Change Place of Mobile and code*/
+.hidden-input-row .requird-field-row .requird-field {
+    text-align: start;
+}
+
+.tel-input {
+    border-radius: 0px 8px 8px 0px !important
+}
+
+.counterCode {
+    border-radius: 8px 0px 0px 8px !important;
+    border-right: none;
+    background-color: white;
+    color: var(--primary-color);
+    direction: ltr;
+}
+
+.input-group {
+    flex-direction: row-reverse;
+}
 @media (max-width:767px) {
     .otc-row {
         margin-right: 0rem;

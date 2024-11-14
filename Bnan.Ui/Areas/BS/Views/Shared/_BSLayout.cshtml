@@ -275,7 +275,7 @@
                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="dripicons-bell noti-icon" style="font-size: 22px;vertical-align: middle;line-height: 70px;color: #7a7272;"></i>
                             <!-- Counter - Alerts -->
-                            @if (Model.Alerts.AlertOrNot > 0)
+                            @if (Model?.Alerts?.AlertOrNot!=null&&Model?.Alerts?.AlertOrNot > 0)
                             {
                                 <span class="noti-icon-badge"></span>
                             }
@@ -304,10 +304,10 @@
                                     @localizer["ContractBranch"]
                                 </div>
                                 <div class="col-md-3 Not-ended-Docs-Num text-center">
-                                    @Model.Alerts.BranchDocumentsAboutExpire
+                                    @Model.Alerts?.BranchDocumentsAboutExpire
                                 </div>
                                 <div class="col-md-3 ended-Docs-Num">
-                                    @Model.Alerts.BranchDocumentsExpireAndRenewed
+                                    @Model.Alerts?.BranchDocumentsExpireAndRenewed
                                 </div>
                             </a>
                             <a class="dropdown-item dropdown-item-custom ">
@@ -315,10 +315,10 @@
                                     @localizer["CarsDocuments"]
                                 </div>
                                 <div class="col-md-3 Not-ended-Docs-Num text-center">
-                                    @Model.Alerts.DocumentsCarsAboutExpire
+                                    @Model.Alerts?.DocumentsCarsAboutExpire
                                 </div>
                                 <div class="col-md-3 ended-Docs-Num">
-                                    @Model.Alerts.DocumentsCarExpiredAndRenewed
+                                    @Model.Alerts?.DocumentsCarExpiredAndRenewed
                                 </div>
                             </a>
                             <a class="dropdown-item dropdown-item-custom ">
@@ -326,10 +326,10 @@
                                     @localizer["CarsFixed"]
                                 </div>
                                 <div class="col-md-3 Not-ended-Docs-Num text-center">
-                                    @Model.Alerts.MaintainceCarAboutExpire
+                                    @Model.Alerts?.MaintainceCarAboutExpire
                                 </div>
                                 <div class="col-md-3 ended-Docs-Num">
-                                    @Model.Alerts.MaintainceCarExpireAndRenewed
+                                    @Model.Alerts?.MaintainceCarExpireAndRenewed
                                 </div>
                             </a>
                             <a class="dropdown-item dropdown-item-custom ">
@@ -338,10 +338,10 @@
                                 </div>
 
                                 <div class="col-md-3 Not-ended-Docs-Num text-center">
-                                    @Model.Alerts.PriceCarAboutExpire
+                                    @Model.Alerts?.PriceCarAboutExpire
                                 </div>
                                 <div class="col-md-3 ended-Docs-Num">
-                                    @Model.Alerts.PriceCarExpireAndRenewed
+                                    @Model.Alerts?.PriceCarExpireAndRenewed
                                 </div>
                             </a>
                         </div>

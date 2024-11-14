@@ -242,19 +242,19 @@
                                                         </div>
                                                     </div>
                                                     @* <div class="col-auto" hidden>
-                                                        <button type="button" class="btn check-btn payment-button" id="UploadRenderIdPhoto" onclick="setupIDPhotoUpload('UploadRenderIdPhoto','RenterIdImg')">
-                                                            <div class="row align-items-center">
-                                                                <div class="col-auto">
-                                                                    <div class="systems-check">
-                                                                        <i class="fa-solid fa-check text-white"></i>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    @localizer["RenterIdPhoto"]
-                                                                </div>
-                                                            </div>
-                                                        </button>
-                                                        <input hidden asp-for="Contract.RenterInfo.CrMasRenterInformationRenterIdImage" id="RenterIdImg" />
+                                                    <button type="button" class="btn check-btn payment-button" id="UploadRenderIdPhoto" onclick="setupIDPhotoUpload('UploadRenderIdPhoto','RenterIdImg')">
+                                                    <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                    <div class="systems-check">
+                                                    <i class="fa-solid fa-check text-white"></i>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col">
+                                                    @localizer["RenterIdPhoto"]
+                                                    </div>
+                                                    </div>
+                                                    </button>
+                                                    <input hidden asp-for="Contract.RenterInfo.CrMasRenterInformationRenterIdImage" id="RenterIdImg" />
                                                     </div> *@
 
                                                 </div>
@@ -328,7 +328,7 @@
 
                                         </div>
                                         <hr class="version2-hr">
-                                        <div class="row hidden-input-row hidden-input-row-renter ms-2" style="display: none">
+                                        <div class="row hidden-input-row hidden-input-row-Renter ms-2" style="display: none">
                                             <input type="hidden" asp-for="Contract.RenterInfo.CrMasRenterInformationCountreyKey" />
                                             <input type="hidden" asp-for="Contract.RenterInfo.CrMasRenterInformationMobile" />
                                             <div class="col-lg-12">
@@ -438,7 +438,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="row align-items-center">
+                                                        <div class="row align-items-start">
                                                             <div class="col-md-6 requird-inputs-col">
                                                                 <label for="Region-city-tenant" class="form-label">@localizer["PostCityConcateAr"]</label>
                                                                 <input type="text" id="Region-city-tenant" class="form-control  inputs-style" asp-for="Contract.RenterInfo.CityText" maxlength="100">
@@ -446,6 +446,29 @@
                                                                 <div id="autocomplete-Cities1" class="autocomplete-items autocomplete-Cities"></div>
                                                                 <div class="row requird-field-row">
                                                                     <span class="requird-field" id="Region-city-tenant-error" asp-validation-for="Contract.RenterInfo.CityText"></span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-xl-6 requird-inputs-col">
+                                                                <label for="mobileRenter" class="form-label">
+                                                                    @localizer["RenterDriverMobile"]
+                                                                </label>
+                                                                <div class="input-group">
+                                                                    <input type="text" id="mobileRenter" asp-for="Contract.RenterInfo.CrMasRenterInformationMobile" class="form-control inputs-style tel-input" maxlength="11" autocomplete="off" autofocus="true">
+                                                                    <select id="countryCodeRenter" style="border-right: none;" asp-for="Contract.RenterInfo.CrMasRenterInformationCountreyKey" class="input-group-text select-style counterCode">
+                                                                        @foreach (var item in Model.CallingKeys)
+                                                                        {
+                                                                            <option value="@item.CrMasSysCallingKeysNo?.Trim()">@item.CrMasSysCallingKeysNo</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                                <div class="row requird-field-row">
+                                                                    <div class="col">
+                                                                        <span class="requird-field" asp-validation-for="Contract.RenterInfo.CrMasRenterInformationMobile"></span>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <span class="requird-field" asp-validation-for="Contract.RenterInfo.CrMasRenterInformationCountreyKey"></span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -690,19 +713,19 @@
                                                         </div>
                                                     </div>
                                                     @* <div class="col-auto" hidden>
-                                                        <button type="button" class="btn check-btn payment-button " id="DriverIdBtn" onclick="setupIDPhotoUpload('DriverIdBtn','DriverIdImg')">
-                                                            <div class="row align-items-center">
-                                                                <div class="col-auto">
-                                                                    <div class="systems-check">
-                                                                        <i class="fa-solid fa-check text-white"></i>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    @localizer["RenterIdPhoto"]
-                                                                </div>
-                                                            </div>
-                                                        </button>
-                                                        <input hidden asp-for="Contract.DriverInfo.CrMasRenterInformationRenterIdImage" id="DriverIdImg" />
+                                                    <button type="button" class="btn check-btn payment-button " id="DriverIdBtn" onclick="setupIDPhotoUpload('DriverIdBtn','DriverIdImg')">
+                                                    <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                    <div class="systems-check">
+                                                    <i class="fa-solid fa-check text-white"></i>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col">
+                                                    @localizer["RenterIdPhoto"]
+                                                    </div>
+                                                    </div>
+                                                    </button>
+                                                    <input hidden asp-for="Contract.DriverInfo.CrMasRenterInformationRenterIdImage" id="DriverIdImg" />
                                                     </div> *@
                                                 </div>
                                             </div>
@@ -730,7 +753,7 @@
 
                                         </div>
                                         <hr class="version2-hr">
-                                        <div class="row  hidden-input-row hidden-input-row-driver ms-2" style="display:none">
+                                        <div class="row  hidden-input-row hidden-input-row-Driver ms-2" style="display:none">
                                             <input type="hidden" id="keyCountry-driver" asp-for="Contract.DriverInfo.CrMasRenterInformationCountreyKey" />
                                             <input type="hidden" id="mobile-driver" asp-for="Contract.DriverInfo.CrMasRenterInformationMobile" />
                                             <div class="col-lg-12">
@@ -847,7 +870,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
+                                                        <div class="row align-items-start">
                                                             <div class="col-md-6 requird-inputs-col">
                                                                 <label for="Region-city-driver" class="form-label">@localizer["PostCityConcateAr"]</label>
                                                                 <input type="text" id="Region-city-driver" class="form-control  inputs-style" asp-for="Contract.DriverInfo.CityText" maxlength="100">
@@ -855,6 +878,29 @@
                                                                 <div id="autocomplete-Cities2" class="autocomplete-items autocomplete-Cities"></div>
                                                                 <div class="row requird-field-row">
                                                                     <span class="requird-field" id="Region-city-driver-error" asp-validation-for="Contract.DriverInfo.CityText"></span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-xl-6 requird-inputs-col">
+                                                                <label for="mobileDriver" class="form-label">
+                                                                    @localizer["RenterDriverMobile"]
+                                                                </label>
+                                                                <div class="input-group">
+                                                                    <input type="text" id="mobileDriver" asp-for="Contract.DriverInfo.CrMasRenterInformationMobile" class="form-control inputs-style tel-input" maxlength="11" autocomplete="off" autofocus="true">
+                                                                    <select id="countryCodeDriver" style="border-right: none;" asp-for="Contract.DriverInfo.CrMasRenterInformationCountreyKey" class="input-group-text select-style counterCode">
+                                                                        @foreach (var item in Model.CallingKeys)
+                                                                        {
+                                                                            <option value="@item.CrMasSysCallingKeysNo?.Trim()">@item.CrMasSysCallingKeysNo</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                                <div class="row requird-field-row">
+                                                                    <div class="col">
+                                                                        <span class="requird-field" asp-validation-for="Contract.DriverInfo.CrMasRenterInformationMobile"></span>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <span class="requird-field" asp-validation-for="Contract.DriverInfo.CrMasRenterInformationCountreyKey"></span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -950,19 +996,19 @@
                                                                     <label class="form-check-label" for="addational-driver"> @localizer["AdditionalDriverr"]</label>
                                                                 </div>
                                                             </div>
-                                                           @*  <div class="col-lg-4 ">
-                                                                <button type="button" class="btn check-btn payment-button " id="UploadDriverLicensePhoto" onclick="setupIDPhotoUpload('UploadDriverLicensePhoto','LicenseImage-driver')">
-                                                                    <div class="row align-items-center">
-                                                                        <div class="col">
-                                                                            @localizer["DrivingPhoto"]
-                                                                        </div>
-                                                                        <div class="col-auto">
-                                                                            <div class="systems-check">
-                                                                                <i class="fa-solid fa-check text-white"></i>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </button>
+                                                            @*  <div class="col-lg-4 ">
+                                                            <button type="button" class="btn check-btn payment-button " id="UploadDriverLicensePhoto" onclick="setupIDPhotoUpload('UploadDriverLicensePhoto','LicenseImage-driver')">
+                                                            <div class="row align-items-center">
+                                                            <div class="col">
+                                                            @localizer["DrivingPhoto"]
+                                                            </div>
+                                                            <div class="col-auto">
+                                                            <div class="systems-check">
+                                                            <i class="fa-solid fa-check text-white"></i>
+                                                            </div>
+                                                            </div>
+                                                            </div>
+                                                            </button>
                                                             </div>
                                                             <input hidden asp-for="Contract.DriverInfo.CrMasRenterInformationRenterLicenseImage" id="LicenseImage-driver" /> *@
                                                         </div>
@@ -1140,19 +1186,19 @@
                                                         </div>
                                                     </div>
                                                     @* <div class="col-auto">
-                                                        <button type="button" class="btn check-btn payment-button " id="AddDriverIdBtn" onclick="setupIDPhotoUpload('AddDriverIdBtn','AddDriverIdImg')">
-                                                            <div class="row align-items-center">
-                                                                <div class="col-auto">
-                                                                    <div class="systems-check">
-                                                                        <i class="fa-solid fa-check text-white"></i>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    @localizer["RenterIdPhoto"]
-                                                                </div>
-                                                            </div>
-                                                        </button>
-                                                        <input hidden asp-for="Contract.AddDriverInfo.CrMasRenterInformationRenterIdImage" id="AddDriverIdImg" />
+                                                    <button type="button" class="btn check-btn payment-button " id="AddDriverIdBtn" onclick="setupIDPhotoUpload('AddDriverIdBtn','AddDriverIdImg')">
+                                                    <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                    <div class="systems-check">
+                                                    <i class="fa-solid fa-check text-white"></i>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col">
+                                                    @localizer["RenterIdPhoto"]
+                                                    </div>
+                                                    </div>
+                                                    </button>
+                                                    <input hidden asp-for="Contract.AddDriverInfo.CrMasRenterInformationRenterIdImage" id="AddDriverIdImg" />
                                                     </div> *@
                                                 </div>
                                             </div>
@@ -1178,7 +1224,7 @@
 
                                         </div>
                                         <hr class="version2-hr">
-                                        <div class="row hidden-input-row hidden-input-row-addDriver ms-2" style="display:none;">
+                                        <div class="row hidden-input-row hidden-input-row-AddDriver ms-2" style="display:none;">
                                             <input type="hidden" asp-for="Contract.AddDriverInfo.CrMasRenterInformationCountreyKey" />
                                             <input type="hidden" asp-for="Contract.AddDriverInfo.CrMasRenterInformationMobile" />
                                             <div class="col-lg-12">
@@ -1291,7 +1337,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
+                                                        <div class="row align-items-start">
                                                             <div class="col-md-6 requird-inputs-col">
                                                                 <label for="Region-city-addDriver" class="form-label">@localizer["PostCityConcateAr"]</label>
                                                                 <input type="text" id="Region-city-addDriver" class="form-control  inputs-style" asp-for="Contract.AddDriverInfo.CityText" maxlength="100">
@@ -1299,6 +1345,28 @@
                                                                 <div id="autocomplete-Cities3" class="autocomplete-items autocomplete-Cities"></div>
                                                                 <div class="row requird-field-row">
                                                                     <span class="requird-field" id="Region-city-addDriver-error" asp-validation-for="Contract.AddDriverInfo.CityText"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl-6 requird-inputs-col">
+                                                                <label for="mobileAddDriver" class="form-label">
+                                                                    @localizer["RenterDriverMobile"]
+                                                                </label>
+                                                                <div class="input-group">
+                                                                    <input type="text" id="mobileAddDriver" asp-for="Contract.AddDriverInfo.CrMasRenterInformationMobile" class="form-control inputs-style tel-input" maxlength="11" autocomplete="off" autofocus="true">
+                                                                    <select id="countryCodeAddDriver" style="border-right: none;" asp-for="Contract.AddDriverInfo.CrMasRenterInformationCountreyKey" class="input-group-text select-style counterCode">
+                                                                        @foreach (var item in Model.CallingKeys)
+                                                                        {
+                                                                            <option value="@item.CrMasSysCallingKeysNo?.Trim()">@item.CrMasSysCallingKeysNo</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                                <div class="row requird-field-row">
+                                                                    <div class="col">
+                                                                        <span class="requird-field" asp-validation-for="Contract.AddDriverInfo.CrMasRenterInformationMobile"></span>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <span class="requird-field" asp-validation-for="Contract.AddDriverInfo.CrMasRenterInformationCountreyKey"></span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1388,19 +1456,19 @@
                                                                     <span class="requird-field" asp-validation-for="Contract.AddDriverInfo.CrMasRenterInformationEmail"></span>
                                                                 </div>
                                                             </div>
-                                                          @*   <div class="col-lg-4 ">
-                                                                <button type="button" class="btn check-btn payment-button " id="UploadAddDriverLicensePhoto" onclick="setupIDPhotoUpload('UploadAddDriverLicensePhoto','LicenseImage-addDriver')">
-                                                                    <div class="row align-items-center">
-                                                                        <div class="col">
-                                                                            @localizer["DrivingPhoto"]
-                                                                        </div>
-                                                                        <div class="col-auto">
-                                                                            <div class="systems-check">
-                                                                                <i class="fa-solid fa-check text-white"></i>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </button>
+                                                            @*   <div class="col-lg-4 ">
+                                                            <button type="button" class="btn check-btn payment-button " id="UploadAddDriverLicensePhoto" onclick="setupIDPhotoUpload('UploadAddDriverLicensePhoto','LicenseImage-addDriver')">
+                                                            <div class="row align-items-center">
+                                                            <div class="col">
+                                                            @localizer["DrivingPhoto"]
+                                                            </div>
+                                                            <div class="col-auto">
+                                                            <div class="systems-check">
+                                                            <i class="fa-solid fa-check text-white"></i>
+                                                            </div>
+                                                            </div>
+                                                            </div>
+                                                            </button>
                                                             </div>
                                                             <input hidden asp-for="Contract.AddDriverInfo.CrMasRenterInformationRenterLicenseImage" id="LicenseImage-addDriver" /> *@
                                                         </div>
@@ -1928,7 +1996,7 @@
                                                 </div>
                                                 <div class="col-md-8 personal-data">
                                                     <div class="offset">
-                                                        <select class="form-select-last form-select" asp-for="Contract.SalesPoint"  disabled>
+                                                        <select class="form-select-last form-select" asp-for="Contract.SalesPoint" disabled>
                                                         </select>
                                                     </div>
                                                     <span class="requird-field" id="requird_field_SalesPoint" asp-validation-for="@Model.Contract.SalesPoint"></span>
@@ -2647,9 +2715,9 @@
 
                 if (!videoElement) {
                     IDuploadContainer.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <video id="videoElement" autoplay></video>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <video id="videoElement" autoplay></video>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
                     videoElement = document.getElementById('videoElement');
                     photo = document.getElementById('photo');
 
@@ -3111,13 +3179,13 @@
                     type: "GET",
                     data: { RenterId: Id },
                 });
-                if (type === "renter") {
+                if (type == "Renter") {
                     RenterInformation = data;
                 }
-                else if (type === "driver") {
+                else if (type == "Driver") {
                     DriverInformation = data;
                 }
-                else if (type === "addDriver") {
+                else if (type === "AddDriver") {
                     AddDriverInformation = data;
                 }
                 else {
@@ -3184,32 +3252,62 @@
             }
         }
         document.getElementById("CheckRenter").addEventListener("click", async function () {
-            if ($("#msform").valid()) {
-                resetModal();// To Reset Model First
-                var renterID = document.getElementById("Contract_RenterInfo_CrMasRenterInformationId").value;
-                console.log("renterID", renterID);
-                CheckIfRenterIdExist = await GetPersonInformation(renterID, "renter");
-                UserCheck(CheckIfRenterIdExist, RenterInformation, SetInformationForRenter, ".hidden-input-row-renter", "renter", "#CheckRenter");
-            }
+            await checkPerson("Renter", SetInformationForRenter);
         });
         document.getElementById("CheckDriver").addEventListener("click", async function () {
-            if ($("#msform").valid()) {
-                resetModal();// To Reset Model First
-                var DriverID = document.getElementById("Contract_DriverInfo_CrMasRenterInformationId").value;
-                console.log("DriverID", DriverID);
-                CheckIfDriverIdExist = await GetPersonInformation(DriverID, "driver");
-                UserCheck(CheckIfDriverIdExist, DriverInformation, SetInformationForDriver, ".hidden-input-row-driver", "driver", "#CheckDriver");
-            }
+            await checkPerson("Driver", SetInformationForDriver);
         });
         document.getElementById("CheckAddDriver").addEventListener("click", async function () {
-            if ($("#msform").valid()) {
-                resetModal();// To Reset Model First
-                var AddDriverID = document.getElementById("Contract_AddDriverInfo_CrMasRenterInformationId").value;
-                console.log("AddDriverID", AddDriverID);
-                CheckIfAddDriverIdExist = await GetPersonInformation(AddDriverID, "addDriver");
-                UserCheck(CheckIfAddDriverIdExist, AddDriverInformation, SetInformationForAddDriver, ".hidden-input-row-addDriver", "addDriver", "#CheckAddDriver");
-            }
+            await checkPerson("AddDriver", SetInformationForAddDriver);
         });
+        async function checkPerson(type, SetPersonInfoFunction) {
+            if ($("#msform").valid()) {
+                var personID = document.getElementById(`Contract_${type}Info_CrMasRenterInformationId`).value;
+                console.log(`${type}ID`, personID);
+
+                await GetPersonInformation(personID, type);
+                SetPersonInfoFunction();
+
+                HandleInputAfterChecks(type);
+            }
+        }
+        function HandleInputAfterChecks(type) {
+            var hiddenInputRow = document.querySelector(`.hidden-input-row-${type}`);
+            hiddenInputRow.style.display = "block";
+            $(`#Check${type}`).hide();
+            // استدعاء ShowPrivateAndRenterIsDriver فقط عندما يكون النوع "renter"
+            if (type == "Renter") {
+                ShowPrivateAndRenterIsDriver();
+            }
+        }
+
+        // document.getElementById("CheckRenter").addEventListener("click", async function () {
+        //     if ($("#msform").valid()) {
+        //         resetModal();// To Reset Model First
+        //         var renterID = document.getElementById("Contract_RenterInfo_CrMasRenterInformationId").value;
+        //         console.log("renterID", renterID);
+        //         CheckIfRenterIdExist = await GetPersonInformation(renterID, "renter");
+        //         UserCheck(CheckIfRenterIdExist, RenterInformation, SetInformationForRenter, ".hidden-input-row-renter", "renter", "#CheckRenter");
+        //     }
+        // });
+        // document.getElementById("CheckDriver").addEventListener("click", async function () {
+        //     if ($("#msform").valid()) {
+        //         resetModal();// To Reset Model First
+        //         var DriverID = document.getElementById("Contract_DriverInfo_CrMasRenterInformationId").value;
+        //         console.log("DriverID", DriverID);
+        //         CheckIfDriverIdExist = await GetPersonInformation(DriverID, "driver");
+        //         UserCheck(CheckIfDriverIdExist, DriverInformation, SetInformationForDriver, ".hidden-input-row-driver", "driver", "#CheckDriver");
+        //     }
+        // });
+        // document.getElementById("CheckAddDriver").addEventListener("click", async function () {
+        //     if ($("#msform").valid()) {
+        //         resetModal();// To Reset Model First
+        //         var AddDriverID = document.getElementById("Contract_AddDriverInfo_CrMasRenterInformationId").value;
+        //         console.log("AddDriverID", AddDriverID);
+        //         CheckIfAddDriverIdExist = await GetPersonInformation(AddDriverID, "addDriver");
+        //         UserCheck(CheckIfAddDriverIdExist, AddDriverInformation, SetInformationForAddDriver, ".hidden-input-row-addDriver", "addDriver", "#CheckAddDriver");
+        //     }
+        // });
 
         function SetCodeAndPhoneNumberToRenter(type) {
             if (type === "renter") {
@@ -3475,7 +3573,7 @@
                     $("#nationality-type").val('');
                     // setDateForInputField("birth-date", "");
                     $("#birth-date").val("");
-                    $(".hidden-input-row-renter").hide();
+                    $(".hidden-input-row-Renter").hide();
                     $("#PrivateDriverDiv").hide();
                     $("#RenterIsdriverDiv").hide();
                     $("#seacrh_icon_Renter").hide();
@@ -3530,50 +3628,6 @@
                 }, 500);
             }
         }
-        function SaveRenterInfo() {
-            // Collect form data
-            var formData = {
-                CrMasRenterInformationId: $("#Contract_RenterInfo_CrMasRenterInformationId").val(),
-                CrMasRenterInformationIdtype: $("#nationality-type").val(),
-                // CrMasRenterInformationBirthDate: $("#birth-date").val(),
-                BirthDate: $("#birth-date").val(),
-                CrMasRenterInformationArName: $("#AR-name-tenant").val(),
-                CrMasRenterInformationEnName: $("#EN-name-tenant").val(),
-                CrMasRenterInformationArAddress: $("#AR-adress-tenant").val(),
-                CrMasRenterInformationEnAddress: $("#EN-adress-tenant").val(),
-                CrMasRenterInformationCity: $("#Region-city-tenant-code").val(),
-                CityText: $("#Region-city-tenant").val(),
-                CrMasRenterInformationEmployer: $("#tenant-workplace-code").val(),
-                CrMasRenterInformationEmployerName: $("#tenant-workplace").val(),
-                CrMasRenterInformationProfession: $("#Profession-tenant").val(),
-                CrMasRenterInformationEmail: $("#Email-tenant").val(),
-                CrMasRenterInformationReasons: $("#Reasons-tenant").val(),
-                CrMasRenterInformationGender: $('.genderRenter[type="radio"]:checked').val(),
-                CrMasRenterInformationNationality: $("#nationality-tenant-code").val(),
-                CrMasRenterInformationCountreyKey: codeCountryForRenter,
-                CrMasRenterInformationMobile: phoneForRenter,
-                CrMasRenterInformationRenterIdImage: $("#RenterIdImg").val(),
-                // Add more fields as needed
-            };
-            $.ajax({
-                url: "/BS/Contract/AddRenterInformation",
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(formData),
-                success: function (response) {
-                    RenterInformation = response;
-                    console.log("RenterInformation", RenterInformation);
-                    if (response != null) {
-                        return true; // Renter exists
-                    }
-                },
-                error: function (xhr, status, error) {
-                    toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                    toastr.error('@localizer["SomethingWrongPleaseCallAdmin"]');
-                    return false; // Error occurred or Renter doesn't exist
-                }
-            });
-        }
         function SetInformationForRenter() {
             if (RenterInformation != null) {
                 document.getElementById("AR-name-tenant").value = RenterInformation.personalArName;
@@ -3587,6 +3641,8 @@
                 document.getElementById("Email-tenant").value = RenterInformation.personalEmail;
                 document.getElementById("Reasons-tenant").value = RenterInformation.reasons;
                 document.getElementById("Contract_RenterInfo_OldSignature").value = RenterInformation.signture;
+                document.getElementById("mobileRenter").value = RenterInformation.mobileNumber;
+                document.getElementById("countryCodeRenter").value = RenterInformation.keyCountry;
                 // Set the selected radio button by id
                 var radioButtonId = "genderRenter-" + RenterInformation.genderCode;
                 $("#" + radioButtonId).prop('checked', true);
@@ -3655,12 +3711,10 @@
             RenterInformation.employerCode = document.getElementById("tenant-workplace-code").value;
             RenterInformation.professionsCode = document.getElementById("Profession-tenant").value;
             RenterInformation.personalEmail = document.getElementById("Email-tenant").value;
-            RenterInformation.keyCountry = codeCountryForRenter;
-            RenterInformation.mobileNumber = phoneForRenter;
+            RenterInformation.keyCountry = document.getElementById("countryCodeRenter").value;
+            RenterInformation.mobileNumber = document.getElementById("mobileRenter").value;
             RenterInformation.arMembership = "مشترك";
             RenterInformation.enMembership = "Mutual";
-            document.getElementById("Contract_RenterInfo_CrMasRenterInformationMobile").value = phoneForRenter;
-            document.getElementById("Contract_RenterInfo_CrMasRenterInformationCountreyKey").value = codeCountryForRenter;
             RenterInformation.reasons = document.getElementById("Reasons-tenant").value;
 
             // Handle the selected radio button for gender
@@ -3748,7 +3802,7 @@
 
                     $("#nationality-type-driver").val('');
                     $("#birth-date-driver").val("");
-                    $(".hidden-input-row-driver").hide();
+                    $(".hidden-input-row-Driver").hide();
                     $("#seacrh_icon_Driver").hide();
                     $("#CheckDriver").show();
                     $("#country-code").val($("#country-code option:first").val());
@@ -3803,7 +3857,7 @@
             $("#birth-date-driver").val("");
             $("#nationality-type-driver").val('');
             $("#Contract_DriverInfo_CrMasRenterInformationId").val('');
-            $(".hidden-input-row-driver").hide();
+            $(".hidden-input-row-Driver").hide();
             DriverInformation = null;
             EmptyDriverInput();
         }
@@ -3825,7 +3879,7 @@
                 }
             });
             $("#CheckDriver").hide();
-            $(".hidden-input-row-driver").show();
+            $(".hidden-input-row-Driver").show();
         }
         function enableAllInputsForDriver() {
             const fieldset = document.querySelector('.disable-all-inputs');
@@ -3844,55 +3898,8 @@
                     input.disabled = false;
                 }
             });
-            $(".hidden-input-row-driver").hide();
+            $(".hidden-input-row-Driver").hide();
             $("#CheckDriver").show();
-        }
-        function SaveDriverInfo() {
-            // Collect form data
-            var formData = {
-                CrMasRenterInformationId: $("#Contract_DriverInfo_CrMasRenterInformationId").val(),
-                CrMasRenterInformationIdtype: $("#nationality-type").val(),
-                // CrMasRenterInformationBirthDate: $("#birth-date").val(),
-                BirthDate: $("#birth-date-driver").val(),
-                CrMasRenterInformationArName: $("#AR-name-driver").val(),
-                CrMasRenterInformationEnName: $("#EN-name-driver").val(),
-                CrMasRenterInformationArAddress: $("#AR-adress-driver").val(),
-                CrMasRenterInformationEnAddress: $("#EN-adress-driver").val(),
-                CrMasRenterInformationCity: $("#Region-city-driver-code").val(),
-                CityText: $("#Region-city-driver").val(),
-                CrMasRenterInformationEmployer: $("#driver-workplace-code").val(),
-                CrMasRenterInformationEmployerName: $("#driver-workplace").val(),
-                CrMasRenterInformationProfession: $("#Profession-driver").val(),
-                CrMasRenterInformationEmail: $("#Email-driver").val(),
-                CrMasRenterInformationReasons: $("#Reasons-driver").val(),
-                CrMasRenterInformationGender: $('.genderDriver[type="radio"]:checked').val(),
-                CrMasRenterInformationNationality: $("#nationality-driver-code").val(),
-                CrMasRenterInformationCountreyKey: codeCountryForRenter,
-                CrMasRenterInformationMobile: phoneForRenter,
-                CrMasRenterInformationRenterIdImage: $("#DriverIdImg").val(),
-                CrMasRenterInformationDrivingLicenseNo: $("#licence-driver-number").val(),
-                CrMasRenterInformationDrivingLicenseType: $("#licence-driver-type").val(),
-                ExpiryLicenseDate: $("#ExpiryDrivingLicenseDate-driver").val(),
-                // Add more fields as needed
-            };
-            $.ajax({
-                url: "/BS/Contract/AddRenterInformation",
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(formData),
-                success: function (response) {
-                    DriverInformation = response;
-                    console.log("DriverInformation", DriverInformation);
-                    if (response != null) {
-                        return true; // Renter exists
-                    }
-                },
-                error: function (xhr, status, error) {
-                    toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                    toastr.error('@localizer["SomethingWrongPleaseCallAdmin"]');
-                    return false; // Error occurred or Renter doesn't exist
-                }
-            });
         }
         function SetInformationForDriver() {
             if (DriverInformation != null) {
@@ -3908,8 +3915,8 @@
                 document.getElementById("licence-driver-number").value = DriverInformation.licenseCode;
                 document.getElementById("licence-driver-type").value = DriverInformation.licenseType;
                 document.getElementById("ExpiryDrivingLicenseDate-driver").value = DriverInformation.licenseExpiryDate ? DriverInformation.licenseExpiryDate.split('T')[0] : '';
-                document.getElementById("mobile-driver").value = phoneForDriver;
-                document.getElementById("keyCountry-driver").value = codeCountryForDriver;
+                document.getElementById("mobileDriver").value = DriverInformation.mobileNumber;
+                document.getElementById("countryCodeDriver").value = DriverInformation.keyCountry;
                 // Set the selected radio button by id
                 var radioButtonId = "genderDriver-" + DriverInformation.genderCode;
                 $("#" + radioButtonId).prop('checked', true);
@@ -3965,8 +3972,8 @@
             document.getElementById("nationality-driver").value = DriverInformation.personalArNationality || DriverInformation.personalEnNationality;
             document.getElementById("driver-workplace").value = DriverInformation.employerArName || DriverInformation.employerEnName;
             document.getElementById("Region-city-driver").value = DriverInformation.cityAr || DriverInformation.cityEn;
-            document.getElementById("mobile-driver").value = DriverInformation.mobileNumber
-            document.getElementById("keyCountry-driver").value = DriverInformation.keyCountry
+            document.getElementById("mobileDriver").value = DriverInformation.mobileNumber
+            document.getElementById("countryCodeDriver").value = DriverInformation.keyCountry
             document.getElementById("licence-driver-number").value = DriverInformation.licenseCode;
             document.getElementById("licence-driver-type").value = DriverInformation.licenseType;
             document.getElementById("ExpiryDrivingLicenseDate-driver").value = DriverInformation.licenseExpiryDate ? DriverInformation.licenseExpiryDate.split('T')[0] : '';
@@ -3992,7 +3999,7 @@
                 $('.genderDriver[type="radio"]').prop('checked', false);
                 $('#divGenderDriver').remove();
             }
-            $(".hidden-input-row-driver").show();
+            $(".hidden-input-row-Driver").show();
             console.log("DriverInformation", DriverInformation);
         }
         function SetInformationForDriverIfNotExist() {
@@ -4025,8 +4032,8 @@
             DriverInformation.employerCode = document.getElementById("driver-workplace-code").value;
             DriverInformation.professionsCode = document.getElementById("Profession-driver").value;
             DriverInformation.personalEmail = document.getElementById("Email-driver").value;
-            DriverInformation.keyCountry = codeCountryForDriver;
-            DriverInformation.mobileNumber = phoneForDriver;
+            DriverInformation.keyCountry = document.getElementById("countryCodeDriver").value;
+            DriverInformation.mobileNumber = document.getElementById("mobileDriver").value;
             DriverInformation.arMembership = "مشترك";
             DriverInformation.enMembership = "Mutual";
             var selectedOption = $("#licence-driver-type option:selected");
@@ -4165,7 +4172,7 @@
             $("#birth-date-AddDriver").val("");
             $("#nationality-type-addDriver").val('');
             $("#Contract_AddDriverInfo_CrMasRenterInformationId").val('');
-            $(".hidden-input-row-addDriver").hide();
+            $(".hidden-input-row-AddDriver").hide();
             AddDriverInformation = null;
             EmptyAddDriverInput();
             console.log("Run EmptyAddDriverRequiredInputs")
@@ -4177,6 +4184,8 @@
                 document.getElementById("AR-adress-addDriver").value = AddDriverInformation.postArDistictName;
                 document.getElementById("EN-adress-addDriver").value = AddDriverInformation.postEnDistictName;
                 document.getElementById("nationality-addDriver-code").value = AddDriverInformation.nationalityCode;
+                document.getElementById("mobileAddDriver").value = AddDriverInformation.mobileNumber;
+                document.getElementById("countryCodeAddDriver").value = AddDriverInformation.keyCountry;
                 document.getElementById("Region-city-addDriver-code").value = AddDriverInformation.cityCode;
                 document.getElementById("addDriver-workplace-code").value = AddDriverInformation.employerCode;
                 document.getElementById("Profession-addDriver").value = AddDriverInformation.professionsCode;
@@ -4232,7 +4241,8 @@
             AddDriverInformation.birthDate = document.getElementById("birth-date-AddDriver").value;
             AddDriverInformation.personalArName = document.getElementById("AR-name-addDriver").value;
             AddDriverInformation.personalEnName = document.getElementById("EN-name-addDriver").value;
-
+            AddDriverInformation.mobileNumber = document.getElementById("mobileAddDriver").value;
+            AddDriverInformation.keyCountry = document.getElementById("countryCodeAddDriver").value;
             AddDriverInformation.postArDistictName = document.getElementById("AR-adress-addDriver").value;
             AddDriverInformation.postEnDistictName = document.getElementById("EN-adress-addDriver").value;
 
@@ -4258,8 +4268,6 @@
             AddDriverInformation.licenseCode = document.getElementById("licence-addDriver-number").value;
             AddDriverInformation.licenseType = document.getElementById("licence-addDriver-type").value;
             AddDriverInformation.licenseExpiryDate = document.getElementById("ExpiryDrivingLicenseDate-addDriver").value;
-            AddDriverInformation.keyCountry = codeCountryForAddDriver;
-            AddDriverInformation.mobileNumber = phoneForAddDriver;
             AddDriverInformation.arMembership = "مشترك";
             AddDriverInformation.enMembership = "Mutual";
             document.getElementById("Contract_AddDriverInfo_CrMasRenterInformationMobile").value = phoneForAddDriver;
@@ -4340,97 +4348,91 @@
             PreviousField = $("#progressbar li").eq($("fieldset").index(next_fs))[0].id;
             if (currentField === "tenant") {
                 if ($("#msform").valid()) {
-                    if (CheckIfConfirmByPhone) {
-                        if (!listsIsTrueOrNotRenter) {
-                            console.log("listsIsTrueOrNotRenter", listsIsTrueOrNotRenter)
-                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                            toastr.error('@localizer["PleaseCheckInputs"]');
-                            return;
-                        }
-                        SetInformationForRenterIfNotExist();
-                        var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
-                        var currentDate = new Date(dateTimeNow);
-                        var city = $("#Region-city-tenant-code").val();
-                        var employeerWorkPlace = $("#tenant-workplace").val();
-                        console.log("employeerWorkPlace", employeerWorkPlace);
-                        console.log("employeerWorkPlaceCode", $("#tenant-workplace-code").val());
-                        var id = true;
-                        var address = true;
-                        var employeer = true;
-                        var chechAuthUser;
-                        CheckSigntureImgForRenter();
-                        if (city == null || city == "") {
-                            address = false;
-                        }
-                        if (employeerWorkPlace == null || employeerWorkPlace == "") {
-                            employeer = false;
-                        }
 
-                        // This Check to If Renter Need Private Driver Or not
-                        var privateDriverRadio1 = document.getElementById("PrivateDriver");
-                        var privateDriverID = $("#Private-Driver-selectt").val();
-                        if (privateDriverRadio1.checked && privateDriverID == null) {
-                            $("#PrivateDriverRequired").text('@localizer["PleaseChooseYourDriver"]').css("color", "red");
-                        }
-                        else {
-                            if (privateDriverRadio1.checked && privateDriverID != null) {
-                                // await GetPersonInformation(privateDriverID, "privateDriver");
-                                await GetPrivateDriverInformation(privateDriverID);
-                                $("#PrivateDriverRequired").text('').css("color", "");
-                                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                next_fs.show();
-                                current_fs.hide();
-                                tab++;
-                            }
-                            else if (!id || !address || !employeer) {
-                                $.ajax({
-                                    url: "/BS/Contract/CheckAuthUser", // Replace YourController with your actual controller name
-                                    type: "GET",
-                                    data: { id: id, address: address, employeer: employeer },
-                                    success: function (data) {
-                                        var check = data;
-                                        if (check == "id") {
-                                            $("#PrivateDriverRequired").text('').css("color", "");
-                                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                            toastr.error('@localizer["IdIsExpriredAndYouNotAuth"]');
-                                            return;
-                                        }
-                                        else if (check == "address") {
-                                            $("#PrivateDriverRequired").text('').css("color", "");
-                                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                            toastr.error('@localizer["AddressIsExpriredAndYouNotAuth"]');
-                                            return
-                                        }
-                                        else if (check == "employeer") {
-                                            $("#tenant-workplace").focus();
-                                            $("#PrivateDriverRequired").text('').css("color", "");
-                                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                            toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
-                                            return
-                                        }
-                                        else {
-                                            $("#PrivateDriverRequired").text('').css("color", "");
-                                            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                            next_fs.show();
-                                            current_fs.hide();
-                                            tab++;
-                                        }
-                                    }
-                                });
-                            }
-                            else {
-                                $("#PrivateDriverRequired").text('').css("color", "");
-                                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                next_fs.show();
-                                current_fs.hide();
-                                tab++;
-                            }
-                        }
+                    if (!listsIsTrueOrNotRenter) {
+                        console.log("listsIsTrueOrNotRenter", listsIsTrueOrNotRenter)
+                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                        toastr.error('@localizer["PleaseCheckInputs"]');
+                        return;
+                    }
+                    SetInformationForRenterIfNotExist();
+                    var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
+                    var currentDate = new Date(dateTimeNow);
+                    var city = $("#Region-city-tenant-code").val();
+                    var employeerWorkPlace = $("#tenant-workplace").val();
+                    console.log("employeerWorkPlace", employeerWorkPlace);
+                    console.log("employeerWorkPlaceCode", $("#tenant-workplace-code").val());
+                    var id = true;
+                    var address = true;
+                    var employeer = true;
+                    var chechAuthUser;
+                    CheckSigntureImgForRenter();
+                    if (city == null || city == "") {
+                        address = false;
+                    }
+                    if (employeerWorkPlace == null || employeerWorkPlace == "") {
+                        employeer = false;
+                    }
+
+                    // This Check to If Renter Need Private Driver Or not
+                    var privateDriverRadio1 = document.getElementById("PrivateDriver");
+                    var privateDriverID = $("#Private-Driver-selectt").val();
+                    if (privateDriverRadio1.checked && privateDriverID == null) {
+                        $("#PrivateDriverRequired").text('@localizer["PleaseChooseYourDriver"]').css("color", "red");
                     }
                     else {
-                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                        toastr.error('@localizer["PleaseCheckFirst"]');
-                        return;
+                        if (privateDriverRadio1.checked && privateDriverID != null) {
+                            // await GetPersonInformation(privateDriverID, "privateDriver");
+                            await GetPrivateDriverInformation(privateDriverID);
+                            $("#PrivateDriverRequired").text('').css("color", "");
+                            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                            next_fs.show();
+                            current_fs.hide();
+                            tab++;
+                        }
+                        else if (!id || !address || !employeer) {
+                            $.ajax({
+                                url: "/BS/Contract/CheckAuthUser", // Replace YourController with your actual controller name
+                                type: "GET",
+                                data: { id: id, address: address, employeer: employeer },
+                                success: function (data) {
+                                    var check = data;
+                                    if (check == "id") {
+                                        $("#PrivateDriverRequired").text('').css("color", "");
+                                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                                        toastr.error('@localizer["IdIsExpriredAndYouNotAuth"]');
+                                        return;
+                                    }
+                                    else if (check == "address") {
+                                        $("#PrivateDriverRequired").text('').css("color", "");
+                                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                                        toastr.error('@localizer["AddressIsExpriredAndYouNotAuth"]');
+                                        return
+                                    }
+                                    else if (check == "employeer") {
+                                        $("#tenant-workplace").focus();
+                                        $("#PrivateDriverRequired").text('').css("color", "");
+                                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                                        toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
+                                        return
+                                    }
+                                    else {
+                                        $("#PrivateDriverRequired").text('').css("color", "");
+                                        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                                        next_fs.show();
+                                        current_fs.hide();
+                                        tab++;
+                                    }
+                                }
+                            });
+                        }
+                        else {
+                            $("#PrivateDriverRequired").text('').css("color", "");
+                            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                            next_fs.show();
+                            current_fs.hide();
+                            tab++;
+                        }
                     }
                 }
                 else {
@@ -4514,124 +4516,86 @@
             }
             else if (currentField === "driver") {
                 if ($("#msform").valid()) {
-                    if (CheckIfConfirmByPhone) {
-                        if (!listsIsTrueOrNotDriver) {
-                            console.log("listsIsTrueOrNotDriver", listsIsTrueOrNotDriver)
+                    if (!listsIsTrueOrNotDriver) {
+                        console.log("listsIsTrueOrNotDriver", listsIsTrueOrNotDriver)
+                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                        toastr.error('@localizer["PleaseCheckInputs"]');
+                        return;
+                    }
+                    if (DriverInformation == null) {
+                        SetInformationForDriverIfNotExist();
+                    }
+                    var additionalDriver = document.getElementById("addational-driver");
+                    var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
+                    var BirthDateDriver = new Date($("#birth-date-driver").val());
+                    var DriverAge = calculateAge(BirthDateDriver);
+                    var city = $("#Region-city-driver-code").val();
+                    var licenseType = $("#licence-driver-type").val();
+                    var licenseNo = $("#licence-driver-number").val();
+                    var licenseDate = $("#ExpiryDrivingLicenseDate-driver").val();
+                    var employerCode = $("#driver-workplace").val();
+
+                    var minAge = CarInformation.carPrice.crCasPriceCarBasicMinAge;
+                    var maxAge = CarInformation.carPrice.crCasPriceCarBasicMaxAge;
+
+                    // All Values Bool to send it to backend to check auth user
+                    var id = true;
+                    var address = true;
+                    var license = true;
+                    var isAgeInRange = DriverAge >= minAge && DriverAge <= maxAge;
+                    var employer = true;
+                    console.log("minAge", minAge)
+                    console.log("maxAge", maxAge)
+                    console.log("DriverAge", DriverAge)
+                    console.log("isAgeInRange", isAgeInRange)
+
+
+                    // Driver Address
+                    if (city == null || city == "") {
+                        address = false;
+                    }
+                    // Driver license
+                    if (licenseType === '2' || licenseType === '1' || licenseType == null || licenseType == "" || licenseNo == null || licenseNo == "" || licenseDate == "" || licenseDate == null) {
+                        license = false;
+                    }
+                    console.log("licenseType", licenseType)
+                    console.log("licenseNo", licenseNo)
+                    console.log("licenseDate", licenseDate)
+                    console.log("license", license)
+                    // Driver employeer
+                    if (employerCode == "" || employerCode == null) {
+                        employer = false;
+                    }
+                    var check = "";
+                    var Authrize = true;
+                    if (!(id && address && license && isAgeInRange && employer)) {
+                        if (id == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityId" == "False") {
                             toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                            toastr.error('@localizer["PleaseCheckInputs"]');
+                            toastr.error('@localizer["IdIsExpriredAndYouNotAuth"]');
                             return;
                         }
-                        if (DriverInformation == null) {
-                            SetInformationForDriverIfNotExist();
+                        else if (address == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityRenterAddress" == "False") {
+                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                            toastr.error('@localizer["AddressIsExpriredAndYouNotAuth"]');
+                            return
                         }
-                        var additionalDriver = document.getElementById("addational-driver");
-                        var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
-                        var BirthDateDriver = new Date($("#birth-date-driver").val());
-                        var DriverAge = calculateAge(BirthDateDriver);
-                        var city = $("#Region-city-driver-code").val();
-                        var licenseType = $("#licence-driver-type").val();
-                        var licenseNo = $("#licence-driver-number").val();
-                        var licenseDate = $("#ExpiryDrivingLicenseDate-driver").val();
-                        var employerCode = $("#driver-workplace").val();
-
-                        var minAge = CarInformation.carPrice.crCasPriceCarBasicMinAge;
-                        var maxAge = CarInformation.carPrice.crCasPriceCarBasicMaxAge;
-
-                        // All Values Bool to send it to backend to check auth user
-                        var id = true;
-                        var address = true;
-                        var license = true;
-                        var isAgeInRange = DriverAge >= minAge && DriverAge <= maxAge;
-                        var employer = true;
-                        console.log("minAge", minAge)
-                        console.log("maxAge", maxAge)
-                        console.log("DriverAge", DriverAge)
-                        console.log("isAgeInRange", isAgeInRange)
-
-
-                        // Driver Address
-                        if (city == null || city == "") {
-                            address = false;
+                        else if (employer == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityEmployer" == "False") {
+                            $("#driver-workplace").focus();
+                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                            toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
+                            return
                         }
-                        // Driver license
-                        if (licenseType === '2' || licenseType === '1' || licenseType == null || licenseType == "" || licenseNo == null || licenseNo == "" || licenseDate == "" || licenseDate == null) {
-                            license = false;
+                        else if (license == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityDrivingLicense" == "False") {
+                            console.log("555555")
+                            $("#licence-driver-number").focus();
+                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                            toastr.error('@localizer["LicenseIsExpriredAndYouNotAuth"]');
+                            return
                         }
-                        console.log("licenseType", licenseType)
-                        console.log("licenseNo", licenseNo)
-                        console.log("licenseDate", licenseDate)
-                        console.log("license", license)
-                        // Driver employeer
-                        if (employerCode == "" || employerCode == null) {
-                            employer = false;
-                        }
-                        var check = "";
-                        var Authrize = true;
-                        if (!(id && address && license && isAgeInRange && employer)) {
-                            if (id == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityId" == "False") {
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["IdIsExpriredAndYouNotAuth"]');
-                                return;
-                            }
-                            else if (address == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityRenterAddress" == "False") {
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["AddressIsExpriredAndYouNotAuth"]');
-                                return
-                            }
-                            else if (employer == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityEmployer" == "False") {
-                                $("#driver-workplace").focus();
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
-                                return
-                            }
-                            else if (license == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityDrivingLicense" == "False") {
-                                console.log("555555")
-                                $("#licence-driver-number").focus();
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["LicenseIsExpriredAndYouNotAuth"]');
-                                return
-                            }
-                            else if (isAgeInRange == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityAge" == "False") {
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["AgeIsExpriredAndYouNotAuth"]');
-                                return
-                            }
-                            else {
-                                enableAllInputsForDriver();
-                                if (additionalDriver.checked) {
-                                    $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                    next_fs.show();
-                                    current_fs.hide();
-                                    currentField = "add-driver";
-                                    NextField = "options";
-                                    setTimeout(() => {
-                                        $("#Contract_AddDriverInfo_CrMasRenterInformationId").focus();
-                                    }, 500);
-                                }
-                                else {
-                                    EmptyAddDriverRequiredInputs();
-                                    if (CarChoices.count == 0 && CarAdditionals.count == 0) {
-                                        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                        next_fs = $(this).closest("fieldset").next().next();
-                                        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                        next_fs = $(this).closest("fieldset").next().next().next();
-                                        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                        next_fs.show();
-                                        current_fs.hide();
-                                        currentField = "check";
-                                        NextField = "payment";
-                                    }
-                                    else {
-                                        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                        next_fs = $(this).closest("fieldset").next().next();
-                                        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                        next_fs.show();
-                                        current_fs.hide();
-                                        currentField = "options";
-                                        NextField = "check";
-                                    }
-                                }
-                            }
+                        else if (isAgeInRange == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityAge" == "False") {
+                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                            toastr.error('@localizer["AgeIsExpriredAndYouNotAuth"]');
+                            return
                         }
                         else {
                             enableAllInputsForDriver();
@@ -4671,9 +4635,40 @@
                         }
                     }
                     else {
-                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                        toastr.error('@localizer["PleaseCheckFirst"]');
-                        return;
+                        enableAllInputsForDriver();
+                        if (additionalDriver.checked) {
+                            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                            next_fs.show();
+                            current_fs.hide();
+                            currentField = "add-driver";
+                            NextField = "options";
+                            setTimeout(() => {
+                                $("#Contract_AddDriverInfo_CrMasRenterInformationId").focus();
+                            }, 500);
+                        }
+                        else {
+                            EmptyAddDriverRequiredInputs();
+                            if (CarChoices.count == 0 && CarAdditionals.count == 0) {
+                                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                                next_fs = $(this).closest("fieldset").next().next();
+                                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                                next_fs = $(this).closest("fieldset").next().next().next();
+                                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                                next_fs.show();
+                                current_fs.hide();
+                                currentField = "check";
+                                NextField = "payment";
+                            }
+                            else {
+                                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                                next_fs = $(this).closest("fieldset").next().next();
+                                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                                next_fs.show();
+                                current_fs.hide();
+                                currentField = "options";
+                                NextField = "check";
+                            }
+                        }
                     }
                 }
                 else {
@@ -4683,116 +4678,109 @@
             }
             else if (currentField === "add-driver") {
                 if ($("#msform").valid()) {
-                    if (CheckIfConfirmByPhone) {
-                        if (!listsIsTrueOrNotAddDriver) {
-                            console.log("listsIsTrueOrNotAddDriver", listsIsTrueOrNotAddDriver)
+                    if (!listsIsTrueOrNotAddDriver) {
+                        console.log("listsIsTrueOrNotAddDriver", listsIsTrueOrNotAddDriver)
+                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                        toastr.error('@localizer["PleaseCheckInputs"]');
+                        return;
+                    }
+                    SetInformationForAddDriverIfNotExist();
+                    var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
+                    var BirthDateAddDriver = new Date($("#birth-date-AddDriver").val());
+                    var AddDriverAge = calculateAge(BirthDateAddDriver);
+                    var city = $("#Region-city-addDriver-code").val();
+                    var licenseType = $("#licence-addDriver-type").val();
+                    var licenseNo = $("#licence-addDriver-number").val();
+                    var licenseDate = $("#ExpiryDrivingLicenseDate-addDriver").val();
+                    var employerCode = $("#addDriver-workplace").val();
+                    var minAge = CarInformation.carPrice.crCasPriceCarBasicMinAge;
+                    var maxAge = CarInformation.carPrice.crCasPriceCarBasicMaxAge;
+                    // All Values Bool to send it to backend to check auth user
+                    var id = true;
+                    var address = true;
+                    var license = true;
+                    var isAgeInRange = AddDriverAge >= minAge && AddDriverAge <= maxAge;
+                    var employer = true;
+                    // AddDriver Address
+                    if (city == null || city == "") {
+                        address = false;
+                    }
+                    // AddDriver license
+                    // Driver license
+                    if (licenseType === '2' || licenseType === '1' || licenseType == null || licenseType == "" || licenseNo == null || licenseNo == "" || licenseDate == "" || licenseDate == null) {
+                        license = false;
+                    }
+                    // AddDriver employeer
+                    if (employerCode == "" || employerCode == null) {
+                        employer = false;
+                    }
+
+                    if (!(id && address && license && isAgeInRange && employer)) {
+
+
+                        if (id == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityId" == "False") {
                             toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                            toastr.error('@localizer["PleaseCheckInputs"]');
+                            toastr.error('@localizer["IdIsExpriredAndYouNotAuth"]');
                             return;
                         }
-                        SetInformationForAddDriverIfNotExist();
-                        var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
-                        var BirthDateAddDriver = new Date($("#birth-date-AddDriver").val());
-                        var AddDriverAge = calculateAge(BirthDateAddDriver);
-                        var city = $("#Region-city-addDriver-code").val();
-                        var licenseType = $("#licence-addDriver-type").val();
-                        var licenseNo = $("#licence-addDriver-number").val();
-                        var licenseDate = $("#ExpiryDrivingLicenseDate-addDriver").val();
-                        var employerCode = $("#addDriver-workplace").val();
-                        var minAge = CarInformation.carPrice.crCasPriceCarBasicMinAge;
-                        var maxAge = CarInformation.carPrice.crCasPriceCarBasicMaxAge;
-                        // All Values Bool to send it to backend to check auth user
-                        var id = true;
-                        var address = true;
-                        var license = true;
-                        var isAgeInRange = AddDriverAge >= minAge && AddDriverAge <= maxAge;
-                        var employer = true;
-                        // AddDriver Address
-                        if (city == null || city == "") {
-                            address = false;
+                        else if (address == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityRenterAddress" == "False") {
+                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                            toastr.error('@localizer["AddressIsExpriredAndYouNotAuth"]');
+                            return
                         }
-                        // AddDriver license
-                        // Driver license
-                        if (licenseType === '2' || licenseType === '1' || licenseType == null || licenseType == "" || licenseNo == null || licenseNo == "" || licenseDate == "" || licenseDate == null) {
-                            license = false;
+                        else if (employer == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityEmployer" == "False") {
+                            $("#addDriver-workplace").focus();
+                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                            toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
+                            return
                         }
-                        // AddDriver employeer
-                        if (employerCode == "" || employerCode == null) {
-                            employer = false;
+                        else if (license == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityDrivingLicense" == "False") {
+                            $("#licence-addDriver-number").focus();
+                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                            toastr.error('@localizer["LicenseIsExpriredAndYouNotAuth"]');
+                            return
                         }
-
-                        if (!(id && address && license && isAgeInRange && employer)) {
-
-
-                            if (id == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityId" == "False") {
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["IdIsExpriredAndYouNotAuth"]');
-                                return;
-                            }
-                            else if (address == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityRenterAddress" == "False") {
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["AddressIsExpriredAndYouNotAuth"]');
-                                return
-                            }
-                            else if (employer == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityEmployer" == "False") {
-                                $("#addDriver-workplace").focus();
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
-                                return
-                            }
-                            else if (license == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityDrivingLicense" == "False") {
-                                $("#licence-addDriver-number").focus();
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["LicenseIsExpriredAndYouNotAuth"]');
-                                return
-                            }
-                            else if (isAgeInRange == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityAge" == "False") {
-                                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                                toastr.error('@localizer["AgeIsExpriredAndYouNotAuth"]');
-                                return
-                            }
-                            else {
-                                if (CarChoices.count == 0 && CarAdditionals.count == 0) {
-                                    $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                    next_fs = $(this).closest("fieldset").next().next();
-                                    $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                    next_fs.show();
-                                    current_fs.hide();
-                                    currentField = "check";
-                                    NextField = "payment"
-                                }
-                                else {
-                                    $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                                    next_fs.show();
-                                    current_fs.hide();
-                                    currentField = "options"
-                                    NextField = "check"
-                                }
-                            }
-
-
-                        }
-                        else if (CarChoices.count == 0 && CarAdditionals.count == 0) {
-                            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                            next_fs = $(this).closest("fieldset").next().next();
-                            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                            next_fs.show();
-                            current_fs.hide();
-                            currentField = "check";
-                            NextField = "payment"
+                        else if (isAgeInRange == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityAge" == "False") {
+                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                            toastr.error('@localizer["AgeIsExpriredAndYouNotAuth"]');
+                            return
                         }
                         else {
-                            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-                            next_fs.show();
-                            current_fs.hide();
-                            currentField = "options"
-                            NextField = "check"
+                            if (CarChoices.count == 0 && CarAdditionals.count == 0) {
+                                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                                next_fs = $(this).closest("fieldset").next().next();
+                                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                                next_fs.show();
+                                current_fs.hide();
+                                currentField = "check";
+                                NextField = "payment"
+                            }
+                            else {
+                                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                                next_fs.show();
+                                current_fs.hide();
+                                currentField = "options"
+                                NextField = "check"
+                            }
                         }
+
+
+                    }
+                    else if (CarChoices.count == 0 && CarAdditionals.count == 0) {
+                        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                        next_fs = $(this).closest("fieldset").next().next();
+                        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                        next_fs.show();
+                        current_fs.hide();
+                        currentField = "check";
+                        NextField = "payment"
                     }
                     else {
-                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                        toastr.error('@localizer["PleaseCheckFirst"]');
-                        return;
+                        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+                        next_fs.show();
+                        current_fs.hide();
+                        currentField = "options"
+                        NextField = "check"
                     }
                 }
                 else {
@@ -4899,7 +4887,7 @@
                         console.log("disableAllInputsForDriver", 1111111)
                         disableAllInputsForDriver();
                     }
-                    $(".hidden-input-row-driver").show();
+                    $(".hidden-input-row-Driver").show();
                     $("#CheckDriver").hide();
                     $("#progressbar li").eq($("fieldset").index(previous_fs)).removeClass("active");
                     previous_fs = $(this).closest("fieldset").prev().prev();
@@ -4945,7 +4933,7 @@
                 }
                 else {
                     if (CarAdditionals.count == 0 && CarChoices.count == 0) {
-                        $(".hidden-input-row-driver").show();
+                        $(".hidden-input-row-Driver").show();
                         $("#CheckDriver").hide();
                         $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
                         $("#progressbar li").eq($("fieldset").index(previous_fs)).removeClass("active");
@@ -4977,7 +4965,7 @@
                 if (RenterIsdriver.checked) {
                     disableAllInputsForDriver();
                 }
-                $(".hidden-input-row-driver").show();
+                $(".hidden-input-row-Driver").show();
                 $("#CheckDriver").hide();
                 $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
                 previous_fs.show();
@@ -8108,7 +8096,7 @@
                     if (pictures[3]) ctx.drawImage(pictures[3], canvas.width - 2015, 750, 650, 650);
                     if (pictures[4]) ctx.drawImage(pictures[4], canvas.width - 2015, 1470, 650, 650);
                     if (pictures[5]) ctx.drawImage(pictures[5], canvas.width - 2015, 2185, 650, 650);
-                    
+
                     // Last
                     DrawEnNameAndSignture(signtures, ctx, canvas);
                     canvas.toBlob(async function (blob) {
@@ -8150,13 +8138,13 @@
                     ctx.textAlign = "left";
                     ctx.fillStyle = "black";
                     ////////////
-                    if (pictures[6])  ctx.drawImage(pictures[6], canvas.width - 1015, 750, 650, 650);
-                    if (pictures[7])  ctx.drawImage(pictures[7], canvas.width - 1015, 1470, 650, 650);
-                    if (pictures[8])  ctx.drawImage(pictures[8], canvas.width - 1015, 2185, 650, 650);
-                    if (pictures[9])  ctx.drawImage(pictures[9], canvas.width - 2015, 750, 650, 650);
-                    if (pictures[10])  ctx.drawImage(pictures[10], canvas.width - 2015, 1470, 650, 650);
+                    if (pictures[6]) ctx.drawImage(pictures[6], canvas.width - 1015, 750, 650, 650);
+                    if (pictures[7]) ctx.drawImage(pictures[7], canvas.width - 1015, 1470, 650, 650);
+                    if (pictures[8]) ctx.drawImage(pictures[8], canvas.width - 1015, 2185, 650, 650);
+                    if (pictures[9]) ctx.drawImage(pictures[9], canvas.width - 2015, 750, 650, 650);
+                    if (pictures[10]) ctx.drawImage(pictures[10], canvas.width - 2015, 1470, 650, 650);
                     if (pictures[11]) ctx.drawImage(pictures[11], canvas.width - 2015, 2185, 650, 650);
-                    
+
                     // Last
                     DrawEnNameAndSignture(signtures, ctx, canvas);
                     canvas.toBlob(async function (blob) {
