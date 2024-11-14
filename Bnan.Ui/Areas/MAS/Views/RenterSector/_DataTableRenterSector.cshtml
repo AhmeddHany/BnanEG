@@ -1,185 +1,51 @@
-﻿
-
-@using Bnan.Core.Extensions
-@model Tuple<IEnumerable<CrMasSupRenterSector>, List<List<string>>>
+﻿@using Bnan.Core.Extensions
+@model List<CrMasSupRenterSector>
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
-@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-{
-    <div class="col-sm-12">
-        @* For-scrolling *@
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
-            <thead>
-                <tr>
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["RenterSectorCode"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["RenterSectorName"]</th>
-                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Count"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["Count"]</th>
+            <th class="DifferAlign"> @localizer["RenterSectorName_view"]</th>
+            <th class="DifferAlign"> @localizer["the_Code"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr onclick="if (parseInt(@item.CrMasSupRenterSectorCode) > 2) {location.href='@Url.Action("Edit", "RenterSector", new { id = item.CrMasSupRenterSectorCode })';} else{showErrorToast_NoUpdate();}">
+                <td><p>@item.CrMasRenterInformations.Count().ToString("N0")</p></td>
+                <td class="DifferAlign">
+                    <p>
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupRenterSectorEnName : item.CrMasSupRenterSectorArName)
+                    </p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@item.CrMasSupRenterSectorCode</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasSupRenterSectorStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasSupRenterSectorStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasSupRenterSectorStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
 
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model.Item1)
-                {
-                    @if (item.CrMasSupRenterSectorStatus == @Status.Deleted || item.CrMasSupRenterSectorStatus == @Status.Hold)
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterSector", new { id = item.CrMasSupRenterSectorCode })'" style="cursor:pointer;color:red">
-                            <td id="_Nc">@no</td>
-                            <td id="_Nc">@item.CrMasSupRenterSectorCode</td>
-                            <td>@item.CrMasSupRenterSectorEnName</td>
-                            <td id="_Nc">
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if (row[0] == @item.CrMasSupRenterSectorCode)
-                                        {
-                                            @row[1]
-                                        }
-
-                                    }
-                                }
-                            </td>
-                            <td>
-
-                                @if (@item.CrMasSupRenterSectorStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else if (@item.CrMasSupRenterSectorStatus == Status.Hold)
-                                {
-                                    @localizer["Hold"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterSector", new { id = item.CrMasSupRenterSectorCode })'">
-                            <td id="_Nc">@no</td>
-                            <td id="_Nc">@item.CrMasSupRenterSectorCode</td>
-                            <td>@item.CrMasSupRenterSectorEnName</td>
-                            <td id="_Nc">
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if (row[0] == @item.CrMasSupRenterSectorCode)
-                                        {
-                                            @row[1]
-                                        }
-
-                                    }
-                                }
-                            </td>
-                            <td>
-
-                                @if (@item.CrMasSupRenterSectorStatus == Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    no++;
-                }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-            <thead>
-                <tr>
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["RenterSectorCode"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["RenterSectorName"]</th>
-                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["Count"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model.Item1)
-                {
-                    @if (item.CrMasSupRenterSectorStatus == @Status.Deleted || item.CrMasSupRenterSectorStatus == @Status.Hold)
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterSector", new { id = item.CrMasSupRenterSectorCode })'" style="cursor:pointer;color:red">
-                            <td id="_Nc">&emsp; @no</td>
-                            <td id="_Nc">&emsp; @item.CrMasSupRenterSectorCode</td>
-                            <td>&emsp; @item.CrMasSupRenterSectorArName</td>
-                            <td id="_Nc">
-                                &emsp;
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if (row[0] == @item.CrMasSupRenterSectorCode)
-                                        {
-                                            @row[1]
-                                        }
-
-                                    }
-                                }
-                            </td>
-                            <td>
-                                &emsp;
-                                @if (@item.CrMasSupRenterSectorStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else if (@item.CrMasSupRenterSectorStatus == Status.Hold)
-                                {
-                                    @localizer["Hold"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterSector", new { id = item.CrMasSupRenterSectorCode })'">
-                            <td id="_Nc">&emsp; @no</td>
-                            <td id="_Nc">&emsp; @item.CrMasSupRenterSectorCode</td>
-                            <td>&emsp; @item.CrMasSupRenterSectorArName</td>
-                            <td id="_Nc">
-                                &emsp;
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if (row[0] == @item.CrMasSupRenterSectorCode)
-                                        {
-                                            @row[1]
-                                        }
-
-                                    }
-                                }
-                            </td>
-                            <td>
-                                &emsp;
-                                @if (@item.CrMasSupRenterSectorStatus == Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    no++;
-                }
-            </tbody>
-        </table>
-    </div>
-}
+    </tbody>
+</table>

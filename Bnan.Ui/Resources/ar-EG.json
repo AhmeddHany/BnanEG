@@ -1,16 +1,66 @@
 {
   "MasSystem": {
     "BnanCompanyMas": "شركة غيوم الودق لتقنية المعلومات",
-    "RentalSystemCode": "رمز نظام التأجير",
-    "RentalSystemNo": "رقم نظام التأجير",
     "BackToHome": "العودة للقائمة الرئيسية",
     "ClassificationOfNationalities": "تصنيف الدولة",
+    "RenterDrivingLicenseName": "رخصة القيادة",
     "AuthEmplpoyee_Enter": "لا يمكنك الدخول ليس لديك صلاحية",
     "AuthEmplpoyee_No_auth": "ليس لديك صلاحية",
     "AuthEmplpoyee_AddMore": "لا يمكن إضافة سجل جديد",
     "AuthEmplpoyee_NoUpdate": "لا يمكن تحديث هذا السجل",
-    "toastor_Exist": "هذا السجل مسجل من قبل"
+    "toastor_Exist": "هذا السجل مسجل من قبل",
+
+    ///////////
+    "RentalSystemCode": "رمز نظام التأجير",
+    "RentalSystemNo": "رقم نظام التأجير",
+    "Count": "العدد",
+    "the_Code": "الرمز",
+    "Reason_s": "ملاحظات",
+
+    //////////
+
+    // MAS Renter Driving License
+    "Add RenterDrivingLicense Data": "إضافة رخصة قيادة",
+    "Edit RenterDrivingLicense Data": "تحديث بيانات رخصة القيادة",
+    "View RenterDrivingLicense Data": "رخص القيادة",
+    "RenterDrivingLicenseName_view": "نوع رخصة القيادة",
+    "RenterDrivingLicenseNameAr_add": "رخصة القيادة عربي",
+    "RenterDrivingLicenseNameEn_add": "رخصة القيادة انجليزي",
+    "RenterDrivingLicenseNameAr_edit": "النوع عربي",
+    "RenterDrivingLicenseNameEn_edit": "النوع إنجليزي",
+
+    // MAS Renter Employer WorkPlace
+    "Add RenterEmployer Data": "إضافة جهة عمل",
+    "Edit RenterEmployer Data": "تحديث بيانات جهة العمل",
+    "View RenterEmployer Data": "جهات العمل",
+    "RenterEmployerName_view": "جهة العمل",
+    "RenterEmployerNameAr_add": "جهة العمل عربي",
+    "RenterEmployerNameEn_add": "جهة العمل انجليزي",
+    "RenterEmployerNameAr_edit": "جهة العمل عربي",
+    "RenterEmployerNameEn_edit": "جهة العمل إنجليزي",
+
+    // MAS Renter Profession
+    "Add RenterProfession Data": "إضافة مهنة",
+    "Edit RenterProfession Data": "تحديث بيانات المهنة",
+    "View RenterProfession Data": "المهن",
+    "RenterProfessionName_view": "المهن",
+    "RenterProfessionNameAr_add": "المهنة عربي",
+    "RenterProfessionNameEn_add": "المهنة انجليزي",
+    "RenterProfessionNameAr_edit": "المهنة عربي",
+    "RenterProfessionNameEn_edit": "المهنة انجليزي",
+
+
+    // MAS Renter Sector
+    "Add RenterSector Data": "إضافة قطاع",
+    "Edit RenterSector Data": "تحديث بيانات القطاع",
+    "View RenterSector Data": "القطاعات",
+    "RenterSectorName_view": "القطاع",
+    "RenterSectorNameAr_add": "القطاع عربي",
+    "RenterSectorNameEn_add": "القطاع إنجليزي",
+    "RenterSectorNameAr_edit": "القطاع عربي",
+    "RenterSectorNameEn_edit": "القطاع إنجليزي"
   },
+
 
   "Arabic": "العربية",
   "English": "الانجليزية",
@@ -556,7 +606,7 @@
 
   //RenterProfession------
   "RenterProfession Hint": ".تمكنك هذه الصفحة من عرض وإضافة وتعديل مهن المستأجرين",
-  "RenterProfession Data": "عرض مهن المستأجرين",
+  "RenterProfession Data": "مهن المستأجرين",
   "RenterProfessionNameEn": "المهنة بالانجليزي",
   "RenterProfessionName": "المهنة",
   "RenterProfessionNameAr": "المهنة بالعربي",
@@ -564,7 +614,7 @@
   "Add RenterProfession Hint": ".تمكنك هذه الصفحة من إضافة مهنة جديدة",
   "Add RenterProfession Data": "اضافة مهنة جديدة",
   "Edit RenterProfession Hint": ".تمكنك هذه الصفحة من تعديل المهنة ",
-  "Edit RenterProfession Data": "تعديل المهنة",
+  "Edit RenterProfession Data": "تحديث بيانات المهنة",
   "RenterProfessionImg": "صورة المهنة",
 
   "HintSureToRetriveHRenterProfession": "سيترتب على استرجاع إيقاف بيانات المهنة وجودها على النظام.",
@@ -600,15 +650,15 @@
 
   //RenterEmployer------
   "RenterEmployer Hint": ".تمكنك هذه الصفحة من عرض وإضافة وتعديل جهات العمل",
-  "RenterEmployer Data": "عرض جهات العمل",
+  "RenterEmployer Data": "جهات العمل",
   "RenterEmployerNameEn": "جهة العمل بالانجليزي",
   "RenterEmployerName": "جهة العمل",
   "RenterEmployerNameAr": "جهة العمل بالعربي",
   "RenterEmployerCode": "الرمز",
-  "Add RenterEmployer Hint": ".تمكنك هذه الصفحة من إضافة طراز جديد جديدة",
-  "Add RenterEmployer Data": "اضافة طراز جديد",
+  "Add RenterEmployer Hint": ".تمكنك هذه الصفحة من إضافة جهة عمل جديدة",
+  "Add RenterEmployer Data": "اضافة جهة عمل جديدة",
   "Edit RenterEmployer Hint": ".تمكنك هذه الصفحة من تعديل جهة العمل ",
-  "Edit RenterEmployer Data": "تعديل جهة العمل",
+  "Edit RenterEmployer Data": "تحديث جهة العمل",
   "RenterEmployerImg": "صورة جهة العمل",
   "RenterEmployerSector": "اختر القطاع",
   "HintSureToRetriveHRenterEmployer": "سيترتب على استرجاع إيقاف بيانات جهة العمل وجودها على النظام.",
@@ -1337,7 +1387,7 @@
   "Existing": "هذا الحقل مسجل من قبل",
   "Exist": "ExistAr",
   "CarIsRented": "عفوا ... هذه السيارة تم تأجيرها بالفعل ، يرجى اختيار سيارة اخرى",
-  
+
   // LessorImages
   "LessorsImages Hint": "تمكنك هذه الصفحة من عرض بيانات الشركات وتعديل الصور المساندة للشركات",
   "Edit Lessor Images Data": "تعديل",

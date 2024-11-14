@@ -122,10 +122,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             }
             // Set Title 
             RenterDrivingLicenseVM renterDrivingLicenseVM = new RenterDrivingLicenseVM();
-            var RenterDrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.GetAllAsync();
-            renterDrivingLicenseVM.CrMasSupRenterDrivingLicenseCode = (RenterDrivingLicenses.ToList().Count > 0)
-            ? (BigInteger.Parse(RenterDrivingLicenses.Last().CrMasSupRenterDrivingLicenseCode) + 1).ToString()
-            : "1";
+            renterDrivingLicenseVM.CrMasSupRenterDrivingLicenseCode = await GenerateLicenseCodeAsync();
             return View(renterDrivingLicenseVM);
         }
 
@@ -201,7 +198,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             var model = _mapper.Map<RenterDrivingLicenseVM>(contract);
             model.CrMasSupRenterDrivingLicenseNaqlCode ??= 0;
             model.CrMasSupRenterDrivingLicenseNaqlId ??= 0;
-            model.RentersHaveLicenceCount = contract.CrCasRenterPrivateDriverInformations.Count + contract.CrMasRenterInformations.Count;
+            model.RentersHave_withType_Count = contract.CrCasRenterPrivateDriverInformations.Count + contract.CrMasRenterInformations.Count;
             return View(model);
         }
         [HttpPost]

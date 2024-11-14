@@ -1,345 +1,358 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
+using Bnan.Inferastructure.Filters;
+using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Numerics;
 namespace Bnan.Ui.Areas.MAS.Controllers
 {
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
     public class RenterSectorController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
-        private readonly UserManager<CrMasUserInformation> userManager;
-        private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly IUserService _userService;
-        private readonly IMasRenterSector _carColor;
+        private readonly IMasRenterSector _masRenterSector;
+        private readonly IBaseRepo _baseRepo;
+        private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<RenterSectorController> _localizer;
 
-
         public RenterSectorController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IMasRenterSector carColor,
+            IMapper mapper, IUserService userService, IMasRenterSector masRenterSector, IBaseRepo BaseRepo,IMasBase masBase,
             IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterSectorController> localizer) : base(userManager, unitOfWork, mapper)
         {
-            this.userManager = userManager;
-            this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             _userService = userService;
-            _carColor = carColor;
+            _masRenterSector = masRenterSector;
             _userLoginsService = userLoginsService;
+            _baseRepo = BaseRepo;
+            _masBase = masBase;
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
         }
 
         [HttpGet]
-
         public async Task<IActionResult> Index()
         {
-            var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106001", "1");
-            //sidebar Active
-            ViewBag.id = "#sidebarUsersServices";
-            ViewBag.no = "6";
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            var pageNumber = Pages.CrMasSupRenterSector;
+            // Set page titles
+            await SetPageTitleAsync(string.Empty, pageNumber);
 
+            // Retrieve active driving licenses
+            var renterSectors = await _unitOfWork.CrMasSupRenterSector
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupRenterSectorStatus == Status.Active, new[] { "CrMasRenterInformations" });
 
-            var titles = await setTitle("106", "1106001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var contracts = await _unitOfWork.CrMasSupRenterSector.GetAllAsync();
-            var contract = contracts.Where(x => x.CrMasSupRenterSectorStatus == "A").ToList();
-            var CarsInfo_count_all = _carColor.GetAllRenterSectorsCount();
-            Tuple<IEnumerable<CrMasSupRenterSector>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupRenterSector>, List<List<string>>>(contract, CarsInfo_count_all);
-            return View(tb);
+            // If no active licenses, retrieve all licenses
+            if (!renterSectors.Any())
+            {
+                renterSectors = await _unitOfWork.CrMasSupRenterSector
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupRenterSectorStatus == Status.Hold,
+                                              new[] { "CrMasRenterInformations" });
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
+            return View(renterSectors);
         }
-
         [HttpGet]
-        public PartialViewResult GetRenterSectorByStatus(string status)
+        public async Task<PartialViewResult> GetRenterSectorByStatus(string status, string search)
         {
             //sidebar Active
-            ViewBag.id = "#sidebarUsersServices";
-            ViewBag.no = "6";
+
             if (!string.IsNullOrEmpty(status))
             {
+                var RenterSectorsAll = await _unitOfWork.CrMasSupRenterSector.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterSectorStatus == Status.Active ||
+                                                                                                                            x.CrMasSupRenterSectorStatus == Status.Deleted ||
+                                                                                                                            x.CrMasSupRenterSectorStatus == Status.Hold, new[] { "CrMasRenterInformations" });
+
                 if (status == Status.All)
                 {
-
-                    var RenterSectorbyStatusAll = _unitOfWork.CrMasSupRenterSector.FindAll(l => l.CrMasSupRenterSectorStatus == Status.Hold || l.CrMasSupRenterSectorStatus == Status.Active);
-                    var CarsInfo_count_all1 = _carColor.GetAllRenterSectorsCount();
-                    Tuple<IEnumerable<CrMasSupRenterSector>, List<List<string>>> tb1 = new Tuple<IEnumerable<CrMasSupRenterSector>, List<List<string>>>(RenterSectorbyStatusAll, CarsInfo_count_all1);
-                    return PartialView("_DataTableRenterSector", tb1);
+                    var FilterAll = RenterSectorsAll.FindAll(x => x.CrMasSupRenterSectorStatus != Status.Deleted &&
+                                                                         (x.CrMasSupRenterSectorArName.Contains(search) ||
+                                                                          x.CrMasSupRenterSectorEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupRenterSectorCode.Contains(search)));
+                    return PartialView("_DataTableRenterSector", FilterAll);
                 }
-                var RenterSectorbyStatus = _unitOfWork.CrMasSupRenterSector.FindAll(l => l.CrMasSupRenterSectorStatus == status).ToList();
-                var CarsInfo_count_all = _carColor.GetAllRenterSectorsCount();
-                Tuple<IEnumerable<CrMasSupRenterSector>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupRenterSector>, List<List<string>>>(RenterSectorbyStatus, CarsInfo_count_all);
-                return PartialView("_DataTableRenterSector", tb);
+                var FilterByStatus = RenterSectorsAll.FindAll(x => x.CrMasSupRenterSectorStatus == status &&
+                                                                            (
+                                                                           x.CrMasSupRenterSectorArName.Contains(search) ||
+                                                                           x.CrMasSupRenterSectorEnName.ToLower().Contains(search.ToLower()) ||
+                                                                           x.CrMasSupRenterSectorCode.Contains(search)));
+                return PartialView("_DataTableRenterSector", FilterByStatus);
             }
             return PartialView();
         }
 
-
         [HttpGet]
         public async Task<IActionResult> AddRenterSector()
         {
-            //sidebar Active
-            ViewBag.id = "#sidebarUsersServices";
-            ViewBag.no = "6";
-            // Set Title !!!!!!!!!!!!!!!!!!!!!!!!!!
-            var titles = await setTitle("106", "1106001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var RenterSectorCode = "";
-            var RenterSectors = await _unitOfWork.CrMasSupRenterSector.GetAllAsync();
-            if (RenterSectors.Count() != 0)
+            var pageNumber = Pages.CrMasSupRenterSector;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                RenterSectorCode = (BigInteger.Parse(RenterSectors.LastOrDefault().CrMasSupRenterSectorCode) + 1).ToString();
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return RedirectToAction("Index", "RenterSector");
             }
-            else
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
             {
-                RenterSectorCode = "0";
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "RenterSector");
             }
-            ViewBag.RenterSectorCode = RenterSectorCode;
-            return View();
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+            // Check If code > 9 get error , because code is char(1)
+            if (int.Parse(await GenerateLicenseCodeAsync()) > 9)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "RenterSector");
+            }
+            // Set Title 
+            RenterSectorVM renterSectorVM = new RenterSectorVM();
+            renterSectorVM.CrMasSupRenterSectorCode = await GenerateLicenseCodeAsync();
+            return View(renterSectorVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddRenterSector(RenterSectorVM RenterSectors)
+        public async Task<IActionResult> AddRenterSector(RenterSectorVM renterSectorVM)
         {
-            //sidebar Active
-            ViewBag.id = "#sidebarUsersServices";
-            ViewBag.no = "6";
-            string currentCulture = CultureInfo.CurrentCulture.Name;
+            var pageNumber = Pages.CrMasSupRenterSector;
+            
+            var user = await _userManager.GetUserAsync(User);
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid || renterSectorVM == null)
             {
-                if (RenterSectors != null)
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddRenterSector", renterSectorVM);
+            }
+            try
+            {
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                // Map ViewModel to Entity
+                var renterSectorEntity = _mapper.Map<CrMasSupRenterSector>(renterSectorVM);
+
+                // Check if the entity already exists
+                if (await _masRenterSector.ExistsByDetailsAsync(renterSectorEntity))
                 {
-                    var RenterSectorVMT = _mapper.Map<CrMasSupRenterSector>(RenterSectors);
-                    var All_RenterSectors = await _unitOfWork.CrMasSupRenterSector.GetAllAsync();
-                    var existingRenterSector_En = All_RenterSectors.FirstOrDefault(x =>
-                        x.CrMasSupRenterSectorEnName == RenterSectorVMT.CrMasSupRenterSectorEnName);
-                    var existingRenterSector_Ar = All_RenterSectors.FirstOrDefault(x =>
-                        x.CrMasSupRenterSectorArName == RenterSectorVMT.CrMasSupRenterSectorArName);
-
-                    // Generate code for the second time
-                    var RenterSectorCode = (BigInteger.Parse(All_RenterSectors.LastOrDefault().CrMasSupRenterSectorCode) + 1).ToString();
-                    RenterSectors.CrMasSupRenterSectorCode = RenterSectorCode;
-                    ViewBag.RenterSectorCode = RenterSectorCode;
-                    if (RenterSectorVMT.CrMasSupRenterSectorArName != null && RenterSectorVMT.CrMasSupRenterSectorEnName != null)
-                    {
-                        if (existingRenterSector_Ar != null && existingRenterSector_En != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(RenterSectors);
-                        }
-                        else if (existingRenterSector_En != null)
-                        {
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(RenterSectors);
-                        }
-                        else if (existingRenterSector_Ar != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            return View(RenterSectors);
-                        }
-                    }
-
-                    RenterSectorVMT.CrMasSupRenterSectorStatus = "A";
-                    //RenterSectorVMT.CrMasSupRenterSectorGroupCode = "14";
-                    await _unitOfWork.CrMasSupRenterSector.AddAsync(RenterSectorVMT);
-
-                    _unitOfWork.Complete();
-
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106001", "1");
-                    var RecordAr = RenterSectorVMT.CrMasSupRenterSectorArName;
-                    var RecordEn = RenterSectorVMT.CrMasSupRenterSectorEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "اضافة", "Add", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
+                    await AddModelErrorsAsync(renterSectorEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("AddRenterSector", renterSectorVM);
                 }
+                // Check If code > 9 get error , because code is char(1)
+                if (int.Parse(await GenerateLicenseCodeAsync()) > 9)
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("AddRenterSector", renterSectorVM);
+                }
+                // Generate and set the Driving License Code
+                renterSectorVM.CrMasSupRenterSectorCode = await GenerateLicenseCodeAsync();
+                // Set status and add the record
+                renterSectorEntity.CrMasSupRenterSectorStatus = "A";
+                await _unitOfWork.CrMasSupRenterSector.AddAsync(renterSectorEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+
+                await SaveTracingForLicenseChange(user, renterSectorEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
-            return View("AddRenterSector", RenterSectors);
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddRenterSector", renterSectorVM);
+            }
         }
-
-
-
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            //sidebar Active
-            ViewBag.id = "#sidebarUsersServices";
-            ViewBag.no = "6";
-            //To Set Title !!!!!!!!!!!!!
-            var titles = await setTitle("106", "1106001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
-
-            var contract = await _unitOfWork.CrMasSupRenterSector.GetByIdAsync(id);
+            var pageNumber = Pages.CrMasSupRenterSector;
+            await SetPageTitleAsync(Status.Update, pageNumber);
+            // if value with code less than 2 Deleted
+            if (int.Parse(id) < 2 + 1)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_NoUpdate"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "RenterSector");
+            }
+            var contract = await _unitOfWork.CrMasSupRenterSector.FindAsync(x => x.CrMasSupRenterSectorCode == id, new[] { "CrMasRenterInformations" });
             if (contract == null)
             {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Index");
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "RenterSector");
             }
-            int countRenterSectors = 0;
-            countRenterSectors = _carColor.GetOneRenterSectorCount(id);
-            ViewBag.RenterSectors_Count = countRenterSectors;
             var model = _mapper.Map<RenterSectorVM>(contract);
-
+            model.RentersHave_withType_Count = contract.CrMasRenterInformations.Count;
             return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(RenterSectorVM renterSectorVM)
+        {
+            var pageNumber = Pages.CrMasSupRenterSector;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null && renterSectorVM == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return RedirectToAction("Index", "RenterSector");
+            }
+            try
+            {
+                //Check Validition
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("Edit", renterSectorVM);
+                }
+                var renterSectorEntity = _mapper.Map<CrMasSupRenterSector>(renterSectorVM);
+                // Check if the entity already exists
+                if (await _masRenterSector.ExistsByDetailsAsync(renterSectorEntity))
+                {
+                    await SetPageTitleAsync(Status.Update, pageNumber);
+                    await AddModelErrorsAsync(renterSectorEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Edit", renterSectorVM);
+                }
+
+                _unitOfWork.CrMasSupRenterSector.Update(renterSectorEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+                await SaveTracingForLicenseChange(user, renterSectorEntity, Status.Update);
+                return RedirectToAction("Index", "RenterSector");
+            }
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return View("Edit", renterSectorVM);
+            }
+        }
+        [HttpPost]
+        public async Task<string> EditStatus(string code, string status)
+        {
+            var pageNumber = Pages.CrMasSupRenterSector;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return "false";
+
+            var licence = await _unitOfWork.CrMasSupRenterSector.GetByIdAsync(code);
+            if (licence == null) return "false";
+
+            try
+            {
+                
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                licence.CrMasSupRenterSectorStatus = status;
+                _unitOfWork.CrMasSupRenterSector.Update(licence);
+                _unitOfWork.Complete();
+                await SaveTracingForLicenseChange(user, licence, status);
+                return "true";
+            }
+            catch (Exception ex)
+            {
+                return "false";
+            }
+        }
+
+        //Error exist message when run post action to get what is the exist field << Help Up in Back End
+        private async Task AddModelErrorsAsync(CrMasSupRenterSector entity)
+        {
+
+            if (await _masRenterSector.ExistsByArabicNameAsync(entity.CrMasSupRenterSectorArName, entity.CrMasSupRenterSectorCode))
+            {
+                ModelState.AddModelError("CrMasSupRenterSectorArName", _localizer["Existing"]);
+            }
+
+            if (await _masRenterSector.ExistsByEnglishNameAsync(entity.CrMasSupRenterSectorEnName, entity.CrMasSupRenterSectorCode))
+            {
+                ModelState.AddModelError("CrMasSupRenterSectorEnName", _localizer["Existing"]);
+            }
+        }
+
+        //Error exist message when change input without run post action >> help us in front end
+        [HttpGet]
+        public async Task<JsonResult> CheckChangedField(string existName, string dataField)
+        {
+            var All_RenterSectors = await _unitOfWork.CrMasSupRenterSector.GetAllAsync();
+            var errors = new List<ErrorResponse>();
+
+            if (!string.IsNullOrEmpty(dataField) && All_RenterSectors != null)
+            {
+                // Check for existing Arabic driving license
+                if (existName == "CrMasSupRenterSectorArName" && All_RenterSectors.Any(x => x.CrMasSupRenterSectorArName == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupRenterSectorArName", Message = _localizer["Existing"] });
+                }
+                // Check for existing English driving license
+                else if (existName == "CrMasSupRenterSectorEnName" && All_RenterSectors.Any(x => x.CrMasSupRenterSectorEnName?.ToLower() == dataField.ToLower()))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupRenterSectorEnName", Message = _localizer["Existing"] });
+                }
+            }
+
+            return Json(new { errors });
+        }
+
+        //Helper Methods 
+        private async Task<string> GenerateLicenseCodeAsync()
+        {
+            var allLicenses = await _unitOfWork.CrMasSupRenterSector.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupRenterSectorCode) + 1).ToString() : "1";
+        }
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupRenterSector licence, string status)
+        {
+            var pageNumber = Pages.CrMasSupRenterSector;
+
+            var recordAr = licence.CrMasSupRenterSectorArName;
+            var recordEn = licence.CrMasSupRenterSectorEnName;
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+
+        [HttpPost]
+        public IActionResult DisplayToastError_NoUpdate(string messageText)
+        {
+            //نص الرسالة _localizer["AuthEmplpoyee_NoUpdate"] === messageText ; 
+            if (messageText == null || messageText == "") messageText = "..";
+            _toastNotification.AddErrorToastMessage(messageText, new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            return Json(new { success = true });
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(RenterSectorVM model)
+        public IActionResult DisplayToastSuccess_withIndex()
         {
-            var user = await _userService.GetUserByUserNameAsync(HttpContext.User.Identity.Name);
-
-            if (user != null)
-            {
-                if (model != null)
-                {
-
-                    var contract = _mapper.Map<CrMasSupRenterSector>(model);
-
-                    _unitOfWork.CrMasSupRenterSector.Update(contract);
-                    _unitOfWork.Complete();
-
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106001", "1");
-                    var RecordAr = contract.CrMasSupRenterSectorArName;
-                    var RecordEn = contract.CrMasSupRenterSectorEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-                }
-
-            }
-
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
             return RedirectToAction("Index", "RenterSector");
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> EditStatus(string code, string status)
-        {
-            string sAr = "";
-            string sEn = "";
-            var Contract = await _unitOfWork.CrMasSupRenterSector.GetByIdAsync(code);
-            if (Contract != null)
-            {
-                if (status == Status.Hold)
-                {
-                    sAr = "ايقاف";
-                    sEn = "Hold";
-                    Contract.CrMasSupRenterSectorStatus = Status.Hold;
-                }
-                else if (status == Status.Deleted)
-                {
-                    int CountRenterSectors = 0;
-                    CountRenterSectors = _carColor.GetOneRenterSectorCount(code);
-                    if (CountRenterSectors == 0)
-                    {
-                        sAr = "حذف";
-                        sEn = "Remove";
-                        Contract.CrMasSupRenterSectorStatus = Status.Deleted;
-                    }
-                    else
-                    {
-                        return View(Contract);
-                    }
-
-                }
-                else if (status == "Reactivate")
-                {
-                    sAr = "استرجاع";
-                    sEn = "Retrive";
-                    Contract.CrMasSupRenterSectorStatus = Status.Active;
-                }
-
-                await _unitOfWork.CompleteAsync();
-
-                // SaveTracing
-                var RecordAr = Contract.CrMasSupRenterSectorArName;
-                var RecordEn = Contract.CrMasSupRenterSectorEnName;
-                var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106001", "1");
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                return RedirectToAction("Index", "RenterSector");
-            }
-
-
-            return View(Contract);
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CheckChangedField(string Exist_lang, string dataField)
-        {
-            var All_RenterSectors = await _unitOfWork.CrMasSupRenterSector.GetAllAsync();
-
-            if (dataField != null && All_RenterSectors != null)
-            {
-                if (Exist_lang == "ExistAr")
-                {
-                    var existingRenterSector_Ar = All_RenterSectors.FirstOrDefault(x =>
-                        x.CrMasSupRenterSectorArName == dataField);
-                    if (existingRenterSector_Ar != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
-                }
-                else if (Exist_lang == "ExistEn")
-                {
-                    var existingRenterSector_En = All_RenterSectors.FirstOrDefault(x =>
-                        x.CrMasSupRenterSectorEnName == dataField);
-                    if (existingRenterSector_En != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
-                }
-
-            }
-            return View();
-        }
-
-
-
-        public IActionResult CannotDelete()
-        {
-
-            _toastNotification.AddErrorToastMessage(_localizer["SureTo_Cannot_delete"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-            return View();
-        }
     }
- }
+}

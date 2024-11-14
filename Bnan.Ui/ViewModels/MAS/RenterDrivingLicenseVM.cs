@@ -18,7 +18,7 @@ namespace Bnan.Ui.ViewModels.MAS
         public string? CrMasSupRenterDrivingLicenseStatus { get; set; }
         [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupRenterDrivingLicenseReasons { get; set; }
-        public int? RentersHaveLicenceCount { get; set; }
+        public int? RentersHave_withType_Count { get; set; }
 
     }
 }

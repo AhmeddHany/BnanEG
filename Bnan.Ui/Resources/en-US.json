@@ -1,15 +1,65 @@
 {
   "MasSystem": {
     "BnanCompanyMas": "Ghyoum Al-Wadaq Information Technology Company",
-    "RentalSystemCode": "Rental System Code",
-    "RentalSystemNo": "Rental System No",
     "BackToHome": "Back To Home",
     "ClassificationOfNationalities": "Class Of Country",
+    "RenterDrivingLicenseName": "Driving License",
     "AuthEmplpoyee_Enter": "You can't enter. You don't have Permission.",
     "AuthEmplpoyee_No_auth": "You don't have Permission.",
     "AuthEmplpoyee_AddMore": "You can't Add New Record.",
     "AuthEmplpoyee_NoUpdate": "You can't Update This Record.",
-    "toastor_Exist": "This Record is Recorded before"
+    "toastor_Exist": "This Record is Recorded before",
+
+    ///////////
+    "RentalSystemCode": "Rental System Code",
+    "RentalSystemNo": "Rental System No",
+    "Count": "Count",
+    "the_Code": "Code",
+    "Reason_s": "Remarks",
+    //////////
+
+    // MAS Renter Driving License
+    "Add RenterDrivingLicense Data": "Add Driving License",
+    "Edit RenterDrivingLicense Data": "Update Driving License Data",
+    "View RenterDrivingLicense Data": "Driving Licenses",
+    "RenterDrivingLicenseName_view": "Driving License Type",
+    "RenterDrivingLicenseNameAr_add": "Driving License in Arabic",
+    "RenterDrivingLicenseNameEn_add": "Driving License in English",
+    "RenterDrivingLicenseNameAr_edit": "Arabic Type",
+    "RenterDrivingLicenseNameEn_edit": "English Type",
+
+    // MAS Renter Employer WorkPlace
+    "Add RenterEmployer Data": "Add WorkPlace",
+    "Edit RenterEmployer Data": "Update WorkPlace Data",
+    "View RenterEmployer Data": "WorkPlaces",
+    "RenterEmployerName_view": "WorkPlace",
+    "RenterEmployerNameAr_add": "WorkPlace in Arabic",
+    "RenterEmployerNameEn_add": "WorkPlace in English",
+    "RenterEmployerNameAr_edit": "WorkPlace in Arabic",
+    "RenterEmployerNameEn_edit": "WorkPlace in English",
+
+    // MAS Renter Profession
+    "Add RenterProfession Data": "Add Profession",
+    "Edit RenterProfession Data": "Update Profession Data",
+    "View RenterProfession Data": "Professions",
+    "RenterProfessionName_view": "Profession",
+    "RenterProfessionNameAr_add": "Profession in Arabic",
+    "RenterProfessionNameEn_add": "Profession in English",
+    "RenterProfessionNameAr_edit": "Profession in Arabic",
+    "RenterProfessionNameEn_edit": "Profession in English",
+
+
+    // MAS Renter Sector
+    "Add RenterSector Data": "Add Sector",
+    "Edit RenterSector Data": "Update Sector Data",
+    "View RenterSector Data": "Sectors",
+    "RenterSectorName_view": "Sector",
+    "RenterSectorNameAr_add": "Sector in Arabic",
+    "RenterSectorNameEn_add": "Sector in English",
+    "RenterSectorNameAr_edit": "Sector in Arabic",
+    "RenterSectorNameEn_edit": "Sector in English",
+
+
   },
   "Arabic": "Arabic",
   "English": "English",
@@ -552,12 +602,12 @@
   "RenterProfession Data": "Renter Profession",
   "RenterProfessionNameEn": "Renter Profession in English",
   "RenterProfessionNameAr": "Renter Profession in Arabic",
-  "RenterProfessionName": "Renter Profession",
+  "RenterProfessionName": "Profession",
   "RenterProfessionCode": "Code",
   "Add RenterProfession Hint": "This page allows you to add Renter Profession data.",
   "Add RenterProfession Data": "Add Renter Profession",
   "Edit RenterProfession Hint": "The page allows you to modify Renter Profession data.",
-  "Edit RenterProfession Data": "modify Renter Profession",
+  "Edit RenterProfession Data": "Update Renter Profession",
   "RenterProfessionImg": "Renter Profession Img",
 
   "HintSureToRetriveHRenterProfession": "The retrieval of Renter Profession data will result to be restored in the system.",
@@ -593,7 +643,7 @@
 
   //Renter Employer------
   "RenterEmployer Hint": "The page allows you to display, add, and modify Work Place data.",
-  "RenterEmployer Data": "Work Place",
+  "RenterEmployer Data": "Work Places",
   "RenterEmployerNameEn": "Work Place in English",
   "RenterEmployerNameAr": "Work Place in Arabic",
   "RenterEmployerName": "Work Place",
@@ -601,7 +651,7 @@
   "Add RenterEmployer Hint": "This page allows you to add New Employer data.",
   "Add RenterEmployer Data": "Add New Employer",
   "Edit RenterEmployer Hint": "The page allows you to modify Work Place data.",
-  "Edit RenterEmployer Data": "modify Work Place",
+  "Edit RenterEmployer Data": "Update Work Place",
   "RenterEmployerImg": "Work Place Img",
   "RenterEmployerSector": "Choose The Sector",
   "HintSureToRetriveHRenterEmployer": "The retrieval of Work Place data will result to be restored in the system.",
@@ -668,7 +718,7 @@
   "RenterInformationEvalution": "Score",
   "RenterInformationAddress": "Address",
   "RenterInformationProfession": "Profession",
-  "RenterInformationWorkPlace": "Work Place",
+  "RenterInformationEmployer": "Work Place",
   "RenterLessorMechanism": "Evaluation",
 
   "DateLastContract": "Last contractual",
@@ -687,7 +737,7 @@
   "Nationality": "Nationality",
   "sector": "Sector",
   "Profession": "Profession",
-  "WorkPlace": "Work Place",
+  "Employer": "Work Place",
   "Bank_name": "Bank",
   "Account_bank_numper": "Account Num",
   "Membership": "Membership",

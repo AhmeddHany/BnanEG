@@ -189,6 +189,8 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IFinancialTransactionOfEmployee, FinancialTransactionOfEmployee>();
             builder.Services.AddScoped<IContractSettlement, ContractSettlement>();
             builder.Services.AddScoped<IConvertedText, ConvertedText>();
+
+            //MAS
             builder.Services.AddScoped<IMasCarColor, MasCarColor>();
             builder.Services.AddScoped<IMasRenterDrivingLicense, MasRenterDrivingLicense>();
             builder.Services.AddScoped<IMasRenterProfession, MasRenterProfession>();
