@@ -329,8 +329,6 @@
                                         </div>
                                         <hr class="version2-hr">
                                         <div class="row hidden-input-row hidden-input-row-Renter ms-2" style="display: none">
-                                            <input type="hidden" asp-for="Contract.RenterInfo.CrMasRenterInformationCountreyKey" />
-                                            <input type="hidden" asp-for="Contract.RenterInfo.CrMasRenterInformationMobile" />
                                             <div class="col-lg-12">
                                                 <div class="row justify-content-end">
                                                     <div class="col-lg-7 inner-hidden-row-div">
@@ -754,8 +752,6 @@
                                         </div>
                                         <hr class="version2-hr">
                                         <div class="row  hidden-input-row hidden-input-row-Driver ms-2" style="display:none">
-                                            <input type="hidden" id="keyCountry-driver" asp-for="Contract.DriverInfo.CrMasRenterInformationCountreyKey" />
-                                            <input type="hidden" id="mobile-driver" asp-for="Contract.DriverInfo.CrMasRenterInformationMobile" />
                                             <div class="col-lg-12">
                                                 <div class="row justify-content-end">
                                                     <div class="col-lg-7  inner-hidden-row-div">
@@ -1225,8 +1221,7 @@
                                         </div>
                                         <hr class="version2-hr">
                                         <div class="row hidden-input-row hidden-input-row-AddDriver ms-2" style="display:none;">
-                                            <input type="hidden" asp-for="Contract.AddDriverInfo.CrMasRenterInformationCountreyKey" />
-                                            <input type="hidden" asp-for="Contract.AddDriverInfo.CrMasRenterInformationMobile" />
+                                           
                                             <div class="col-lg-12">
                                                 <div class="row justify-content-end">
                                                     <div class="col-lg-7  inner-hidden-row-div">
@@ -3309,256 +3304,256 @@
         //     }
         // });
 
-        function SetCodeAndPhoneNumberToRenter(type) {
-            if (type === "renter") {
-                $("#Contract_RenterInfo_CrMasRenterInformationCountreyKey").val(codeCountryForRenter)
-                $("#Contract_RenterInfo_CrMasRenterInformationMobile").val(phoneForRenter)
-                // RenterInformation.keyCountry = codeCountryForRenter;
-                // RenterInformation.mobileNumber = phoneForRenter;
-            }
-            else if (type === "driver") {
-                $("#keyCountry-driver").val(codeCountryForDriver)
-                $("#mobile-driver").val(phoneForDriver)
-                // DriverInformation.keyCountry = codeCountryForDriver;
-                // DriverInformation.mobileNumber = phoneForDriver;
-            }
-            else {
-                $("#Contract_AddDriverInfo_CrMasRenterInformationCountreyKey").val(codeCountryForAddDriver)
-                $("#Contract_AddDriverInfo_CrMasRenterInformationMobile").val(phoneForAddDriver)
-                // AddDriverInformation.keyCountry = codeCountryForAddDriver;
-                // AddDriverInformation.mobileNumber = phoneForAddDriver;
-            }
+        // function SetCodeAndPhoneNumberToRenter(type) {
+        //     if (type === "renter") {
+        //         $("#Contract_RenterInfo_CrMasRenterInformationCountreyKey").val(codeCountryForRenter)
+        //         $("#Contract_RenterInfo_CrMasRenterInformationMobile").val(phoneForRenter)
+        //         // RenterInformation.keyCountry = codeCountryForRenter;
+        //         // RenterInformation.mobileNumber = phoneForRenter;
+        //     }
+        //     else if (type === "driver") {
+        //         $("#keyCountry-driver").val(codeCountryForDriver)
+        //         $("#mobile-driver").val(phoneForDriver)
+        //         // DriverInformation.keyCountry = codeCountryForDriver;
+        //         // DriverInformation.mobileNumber = phoneForDriver;
+        //     }
+        //     else {
+        //         $("#Contract_AddDriverInfo_CrMasRenterInformationCountreyKey").val(codeCountryForAddDriver)
+        //         $("#Contract_AddDriverInfo_CrMasRenterInformationMobile").val(phoneForAddDriver)
+        //         // AddDriverInformation.keyCountry = codeCountryForAddDriver;
+        //         // AddDriverInformation.mobileNumber = phoneForAddDriver;
+        //     }
 
-        }
-        async function SendCodeToPhoneNumber(type) {
-            const selectedWayToSendMessage = $('input[name="SMS-or-WhatsApp"]:checked').val();
-            if (selectedWayToSendMessage == "WhatsApp") {
-                TimerFunction("SendMessageBtn");
-                randomNumberRenter = generateRandomNumber();
-                if (type === "renter") {
-                    phoneForRenter = $("#CheckModal-PhoneInput").val();
-                    codeCountryForRenter = $("#country-code").val();
-                    console.log("phoneForRenter", phoneForRenter);
-                    console.log("codeCountryForRenter", codeCountryForRenter);
-                }
-                else if (type === "driver") {
-                    phoneForDriver = $("#CheckModal-PhoneInput").val();
-                    codeCountryForDriver = $("#country-code").val();
-                }
-                else {
-                    phoneForAddDriver = $("#CheckModal-PhoneInput").val();
-                    codeCountryForAddDriver = $("#country-code").val();
-                }
-                var phoneNoSendCode;
-                var phoneNumberRenter = codeCountryForRenter + phoneForRenter;
-                var phoneNumberUser = '@user.CrMasUserInformationCallingKey' + '@user.CrMasUserInformationMobileNo';
-                var lessorCode = "@lessorInfo.CrMasUserInformationLessor";
-                if (parseInt(lessorCode) > 4009) {
-                    phoneNoSendCode = phoneNumberRenter;
-                    console.log("phoneNumberRenter", phoneNoSendCode);
-                }
-                else {
-                    phoneNoSendCode = phoneNumberUser;
-                    console.log("phoneNumberUser", phoneNoSendCode);
-                }
-                await sendMessageToWhatsApp(randomNumberRenter, phoneNoSendCode);
-            }
-            else if (selectedWayToSendMessage == "SMS") {
-                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                toastr.warning('@localizer["ThisFeatureNotAvaliable"]');
-                return;
-            }
-        }
-        const originalContent = document.querySelector("#confirmButton").innerHTML;
-        const originalContentSendMessage = document.getElementById("SendMessageBtn").innerHTML;
-        function UserCheck(WhoIsCheck, model, updateFunction, classDivHide, type, btnCheck) {
-            $("#checkModalToggle").modal('show');
-            setTimeout(() => {
-                $("#CheckModal-PhoneInput").focus();
-            }, 500);
-            if (WhoIsCheck) {
-                var countryKey = model.keyCountry;
-                var mobileNumber = model.mobileNumber;
-                $("#country-code").val(countryKey);
-                $("#CheckModal-PhoneInput").val(mobileNumber);
-            }
-            const confirmButton = document.querySelector("#confirmButton");
-            const ResendButton = document.querySelector("#ResendButton");
-            // تغيير حالة مدخلات ارقام الكود الي disabledd
-            const otpInputs = document.querySelectorAll("input.OTP");
-            otpInputs.forEach(function (input) {
-                input.disabled = true;
-            });
-            // التأكد من ادخال جميع ارقام الكود السته
-            otpInputs.forEach((input, index) => {
-                input.addEventListener("input", () => {
-                    if (Array.from(otpInputs).every((input) => input.value.trim() !== "")) {
-                        confirmButton.disabled = false;
-                    } else {
-                        confirmButton.disabled = true;
-                    }
-                });
-            });
-            confirmButton.addEventListener("click", function () {
-                $("#Incorrect-Code-Erorr").text("");
-                //  اظهار لودر اثناء التحقق من الكود
-                var spinner = document.createElement("div");
-                spinner.classList.add(
-                    "spinner-border",
-                    "spinner-border-sm",
-                    "text-warning"
-                );
-                spinner.role = "status";
+        // }
+        // async function SendCodeToPhoneNumber(type) {
+        //     const selectedWayToSendMessage = $('input[name="SMS-or-WhatsApp"]:checked').val();
+        //     if (selectedWayToSendMessage == "WhatsApp") {
+        //         TimerFunction("SendMessageBtn");
+        //         randomNumberRenter = generateRandomNumber();
+        //         if (type === "renter") {
+        //             phoneForRenter = $("#CheckModal-PhoneInput").val();
+        //             codeCountryForRenter = $("#country-code").val();
+        //             console.log("phoneForRenter", phoneForRenter);
+        //             console.log("codeCountryForRenter", codeCountryForRenter);
+        //         }
+        //         else if (type === "driver") {
+        //             phoneForDriver = $("#CheckModal-PhoneInput").val();
+        //             codeCountryForDriver = $("#country-code").val();
+        //         }
+        //         else {
+        //             phoneForAddDriver = $("#CheckModal-PhoneInput").val();
+        //             codeCountryForAddDriver = $("#country-code").val();
+        //         }
+        //         var phoneNoSendCode;
+        //         var phoneNumberRenter = codeCountryForRenter + phoneForRenter;
+        //         var phoneNumberUser = '@user.CrMasUserInformationCallingKey' + '@user.CrMasUserInformationMobileNo';
+        //         var lessorCode = "@lessorInfo.CrMasUserInformationLessor";
+        //         if (parseInt(lessorCode) > 4009) {
+        //             phoneNoSendCode = phoneNumberRenter;
+        //             console.log("phoneNumberRenter", phoneNoSendCode);
+        //         }
+        //         else {
+        //             phoneNoSendCode = phoneNumberUser;
+        //             console.log("phoneNumberUser", phoneNoSendCode);
+        //         }
+        //         await sendMessageToWhatsApp(randomNumberRenter, phoneNoSendCode);
+        //     }
+        //     else if (selectedWayToSendMessage == "SMS") {
+        //         toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+        //         toastr.warning('@localizer["ThisFeatureNotAvaliable"]');
+        //         return;
+        //     }
+        // }
+        // const originalContent = document.querySelector("#confirmButton").innerHTML;
+        // const originalContentSendMessage = document.getElementById("SendMessageBtn").innerHTML;
+        // function UserCheck(WhoIsCheck, model, updateFunction, classDivHide, type, btnCheck) {
+        //     $("#checkModalToggle").modal('show');
+        //     setTimeout(() => {
+        //         $("#CheckModal-PhoneInput").focus();
+        //     }, 500);
+        //     if (WhoIsCheck) {
+        //         var countryKey = model.keyCountry;
+        //         var mobileNumber = model.mobileNumber;
+        //         $("#country-code").val(countryKey);
+        //         $("#CheckModal-PhoneInput").val(mobileNumber);
+        //     }
+        //     const confirmButton = document.querySelector("#confirmButton");
+        //     const ResendButton = document.querySelector("#ResendButton");
+        //     // تغيير حالة مدخلات ارقام الكود الي disabledd
+        //     const otpInputs = document.querySelectorAll("input.OTP");
+        //     otpInputs.forEach(function (input) {
+        //         input.disabled = true;
+        //     });
+        //     // التأكد من ادخال جميع ارقام الكود السته
+        //     otpInputs.forEach((input, index) => {
+        //         input.addEventListener("input", () => {
+        //             if (Array.from(otpInputs).every((input) => input.value.trim() !== "")) {
+        //                 confirmButton.disabled = false;
+        //             } else {
+        //                 confirmButton.disabled = true;
+        //             }
+        //         });
+        //     });
+        //     confirmButton.addEventListener("click", function () {
+        //         $("#Incorrect-Code-Erorr").text("");
+        //         //  اظهار لودر اثناء التحقق من الكود
+        //         var spinner = document.createElement("div");
+        //         spinner.classList.add(
+        //             "spinner-border",
+        //             "spinner-border-sm",
+        //             "text-warning"
+        //         );
+        //         spinner.role = "status";
 
-                var checkIcon = document.createElement("i");
-                checkIcon.classList.add("fa-solid", "fa-check");
+        //         var checkIcon = document.createElement("i");
+        //         checkIcon.classList.add("fa-solid", "fa-check");
 
-                confirmButton.innerHTML = "";
-                confirmButton.appendChild(spinner);
-                confirmButton.classList.add("send-check");
+        //         confirmButton.innerHTML = "";
+        //         confirmButton.appendChild(spinner);
+        //         confirmButton.classList.add("send-check");
 
-                setTimeout(() => {
-                    confirmButton.innerHTML = "";
-                    confirmButton.innerHTML = originalContent;
-                    console.log("originalContent", originalContent)
-                    confirmButton.classList.remove("send-check");
+        //         setTimeout(() => {
+        //             confirmButton.innerHTML = "";
+        //             confirmButton.innerHTML = originalContent;
+        //             console.log("originalContent", originalContent)
+        //             confirmButton.classList.remove("send-check");
 
-                }, 1500);
-                // مقارنة الكود المدخل بالكود المرسل و حالة المستأجر
-                var predefinedCode = "111111";
-                var hiddenInputRow = document.querySelector(classDivHide);
-                var otpInputs = document.querySelectorAll("input.OTP");
-                let enteredCode = "";
-                otpInputs.forEach(function (input) {
-                    enteredCode += input.value;
-                });
-                if (enteredCode === predefinedCode || enteredCode === randomNumberRenter) {
-                    setTimeout(() => {
-                        hiddenInputRow.style.display = "block";
-                        $(btnCheck).hide();
-                        CheckIfConfirmByPhone = true;
-                        SetCodeAndPhoneNumberToRenter(type);
-                        updateFunction();
-                        $("#checkModalToggle").modal("hide");
-                    }, 1500);
+        //         }, 1500);
+        //         // مقارنة الكود المدخل بالكود المرسل و حالة المستأجر
+        //         var predefinedCode = "111111";
+        //         var hiddenInputRow = document.querySelector(classDivHide);
+        //         var otpInputs = document.querySelectorAll("input.OTP");
+        //         let enteredCode = "";
+        //         otpInputs.forEach(function (input) {
+        //             enteredCode += input.value;
+        //         });
+        //         if (enteredCode === predefinedCode || enteredCode === randomNumberRenter) {
+        //             setTimeout(() => {
+        //                 hiddenInputRow.style.display = "block";
+        //                 $(btnCheck).hide();
+        //                 CheckIfConfirmByPhone = true;
+        //                 SetCodeAndPhoneNumberToRenter(type);
+        //                 updateFunction();
+        //                 $("#checkModalToggle").modal("hide");
+        //             }, 1500);
 
-                }
-                else {
-                    setTimeout(() => {
-                        $("#Incorrect-Code-Erorr").text('@localizer["CodeIsWrong"]');
-                    }, 1500);
-                }
-            });
-            // Send Code To Phone
-            document.getElementById("SendMessageBtn").addEventListener("click", async function () {
-                //Check Phone And Code
-                var countryCode = $("#country-code").val();
-                var phoneNumber = $("#CheckModal-PhoneInput").val();
-                if (countryCode && phoneNumber) {
-                    $("#CheckModal-PhoneInput-Error").text('');
-                    await SendCodeToPhoneNumber(type);
-                }
-                else {
-                    $("#CheckModal-PhoneInput-Error").text('@localizer["SureCountryCodeAndPhone"]');
-                    return;
-                }
-            });
-            // Resend Code To Phone
-            ResendButton.addEventListener("click", async function () {
-                const SendButton = document.getElementById("SendMessageBtn");
-                const otcInputs = document.querySelectorAll(".OTP");
-                // SendButton.disabled = false;
-                document.getElementById("otc-1").value = "";
-                document.getElementById("otc-2").value = "";
-                document.getElementById("otc-3").value = "";
-                document.getElementById("otc-4").value = "";
-                document.getElementById("otc-5").value = "";
-                document.getElementById("otc-6").value = "";
-                otcInputs[0].focus();
-                await SendCodeToPhoneNumber(type);
-            });
+        //         }
+        //         else {
+        //             setTimeout(() => {
+        //                 $("#Incorrect-Code-Erorr").text('@localizer["CodeIsWrong"]');
+        //             }, 1500);
+        //         }
+        //     });
+        //     // Send Code To Phone
+        //     document.getElementById("SendMessageBtn").addEventListener("click", async function () {
+        //         //Check Phone And Code
+        //         var countryCode = $("#country-code").val();
+        //         var phoneNumber = $("#CheckModal-PhoneInput").val();
+        //         if (countryCode && phoneNumber) {
+        //             $("#CheckModal-PhoneInput-Error").text('');
+        //             await SendCodeToPhoneNumber(type);
+        //         }
+        //         else {
+        //             $("#CheckModal-PhoneInput-Error").text('@localizer["SureCountryCodeAndPhone"]');
+        //             return;
+        //         }
+        //     });
+        //     // Resend Code To Phone
+        //     ResendButton.addEventListener("click", async function () {
+        //         const SendButton = document.getElementById("SendMessageBtn");
+        //         const otcInputs = document.querySelectorAll(".OTP");
+        //         // SendButton.disabled = false;
+        //         document.getElementById("otc-1").value = "";
+        //         document.getElementById("otc-2").value = "";
+        //         document.getElementById("otc-3").value = "";
+        //         document.getElementById("otc-4").value = "";
+        //         document.getElementById("otc-5").value = "";
+        //         document.getElementById("otc-6").value = "";
+        //         otcInputs[0].focus();
+        //         await SendCodeToPhoneNumber(type);
+        //     });
 
-        }
-        function TimerFunction(buttonId) {
-            const otpInputs = document.querySelectorAll("input.OTP");
-            otpInputs.forEach(function (input) {
-                input.disabled = false;
-            });
-            const SendButton = document.getElementById("SendMessageBtn");
-            const ResendButton = document.getElementById("ResendButton");
-            const otcInputs = document.querySelectorAll(".OTP");
-            const spinner = document.createElement("div");
-            spinner.classList.add("spinner-border", "spinner-border-sm", "text-warning");
-            spinner.role = "status";
+        // }
+        // function TimerFunction(buttonId) {
+        //     const otpInputs = document.querySelectorAll("input.OTP");
+        //     otpInputs.forEach(function (input) {
+        //         input.disabled = false;
+        //     });
+        //     const SendButton = document.getElementById("SendMessageBtn");
+        //     const ResendButton = document.getElementById("ResendButton");
+        //     const otcInputs = document.querySelectorAll(".OTP");
+        //     const spinner = document.createElement("div");
+        //     spinner.classList.add("spinner-border", "spinner-border-sm", "text-warning");
+        //     spinner.role = "status";
 
-            const checkIcon = document.createElement("i");
-            checkIcon.classList.add("fa-solid", "fa-check");
+        //     const checkIcon = document.createElement("i");
+        //     checkIcon.classList.add("fa-solid", "fa-check");
 
-            SendButton.innerHTML = "";
-            SendButton.appendChild(spinner);
-            SendButton.classList.add("send-check");
+        //     SendButton.innerHTML = "";
+        //     SendButton.appendChild(spinner);
+        //     SendButton.classList.add("send-check");
 
-            setTimeout(() => {
-                SendButton.innerHTML = originalContentSendMessage;
-                SendButton.classList.remove("send-check");
-                SendButton.disabled = true;
-                ResendButton.disabled = false;
-                otcInputs[0].focus();
-            }, 2000);
+        //     setTimeout(() => {
+        //         SendButton.innerHTML = originalContentSendMessage;
+        //         SendButton.classList.remove("send-check");
+        //         SendButton.disabled = true;
+        //         ResendButton.disabled = false;
+        //         otcInputs[0].focus();
+        //     }, 2000);
 
-            if (buttonId !== lastClickedButtonId || !interval) {
-                if (interval) {
-                    clearInterval(interval);
-                }
-                lastClickedButtonId = buttonId;
-                var display = document.querySelector("#timerDiv");
-                var timer = 300, minutes, seconds;
-                interval = setInterval(function () {
-                    minutes = parseInt(timer / 60, 10);
-                    seconds = parseInt(timer % 60, 10);
+        //     if (buttonId !== lastClickedButtonId || !interval) {
+        //         if (interval) {
+        //             clearInterval(interval);
+        //         }
+        //         lastClickedButtonId = buttonId;
+        //         var display = document.querySelector("#timerDiv");
+        //         var timer = 300, minutes, seconds;
+        //         interval = setInterval(function () {
+        //             minutes = parseInt(timer / 60, 10);
+        //             seconds = parseInt(timer % 60, 10);
 
-                    minutes = minutes < 10 ? "0" + minutes : minutes;
-                    seconds = seconds < 10 ? "0" + seconds : seconds;
+        //             minutes = minutes < 10 ? "0" + minutes : minutes;
+        //             seconds = seconds < 10 ? "0" + seconds : seconds;
 
-                    display.textContent = minutes + ":" + seconds;
+        //             display.textContent = minutes + ":" + seconds;
 
-                    if (--timer < 0) {
-                        timer = 0;
-                        clearInterval(interval);
-                        $("#checkModalToggle").modal("hide");
-                    }
-                }, 1000);
-            }
-        };
-        function resetModal() {
-            // Clear input fields
-            CheckIfConfirmByPhone = false;
-            $("#country-code").val('');
-            $("#CheckModal-PhoneInput").val('');
-            $(".OTP").val('');
+        //             if (--timer < 0) {
+        //                 timer = 0;
+        //                 clearInterval(interval);
+        //                 $("#checkModalToggle").modal("hide");
+        //             }
+        //         }, 1000);
+        //     }
+        // };
+        // function resetModal() {
+        //     // Clear input fields
+        //     CheckIfConfirmByPhone = false;
+        //     $("#country-code").val('');
+        //     $("#CheckModal-PhoneInput").val('');
+        //     $(".OTP").val('');
 
-            // Reset radio buttons
-            $("input[name='SMS-or-WhatsApp']").prop('checked', false);
-            $("#WhatsApp").prop('checked', true);
+        //     // Reset radio buttons
+        //     $("input[name='SMS-or-WhatsApp']").prop('checked', false);
+        //     $("#WhatsApp").prop('checked', true);
 
-            // Hide error messages and disable buttons
+        //     // Hide error messages and disable buttons
 
-            $("#ResendButton").prop('disabled', true);
-            $("#confirmButton").prop('disabled', true);
-            $("#SendMessageBtn").prop('disabled', false);
-            // Reset timer
-            ResetTimerForModal();
-        }
-        function ResetTimerForModal() {
-            // ايقاف الtimer
-            if (interval) {
-                clearInterval(interval);
-            }
+        //     $("#ResendButton").prop('disabled', true);
+        //     $("#confirmButton").prop('disabled', true);
+        //     $("#SendMessageBtn").prop('disabled', false);
+        //     // Reset timer
+        //     ResetTimerForModal();
+        // }
+        // function ResetTimerForModal() {
+        //     // ايقاف الtimer
+        //     if (interval) {
+        //         clearInterval(interval);
+        //     }
 
-            // Reset the timer
-            var display = document.querySelector("#timerDiv");
-            display.innerHTML = "05:00";
-        }
+        //     // Reset the timer
+        //     var display = document.querySelector("#timerDiv");
+        //     display.innerHTML = "05:00";
+        // }
 
         // Renter
         //Restart all values
@@ -4044,8 +4039,6 @@
             DriverInformation.licenseCode = document.getElementById("licence-driver-number").value;
             DriverInformation.licenseType = document.getElementById("licence-driver-type").value;
             DriverInformation.licenseExpiryDate = document.getElementById("ExpiryDrivingLicenseDate-driver").value;
-            document.getElementById("mobile-driver").value = phoneForDriver;
-            document.getElementById("keyCountry-driver").value = codeCountryForDriver;
             DriverInformation.reasons = document.getElementById("Reasons-driver").value;
 
             // Handle the selected radio button for gender
@@ -4270,8 +4263,6 @@
             AddDriverInformation.licenseExpiryDate = document.getElementById("ExpiryDrivingLicenseDate-addDriver").value;
             AddDriverInformation.arMembership = "مشترك";
             AddDriverInformation.enMembership = "Mutual";
-            document.getElementById("Contract_AddDriverInfo_CrMasRenterInformationMobile").value = phoneForAddDriver;
-            document.getElementById("Contract_AddDriverInfo_CrMasRenterInformationCountreyKey").value = codeCountryForAddDriver;
             AddDriverInformation.reasons = document.getElementById("Reasons-addDriver").value;
 
             // Handle the selected radio button for gender
