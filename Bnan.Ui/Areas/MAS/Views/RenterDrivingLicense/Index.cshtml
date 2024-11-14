@@ -5,15 +5,18 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["RenterDrivingLicense Data"];
+    ViewData["Page-title"] = @localizer["View RenterDrivingLicense Data"];
     ViewData["Page-Hint"] = @localizer["RenterDrivingLicense Hint"];
 }
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container main-container">
         <form action="">
             <div class="row g-3 mb-2">
                 <div class="col">
-                    <h3>@localizer["RenterDrivingLicense Data"]</h3>
+                    <h3>@localizer["View RenterDrivingLicense Data"]</h3>
                 </div>
                 <div class="col-12 col-lg-6 d-flex justify-content-end">
 
@@ -67,6 +70,7 @@
 </div>
 
 @section scripts {
+    <script src="~/js/toastr.js"></script>
 
     <script>
         // لجعل الحالة حسب ما هي جاية من index نشط او الكل
@@ -78,6 +82,22 @@
         function showErrorToast_NoUpdate() {
             toastr.options = { "positionClass": '@localizer["toastPostion"]' };
             toastr.error('@localizer["AuthEmplpoyee_NoUpdate"]');
+        }
+
+        function showErrorToast_whitController(messageText) {
+            $.ajax({
+                url: '@Url.Action("DisplayToastError_NoUpdate", "RenterDrivingLicense")',
+                type: 'POST',
+                data: { messageText: messageText },
+                success: function (response) {
+                    if (response.success) {
+                        console.log('showErrorToast_whitController : ', messageText);
+                    }
+                },
+                error: function () {
+                    toastr.error('تعذر الاتصال بالخادم');
+                }
+            });
         }
     </script>
     @*Get RenterDrivingLicense Using filter*@

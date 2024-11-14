@@ -9,14 +9,18 @@ namespace Bnan.Ui.ViewModels.MAS
 
         public string? CrMasSupRenterEmployerGroupCode = "18";
         public string? CrMasSupRenterEmployerSectorCode { get; set; }
-        [Required(ErrorMessage = "requiredFiled"), MaxLength(50, ErrorMessage = "requiredNoLengthFiled50")]
+
+        [Required(ErrorMessage = "requiredFiled"), MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupRenterEmployerArName { get; set; }
 
-        [Required(ErrorMessage = "requiredFiled"), MaxLength(50, ErrorMessage = "requiredNoLengthFiled50")]
+        [Required(ErrorMessage = "requiredFiled"), MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupRenterEmployerEnName { get; set; }
         public int? CrMasSupRenterEmployerCounter { get; set; }
         public string? CrMasSupRenterEmployerStatus { get; set; }
+
+        [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupRenterEmployerReasons { get; set; }
+        public int? RentersHave_withType_Count { get; set; }
 
         public List<CrMasSupRenterSector> All_Sectors = new List<CrMasSupRenterSector>();
         public virtual CrMasSysGroup? CrMasSupRenterEmployerGroupCodeNavigation { get; set; }

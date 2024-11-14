@@ -166,6 +166,9 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IContractExtension, ContractExtension>();
             builder.Services.AddScoped<IFeedBoxBS, FeedBoxBS>();
 
+
+            
+            builder.Services.AddScoped<IMasBase, MasBase>();
             builder.Services.AddScoped<IMasCarFuel, MasCarFuel>();
             builder.Services.AddScoped<IMasCarCvt, MasCarCvt>();
             builder.Services.AddScoped<IMasCarCategory, MasCarCategory>();
@@ -186,6 +189,8 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IFinancialTransactionOfEmployee, FinancialTransactionOfEmployee>();
             builder.Services.AddScoped<IContractSettlement, ContractSettlement>();
             builder.Services.AddScoped<IConvertedText, ConvertedText>();
+
+            //MAS
             builder.Services.AddScoped<IMasCarColor, MasCarColor>();
             builder.Services.AddScoped<IMasRenterDrivingLicense, MasRenterDrivingLicense>();
             builder.Services.AddScoped<IMasRenterProfession, MasRenterProfession>();
