@@ -5,7 +5,7 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["View RenterProfession Data"];
+    ViewData["Page-title"] = @localizer["View_RenterProfession_PageTitle"];
     ViewData["Page-Hint"] = @localizer["RenterProfession Hint"];
 }
 <link href="~/css/toastr.css" rel="stylesheet" />
@@ -16,7 +16,7 @@
         <form action="">
             <div class="row g-3 mb-2">
                 <div class="col">
-                    <h3>@localizer["View RenterProfession Data"]</h3>
+                    <h3>@localizer["View_RenterProfession_PageTitle"]</h3>
                 </div>
                 <div class="col-12 col-lg-6 d-flex justify-content-end">
 
@@ -59,7 +59,7 @@
             </div>
         </form>
         <a asp-area="MAS" asp-controller="RenterProfession" asp-action="AddRenterProfession" data-bs-toggle="tooltip" data-bs-placement="top"
-           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add RenterProfession Data"]" class="new-Page-icon" style="cursor: pointer">
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add_RenterProfession_PageTitle"]" class="new-Page-icon" style="cursor: pointer">
             <img src="~/MasSystem/images/new driver lecience.svg" alt="new item">
         </a>
         <a asp-area="MAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
@@ -80,8 +80,8 @@
         ///////
 
         function showErrorToast_NoUpdate() {
-            toastr.options = { "positionClass": '@localizer["toastPostion"]' };
-            toastr.error('@localizer["AuthEmplpoyee_NoUpdate"]');
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+            toastr.error("@localizer["AuthEmplpoyee_NoUpdate"]");
         }
 
         function showErrorToast_whitController(messageText) {

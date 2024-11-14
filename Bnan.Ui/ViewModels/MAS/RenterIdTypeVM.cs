@@ -2,7 +2,7 @@
 
 namespace Bnan.Ui.ViewModels.MAS
 {
-    public class RenterIdTypeVM
+    public class RenterIdtypeVM
     {
         public string CrMasSupRenterIdtypeCode { get; set; } = null!;
 
@@ -12,6 +12,9 @@ namespace Bnan.Ui.ViewModels.MAS
         [Required(ErrorMessage = "requiredFiled"), MaxLength(30, ErrorMessage = "requiredNoLengthFiled30")]
         public string? CrMasSupRenterIdtypeEnName { get; set; }
         public string? CrMasSupRenterIdtypeStatus { get; set; }
+
+        [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupRenterIdtypeReasons { get; set; }
+        public int? RentersHave_withType_Count { get; set; }
     }
 }

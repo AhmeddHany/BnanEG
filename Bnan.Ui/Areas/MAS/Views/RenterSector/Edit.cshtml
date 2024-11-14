@@ -21,7 +21,7 @@
                     <div class="col-lg-9">
                         <div class="row g-3 my-2">
                             <div class="col">
-                                <h3>@localizer["Edit RenterSector Data"]</h3>
+                                <h3>@localizer["Edit_RenterSector_PageTitle"]</h3>
                             </div>
                             <div class="col-md-auto save-col btnsContainer">
                                 <button type="submit" class="custom-img-btn" id="SaveEdit">
@@ -161,8 +161,6 @@
         }
         //////////////////////////////////////////
         var statusInput = $("#CrMasSupRenterSectorStatus");
-        var OldNaqlId = $("#CrMasSupRenterSectorNaqlId").val();
-        var OldNaqlCode = $("#CrMasSupRenterSectorNaqlCode").val();
         var OldArName = $("#CrMasSupRenterSectorArName").val();
         var OldEnName = $("#CrMasSupRenterSectorEnName").val();
 
@@ -213,17 +211,6 @@
             Check_onChange_input('CrMasSupRenterSectorEnName', newValue, OldEnName);
         });
 
-        // Example usage for Naql Code input
-        $('#CrMasSupRenterSectorNaqlCode').on('change', function () {
-            var newValue = $(this).val();
-            Check_onChange_input('CrMasSupRenterSectorNaqlCode', newValue, OldNaqlCode);
-        });
-
-        // Example usage for Naql ID input
-        $('#CrMasSupRenterSectorNaqlId').on('change', function () {
-            var newValue = $(this).val();
-            Check_onChange_input('CrMasSupRenterSectorNaqlId', newValue, OldNaqlId);
-        });
     </script>
     <script>
         function updateRenterSectorStatus(status) {
@@ -234,24 +221,24 @@
                     url: "/MAS/RenterSector/EditStatus",
                     data: { status: status, code: code },
                     success: function (result) {
-                        toastr.options = { "positionClass": '@localizer["toastPostion"]' };
+                        toastr.options = { "positionClass": "@localizer["toastPostion"]" };
 
                         if (result == "true") {
-                            //@*toastr.success('@localizer["ToastSave"]');*@
+                            //@*toastr.success("@localizer["ToastSave"]");*@
                             resolve(true);
                         } else if (result == "false_auth") {
-                            toastr.error('@localizer["AuthEmplpoyee_No_auth"]');
+                            toastr.error("@localizer["AuthEmplpoyee_No_auth"]");
                             resolve(false);
                         } else if (result == "udelete") {
-                            toastr.error('@localizer["SureTo_Cannot_delete"]');
+                            toastr.error("@localizer["SureTo_Cannot_delete"]");
                             resolve(false);
                         } else {
-                            toastr.error('@localizer["ToastFailed"]');
+                            toastr.error("@localizer["ToastFailed"]");
                             resolve(false);
                         }
                     },
                     error: function () {
-                        toastr.error('@localizer["ToastFailed"]');
+                        toastr.error("@localizer["ToastFailed"]");
                         resolve(false);
                     }
                 });
@@ -285,49 +272,49 @@
 
             document.getElementById("modalContent").innerHTML = isDeleted
                 ? `
-                                                            <div class="modal-header border-0">
-                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                <img src="/MasSystem/images/Green-recycle.svg" /> @localizer["SureToRetriveDelete"]
-                                                              </h1>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                              <p>بيانات ونتائج</p>
-                                                              <p>بيانات ونتائج</p>
-                                                            </div>
-                                                            <div class="modal-footer border-0">
-                                                              <div class="container">
-                                                                <div class="row">
-                                                                  <div class="col-md-6 text-center">
-                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
-                                                                  </div>
-                                                                  <div class="col-md-6 text-center">
-                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                  </div>
-                                                                </div>
-                                                              </div>
-                                                            </div>`
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                        <img src="/MasSystem/images/Green-recycle.svg" /> @localizer["SureToRetriveDelete"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_Sector_UnDelete"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_Sector_UnDelete"]</p>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`
                 : `
-                                                            <div class="modal-header border-0">
-                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                <img src="/MasSystem/images/delete (2).svg" /> @localizer["SureTodelete"]
-                                                              </h1>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                              <p>بيانات ونتائج</p>
-                                                              <p>بيانات ونتائج</p>
-                                                            </div>
-                                                            <div class="modal-footer border-0">
-                                                              <div class="container">
-                                                                <div class="row">
-                                                                  <div class="col-md-6 text-center">
-                                                                    <button type="button" class="btn btn-modal-Save" id="DeleteBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
-                                                                  </div>
-                                                                  <div class="col-md-6 text-center">
-                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                  </div>
-                                                                </div>
-                                                              </div>
-                                                            </div>`;
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                        <img src="/MasSystem/images/delete (2).svg" /> @localizer["SureTodelete"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                                <p>@localizer["ModalFirstMessage_Sector_Delete"]</p>
+                                                                                <p>@localizer["ModalSecondMessage_Sector_Delete"]</p>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="DeleteBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`;
         }
         function DeleteLoad() {
             const modalContent = document.getElementById("modalContent");
@@ -378,49 +365,49 @@
 
             document.getElementById("Stop-modal-Content").innerHTML = isStoped
                 ? `
-                                                            <div class="modal-header border-0">
-                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                <img src="/MasSystem/images/GreenStop.svg" /> @localizer["SureToRetriveHold"]
-                                                              </h1>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                              <p>بيانات ونتائج</p>
-                                                              <p>بيانات ونتائج</p>
-                                                            </div>
-                                                            <div class="modal-footer border-0">
-                                                              <div class="container">
-                                                                <div class="row">
-                                                                  <div class="col-md-6 text-center">
-                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="StopLoad()">@localizer["Okay"]</button>
-                                                                  </div>
-                                                                  <div class="col-md-6 text-center">
-                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                  </div>
-                                                                </div>
-                                                              </div>
-                                                            </div>`
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                        <img src="/MasSystem/images/GreenStop.svg" /> @localizer["SureToRetriveHold"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_Sector_UnHold"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_Sector_UnHold"]</p>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`
                 : `
-                                                            <div class="modal-header border-0">
-                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                <img src="/MasSystem/images/RedStop.svg" /> @localizer["SureToHold"]
-                                                              </h1>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                              <p>بيانات ونتائج</p>
-                                                              <p>بيانات ونتائج</p>
-                                                            </div>
-                                                            <div class="modal-footer border-0">
-                                                              <div class="container">
-                                                                <div class="row">
-                                                                  <div class="col-md-6 text-center">
-                                                                    <button type="button" class="btn btn-modal-Save" id="HoldBtn" onclick="StopLoad()">@localizer["Okay"]</button>
-                                                                  </div>
-                                                                  <div class="col-md-6 text-center">
-                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                  </div>
-                                                                </div>
-                                                              </div>
-                                                            </div>`;
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                        <img src="/MasSystem/images/RedStop.svg" /> @localizer["SureToHold"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_Sector_Hold"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_Sector_Hold"]</p>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="HoldBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`;
         }
         function StopLoad() {
             const stopModalContent = document.getElementById("Stop-modal-Content");

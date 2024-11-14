@@ -96,7 +96,7 @@ namespace Bnan.Inferastructure
 
             CreateMap<UserLoginVM, CrMasUserLogin>().ReverseMap();
 
-            CreateMap<RenterIdTypeVM, CrMasSupRenterIdtype>().ReverseMap();
+            CreateMap<RenterIdtypeVM, CrMasSupRenterIdtype>().ReverseMap();
 
             CreateMap<RenterInformationsVM, CrMasRenterInformation>().ReverseMap();
 

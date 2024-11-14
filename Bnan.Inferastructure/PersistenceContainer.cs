@@ -150,7 +150,6 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IRenterDriver, RenterDriver>();
             builder.Services.AddScoped<IDrivingLicense, DrivingLicense>();
 
-            builder.Services.AddScoped<IRenterIdType, RenterIdType>();
 
             builder.Services.AddScoped<IRenterGender, RenterGender>();
             builder.Services.AddScoped<IRenterNationality, RenterNationality>();
@@ -169,6 +168,7 @@ namespace Bnan.Inferastructure
 
             
             builder.Services.AddScoped<IMasBase, MasBase>();
+            builder.Services.AddScoped<IMasRenterIdtype, MasRenterIdtype>();
             builder.Services.AddScoped<IMasCarFuel, MasCarFuel>();
             builder.Services.AddScoped<IMasCarCvt, MasCarCvt>();
             builder.Services.AddScoped<IMasCarCategory, MasCarCategory>();

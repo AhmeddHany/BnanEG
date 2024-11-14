@@ -1,335 +1,353 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
+using Bnan.Inferastructure.Filters;
+using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Numerics;
 namespace Bnan.Ui.Areas.MAS.Controllers
 {
-
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
-    public class RenterIdTypeController : BaseController
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
+    public class RenterIdtypeController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
-        private readonly UserManager<CrMasUserInformation> userManager;
-        private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly IUserService _userService;
-        private readonly IRenterIdType _RenterIdType;
+        private readonly IMasRenterIdtype _masRenterIdtype;
+        private readonly IBaseRepo _baseRepo;
+        private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IStringLocalizer<RenterIdTypeController> _localizer;
+        private readonly IStringLocalizer<RenterIdtypeController> _localizer;
 
-
-        public RenterIdTypeController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IRenterIdType RenterIdType,
-            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterIdTypeController> localizer) : base(userManager, unitOfWork, mapper)
+        public RenterIdtypeController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
+            IMapper mapper, IUserService userService, IMasRenterIdtype masRenterIdtype, IBaseRepo BaseRepo,IMasBase masBase,
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterIdtypeController> localizer) : base(userManager, unitOfWork, mapper)
         {
-            this.userManager = userManager;
-            this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             _userService = userService;
-            _RenterIdType = RenterIdType;
+            _masRenterIdtype = masRenterIdtype;
             _userLoginsService = userLoginsService;
+            _baseRepo = BaseRepo;
+            _masBase = masBase;
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
         }
 
         [HttpGet]
-
         public async Task<IActionResult> Index()
         {
-            var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106002", "1");
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            var pageNumber = Pages.CrMasSupRenterIdtype;
+            // Set page titles
+            await SetPageTitleAsync(string.Empty, pageNumber);
 
+            // Retrieve active driving licenses
+            var renterIdtypes = await _unitOfWork.CrMasSupRenterIdtype
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupRenterIdtypeStatus == Status.Active, new[] { "CrMasRenterInformations" });
 
-            var titles = await setTitle("106", "1106002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var contracts = await _unitOfWork.CrMasSupRenterIdtype.GetAllAsync();
-            var contract = contracts.Where(x => x.CrMasSupRenterIdtypeStatus == "A").ToList();
-            var CarsInfo_count_all = _RenterIdType.GetAllRenterIdTypesCount();
-            Tuple<IEnumerable<CrMasSupRenterIdtype>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupRenterIdtype>, List<List<string>>>(contract, CarsInfo_count_all);
-            return View(tb);
+            // If no active licenses, retrieve all licenses
+            if (!renterIdtypes.Any())
+            {
+                renterIdtypes = await _unitOfWork.CrMasSupRenterIdtype
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupRenterIdtypeStatus == Status.Hold,
+                                              new[] { "CrMasRenterInformations" });
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
+            return View(renterIdtypes);
         }
-
         [HttpGet]
-        public PartialViewResult GetRenterIdTypeByStatus(string status)
+        public async Task<PartialViewResult> GetRenterIdtypeByStatus(string status, string search)
         {
+            //sidebar Active
+
             if (!string.IsNullOrEmpty(status))
             {
+                var RenterIdtypesAll = await _unitOfWork.CrMasSupRenterIdtype.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterIdtypeStatus == Status.Active ||
+                                                                                                                            x.CrMasSupRenterIdtypeStatus == Status.Deleted ||
+                                                                                                                            x.CrMasSupRenterIdtypeStatus == Status.Hold, new[] { "CrMasRenterInformations" });
+
                 if (status == Status.All)
                 {
-                    //var RenterIdTypebyStatusAll = _unitOfWork.CrMasSupRenterIdtype.GetAll();
-                    //return PartialView("_DataTableRenterIdType", RenterIdTypebyStatusAll);
-
-                    var RenterIdTypebyStatusAll = _unitOfWork.CrMasSupRenterIdtype.FindAll(l => l.CrMasSupRenterIdtypeStatus == Status.Hold || l.CrMasSupRenterIdtypeStatus == Status.Active);
-                    var CarsInfo_count_all1 = _RenterIdType.GetAllRenterIdTypesCount();
-                    Tuple<IEnumerable<CrMasSupRenterIdtype>, List<List<string>>> tb1 = new Tuple<IEnumerable<CrMasSupRenterIdtype>, List<List<string>>>(RenterIdTypebyStatusAll, CarsInfo_count_all1);
-                    return PartialView("_DataTableRenterIdType", tb1);
+                    var FilterAll = RenterIdtypesAll.FindAll(x => x.CrMasSupRenterIdtypeStatus != Status.Deleted &&
+                                                                         (x.CrMasSupRenterIdtypeArName.Contains(search) ||
+                                                                          x.CrMasSupRenterIdtypeEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupRenterIdtypeCode.Contains(search)));
+                    return PartialView("_DataTableRenterIdtype", FilterAll);
                 }
-                var RenterIdTypebyStatus = _unitOfWork.CrMasSupRenterIdtype.FindAll(l => l.CrMasSupRenterIdtypeStatus == status).ToList();
-                var CarsInfo_count_all = _RenterIdType.GetAllRenterIdTypesCount();
-                Tuple<IEnumerable<CrMasSupRenterIdtype>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupRenterIdtype>, List<List<string>>>(RenterIdTypebyStatus, CarsInfo_count_all);
-                return PartialView("_DataTableRenterIdType", tb);
+                var FilterByStatus = RenterIdtypesAll.FindAll(x => x.CrMasSupRenterIdtypeStatus == status &&
+                                                                            (
+                                                                           x.CrMasSupRenterIdtypeArName.Contains(search) ||
+                                                                           x.CrMasSupRenterIdtypeEnName.ToLower().Contains(search.ToLower()) ||
+                                                                           x.CrMasSupRenterIdtypeCode.Contains(search)));
+                return PartialView("_DataTableRenterIdtype", FilterByStatus);
             }
             return PartialView();
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> AddRenterIdType()
+        public async Task<IActionResult> AddRenterIdtype()
         {
-
-            // Set Title !!!!!!!!!!!!!!!!!!!!!!!!!!
-            var titles = await setTitle("106", "1106002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var RenterIdTypeCode = "";
-            var RenterIdTypes = await _unitOfWork.CrMasSupRenterIdtype.GetAllAsync();
-            if (RenterIdTypes.Count() != 0)
+            var pageNumber = Pages.CrMasSupRenterIdtype;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                RenterIdTypeCode = (BigInteger.Parse(RenterIdTypes.LastOrDefault().CrMasSupRenterIdtypeCode) + 1).ToString();
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return RedirectToAction("Index", "RenterIdtype");
             }
-            else
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
             {
-                RenterIdTypeCode = "0";
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "RenterIdtype");
             }
-            ViewBag.RenterIdTypeCode = RenterIdTypeCode;
-            return View();
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+            // Check If code > 9 get error , because code is char(1)
+            if (int.Parse(await GenerateLicenseCodeAsync()) > 9)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "RenterIdtype");
+            }
+            // Set Title 
+            RenterIdtypeVM renterIdtypeVM = new RenterIdtypeVM();
+            renterIdtypeVM.CrMasSupRenterIdtypeCode = await GenerateLicenseCodeAsync();
+            return View(renterIdtypeVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddRenterIdType(RenterIdTypeVM RenterIdTypes)
+        public async Task<IActionResult> AddRenterIdtype(RenterIdtypeVM renterIdtypeVM)
         {
-            string currentCulture = CultureInfo.CurrentCulture.Name;
+            var pageNumber = Pages.CrMasSupRenterIdtype;
+            
+            var user = await _userManager.GetUserAsync(User);
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid || renterIdtypeVM == null)
             {
-                if (RenterIdTypes != null)
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddRenterIdtype", renterIdtypeVM);
+            }
+            try
+            {
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                // Map ViewModel to Entity
+                var renterIdtypeEntity = _mapper.Map<CrMasSupRenterIdtype>(renterIdtypeVM);
+
+                // Check if the entity already exists
+                if (await _masRenterIdtype.ExistsByDetailsAsync(renterIdtypeEntity))
                 {
-                    var RenterIdTypeVMT = _mapper.Map<CrMasSupRenterIdtype>(RenterIdTypes);
-                    var All_RenterIdTypes = await _unitOfWork.CrMasSupRenterIdtype.GetAllAsync();
-                    var existingRenterIdType_En = All_RenterIdTypes.FirstOrDefault(x =>
-                        x.CrMasSupRenterIdtypeEnName == RenterIdTypeVMT.CrMasSupRenterIdtypeEnName);
-                    var existingRenterIdType_Ar = All_RenterIdTypes.FirstOrDefault(x =>
-                        x.CrMasSupRenterIdtypeArName == RenterIdTypeVMT.CrMasSupRenterIdtypeArName);
-
-                    // Generate code for the second time
-                    var RenterIdTypeCode = (BigInteger.Parse(All_RenterIdTypes.LastOrDefault().CrMasSupRenterIdtypeCode) + 1).ToString();
-                    RenterIdTypes.CrMasSupRenterIdtypeCode = RenterIdTypeCode;
-                    ViewBag.RenterIdTypeCode = RenterIdTypeCode;
-                    if (RenterIdTypeVMT.CrMasSupRenterIdtypeArName != null && RenterIdTypeVMT.CrMasSupRenterIdtypeEnName != null)
-                    {
-                        if (existingRenterIdType_Ar != null && existingRenterIdType_En != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(RenterIdTypes);
-                        }
-                        else if (existingRenterIdType_En != null)
-                        {
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(RenterIdTypes);
-                        }
-                        else if (existingRenterIdType_Ar != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            return View(RenterIdTypes);
-                        }
-                    }
-
-                    RenterIdTypeVMT.CrMasSupRenterIdtypeStatus = "A";
-                    await _unitOfWork.CrMasSupRenterIdtype.AddAsync(RenterIdTypeVMT);
-
-                    _unitOfWork.Complete();
-
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106002", "1");
-                    var RecordAr = RenterIdTypeVMT.CrMasSupRenterIdtypeArName;
-                    var RecordEn = RenterIdTypeVMT.CrMasSupRenterIdtypeEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "اضافة", "Add", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
+                    await AddModelErrorsAsync(renterIdtypeEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("AddRenterIdtype", renterIdtypeVM);
                 }
+                // Check If code > 9 get error , because code is char(1)
+                if (int.Parse(await GenerateLicenseCodeAsync()) > 9)
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("AddRenterIdtype", renterIdtypeVM);
+                }
+                // Generate and set the Driving License Code
+                renterIdtypeVM.CrMasSupRenterIdtypeCode = await GenerateLicenseCodeAsync();
+                // Set status and add the record
+                renterIdtypeEntity.CrMasSupRenterIdtypeStatus = "A";
+                await _unitOfWork.CrMasSupRenterIdtype.AddAsync(renterIdtypeEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+
+                await SaveTracingForLicenseChange(user, renterIdtypeEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
-            return View("AddRenterIdType", RenterIdTypes);
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddRenterIdtype", renterIdtypeVM);
+            }
         }
-
-
-
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            //To Set Title !!!!!!!!!!!!!
-            var titles = await setTitle("106", "1106002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
-
-            var contract = await _unitOfWork.CrMasSupRenterIdtype.GetByIdAsync(id);
+            var pageNumber = Pages.CrMasSupRenterIdtype;
+            await SetPageTitleAsync(Status.Update, pageNumber);
+            var contract = await _unitOfWork.CrMasSupRenterIdtype.FindAsync(x => x.CrMasSupRenterIdtypeCode == id, new[] { "CrCasRenterPrivateDriverInformations", "CrMasRenterInformations" });
             if (contract == null)
             {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Index");
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "RenterIdtype");
             }
-            int countRenterIdTypes = 0;
-            countRenterIdTypes = _RenterIdType.GetOneRenterIdTypeCount(id);
-            ViewBag.RenterIdTypes_Count = countRenterIdTypes;
-            var model = _mapper.Map<RenterIdTypeVM>(contract);
-
+            var model = _mapper.Map<RenterIdtypeVM>(contract);
+            model.RentersHave_withType_Count = contract.CrCasRenterPrivateDriverInformations.Count + contract.CrMasRenterInformations.Count;
             return View(model);
         }
-
-
         [HttpPost]
-        public async Task<IActionResult> Edit(RenterIdTypeVM model)
+        public async Task<IActionResult> Edit(RenterIdtypeVM renterIdtypeVM)
         {
-          
-            var user = await _userService.GetUserByUserNameAsync(HttpContext.User.Identity.Name);
-
-            if (user != null)
+            var pageNumber = Pages.CrMasSupRenterIdtype;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null && renterIdtypeVM == null)
             {
-                if (model != null)
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return RedirectToAction("Index", "RenterIdtype");
+            }
+            try
+            {
+                //Check Validition
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
                 {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("Edit", renterIdtypeVM);
+                }
+                var renterIdtypeEntity = _mapper.Map<CrMasSupRenterIdtype>(renterIdtypeVM);
 
-                    var contract = _mapper.Map<CrMasSupRenterIdtype>(model);
-
-                    _unitOfWork.CrMasSupRenterIdtype.Update(contract);
-                    _unitOfWork.Complete();
-
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106002", "1");
-                    var RecordAr = contract.CrMasSupRenterIdtypeArName;
-                    var RecordEn = contract.CrMasSupRenterIdtypeEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
+                // Check if the entity already exists
+                if (await _masRenterIdtype.ExistsByDetailsAsync(renterIdtypeEntity))
+                {
+                    await SetPageTitleAsync(Status.Update, pageNumber);
+                    await AddModelErrorsAsync(renterIdtypeEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Edit", renterIdtypeVM);
                 }
 
+                _unitOfWork.CrMasSupRenterIdtype.Update(renterIdtypeEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+                await SaveTracingForLicenseChange(user, renterIdtypeEntity, Status.Update);
+                return RedirectToAction("Index", "RenterIdtype");
+            }
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return View("Edit", renterIdtypeVM);
+            }
+        }
+        [HttpPost]
+        public async Task<string> EditStatus(string code, string status)
+        {
+            var pageNumber = Pages.CrMasSupRenterIdtype;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return "false";
+
+            var licence = await _unitOfWork.CrMasSupRenterIdtype.GetByIdAsync(code);
+            if (licence == null) return "false";
+
+            try
+            {
+                
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                licence.CrMasSupRenterIdtypeStatus = status;
+                _unitOfWork.CrMasSupRenterIdtype.Update(licence);
+                _unitOfWork.Complete();
+                await SaveTracingForLicenseChange(user, licence, status);
+                return "true";
+            }
+            catch (Exception ex)
+            {
+                return "false";
+            }
+        }
+
+        //Error exist message when run post action to get what is the exist field << Help Up in Back End
+        private async Task AddModelErrorsAsync(CrMasSupRenterIdtype entity)
+        {
+
+            if (await _masRenterIdtype.ExistsByArabicNameAsync(entity.CrMasSupRenterIdtypeArName, entity.CrMasSupRenterIdtypeCode))
+            {
+                ModelState.AddModelError("CrMasSupRenterIdtypeArName", _localizer["Existing"]);
             }
 
-            return RedirectToAction("Index", "RenterIdType");
+            if (await _masRenterIdtype.ExistsByEnglishNameAsync(entity.CrMasSupRenterIdtypeEnName, entity.CrMasSupRenterIdtypeCode))
+            {
+                ModelState.AddModelError("CrMasSupRenterIdtypeEnName", _localizer["Existing"]);
+            }
+        }
+
+        //Error exist message when change input without run post action >> help us in front end
+        [HttpGet]
+        public async Task<JsonResult> CheckChangedField(string existName, string dataField)
+        {
+            var All_RenterIdtypes = await _unitOfWork.CrMasSupRenterIdtype.GetAllAsync();
+            var errors = new List<ErrorResponse>();
+
+            if (!string.IsNullOrEmpty(dataField) && All_RenterIdtypes != null)
+            {
+                // Check for existing Arabic driving license
+                if (existName == "CrMasSupRenterIdtypeArName" && All_RenterIdtypes.Any(x => x.CrMasSupRenterIdtypeArName == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupRenterIdtypeArName", Message = _localizer["Existing"] });
+                }
+                // Check for existing English driving license
+                else if (existName == "CrMasSupRenterIdtypeEnName" && All_RenterIdtypes.Any(x => x.CrMasSupRenterIdtypeEnName?.ToLower() == dataField.ToLower()))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupRenterIdtypeEnName", Message = _localizer["Existing"] });
+                }
+            }
+
+            return Json(new { errors });
+        }
+
+        //Helper Methods 
+        private async Task<string> GenerateLicenseCodeAsync()
+        {
+            var allLicenses = await _unitOfWork.CrMasSupRenterIdtype.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupRenterIdtypeCode) + 1).ToString() : "0";
+        }
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupRenterIdtype licence, string status)
+        {
+            var pageNumber = Pages.CrMasSupRenterIdtype;
+
+            var recordAr = licence.CrMasSupRenterIdtypeArName;
+            var recordEn = licence.CrMasSupRenterIdtypeEnName;
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+
+        [HttpPost]
+        public IActionResult DisplayToastError_NoUpdate(string messageText)
+        {
+            //نص الرسالة _localizer["AuthEmplpoyee_NoUpdate"] === messageText ; 
+            if (messageText == null || messageText == "") messageText = "..";
+            _toastNotification.AddErrorToastMessage(messageText, new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            return Json(new { success = true });
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> EditStatus(string code, string status)
+        public IActionResult DisplayToastSuccess_withIndex()
         {
-            string sAr = "";
-            string sEn = "";
-            var Contract = await _unitOfWork.CrMasSupRenterIdtype.GetByIdAsync(code);
-            if (Contract != null)
-            {
-                if (status == Status.Hold)
-                {
-                    sAr = "ايقاف";
-                    sEn = "Hold";
-                    Contract.CrMasSupRenterIdtypeStatus = Status.Hold;
-                }
-                else if (status == Status.Deleted)
-                {
-                    int CountRenterIdTypes = 0;
-                    CountRenterIdTypes = _RenterIdType.GetOneRenterIdTypeCount(code);
-                    if (CountRenterIdTypes == 0)
-                    {
-                        sAr = "حذف";
-                        sEn = "Remove";
-                        Contract.CrMasSupRenterIdtypeStatus = Status.Deleted;
-                    }
-                    else
-                    {
-                        return View(Contract);
-                    }
-
-                }
-                else if (status == "Reactivate")
-                {
-                    sAr = "استرجاع";
-                    sEn = "Retrive";
-                    Contract.CrMasSupRenterIdtypeStatus = Status.Active;
-                }
-
-                await _unitOfWork.CompleteAsync();
-
-                // SaveTracing
-
-                var (mainTask, subTask, system, currentUser) = await SetTrace("106", "1106002", "1");
-                var RecordAr = Contract.CrMasSupRenterIdtypeArName;
-                var RecordEn = Contract.CrMasSupRenterIdtypeEnName;
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                return RedirectToAction("Index", "RenterIdType");
-            }
-
-
-            return View(Contract);
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CheckChangedField(string Exist_lang, string dataField)
-        {
-            var All_RenterIdTypes = await _unitOfWork.CrMasSupRenterIdtype.GetAllAsync();
-
-            if (dataField != null && All_RenterIdTypes != null)
-            {
-                if (Exist_lang == "ExistAr")
-                {
-                    var existingRenterIdType_Ar = All_RenterIdTypes.FirstOrDefault(x =>
-                        x.CrMasSupRenterIdtypeArName == dataField);
-                    if (existingRenterIdType_Ar != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
-                }
-                else if (Exist_lang == "ExistEn")
-                {
-                    var existingRenterIdType_En = All_RenterIdTypes.FirstOrDefault(x =>
-                        x.CrMasSupRenterIdtypeEnName == dataField);
-                    if (existingRenterIdType_En != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
-                }
-
-            }
-            return View();
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+            return RedirectToAction("Index", "RenterIdtype");
         }
 
 
-
-        //public  IActionResult CannotDelete() 
-        //{ 
-
-        //_toastNotification.AddErrorToastMessage(_localizer["SureTo_Cannot_delete"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-        //    return View();
-        //}
     }
- }
+}

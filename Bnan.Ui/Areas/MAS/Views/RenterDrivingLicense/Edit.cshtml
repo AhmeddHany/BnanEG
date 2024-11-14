@@ -21,7 +21,7 @@
                     <div class="col-lg-9">
                         <div class="row g-3 my-2">
                             <div class="col">
-                                <h3>@localizer["Edit RenterDrivingLicense Data"]</h3>
+                                <h3>@localizer["Edit_RenterDrivingLicense_PageTitle"]</h3>
                             </div>
                             <div class="col-md-auto save-col btnsContainer">
                                 <button type="submit" class="custom-img-btn" id="SaveEdit">
@@ -254,24 +254,24 @@
                     url: "/MAS/RenterDrivingLicense/EditStatus",
                     data: { status: status, code: code },
                     success: function (result) {
-                        toastr.options = { "positionClass": '@localizer["toastPostion"]' };
+                        toastr.options = { "positionClass": "@localizer["toastPostion"]" };
 
                         if (result == "true") {
-                            //@*toastr.success('@localizer["ToastSave"]');*@
+                            //@*toastr.success("@localizer["ToastSave"]");*@
                             resolve(true);
                         } else if (result == "false_auth") {
-                            toastr.error('@localizer["AuthEmplpoyee_No_auth"]');
+                            toastr.error("@localizer["AuthEmplpoyee_No_auth"]");
                             resolve(false);
                         } else if (result == "udelete") {
-                            toastr.error('@localizer["SureTo_Cannot_delete"]');
+                            toastr.error("@localizer["SureTo_Cannot_delete"]");
                             resolve(false);
                         } else {
-                            toastr.error('@localizer["ToastFailed"]');
+                            toastr.error("@localizer["ToastFailed"]");
                             resolve(false);
                         }
                     },
                     error: function () {
-                        toastr.error('@localizer["ToastFailed"]');
+                        toastr.error("@localizer["ToastFailed"]");
                         resolve(false);
                     }
                 });
@@ -311,8 +311,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                              <p>بيانات ونتائج</p>
-                                                              <p>بيانات ونتائج</p>
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_UnDelete"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_UnDelete"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
@@ -333,8 +333,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                              <p>بيانات ونتائج</p>
-                                                              <p>بيانات ونتائج</p>
+                                                                        <p>@localizer["ModalFirstMessage_DrivingLicense_Delete"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_DrivingLicense_Delete"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
@@ -404,8 +404,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                              <p>بيانات ونتائج</p>
-                                                              <p>بيانات ونتائج</p>
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_UnHold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_UnHold"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
@@ -426,8 +426,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                              <p>بيانات ونتائج</p>
-                                                              <p>بيانات ونتائج</p>
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_Hold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_Hold"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
