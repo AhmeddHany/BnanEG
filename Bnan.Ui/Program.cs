@@ -1,13 +1,8 @@
-﻿using Bnan.Core;
-using Microsoft.Extensions.FileProviders;
-using Bnan.Inferastructure;
-using NToastNotify;
-using System.Globalization;
-using Bnan.Inferastructure.MiddleWare;
-using Bnan.Core.Interfaces;
-using Bnan.Inferastructure.Repository;
-using Quartz;
+﻿using Bnan.Inferastructure;
 using Bnan.Inferastructure.Quartz;
+using Microsoft.Extensions.FileProviders;
+using NToastNotify;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMemoryCache();
@@ -23,7 +18,7 @@ builder.AddPersistenceServices();
 builder.Services.AddSignalR();
 
 // Add Quartz services
-builder.Services.AddQuartz(q =>QuartzConfiguration.ConfigureQuartz(q));
+builder.Services.AddQuartz(q => QuartzConfiguration.ConfigureQuartz(q));
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -41,17 +36,9 @@ else
 {
     app.UseDeveloperExceptionPage();
 }
-app.Use(async (context, next) =>
-{
-    context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
-    context.Response.Headers["Pragma"] = "no-cache";
-    context.Response.Headers["Expires"] = "0";
-    await next();
-});
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 var supportedCultures = new[] { "en-US", "ar-EG" };
 var localizationOptions = new RequestLocalizationOptions()
     .SetDefaultCulture(supportedCultures[0])
