@@ -180,12 +180,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         {
             var pageNumber = Pages.CrMasSupRenterSector;
             await SetPageTitleAsync(Status.Update, pageNumber);
-            // if value with code less than 2 Deleted
-            if (int.Parse(id) < 2 + 1)
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_NoUpdate"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "RenterSector");
-            }
             var contract = await _unitOfWork.CrMasSupRenterSector.FindAsync(x => x.CrMasSupRenterSectorCode == id, new[] { "CrMasRenterInformations" });
             if (contract == null)
             {
@@ -308,7 +302,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private async Task<string> GenerateLicenseCodeAsync()
         {
             var allLicenses = await _unitOfWork.CrMasSupRenterSector.GetAllAsync();
-            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupRenterSectorCode) + 1).ToString() : "1";
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupRenterSectorCode) + 1).ToString() : "0";
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupRenterSector licence, string status)
         {
