@@ -11,8 +11,14 @@ namespace Bnan.Ui.ViewModels.MAS
 
         [Required(ErrorMessage = "requiredFiled"), MaxLength(30, ErrorMessage = "requiredNoLengthFiled30")]
         public string? CrMasSupCarAdvantagesEnName { get; set; }
+
+        [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupCarAdvantagesImage { get; set; }
         public string? CrMasSupCarAdvantagesStatus { get; set; }
+
+        [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupCarAdvantagesReasons { get; set; }
+        public int? RentersHave_withType_Count { get; set; }
+
     }
 }

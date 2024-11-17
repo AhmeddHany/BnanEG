@@ -1,6 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
+public class TResult2
+{
+    public TResult2()
+    {
 
+    }
+    public object Column { get; set; }  // نوع ديناميكي للعمود المحدد
+    public int RowCount { get; set; }
+}
 public interface IGenric<T> where T : class
 {
     T GetById(string id);
@@ -13,6 +21,9 @@ public interface IGenric<T> where T : class
     IEnumerable<T> FindAll(Expression<Func<T, bool>> criteria, string[] includes = null);
     Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> criteria, string[] includes = null);
     Task<List<T>> FindAllAsNoTrackingAsync(Expression<Func<T, bool>> predicate, string[] includes = null);
+
+    Task<List<TResult>> FindAllWithSelectAsNoTrackingAsync<TResult>(Expression<Func<T, bool>> predicate,Func<IQueryable<T>, IQueryable<TResult>> selectProjection,string[] includes = null);
+    Task<List<TResult2>?> FindCountByColumnAsync<TResult>(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> columnSelector, string[] includes = null);
     T Add(T entity);
     Task<T> AddAsync(T entity);
     //IEnumerable<T> AddRange(IEnumerable<T> entities);
