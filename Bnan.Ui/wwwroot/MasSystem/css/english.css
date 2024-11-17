@@ -2,91 +2,108 @@
 
 
 body {
-    direction: ltr !important;
+    direction: ltr;
 }
-.menu-links{
-direction: ltr;
+
+.menu-links {
+    direction: ltr;
 }
+
 .sidebar .menu {
-   
     direction: rtl;
 }
-.sidebar header .toggle{
+
+.sidebar header .toggle {
     right: -25px;
-    left:auto;
+    left: auto;
     transform: rotate(180deg);
 }
+
 .sidebar .nav-link .nav-text[data-bs-toggle=collapse].collapsed::after {
     content: '\f104';
     transform: rotate(180deg);
     float: right;
 }
+
 .sidebar1-col {
-    border-left:none !important;
+    border-left: none !important;
     border-right: 2px solid #39629C;
 }
-.sidebar.close{
+
+.sidebar.close {
     border-right: 2px solid #ffffff !important;
-    border-left: none ;
-
+    border-left: none;
 }
-.sidebar.close:hover{
-    border-right: 2px solid #39629C !important;
-    border-left: none !important;
 
-}
+    .sidebar.close:hover {
+        border-right: 2px solid #39629C !important;
+        border-left: none !important;
+    }
+
 .sidebar {
     border-right: 2px solid #39629C;
     border-left: none;
 }
-.inner-collapse-arrow{
+
+.inner-collapse-arrow {
     transform: rotate(180deg);
 }
+
 .sidebar .nav-link .nav-text[data-bs-toggle=collapse]::after {
     float: right;
 }
-.sidebar2 .toggle2{
+
+.sidebar2 .toggle2 {
     left: -35px;
     right: auto;
 }
+
 .sidebar2.open .sidebar2-chevron {
     transform: rotate(180deg);
 }
-.navbar-expand-lg .navbar-nav .nav-link{
+
+.navbar-expand-lg .navbar-nav .nav-link {
     flex-direction: row-reverse;
     gap: .5rem;
 }
-.sidebar2{
+
+.sidebar2 {
     left: auto;
     right: 0;
 }
-.icons-content{
+
+.icons-content {
     justify-content: flex-end;
 }
-.userDropdown-options .logout{
+
+.userDropdown-options .logout {
     transform: rotate(180deg);
 }
 
 .stat-btn {
     padding-left: 0;
-    padding-right:inherit;
+    padding-right: inherit;
 }
+
 @media (max-width: 767px) {
     .membership-chevron {
         transform: rotate(270deg);
     }
 }
+
 @media (min-width: 768px) {
-    .membership-chevron{
+    .membership-chevron {
         transform: rotateY(180deg) !important;
     }
 }
+
 @media (max-width: 1000px) {
     .sidebar2.close2 {
-        left: -45px ;
+        left: -45px;
         left: auto;
     }
 }
+
 @media (max-width: 1000px) {
     .sidebar.close {
         left: -200px;
@@ -94,51 +111,62 @@ direction: ltr;
 }
 
 /* ================================================================================ search input   ======================================================================================= */
-.search-input{
+.search-input {
     direction: rtl;
 }
 /* ================================================================================ table style   ======================================================================================= */
-.tables-style thead{
+.tables-style thead {
     direction: rtl;
 }
-.tables-style{
+
+.tables-style {
     direction: rtl;
 }
-.tables-style th:last-child{
-    border-radius: 8px 0px 0px 8px;
-}
-.tables-style th:first-child{
-    border-radius: 0px 8px 8px 0px;
-}
+
+    .tables-style th:last-child {
+        border-radius: 8px 0px 0px 8px;
+    }
+
+    .tables-style th:first-child {
+        border-radius: 0px 8px 8px 0px;
+    }
 /* ================================================================================  Company => Branches     ======================================================================================= */
 /* ================================================================================================================================================================================== */
-.new-Branch{
-    right : -60px;
+.new-Branch {
+    right: -60px;
     left: auto;
 }
-.ExistFileData{
+
+.ExistFileData {
     right: auto;
     left: -280px;
 }
-.dropdown-content{
+
+.dropdown-content {
     width: 255px;
 }
-.ExistFileData{
+
+.ExistFileData {
     width: 230px;
 }
-.data-container{
+
+.data-container {
     text-align: right;
 }
-.Chevron{
+
+.Chevron {
     transform: rotateY(180deg);
 }
-.doc-save-align{
+
+.doc-save-align {
     text-align: end;
 }
+
 .custom-margin {
     margin-right: 40px;
     margin-left: 0;
 }
+
 @media (max-width: 1024px) {
     .main-page-icon {
         position: sticky;
@@ -148,40 +176,43 @@ direction: ltr;
         z-index: 9;
     }
 }
+
 @media (max-width : 1600px) {
-    .new-Branch{
-      right: 0px;
-      left: auto;
+    .new-Branch {
+        right: 0px;
+        left: auto;
     }
 }
 
 
 /* ================================================================================  inputs   ======================================================================================= */
 
-.number-input-container button{
+.number-input-container button {
     margin: 0px 7px 0px 0px;
 }
+
 .profile-section {
     border-left: 2px solid #D9D9D9;
-    border-right:none ;
+    border-right: none;
 }
+
 .tel-input {
     border-radius: 0px 8px 8px 0px !important
-  }
-  
-  .counterCode {
-    border-radius:8px 0px 0px 8px !important;
+}
+
+.counterCode {
+    border-radius: 8px 0px 0px 8px !important;
     border-right: none;
     background-color: white;
     color: var(--primary-color);
     direction: ltr;
-  
-  }
-  .input-group{
+}
+
+.input-group {
     flex-direction: row-reverse;
-  }
+}
 /* ================================================================================  services => technical connect     ======================================================================================= */
 /* ================================================================================================================================================================================== */
-.techncal-connect-error{
-    direction:ltr;
-  }
+.techncal-connect-error {
+    direction: ltr;
+}

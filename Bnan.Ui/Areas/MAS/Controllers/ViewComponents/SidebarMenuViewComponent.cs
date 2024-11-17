@@ -82,7 +82,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                 {
                     Title = _localizer["Bnan"],
                     ItemName = "sidebarcars",
-                    IconPath = "/MasSystem/images/Comanies.svg", // استخدم المسار الصحيح للأيقونة
+                    IconPath = "/MasSystem/images/Bnan.svg", // استخدم المسار الصحيح للأيقونة
                     SubItems = new List<SidebarMenuItem>(),
                     Authorization = true,
                 };
