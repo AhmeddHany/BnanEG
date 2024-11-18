@@ -111,8 +111,43 @@
     "ModalFirstMessage_Idtype_Hold": "ايقاف بيانات ونتائج1",
     "ModalSecondMessage_Idtype_Hold": "ايقاف بيانات ونتائج2",
     "ModalFirstMessage_Idtype_UnHold": "ارجاع بيانات ونتائج1",
-    "ModalSecondMessage_Idtype_UnHold": "ارجاع بيانات ونتائج2"
+    "ModalSecondMessage_Idtype_UnHold": "ارجاع بيانات ونتائج2",
 
+    // MAS Car Advantage
+    "Add_CarAdvantage_PageTitle": "إضافة ميزة",
+    "Edit_CarAdvantage_PageTitle": "تحديث بيانات الميزة",
+    "View_CarAdvantage_PageTitle": "المميزات الإضافية",
+    "CarAdvantageName_view": "الميزة",
+    "CarAdvantageNameAr_add": "الميزة عربي",
+    "CarAdvantageNameEn_add": "الميزة انجليزي",
+    "CarAdvantageNameAr_edit": "الميزة عربي",
+    "CarAdvantageNameEn_edit": "الميزة انجليزي",
+    "ModalFirstMessage_CarAdvantage_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_CarAdvantage_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_CarAdvantage_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_CarAdvantage_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_CarAdvantage_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_CarAdvantage_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_CarAdvantage_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_CarAdvantage_UnHold": "ارجاع بيانات ونتائج2",
+
+    // MAS Car Registration
+    "Add_CarRegistration_PageTitle": "إضافة تسجيل",
+    "Edit_CarRegistration_PageTitle": "تحديث بيانات التسجيل",
+    "View_CarRegistration_PageTitle": "التسجيل",
+    "CarRegistrationName_view": "نوع تسجيل السيارة",
+    "CarRegistrationNameAr_add": "التسجيل عربي",
+    "CarRegistrationNameEn_add": "التسجيل انجليزي",
+    "CarRegistrationNameAr_edit": "التسجيل عربي",
+    "CarRegistrationNameEn_edit": "التسجيل انجليزي",
+    "ModalFirstMessage_CarRegistration_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_CarRegistration_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_CarRegistration_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_CarRegistration_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_CarRegistration_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_CarRegistration_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_CarRegistration_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_CarRegistration_UnHold": "ارجاع بيانات ونتائج2"
   },
 
 

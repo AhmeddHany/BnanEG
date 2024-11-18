@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 
 namespace Bnan.Inferastructure.Repository
 {
+
     public class BaseRepository<T> : IGenric<T> where T : class
     {
         protected BnanSCContext _context;
@@ -320,6 +321,65 @@ namespace Bnan.Inferastructure.Repository
             query = query.AsNoTracking();
             return await query.Where(predicate).ToListAsync();
         }
+
+        public async Task<List<TResult>> FindAllWithSelectAsNoTrackingAsync<TResult>(
+            Expression<Func<T, bool>> predicate,
+            Func<IQueryable<T>, IQueryable<TResult>> selectProjection,
+            string[] includes = null)
+        {
+            IQueryable<T> query = _context.Set<T>().AsNoTracking(); 
+
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include); 
+                }
+            }
+
+            // تطبيق دالة Select لتحديد الأعمدة المطلوبة
+            var resultQuery = selectProjection(query);
+
+            return await resultQuery.ToListAsync(); 
+        }
+
+        public async Task<List<TResult2>> FindCountByColumnAsync<TResult>(
+            Expression<Func<T, bool>> predicate,
+            Expression<Func<T, object>> columnSelector,  // العمود الذي سيتم التجميع عليه
+            string[] includes = null)
+        {
+            IQueryable<T> query = _context.Set<T>().AsNoTracking(); 
+
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include); 
+                }
+            }
+
+            // التجميع بناءً على العمود المحدد
+            var resultQuery = query
+                .GroupBy(columnSelector) // تجميع النتائج بناءً على العمود المحدد
+                .Select(g => new TResult2
+                {
+                    Column = g.Key,           // إرجاع القيمة من العمود المحدد
+                    RowCount = g.Count()      // حساب عدد الصفوف في هذه المجموعة
+                });
+
+            return await resultQuery.ToListAsync(); 
+        }
+
         public IQueryable<T> GetTableAsTracking()
         {
             return _context.Set<T>().AsQueryable();
@@ -333,6 +393,8 @@ namespace Bnan.Inferastructure.Repository
         {
             return await _context.Database.BeginTransactionAsync();
         }
+
+
 
     }
 }

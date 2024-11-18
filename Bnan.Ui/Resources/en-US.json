@@ -108,7 +108,45 @@
     "ModalFirstMessage_Idtype_Hold": "Hold Data And Results1",
     "ModalSecondMessage_Idtype_Hold": "Hold Data And Results2",
     "ModalFirstMessage_Idtype_UnHold": "UnHold Data And Results1",
-    "ModalSecondMessage_Idtype_UnHold": "UnHold Data And Results2"
+    "ModalSecondMessage_Idtype_UnHold": "UnHold Data And Results2",
+
+
+    // MAS Car Advantage
+    "Add_CarAdvantage_PageTitle": "Add Advantage",
+    "Edit_CarAdvantage_PageTitle": "Update The Advantage Data",
+    "View_CarAdvantage_PageTitle": "Additional Advantages",
+    "CarAdvantageName_view": "The Advantage",
+    "CarAdvantageNameAr_add": "The Advantage in Arabic",
+    "CarAdvantageNameEn_add": "The Advantage in English",
+    "CarAdvantageNameAr_edit": "The Advantage in Arabic",
+    "CarAdvantageNameEn_edit": "The Advantage in English",
+    "ModalFirstMessage_CarAdvantage_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_CarAdvantage_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_CarAdvantage_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_CarAdvantage_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_CarAdvantage_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_CarAdvantage_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_CarAdvantage_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_CarAdvantage_UnHold": "UnHold Data And Results2",
+
+
+    // MAS Car Registration
+    "Add_CarRegistration_PageTitle": "Add Registration",
+    "Edit_CarRegistration_PageTitle": "Update The Registration Data",
+    "View_CarRegistration_PageTitle": "The Registration",
+    "CarRegistrationName_view": "Car Registration Type",
+    "CarRegistrationNameAr_add": "The Registration in Arabic",
+    "CarRegistrationNameEn_add": "The Registration in English",
+    "CarRegistrationNameAr_edit": "The Registration in Arabic",
+    "CarRegistrationNameEn_edit": "The Registration in English",
+    "ModalFirstMessage_CarRegistration_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_CarRegistration_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_CarRegistration_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_CarRegistration_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_CarRegistration_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_CarRegistration_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_CarRegistration_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_CarRegistration_UnHold": "UnHold Data And Results2"
 
   },
   "Arabic": "Arabic",
