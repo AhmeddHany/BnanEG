@@ -222,11 +222,11 @@
                                                         </div>
                                                         <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
-                                                                <p> : @localizer["FreeAdditionalHoursForUser"]</p>
+                                                                <p> : @localizer["FreeAdditionalHours"]</p>
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p>
-                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicUserFreeHours</span>
+                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicUserFreeHours?.ToString() + @Model.ContractSettlement.CrCasRenterContractBasicFreeHours?.ToString()</span>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -240,21 +240,11 @@
                                                         </div>
                                                         <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
-                                                                <p> : @localizer["DailyFreeKmForCar"]</p>
+                                                                <p> : @localizer["DailyFreeKm"]</p>
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p>
-                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicDailyFreeKm </span>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p> : @localizer["DailyFreeKmForUser"]</p>
-                                                            </div>
-                                                            <div class="col personal-data">
-                                                                <p>
-                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicDailyFreeKmUser </span>
+                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicDailyFreeKmUser?.ToString() + @Model.ContractSettlement.CrCasRenterContractBasicTotalDailyFreeKm?.ToString()  </span>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -1647,7 +1637,7 @@
     </script>
 
     <script>
-        function customizeDate(){
+        function customizeDate() {
             // الحصول على الوقت الحالي
             var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
             const now = new Date(dateTimeNow);
@@ -2410,9 +2400,9 @@
             var selectedArabicName = selectedOption.dataset.ar;
             if (selectedArabicName == "" || selectedArabicName == undefined || selectedArabicName == NaN) {
                 selectedArabicName = "";
-            }            
+            }
             var reasonPayment = document.getElementById("ContractSettlement_ReasonsPayment").value;
-           
+
             var namesAndSignatures = await loadArSignatures();
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2688,7 +2678,7 @@
             var selectedEnglishName = selectedOption.dataset.en;
             if (selectedEnglishName == "" || selectedEnglishName == undefined || selectedEnglishName == NaN) {
                 selectedEnglishName = "";
-            }            
+            }
             var reasonPayment = document.getElementById("ContractSettlement_ReasonsPayment").value;
             // Signture Image
             var namesAndSignatures = await loadEnSignatures();
