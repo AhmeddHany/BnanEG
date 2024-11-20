@@ -342,7 +342,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                 };
 
                 // Add submenu items based on permissions
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106001" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107001" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -352,7 +352,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106002" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107002" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -362,7 +362,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106003" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107003" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -371,7 +371,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                         Url = Url.Action("Index", "RenterNationality", new { area = "MAS" })
                     });
                 }
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106004" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107004" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -380,7 +380,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                         Url = "#"
                     });
                 }
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106005" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107005" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -390,7 +390,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106006" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107006" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -400,7 +400,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106007" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107007" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -410,7 +410,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106008" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107008" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {

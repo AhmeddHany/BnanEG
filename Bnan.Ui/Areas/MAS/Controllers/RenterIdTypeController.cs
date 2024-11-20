@@ -48,7 +48,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var pageNumber = Pages.CrMasSupRenterIdtype;
+            var pageNumber = SubTasks.CrMasSupRenterIdtype;
             // Set page titles
             await SetPageTitleAsync(string.Empty, pageNumber);
 
@@ -99,7 +99,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddRenterIdtype()
         {
-            var pageNumber = Pages.CrMasSupRenterIdtype;
+            var pageNumber = SubTasks.CrMasSupRenterIdtype;
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -129,7 +129,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRenterIdtype(RenterIdtypeVM renterIdtypeVM)
         {
-            var pageNumber = Pages.CrMasSupRenterIdtype;
+            var pageNumber = SubTasks.CrMasSupRenterIdtype;
             
             var user = await _userManager.GetUserAsync(User);
 
@@ -178,7 +178,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = Pages.CrMasSupRenterIdtype;
+            var pageNumber = SubTasks.CrMasSupRenterIdtype;
             await SetPageTitleAsync(Status.Update, pageNumber);
             var contract = await _unitOfWork.CrMasSupRenterIdtype.FindAsync(x => x.CrMasSupRenterIdtypeCode == id, new[] { "CrCasRenterPrivateDriverInformations", "CrMasRenterInformations" });
             if (contract == null)
@@ -193,7 +193,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(RenterIdtypeVM renterIdtypeVM)
         {
-            var pageNumber = Pages.CrMasSupRenterIdtype;
+            var pageNumber = SubTasks.CrMasSupRenterIdtype;
             var user = await _userManager.GetUserAsync(User);
             if (user == null && renterIdtypeVM == null)
             {
@@ -236,7 +236,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = Pages.CrMasSupRenterIdtype;
+            var pageNumber = SubTasks.CrMasSupRenterIdtype;
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -307,7 +307,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupRenterIdtype licence, string status)
         {
-            var pageNumber = Pages.CrMasSupRenterIdtype;
+            var pageNumber = SubTasks.CrMasSupRenterIdtype;
 
             var recordAr = licence.CrMasSupRenterIdtypeArName;
             var recordEn = licence.CrMasSupRenterIdtypeEnName;
