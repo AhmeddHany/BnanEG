@@ -10,6 +10,8 @@
     <thead class="sticky-top">
         <tr>
             <th>@localizer["Count"]</th>
+            <th> @localizer["RentalSystemCode"]</th>
+            <th> @localizer["RentalSystemNo"] </th>
             <th class="DifferAlign"> @localizer["CarRegistrationName_view"]</th>
             <th class="DifferAlign"> @localizer["the_Code"]</th>
             <th></th>
@@ -28,6 +30,12 @@
                     Count = Model.cars_count?.Find(x => x.Column.ToString() == item.CrMasSupCarRegistrationCode)?.RowCount.ToString("N0") ?? "0";
                 }
                 <td><p>@Count</p></td>
+                <td>
+                    <p>@(item.CrMasSupCarRegistrationNaqlCode ?? 0)</p>
+                </td>
+                <td>
+                    <p>@(item.CrMasSupCarRegistrationNaqlId ?? 0)</p>
+                </td>
                 <td class="DifferAlign">
                     <p>
                         @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupCarRegistrationEnName : item.CrMasSupCarRegistrationArName)

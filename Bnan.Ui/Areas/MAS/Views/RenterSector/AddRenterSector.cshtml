@@ -77,6 +77,26 @@
 
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="rental-system-number" class="form-label">@localizer["RentalSystemNo"]</label>
+                                            <input disabled type="text" class="form-control inputs number-input" id="CrMasSupCarModelNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarModelNaqlCode-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="rental-system-pin" class="form-label">@localizer["RentalSystemCode"]</label>
+                                            <input disabled type="text" class="form-control number-input inputs" id="CrMasSupCarModelNaqlId" maxlength="10" oninput="validateNumberLength(this)">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarModelNaqlId-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -128,7 +148,7 @@
                     success: function (result) {
                         console.log("feedback", result);
                         // Hide all previous error messages
-                        $('.invalid-feedback').hide();
+                        $('.invalid-feedback').show();
 
                         // Show new error messages if they exist
                         if (result.errors && result.errors.length > 0) {

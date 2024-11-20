@@ -1,182 +1,64 @@
-﻿@using Bnan.Core.Extensions 
-@model Tuple<IEnumerable<CrMasSupCarFuel>, List<List<string>>>
+﻿@using Bnan.Core.Extensions
+@model CarFuelVM
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
-@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-{
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-            <thead>
-                <tr >
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["CarFuelCode"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["CarFuelName"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Count"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
-
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["Count"]</th>
+            <th> @localizer["RentalSystemCode"]</th>
+            <th> @localizer["RentalSystemNo"] </th>
+            <th class="DifferAlign"> @localizer["CarFuelName_view"]</th>
+            <th class="DifferAlign"> @localizer["the_Code"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.crMasSupCarFuel)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "CarFuel", new { id = item.CrMasSupCarFuelCode })'">
+                @*<td><p>@Model.cars_count.Count(x=>x.CrCasCarInformationFuel == @item.CrMasSupCarFuelCode).ToString("N0")</p></td>*@
                 @{
-                    int no = 1;
+                    var Count = "0";
+                    Count = Model.cars_count?.Find(x => x.Column.ToString() == item.CrMasSupCarFuelCode)?.RowCount.ToString("N0") ?? "0";
                 }
-                @foreach (var item in Model.Item1)
-                {
-                    @if (item.CrMasSupCarFuelStatus == @Status.Deleted || item.CrMasSupCarFuelStatus == @Status.Hold)
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarFuel", new { id = item.CrMasSupCarFuelCode })'" style="cursor:pointer;color:red">
-                            <td>@no</td>
-                            <td>@item.CrMasSupCarFuelCode</td>
-                            <td>@item.CrMasSupCarFuelEnName</td>
-                            <td>
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if(row[0] == @item.CrMasSupCarFuelCode)
-                                        {
-                                            @row[1]
-                                        }
+                <td><p>@Count</p></td>
+                <td>
+                    <p>@(item.CrMasSupCarFuelNaqlCode ?? 0)</p>
+                </td>
+                <td>
+                    <p>@(item.CrMasSupCarFuelNaqlId ?? 0)</p>
+                </td>
+                <td class="DifferAlign">
+                    <p>
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupCarFuelEnName : item.CrMasSupCarFuelArName)
+                    </p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@item.CrMasSupCarFuelCode</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasSupCarFuelStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasSupCarFuelStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasSupCarFuelStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
 
-                                    }
-                                }
-                            </td>
-                            <td>
-                                &emsp;
-                                @if (@item.CrMasSupCarFuelStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else if (@item.CrMasSupCarFuelStatus == Status.Hold)
-                                {
-                                    @localizer["Hold"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarFuel", new { id = item.CrMasSupCarFuelCode })'">
-                            <td>@no</td>
-                            <td>@item.CrMasSupCarFuelCode</td>
-                            <td>@item.CrMasSupCarFuelEnName</td>
-                            <td>
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if (row[0] == @item.CrMasSupCarFuelCode)
-                                        {
-                                            @row[1]
-                                        }
-
-                                    }
-                                }
-                            </td>
-                            <td>
-                                &emsp;
-                                @if (@item.CrMasSupCarFuelStatus == Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    no++;
-                }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-            <thead>
-                <tr role="row">
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending" >@localizer["No"]</th>
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending" >@localizer["CarFuelCode"]</th>
-                    <th aria-label="Position: activate to sort column ascending" >@localizer["CarFuelName"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Count"]</th>
-                    <th aria-label="Position: activate to sort column ascending" >@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model.Item1)
-                {
-                    @if (item.CrMasSupCarFuelStatus == @Status.Deleted || item.CrMasSupCarFuelStatus == @Status.Hold)
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarFuel", new { id = item.CrMasSupCarFuelCode })'" style="cursor:pointer;color:red">
-                            <td>&emsp; @no</td>
-                            <td>&emsp; @item.CrMasSupCarFuelCode</td>
-                            <td>&emsp; @item.CrMasSupCarFuelArName</td>
-                            <td>
-                                &emsp;&emsp;
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if (row[0] == @item.CrMasSupCarFuelCode)
-                                        {
-                                            @row[1]
-                                        }
-
-                                    }
-                                }
-                            </td>
-                            <td>
-                                &emsp;&emsp;
-                                @if (@item.CrMasSupCarFuelStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else if (@item.CrMasSupCarFuelStatus == Status.Hold)
-                                {
-                                    @localizer["Hold"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarFuel", new { id = item.CrMasSupCarFuelCode })'">
-                            <td>&emsp; @no</td>
-                            <td>&emsp; @item.CrMasSupCarFuelCode</td>
-                            <td>&emsp; @item.CrMasSupCarFuelArName</td>
-                            <td>
-                                &emsp;&emsp;
-                                @if (Model.Item2 != null)
-                                {
-                                    @foreach (var row in Model.Item2)
-                                    {
-                                        if (row[0] == @item.CrMasSupCarFuelCode)
-                                        {
-                                            @row[1]
-                                        }
-
-                                    }
-                                }
-                            </td>
-                            <td>
-                                &emsp;&emsp;
-                                @if (@item.CrMasSupCarFuelStatus == Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    no++;
-                }
-            </tbody>
-        </table>
-    </div>
-}
+    </tbody>
+</table>

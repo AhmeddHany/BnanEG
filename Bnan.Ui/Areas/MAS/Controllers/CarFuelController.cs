@@ -1,365 +1,409 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
+using Bnan.Inferastructure.Filters;
+using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Numerics;
-
 namespace Bnan.Ui.Areas.MAS.Controllers
 {
-
-
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
     public class CarFuelController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
-        private readonly UserManager<CrMasUserInformation> userManager;
-        private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly IUserService _userService;
-        private readonly IMasCarFuel _carFuel;
+        private readonly IMasCarFuel _masCarFuel;
+        private readonly IBaseRepo _baseRepo;
+        private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<CarFuelController> _localizer;
 
-
         public CarFuelController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IMasCarFuel carFuel,
+            IMapper mapper, IUserService userService, IMasCarFuel masCarFuel, IBaseRepo BaseRepo,IMasBase masBase,
             IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<CarFuelController> localizer) : base(userManager, unitOfWork, mapper)
         {
-            this.userManager = userManager;
-            this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             _userService = userService;
-            _carFuel = carFuel;
+            _masCarFuel = masCarFuel;
             _userLoginsService = userLoginsService;
+            _baseRepo = BaseRepo;
+            _masBase = masBase;
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
         }
 
         [HttpGet]
-
         public async Task<IActionResult> Index()
         {
-            var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107002", "1");
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            var pageNumber = Pages.CrMasSupCarFuel;
+            // Set page titles
+            await SetPageTitleAsync(string.Empty, pageNumber);
+
+            // Retrieve active driving licenses
+            var renterDrivingLicenses = await _unitOfWork.CrMasSupCarFuel
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupCarFuelStatus == Status.Active );
+
+            //var Cars_Count = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
+            //    predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+            //    selectProjection: query => query.Select(x => new CrCasCarInformation
+            //    {
+            //        CrCasCarInformationSerailNo = x.CrCasCarInformationSerailNo,
+            //        CrCasCarInformationFuel = x.CrCasCarInformationFuel
+            //    })
+            //    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+            //    );
+
+            var Cars_Count = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrMasSupCarFuel>(
+                predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                columnSelector: x => x.CrCasCarInformationFuel  // تحديد العمود الذي نريد التجميع بناءً عليه
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
 
 
-            var titles = await setTitle("107", "1107002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var contracts = await _unitOfWork.CrMasSupCarFuel.GetAllAsync();
-            var contract = contracts.Where(x => x.CrMasSupCarFuelStatus == "A").ToList();
-            var CarsInfo_count_all = _carFuel.GetAllCarFuelsCount();
-            Tuple<IEnumerable<CrMasSupCarFuel>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupCarFuel>, List<List<string>>>(contract, CarsInfo_count_all);
-            return View(tb);
+            // If no active licenses, retrieve all licenses
+            if (!renterDrivingLicenses.Any())
+            {
+                renterDrivingLicenses = await _unitOfWork.CrMasSupCarFuel
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupCarFuelStatus == Status.Hold
+                                              );
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
+            CarFuelVM vm = new CarFuelVM();
+            vm.crMasSupCarFuel = renterDrivingLicenses;
+            vm.cars_count = Cars_Count;
+            return View(vm);
         }
-
         [HttpGet]
-        public PartialViewResult GetCarFuelByStatus(string status)
+        public async Task<PartialViewResult> GetCarFuelByStatus(string status, string search)
         {
+            //sidebar Active
+
             if (!string.IsNullOrEmpty(status))
             {
+                var CarFuelsAll = await _unitOfWork.CrMasSupCarFuel.FindAllAsNoTrackingAsync(x => x.CrMasSupCarFuelStatus == Status.Active ||
+                                                                                                                            x.CrMasSupCarFuelStatus == Status.Deleted ||
+                                                                                                                            x.CrMasSupCarFuelStatus == Status.Hold );
+                var Cars_Count = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrMasSupCarFuel>(
+                    predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                    columnSelector: x => x.CrCasCarInformationFuel  // تحديد العمود الذي نريد التجميع بناءً عليه
+                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                    );
+                CarFuelVM vm = new CarFuelVM();
+                vm.cars_count = Cars_Count;
                 if (status == Status.All)
                 {
-                    //var CarFuelbyStatusAll = _unitOfWork.CrMasSupCarFuel.GetAll();
-                    //return PartialView("_DataTableCarFuel", CarFuelbyStatusAll);
-
-                    var CarFuelbyStatusAll = _unitOfWork.CrMasSupCarFuel.FindAll(l => l.CrMasSupCarFuelStatus == Status.Hold || l.CrMasSupCarFuelStatus == Status.Active);
-                    var CarsInfo_count_all1 = _carFuel.GetAllCarFuelsCount();
-                    Tuple<IEnumerable<CrMasSupCarFuel>, List<List<string>>> tb1 = new Tuple<IEnumerable<CrMasSupCarFuel>, List<List<string>>>(CarFuelbyStatusAll, CarsInfo_count_all1);
-                    return PartialView("_DataTableCarFuel", tb1);
+                    var FilterAll = CarFuelsAll.FindAll(x => x.CrMasSupCarFuelStatus != Status.Deleted &&
+                                                                         (x.CrMasSupCarFuelArName.Contains(search) ||
+                                                                          x.CrMasSupCarFuelEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupCarFuelCode.Contains(search)));
+                    vm.crMasSupCarFuel = FilterAll;
+                    return PartialView("_DataTableCarFuel", vm);
                 }
-                var CarFuelbyStatus = _unitOfWork.CrMasSupCarFuel.FindAll(l => l.CrMasSupCarFuelStatus == status).ToList();
-                var CarsInfo_count_all = _carFuel.GetAllCarFuelsCount();
-                Tuple<IEnumerable<CrMasSupCarFuel>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupCarFuel>, List<List<string>>>(CarFuelbyStatus, CarsInfo_count_all);
-                return PartialView("_DataTableCarFuel", tb);
+                var FilterByStatus = CarFuelsAll.FindAll(x => x.CrMasSupCarFuelStatus == status &&
+                                                                            (
+                                                                           x.CrMasSupCarFuelArName.Contains(search) ||
+                                                                           x.CrMasSupCarFuelEnName.ToLower().Contains(search.ToLower()) ||
+                                                                           x.CrMasSupCarFuelCode.Contains(search)));
+                vm.crMasSupCarFuel = FilterByStatus;
+                return PartialView("_DataTableCarFuel", vm);
             }
             return PartialView();
         }
 
-
         [HttpGet]
         public async Task<IActionResult> AddCarFuel()
         {
-
-            // Set Title !!!!!!!!!!!!!!!!!!!!!!!!!!
-            var titles = await setTitle("107", "1107002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var CarFuelCode = "";
-            var CarFuels = await _unitOfWork.CrMasSupCarFuel.GetAllAsync();
-            if (CarFuels.Count() != 0)
+            var pageNumber = Pages.CrMasSupCarFuel;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                CarFuelCode = (BigInteger.Parse(CarFuels.LastOrDefault().CrMasSupCarFuelCode) + 1).ToString();
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return RedirectToAction("Index", "CarFuel");
             }
-            else
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
             {
-                CarFuelCode = "10";
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "CarFuel");
             }
-            ViewBag.CarFuelCode = CarFuelCode;
-            return View();
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+            // Check If code > 9 get error , because code is char(1)
+            if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "CarFuel");
+            }
+            // Set Title 
+            CarFuelVM renterDrivingLicenseVM = new CarFuelVM();
+            renterDrivingLicenseVM.CrMasSupCarFuelCode = await GenerateLicenseCodeAsync();
+            return View(renterDrivingLicenseVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCarFuel(CarFuelVM CarFuels, IFormFile? AcceptImg)
+        public async Task<IActionResult> AddCarFuel(CarFuelVM renterDrivingLicenseVM)
         {
-            string currentCulture = CultureInfo.CurrentCulture.Name;
-            string foldername = $"{"images\\Common"}";
-            string filePathImageAccept = "";
+            var pageNumber = Pages.CrMasSupCarFuel;
+            
+            var user = await _userManager.GetUserAsync(User);
 
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid || renterDrivingLicenseVM == null)
             {
-                if (CarFuels != null)
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddCarFuel", renterDrivingLicenseVM);
+            }
+            try
+            {
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                // Map ViewModel to Entity
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarFuel>(renterDrivingLicenseVM);
+
+                renterDrivingLicenseEntity.CrMasSupCarFuelNaqlCode ??= 0;
+                renterDrivingLicenseEntity.CrMasSupCarFuelNaqlId ??= 0;
+
+                // Check if the entity already exists
+                if (await _masCarFuel.ExistsByDetailsAsync(renterDrivingLicenseEntity))
                 {
-                    var CarFuelVMT = _mapper.Map<CrMasSupCarFuel>(CarFuels);
-                    var All_CarFuels = await _unitOfWork.CrMasSupCarFuel.GetAllAsync();
-                    var existingCarFuel_En = All_CarFuels.FirstOrDefault(x =>
-                        x.CrMasSupCarFuelEnName == CarFuelVMT.CrMasSupCarFuelEnName);
-                    var existingCarFuel_Ar = All_CarFuels.FirstOrDefault(x =>
-                        x.CrMasSupCarFuelArName == CarFuelVMT.CrMasSupCarFuelArName);
-
-                    // Generate code for the second time
-                    var CarFuelCode = (BigInteger.Parse(All_CarFuels.LastOrDefault().CrMasSupCarFuelCode) + 1).ToString();
-                    CarFuels.CrMasSupCarFuelCode = CarFuelCode;
-                    ViewBag.CarFuelCode = CarFuelCode;
-                    if (CarFuelVMT.CrMasSupCarFuelArName != null && CarFuelVMT.CrMasSupCarFuelEnName != null)
-                    {
-                        if (existingCarFuel_Ar != null && existingCarFuel_En != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(CarFuels);
-                        }
-                        else if (existingCarFuel_En != null)
-                        {
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(CarFuels);
-                        }
-                        else if (existingCarFuel_Ar != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            return View(CarFuels);
-                        }
-                    }
-
-                    if (AcceptImg != null)
-                    {
-                        string fileNameImg = "CarFuel_" + CarFuels.CrMasSupCarFuelCode.ToString();
-                        filePathImageAccept = await AcceptImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
-                    }
-
-
-                    CarFuelVMT.CrMasSupCarFuelImage = filePathImageAccept;
-                    CarFuelVMT.CrMasSupCarFuelStatus = "A";
-                    await _unitOfWork.CrMasSupCarFuel.AddAsync(CarFuelVMT);
-
-                    _unitOfWork.Complete();
-
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107002", "1");
-                    var RecordAr = CarFuelVMT.CrMasSupCarFuelArName;
-                    var RecordEn = CarFuelVMT.CrMasSupCarFuelEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "اضافة", "Add", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
+                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("AddCarFuel", renterDrivingLicenseVM);
                 }
+                // Check If code > 9 get error , because code is char(1)
+                if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("AddCarFuel", renterDrivingLicenseVM);
+                }
+                // Generate and set the Driving License Code
+                renterDrivingLicenseVM.CrMasSupCarFuelCode = await GenerateLicenseCodeAsync();
+                // Set status and add the record
+                renterDrivingLicenseEntity.CrMasSupCarFuelStatus = "A";
+                await _unitOfWork.CrMasSupCarFuel.AddAsync(renterDrivingLicenseEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+
+                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
-            return View("AddCarFuel", CarFuels);
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddCarFuel", renterDrivingLicenseVM);
+            }
         }
-
-
-
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            //To Set Title !!!!!!!!!!!!!
-            var titles = await setTitle("107", "1107002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
+            var pageNumber = Pages.CrMasSupCarFuel;
+            await SetPageTitleAsync(Status.Update, pageNumber);
 
-            var contract = await _unitOfWork.CrMasSupCarFuel.GetByIdAsync(id);
+            var contract = await _unitOfWork.CrMasSupCarFuel.FindAsync(x => x.CrMasSupCarFuelCode == id);
             if (contract == null)
             {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Index");
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "CarFuel");
             }
-            int countCarFuels = 0;
-            countCarFuels = _carFuel.GetOneCarFuelCount(id);
-            ViewBag.CarFuels_Count = countCarFuels;
             var model = _mapper.Map<CarFuelVM>(contract);
-
+            model.CrMasSupCarFuelNaqlCode ??= 0;
+            model.CrMasSupCarFuelNaqlId ??= 0;
+            //model.RentersHave_withType_Count = contract.CrCasRenterPrivateDriverInformations.Count + contract.CrMasRenterInformations.Count;
             return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(CarFuelVM renterDrivingLicenseVM)
+        {
+            var pageNumber = Pages.CrMasSupCarFuel;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null && renterDrivingLicenseVM == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return RedirectToAction("Index", "CarFuel");
+            }
+            try
+            {
+                //Check Validition
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("Edit", renterDrivingLicenseVM);
+                }
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarFuel>(renterDrivingLicenseVM);
+                renterDrivingLicenseEntity.CrMasSupCarFuelNaqlCode ??= 0;
+                renterDrivingLicenseEntity.CrMasSupCarFuelNaqlId ??= 0;
+
+                // Check if the entity already exists
+                if (await _masCarFuel.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                {
+                    await SetPageTitleAsync(Status.Update, pageNumber);
+                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Edit", renterDrivingLicenseVM);
+                }
+
+                _unitOfWork.CrMasSupCarFuel.Update(renterDrivingLicenseEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
+                return RedirectToAction("Index", "CarFuel");
+            }
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return View("Edit", renterDrivingLicenseVM);
+            }
+        }
+        [HttpPost]
+        public async Task<string> EditStatus(string code, string status)
+        {
+            var pageNumber = Pages.CrMasSupCarFuel;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return "false";
+
+            var licence = await _unitOfWork.CrMasSupCarFuel.GetByIdAsync(code);
+            if (licence == null) return "false";
+
+            try
+            {
+                
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                licence.CrMasSupCarFuelStatus = status;
+                _unitOfWork.CrMasSupCarFuel.Update(licence);
+                _unitOfWork.Complete();
+                await SaveTracingForLicenseChange(user, licence, status);
+                return "true";
+            }
+            catch (Exception ex)
+            {
+                return "false";
+            }
+        }
+
+        //Error exist message when run post action to get what is the exist field << Help Up in Back End
+        private async Task AddModelErrorsAsync(CrMasSupCarFuel entity)
+        {
+
+            if (await _masCarFuel.ExistsByArabicNameAsync(entity.CrMasSupCarFuelArName, entity.CrMasSupCarFuelCode))
+            {
+                ModelState.AddModelError("CrMasSupCarFuelArName", _localizer["Existing"]);
+            }
+
+            if (await _masCarFuel.ExistsByEnglishNameAsync(entity.CrMasSupCarFuelEnName, entity.CrMasSupCarFuelCode))
+            {
+                ModelState.AddModelError("CrMasSupCarFuelEnName", _localizer["Existing"]);
+            }
+
+            if (await _masCarFuel.ExistsByNaqlCodeAsync((int)entity.CrMasSupCarFuelNaqlCode, entity.CrMasSupCarFuelCode))
+            {
+                ModelState.AddModelError("CrMasSupCarFuelNaqlCode", _localizer["Existing"]);
+            }
+
+            if (await _masCarFuel.ExistsByNaqlIdAsync((int)entity.CrMasSupCarFuelNaqlId, entity.CrMasSupCarFuelCode))
+            {
+                ModelState.AddModelError("CrMasSupCarFuelNaqlId", _localizer["Existing"]);
+            }
+        }
+
+        //Error exist message when change input without run post action >> help us in front end
+        [HttpGet]
+        public async Task<JsonResult> CheckChangedField(string existName, string dataField)
+        {
+            var All_CarFuels = await _unitOfWork.CrMasSupCarFuel.GetAllAsync();
+            var errors = new List<ErrorResponse>();
+
+            if (!string.IsNullOrEmpty(dataField) && All_CarFuels != null)
+            {
+                // Check for existing Arabic driving license
+                if (existName == "CrMasSupCarFuelArName" && All_CarFuels.Any(x => x.CrMasSupCarFuelArName == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarFuelArName", Message = _localizer["Existing"] });
+                }
+                // Check for existing English driving license
+                else if (existName == "CrMasSupCarFuelEnName" && All_CarFuels.Any(x => x.CrMasSupCarFuelEnName?.ToLower() == dataField.ToLower()))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarFuelEnName", Message = _localizer["Existing"] });
+                }
+                // Check for existing rental system number
+                else if (existName == "CrMasSupCarFuelNaqlCode" && int.TryParse(dataField, out var code) && code != 0 && All_CarFuels.Any(x => x.CrMasSupCarFuelNaqlCode == code))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarFuelNaqlCode", Message = _localizer["Existing"] });
+                }
+                // Check for existing rental system ID
+                else if (existName == "CrMasSupCarFuelNaqlId" && int.TryParse(dataField, out var id) && id != 0 && All_CarFuels.Any(x => x.CrMasSupCarFuelNaqlId == id))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarFuelNaqlId", Message = _localizer["Existing"] });
+                }
+            }
+
+            return Json(new { errors });
+        }
+
+        //Helper Methods 
+        private async Task<string> GenerateLicenseCodeAsync()
+        {
+            var allLicenses = await _unitOfWork.CrMasSupCarFuel.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupCarFuelCode) + 1).ToString() : "10";
+        }
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupCarFuel licence, string status)
+        {
+            var pageNumber = Pages.CrMasSupCarFuel;
+
+            var recordAr = licence.CrMasSupCarFuelArName;
+            var recordEn = licence.CrMasSupCarFuelEnName;
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+
+        [HttpPost]
+        public IActionResult DisplayToastError_NoUpdate(string messageText)
+        {
+            //نص الرسالة _localizer["AuthEmplpoyee_NoUpdate"] === messageText ; 
+            if (messageText == null || messageText == "") messageText = "..";
+            _toastNotification.AddErrorToastMessage(messageText, new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            return Json(new { success = true });
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(CarFuelVM model, IFormFile? AcceptImg)
+        public IActionResult DisplayToastSuccess_withIndex()
         {
-            string foldername = $"{"images\\Common"}";
-            string filePathImageAccept = null;
-            var user = await _userService.GetUserByUserNameAsync(HttpContext.User.Identity.Name);
-            var fuel =await _unitOfWork.CrMasSupCarFuel.FindAsync(x=>x.CrMasSupCarFuelCode==model.CrMasSupCarFuelCode);
-            if (user != null)
-            {
-                if (model != null && fuel!=null)
-                {
-
-                    
-                    if (AcceptImg != null)
-                    {
-                        string fileNameImg = "CarFuel_" + model.CrMasSupCarFuelCode.ToString() + "_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوق
-                        filePathImageAccept = await AcceptImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png", fuel.CrMasSupCarFuelImage);
-                    }
-                    else if (!string.IsNullOrEmpty(fuel.CrMasSupCarFuelImage))
-                    {
-                        filePathImageAccept = fuel.CrMasSupCarFuelImage;
-                    }
-                    else
-                    {
-                        filePathImageAccept = "~/images/common/DefaultCar.png";
-                    }
-
-                    //var contract = _mapper.Map<CrMasSupCarFuel>(model);
-                    fuel.CrMasSupCarFuelImage = filePathImageAccept;
-                    fuel.CrMasSupCarFuelReasons = model.CrMasSupCarFuelReasons;
-
-                    _unitOfWork.CrMasSupCarFuel.Update(fuel);
-                    _unitOfWork.Complete();
-
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107002", "1");
-                    var RecordAr = fuel.CrMasSupCarFuelArName;
-                    var RecordEn = fuel.CrMasSupCarFuelEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-                }
-
-            }
-
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
             return RedirectToAction("Index", "CarFuel");
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> EditStatus(string code, string status)
-        {
-            string sAr = "";
-            string sEn = "";
-            var Contract = await _unitOfWork.CrMasSupCarFuel.GetByIdAsync(code);
-            if (Contract != null)
-            {
-                if (status == Status.Hold)
-                {
-                    sAr = "ايقاف";
-                    sEn = "Hold";
-                    Contract.CrMasSupCarFuelStatus = Status.Hold;
-                }
-                else if (status == Status.Deleted)
-                {
-                    int CountCarFuels = 0;
-                    CountCarFuels = _carFuel.GetOneCarFuelCount(code);
-                    if (CountCarFuels == 0)
-                    {
-                        sAr = "حذف";
-                        sEn = "Remove";
-                        Contract.CrMasSupCarFuelStatus = Status.Deleted;
-                    }
-                    else
-                    {
-                        return View(Contract);
-                    }
-
-                }
-                else if (status == "Reactivate")
-                {
-                    sAr = "استرجاع";
-                    sEn = "Retrive";
-                    Contract.CrMasSupCarFuelStatus = Status.Active;
-                }
-
-                await _unitOfWork.CompleteAsync();
-
-                // SaveTracing
-                var RecordAr = Contract.CrMasSupCarFuelArName;
-                var RecordEn = Contract.CrMasSupCarFuelEnName;
-                var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107002", "1");
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                return RedirectToAction("Index", "CarFuel");
-            }
-
-
-            return View(Contract);
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CheckChangedField(string Exist_lang, string dataField)
-        {
-            var All_CarFuels = await _unitOfWork.CrMasSupCarFuel.GetAllAsync();
-
-            if (dataField != null && All_CarFuels != null)
-            {
-                if (Exist_lang == "ExistAr")
-                {
-                    var existingCarFuel_Ar = All_CarFuels.FirstOrDefault(x =>
-                        x.CrMasSupCarFuelArName == dataField);
-                    if (existingCarFuel_Ar != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
-                }
-                else if (Exist_lang == "ExistEn")
-                {
-                    var existingCarFuel_En = All_CarFuels.FirstOrDefault(x =>
-                        x.CrMasSupCarFuelEnName == dataField);
-                    if (existingCarFuel_En != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
-                }
-
-            }
-            return View();
-        }
-
-
-
-        //public  IActionResult CannotDelete() 
-        //{ 
-
-        //_toastNotification.AddErrorToastMessage(_localizer["SureTo_Cannot_delete"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-        //    return View();
-        //}
     }
-  }
+}

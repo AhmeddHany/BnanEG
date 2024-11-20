@@ -9,6 +9,7 @@ namespace Bnan.Ui.ViewModels.MAS
         public string CrMasSupCarModelCode { get; set; } = null!;
 
         public string? CrMasSupCarModelGroup = "31";
+        [Required(ErrorMessage = "requiredFiled"), MaxLength(4, ErrorMessage = "requiredNoLengthFiled4")]
         public string? CrMasSupCarModelBrand { get; set; }
 
         [Required(ErrorMessage = "requiredFiled"), MaxLength(30, ErrorMessage = "requiredNoLengthFiled30")]
@@ -17,13 +18,15 @@ namespace Bnan.Ui.ViewModels.MAS
         [Required(ErrorMessage = "requiredFiled"), MaxLength(30, ErrorMessage = "requiredNoLengthFiled30")]
         public string? CrMasSupCarModelEnName { get; set; }
 
-        [Required(ErrorMessage = "requiredFiled"), MaxLength(60, ErrorMessage = "requiredNoLengthFiled60")]
+        [MaxLength(60, ErrorMessage = "requiredNoLengthFiled60")]
         public string? CrMasSupCarModelArConcatenateName { get; set; }
 
-        [Required(ErrorMessage = "requiredFiled"), MaxLength(60, ErrorMessage = "requiredNoLengthFiled60")]
+        [MaxLength(60, ErrorMessage = "requiredNoLengthFiled60")]
         public string? CrMasSupCarModelConcatenateEnName { get; set; }
         public int? CrMasSupCarModelCounter { get; set; }
         public string? CrMasSupCarModelStatus { get; set; }
+
+        [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupCarModelReasons { get; set; }
 
         public List<CrMasSupCarBrand> All_Brands = new List<CrMasSupCarBrand>();
@@ -32,6 +35,9 @@ namespace Bnan.Ui.ViewModels.MAS
         public virtual CrMasSysGroup? CrMasSupCarModelGroupNavigation { get; set; }
 
 
+        public List<CrMasSupCarModel> crMasSupCarModel = new List<CrMasSupCarModel>();
+
+        public List<TResult2>? cars_count = new List<TResult2>();
 
     }
 }

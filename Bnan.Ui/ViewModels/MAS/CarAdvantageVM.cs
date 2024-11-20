@@ -20,5 +20,6 @@ namespace Bnan.Ui.ViewModels.MAS
         public string? CrMasSupCarAdvantagesReasons { get; set; }
         public int? RentersHave_withType_Count { get; set; }
 
+
     }
 }

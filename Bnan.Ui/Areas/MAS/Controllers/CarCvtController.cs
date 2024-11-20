@@ -1,371 +1,369 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
+using Bnan.Inferastructure.Filters;
+using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Numerics;
-
-
-namespace Bnan.Ui.Areas.MAS
+namespace Bnan.Ui.Areas.MAS.Controllers
 {
-
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
     public class CarCvtController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
-        private readonly UserManager<CrMasUserInformation> userManager;
-        private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly IUserService _userService;
-        private readonly IMasCarCvt _carCvt;
+        private readonly IMasCarCvt _masCarCvt;
+        private readonly IBaseRepo _baseRepo;
+        private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<CarCvtController> _localizer;
 
-
         public CarCvtController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IMasCarCvt carCvt,
+            IMapper mapper, IUserService userService, IMasCarCvt masCarCvt, IBaseRepo BaseRepo,IMasBase masBase,
             IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<CarCvtController> localizer) : base(userManager, unitOfWork, mapper)
         {
-            this.userManager = userManager;
-            this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             _userService = userService;
-            _carCvt = carCvt;
+            _masCarCvt = masCarCvt;
             _userLoginsService = userLoginsService;
+            _baseRepo = BaseRepo;
+            _masBase = masBase;
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
         }
 
         [HttpGet]
-
         public async Task<IActionResult> Index()
         {
-            var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107003", "1");
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            var pageNumber = Pages.CrMasSupCarCvt;
+            // Set page titles
+            await SetPageTitleAsync(string.Empty, pageNumber);
 
+            // Retrieve active driving licenses
+            var CarCvt = await _unitOfWork.CrMasSupCarCvt
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupCarCvtStatus == Status.Active);
 
-            var titles = await setTitle("107", "1107003", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
+            var Cars_Count = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrMasSupCarCvt>(
+                predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                columnSelector: x => x.CrCasCarInformationCvt  // تحديد العمود الذي نريد التجميع بناءً عليه
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+            );
 
-            var contracts = await _unitOfWork.CrMasSupCarCvt.GetAllAsync();
-            var contract = contracts.Where(x => x.CrMasSupCarCvtStatus == "A").ToList();
-            var CarsInfo_count_all = _carCvt.GetAllCarCvtsCount();
-            Tuple<IEnumerable<CrMasSupCarCvt>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupCarCvt>, List<List<string>>>(contract, CarsInfo_count_all);
-            return View(tb);
+            // If no active licenses, retrieve all licenses
+            if (!CarCvt.Any())
+            {
+                CarCvt = await _unitOfWork.CrMasSupCarCvt
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupCarCvtStatus == Status.Hold);
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
+            CarCvtVM vm = new CarCvtVM();
+            vm.crMasSupCarCvt = CarCvt;
+            vm.cars_count = Cars_Count;
+            return View(vm);
         }
-
         [HttpGet]
-        public PartialViewResult GetCarCvtByStatus(string status)
+        public async Task<PartialViewResult> GetCarCvtByStatus(string status, string search)
         {
+            //sidebar Active
+
             if (!string.IsNullOrEmpty(status))
             {
+                var CarCvtAll = await _unitOfWork.CrMasSupCarCvt.FindAllAsNoTrackingAsync(x => x.CrMasSupCarCvtStatus == Status.Active ||
+                                                                                                                            x.CrMasSupCarCvtStatus == Status.Deleted ||
+                                                                                                                            x.CrMasSupCarCvtStatus == Status.Hold);
+                var Cars_Count = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrMasSupCarCvt>(
+                    predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                    columnSelector: x => x.CrCasCarInformationCvt  // تحديد العمود الذي نريد التجميع بناءً عليه
+                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
+                CarCvtVM vm = new CarCvtVM();
+                vm.cars_count = Cars_Count;
                 if (status == Status.All)
                 {
-                    //var CarCvtbyStatusAll = _unitOfWork.CrMasSupCarCvt.GetAll();
-                    //return PartialView("_DataTableCarCvt", CarCvtbyStatusAll);
-
-                    var CarCvtbyStatusAll = _unitOfWork.CrMasSupCarCvt.FindAll(l => l.CrMasSupCarCvtStatus == Status.Hold || l.CrMasSupCarCvtStatus == Status.Active);
-                    var CarsInfo_count_all1 = _carCvt.GetAllCarCvtsCount();
-                    Tuple<IEnumerable<CrMasSupCarCvt>, List<List<string>>> tb1 = new Tuple<IEnumerable<CrMasSupCarCvt>, List<List<string>>>(CarCvtbyStatusAll, CarsInfo_count_all1);
-                    return PartialView("_DataTableCarCvt", tb1);
+                    var FilterAll = CarCvtAll.FindAll(x => x.CrMasSupCarCvtStatus != Status.Deleted &&
+                                                                         (x.CrMasSupCarCvtArName.Contains(search) ||
+                                                                          x.CrMasSupCarCvtEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupCarCvtCode.Contains(search)));
+                    vm.crMasSupCarCvt = FilterAll;
+                    return PartialView("_DataTableCarCvt", vm);
                 }
-                var CarCvtbyStatus = _unitOfWork.CrMasSupCarCvt.FindAll(l => l.CrMasSupCarCvtStatus == status).ToList();
-                var CarsInfo_count_all = _carCvt.GetAllCarCvtsCount();
-                Tuple<IEnumerable<CrMasSupCarCvt>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupCarCvt>, List<List<string>>>(CarCvtbyStatus, CarsInfo_count_all);
-                return PartialView("_DataTableCarCvt", tb);
+                var FilterByStatus = CarCvtAll.FindAll(x => x.CrMasSupCarCvtStatus == status &&
+                                                                            (
+                                                                           x.CrMasSupCarCvtArName.Contains(search) ||
+                                                                           x.CrMasSupCarCvtEnName.ToLower().Contains(search.ToLower()) ||
+                                                                           x.CrMasSupCarCvtCode.Contains(search)));
+                vm.crMasSupCarCvt = FilterByStatus;
+                return PartialView("_DataTableCarCvt", vm);
             }
             return PartialView();
         }
 
-
         [HttpGet]
         public async Task<IActionResult> AddCarCvt()
         {
-
-            // Set Title !!!!!!!!!!!!!!!!!!!!!!!!!!
-            var titles = await setTitle("107", "1107003", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var CarCvtCode = "";
-            var CarCvts = await _unitOfWork.CrMasSupCarCvt.GetAllAsync();
-            if (CarCvts.Count() != 0)
+            var pageNumber = Pages.CrMasSupCarCvt;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                CarCvtCode = (BigInteger.Parse(CarCvts.LastOrDefault().CrMasSupCarCvtCode) + 1).ToString();
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return RedirectToAction("Index", "CarCvt");
             }
-            else
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
             {
-                CarCvtCode = "10";
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "CarCvt");
             }
-            ViewBag.CarCvtCode = CarCvtCode;
-            return View();
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+            // Check If code > 9 get error , because code is char(1)
+            if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "CarCvt");
+            }
+            // Set Title 
+            CarCvtVM CarCvtVM = new CarCvtVM();
+            CarCvtVM.CrMasSupCarCvtCode = await GenerateLicenseCodeAsync();
+            return View(CarCvtVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCarCvt(CarCvtVM CarCvts, IFormFile? AcceptImg)
+        public async Task<IActionResult> AddCarCvt(CarCvtVM CarCvtVM)
         {
-            string currentCulture = CultureInfo.CurrentCulture.Name;
-            string foldername = $"{"images\\Common"}";
-            string filePathImageAccept = "";
+            var pageNumber = Pages.CrMasSupCarCvt;
+            
+            var user = await _userManager.GetUserAsync(User);
 
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid || CarCvtVM == null)
             {
-                if (CarCvts != null)
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddCarCvt", CarCvtVM);
+            }
+            try
+            {
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                // Map ViewModel to Entity
+                var CarCvtEntity = _mapper.Map<CrMasSupCarCvt>(CarCvtVM);
+
+                // Check if the entity already exists
+                if (await _masCarCvt.ExistsByDetailsAsync(CarCvtEntity))
                 {
-                    var CarCvtVMT = _mapper.Map<CrMasSupCarCvt>(CarCvts);
-                    var All_CarCvts = await _unitOfWork.CrMasSupCarCvt.GetAllAsync();
-                    var existingCarCvt_En = All_CarCvts.FirstOrDefault(x =>
-                        x.CrMasSupCarCvtEnName == CarCvtVMT.CrMasSupCarCvtEnName);
-                    var existingCarCvt_Ar = All_CarCvts.FirstOrDefault(x =>
-                        x.CrMasSupCarCvtArName == CarCvtVMT.CrMasSupCarCvtArName);
-
-                    // Generate code for the second time
-                    var CarCvtCode = (BigInteger.Parse(All_CarCvts.LastOrDefault().CrMasSupCarCvtCode) + 1).ToString();
-                    CarCvts.CrMasSupCarCvtCode = CarCvtCode;
-                    ViewBag.CarCvtCode = CarCvtCode;
-                    if (CarCvtVMT.CrMasSupCarCvtArName != null && CarCvtVMT.CrMasSupCarCvtEnName != null)
-                    {
-                        if (existingCarCvt_Ar != null && existingCarCvt_En != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(CarCvts);
-                        }
-                        else if (existingCarCvt_En != null)
-                        {
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(CarCvts);
-                        }
-                        else if (existingCarCvt_Ar != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            return View(CarCvts);
-                        }
-                    }
-
-                    if (AcceptImg != null)
-                    {
-                        //string fileNameImg = CarCvts.CrMasSupCarCvtEnName + "_CarCvt_" + CarCvts.CrMasSupCarCvtCode.ToString();
-                        string fileNameImg ="CarCvt_" + CarCvts.CrMasSupCarCvtCode.ToString();
-                        filePathImageAccept = await AcceptImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
-                    }
-
-
-                    CarCvtVMT.CrMasSupCarCvtImage = filePathImageAccept;
-                    CarCvtVMT.CrMasSupCarCvtStatus = "A";
-                    await _unitOfWork.CrMasSupCarCvt.AddAsync(CarCvtVMT);
-
-                    _unitOfWork.Complete();
-
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107003", "1");
-                    var RecordAr = CarCvtVMT.CrMasSupCarCvtArName;
-                    var RecordEn = CarCvtVMT.CrMasSupCarCvtEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "اضافة", "Add", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
+                    await AddModelErrorsAsync(CarCvtEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("AddCarCvt", CarCvtVM);
                 }
+                // Check If code > 9 get error , because code is char(1)
+                if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("AddCarCvt", CarCvtVM);
+                }
+                // Generate and set the Driving License Code
+                CarCvtVM.CrMasSupCarCvtCode = await GenerateLicenseCodeAsync();
+                // Set status and add the record
+                CarCvtEntity.CrMasSupCarCvtStatus = "A";
+                await _unitOfWork.CrMasSupCarCvt.AddAsync(CarCvtEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+
+                await SaveTracingForLicenseChange(user, CarCvtEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
-            return View("AddCarCvt", CarCvts);
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddCarCvt", CarCvtVM);
+            }
         }
-
-
-
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            //To Set Title !!!!!!!!!!!!!
-            var titles = await setTitle("107", "1107003", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
+            var pageNumber = Pages.CrMasSupCarCvt;
+            await SetPageTitleAsync(Status.Update, pageNumber);
 
-            var contract = await _unitOfWork.CrMasSupCarCvt.GetByIdAsync(id);
+            var contract = await _unitOfWork.CrMasSupCarCvt.FindAsync(x => x.CrMasSupCarCvtCode == id);
             if (contract == null)
             {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Index");
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "CarCvt");
             }
-            int countCarCvts = 0;
-            countCarCvts = _carCvt.GetOneCarCvtCount(id);
-            ViewBag.CarCvts_Count = countCarCvts;
             var model = _mapper.Map<CarCvtVM>(contract);
-
             return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(CarCvtVM CarCvtVM)
+        {
+            var pageNumber = Pages.CrMasSupCarCvt;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null && CarCvtVM == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return RedirectToAction("Index", "CarCvt");
+            }
+            try
+            {
+                //Check Validition
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("Edit", CarCvtVM);
+                }
+                var CarCvtEntity = _mapper.Map<CrMasSupCarCvt>(CarCvtVM);
+
+                // Check if the entity already exists
+                if (await _masCarCvt.ExistsByDetailsAsync(CarCvtEntity))
+                {
+                    await SetPageTitleAsync(Status.Update, pageNumber);
+                    await AddModelErrorsAsync(CarCvtEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Edit", CarCvtVM);
+                }
+
+                _unitOfWork.CrMasSupCarCvt.Update(CarCvtEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+                await SaveTracingForLicenseChange(user, CarCvtEntity, Status.Update);
+                return RedirectToAction("Index", "CarCvt");
+            }
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return View("Edit", CarCvtVM);
+            }
+        }
+        [HttpPost]
+        public async Task<string> EditStatus(string code, string status)
+        {
+            var pageNumber = Pages.CrMasSupCarCvt;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return "false";
+
+            var licence = await _unitOfWork.CrMasSupCarCvt.GetByIdAsync(code);
+            if (licence == null) return "false";
+
+            try
+            {
+                
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                licence.CrMasSupCarCvtStatus = status;
+                _unitOfWork.CrMasSupCarCvt.Update(licence);
+                _unitOfWork.Complete();
+                await SaveTracingForLicenseChange(user, licence, status);
+                return "true";
+            }
+            catch (Exception ex)
+            {
+                return "false";
+            }
+        }
+
+        //Error exist message when run post action to get what is the exist field << Help Up in Back End
+        private async Task AddModelErrorsAsync(CrMasSupCarCvt entity)
+        {
+
+            if (await _masCarCvt.ExistsByArabicNameAsync(entity.CrMasSupCarCvtArName, entity.CrMasSupCarCvtCode))
+            {
+                ModelState.AddModelError("CrMasSupCarCvtArName", _localizer["Existing"]);
+            }
+
+            if (await _masCarCvt.ExistsByEnglishNameAsync(entity.CrMasSupCarCvtEnName, entity.CrMasSupCarCvtCode))
+            {
+                ModelState.AddModelError("CrMasSupCarCvtEnName", _localizer["Existing"]);
+            }
+        }
+
+        //Error exist message when change input without run post action >> help us in front end
+        [HttpGet]
+        public async Task<JsonResult> CheckChangedField(string existName, string dataField)
+        {
+            var All_CarCvt = await _unitOfWork.CrMasSupCarCvt.GetAllAsync();
+            var errors = new List<ErrorResponse>();
+
+            if (!string.IsNullOrEmpty(dataField) && All_CarCvt != null)
+            {
+                // Check for existing Arabic driving license
+                if (existName == "CrMasSupCarCvtArName" && All_CarCvt.Any(x => x.CrMasSupCarCvtArName == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarCvtArName", Message = _localizer["Existing"] });
+                }
+                // Check for existing English driving license
+                else if (existName == "CrMasSupCarCvtEnName" && All_CarCvt.Any(x => x.CrMasSupCarCvtEnName?.ToLower() == dataField.ToLower()))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarCvtEnName", Message = _localizer["Existing"] });
+                }
+            }
+
+            return Json(new { errors });
+        }
+
+        //Helper Methods 
+        private async Task<string> GenerateLicenseCodeAsync()
+        {
+            var allLicenses = await _unitOfWork.CrMasSupCarCvt.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupCarCvtCode) + 1).ToString() : "10";
+        }
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupCarCvt licence, string status)
+        {
+            var pageNumber = Pages.CrMasSupCarCvt;
+
+            var recordAr = licence.CrMasSupCarCvtArName;
+            var recordEn = licence.CrMasSupCarCvtEnName;
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+
+        [HttpPost]
+        public IActionResult DisplayToastError_NoUpdate(string messageText)
+        {
+            //نص الرسالة _localizer["AuthEmplpoyee_NoUpdate"] === messageText ; 
+            if (messageText == null || messageText == "") messageText = "..";
+            _toastNotification.AddErrorToastMessage(messageText, new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            return Json(new { success = true });
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(CarCvtVM model, IFormFile? AcceptImg)
+        public IActionResult DisplayToastSuccess_withIndex()
         {
-            string foldername = $"{"images\\Common"}";
-            string filePathImageAccept = "";
-            var user = await _userService.GetUserByUserNameAsync(HttpContext.User.Identity.Name);
-            var cvt = await _unitOfWork.CrMasSupCarCvt.FindAsync(x => x.CrMasSupCarCvtCode == model.CrMasSupCarCvtCode);
-            if (user != null)
-            {
-                if (model != null)
-                {
-
-                    if (AcceptImg != null)
-                    {
-                        //string fileNameImg = model.CrMasSupCarCvtEnName + "_CarCvt_" + model.CrMasSupCarCvtCode.ToString();
-                        string fileNameImg = "CarFuel_" + model.CrMasSupCarCvtCode.ToString() + "_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوق
-                        filePathImageAccept = await AcceptImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png",cvt.CrMasSupCarCvtImage);
-                    }
-                    if (AcceptImg != null)
-                    {
-                        string fileNameImg = "CarFuel_" + model.CrMasSupCarCvtCode.ToString() + "_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوق
-                        filePathImageAccept = await AcceptImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png", cvt.CrMasSupCarCvtImage);
-                    }
-                    else if (!string.IsNullOrEmpty(cvt.CrMasSupCarCvtImage))
-                    {
-                        filePathImageAccept = cvt.CrMasSupCarCvtImage;
-                    }
-                    else
-                    {
-                        filePathImageAccept = "~/images/common/DefaultCar.png";
-                    }
-
-                    //var contract = _mapper.Map<CrMasSupCarCvt>(model);
-                    cvt.CrMasSupCarCvtImage = filePathImageAccept;
-                    cvt.CrMasSupCarCvtReasons = model.CrMasSupCarCvtReasons;
-
-                    _unitOfWork.CrMasSupCarCvt.Update(cvt);
-                    _unitOfWork.Complete();
-
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107003", "1");
-                    var RecordAr = cvt.CrMasSupCarCvtArName;
-                    var RecordEn = cvt.CrMasSupCarCvtEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-                }
-
-            }
-
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
             return RedirectToAction("Index", "CarCvt");
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> EditStatus(string code, string status)
-        {
-            string sAr = "";
-            string sEn = "";
-            var Contract = await _unitOfWork.CrMasSupCarCvt.GetByIdAsync(code);
-            if (Contract != null)
-            {
-                if (status == Status.Hold)
-                {
-                    sAr = "ايقاف";
-                    sEn = "Hold";
-                    Contract.CrMasSupCarCvtStatus = Status.Hold;
-                }
-                else if (status == Status.Deleted)
-                {
-                    int CountCarCvts = 0;
-                    CountCarCvts = _carCvt.GetOneCarCvtCount(code);
-                    if (CountCarCvts == 0)
-                    {
-                        sAr = "حذف";
-                        sEn = "Remove";
-                        Contract.CrMasSupCarCvtStatus = Status.Deleted;
-                    }
-                    else
-                    {
-                        return View(Contract);
-                    }
-
-                }
-                else if (status == "Reactivate")
-                {
-                    sAr = "استرجاع";
-                    sEn = "Retrive";
-                    Contract.CrMasSupCarCvtStatus = Status.Active;
-                }
-
-                await _unitOfWork.CompleteAsync();
-
-                // SaveTracing
-                var RecordAr = Contract.CrMasSupCarCvtArName;
-                var RecordEn = Contract.CrMasSupCarCvtEnName;
-                var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107003", "1");
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                return RedirectToAction("Index", "CarCvt");
-            }
-
-
-            return View(Contract);
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CheckChangedField(string Exist_lang, string dataField)
-        {
-            var All_CarCvts = await _unitOfWork.CrMasSupCarCvt.GetAllAsync();
-
-            if (dataField != null && All_CarCvts != null)
-            {
-                if (Exist_lang == "ExistAr")
-                {
-                    var existingCarCvt_Ar = All_CarCvts.FirstOrDefault(x =>
-                        x.CrMasSupCarCvtArName == dataField);
-                    if (existingCarCvt_Ar != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
-                }
-                else if (Exist_lang == "ExistEn")
-                {
-                    var existingCarCvt_En = All_CarCvts.FirstOrDefault(x =>
-                        x.CrMasSupCarCvtEnName == dataField);
-                    if (existingCarCvt_En != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
-                }
-
-            }
-            return View();
-        }
-
-
-
-        //public  IActionResult CannotDelete() 
-        //{ 
-
-        //_toastNotification.AddErrorToastMessage(_localizer["SureTo_Cannot_delete"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-        //    return View();
-        //}
     }
- }
+}

@@ -67,10 +67,6 @@
     <None Include="Areas\Identity\Views\Shared\_ValidationScriptsPartial.cshtml" />
     <None Include="Areas\Identity\Views\_ViewImports.cshtml" />
     <None Include="Areas\Identity\Views\_ViewStart.cshtml" />
-    <None Include="Areas\MAS\Views\Bank\AddBank.cshtml" />
-    <None Include="Areas\MAS\Views\Bank\Edit.cshtml" />
-    <None Include="Areas\MAS\Views\Bank\Index.cshtml" />
-    <None Include="Areas\MAS\Views\Bank\_DataTableBank.cshtml" />
     <None Include="Areas\MAS\Views\Home\Index.cshtml" />
     <None Include="Areas\MAS\Views\LessorsKSA\AddLessorKSA.cshtml" />
     <None Include="Areas\MAS\Views\LessorsKSA\Edit.cshtml" />

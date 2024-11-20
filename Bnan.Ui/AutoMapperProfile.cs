@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Repository;
 using Bnan.Ui.ViewModels;
@@ -36,7 +37,7 @@ namespace Bnan.Inferastructure
 
             CreateMap<CrCasBranchPost, BranchPostVM>().ReverseMap();
             CreateMap<ContractCompanyVM, CrMasContractCompany>().ReverseMap();
-            CreateMap<CrMasSupAccountBank, BankVM>().ReverseMap();
+            CreateMap<CrMasSupAccountBank, MasAccountBankVM>().ReverseMap();
             CreateMap<CrMasSupAccountPaymentMethod, PaymentMethodsVM>().ReverseMap();
 
             CreateMap<AccountRefrenceVM, CrMasSupAccountReference>();
@@ -58,6 +59,7 @@ namespace Bnan.Inferastructure
 
             CreateMap<CrCasAccountBank, AccountBankVM>().ReverseMap();
 
+
             CreateMap<CrCasRenterPrivateDriverInformation, RenterDriverVM>().ReverseMap();
 
             CreateMap<BranchVM, CrCasBranchInformation>().ReverseMap();
@@ -75,12 +77,12 @@ namespace Bnan.Inferastructure
             CreateMap<CrCasCarInformation, CarsInforamtionVM>().ReverseMap();
             CreateMap<CrCasCarDocumentsMaintenance, DocumentsMaintainceCarVM>().ReverseMap();
             CreateMap<CarPriceVM, CrCasPriceCarBasic>().ReverseMap();
-
+            
             CreateMap<RenterLessorVM, CrCasRenterLessor>().ReverseMap();
 
             CreateMap<ContractForExtensionVM, CrCasRenterContractBasic>().ReverseMap();
 
-            CreateMap<CarBrandsVM, CrMasSupCarBrand>().ReverseMap();
+            CreateMap<CarBrandVM, CrMasSupCarBrand>().ReverseMap();
 
             CreateMap<RenterNationalityVM, CrMasSupRenterNationality>().ReverseMap();
 

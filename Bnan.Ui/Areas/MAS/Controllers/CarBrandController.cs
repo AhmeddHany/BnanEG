@@ -1,358 +1,371 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
+using Bnan.Inferastructure.Filters;
+using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Numerics;
-
 namespace Bnan.Ui.Areas.MAS.Controllers
 {
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
     public class CarBrandController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
-        private readonly UserManager<CrMasUserInformation> userManager;
-        private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly IUserService _userService;
-        private readonly ICarBrand _carBrand;
+        private readonly IMasCarBrand _masCarBrand;
+        private readonly IBaseRepo _baseRepo;
+        private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<CarBrandController> _localizer;
 
-
         public CarBrandController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService,  ICarBrand carBrand,
+            IMapper mapper, IUserService userService, IMasCarBrand masCarBrand, IBaseRepo BaseRepo,IMasBase masBase,
             IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<CarBrandController> localizer) : base(userManager, unitOfWork, mapper)
         {
-            this.userManager = userManager;
-            this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             _userService = userService;
-            _carBrand = carBrand;
+            _masCarBrand = masCarBrand;
             _userLoginsService = userLoginsService;
+            _baseRepo = BaseRepo;
+            _masBase = masBase;
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
         }
 
         [HttpGet]
-
         public async Task<IActionResult> Index()
         {
-            var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107004", "1");
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            var pageNumber = Pages.CrMasSupCarBrand;
+            // Set page titles
+            await SetPageTitleAsync(string.Empty, pageNumber);
+
+            // Retrieve active driving licenses
+            var renterDrivingLicenses = await _unitOfWork.CrMasSupCarBrand
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Active );
+
+            var Cars_Count = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrMasSupCarBrand>(
+                predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                columnSelector: x => x.CrCasCarInformationBrand  // تحديد العمود الذي نريد التجميع بناءً عليه
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
 
 
-            var titles = await setTitle("107", "1107004", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var contracts = await _unitOfWork.CrMasSupCarBrand.GetAllAsync();
-            var contract = contracts.Where(x => x.CrMasSupCarBrandStatus == "A").ToList();
-            var CarsInfo_count_all = _carBrand.GetAllCarBrandsCount();
-            Tuple<IEnumerable<CrMasSupCarBrand>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupCarBrand>, List<List<string>>>(contract, CarsInfo_count_all);
-            return View(tb);
+            // If no active licenses, retrieve all licenses
+            if (!renterDrivingLicenses.Any())
+            {
+                renterDrivingLicenses = await _unitOfWork.CrMasSupCarBrand
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Hold
+                                              );
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
+            CarBrandVM vm = new CarBrandVM();
+            vm.crMasSupCarBrand = renterDrivingLicenses;
+            vm.cars_count = Cars_Count;
+            return View(vm);
         }
-
         [HttpGet]
-        public PartialViewResult GetCarBrandByStatus(string status)
+        public async Task<PartialViewResult> GetCarBrandByStatus(string status, string search)
         {
+            //sidebar Active
+
             if (!string.IsNullOrEmpty(status))
             {
+                var CarBrandsAll = await _unitOfWork.CrMasSupCarBrand.FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Active ||
+                                                                                                                            x.CrMasSupCarBrandStatus == Status.Deleted ||
+                                                                                                                            x.CrMasSupCarBrandStatus == Status.Hold );
+                var Cars_Count = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrMasSupCarBrand>(
+                    predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                    columnSelector: x => x.CrCasCarInformationBrand  // تحديد العمود الذي نريد التجميع بناءً عليه
+                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                    );
+                CarBrandVM vm = new CarBrandVM();
+                vm.cars_count = Cars_Count;
                 if (status == Status.All)
                 {
-                    //var CarBrandbyStatusAll = _unitOfWork.CrMasSupCarBrand.GetAll();
-                    //return PartialView("_DataTableCarBrand", CarBrandbyStatusAll);
-
-                    var CarBrandbyStatusAll = _unitOfWork.CrMasSupCarBrand.FindAll(l => l.CrMasSupCarBrandStatus == Status.Hold || l.CrMasSupCarBrandStatus == Status.Active);
-                    var CarsInfo_count_all1 = _carBrand.GetAllCarBrandsCount();
-                    Tuple<IEnumerable<CrMasSupCarBrand>, List<List<string>>> tb1 = new Tuple<IEnumerable<CrMasSupCarBrand>, List<List<string>>>(CarBrandbyStatusAll, CarsInfo_count_all1);
-                    return PartialView("_DataTableCarBrand", tb1);
+                    var FilterAll = CarBrandsAll.FindAll(x => x.CrMasSupCarBrandStatus != Status.Deleted &&
+                                                                         (x.CrMasSupCarBrandArName.Contains(search) ||
+                                                                          x.CrMasSupCarBrandEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupCarBrandCode.Contains(search)));
+                    vm.crMasSupCarBrand = FilterAll;
+                    return PartialView("_DataTableCarBrand", vm);
                 }
-                var CarBrandbyStatus = _unitOfWork.CrMasSupCarBrand.FindAll(l => l.CrMasSupCarBrandStatus == status).ToList();
-                var CarsInfo_count_all = _carBrand.GetAllCarBrandsCount();
-                Tuple<IEnumerable<CrMasSupCarBrand>, List<List<string>>> tb = new Tuple<IEnumerable<CrMasSupCarBrand>, List<List<string>>>(CarBrandbyStatus, CarsInfo_count_all);
-                return PartialView("_DataTableCarBrand", tb);
+                var FilterByStatus = CarBrandsAll.FindAll(x => x.CrMasSupCarBrandStatus == status &&
+                                                                            (
+                                                                           x.CrMasSupCarBrandArName.Contains(search) ||
+                                                                           x.CrMasSupCarBrandEnName.ToLower().Contains(search.ToLower()) ||
+                                                                           x.CrMasSupCarBrandCode.Contains(search)));
+                vm.crMasSupCarBrand = FilterByStatus;
+                return PartialView("_DataTableCarBrand", vm);
             }
             return PartialView();
         }
 
-
         [HttpGet]
         public async Task<IActionResult> AddCarBrand()
         {
-
-            // Set Title !!!!!!!!!!!!!!!!!!!!!!!!!!
-            var titles = await setTitle("107", "1107004", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var CarBrandCode = "";
-            var CarBrands = await _unitOfWork.CrMasSupCarBrand.GetAllAsync();
-            if (CarBrands.Count() != 0)
+            var pageNumber = Pages.CrMasSupCarBrand;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                CarBrandCode = (BigInteger.Parse(CarBrands.LastOrDefault().CrMasSupCarBrandCode) + 1).ToString();
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return RedirectToAction("Index", "CarBrand");
             }
-            else
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
             {
-                CarBrandCode = "3001";
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "CarBrand");
             }
-            ViewBag.CarBrandCode = CarBrandCode;
-            return View();
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+            // Check If code > 9 get error , because code is char(1)
+            if (int.Parse(await GenerateLicenseCodeAsync()) > 3999)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "CarBrand");
+            }
+            // Set Title 
+            CarBrandVM renterDrivingLicenseVM = new CarBrandVM();
+            renterDrivingLicenseVM.CrMasSupCarBrandCode = await GenerateLicenseCodeAsync();
+            return View(renterDrivingLicenseVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCarBrand(CarBrandsVM CarBrands, IFormFile? AcceptImg)
+        public async Task<IActionResult> AddCarBrand(CarBrandVM renterDrivingLicenseVM)
         {
-            string currentCulture = CultureInfo.CurrentCulture.Name;
-            string foldername = $"{"images\\Common"}";
-            string filePathImageAccept = "";
+            var pageNumber = Pages.CrMasSupCarBrand;
+            
+            var user = await _userManager.GetUserAsync(User);
 
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid || renterDrivingLicenseVM == null)
             {
-                if (CarBrands != null)
-                {
-                    var CarBrandsVMT = _mapper.Map<CrMasSupCarBrand>(CarBrands);
-                    var All_CarBrands = await _unitOfWork.CrMasSupCarBrand.GetAllAsync();
-                    var existingCarBrand_En = All_CarBrands.FirstOrDefault(x =>
-                        x.CrMasSupCarBrandEnName == CarBrandsVMT.CrMasSupCarBrandEnName);
-                    var existingCarBrand_Ar = All_CarBrands.FirstOrDefault(x => 
-                        x.CrMasSupCarBrandArName == CarBrandsVMT.CrMasSupCarBrandArName);
-
-                    // Generate code for the second time
-                    var CarBrandCode = (BigInteger.Parse(All_CarBrands.LastOrDefault().CrMasSupCarBrandCode) + 1).ToString();
-                    CarBrands.CrMasSupCarBrandCode = CarBrandCode;
-                    ViewBag.CarBrandCode = CarBrandCode;
-                    if (CarBrandsVMT.CrMasSupCarBrandArName != null && CarBrandsVMT.CrMasSupCarBrandEnName != null) 
-                    {
-                        if (existingCarBrand_Ar != null && existingCarBrand_En != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(CarBrands);
-                        }
-                        else if (existingCarBrand_En != null)
-                        {                  
-                            ModelState.AddModelError("ExistEn", _localizer["Existing"]);
-                            return View(CarBrands);
-                        }
-                        else if (existingCarBrand_Ar != null)
-                        {
-                            ModelState.AddModelError("ExistAr", _localizer["Existing"]);
-                            return View(CarBrands);
-                        }
-                    }
-
-                    if (AcceptImg != null)
-                    {
-                        string fileNameImg = CarBrands.CrMasSupCarBrandEnName + "_CarBrand_" + CarBrands.CrMasSupCarBrandCode.ToString().Substring(CarBrands.CrMasSupCarBrandCode.ToString().Length - 3);
-                        filePathImageAccept = await AcceptImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
-                    }
-
-
-                    CarBrandsVMT.CrMasSupCarBrandImage = filePathImageAccept;
-                    CarBrandsVMT.CrMasSupCarBrandStatus = "A";
-                    await _unitOfWork.CrMasSupCarBrand.AddAsync(CarBrandsVMT);
-
-                    _unitOfWork.Complete();
-
-                    var RecordAr = CarBrandsVMT.CrMasSupCarBrandArName;
-                    var RecordEn = CarBrandsVMT.CrMasSupCarBrandEnName;
-
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107004", "1");
-
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "اضافة", "Add", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddCarBrand", renterDrivingLicenseVM);
             }
+            try
+            {
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                // Map ViewModel to Entity
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarBrand>(renterDrivingLicenseVM);
+
+                // Check if the entity already exists
+                if (await _masCarBrand.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                {
+                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("AddCarBrand", renterDrivingLicenseVM);
+                }
+                // Check If code > 9 get error , because code is char(1)
+                if (int.Parse(await GenerateLicenseCodeAsync()) > 3999)
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("AddCarBrand", renterDrivingLicenseVM);
+                }
+                // Generate and set the Driving License Code
+                renterDrivingLicenseVM.CrMasSupCarBrandCode = await GenerateLicenseCodeAsync();
+                // Set status and add the record
+                renterDrivingLicenseEntity.CrMasSupCarBrandStatus = "A";
+                await _unitOfWork.CrMasSupCarBrand.AddAsync(renterDrivingLicenseEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+
+                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
-            return View("AddCarBrand", CarBrands);
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddCarBrand", renterDrivingLicenseVM);
+            }
         }
-
-
-
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            //To Set Title !!!!!!!!!!!!!
-            var titles = await setTitle("107", "1107004", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
+            var pageNumber = Pages.CrMasSupCarBrand;
+            await SetPageTitleAsync(Status.Update, pageNumber);
 
-            var contract = await _unitOfWork.CrMasSupCarBrand.GetByIdAsync(id);
+            var contract = await _unitOfWork.CrMasSupCarBrand.FindAsync(x => x.CrMasSupCarBrandCode == id);
             if (contract == null)
             {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Index");
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "CarBrand");
             }
-            int countCarBrands = 0;
-            countCarBrands = _carBrand.GetOneBrandCount(id);
-            ViewBag.CarBrands_Count = countCarBrands;
-            var model = _mapper.Map<CarBrandsVM>(contract);
-
+            var model = _mapper.Map<CarBrandVM>(contract);
             return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(CarBrandVM renterDrivingLicenseVM)
+        {
+            var pageNumber = Pages.CrMasSupCarBrand;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null && renterDrivingLicenseVM == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return RedirectToAction("Index", "CarBrand");
+            }
+            try
+            {
+                //Check Validition
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("Edit", renterDrivingLicenseVM);
+                }
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarBrand>(renterDrivingLicenseVM);
+
+                // Check if the entity already exists
+                if (await _masCarBrand.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                {
+                    await SetPageTitleAsync(Status.Update, pageNumber);
+                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Edit", renterDrivingLicenseVM);
+                }
+
+                _unitOfWork.CrMasSupCarBrand.Update(renterDrivingLicenseEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
+                return RedirectToAction("Index", "CarBrand");
+            }
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return View("Edit", renterDrivingLicenseVM);
+            }
+        }
+        [HttpPost]
+        public async Task<string> EditStatus(string code, string status)
+        {
+            var pageNumber = Pages.CrMasSupCarBrand;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return "false";
+
+            var licence = await _unitOfWork.CrMasSupCarBrand.GetByIdAsync(code);
+            if (licence == null) return "false";
+
+            try
+            {
+                
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                licence.CrMasSupCarBrandStatus = status;
+                _unitOfWork.CrMasSupCarBrand.Update(licence);
+                _unitOfWork.Complete();
+                await SaveTracingForLicenseChange(user, licence, status);
+                return "true";
+            }
+            catch (Exception ex)
+            {
+                return "false";
+            }
+        }
+
+        //Error exist message when run post action to get what is the exist field << Help Up in Back End
+        private async Task AddModelErrorsAsync(CrMasSupCarBrand entity)
+        {
+
+            if (await _masCarBrand.ExistsByArabicNameAsync(entity.CrMasSupCarBrandArName, entity.CrMasSupCarBrandCode))
+            {
+                ModelState.AddModelError("CrMasSupCarBrandArName", _localizer["Existing"]);
+            }
+
+            if (await _masCarBrand.ExistsByEnglishNameAsync(entity.CrMasSupCarBrandEnName, entity.CrMasSupCarBrandCode))
+            {
+                ModelState.AddModelError("CrMasSupCarBrandEnName", _localizer["Existing"]);
+            }
+        }
+
+        //Error exist message when change input without run post action >> help us in front end
+        [HttpGet]
+        public async Task<JsonResult> CheckChangedField(string existName, string dataField)
+        {
+            var All_CarBrands = await _unitOfWork.CrMasSupCarBrand.GetAllAsync();
+            var errors = new List<ErrorResponse>();
+
+            if (!string.IsNullOrEmpty(dataField) && All_CarBrands != null)
+            {
+                // Check for existing Arabic driving license
+                if (existName == "CrMasSupCarBrandArName" && All_CarBrands.Any(x => x.CrMasSupCarBrandArName == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarBrandArName", Message = _localizer["Existing"] });
+                }
+                // Check for existing English driving license
+                else if (existName == "CrMasSupCarBrandEnName" && All_CarBrands.Any(x => x.CrMasSupCarBrandEnName?.ToLower() == dataField.ToLower()))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarBrandEnName", Message = _localizer["Existing"] });
+                }
+            }
+
+            return Json(new { errors });
+        }
+
+        //Helper Methods 
+        private async Task<string> GenerateLicenseCodeAsync()
+        {
+            var allLicenses = await _unitOfWork.CrMasSupCarBrand.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupCarBrandCode) + 1).ToString() : "3001";
+        }
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupCarBrand licence, string status)
+        {
+            var pageNumber = Pages.CrMasSupCarBrand;
+
+            var recordAr = licence.CrMasSupCarBrandArName;
+            var recordEn = licence.CrMasSupCarBrandEnName;
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+
+        [HttpPost]
+        public IActionResult DisplayToastError_NoUpdate(string messageText)
+        {
+            //نص الرسالة _localizer["AuthEmplpoyee_NoUpdate"] === messageText ; 
+            if (messageText == null || messageText == "") messageText = "..";
+            _toastNotification.AddErrorToastMessage(messageText, new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            return Json(new { success = true });
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(CarBrandsVM model, IFormFile? AcceptImg)
+        public IActionResult DisplayToastSuccess_withIndex()
         {
-            string foldername = $"{"images\\Common"}";
-            string filePathImageAccept = "";
-            var user = await _userService.GetUserByUserNameAsync(HttpContext.User.Identity.Name);
-
-            if (user != null)
-            {
-                if (model != null)
-                {
-
-                    if (AcceptImg != null)
-                    {
-                        string fileNameImg = model.CrMasSupCarBrandEnName + "_CarBrand_" + model.CrMasSupCarBrandCode.ToString().Substring(model.CrMasSupCarBrandCode.ToString().Length - 3);
-                        filePathImageAccept = await AcceptImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
-                        model.CrMasSupCarBrandImage = filePathImageAccept;
-                    }
-
-
-                    var contract = _mapper.Map<CrMasSupCarBrand>(model);
-
-                    _unitOfWork.CrMasSupCarBrand.Update(contract);
-                    _unitOfWork.Complete();
-
-                    var RecordAr = model.CrMasSupCarBrandArName;
-                    var RecordEn = model.CrMasSupCarBrandEnName;
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107004", "1");
-
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode,RecordAr,RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-                }
-
-            }
-
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
             return RedirectToAction("Index", "CarBrand");
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> EditStatus(string code, string status)
-        {
-            string sAr = "";
-            string sEn = "";
-            var Contract = await _unitOfWork.CrMasSupCarBrand.GetByIdAsync(code);
-            if (Contract != null)
-            {
-                if (status == Status.Hold)
-                {
-                    sAr = "ايقاف";
-                    sEn = "Hold";
-                    Contract.CrMasSupCarBrandStatus = Status.Hold;
-                }
-                else if (status == Status.Deleted)
-                {
-                    int CountCarBrands = 0;
-                    CountCarBrands = _carBrand.GetOneBrandCount(code);
-                    if (CountCarBrands == 0)
-                    {
-                        sAr = "حذف";
-                        sEn = "Remove";
-                        Contract.CrMasSupCarBrandStatus = Status.Deleted;
-                    }
-                    else
-                    {
-                        return View(Contract);
-                    }
-
-                }
-                else if (status == "Reactivate")
-                {
-                    sAr = "استرجاع";
-                    sEn = "Retrive";
-                    Contract.CrMasSupCarBrandStatus = Status.Active;
-                }
-
-                await _unitOfWork.CompleteAsync();
-
-                var RecordAr = Contract.CrMasSupCarBrandArName;
-                var RecordEn = Contract.CrMasSupCarBrandEnName;
-                // SaveTracing
-
-                var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107004", "1");
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr,RecordEn, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                return RedirectToAction("Index", "CarBrand");
-            }
-
-
-            return View(Contract);
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CheckChangedField(string Exist_lang,string dataField)
-        {
-            var All_CarBrands = await _unitOfWork.CrMasSupCarBrand.GetAllAsync();
-            
-            if (dataField != null && All_CarBrands != null)
-            {
-                if (Exist_lang == "ExistAr")
-                {
-                    var existingCarBrand_Ar = All_CarBrands.FirstOrDefault(x =>
-                        x.CrMasSupCarBrandArName == dataField);
-                    if (existingCarBrand_Ar != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
-                }
-                else if (Exist_lang == "ExistEn")
-                {
-                    var existingCarBrand_En = All_CarBrands.FirstOrDefault(x =>
-                        x.CrMasSupCarBrandEnName == dataField);
-                    if (existingCarBrand_En != null)
-                    {
-                        ModelState.AddModelError(Exist_lang, _localizer["Existing"]);
-                        return View();
-                    }
-                }
-
-            }
-            return View();
-        }
-                
-
-
-        //public  IActionResult CannotDelete() 
-        //{ 
-
-        //_toastNotification.AddErrorToastMessage(_localizer["SureTo_Cannot_delete"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-        //    return View();
-        //}
     }
-    }
+}

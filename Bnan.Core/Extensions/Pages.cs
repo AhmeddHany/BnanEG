@@ -25,6 +25,12 @@
         public static string CrMasSupCarAdvantage { get; set; } = "1107008";
         public static string CrMasSupCarColor { get; set; } = "1107009";
 
-
+        ////////////
+        //MAS  Finantial
+        public static string CrMasSupAccountBank { get; set; } = "1109001";
+        public static string CrMasSupAccountPaymentMethod { get; set; } = "1109002";
+        public static string CrMasSupAccountReference { get; set; } = "1109003";
     }
 }
+
+

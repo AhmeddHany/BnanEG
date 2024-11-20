@@ -147,7 +147,7 @@
                     success: function (result) {
                         console.log("feedback", result);
                         // Hide all previous error messages
-                        $('.invalid-feedback').hide();
+                        $('.invalid-feedback').show();
 
                         // Show new error messages if they exist
                         if (result.errors && result.errors.length > 0) {

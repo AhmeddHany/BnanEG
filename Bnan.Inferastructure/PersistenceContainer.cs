@@ -137,7 +137,6 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<ISalesPoint, SalesPoint>();
             builder.Services.AddScoped<IBankService, BankService>();
             builder.Services.AddScoped<IPaymentMethods, PaymentMethods>();
-            builder.Services.AddScoped<IAccountRefrence, AccountRefrence>();
             builder.Services.AddScoped<ICarDistribution, CarDistribution>();
 
             builder.Services.AddScoped<IContractAdditional, ContractAdditional>();
@@ -174,8 +173,10 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasCarCategory, MasCarCategory>();
             builder.Services.AddScoped<IMasCarAdvantage, MasCarAdvantage>();
             builder.Services.AddScoped<IMasCarRegistration, MasCarRegistration>();
-            builder.Services.AddScoped<ICarBrand, CarBrand>();
+            builder.Services.AddScoped<IMasCarBrand, MasCarBrand>();
             builder.Services.AddScoped<IRenterInformation, RenterInformation>();
+
+            builder.Services.AddScoped<IMasAccountBank, MasAccountBank>();
 
 
             //CAS

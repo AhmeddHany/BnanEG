@@ -1,298 +1,371 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
+using Bnan.Inferastructure.Filters;
+using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.Identitiy;
-using Bnan.Ui.ViewModels.MAS.UserValiditySystem;
+using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Bnan.Inferastructure.Repository;
-using Bnan.Ui.ViewModels.MAS;
-using NToastNotify;
-using System.Linq;
-using Bnan.Ui.Areas.CAS.Controllers;
 using Microsoft.Extensions.Localization;
-
+using NToastNotify;
+using System.Numerics;
 namespace Bnan.Ui.Areas.MAS.Controllers
 {
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
     public class BankController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
         private readonly IUserService _userService;
-        private readonly IBankService _bankService;
+        private readonly IMasAccountBank _masAccountBank;
+        private readonly IBaseRepo _baseRepo;
+        private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<BankController> _localizer;
 
-
-
-        public BankController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, IUserService userService, IBankService bankService, IUserLoginsService userLoginsService, IToastNotification toastNotification, IStringLocalizer<BankController> localizer) : base(userManager, unitOfWork, mapper)
+        public BankController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
+            IMapper mapper, IUserService userService, IMasAccountBank masAccountBank, IBaseRepo BaseRepo,IMasBase masBase,
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<BankController> localizer) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
-            _bankService = bankService;
+            _masAccountBank = masAccountBank;
             _userLoginsService = userLoginsService;
+            _baseRepo = BaseRepo;
+            _masBase = masBase;
             _toastNotification = toastNotification;
+            _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            //save Tracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("109", "1109001", "1");
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            var pageNumber = Pages.CrMasSupAccountBank;
+            // Set page titles
+            await SetPageTitleAsync(string.Empty, pageNumber);
+
+            // Retrieve active driving licenses
+            var renterDrivingLicenses = await _unitOfWork.CrMasSupAccountBanks
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Active );
+
+            var Cars_Count = await _unitOfWork.CrCasAccountBank.FindCountByColumnAsync<CrMasSupAccountBank>(
+                predicate: x => x.CrCasAccountBankStatus != Status.Deleted,
+                columnSelector: x => x.CrCasAccountBankNo  // تحديد العمود الذي نريد التجميع بناءً عليه
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
 
 
-            var titles = await setTitle("109", "1109001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var banks = await _unitOfWork.CrMasSupAccountBanks.GetAllAsync();
-            var bank = banks.Where(x => x.CrMasSupAccountBankCode != "00" && x.CrMasSupAccountBankStatus == "A").ToList();
-
-            return View(bank);
+            // If no active licenses, retrieve all licenses
+            if (!renterDrivingLicenses.Any())
+            {
+                renterDrivingLicenses = await _unitOfWork.CrMasSupAccountBanks
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Hold
+                                              );
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
+            MasAccountBankVM vm = new MasAccountBankVM();
+            vm.crMasSupAccountBank = renterDrivingLicenses;
+            vm.cars_count = Cars_Count;
+            return View(vm);
         }
-
-
         [HttpGet]
-        public PartialViewResult GetBanksByStatus(string status)
+        public async Task<PartialViewResult> GetAccountBankByStatus(string status, string search)
         {
+            //sidebar Active
+
             if (!string.IsNullOrEmpty(status))
             {
+                var AccountBanksAll = await _unitOfWork.CrMasSupAccountBanks.FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Active ||
+                                                                                                                            x.CrMasSupAccountBankStatus == Status.Deleted ||
+                                                                                                                            x.CrMasSupAccountBankStatus == Status.Hold );
+                var Cars_Count = await _unitOfWork.CrCasAccountBank.FindCountByColumnAsync<CrMasSupAccountBank>(
+                    predicate: x => x.CrCasAccountBankStatus != Status.Deleted,
+                    columnSelector: x => x.CrCasAccountBankNo  // تحديد العمود الذي نريد التجميع بناءً عليه
+                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                    );
+                MasAccountBankVM vm = new MasAccountBankVM();
+                vm.cars_count = Cars_Count;
                 if (status == Status.All)
                 {
-                    var BankbyStatusAll = _unitOfWork.CrMasSupAccountBanks.GetAll();
-                    var BankbyStatusAllFilter = BankbyStatusAll.Where(x => x.CrMasSupAccountBankCode != "00").ToList();
-                    return PartialView("_DataTableBank", BankbyStatusAllFilter);
+                    var FilterAll = AccountBanksAll.FindAll(x => x.CrMasSupAccountBankStatus != Status.Deleted &&
+                                                                         (x.CrMasSupAccountBankArName.Contains(search) ||
+                                                                          x.CrMasSupAccountBankEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupAccountBankCode.Contains(search)));
+                    vm.crMasSupAccountBank = FilterAll;
+                    return PartialView("_DataTableAccountBank", vm);
                 }
-                var BankbyStatus = _unitOfWork.CrMasSupAccountBanks.FindAll(l => l.CrMasSupAccountBankStatus == status).ToList();
-                var BankbyStatusFilter = BankbyStatus.Where(x => x.CrMasSupAccountBankCode != "00").ToList();
-                return PartialView("_DataTableBank", BankbyStatusFilter);
+                var FilterByStatus = AccountBanksAll.FindAll(x => x.CrMasSupAccountBankStatus == status &&
+                                                                            (
+                                                                           x.CrMasSupAccountBankArName.Contains(search) ||
+                                                                           x.CrMasSupAccountBankEnName.ToLower().Contains(search.ToLower()) ||
+                                                                           x.CrMasSupAccountBankCode.Contains(search)));
+                vm.crMasSupAccountBank = FilterByStatus;
+                return PartialView("_DataTableAccountBank", vm);
             }
             return PartialView();
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> AddBank()
+        public async Task<IActionResult> AddAccountBank()
         {
-
-            // Set Title !!!!!!!!!!!!!!!!!!!!!!!!!!
-            var titles = await setTitle("109", "1109001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-
-            var Banks = await _unitOfWork.CrMasSupAccountBanks.GetAllAsync();
-
-            var BankCode = (int.Parse(Banks.LastOrDefault().CrMasSupAccountBankCode) + 1).ToString();
-            ViewBag.BankCode = BankCode;
-            return View();
+            var pageNumber = Pages.CrMasSupAccountBank;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return RedirectToAction("Index", "Bank");
+            }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Bank");
+            }
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+            // Check If code > 9 get error , because code is char(1)
+            if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Bank");
+            }
+            // Set Title 
+            MasAccountBankVM renterDrivingLicenseVM = new MasAccountBankVM();
+            renterDrivingLicenseVM.CrMasSupAccountBankCode = await GenerateLicenseCodeAsync();
+            return View(renterDrivingLicenseVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddBank(BankVM AccountBank)
+        public async Task<IActionResult> AddAccountBank(MasAccountBankVM renterDrivingLicenseVM)
         {
-            string currentCulture = CultureInfo.CurrentCulture.Name;
-            if (ModelState.IsValid)
+            var pageNumber = Pages.CrMasSupAccountBank;
+            
+            var user = await _userManager.GetUserAsync(User);
+
+            if (!ModelState.IsValid || renterDrivingLicenseVM == null)
             {
-                if (AccountBank != null)
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddAccountBank", renterDrivingLicenseVM);
+            }
+            try
+            {
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                // Map ViewModel to Entity
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountBank>(renterDrivingLicenseVM);
+
+                // Check if the entity already exists
+                if (await _masAccountBank.ExistsByDetailsAsync(renterDrivingLicenseEntity))
                 {
-                    var banks = await _unitOfWork.CrMasSupAccountBanks.GetAllAsync();
-                    var existingBank = banks.FirstOrDefault(x =>
-                        x.CrMasSupAccountBankEnName == AccountBank.CrMasSupAccountBankEnName ||
-                        x.CrMasSupAccountBankArName == AccountBank.CrMasSupAccountBankArName);
-
-                    // Generate code for the second time
-                    var Banks = await _unitOfWork.CrMasSupAccountBanks.GetAllAsync();
-                    var BankCode = (int.Parse(Banks.LastOrDefault().CrMasSupAccountBankCode) + 1).ToString();
-                    AccountBank.CrMasSupAccountBankCode = BankCode;
-                    ViewBag.BankCode = BankCode;
-
-                    if (existingBank != null)
-                    {
-                        if (existingBank.CrMasSupAccountBankArName != null &&
-                            existingBank.CrMasSupAccountBankArName == AccountBank.CrMasSupAccountBankArName &&
-                             existingBank.CrMasSupAccountBankEnName != AccountBank.CrMasSupAccountBankEnName)
-                        {
-                            if (currentCulture != "en-US")
-                            {
-                                ModelState.AddModelError("ExistAr", "هذا الحقل مسجل من قبل.");
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("ExistAr", "This field is Existed.");
-                            }
-
-                        }
-                        if (existingBank.CrMasSupAccountBankEnName != null &&
-                            existingBank.CrMasSupAccountBankEnName == AccountBank.CrMasSupAccountBankEnName &&
-                             existingBank.CrMasSupAccountBankArName != AccountBank.CrMasSupAccountBankArName)
-                        {
-                            if (currentCulture != "en-US")
-                            {
-                                ModelState.AddModelError("ExistEn", "هذا الحقل مسجل من قبل.");
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("ExistEn", "This field is Existed.");
-                            }
-                        }
-                        if (existingBank.CrMasSupAccountBankArName != null && existingBank.CrMasSupAccountBankEnName != null
-                            && existingBank.CrMasSupAccountBankEnName == AccountBank.CrMasSupAccountBankEnName &&
-                           existingBank.CrMasSupAccountBankArName == AccountBank.CrMasSupAccountBankArName)
-                        {
-                            if (currentCulture != "en-US")
-                            {
-                                ModelState.AddModelError("ExistEn", "هذا الحقل مسجل من قبل.");
-                                ModelState.AddModelError("ExistAr", "هذا الحقل مسجل من قبل.");
-
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("ExistAr", "This field is Existed.");
-                                ModelState.AddModelError("ExistEn", "This field is Existed.");
-                            }
-                        }
-                        return View(AccountBank);
-                    }
-
-                    AccountBank.CrMasSupAccountBankStatus = "A";
-                    var BankVMTBank = _mapper.Map<CrMasSupAccountBank>(AccountBank);
-
-                    await _unitOfWork.CrMasSupAccountBanks.AddAsync(BankVMTBank);
-
-                    _unitOfWork.Complete();
-
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("109", "1109001", "1");
-                    var RecordAr = BankVMTBank.CrMasSupAccountBankArName;
-                    var RecordEn = BankVMTBank.CrMasSupAccountBankEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "اضافة بنك", "Add Bank", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
+                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("AddAccountBank", renterDrivingLicenseVM);
                 }
+                // Check If code > 9 get error , because code is char(1)
+                if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("AddAccountBank", renterDrivingLicenseVM);
+                }
+                // Generate and set the Driving License Code
+                renterDrivingLicenseVM.CrMasSupAccountBankCode = await GenerateLicenseCodeAsync();
+                // Set status and add the record
+                renterDrivingLicenseEntity.CrMasSupAccountBankStatus = "A";
+                await _unitOfWork.CrMasSupAccountBanks.AddAsync(renterDrivingLicenseEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+
+                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
-            return View("AddBank", AccountBank);
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return View("AddAccountBank", renterDrivingLicenseVM);
+            }
         }
-
-
-
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            //To Set Title !!!!!!!!!!!!!
-            var titles = await setTitle("109", "1109001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
+            var pageNumber = Pages.CrMasSupAccountBank;
+            await SetPageTitleAsync(Status.Update, pageNumber);
 
-            var bank = await _unitOfWork.CrMasSupAccountBanks.GetByIdAsync(id);
-            if (bank == null)
+            var contract = await _unitOfWork.CrMasSupAccountBanks.FindAsync(x => x.CrMasSupAccountBankCode == id);
+            if (contract == null)
             {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Index");
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Bank");
             }
-            if (id == "00")
-            {
-                ModelState.AddModelError("Exist", "You Can't Edit This.");
-                var bank2 = await _unitOfWork.CrMasSupAccountBanks.GetAllAsync();
-                return View("Index", bank2);
-
-            }
-            var model = _mapper.Map<BankVM>(bank);
-
+            var model = _mapper.Map<MasAccountBankVM>(contract);
             return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(MasAccountBankVM renterDrivingLicenseVM)
+        {
+            var pageNumber = Pages.CrMasSupAccountBank;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null && renterDrivingLicenseVM == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return RedirectToAction("Index", "Bank");
+            }
+            try
+            {
+                //Check Validition
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("Edit", renterDrivingLicenseVM);
+                }
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountBank>(renterDrivingLicenseVM);
+
+                // Check if the entity already exists
+                if (await _masAccountBank.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                {
+                    await SetPageTitleAsync(Status.Update, pageNumber);
+                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Edit", renterDrivingLicenseVM);
+                }
+
+                _unitOfWork.CrMasSupAccountBanks.Update(renterDrivingLicenseEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
+                return RedirectToAction("Index", "Bank");
+            }
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                await SetPageTitleAsync(Status.Update, pageNumber);
+                return View("Edit", renterDrivingLicenseVM);
+            }
+        }
+        [HttpPost]
+        public async Task<string> EditStatus(string code, string status)
+        {
+            var pageNumber = Pages.CrMasSupAccountBank;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return "false";
+
+            var licence = await _unitOfWork.CrMasSupAccountBanks.GetByIdAsync(code);
+            if (licence == null) return "false";
+
+            try
+            {
+                
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                licence.CrMasSupAccountBankStatus = status;
+                _unitOfWork.CrMasSupAccountBanks.Update(licence);
+                _unitOfWork.Complete();
+                await SaveTracingForLicenseChange(user, licence, status);
+                return "true";
+            }
+            catch (Exception ex)
+            {
+                return "false";
+            }
+        }
+
+        //Error exist message when run post action to get what is the exist field << Help Up in Back End
+        private async Task AddModelErrorsAsync(CrMasSupAccountBank entity)
+        {
+
+            if (await _masAccountBank.ExistsByArabicNameAsync(entity.CrMasSupAccountBankArName, entity.CrMasSupAccountBankCode))
+            {
+                ModelState.AddModelError("CrMasSupAccountBankArName", _localizer["Existing"]);
+            }
+
+            if (await _masAccountBank.ExistsByEnglishNameAsync(entity.CrMasSupAccountBankEnName, entity.CrMasSupAccountBankCode))
+            {
+                ModelState.AddModelError("CrMasSupAccountBankEnName", _localizer["Existing"]);
+            }
+        }
+
+        //Error exist message when change input without run post action >> help us in front end
+        [HttpGet]
+        public async Task<JsonResult> CheckChangedField(string existName, string dataField)
+        {
+            var All_AccountBanks = await _unitOfWork.CrMasSupAccountBanks.GetAllAsync();
+            var errors = new List<ErrorResponse>();
+
+            if (!string.IsNullOrEmpty(dataField) && All_AccountBanks != null)
+            {
+                // Check for existing Arabic driving license
+                if (existName == "CrMasSupAccountBankArName" && All_AccountBanks.Any(x => x.CrMasSupAccountBankArName == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupAccountBankArName", Message = _localizer["Existing"] });
+                }
+                // Check for existing English driving license
+                else if (existName == "CrMasSupAccountBankEnName" && All_AccountBanks.Any(x => x.CrMasSupAccountBankEnName?.ToLower() == dataField.ToLower()))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupAccountBankEnName", Message = _localizer["Existing"] });
+                }
+            }
+
+            return Json(new { errors });
+        }
+
+        //Helper Methods 
+        private async Task<string> GenerateLicenseCodeAsync()
+        {
+            var allLicenses = await _unitOfWork.CrMasSupAccountBanks.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupAccountBankCode) + 1).ToString() : "10";
+        }
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupAccountBank licence, string status)
+        {
+            var pageNumber = Pages.CrMasSupAccountBank;
+
+            var recordAr = licence.CrMasSupAccountBankArName;
+            var recordEn = licence.CrMasSupAccountBankEnName;
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+
+        [HttpPost]
+        public IActionResult DisplayToastError_NoUpdate(string messageText)
+        {
+            //نص الرسالة _localizer["AuthEmplpoyee_NoUpdate"] === messageText ; 
+            if (messageText == null || messageText == "") messageText = "..";
+            _toastNotification.AddErrorToastMessage(messageText, new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            return Json(new { success = true });
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(BankVM model)
+        public IActionResult DisplayToastSuccess_withIndex()
         {
-
-            var user = await _userService.GetUserByUserNameAsync(HttpContext.User.Identity.Name);
-            var bank = _mapper.Map<CrMasSupAccountBank>(model);
-
-            if (user != null)
-            {
-                if (bank != null)
-                {
-                    _unitOfWork.CrMasSupAccountBanks.Update(bank);
-                    _unitOfWork.Complete();
-
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("109", "1109001", "1");
-                    var RecordAr = model.CrMasSupAccountBankArName;
-                    var RecordEn = model.CrMasSupAccountBankEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-                }
-
-            }
-
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
             return RedirectToAction("Index", "Bank");
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> EditStatus(string code, string status)
-        {
-            string sAr = "";
-            string sEn = "";
-            var bank = await _unitOfWork.CrMasSupAccountBanks.GetByIdAsync(code);
-            if (bank != null)
-            {
-                if (await CheckUserSubValidationProcdures("1109001", status))
-                {
-                    if (status == Status.Hold)
-                    {
-                        sAr = "ايقاف";
-                        sEn = "Hold";
-                        bank.CrMasSupAccountBankStatus = Status.Hold;
-                    }
-                    else if (status == Status.Deleted)
-                    {
-                        sAr = "حذف";
-                        sEn = "Remove";
-                        bank.CrMasSupAccountBankStatus = Status.Deleted;
-                    }
-                    else if (status == "Reactivate")
-                    {
-                        sAr = "استرجاع";
-                        sEn = "Retrive";
-                        bank.CrMasSupAccountBankStatus = Status.Active;
-                    }
-
-                    await _unitOfWork.CompleteAsync();
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("109", "1109001", "1");
-                    var RecordAr = bank.CrMasSupAccountBankArName;
-                    var RecordEn = bank.CrMasSupAccountBankEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                return RedirectToAction("Index", "Bank");
-            }
-        }
-
-
-            return View(bank);
-
     }
-}
 }
