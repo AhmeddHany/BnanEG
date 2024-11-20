@@ -212,21 +212,11 @@
                                                         </div>
                                                         <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
-                                                                <p> : @localizer["FreeAdditionalHoursForCar"]</p>
+                                                                <p> : @localizer["FreeAdditionalHours"]</p>
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p>
-                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicFreeHours</span>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p> : @localizer["FreeAdditionalHoursForUser"]</p>
-                                                            </div>
-                                                            <div class="col personal-data">
-                                                                <p>
-                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicUserFreeHours</span>
+                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicUserFreeHours?.ToString() + @Model.ContractSettlement.CrCasRenterContractBasicFreeHours?.ToString()</span>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -240,21 +230,11 @@
                                                         </div>
                                                         <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
-                                                                <p> : @localizer["DailyFreeKmForCar"]</p>
+                                                                <p> : @localizer["DailyFreeKm"]</p>
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p>
-                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicDailyFreeKm </span>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p> : @localizer["DailyFreeKmForUser"]</p>
-                                                            </div>
-                                                            <div class="col personal-data">
-                                                                <p>
-                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicDailyFreeKmUser </span>
+                                                                    <span>@Model.ContractSettlement.CrCasRenterContractBasicDailyFreeKmUser?.ToString() + @Model.ContractSettlement.CrCasRenterContractBasicTotalDailyFreeKm?.ToString()  </span>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -392,7 +372,7 @@
                                         <div class="row data-row-Settl">
                                             <div class="col-md-5 data-col-Settl ">
                                                 <div class="col-auto">
-                                                    <p>@localizer["AddHours"]</p>
+                                                    <p id="AddOrLateHoursText">@localizer["AddHours"]</p>
                                                 </div>
                                                 <div class="col-auto personal-data">
                                                     <span id="diffHours">00</span>:<span id="diffMinutes">00</span>
@@ -1388,11 +1368,13 @@
             // "Check All" checkbox functionality
             $('#CheckAll').on('change', function () {
                 // Set all checkboxes with the class 'CheckUp' to the same state as "Check All"
+                console.log("111111")
                 $('.CheckUp').prop('checked', $(this).prop('checked'));
             });
 
             // Uncheck the "Check All" checkbox if any individual checkbox is unchecked
             $(document).on('change', '.CheckUp', function () {
+                console.log("00000")
                 if (!$(this).prop('checked')) {
                     $('#CheckAll').prop('checked', false);
                 }
@@ -1647,7 +1629,7 @@
     </script>
 
     <script>
-        function customizeDate(){
+        function customizeDate() {
             // الحصول على الوقت الحالي
             var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
             const now = new Date(dateTimeNow);
@@ -1668,7 +1650,7 @@
 
                 } else {
                     // إذا كان تاريخ النهاية أكبر من الآن، نضع endDate كقيمة
-                    const dateValue = endDate.toISOString().split('T')[0];  // yyyy-MM-dd
+                    const dateValue = now.toISOString().split('T')[0];  // yyyy-MM-dd
                     document.getElementById("contract_real_endTime").min = now.toISOString().split('T')[0];  // الحد الأدنى هو الآن
                     document.getElementById("contract_real_endTime").max = endDate.toISOString().split('T')[0];  // الحد الأقصى هو endDate + 1
                     document.getElementById("contract_real_endTime").value = dateValue;
@@ -1707,8 +1689,10 @@
 
             function calculateDifference() {
                 const settlementDateString = document.getElementById("contract_real_endTime").value;
+
                 const settlementDateTimeString = settlementDateString + "T" + timeString;
                 const settlementDateTime = new Date(settlementDateTimeString);
+
                 const timeDiff = Math.abs(settlementDateTime.getTime() - startContractDate.getTime());
                 let diffDays = Math.floor(timeDiff / (1000 * 3600 * 24)); // Difference in days
                 if (diffDays === 0) {
@@ -1716,6 +1700,9 @@
                 }
                 diffHours = Math.floor((timeDiff % (1000 * 3600 * 24)) / (1000 * 3600)); // Remaining difference in hours
                 diffMinutes = Math.floor((timeDiff % (1000 * 3600)) / (1000 * 60)); // Remaining difference in minutes
+                console.log("settlementDateTime", settlementDateTime)
+                console.log("timeDiff", timeDiff)
+                console.log("diffDays", diffDays)
                 diff = parseInt(diffHours) - parseInt(TotalFreeHours);
                 $("#daysNo").text(diffDays);
                 totalDaysNo = diffDays;
@@ -1727,20 +1714,33 @@
                     ('0' + actualEndContractDate.getHours()).slice(-2) + ':' + ('0' + actualEndContractDate.getMinutes()).slice(-2) + ':00';
                 $("#DaysNoContract").text(diffDays);
                 $("#EndContract").text(formattedEndContractDate);
+
+                console.log("totalDaysNo", totalDaysNo)
+
+
+
+
                 ////////////////////////////////////////////////////////////
                 if (endContractDate < now && (diff > 0 || (diff === 0 && diffMinutes > 0))) {
-                    $("#diffHours").text(diff.toString().padStart(2, '0'));
-                    $("#diffMinutes").text(diffMinutes.toString().padStart(2, '0'));
+                    // إذا كانت هناك دقائق متبقية أو فرق زمني
+                    let totalMinutes = diff * 60 + diffMinutes; // تحويل الساعات والدقائق إلى إجمالي الدقائق
+                    let roundedHours = Math.ceil(totalMinutes / 60); // تقريب لأعلى لحساب الساعات
+
+                    $("#diffHours").text(roundedHours.toString().padStart(2, '0')); // عرض الساعات
+                    $("#diffMinutes").text('00'); // دائماً نعرض الدقائق كصفر لأننا حسبنا الساعات فقط
+
                     if (SettelmentAuth.toLowerCase() === "false" || SettelmentAuth == null || SettelmentAuth == "") {
                         $("#contract_real_endTime").prop('readonly', true).css('background-color', 'white');
                     }
                     else {
-                        if (elementToHide && (diff >= parseInt(MaxHours) && diffMinutes > 0)) {
+                        if (elementToHide && roundedHours >= parseInt(MaxHours)) {
                             elementToHide.style.display = "";
+                            $("#AddOrLateHoursText").text("@localizer["AddHourslate"]")
                         }
                         else {
-                            $("#diffHours").text(diff.toString().padStart(2, '0'));
-                            $("#diffMinutes").text(diffMinutes.toString().padStart(2, '0'));
+                            $("#diffHours").text(roundedHours.toString().padStart(2, '0')); // عرض الساعات
+                            $("#diffMinutes").text('00'); // عرض الدقائق;
+                            $("#AddOrLateHoursText").text("@localizer["AddHours"]")
                         }
                     }
                 }
@@ -1759,8 +1759,8 @@
 
             document.getElementById("contract_real_endTime").addEventListener("change", calculateDifference);
             // Call calculateDifference function when the page loads
-            customizeDate();
             calculateDifference();
+            customizeDate();
         });
     </script>
     <script>
@@ -1882,6 +1882,7 @@
                     // Push the object into the array
                     checkUpData.push(rowData);
                     CarCheckUp = checkUpData;
+                    console.log("CarCheckUp", CarCheckUp);
                 }
             });
         }
@@ -2005,6 +2006,7 @@
                             $("#examinationError").text('@localizer["checkUpMessageRequired"]')
                         }
                     }
+
                 }
             });
         });
@@ -2190,27 +2192,36 @@
             document.getElementById('AmountRequired').textContent = Math.abs(AmountRequired).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
         function getAdditionalHoursValue() {
-            // Additional Hours Value Total
+            // استرجاع القيم المطلوبة
             const TotalFreeHours = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicTotalFreeHours));
             var AdditionalHourValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourValue));
             var AdditionalHour = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourMax));
+
+            // التأكد أن عدد الساعات الإضافية أكبر من 0
             if (AdditionalHour > 0) {
+                AdditionalHoursValueTotal = 0; // للتأكد من أنها فارغة في البداية
+
+                // إذا كانت الفرق الزمني أكبر أو يساوي الساعات القصوى
                 if (diff >= AdditionalHour) {
                     AdditionalHoursValueTotal = parseInt(AdditionalHour) * parseFloat(AdditionalHourValue);
-                }
-                else {
+                } else {
                     var HourAfterFreeHour = diffHours - TotalFreeHours;
 
                     if (HourAfterFreeHour >= 0 && diffMinutes > 0) {
-                        AdditionalHoursValueTotal = (parseInt(HourAfterFreeHour) * parseFloat(AdditionalHourValue)) + (((parseFloat(AdditionalHourValue) * parseInt(diffMinutes)) / 60));
+                        // إضافة القيمة بناءً على الدقائق المحسوبة، مع تقريب الدقائق إلى الساعات
+                        let totalMinutes = HourAfterFreeHour * 60 + diffMinutes; // اجمع الساعات والدقائق
+                        let totalRoundedHours = Math.ceil(totalMinutes / 60); // تقريب الساعات لأعلى
+                        // حساب القيمة بناءً على الساعات المحسوبة
+                        AdditionalHoursValueTotal = totalRoundedHours * parseFloat(AdditionalHourValue);
                     }
                 }
-            }
-            document.getElementById('ExtraHoursValue').textContent = AdditionalHoursValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            $("#ContractSettlement_MaxHours").val(AdditionalHour);
-            $("#ContractSettlement_MaxMinutes").val(diffMinutes);
-            $("#ContractSettlement_ExtraHoursValue").val(AdditionalHoursValueTotal.toFixed(2));
 
+                // تحديث القيم المعروضة
+                document.getElementById('ExtraHoursValue').textContent = AdditionalHoursValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                $("#ContractSettlement_MaxHours").val(AdditionalHour);
+                $("#ContractSettlement_MaxMinutes").val(diffMinutes);
+                $("#ContractSettlement_ExtraHoursValue").val(AdditionalHoursValueTotal.toFixed(2));
+            }
         }
         function getAdditionalKmValue() {
             const KMValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicKmValue));
@@ -2222,6 +2233,9 @@
         function CheckIfCanPayLessThanTotalAmount() {
             var userCashBranchAmount = @Html.Raw(Json.Serialize(userInfo?.CrMasUserBranchValidities?.FirstOrDefault(x => x.CrMasUserBranchValidityBranch == Model?.SelectedBranch).CrMasUserBranchValidityBranchCashAvailable));
             var AmountPayed = document.getElementById("AmountPayed").value;
+            console.log("userCashBranchAmount", userCashBranchAmount)
+            console.log("AmountRequired", AmountRequired)
+            console.log("AmountPayed", AmountPayed)
             if (AmountRequired < 0) {
                 if (parseFloat(userCashBranchAmount) < parseFloat(AmountPayed)) {
                     toastr.options = { "positionClass": '@localizer["toastPostion"]', };
@@ -2348,6 +2362,7 @@
                     ctx.textAlign = "left";
                     ctx.fillText(RenterEnName, canvas.width - 3950, 3050);
                     ctx.fillText(contractNo, canvas.width - 4400, 940);
+                    console.log("phoneNumber", phoneNumber)
                     canvas.toBlob(async function (blob) {
                         const base64String = await blobToBase64(blob);
                         document.getElementById("StaticContractCardImg").value = base64String;
@@ -2410,9 +2425,9 @@
             var selectedArabicName = selectedOption.dataset.ar;
             if (selectedArabicName == "" || selectedArabicName == undefined || selectedArabicName == NaN) {
                 selectedArabicName = "";
-            }            
+            }
             var reasonPayment = document.getElementById("ContractSettlement_ReasonsPayment").value;
-           
+
             var namesAndSignatures = await loadArSignatures();
             //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2541,28 +2556,54 @@
                 if (choicesValue > 0) {
                     YHeight = calculateAndDrawAr(ctx, canvas, "الخيارات", choicesValue, daysNo, DiscountInput, TaxPercent, YHeight);
                 }
-                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////Additional Hours
-                var AdditionalHours = 0;
-                if (AdditionalHoursValueTotal != null && AdditionalHoursValueTotal != 0 && AdditionalHoursValueTotal != "" && AdditionalHoursValueTotal != undefined) {
-                    AdditionalHours = parseFloat(AdditionalHoursValueTotal);
-                }
-                else {
-                    AdditionalHours = 0;
-                }
-                if (AdditionalHours > 0) {
-                    YHeight = calculateAndDrawAr(ctx, canvas, "الساعات الاضافية", AdditionalHours, "1", DiscountInput, TaxPercent, YHeight);
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // استرجاع القيم المطلوبة
+                const TotalFreeHours = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicTotalFreeHours));
+                var AdditionalHourValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourValue));
+                var AdditionalHour = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourMax));
+
+                // التأكد أن عدد الساعات الإضافية أكبر من 0
+                if (AdditionalHour > 0) {
+                    let totalRoundedHours = 0; // عدد الساعات المحسوبة بعد التقريب
+
+                    // إذا كانت الفرق الزمني أكبر أو يساوي الساعات القصوى
+                    if (diff >= AdditionalHour) {
+                        totalRoundedHours = parseInt(AdditionalHour); // استخدام الساعات القصوى كعدد الساعات
+                    } else {
+                        var HourAfterFreeHour = diffHours - TotalFreeHours;
+
+                        if (HourAfterFreeHour >= 0 && diffMinutes > 0) {
+                            // إضافة القيمة بناءً على الدقائق المحسوبة، مع تقريب الدقائق إلى الساعات
+                            let totalMinutes = HourAfterFreeHour * 60 + diffMinutes; // اجمع الساعات والدقائق
+                            totalRoundedHours = Math.ceil(totalMinutes / 60); // تقريب الساعات لأعلى
+                        }
+                    }
+
+                    // حساب عدد الساعات التأخير
+                    let totalLateHours = totalRoundedHours;
+                    let totalLateHourValue = totalLateHours * parseFloat(AdditionalHourValue);
+
+                    // التأكد من قيمة الساعات المتأخرة
+                    totalLateHourValue = totalLateHourValue || 0;
+
+                    // الآن يمكنك استخدام هذه القيم كما تريد
+                    if (totalLateHourValue > 0) {
+                        // رسم القيم في الـ canvas
+                        YHeight = calculateAndDrawAr(ctx, canvas, "ساعات التأخير", AdditionalHourValue, totalLateHours, DiscountInput, TaxPercent, YHeight);
+                    }
                 }
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////Additional KM
-                var AdditionalKm = 0;
+                var KMValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicKmValue));
+                var AdditionalKmVal = 0;
                 if (AdditionalKMValueTotal != null && AdditionalKMValueTotal != 0 && AdditionalKMValueTotal != "" && AdditionalKMValueTotal != undefined) {
-                    AdditionalKm = parseFloat(AdditionalKMValueTotal);
+                    AdditionalKmVal = parseFloat(AdditionalKMValueTotal);
                 }
                 else {
-                    AdditionalKm = 0;
+                    AdditionalKmVal = 0;
                 }
-                if (AdditionalKm > 0) {
-                    YHeight = calculateAndDrawAr(ctx, canvas, "الكيلوات الاضافية", AdditionalKm, "1", DiscountInput, TaxPercent, YHeight);
+                if (AdditionalKmVal > 0) {
+                    YHeight = calculateAndDrawAr(ctx, canvas, "كيلوات اضافية", KMValue, AdditionalKm, DiscountInput, TaxPercent, YHeight);
                 }
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Settlement
                 var settelement = 0;
@@ -2573,43 +2614,16 @@
                     settelement = 0;
                 }
                 if (settelement > 0) {
-                    YHeight = calculateAndDrawAr(ctx, canvas, "التسوية", Rent, settelement, DiscountInput, TaxPercent, YHeight);
+                    YHeight = calculateAndDrawAr(ctx, canvas, "غرامة التأخير", Rent, settelement, DiscountInput, TaxPercent, YHeight);
                 }
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total Compensation
-                // var CompensationInput = document.getElementById("compensation-input").value;
-                // var TotalCompensation = parseFloat(CompensationInput);
-                var compensationValue = 0;
-                // if (TotalCompensation != null && TotalCompensation != 0 && TotalCompensation != "" && TotalCompensation != undefined && !isNaN(TotalCompensation)) {
-                //     compensationValue = parseFloat(TotalCompensation);
-                // }
-                // else {
-                //     compensationValue = 0;
-                // }
-
-                // if (compensationValue > 0) {
-                //     YHeight = calculateAndDrawAr(ctx, canvas, "التعويضات", compensationValue, "1", 0, 0, YHeight);
-                // }
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total Expenses
-                // var ExpenseInput = document.getElementById("expensesValue-input").value;
-                // var TotalExpenses = parseFloat(ExpenseInput);
-                var expensesValue = 0;
-                // if (TotalExpenses != null && TotalExpenses != 0 && TotalExpenses != "" && TotalExpenses != undefined && !isNaN(TotalExpenses)) {
-                //     expensesValue = parseFloat(TotalExpenses);
-                // }
-                // else {
-                //     expensesValue = 0;
-                // }
-                // if (expensesValue > 0) {
-                //     YHeight = calculateAndDrawAr(ctx, canvas, "المصروفات", expensesValue, "1", 0, 0, YHeight);
-                // }
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total
-                var tTotal = calculateTotalAmountPerDay(parseFloat('@Model.ContractSettlement?.CrCasRenterContractBasicDailyRent'), parseFloat(FeesTammValue), parseFloat(AdvantagesValue), parseFloat(privateDriverValue), parseFloat(choicesValue), parseFloat(additionalDriverValue), parseFloat(additionalValue), parseFloat(AdditionalHours), parseFloat(AdditionalKm), settelement, daysNo);
+                
+                var tTotal = calculateTotalAmountPerDay(parseFloat('@Model.ContractSettlement?.CrCasRenterContractBasicDailyRent'), parseFloat(FeesTammValue), parseFloat(AdvantagesValue), parseFloat(PrivateDriverValueTotal),
+                                                        parseFloat(choicesValue), parseFloat(additionalDriverValue), parseFloat(additionalValue), parseFloat(AdditionalHoursValueTotal), parseFloat(AdditionalKmVal), settelement, daysNo);
                 var tTotalDiscount = calculateTotalDiscountAmount(tTotal, DiscountInput);
                 var tTotalAfterDiscount = tTotal - tTotalDiscount;
                 var tTotalTax = (tTotalAfterDiscount) * (TaxPercent / 100);
-                var TotalAmountMinisPerviousBalance = tTotalTax + tTotalAfterDiscount + compensationValue - expensesValue;
-                tTotal = tTotal + compensationValue - expensesValue;
-                tTotalAfterDiscount = tTotalAfterDiscount + compensationValue - expensesValue;
+                var TotalAmountMinisPerviousBalance = tTotalTax + tTotalAfterDiscount;
                 // // الاجمالي
                 ctx.fillText(tTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 970, 2250);
                 ctx.fillText(tTotalDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1270, 2250);
@@ -2688,7 +2702,7 @@
             var selectedEnglishName = selectedOption.dataset.en;
             if (selectedEnglishName == "" || selectedEnglishName == undefined || selectedEnglishName == NaN) {
                 selectedEnglishName = "";
-            }            
+            }
             var reasonPayment = document.getElementById("ContractSettlement_ReasonsPayment").value;
             // Signture Image
             var namesAndSignatures = await loadEnSignatures();
@@ -2817,28 +2831,56 @@
                 if (choicesValue > 0) {
                     YHeight = calculateAndDrawEn(ctx, canvas, "Options", choicesValue, daysNo, DiscountInput, TaxPercent, YHeight);
                 }
+
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////Additional Hours
-                var AdditionalHours = 0;
-                if (AdditionalHoursValueTotal != null && AdditionalHoursValueTotal != 0 && AdditionalHoursValueTotal != "" && AdditionalHoursValueTotal != undefined) {
-                    AdditionalHours = parseFloat(AdditionalHoursValueTotal);
+                // استرجاع القيم المطلوبة
+                const TotalFreeHours = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicTotalFreeHours));
+                var AdditionalHourValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourValue));
+                var AdditionalHour = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourMax));
+
+                // التأكد أن عدد الساعات الإضافية أكبر من 0
+                if (AdditionalHour > 0) {
+                    let totalRoundedHours = 0; // عدد الساعات المحسوبة بعد التقريب
+
+                    // إذا كانت الفرق الزمني أكبر أو يساوي الساعات القصوى
+                    if (diff >= AdditionalHour) {
+                        totalRoundedHours = parseInt(AdditionalHour); // استخدام الساعات القصوى كعدد الساعات
+                    } else {
+                        var HourAfterFreeHour = diffHours - TotalFreeHours;
+
+                        if (HourAfterFreeHour >= 0 && diffMinutes > 0) {
+                            // إضافة القيمة بناءً على الدقائق المحسوبة، مع تقريب الدقائق إلى الساعات
+                            let totalMinutes = HourAfterFreeHour * 60 + diffMinutes; // اجمع الساعات والدقائق
+                            totalRoundedHours = Math.ceil(totalMinutes / 60); // تقريب الساعات لأعلى
+                        }
+                    }
+
+                    // حساب عدد الساعات التأخير
+                    let totalLateHours = totalRoundedHours;
+                    let totalLateHourValue = totalLateHours * parseFloat(AdditionalHourValue);
+
+                    // التأكد من قيمة الساعات المتأخرة
+                    totalLateHourValue = totalLateHourValue || 0;
+
+                    // الآن يمكنك استخدام هذه القيم كما تريد
+                    if (totalLateHourValue > 0) {
+                        // رسم القيم في الـ canvas
+                        YHeight = calculateAndDrawEn(ctx, canvas, "Late Hours", AdditionalHourValue, totalLateHours, DiscountInput, TaxPercent, YHeight);
+                    }
                 }
-                else {
-                    AdditionalHours = 0;
-                }
-                if (AdditionalHours > 0) {
-                    YHeight = calculateAndDrawEn(ctx, canvas, "Additional Hours", AdditionalHours, "1", DiscountInput, TaxPercent, YHeight);
-                }
+                
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////Additional KM
-                var AdditionalKm = 0;
+                                var KMValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicKmValue));
+                var AdditionalKmVal = 0;
                 if (AdditionalKMValueTotal != null && AdditionalKMValueTotal != 0 && AdditionalKMValueTotal != "" && AdditionalKMValueTotal != undefined) {
-                    AdditionalKm = parseFloat(AdditionalKMValueTotal);
+                    AdditionalKmVal = parseFloat(AdditionalKMValueTotal);
                 }
                 else {
-                    AdditionalKm = 0;
+                    AdditionalKmVal = 0;
                 }
-                if (AdditionalKm > 0) {
-                    YHeight = calculateAndDrawEn(ctx, canvas, "Additional Km", AdditionalKm, "1", DiscountInput, TaxPercent, YHeight);
+                if (AdditionalKmVal > 0) {
+                    YHeight = calculateAndDrawEn(ctx, canvas, "Additional Km", KMValue, AdditionalKm, DiscountInput, TaxPercent, YHeight);
                 }
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Settlement
                 var settelement = 0;
@@ -2849,43 +2891,15 @@
                     settelement = 0;
                 }
                 if (settelement > 0) {
-                    YHeight = calculateAndDrawEn(ctx, canvas, "Settelement", Rent, settelement, DiscountInput, TaxPercent, YHeight);
+                    YHeight = calculateAndDrawEn(ctx, canvas, "Late fee", Rent, settelement, DiscountInput, TaxPercent, YHeight);
                 }
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total Compensation
-                // var CompensationInput = document.getElementById("compensation-input").value;
-                // var TotalCompensation = parseFloat(CompensationInput);
-                var compensationValue = 0;
-                // if (TotalCompensation != null && TotalCompensation != 0 && TotalCompensation != "" && TotalCompensation != undefined && !isNaN(TotalCompensation)) {
-                //     compensationValue = parseFloat(TotalCompensation);
-                // }
-                // else {
-                //     compensationValue = 0;
-                // }
-
-                // if (compensationValue > 0) {
-                //     YHeight = calculateAndDrawEn(ctx, canvas, "Compensation", compensationValue, "1", 0, 0, YHeight);
-                // }
-                // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total Expenses
-                // var ExpenseInput = document.getElementById("expensesValue-input").value;
-                // var TotalExpenses = parseFloat(ExpenseInput);
-                var expensesValue = 0;
-                // if (TotalExpenses != null && TotalExpenses != 0 && TotalExpenses != "" && TotalExpenses != undefined && !isNaN(TotalExpenses)) {
-                //     expensesValue = parseFloat(TotalExpenses);
-                // }
-                // else {
-                //     expensesValue = 0;
-                // }
-                // if (expensesValue > 0) {
-                //     YHeight = calculateAndDrawEn(ctx, canvas, "Expenses", expensesValue, "1", 0, 0, YHeight);
-                // }
+                
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total
-                var tTotal = calculateTotalAmountPerDay(parseFloat('@Model.ContractSettlement?.CrCasRenterContractBasicDailyRent'), parseFloat(FeesTammValue), parseFloat(AdvantagesValue), parseFloat(privateDriverValue), parseFloat(choicesValue), parseFloat(additionalDriverValue), parseFloat(additionalValue), parseFloat(AdditionalHours), parseFloat(AdditionalKm), settelement, daysNo);
+                var tTotal = calculateTotalAmountPerDay(parseFloat('@Model.ContractSettlement?.CrCasRenterContractBasicDailyRent'), parseFloat(FeesTammValue), parseFloat(AdvantagesValue), parseFloat(privateDriverValue), parseFloat(choicesValue), parseFloat(additionalDriverValue), parseFloat(additionalValue), parseFloat(AdditionalHoursValueTotal), parseFloat(AdditionalKmVal), settelement, daysNo);
                 var tTotalDiscount = calculateTotalDiscountAmount(tTotal, DiscountInput);
                 var tTotalAfterDiscount = tTotal - tTotalDiscount;
                 var tTotalTax = (tTotalAfterDiscount) * (TaxPercent / 100);
-                var TotalAmountMinisPerviousBalance = tTotalTax + tTotalAfterDiscount + compensationValue - expensesValue;
-                tTotalAfterDiscount = tTotalAfterDiscount + compensationValue - expensesValue;
-                tTotal = tTotal + compensationValue - expensesValue;
+                var TotalAmountMinisPerviousBalance = tTotalTax + tTotalAfterDiscount;
                 // // الاجمالي
                 ctx.fillText(tTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1510, 2255);
                 ctx.fillText(tTotalDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1200, 2255);
@@ -3455,8 +3469,8 @@
             var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
             var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorArName");
             var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
-            var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
-            var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
+            var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationDirectorArName");
+            var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationDirectorSignature").replace('~', '');
 
             const promises = [];
 
@@ -3481,10 +3495,10 @@
             const signatureImages = await Promise.all(promises);
 
             return {
-                renterName: renterName,
-                userName: userName,
-                directorOfLessor: directorOfLessor,
-                directorOfBranch: directorOfBranch,
+                renterName: renterName ||'',
+                userName: userName ||'',
+                directorOfLessor: directorOfLessor ||'',
+                directorOfBranch: directorOfBranch ||'',
                 signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
                 signatureImg2: signatureImages[1] || '',
                 signatureImg3: signatureImages[2] || '',
@@ -3558,6 +3572,9 @@
                     // get data For Page 1
                     var Data = getArDataOfPage1();
                     var signtures = await loadArSignatures();
+                    console.log("imagePath", imagePath);
+                    console.log("signtures", signtures);
+
                     // Last Director and manger and user and renter with signture
                     // Text on Image
                     // Get Image And Text On
@@ -4014,9 +4031,11 @@
 
                 // Check conditions and add functions with their orders accordingly
                 if (!isNaN(parsedExpensesValue) && parsedExpensesValue > 0) {
+                    console.log("ExpensesValue", ExpensesValue);
                     createPageFunctions.push({ func: CreateArPageContract2, order: 2 });
                 }
                 if (!isNaN(parsedCompensationValue) && parsedCompensationValue > 0) {
+                    console.log("compensationValue", compensationValue);
                     createPageFunctions.push({ func: CreateArPageContract3, order: 3 });
                 }
                 if (imgCheckUpArray.length > 6) {
@@ -4087,10 +4106,10 @@
             const signatureImages = await Promise.all(promises);
 
             return {
-                renterName: renterName,
-                userName: userName,
-                directorOfLessor: directorOfLessor,
-                directorOfBranch: directorOfBranch,
+                renterName: renterName||'',
+                userName: userName ||'',
+                directorOfLessor: directorOfLessor||'',
+                directorOfBranch: directorOfBranch||'',
                 signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
                 signatureImg2: signatureImages[1] || '',
                 signatureImg3: signatureImages[2] || '',
@@ -4581,9 +4600,11 @@
 
                 // Check conditions and add functions with their orders accordingly
                 if (!isNaN(parsedExpensesValue) && parsedExpensesValue > 0) {
+                    console.log("ExpensesValue", ExpensesValue);
                     createPageFunctions.push({ func: CreateEnPageContract2, order: 2 });
                 }
                 if (!isNaN(parsedCompensationValue) && parsedCompensationValue > 0) {
+                    console.log("compensationValue", compensationValue);
                     createPageFunctions.push({ func: CreateEnPageContract3, order: 3 });
                 }
                 if (imgCheckUpArray.length > 6) {
@@ -4699,6 +4720,8 @@
 
                 const mergedPdfBytes = await existingPdfDoc.save();
                 const base64String = arrayBufferToBase64(mergedPdfBytes);
+
+                console.log("base64String", base64String);
                 return base64String;
             } catch (error) {
                 console.error('Error in mergePdfs:', error);
