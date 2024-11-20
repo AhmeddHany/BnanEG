@@ -233,11 +233,13 @@
   "Messages To Users": "Messages To Users",
   "Offer": "Offer",
   "FrequentlyAskedQuestions": "Frequently Asked Questions",
+  "TechnicalConnectivity": "Technical Connectivity",
   "Evaluation": "Evaluation",
   "TranslatingNumbers": "Translating Numbers",
   "InternationalKeys": "International Keys",
   "ClassificationOfCompanies": "Classification Of Companies",
-
+  "ClassificationOfCountries": "Classification Of Countries",
+  "Currency": "Currency",
   //CAS System NavBar
   "Welcome": "Welcome",
   "Logout": "Logout",
@@ -327,8 +329,12 @@
   "Supportphotos": "Support Photos",
   "Dues": "Dues",
   "Clearingdues": "Clearing Dues",
+  "MessagesCompanies": "Messages Companies",
   //Bnan
   "Bnan": "Bnan",
+  "SupportingCompanies": "Supporting Companies",
+  "MarketingCompanies": "Marketing Companies",
+  "CompanyUsers": "Company Users",
   //Reports
   "EmployeeProcedure": "Employees Procedure",
   "Existing Contracts": "Existing Contracts",
@@ -355,6 +361,7 @@
   "CarsServices": "Cars Services",
   "RegistrationType": "Registration Type",
   "FuelType": "Fuel Type",
+  "Oils": "Oils",
   "Brands": "Brands",
   "CVTType": "CVT Type",
   "Models": "Models",
@@ -367,6 +374,7 @@
   "MailsServices": "MailsServices",
   "Regions": "Regions",
   "Cities": "Cities",
+  "Countries": "Countries",
   //AccountsServices
   "AccountsServices": "Accounts Services",
   "PaymentMethods": "Payment Methods",
@@ -378,6 +386,7 @@
   "Choices": "Choices",
   "Choicess": "Choices",
   "VirtualInspection": "Virtual Inspection",
+  "VirtualInspectionDetails": "Virtual Inspection Details",
   //Services
   "Systems": "Systems",
   "MainTasks": "Main Tasks",
@@ -1481,7 +1490,7 @@
   "Existing": "This field is Existed.",
   "Exist": "ExistEn",
   "CarIsRented": "Sorry... this car has already been rented, please choose another car",
-  
+
   // LessorImages
   "LessorsImages Hint": "The page allows you to display lessors data , and modify lessors images",
   "Edit Lessor Images Data": "Edit",
@@ -2438,6 +2447,7 @@
   "ExpectedDaysNo": "Expected Days No",
   "ActualNumberOfDays": "ActualNumberOfDays",
   "AddHours": "Additional Hours",
+  "AddHourslate": "Late Hours",
   "SettlementDate": "SettlementDate",
   "ReceivingBranch": "Receiving Branch",
   "DeliveryBranch": "Delivery Branch",

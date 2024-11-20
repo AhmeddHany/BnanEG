@@ -231,10 +231,13 @@
   "Offer": "العروض",
   "Drivers": "السائقين",
   "FrequentlyAskedQuestions": "الاسئلة الأكثر شيوعاً",
+  "TechnicalConnectivity": "الربط التقني",
   "Evaluation": "التقييم",
   "TranslatingNumbers": "ترجمة الأرقام",
   "InternationalKeys": "المفاتيح الدولية",
   "ClassificationOfCompanies": "تصنيف الشركات",
+  "ClassificationOfCountries": "تصنيف الدول",
+  "Currency": "العملة",
 
   //Login
   "CompanyDeleted": "عفواً ........ ليس لديك صلاحية الرجاء مراجعة الشركة المشغلة",
@@ -331,8 +334,12 @@
   "Supportphotos": "صور مساندة",
   "Dues": "المستحقات",
   "Clearingdues": "تسديد المستحقات",
+  "MessagesCompanies": "رسائل للشركات",
   //Bnan>>>>
   "Bnan": "بنان",
+  "SupportingCompanies": "الشركات المساندة",
+  "MarketingCompanies": "الشركات  التسويقية",
+  "CompanyUsers": " موظفي الشركات",
 
   //Reports>>>>
   "EmployeeProcedure": "إجراءات الموظفين",
@@ -361,6 +368,7 @@
   "CarsServices": "خدمات السيارات",
   "RegistrationType": "نوع التسجيل",
   "FuelType": "نوع الوقود",
+  "Oils": "الزيوت",
   "Brands": "الماركات",
   "CVTType": "نوع الناقل",
   "Models": "الطراز",
@@ -374,6 +382,7 @@
   "MailsServices": "خدمات البريد",
   "Regions": "المناطق",
   "Cities": "المدن",
+  "Countries": "الدول",
   //AccountsServices
   "AccountsServices": "الخدمات المالية",
   "PaymentMethods": "طريق الدفع",
@@ -385,6 +394,7 @@
   "Choices": "الخيارات",
   "Choicess": "خيارات",
   "VirtualInspection": "الفحص الظاهري",
+  "VirtualInspectionDetails": "تفاصيل الفحص الظاهري",
   //Services
   "Systems": "الانظمة",
   "MainTasks": "المهام الرئيسية",
@@ -2423,6 +2433,7 @@
   "SettlementDate": "تاريخ التسوية",
   "ActualNumberOfDays": "عدد الأيام الفعلية",
   "AddHours": "ساعات إضافية",
+  "AddHourslate": "ساعات التأخير",
   "ReceivingBranch": "فرع الاستلام",
   "DeliveryBranch": "فرع التسليم",
   "Without": "اعفاء",

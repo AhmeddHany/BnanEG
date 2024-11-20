@@ -68,6 +68,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
 
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1101005" && l.CrMasUserSubValidationAuthorization == true))
                     companyMenu.SubItems.Add(new SidebarMenuItem { Authorization = true, Title = _localizer["Clearingdues"], Url = Url.Action("Index", "CompanyOwed", new { area = "MAS" }) });
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1101006" && l.CrMasUserSubValidationAuthorization == true))
+                    companyMenu.SubItems.Add(new SidebarMenuItem { Authorization = true, Title = _localizer["MessagesCompanies"], Url = "#" });
 
                 // Add more submenu items as needed based on permissions
 
@@ -90,12 +92,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                 // Add submenu items based on permissions
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1102001" && l.CrMasUserSubValidationAuthorization == true))
                 {
-                    bnanMenu.SubItems.Add(new SidebarMenuItem { Authorization = true, Title = _localizer["Contracts"], Url = Url.Action("Index", "BnanContracts", new { area = "MAS" }) });
+                    bnanMenu.SubItems.Add(new SidebarMenuItem { Authorization = true, Title = _localizer["SupportingCompanies"], Url = "#" });
                 }
 
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1102002" && l.CrMasUserSubValidationAuthorization == true))
                 {
-                    bnanMenu.SubItems.Add(new SidebarMenuItem { Authorization = true, Title = _localizer["Documents"], Url = Url.Action("Index", "BnanDocuments", new { area = "MAS" }) });
+                    bnanMenu.SubItems.Add(new SidebarMenuItem { Authorization = true, Title = _localizer["MarketingCompanies"], Url = "#" });
                 }
 
                 sidebarMenu.Add(bnanMenu);
@@ -211,9 +213,25 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1104008" && l.CrMasUserSubValidationAuthorization == true))
+                sidebarMenu.Add(reportsMenu);
+            }
+
+            // Statistics 
+            if (userInfo?.CrMasUserMainValidations != null &&
+                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "105" && l.CrMasUserMainValidationAuthorization == true))
+            {
+                var statisticsMenu = new SidebarMenuItem
                 {
-                    reportsMenu.SubItems.Add(new SidebarMenuItem
+                    Title = _localizer["Statistics"],
+                    ItemName = "sidebarStatistics",
+                    IconPath = "/MasSystem/images/reports.svg", // استبدل هذا المسار بأيقونة مناسبة
+                    SubItems = new List<SidebarMenuItem>(),
+                    Authorization = true,
+                };
+
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1105001" && l.CrMasUserSubValidationAuthorization == true))
+                {
+                    statisticsMenu.SubItems.Add(new SidebarMenuItem
                     {
                         Authorization = true,
                         Title = _localizer["Tenant Statistics"],
@@ -221,9 +239,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1104009" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1105002" && l.CrMasUserSubValidationAuthorization == true))
                 {
-                    reportsMenu.SubItems.Add(new SidebarMenuItem
+                    statisticsMenu.SubItems.Add(new SidebarMenuItem
                     {
                         Authorization = true,
                         Title = _localizer["Car Statistics"],
@@ -231,9 +249,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1104010" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1105003" && l.CrMasUserSubValidationAuthorization == true))
                 {
-                    reportsMenu.SubItems.Add(new SidebarMenuItem
+                    statisticsMenu.SubItems.Add(new SidebarMenuItem
                     {
                         Authorization = true,
                         Title = _localizer["Contract Statisticss"],
@@ -241,9 +259,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1104011" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1105004" && l.CrMasUserSubValidationAuthorization == true))
                 {
-                    reportsMenu.SubItems.Add(new SidebarMenuItem
+                    statisticsMenu.SubItems.Add(new SidebarMenuItem
                     {
                         Authorization = true,
                         Title = _localizer["Car Contract Statistics"],
@@ -251,9 +269,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1104012" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1105005" && l.CrMasUserSubValidationAuthorization == true))
                 {
-                    reportsMenu.SubItems.Add(new SidebarMenuItem
+                    statisticsMenu.SubItems.Add(new SidebarMenuItem
                     {
                         Authorization = true,
                         Title = _localizer["Tenant Contracts Statistics"],
@@ -261,12 +279,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                sidebarMenu.Add(reportsMenu);
+                sidebarMenu.Add(statisticsMenu);
             }
 
             // Users Section
             if (userInfo?.CrMasUserMainValidations != null &&
-                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "105" && l.CrMasUserMainValidationAuthorization == true))
+                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "106" && l.CrMasUserMainValidationAuthorization == true))
             {
                 var usersMenu = new SidebarMenuItem
                 {
@@ -278,7 +296,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                 };
 
                 // Add submenu items based on permissions
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1105001" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106001" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     usersMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -288,7 +306,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1105002" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106002" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     usersMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -297,13 +315,22 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                         Url = Url.Action("SystemValiditions", "Users", new { area = "MAS" })
                     });
                 }
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106003" && l.CrMasUserSubValidationAuthorization == true))
+                {
+                    usersMenu.SubItems.Add(new SidebarMenuItem
+                    {
+                        Authorization = true,
+                        Title = _localizer["CompanyUsers"],
+                        Url = "#"
+                    });
+                }
 
                 sidebarMenu.Add(usersMenu);
             }
 
             // Renters Services Section
             if (userInfo?.CrMasUserMainValidations != null &&
-                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "106" && l.CrMasUserMainValidationAuthorization == true))
+                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "107" && l.CrMasUserMainValidationAuthorization == true))
             {
                 var rentersServicesMenu = new SidebarMenuItem
                 {
@@ -344,8 +371,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                         Url = Url.Action("Index", "RenterNationality", new { area = "MAS" })
                     });
                 }
-
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106004" && l.CrMasUserSubValidationAuthorization == true))
+                {
+                    rentersServicesMenu.SubItems.Add(new SidebarMenuItem
+                    {
+                        Authorization = true,
+                        Title = _localizer["Gender"],
+                        Url = "#"
+                    });
+                }
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106005" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -355,7 +390,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106005" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106006" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -365,7 +400,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106006" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106007" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -375,7 +410,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106007" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106008" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentersServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -390,7 +425,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
 
             // Cars Services Section
             if (userInfo?.CrMasUserMainValidations != null &&
-                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "107" && l.CrMasUserMainValidationAuthorization == true))
+                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "108" && l.CrMasUserMainValidationAuthorization == true))
             {
                 var carsServicesMenu = new SidebarMenuItem
                 {
@@ -402,7 +437,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                 };
 
                 // Add submenu items based on permissions
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107001" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108001" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     carsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -412,7 +447,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107002" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108002" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     carsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -421,8 +456,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                         Url = Url.Action("Index", "CarFuel", new { area = "MAS" })
                     });
                 }
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108003" && l.CrMasUserSubValidationAuthorization == true))
+                {
+                    carsServicesMenu.SubItems.Add(new SidebarMenuItem
+                    {
+                        Authorization = true,
+                        Title = _localizer["Oils"],
+                        Url = "#"
+                    });
+                }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107003" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108004" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     carsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -432,7 +476,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107004" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108005" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     carsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -442,7 +486,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107005" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108006" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     carsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -452,7 +496,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107006" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108007" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     carsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -462,7 +506,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107007" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108008" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     carsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -472,7 +516,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107008" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108009" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     carsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -482,7 +526,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107009" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108010" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     carsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -497,7 +541,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
 
             // Mails Services Section
             if (userInfo?.CrMasUserMainValidations != null &&
-                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "108" && l.CrMasUserMainValidationAuthorization == true))
+                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "109" && l.CrMasUserMainValidationAuthorization == true))
             {
                 var mailsServicesMenu = new SidebarMenuItem
                 {
@@ -507,9 +551,18 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     SubItems = new List<SidebarMenuItem>(),
                     Authorization = true,
                 };
-
                 // Add submenu items based on permissions
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108001" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1109001" && l.CrMasUserSubValidationAuthorization == true))
+                {
+                    mailsServicesMenu.SubItems.Add(new SidebarMenuItem
+                    {
+                        Authorization = true,
+                        Title = _localizer["Countries"],
+                        Url = "#"
+                    });
+                }
+                // Add submenu items based on permissions
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1109002" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     mailsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -519,7 +572,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1108002" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1109003" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     mailsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -534,7 +587,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
 
             // Accounts Services Section
             if (userInfo?.CrMasUserMainValidations != null &&
-                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "109" && l.CrMasUserMainValidationAuthorization == true))
+                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "110" && l.CrMasUserMainValidationAuthorization == true))
             {
                 var accountsServicesMenu = new SidebarMenuItem
                 {
@@ -546,7 +599,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                 };
 
                 // Add submenu items based on permissions
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1109001" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1110001" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     accountsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -556,7 +609,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1109002" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1110002" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     accountsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -566,7 +619,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1109003" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1110003" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     accountsServicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -581,7 +634,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
 
             // RentalContracts Section
             if (userInfo?.CrMasUserMainValidations != null &&
-               userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "110" && l.CrMasUserMainValidationAuthorization == true))
+                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "111" && l.CrMasUserMainValidationAuthorization == true))
             {
                 var rentalContractsMenu = new SidebarMenuItem
                 {
@@ -593,7 +646,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                 };
 
                 // Add submenu items based on permissions
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1110001" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1111001" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentalContractsMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -603,7 +656,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1110002" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1111002" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentalContractsMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -613,7 +666,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1110003" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1111003" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     rentalContractsMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -622,13 +675,22 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                         Url = Url.Action("Index", "CarCheckup", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
                     });
                 }
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1111004" && l.CrMasUserSubValidationAuthorization == true))
+                {
+                    rentalContractsMenu.SubItems.Add(new SidebarMenuItem
+                    {
+                        Authorization = true,
+                        Title = _localizer["VirtualInspectionDetails"],
+                        Url = "#" // استخدم Url الفعلي للـ Action
+                    });
+                }
 
                 sidebarMenu.Add(rentalContractsMenu);
             }
 
             // Services Section
             if (userInfo?.CrMasUserMainValidations != null &&
-                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "111" && l.CrMasUserMainValidationAuthorization == true))
+                userInfo.CrMasUserMainValidations.Any(l => l.CrMasUserMainValidationMainTasks == "112" && l.CrMasUserMainValidationAuthorization == true))
             {
 
                 var servicesMenu = new SidebarMenuItem
@@ -641,17 +703,27 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                 };
 
                 // Add submenu items based on permissions
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1111001" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112001" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     servicesMenu.SubItems.Add(new SidebarMenuItem
                     {
                         Authorization = true,
-                        Title = _localizer["FrequentlyAskedQuestions"],
-                        Url = Url.Action("Index", "FrequentlyAskedQuestions", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
+                        Title = _localizer["TechnicalConnectivity"],
+                        Url = "#" // استخدم Url الفعلي للـ Action
+                    });
+                }
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112002" && l.CrMasUserSubValidationAuthorization == true))
+                {
+                    servicesMenu.SubItems.Add(new SidebarMenuItem
+                    {
+                        Authorization = true,
+                        Title = _localizer["ClassificationOfCountries"],
+                        Url = "#" // استخدم Url الفعلي للـ Action
                     });
                 }
 
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1111002" && l.CrMasUserSubValidationAuthorization == true))
+
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112003" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     servicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -660,28 +732,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                         Url = Url.Action("Index", "ClassificationOfCompanies", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
                     });
                 }
-
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1111003" && l.CrMasUserSubValidationAuthorization == true))
-                {
-                    servicesMenu.SubItems.Add(new SidebarMenuItem
-                    {
-                        Authorization = true,
-                        Title = _localizer["InternationalKeys"],
-                        Url = Url.Action("Index", "InternationalKeys", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
-                    });
-                }
-
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1111004" && l.CrMasUserSubValidationAuthorization == true))
-                {
-                    servicesMenu.SubItems.Add(new SidebarMenuItem
-                    {
-                        Authorization = true,
-                        Title = _localizer["TranslatingNumbers"],
-                        Url = Url.Action("Index", "TranslatingNumbers", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
-                    });
-                }
-
-                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1111005" && l.CrMasUserSubValidationAuthorization == true))
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112004" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     servicesMenu.SubItems.Add(new SidebarMenuItem
                     {
@@ -690,6 +741,48 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                         Url = Url.Action("Index", "Evaluation", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
                     });
                 }
+
+                if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112005" && l.CrMasUserSubValidationAuthorization == true))
+                {
+                    servicesMenu.SubItems.Add(new SidebarMenuItem
+                    {
+                        Authorization = true,
+                        Title = _localizer["Currency"],
+                        Url = "#" // استخدم Url الفعلي للـ Action
+                    });
+                }
+
+                //if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112003" && l.CrMasUserSubValidationAuthorization == true))
+                //{
+                //    servicesMenu.SubItems.Add(new SidebarMenuItem
+                //    {
+                //        Authorization = true,
+                //        Title = _localizer["InternationalKeys"],
+                //        Url = Url.Action("Index", "InternationalKeys", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
+                //    });
+                //}
+
+                //if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112002" && l.CrMasUserSubValidationAuthorization == true))
+                //{
+                //    servicesMenu.SubItems.Add(new SidebarMenuItem
+                //    {
+                //        Authorization = true,
+                //        Title = _localizer["FrequentlyAskedQuestions"],
+                //        Url = Url.Action("Index", "FrequentlyAskedQuestions", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
+                //    });
+                //}
+
+                //if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112004" && l.CrMasUserSubValidationAuthorization == true))
+                //{
+                //    servicesMenu.SubItems.Add(new SidebarMenuItem
+                //    {
+                //        Authorization = true,
+                //        Title = _localizer["TranslatingNumbers"],
+                //        Url = Url.Action("Index", "TranslatingNumbers", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
+                //    });
+                //}
+
+
 
                 // Add Messages To Users as a static item
                 servicesMenu.SubItems.Add(new SidebarMenuItem

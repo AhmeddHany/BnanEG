@@ -1,11 +1,6 @@
 ﻿using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -29,30 +24,16 @@ namespace Bnan.Inferastructure.Repository
             foreach (var item in SubTasks)
             {
                 CrMasUserSubValidation CrMasUserSubValidation = new CrMasUserSubValidation();
-                if (item.CrMasSysSubTasksCode == "2206001" || item.CrMasSysSubTasksCode == "2206002" || item.CrMasSysSubTasksCode == "2206003")
-                {
-                    CrMasUserSubValidation = new CrMasUserSubValidation
-                    {
-                        CrMasUserSubValidationUser = user.CrMasUserInformationCode,
-                        CrMasUserSubValidationSubTasks = item.CrMasSysSubTasksCode,
-                        CrMasUserSubValidationSystem = item.CrMasSysSubTasksSystemCode,
-                        CrMasUserSubValidationMain = item.CrMasSysSubTasksMainCodeNavigation.CrMasSysMainTasksCode,
-                        CrMasUserSubValidationAuthorization = true
-                    };
-                    await _unitOfWork.CrMasUserSubValidations.AddAsync(CrMasUserSubValidation);
-                }
-                //else
-                //{
-                //    CrMasUserSubValidation = new CrMasUserSubValidation
-                //    {
-                //        CrMasUserSubValidationUser = user.CrMasUserInformationCode,
-                //        CrMasUserSubValidationSubTasks = item.CrMasSysSubTasksCode,
-                //        CrMasUserSubValidationSystem = item.CrMasSysSubTasksSystemCode,
-                //        CrMasUserSubValidationMain = item.CrMasSysSubTasksMainCodeNavigation.CrMasSysMainTasksCode,
-                //        CrMasUserSubValidationAuthorization = false
-                //    };   
-                //}
 
+                CrMasUserSubValidation = new CrMasUserSubValidation
+                {
+                    CrMasUserSubValidationUser = user.CrMasUserInformationCode,
+                    CrMasUserSubValidationSubTasks = item.CrMasSysSubTasksCode,
+                    CrMasUserSubValidationSystem = item.CrMasSysSubTasksSystemCode,
+                    CrMasUserSubValidationMain = item.CrMasSysSubTasksMainCodeNavigation.CrMasSysMainTasksCode,
+                    CrMasUserSubValidationAuthorization = true
+                };
+                await _unitOfWork.CrMasUserSubValidations.AddAsync(CrMasUserSubValidation);
             }
             return true;
         }
@@ -62,17 +43,13 @@ namespace Bnan.Inferastructure.Repository
             var subTasks = _unitOfWork.CrMasSysSubTasks.FindAll(x => x.CrMasSysSubTasksSystemCode == systemCode && x.CrMasSysSubTasksStatus == Status.Active);
             foreach (var item in subTasks)
             {
-                if (item.CrMasSysSubTasksCode != "2206001" || item.CrMasSysSubTasksCode != "2206002" || item.CrMasSysSubTasksCode != "2206003")
-                {
-                    CrMasUserSubValidation crMasUserSubValidation = new CrMasUserSubValidation();
-                    crMasUserSubValidation.CrMasUserSubValidationUser = userCode;
-                    crMasUserSubValidation.CrMasUserSubValidationSystem = systemCode;
-                    crMasUserSubValidation.CrMasUserSubValidationMain = item.CrMasSysSubTasksMainCode;
-                    crMasUserSubValidation.CrMasUserSubValidationSubTasks = item.CrMasSysSubTasksCode;
-                    crMasUserSubValidation.CrMasUserSubValidationAuthorization = false;
-                    _unitOfWork.CrMasUserSubValidations.Add(crMasUserSubValidation);
-                }
-
+                CrMasUserSubValidation crMasUserSubValidation = new CrMasUserSubValidation();
+                crMasUserSubValidation.CrMasUserSubValidationUser = userCode;
+                crMasUserSubValidation.CrMasUserSubValidationSystem = systemCode;
+                crMasUserSubValidation.CrMasUserSubValidationMain = item.CrMasSysSubTasksMainCode;
+                crMasUserSubValidation.CrMasUserSubValidationSubTasks = item.CrMasSysSubTasksCode;
+                crMasUserSubValidation.CrMasUserSubValidationAuthorization = false;
+                _unitOfWork.CrMasUserSubValidations.Add(crMasUserSubValidation);
             }
             await _unitOfWork.CompleteAsync();
             return true;
