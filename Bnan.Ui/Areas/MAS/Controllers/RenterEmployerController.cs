@@ -48,7 +48,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var pageNumber = Pages.CrMasSupRenterEmployer;
+            var pageNumber = SubTasks.CrMasSupRenterEmployer;
             // Set page titles
             await SetPageTitleAsync(string.Empty, pageNumber);
 
@@ -99,7 +99,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddRenterEmployer()
         {
-            var pageNumber = Pages.CrMasSupRenterEmployer;
+            var pageNumber = SubTasks.CrMasSupRenterEmployer;
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -129,7 +129,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRenterEmployer(RenterEmployerVM renterEmployerVM)
         {
-            var pageNumber = Pages.CrMasSupRenterEmployer;
+            var pageNumber = SubTasks.CrMasSupRenterEmployer;
             
             var user = await _userManager.GetUserAsync(User);
 
@@ -181,7 +181,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = Pages.CrMasSupRenterEmployer;
+            var pageNumber = SubTasks.CrMasSupRenterEmployer;
             await SetPageTitleAsync(Status.Update, pageNumber);
             // if value with code less than 2 Deleted
             if (int.Parse(id) < 1800000002 + 1)
@@ -203,7 +203,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(RenterEmployerVM renterEmployerVM)
         {
-            var pageNumber = Pages.CrMasSupRenterEmployer;
+            var pageNumber = SubTasks.CrMasSupRenterEmployer;
             var user = await _userManager.GetUserAsync(User);
             if (user == null && renterEmployerVM == null)
             {
@@ -246,7 +246,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = Pages.CrMasSupRenterEmployer;
+            var pageNumber = SubTasks.CrMasSupRenterEmployer;
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -318,7 +318,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupRenterEmployer licence, string status)
         {
-            var pageNumber = Pages.CrMasSupRenterEmployer;
+            var pageNumber = SubTasks.CrMasSupRenterEmployer;
 
             var recordAr = licence.CrMasSupRenterEmployerArName;
             var recordEn = licence.CrMasSupRenterEmployerEnName;

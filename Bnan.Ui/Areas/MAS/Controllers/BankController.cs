@@ -48,7 +48,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var pageNumber = Pages.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountBank;
             // Set page titles
             await SetPageTitleAsync(string.Empty, pageNumber);
 
@@ -117,7 +117,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddAccountBank()
         {
-            var pageNumber = Pages.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountBank;
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -147,7 +147,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAccountBank(MasAccountBankVM renterDrivingLicenseVM)
         {
-            var pageNumber = Pages.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountBank;
             
             var user = await _userManager.GetUserAsync(User);
 
@@ -196,7 +196,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = Pages.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountBank;
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var contract = await _unitOfWork.CrMasSupAccountBanks.FindAsync(x => x.CrMasSupAccountBankCode == id);
@@ -211,7 +211,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(MasAccountBankVM renterDrivingLicenseVM)
         {
-            var pageNumber = Pages.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountBank;
             var user = await _userManager.GetUserAsync(User);
             if (user == null && renterDrivingLicenseVM == null)
             {
@@ -254,7 +254,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = Pages.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountBank;
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -325,7 +325,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupAccountBank licence, string status)
         {
-            var pageNumber = Pages.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountBank;
 
             var recordAr = licence.CrMasSupAccountBankArName;
             var recordEn = licence.CrMasSupAccountBankEnName;

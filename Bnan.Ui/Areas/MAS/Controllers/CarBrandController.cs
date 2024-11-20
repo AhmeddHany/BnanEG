@@ -48,7 +48,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var pageNumber = Pages.CrMasSupCarBrand;
+            var pageNumber = SubTasks.CrMasSupCarBrand;
             // Set page titles
             await SetPageTitleAsync(string.Empty, pageNumber);
 
@@ -117,7 +117,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddCarBrand()
         {
-            var pageNumber = Pages.CrMasSupCarBrand;
+            var pageNumber = SubTasks.CrMasSupCarBrand;
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -147,7 +147,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCarBrand(CarBrandVM renterDrivingLicenseVM)
         {
-            var pageNumber = Pages.CrMasSupCarBrand;
+            var pageNumber = SubTasks.CrMasSupCarBrand;
             
             var user = await _userManager.GetUserAsync(User);
 
@@ -196,7 +196,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = Pages.CrMasSupCarBrand;
+            var pageNumber = SubTasks.CrMasSupCarBrand;
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var contract = await _unitOfWork.CrMasSupCarBrand.FindAsync(x => x.CrMasSupCarBrandCode == id);
@@ -211,7 +211,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(CarBrandVM renterDrivingLicenseVM)
         {
-            var pageNumber = Pages.CrMasSupCarBrand;
+            var pageNumber = SubTasks.CrMasSupCarBrand;
             var user = await _userManager.GetUserAsync(User);
             if (user == null && renterDrivingLicenseVM == null)
             {
@@ -254,7 +254,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = Pages.CrMasSupCarBrand;
+            var pageNumber = SubTasks.CrMasSupCarBrand;
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -325,7 +325,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupCarBrand licence, string status)
         {
-            var pageNumber = Pages.CrMasSupCarBrand;
+            var pageNumber = SubTasks.CrMasSupCarBrand;
 
             var recordAr = licence.CrMasSupCarBrandArName;
             var recordEn = licence.CrMasSupCarBrandEnName;

@@ -48,7 +48,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var pageNumber = Pages.CrMasSupCarAdvantage;
+            var pageNumber = SubTasks.CrMasSupCarAdvantage;
             // Set page titles
             await SetPageTitleAsync(string.Empty, pageNumber);
 
@@ -98,7 +98,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddCarAdvantage()
         {
-            var pageNumber = Pages.CrMasSupCarAdvantage;
+            var pageNumber = SubTasks.CrMasSupCarAdvantage;
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -128,7 +128,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCarAdvantage(CarAdvantageVM CarAdvantageVM)
         {
-            var pageNumber = Pages.CrMasSupCarAdvantage;
+            var pageNumber = SubTasks.CrMasSupCarAdvantage;
             
             var user = await _userManager.GetUserAsync(User);
 
@@ -177,7 +177,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = Pages.CrMasSupCarAdvantage;
+            var pageNumber = SubTasks.CrMasSupCarAdvantage;
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var contract = await _unitOfWork.CrMasSupCarAdvantage.FindAsync(x => x.CrMasSupCarAdvantagesCode == id);
@@ -193,7 +193,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(CarAdvantageVM CarAdvantageVM)
         {
-            var pageNumber = Pages.CrMasSupCarAdvantage;
+            var pageNumber = SubTasks.CrMasSupCarAdvantage;
             var user = await _userManager.GetUserAsync(User);
             if (user == null && CarAdvantageVM == null)
             {
@@ -236,7 +236,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = Pages.CrMasSupCarAdvantage;
+            var pageNumber = SubTasks.CrMasSupCarAdvantage;
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -307,7 +307,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupCarAdvantage licence, string status)
         {
-            var pageNumber = Pages.CrMasSupCarAdvantage;
+            var pageNumber = SubTasks.CrMasSupCarAdvantage;
 
             var recordAr = licence.CrMasSupCarAdvantagesArName;
             var recordEn = licence.CrMasSupCarAdvantagesEnName;

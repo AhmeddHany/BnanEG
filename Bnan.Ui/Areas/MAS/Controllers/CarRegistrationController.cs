@@ -48,7 +48,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var pageNumber = Pages.CrMasSupCarRegistration;
+            var pageNumber = SubTasks.CrMasSupCarRegistration;
             // Set page titles
             await SetPageTitleAsync(string.Empty, pageNumber);
 
@@ -127,7 +127,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddCarRegistration()
         {
-            var pageNumber = Pages.CrMasSupCarRegistration;
+            var pageNumber = SubTasks.CrMasSupCarRegistration;
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -157,7 +157,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCarRegistration(CarRegistrationVM renterDrivingLicenseVM)
         {
-            var pageNumber = Pages.CrMasSupCarRegistration;
+            var pageNumber = SubTasks.CrMasSupCarRegistration;
             
             var user = await _userManager.GetUserAsync(User);
 
@@ -209,7 +209,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = Pages.CrMasSupCarRegistration;
+            var pageNumber = SubTasks.CrMasSupCarRegistration;
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var contract = await _unitOfWork.CrMasSupCarRegistration.FindAsync(x => x.CrMasSupCarRegistrationCode == id);
@@ -227,7 +227,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(CarRegistrationVM renterDrivingLicenseVM)
         {
-            var pageNumber = Pages.CrMasSupCarRegistration;
+            var pageNumber = SubTasks.CrMasSupCarRegistration;
             var user = await _userManager.GetUserAsync(User);
             if (user == null && renterDrivingLicenseVM == null)
             {
@@ -272,7 +272,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = Pages.CrMasSupCarRegistration;
+            var pageNumber = SubTasks.CrMasSupCarRegistration;
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -363,7 +363,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupCarRegistration licence, string status)
         {
-            var pageNumber = Pages.CrMasSupCarRegistration;
+            var pageNumber = SubTasks.CrMasSupCarRegistration;
 
             var recordAr = licence.CrMasSupCarRegistrationArName;
             var recordEn = licence.CrMasSupCarRegistrationEnName;
