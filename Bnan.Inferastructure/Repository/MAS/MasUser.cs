@@ -63,6 +63,19 @@ namespace Bnan.Inferastructure.Repository.MAS
                 .FindAsync(x => x.CrMasUserInformationId == userId && x.CrMasUserInformationCode != userCode) != null;
         }
 
+        public async Task<bool> UpdateUser(CrMasUserInformation model)
+        {
+            var user = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == model.CrMasUserInformationCode);
+            if (user == null) return false;
+            user.CrMasUserInformationMobileNo = model.CrMasUserInformationMobileNo;
+            user.CrMasUserInformationCallingKey = model.CrMasUserInformationCallingKey;
+            user.CrMasUserInformationTasksArName = model.CrMasUserInformationTasksArName;
+            user.CrMasUserInformationTasksEnName = model.CrMasUserInformationTasksEnName;
+            user.CrMasUserInformationReasons = model.CrMasUserInformationReasons;
+            if (_unitOfWork.CrMasUserInformation.Update(user) != null) return true;
+            return false;
+        }
+
         //public async Task<bool> CheckIfCanDeleteIt(string code)
         //{
         //    var rentersLicenceCount = await _unitOfWork.CrMasRenterInformation.CountAsync(x => x.CrMasRenterInformationDrivingLicenseType == code);

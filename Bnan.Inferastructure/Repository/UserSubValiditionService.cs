@@ -1,5 +1,4 @@
-﻿using Bnan.Core.Extensions;
-using Bnan.Core.Interfaces;
+﻿using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 
 namespace Bnan.Inferastructure.Repository
@@ -40,7 +39,7 @@ namespace Bnan.Inferastructure.Repository
 
         public async Task<bool> AddSubValiditionsForEachUser(string userCode, string systemCode)
         {
-            var subTasks = await _unitOfWork.CrMasSysSubTasks.FindAllAsNoTrackingAsync(x => x.CrMasSysSubTasksSystemCode == systemCode && x.CrMasSysSubTasksStatus == Status.Active);
+            var subTasks = await _unitOfWork.CrMasSysSubTasks.FindAllAsNoTrackingAsync(x => x.CrMasSysSubTasksSystemCode == systemCode);
             foreach (var item in subTasks)
             {
                 if (item.CrMasSysSubTasksCode != "2207001" || item.CrMasSysSubTasksCode != "2207001" || item.CrMasSysSubTasksCode != "2207001")

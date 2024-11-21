@@ -5,6 +5,7 @@ namespace Bnan.Core.Interfaces.MAS
     public interface IMasUser
     {
         Task<List<CrMasUserInformation>> GetAllAsync();
+        Task<bool> UpdateUser(CrMasUserInformation model);
         Task<bool> ExistsByDetailsAsync(CrMasUserInformation entity);
         //Task<bool> CheckIfCanDeleteIt(string code);
         Task<bool> ExistsByArabicNameAsync(string arabicName, string code);

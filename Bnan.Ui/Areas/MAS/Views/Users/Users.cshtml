@@ -52,7 +52,7 @@
             </div>
             <div class="row table-row px-3">
                 <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
-                    <partial name="_DataTableUsers" />
+                    @await Html.PartialAsync("_DataTableUsers", Model, new ViewDataDictionary(ViewData) { { "ActionName", "Edit" } })
                 </div>
             </div>
         </form>

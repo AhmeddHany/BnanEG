@@ -9,7 +9,7 @@
     "AuthEmplpoyee_AddMore": "لا يمكن إضافة سجل جديد",
     "AuthEmplpoyee_NoUpdate": "لا يمكن تحديث هذا السجل",
     "toastor_Exist": "هذا السجل مسجل من قبل",
-    "MobilePatternError" : "ادخل رقم الجوال صحيح",
+    "MobilePatternError": "ادخل رقم الجوال صحيح",
     ///////////
     "RentalSystemCode": "رمز نظام التأجير",
     "RentalSystemNo": "رقم نظام التأجير",
@@ -290,6 +290,7 @@
     "UserNameEn_add": "الموظف انجليزي",
     "UserNameAr_edit": "الموظف عربي",
     "UserNameEn_edit": "الموظف انجليزي",
+    "SystemValiditions": "صلاحيات النظام",
     "ModalFirstMessage_User_Delete": "حذف بيانات ونتائج1",
     "ModalSecondMessage_User_Delete": "حذف بيانات ونتائج2",
     "ModalFirstMessage_User_UnDelete": "استعادة بيانات ونتائج1",

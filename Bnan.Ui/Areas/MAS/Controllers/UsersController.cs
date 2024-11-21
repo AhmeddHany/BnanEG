@@ -269,9 +269,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return View("Edit", model);
                 }
-                _unitOfWork.CrMasUserInformation.Update(userInfo);
-                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-
+                if (await _masUser.UpdateUser(userInfo) && await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 await SaveTracingForUserChange(userInfo, Status.Update);
                 return RedirectToAction("Users", "Users");
             }
@@ -373,49 +371,44 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> SystemValiditions()
         {
-            //save Tracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("105", "1105002", "1");
+            var user = await _userManager.GetUserAsync(User);
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            var pageNumber = SubTasks.CrMasUserSystemValiditionsMAS;
+            // Set page titles
+            await SetPageTitleAsync(string.Empty, pageNumber);
 
+            // Retrieve active driving licenses
+            var usersInfo = await _unitOfWork.CrMasUserInformation
+                .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationCode != Status.MASUserCode &&
+                                              x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
+                                              x.CrMasUserInformationStatus == Status.Active &&
+                                              x.CrMasUserInformationLessor == Status.MASLessorCode);
 
-            //sidebar Active
-            ViewBag.id = "#sidebarUsers";
-            ViewBag.no = "1";
-            // Set Title
-            var titles = await setTitle("105", "1105002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-
-            var user = User; // Get the current User object
-            var userLessor = await _userService.GetUserLessor(user);
-
-            if (userLessor == null)
+            // If no active licenses, retrieve all licenses
+            if (!usersInfo.Any())
             {
-                return RedirectToAction("Login", "Account");
+                usersInfo = await _unitOfWork.CrMasUserInformation
+                    .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationCode != Status.MASUserCode &&
+                                              x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
+                                              x.CrMasUserInformationStatus == Status.Hold
+                                              && x.CrMasUserInformationLessor == Status.MASLessorCode);
+                ViewBag.radio = "All";
             }
-            // Exclude the current user from the list
-            var usersByLessor = await _userService.GetAllUsersByLessor(userLessor.CrMasUserInformationLessor);
-
-            return View(usersByLessor.Where(x => x.CrMasUserInformationCode != userLessor.CrMasUserInformationCode && x.CrMasUserInformationStatus == Status.Active).ToList());
+            else ViewBag.radio = "A";
+            return View(usersInfo);
         }
         [HttpGet]
-        public async Task<ActionResult> EditSystemValiditions(string id)
+        public async Task<IActionResult> EditSystemValiditions(string id)
         {
-            //sidebar Active
-            ViewBag.id = "#sidebarUsers";
-            ViewBag.no = "1";
+            var user = await _userManager.GetUserAsync(User);
 
-            // Set Title
-            var titles = await setTitle("105", "1105002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
-            var user = await _userService.GetUserByUserNameAsync(id);
-            if (user == null)
+            var pageNumber = SubTasks.CrMasUserSystemValiditionsMAS;
+            await SetPageTitleAsync(Status.Update, pageNumber);
+            var EditedUser = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == id);
+            if (EditedUser == null || user == null)
             {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Users");
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Users", "Users");
             }
             var mainValidition = _unitOfWork.CrMasUserMainValidations.FindAll(x => x.CrMasUserMainValidationUser == id);
             var subValition = _unitOfWork.CrMasUserSubValidations.FindAll(x => x.CrMasUserSubValidationUser == id);
@@ -424,18 +417,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             RegisterViewModel viewModel = new RegisterViewModel
             {
-                CrMasSysMainTasks = (List<CrMasSysMainTask>)_unitOfWork.CrMasSysMainTasks.FindAll(x => x.CrMasSysMainTasksStatus == Status.Active),
+                CrMasSysMainTasks = (List<CrMasSysMainTask>)_unitOfWork.CrMasSysMainTasks.FindAll(x => x.CrMasSysMainTasksSystem == "1"),
                 CrMasUserMainValidations = (List<CrMasUserMainValidation>)mainValidition,
 
-                CrMasUserInformationCode = user.CrMasUserInformationCode,
-                CrMasUserInformationArName = user.CrMasUserInformationArName,
-                CrMasUserInformationEnName = user.CrMasUserInformationEnName,
+                CrMasUserInformationCode = EditedUser.CrMasUserInformationCode,
+                CrMasUserInformationArName = EditedUser.CrMasUserInformationArName,
+                CrMasUserInformationEnName = EditedUser.CrMasUserInformationEnName,
 
-                CrMasSysSubTasks = (List<CrMasSysSubTask>)_unitOfWork.CrMasSysSubTasks.FindAll(x => x.CrMasSysSubTasksStatus == Status.Active),
+                CrMasSysSubTasks = (List<CrMasSysSubTask>)_unitOfWork.CrMasSysSubTasks.FindAll(x => x.CrMasSysSubTasksSystemCode == "1"),
                 CrMasUserSubValidations = (List<CrMasUserSubValidation>)subValition,
                 CrMasSysProceduresTasks = (List<CrMasSysProceduresTask>)procedureTasks,
                 ProceduresValidations = (List<CrMasUserProceduresValidation>)procedureValidition,
-
             };
             return View(viewModel);
         }

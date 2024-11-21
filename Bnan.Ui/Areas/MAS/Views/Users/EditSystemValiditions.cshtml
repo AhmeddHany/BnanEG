@@ -3,333 +3,317 @@
 @inject IViewLocalizer localizer
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
-}
-
-@{
-    ViewData["Page-title"] = localizer["Edit ValiditionsSystem Data"];
-    ViewData["Page-Hint"] = localizer["Edit ValiditionsSystem Hint"];
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
 
 
-<style>
-    .row {
-        align-items: baseline;
-    }
-</style>
-<style>
-    .plus-icon {
-        cursor: pointer
-    }
 
-    ul {
-        list-style: none;
-    }
 
-    .sub-container-form form .form-contain {
-        height: 50vh;
-        margin-top: 10px
-    }
-</style>
 
-<div class="sub-container-form">
-    <div class="collapsible">
-        <form>
-            <div class="row mt-3 text-center ">
-                <div class="col-md-5 row">
-                    <div class="col-md-2">
-                        <label class="form-label" for="UserCode">@localizer["User Code"]</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" asp-for="CrMasUserInformationCode" id="UserCode" readonly>
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form class="needs-validation" novalidate>
+            <div class="row  mt-3 g-3">
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3> @localizer["SystemValiditions"]</h3>
+                            </div>
+                            <div class="col-md-auto save-col">
+                                <button type="submit" class="custom-img-btn">
+                                    <img src="~/MasSystem/images/save.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn">
+                                    <a href="/MAS/Users/SystemValiditions">
+                                        <img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" />
+                                    </a>
+                                </button>
+                            </div>
+
+                        </div>
+                        <main class="mt-4 g-3">
+                            <input asp-for="CrMasUserInformationCode" id="CrMasUserInformationCode" hidden />
+                            <h5 class="subtitle">
+                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.CrMasUserInformationEnName : Model.CrMasUserInformationArName)
+                            </h5>
+                            @foreach (var mainValidation in Model.CrMasUserMainValidations)
+                            {
+                                <div class="accordion inputs-accordion">
+                                    <div class=" inputs-accordion-item">
+                                        <div class="inputs-accordion-item-header">
+                                            <span class="accordion-item-header-title">
+                                                <i class="fa-solid fa-circle-check listCheck" onclick="listChecked(this)"></i>
+                                                @{
+                                                    var MainTask = Model.CrMasSysMainTasks?.FirstOrDefault(x => x.CrMasSysMainTasksCode == mainValidation?.CrMasUserMainValidationMainTasks);
+                                                }
+                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? MainTask?.CrMasSysMainTasksEnName : MainTask.CrMasSysMainTasksArName)
+                                                <input class="form-check-input checkbox mainTasksCheckbox" type="checkbox" value="checked" id="_checkBox.@mainValidation.CrMasUserMainValidationMainTasks" name="mainTasks" style="display: none;"
+                                                       data-id="@mainValidation.CrMasUserMainValidationMainTasks" @((bool)mainValidation.CrMasUserMainValidationAuthorization ? "checked='checked'" : "")>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down accordion-item-header-icon">
+                                                <path d="m6 9 6 6 6-6" />
+                                            </svg>
+                                        </div>
+                                        <div class="accordion-item-description-wrapper">
+
+                                            <div class="accordion-item-description">
+                                                <hr class="accordion-items-hr">
+                                                <div class="container-fluid">
+                                                    @{
+                                                        var subValiditions = Model?.CrMasUserSubValidations?.Where(x => x.CrMasUserSubValidationMain == mainValidation.CrMasUserMainValidationMainTasks);
+                                                    }
+                                                    @foreach (var subValition in subValiditions)
+                                                    {
+
+                                                        var subValidionNames = Model?.CrMasSysSubTasks?.FirstOrDefault(x => x.CrMasSysSubTasksCode == subValition?.CrMasUserSubValidationSubTasks);
+                                                        <div class="row">
+                                                            <div class="col-lg-auto col-xl-4">
+                                                                <div class="d-flex gap-3 align-items-center" @* onclick="showProcedures(@subValition.CrMasUserSubValidationSubTasks)" *@>
+                                                                    <input class="form-check-input checkbox subTasksCheckbox" type="checkbox" id="_checkBox.@subValition.CrMasUserSubValidationSubTasks" name="subTasks"
+                                                                    @((bool)subValition.CrMasUserSubValidationAuthorization ? "checked='checked'" : "") onclick="showProcedures(@subValition.CrMasUserSubValidationSubTasks)">
+                                                                    <label class="form-check-label main-checkbox"
+                                                                           @* for="_checkBox.@subValition.CrMasUserSubValidationSubTasks" *@>
+                                                                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? subValidionNames?.CrMasSysSubTasksEnName : subValidionNames.CrMasSysSubTasksArName)
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-auto " id="_procedure.@subValition.CrMasUserSubValidationSubTasks"
+                                                                 style="display: none;">
+                                                                <div class="row">
+                                                                    @{
+                                                                        var procedureValidtion = Model.ProceduresValidations.FirstOrDefault(x => x.CrMasUserProceduresValidationSubTasks == subValition.CrMasUserSubValidationSubTasks);
+                                                                        var procedureTask = Model.CrMasSysProceduresTasks.FirstOrDefault(x => x.CrMasSysProceduresTasksSubTasks == subValition.CrMasUserSubValidationSubTasks);
+                                                                        if (procedureTask != null)
+                                                                        {
+                                                                            if (procedureTask.CrMasSysProceduresTasksInsertAvailable == true)
+                                                                            {
+                                                                                    <div class="col-6 col-md-auto d-flex gap-3 align-items-center">
+                                                                                        <input class="form-check-input checkbox  proceduresTasksCheckbox" type="checkbox" id="_insert.@subValition.CrMasUserSubValidationSubTasks"
+                                                                                               data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksInsertEnName"
+                                                                                        @((bool)procedureValidtion.CrMasUserProceduresValidationInsertAuthorization ? "checked='checked'" : "")>
+                                                                                        <label class="form-check-label" for="_insert.@subValition.CrMasUserSubValidationSubTasks">
+                                                                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedureTask?.CrMasSysProceduresTasksInsertEnName : procedureTask.CrMasSysProceduresTasksInsertArName)
+                                                                                        </label>
+                                                                                    </div>
+                                                                            }
+                                                                            if (procedureTask.CrMasSysProceduresTasksUpDateAvailable == true)
+                                                                            {
+                                                                                    <div class="col-6 col-md-auto d-flex gap-3 align-items-center">
+                                                                                        <input class="form-check-input checkbox proceduresTasksCheckbox" type="checkbox" id="_update.@subValition.CrMasUserSubValidationSubTasks"
+                                                                                               data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksUpDateEnName"
+                                                                                        @((bool)procedureValidtion.CrMasUserProceduresValidationUpDateAuthorization ? "checked='checked'" : "")>
+                                                                                        <label class="form-check-label" for="_update.@subValition.CrMasUserSubValidationSubTasks">
+                                                                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedureTask?.CrMasSysProceduresTasksUpDateEnName : procedureTask.CrMasSysProceduresTasksUpDateArName)
+                                                                                        </label>
+                                                                                    </div>
+                                                                            }
+                                                                            if (procedureTask.CrMasSysProceduresTasksHoldAvailable == true)
+                                                                            {
+                                                                                    <div class="col-6 col-md-auto d-flex gap-3 align-items-center">
+                                                                                        <input class="form-check-input checkbox proceduresTasksCheckbox" type="checkbox" id="_hold.@subValition.CrMasUserSubValidationSubTasks"
+                                                                                               data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksHoldEnName"
+                                                                                        @((bool)procedureValidtion.CrMasUserProceduresValidationHoldAuthorization ? "checked='checked'" : "")>
+                                                                                        <label class="form-check-label" for="_hold.@subValition.CrMasUserSubValidationSubTasks">
+                                                                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedureTask?.CrMasSysProceduresTasksHoldEnName : procedureTask.CrMasSysProceduresTasksHoldArName)
+                                                                                        </label>
+                                                                                    </div>
+                                                                            }
+                                                                            if (procedureTask.CrMasSysProceduresTasksUnHoldAvailable == true)
+                                                                            {
+                                                                                    <div class="col-6 col-md-auto d-flex gap-3 align-items-center">
+                                                                                        <input class="form-check-input checkbox proceduresTasksCheckbox" type="checkbox" id="_unhold.@subValition.CrMasUserSubValidationSubTasks"
+                                                                                               data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksUnHoldEnName"
+                                                                                        @((bool)procedureValidtion.CrMasUserProceduresValidationUnHoldAuthorization ? "checked='checked'" : "")>
+                                                                                        <label class="form-check-label" for="_unhold.@subValition.CrMasUserSubValidationSubTasks">
+                                                                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedureTask?.CrMasSysProceduresTasksUnHoldEnName : procedureTask.CrMasSysProceduresTasksUnHoldArName)
+                                                                                        </label>
+                                                                                    </div>
+                                                                            }
+                                                                            if (procedureTask.CrMasSysProceduresTasksDeleteAvailable == true)
+                                                                            {
+                                                                                    <div class="col-6 col-md-auto d-flex gap-3 align-items-center">
+                                                                                        <input class="form-check-input checkbox proceduresTasksCheckbox" type="checkbox" id="_delete.@subValition.CrMasUserSubValidationSubTasks"
+                                                                                               data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksDeleteEnName"
+                                                                                        @((bool)procedureValidtion.CrMasUserProceduresValidationDeleteAuthorization ? "checked='checked'" : "")>
+                                                                                        <label class="form-check-label" for="_delete.@subValition.CrMasUserSubValidationSubTasks">
+                                                                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedureTask?.CrMasSysProceduresTasksDeleteEnName : procedureTask.CrMasSysProceduresTasksDeleteArName)
+                                                                                        </label>
+                                                                                    </div>
+                                                                            }
+                                                                            if (procedureTask.CrMasSysProceduresTasksUnDeleteAvailable == true)
+                                                                            {
+                                                                                    <div class="col-6 col-md-auto d-flex gap-3 align-items-center">
+                                                                                        <input class="form-check-input checkbox" type="checkbox" id="_undelete.@subValition.CrMasUserSubValidationSubTasks"
+                                                                                               data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksUnDeleteEnName"
+                                                                                        @((bool)procedureValidtion.CrMasUserProceduresValidationUnDeleteAuthorization ? "checked='checked'" : "")>
+                                                                                        <label class="form-check-label" for="_undelete.@subValition.CrMasUserSubValidationSubTasks">
+                                                                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedureTask?.CrMasSysProceduresTasksUnDeleteEnName : procedureTask.CrMasSysProceduresTasksUnDeleteArName)
+                                                                                        </label>
+                                                                                    </div>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </main>
                     </div>
                 </div>
-                @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
-                {
-                    <div class="col-md-5 row">
-                        <div class="col-md-2">
-                            <label class="form-label" for="UserNameAr">@localizer["UserName"]</label>
-                        </div>
-                        <div class="col-md-7">
-                            <input type="text" class="form-control" asp-for="CrMasUserInformationArName" readonly>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <div class="col-md-5 row">
-                        <div class="col-md-2">
-                            <label class="form-label" for="UserNameAr">@localizer["UserName"]</label>
-                        </div>
-                        <div class="col-md-7">
-                            <input type="text" class="form-control" asp-for="CrMasUserInformationEnName" readonly>
-                        </div>
-                    </div>
-                }
-
             </div>
-            <div class="form-contain mb-2">
-                @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
-                {
-                    @foreach (var mainValidation in Model.CrMasUserMainValidations)
-                    {
-                        //Main Tasks
-                        <h4 style="font-size: 22px;">
-                            <input type="checkbox" id="_checkBox.@mainValidation.CrMasUserMainValidationMainTasks" style="height: 18px;width: 21px;" name="mainTasks" class="mainTasksCheckbox"
-                           data-id="@mainValidation.CrMasUserMainValidationMainTasks" @((bool)mainValidation.CrMasUserMainValidationAuthorization ? "checked='checked'" : "") />
-                            <label for="_checkBox.@mainValidation.CrMasUserMainValidationMainTasks" class="mb-1">
-                                <span>@Html.Label(Model.CrMasSysMainTasks.FirstOrDefault(x => x.CrMasSysMainTasksCode == mainValidation?.CrMasUserMainValidationMainTasks)?.CrMasSysMainTasksArName)</span>
-                            </label>
-                            <a class="plus-icon" onclick="showSubTask(@mainValidation.CrMasUserMainValidationMainTasks)">
-                                <i class="dripicons-plus"></i>
-                            </a>
-                        </h4>
-                        // Sub Tasks
-                        <div style="display:none" id="_list.@mainValidation.CrMasUserMainValidationMainTasks">
-                            @foreach (var subValition in Model.CrMasUserSubValidations.Where(x => x.CrMasUserSubValidationMain == mainValidation.CrMasUserMainValidationMainTasks))
-                            {
-                                <ul class="list mt-2" style="font-size:17px;">
-                                    <li>
-                                        <h4 class="mb-1">
-                                            <input type="checkbox" id="_checkBox.@subValition.CrMasUserSubValidationSubTasks" style="height: 15px;width: 30px;" name="subTasks" class="subTasksCheckbox"
-                                       data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks"
-                                       @((bool)subValition.CrMasUserSubValidationAuthorization ? "checked='checked'" : "") />
-
-                                            <label for="_checkBox.@subValition.CrMasUserSubValidationSubTasks">
-                                                <span>@Html.Label(Model.CrMasSysSubTasks.FirstOrDefault(x =>x.CrMasSysSubTasksCode==subValition?.CrMasUserSubValidationSubTasks)?.CrMasSysSubTasksArName)</span>
-                                            </label>
-
-                                            @if (Model.CrMasSysSubTasks.FirstOrDefault(x => x.CrMasSysSubTasksCode == subValition?.CrMasUserSubValidationSubTasks)?.CrMasSysSubTasksProceduresExpanded == true)
-                                            {
-                                                <a class="plus-icon" onclick="showProcedures(@subValition.CrMasUserSubValidationSubTasks)">
-                                                    <i class="dripicons-plus"></i>
-                                                </a>
-                                            }
-
-                                        </h4>
-                                        <!-- Procedures Tasks -->
-                                        <div style="display:none" id="_procedure.@subValition.CrMasUserSubValidationSubTasks">
-                                            <ul class="list mt-2" style="font-size:15px;">
-                                                @{
-                                                    var procedureValidtion = Model.ProceduresValidations.FirstOrDefault(x => x.CrMasUserProceduresValidationSubTasks == subValition.CrMasUserSubValidationSubTasks);
-                                                    var procedureTask = Model.CrMasSysProceduresTasks.FirstOrDefault(x => x.CrMasSysProceduresTasksSubTasks == subValition.CrMasUserSubValidationSubTasks);
-                                                    if (procedureTask != null)
-                                                    {
-                                                        if (procedureTask.CrMasSysProceduresTasksInsertAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px;" class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksInsertEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationInsertAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksInsertArName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                        if (procedureTask.CrMasSysProceduresTasksUpDateAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px;" class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksUpDateEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationUpDateAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksUpDateArName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                        if (procedureTask.CrMasSysProceduresTasksHoldAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px;" class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksHoldEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationHoldAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksHoldArName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                        if (procedureTask.CrMasSysProceduresTasksUnHoldAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px;" class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksUnHoldEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationUnHoldAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksUnHoldArName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                        if (procedureTask.CrMasSysProceduresTasksDeleteAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px;" class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksDeleteEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationDeleteAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksDeleteArName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                        if (procedureTask.CrMasSysProceduresTasksUnDeleteAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px; " class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksUnDeleteEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationUnDeleteAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksUnDeleteArName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                    }
-
-                                                }
-                                            </ul>
-                                        </div>
-
-                                    </li>
-                                </ul>
-                            }
-                        </div>
-                    }
-                }
-                else
-                {
-                    @foreach (var mainValidation in Model.CrMasUserMainValidations)
-                    {
-                        //Main Tasks
-                        <h4 style="font-size: 22px;">
-                            <input type="checkbox" id="_checkBox.@mainValidation.CrMasUserMainValidationMainTasks" style="height: 18px;width: 21px;" name="mainTasks" class="mainTasksCheckbox"
-                           data-id="@mainValidation.CrMasUserMainValidationMainTasks" @((bool)mainValidation.CrMasUserMainValidationAuthorization ? "checked='checked'" : "") />
-                            <label for="_checkBox.@mainValidation.CrMasUserMainValidationMainTasks" class="mb-1">
-                                <span>@Html.Label(Model.CrMasSysMainTasks.FirstOrDefault(x => x.CrMasSysMainTasksCode == mainValidation?.CrMasUserMainValidationMainTasks)?.CrMasSysMainTasksEnName)</span>
-                            </label>
-                            <a class="plus-icon" onclick="showSubTask(@mainValidation.CrMasUserMainValidationMainTasks)">
-                                <i class="dripicons-plus"></i>
-                            </a>
-                        </h4>
-                        // Sub Tasks
-                        <div style="display:none" id="_list.@mainValidation.CrMasUserMainValidationMainTasks">
-                            @foreach (var subValition in Model.CrMasUserSubValidations.Where(x => x.CrMasUserSubValidationMain == mainValidation.CrMasUserMainValidationMainTasks))
-                            {
-                                <ul class="list mt-2" style="font-size:17px;">
-                                    <li>
-                                        <h4 class="mb-1">
-                                            <input type="checkbox" id="_checkBox.@subValition.CrMasUserSubValidationSubTasks" style="height: 15px;width: 30px;" name="subTasks" class="subTasksCheckbox"
-                                       data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks"
-                                       @((bool)subValition.CrMasUserSubValidationAuthorization ? "checked='checked'" : "") />
-
-                                            <label for="_checkBox.@subValition.CrMasUserSubValidationSubTasks">
-                                                <span>@Html.Label(Model.CrMasSysSubTasks.FirstOrDefault(x =>x.CrMasSysSubTasksCode==subValition?.CrMasUserSubValidationSubTasks)?.CrMasSysSubTasksEnName)</span>
-                                            </label>
-
-                                            @if (Model.CrMasSysSubTasks.FirstOrDefault(x => x.CrMasSysSubTasksCode == subValition?.CrMasUserSubValidationSubTasks)?.CrMasSysSubTasksProceduresExpanded == true)
-                                            {
-                                                <a class="plus-icon" onclick="showProcedures(@subValition.CrMasUserSubValidationSubTasks)">
-                                                    <i class="dripicons-plus"></i>
-                                                </a>
-                                            }
-
-                                        </h4>
-                                        <!-- Procedures Tasks -->
-                                        <div style="display:none" id="_procedure.@subValition.CrMasUserSubValidationSubTasks">
-                                            <ul class="list mt-2" style="font-size:15px;">
-                                                @{
-                                                    var procedureValidtion = Model.ProceduresValidations.FirstOrDefault(x => x.CrMasUserProceduresValidationSubTasks == subValition.CrMasUserSubValidationSubTasks);
-                                                    var procedureTask = Model.CrMasSysProceduresTasks.FirstOrDefault(x => x.CrMasSysProceduresTasksSubTasks == subValition.CrMasUserSubValidationSubTasks);
-                                                    if (procedureTask != null)
-                                                    {
-                                                        if (procedureTask.CrMasSysProceduresTasksInsertAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px;" class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksInsertEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationInsertAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksInsertEnName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                        if (procedureTask.CrMasSysProceduresTasksUpDateAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px;" class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksUpDateEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationUpDateAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksUpDateEnName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                        if (procedureTask.CrMasSysProceduresTasksHoldAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px;" class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksHoldEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationHoldAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksHoldEnName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                        if (procedureTask.CrMasSysProceduresTasksUnHoldAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px;" class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksUnHoldEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationUnHoldAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksUnHoldEnName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                        if (procedureTask.CrMasSysProceduresTasksDeleteAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px;" class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksDeleteEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationDeleteAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksDeleteEnName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                        if (procedureTask.CrMasSysProceduresTasksUnDeleteAvailable == true)
-                                                        {
-                                                            <li>
-                                                                <input type="checkbox" style="height: 15px;width: 30px; " class="proceduresTasksCheckbox"
-                                                   data-id="@mainValidation.CrMasUserMainValidationMainTasks,@subValition.CrMasUserSubValidationSubTasks,@procedureTask.CrMasSysProceduresTasksUnDeleteEnName"
-                                                   @((bool)procedureValidtion.CrMasUserProceduresValidationUnDeleteAuthorization ? "checked='checked'" : "") />
-                                                                <label for="toggleCompanies">
-                                                                    <span>@Html.Label(procedureTask.CrMasSysProceduresTasksUnDeleteEnName)</span>
-                                                                </label>
-                                                            </li>
-                                                        }
-                                                    }
-
-                                                }
-                                            </ul>
-                                        </div>
-
-                                    </li>
-                                </ul>
-                            }
-                        </div>
-                    }
-                }
-            </div>
-            <div class="mt-3">
-                <button class="btn btn-primary ms-2" type="button" onclick="getCheckboxValues()" id="btn">@localizer["Save"]</button>
-                <a type="button" class="btn btn-danger ms-2" title="@localizer["Back"]" asp-area="MAS" asp-controller="Users" asp-action="SystemValiditions">
-                    @localizer["Back"]
-                </a>
-            </div>
-
         </form>
-
     </div>
 </div>
+
+
+
+
+
 @section scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const procedureElements = document.querySelectorAll("[id^='_procedure.']");
+
+            procedureElements.forEach(function (procedureElement) {
+                const checkboxes = procedureElement.querySelectorAll("input[type='checkbox']");
+                let hasCheckedCheckbox = false;
+
+                checkboxes.forEach(function (checkbox) {
+                    if (checkbox.checked) {
+                        hasCheckedCheckbox = true;
+                    }
+                });
+
+                // Show parent div only if any checkbox is checked
+                procedureElement.style.display = hasCheckedCheckbox ? "block" : "none";
+            });
+        });
+        function showProcedures(code) {
+            var proceduresList = document.getElementById("_procedure." + code);
+            var checkbox = document.getElementById("_checkBox." + code);
+            if (checkbox.checked) {
+                if (proceduresList.style.display === "block") {
+                    proceduresList.style.display = "none";
+                } else {
+                    proceduresList.style.display = "block";
+                }
+            }
+            else {
+                proceduresList.style.display = "none";
+            }
+            // checkbox.addEventListener("change", function () {
+            //     showProcedures(code);
+            // })
+
+        }
+    </script>
+    <script>
+
+        function getCheckboxValues() {
+            // Main Tasks
+            var checkboxesMainTask = document.getElementsByClassName("mainTasksCheckbox");
+            var checkboxMainTaskValues = [];
+            for (var i = 0; i < checkboxesMainTask.length; i++) {
+                var checkbox = checkboxesMainTask[i];
+                var value = checkbox.checked;
+                var id = checkbox.getAttribute("data-id");
+                checkboxMainTaskValues.push({ id: id, value: value });
+            }
+            //Sub Tasks
+            var checkboxesSubTask = document.getElementsByClassName("subTasksCheckbox");
+            var checkboxSubTaskValues = [];
+            for (var i = 0; i < checkboxesSubTask.length; i++) {
+                var checkbox = checkboxesSubTask[i];
+                var value = checkbox.checked;
+                var ids = checkbox.getAttribute("data-id").split(",");
+                var mainTaskId = ids[0];
+                var subTaskId = ids[1];
+                checkboxSubTaskValues.push({ mainTaskId: mainTaskId, subTaskId: subTaskId, value: value });
+            }
+            // Procedures
+            var checkboxesProceduresTask = document.getElementsByClassName("proceduresTasksCheckbox");
+            var checkboxMProceduresTaskValues = [];
+            for (var i = 0; i < checkboxesProceduresTask.length; i++) {
+                var checkbox = checkboxesProceduresTask[i];
+                var value = checkbox.checked;
+                var ids = checkbox.getAttribute("data-id").split(",");
+                var mainTaskId = ids[0];
+                var subTaskId = ids[1];
+                var procedureName = ids[2];
+                checkboxMProceduresTaskValues.push({ mainTaskId: mainTaskId, subTaskId: subTaskId, procedureName: procedureName, value: value });
+            }
+
+            var userId = document.getElementById("CrMasUserInformationCode").value;
+            $.ajax({
+                url: "@Url.Action("EditSystemValiditions", "Users", new { Area = "MAS" })",
+                type: 'POST',
+                dataType: 'JSON',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    checkboxesMainTask: checkboxMainTaskValues,
+                    checkboxesSubTask: checkboxSubTaskValues,
+                    checkboxesProcedureTask: checkboxMProceduresTaskValues,
+                    userId: userId
+                }),
+                success: function (response) {
+                    window.location.href = '@Url.Action("SystemValiditions", "Users", new { Area = "MAS" })';
+                },
+                error: function (xhr, status, error) {
+                    alert(status + xhr + error)
+                }
+            });
+        }
+
+    </script>
+    <script>
+        function listChecked(icon) {
+            const mainCheckbox = icon.nextElementSibling;
+            mainCheckbox.checked = !mainCheckbox.checked;
+
+            icon.style.color = mainCheckbox.checked ? 'green' : '';
+
+            if (!mainCheckbox.checked) {
+                const container = icon.closest('.inputs-accordion-item');
+                const allCheckboxes = container.querySelectorAll('.accordion-item-description .checkbox');
+                allCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputsAccordion = document.querySelectorAll(".inputs-accordion-item");
+
+            function ViewAleadyChecked() {
+                listsIcons = document.querySelectorAll('.listCheck')
+                console.log(listsIcons)
+                listsIcons.forEach((icon) => {
+                    if (icon.nextElementSibling.checked) {
+                        icon.style.color = 'green';
+                    } else {
+                        icon.style.color = '';
+                    }
+                })
+            }
+            ViewAleadyChecked()
+        })
+    </script>
+}
+
+
+
+
+
+
+@*@section scripts {
 
     <script>
 
@@ -418,7 +402,7 @@
                     checkboxesSubTask: checkboxSubTaskValues,
                     checkboxesProcedureTask: checkboxMProceduresTaskValues,
                     userId: userId
-                }), 
+                }),
                 success: function (response) {
                     window.location.href = '@Url.Action("SystemValiditions", "Users", new { Area = "MAS" })';
                 },
@@ -430,3 +414,4 @@
 
     </script>
 }
+*@
