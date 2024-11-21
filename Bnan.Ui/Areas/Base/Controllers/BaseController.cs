@@ -8,7 +8,6 @@ using Bnan.Ui.ViewModels.Owners;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Quartz;
 using System.Globalization;
 
 namespace Bnan.Ui.Areas.Base.Controllers
@@ -53,7 +52,7 @@ namespace Bnan.Ui.Areas.Base.Controllers
                 string currentCulture = CultureInfo.CurrentCulture.Name;
 
                 // جلب البيانات دفعة واحدة
-                var subTask = _unitOfWork.CrMasSysSubTasks.GetById(subTaskCode);
+                var subTask = await _unitOfWork.CrMasSysSubTasks.GetByIdAsync(subTaskCode);
 
                 string SubTaskName = currentCulture == "en-US" ? subTask.CrMasSysSubTasksConcatenateEnName : subTask.CrMasSysSubTasksConcatenateArName;
                 string userName = currentCulture == "en-US" ? currentUser.CrMasUserInformationEnName : currentUser.CrMasUserInformationArName;
@@ -63,7 +62,7 @@ namespace Bnan.Ui.Areas.Base.Controllers
             return new string[] { "0", "0" };
         }
 
-        public async Task SetPageTitleAsync(string status,string subTaskCode)
+        public async Task SetPageTitleAsync(string status, string subTaskCode)
         {
             var (operationAr, operationEn) = GetStatusTranslation(status);
             var titles = await setTitle(subTaskCode);

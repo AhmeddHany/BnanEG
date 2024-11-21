@@ -1,29 +1,30 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
+using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.Identitiy;
+using Bnan.Ui.ViewModels.MAS;
 using Bnan.Ui.ViewModels.MAS.UserValiditySystem;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using Microsoft.IdentityModel.Tokens;
+using System.Data;
+using System.Globalization;
 
 namespace Bnan.Ui.Areas.MAS.Controllers
 {
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
+
     public class UsersController : BaseController
     {
         private readonly IAuthService _authService;
@@ -35,6 +36,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IUserProcedureValidition _userProcedureValidition;
         private readonly IStringLocalizer<UsersController> _localizer;
         private readonly IToastNotification _toastNotification;
+        private readonly IBaseRepo _baseRepo;
+        private readonly IMasUser _masUser;
+
 
 
         public UsersController(IUserService userService,
@@ -45,7 +49,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                                IMapper mapper, IUserMainValidtion userMainValidtion,
                                IUserSubValidition userSubValidition,
                                IStringLocalizer<UsersController> localizer,
-                               IUserProcedureValidition userProcedureValidition, IToastNotification toastNotification) : base(userManager, unitOfWork, mapper)
+                               IUserProcedureValidition userProcedureValidition, IToastNotification toastNotification, IBaseRepo baseRepo, IMasUser masUser) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
             _authService = authService;
@@ -56,259 +60,314 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             _userProcedureValidition = userProcedureValidition;
             _localizer = localizer;
             _toastNotification = toastNotification;
+            _baseRepo = baseRepo;
+            _masUser = masUser;
         }
 
         [HttpGet]
         public async Task<IActionResult> Users()
         {
-            //save Tracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("105", "1105001", "1");
+            var user = await _userManager.GetUserAsync(User);
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            var pageNumber = SubTasks.CrMasUserInformationForMAS;
+            // Set page titles
+            await SetPageTitleAsync(string.Empty, pageNumber);
 
-            //sidebar Active
-            ViewBag.id = "#sidebarUsers";
-            ViewBag.no = "0";
+            // Retrieve active driving licenses
+            var usersInfo = await _unitOfWork.CrMasUserInformation
+                .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationCode != Status.MASUserCode &&
+                                              x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
+                                              x.CrMasUserInformationStatus == Status.Active &&
+                                              x.CrMasUserInformationLessor == Status.MASLessorCode);
 
-            // Set Title
-            var titles = await setTitle("105", "1105001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-
-            var user = User; // Get the current User object
-            var userLessor = await _userService.GetUserLessor(user);
-
-            if (userLessor == null)
+            // If no active licenses, retrieve all licenses
+            if (!usersInfo.Any())
             {
-                return RedirectToAction("Login", "Account");
+                usersInfo = await _unitOfWork.CrMasUserInformation
+                    .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationCode != Status.MASUserCode &&
+                                              x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
+                                              x.CrMasUserInformationStatus == Status.Hold
+                                              && x.CrMasUserInformationLessor == Status.MASLessorCode);
+                ViewBag.radio = "All";
             }
-            // Exclude the current user from the list
-            var usersByLessor = await _userService.GetAllUsersByLessor(userLessor.CrMasUserInformationLessor);
-
-            return View(usersByLessor.Where(x => x.CrMasUserInformationCode != userLessor.CrMasUserInformationCode).ToList());
+            else ViewBag.radio = "A";
+            return View(usersInfo);
         }
         [HttpGet]
-        public async Task<PartialViewResult> GetUsersByStatusAsync(string status)
+        public async Task<PartialViewResult> GetUserByStatus(string status, string search)
         {
-            var user = User; // Get the current User object
-            var userLessor = await _userService.GetUserLessor(user);
-            if (userLessor != null)
-            {
-                if (!string.IsNullOrEmpty(status))
-                {
-                    if (status == "all")
-                    {
-                        var UsersbyStatusAll = await _userService.GetAllUsersByLessor(userLessor.CrMasUserInformationLessor);
-                        return PartialView("_DataTableUsers", UsersbyStatusAll.Where(x => x.CrMasUserInformationCode != userLessor.CrMasUserInformationCode));
-                    }
-                    var UsersbyStatus = await _userService.GetAllUsersByLessor(userLessor.CrMasUserInformationLessor);
-                    return PartialView("_DataTableUsers", UsersbyStatus.Where(x => x.CrMasUserInformationCode != userLessor.CrMasUserInformationCode && x.CrMasUserInformationStatus == status));
-                }
-            }
+            var user = await _userManager.GetUserAsync(User);
 
+            if (!string.IsNullOrEmpty(status))
+            {
+                var usersInfo = await _unitOfWork.CrMasUserInformation.FindAllAsNoTrackingAsync(x => x.CrMasUserInformationCode != Status.MASUserCode &&
+                                                                                                     x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
+                                                                                                     x.CrMasUserInformationLessor == Status.MASLessorCode &&
+                                                                                                    (x.CrMasUserInformationStatus == Status.Active ||
+                                                                                                     x.CrMasUserInformationStatus == Status.Deleted ||
+                                                                                                     x.CrMasUserInformationStatus == Status.Hold));
+
+                if (status == Status.All)
+                {
+                    var FilterAll = usersInfo.FindAll(x => x.CrMasUserInformationStatus != Status.Deleted &&
+                                                                         (x.CrMasUserInformationArName.Contains(search) ||
+                                                                          x.CrMasUserInformationEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasUserInformationTasksArName.Contains(search) ||
+                                                                          x.CrMasUserInformationTasksEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasUserInformationCode.Contains(search)));
+                    return PartialView("_DataTableUsers", FilterAll);
+                }
+                var FilterByStatus = usersInfo.FindAll(x => x.CrMasUserInformationStatus == status &&
+                                                                         (x.CrMasUserInformationArName.Contains(search) ||
+                                                                          x.CrMasUserInformationEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasUserInformationTasksArName.Contains(search) ||
+                                                                          x.CrMasUserInformationTasksEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasUserInformationCode.Contains(search)));
+                return PartialView("_DataTableUsers", FilterByStatus);
+            }
             return PartialView();
         }
 
         public async Task<IActionResult> AddUser()
         {
-            //sidebar Active
-            ViewBag.id = "#sidebarUsers";
-            ViewBag.no = "0";
-
-            //To Set Title;
-            var titles = await setTitle("105", "1105001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "اضافة", "Create", titles[3]);
+            var pageNumber = SubTasks.CrMasUserInformationForMAS;
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Users", "Users");
+            }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Users", "Users");
+            }
             var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active);
-            var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo }).ToList();
+            var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString().Trim(), Text = c.CrMasSysCallingKeysNo?.Trim() }).ToList();
             ViewData["CallingKeys"] = callingKeyList; // Pass the callingKeys to the view
-
-
-            return View();
+            RegisterViewModel registerViewModel = new RegisterViewModel();
+            return View(registerViewModel);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddUser(RegisterViewModel model, IFormFile UserSignatureFile, IFormFile UserImgFile)
+        public async Task<IActionResult> AddUser(RegisterViewModel model)
         {
-            var user = await _userService.GetUserByUserNameAsync(model.CrMasUserInformationCode);
 
-            string foldername = $"{"images\\Bnan\\Users"}\\{model.CrMasUserInformationCode}";
-            string filePathImage;
-            string filePathSignture;
+            var pageNumber = SubTasks.CrMasSupRenterDrivingLicense;
 
-            if (UserImgFile != null)
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+
+            if (!ModelState.IsValid || model == null || user == null)
             {
-                string fileNameImg = "Image_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
-                //string fileNameImgExtenstion = Path.GetExtension(UserImgFile.FileName);
-                filePathImage = await UserImgFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View("Users", model);
             }
-            else
+            try
             {
-                filePathImage = "~/images/common/user.jpg";
+                var crMasUserInformation = _mapper.Map<CrMasUserInformation>(model);
+                // Check if the entity already exists
+                if (await _masUser.ExistsByDetailsAsync(crMasUserInformation))
+                {
+                    await AddModelErrorsAsync(crMasUserInformation);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("AddUser", model);
+                }
+
+                if (!await _authService.RegisterAsync(crMasUserInformation))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Users", model);
+                }
+                //Add Role 
+                var newUser = await _userService.GetUserByUserNameAsync(model.CrMasUserInformationCode);
+                if (!await _authService.AddRoleAsync(newUser, "MAS"))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Users", model);
+                };
+                //Add Main Validitions
+                //Add Sub Validitions
+                //Add Procedures Validitions
+
+                if (!await _userMainValidtion.AddMainValiditionsForEachUser(newUser.CrMasUserInformationCode, "1"))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Users", model);
+                }
+
+                if (!await _userSubValidition.AddSubValiditionsForEachUser(newUser.CrMasUserInformationCode, "1"))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Users", model);
+                }
+
+                if (!await _userProcedureValidition.AddProceduresValiditionsForEachUser(newUser.CrMasUserInformationCode, "1"))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Users", model);
+                }
+
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", });
+
+                await SaveTracingForUserChange(newUser, Status.Insert);
+                return RedirectToAction("Users", "Users");
             }
-            
-            if (UserSignatureFile != null)
+            catch (Exception ex)
             {
-                string fileNameSignture = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
-                //string fileNameSigntureExtenstion = Path.GetExtension(UserSignatureFile.FileName);
-                filePathSignture = await UserSignatureFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameSignture, ".png");
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View("Users", model);
             }
-            else
-            {
-                filePathSignture = "~/images/common/DefualtUserSignature.png";
-            }
-            
-
-
-
-            if (user != null)
-            {
-                ModelState.AddModelError("Exist", "User Code Is Exists");
-                return View(model);
-            }
-
-            model.CrMasUserInformationSignature = filePathSignture;
-            model.CrMasUserInformationPicture = filePathImage;
-
-            var crMasUserInformation = _mapper.Map<CrMasUserInformation>(model);
-            var createUser = await _authService.RegisterAsync(crMasUserInformation);
-
-            if (!createUser)
-            {
-                ModelState.AddModelError("Exist", "Something went wrong");
-                return View(model);
-            }
-            //Add Role 
-            var newUser = await _userService.GetUserByUserNameAsync(model.CrMasUserInformationCode);
-            await _authService.AddRoleAsync(newUser, "MAS");
-
-            //Add Main Validitions
-            if (!await _userMainValidtion.AddMainValiditionsForEachUser(newUser.CrMasUserInformationCode, "1"))
-            {
-                ModelState.AddModelError("Exist", "Something went wrong");
-                return View(model);
-            }
-
-            //Add Sub Validitions
-            if (!await _userSubValidition.AddSubValiditionsForEachUser(newUser.CrMasUserInformationCode, "1"))
-            {
-                ModelState.AddModelError("Exist", "Something went wrong");
-                return View(model);
-            }
-
-            //Add Procedures Validitions
-            if (!await _userProcedureValidition.AddProceduresValiditionsForEachUser(newUser.CrMasUserInformationCode, "1"))
-            {
-                ModelState.AddModelError("Exist", "Something went wrong");
-                return View(model);
-            }
-
-
-            // SaveTracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("105", "1105001", "1");
-            var RecordAr = $"{model.CrMasUserInformationArName} - {model.CrMasUserInformationTasksArName}";
-            var RecordEn = $"{model.CrMasUserInformationEnName} - {model.CrMasUserInformationTasksEnName}";
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "إضافة", "Add", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-            return RedirectToAction("Users", "Users");
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            //sidebar Active
-            ViewBag.id = "#sidebarUsers";
-            ViewBag.no = "0";
-
-            //To Set Title 
-            var titles = await setTitle("105", "1105001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
-            var user = await _userService.GetUserByUserNameAsync(id);
-            if (user == null)
+            var pageNumber = SubTasks.CrMasUserInformationForMAS;
+            await SetPageTitleAsync(Status.Update, pageNumber);
+            var userInfo = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == id);
+            if (userInfo == null)
             {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Users");
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Users", "Users");
             }
-            var crMasUserInformation = _mapper.Map<RegisterViewModel>(user);
+            var crMasUserInformation = _mapper.Map<RegisterViewModel>(userInfo);
+            var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active);
+            var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString().Trim(), Text = c.CrMasSysCallingKeysNo?.Trim() }).ToList();
+            ViewData["CallingKeys"] = callingKeyList; // Pass the callingKeys to the view
             return View(crMasUserInformation);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(RegisterViewModel model)
         {
-            var user = await _userService.GetUserByUserNameAsync(model.CrMasUserInformationCode);
-            if (user != null)
+
+            var pageNumber = SubTasks.CrMasUserInformationForMAS;
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+
+            if (user == null && model == null)
             {
-                // Check if the tasks have changed
-                if (user.CrMasUserInformationTasksArName != model.CrMasUserInformationTasksArName
-                    || user.CrMasUserInformationTasksEnName != model.CrMasUserInformationTasksEnName)
-                {
-                    user.CrMasUserInformationTasksArName = model.CrMasUserInformationTasksArName;
-                    user.CrMasUserInformationTasksEnName = model.CrMasUserInformationTasksEnName;
-                    await _userService.UpdateAsync(user);
-
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("105", "1105001", "1");
-                    var RecordAr = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.CrMasUserInformationCode).CrMasUserInformationArName} - {_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.CrMasUserInformationCode).CrMasUserInformationTasksArName}";
-                    var RecordEn = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.CrMasUserInformationCode).CrMasUserInformationEnName} - {_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.CrMasUserInformationCode).CrMasUserInformationTasksEnName}";
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                }
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "RenterDrivingLicense");
             }
+            try
+            {
+                //Check Validition
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("Edit", model);
+                }
+                var userInfo = _mapper.Map<CrMasUserInformation>(model);
+                // Check if the entity already exists
+                if (await _masUser.ExistsByDetailsAsync(userInfo))
+                {
+                    await AddModelErrorsAsync(userInfo);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Edit", model);
+                }
+                _unitOfWork.CrMasUserInformation.Update(userInfo);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
-            return RedirectToAction("Users", "Users");
+                await SaveTracingForUserChange(userInfo, Status.Update);
+                return RedirectToAction("Users", "Users");
+            }
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View("Edit", model);
+            }
         }
         [HttpPost]
-        public async Task<IActionResult> EditStatus(string code, string status)
+        public async Task<string> EditStatus(string status, string code)
         {
-            string sAr = "";
-            string sEn = "";
-            var user = await _userService.GetUserByUserNameAsync(code);
-            if (user != null)
+            var pageNumber = SubTasks.CrMasUserInformationForMAS;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return "false";
+
+            var EditedUser = await _unitOfWork.CrMasUserInformation.GetByIdAsync(code);
+            if (EditedUser == null) return "false";
+
+            try
             {
-                if (await CheckUserSubValidationProcdures("1105001", status))
-                {
-                    if (status == Status.Hold)
-                    {
-                        sAr = "ايقاف";
-                        sEn = "Hold";
-                        user.CrMasUserInformationStatus = Status.Hold;
-                    }
-                    else if (status == Status.Deleted)
-                    {
-                        sAr = "حذف";
-                        sEn = "Remove";
-                        user.CrMasUserInformationStatus = Status.Deleted;
-                    }
-                    else if (status == Status.Active)
-                    {
-                        sAr = "استرجاع";
-                        sEn = "Retrive";
-                        user.CrMasUserInformationStatus = Status.Active;
-                    }
-
-                    await _unitOfWork.CompleteAsync();
-
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("105", "1105001", "1");
-                    var RecordAr = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == user.CrMasUserInformationCode).CrMasUserInformationArName} - {_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == user.CrMasUserInformationCode).CrMasUserInformationTasksArName}";
-                    var RecordEn = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == user.CrMasUserInformationCode).CrMasUserInformationEnName} - {_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == user.CrMasUserInformationCode).CrMasUserInformationTasksEnName}";
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return RedirectToAction("Users", "Users");
-                }
-
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                EditedUser.CrMasUserInformationStatus = status;
+                _unitOfWork.CrMasUserInformation.Update(EditedUser);
+                await _unitOfWork.CompleteAsync();
+                await SaveTracingForUserChange(EditedUser, status);
+                return "true";
             }
-            return View(user);
-
+            catch (Exception ex)
+            {
+                return "false";
+            }
         }
+
+
+        //Error exist message when run post action to get what is the exist field << Help Up in Back End
+        private async Task AddModelErrorsAsync(CrMasUserInformation entity)
+        {
+
+            if (await _masUser.ExistsByArabicNameAsync(entity.CrMasUserInformationArName, entity.CrMasUserInformationCode))
+            {
+                ModelState.AddModelError("CrMasUserInformationArName", _localizer["Existing"]);
+            }
+
+            if (await _masUser.ExistsByEnglishNameAsync(entity.CrMasUserInformationEnName, entity.CrMasUserInformationCode))
+            {
+                ModelState.AddModelError("CrMasUserInformationEnName", _localizer["Existing"]);
+            }
+
+            if (await _masUser.ExistsByUserCodeAsync(entity.CrMasUserInformationCode))
+            {
+                ModelState.AddModelError("CrMasUserInformationCode", _localizer["Existing"]);
+            }
+
+            if (await _masUser.ExistsByUserIdAsync(entity.CrMasUserInformationId, entity.CrMasUserInformationCode))
+            {
+                ModelState.AddModelError("CrMasUserInformationId", _localizer["Existing"]);
+            }
+        }
+
+        //Error exist message when change input without run post action >> help us in front end
+        [HttpGet]
+        public async Task<JsonResult> CheckChangedField(string existName, string dataField)
+        {
+            var All_Users = await _unitOfWork.CrMasUserInformation.GetAllAsync();
+            var errors = new List<ErrorResponse>();
+
+            if (!string.IsNullOrEmpty(dataField) && All_Users != null)
+            {
+                if (existName == "CrMasUserInformationArName" && All_Users.Any(x => x.CrMasUserInformationArName == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasUserInformationArName", Message = _localizer["Existing"] });
+                }
+                else if (existName == "CrMasUserInformationEnName" && All_Users.Any(x => x.CrMasUserInformationEnName?.ToLower() == dataField.ToLower()))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasUserInformationEnName", Message = _localizer["Existing"] });
+                }
+                else if (existName == "CrMasUserInformationCode" && !string.IsNullOrEmpty(dataField) && All_Users.Any(x => x.CrMasUserInformationCode == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasUserInformationCode", Message = _localizer["Existing"] });
+                }
+                else if (existName == "CrMasUserInformationId" && !string.IsNullOrEmpty(dataField) && All_Users.Any(x => x.CrMasUserInformationId == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasUserInformationId", Message = _localizer["Existing"] });
+                }
+            }
+
+            return Json(new { errors });
+        }
+
+
+
+
+
+
 
 
         [HttpGet]
@@ -342,8 +401,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             return View(usersByLessor.Where(x => x.CrMasUserInformationCode != userLessor.CrMasUserInformationCode && x.CrMasUserInformationStatus == Status.Active).ToList());
         }
-
-
         [HttpGet]
         public async Task<ActionResult> EditSystemValiditions(string id)
         {
@@ -515,11 +572,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 filePathImage = user.CrMasUserInformationPicture;
 
             }
-            
+
             if (UserSignatureFile != null)
             {
                 string fileNameSignture = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقتs
-                filePathSignture = await UserSignatureFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameSignture, ".png",user.CrMasUserInformationSignature);
+                filePathSignture = await UserSignatureFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameSignture, ".png", user.CrMasUserInformationSignature);
             }
             else if (string.IsNullOrEmpty(oldPathSignture))
             {
@@ -607,6 +664,51 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        private async Task SaveTracingForUserChange(CrMasUserInformation userCreated, string status)
+        {
+            var pageNumber = SubTasks.CrMasUserInformationForMAS;
+
+            var recordAr = $"{userCreated.CrMasUserInformationArName} - {userCreated.CrMasUserInformationTasksArName}";
+            var recordEn = $"{userCreated.CrMasUserInformationEnName} - {userCreated.CrMasUserInformationTasksEnName}";
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+
+
+        [HttpPost]
+        public IActionResult DisplayToastError_NoUpdate(string messageText)
+        {
+            //نص الرسالة _localizer["AuthEmplpoyee_NoUpdate"] === messageText ; 
+            if (messageText == null || messageText == "") messageText = "..";
+            _toastNotification.AddErrorToastMessage(messageText, new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            return Json(new { success = true });
+        }
+
+
+        public IActionResult DisplayToastSuccess_withIndex()
+        {
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+            return RedirectToAction("Users", "Users");
+        }
+
 
     }
 }

@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Case for regular forms (not inside accordion)
     const regularFormElements = document.querySelectorAll("input, select, textarea");
     if (regularFormElements.length > 0) {
-        regularFormElements[1].focus();
+        regularFormElements[0].focus();
     }
     regularFormElements.forEach((element, index) => {
         element.addEventListener("keydown", function (e) {

@@ -6,7 +6,6 @@
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
     ViewData["Page-title"] = @localizer["View_RenterDrivingLicense_PageTitle"];
-    ViewData["Page-Hint"] = @localizer["RenterDrivingLicense Hint"];
 }
 <link href="~/css/toastr.css" rel="stylesheet" />
 

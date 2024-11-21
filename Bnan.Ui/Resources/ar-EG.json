@@ -9,7 +9,7 @@
     "AuthEmplpoyee_AddMore": "لا يمكن إضافة سجل جديد",
     "AuthEmplpoyee_NoUpdate": "لا يمكن تحديث هذا السجل",
     "toastor_Exist": "هذا السجل مسجل من قبل",
-
+    "MobilePatternError": "ادخل رقم الجوال صحيح",
     ///////////
     "RentalSystemCode": "رمز نظام التأجير",
     "RentalSystemNo": "رقم نظام التأجير",
@@ -348,7 +348,30 @@
     "ModalFirstMessage_Gender_Hold": "ايقاف بيانات ونتائج1",
     "ModalSecondMessage_Gender_Hold": "ايقاف بيانات ونتائج2",
     "ModalFirstMessage_Gender_UnHold": "ارجاع بيانات ونتائج1",
-    "ModalSecondMessage_Gender_UnHold": "ارجاع بيانات ونتائج2"
+    "ModalSecondMessage_Gender_UnHold": "ارجاع بيانات ونتائج2",
+
+    // MAS Users
+    "Add_User_PageTitle": "إضافة موظف",
+    "Edit_User_PageTitle": "تحديث بيانات الموظف",
+    "View_User_PageTitle": "الموظفين",
+    "UserName_view": "الموظف",
+    "UserCode": "رقم الموظف",
+    "UserID": "رقم الهوية",
+    "EmployementName": "المسمى الوظيفي",
+    "EmployementNameAr": "المسمى الوظيفي انجليزي",
+    "EmployementNameEn": "المسمى الوظيفي عربي",
+    "UserNameAr_add": "الموظف عربي",
+    "UserNameEn_add": "الموظف انجليزي",
+    "UserNameAr_edit": "الموظف عربي",
+    "UserNameEn_edit": "الموظف انجليزي",
+    "ModalFirstMessage_User_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_User_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_User_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_User_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_User_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_User_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_User_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_User_UnHold": "ارجاع بيانات ونتائج2"
 
   },
 

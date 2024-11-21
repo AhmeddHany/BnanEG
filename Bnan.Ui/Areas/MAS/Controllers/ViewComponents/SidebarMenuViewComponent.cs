@@ -224,7 +224,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                 {
                     Title = _localizer["Statistics"],
                     ItemName = "sidebarStatistics",
-                    IconPath = "/MasSystem/images/reports.svg", // استبدل هذا المسار بأيقونة مناسبة
+                    IconPath = "/MasSystem/images/stat.svg", // استبدل هذا المسار بأيقونة مناسبة
                     SubItems = new List<SidebarMenuItem>(),
                     Authorization = true,
                 };

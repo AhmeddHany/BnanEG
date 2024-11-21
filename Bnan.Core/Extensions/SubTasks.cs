@@ -31,6 +31,12 @@
         public static string CrMasSupAccountBank { get; set; } = "1110001";
         public static string CrMasSupAccountPaymentMethod { get; set; } = "1110002";
         public static string CrMasSupAccountReference { get; set; } = "1110003";
+
+
+        ////////////
+        //MAS  Users
+        public static string CrMasUserInformationForMAS { get; set; } = "1106001";
+
     }
 }
 

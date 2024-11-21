@@ -5,7 +5,6 @@ using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
-using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +30,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IStringLocalizer<RenterDrivingLicenseController> _localizer;
 
         public RenterDrivingLicenseController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IMasRenterDrivingLicense masRenterDrivingLicense, IBaseRepo BaseRepo,IMasBase masBase,
+            IMapper mapper, IUserService userService, IMasRenterDrivingLicense masRenterDrivingLicense, IBaseRepo BaseRepo, IMasBase masBase,
             IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterDrivingLicenseController> localizer) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
@@ -101,10 +100,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         {
             var pageNumber = SubTasks.CrMasSupRenterDrivingLicense;
             var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+
             if (user == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                await SetPageTitleAsync(Status.Insert, pageNumber);
                 return RedirectToAction("Index", "RenterDrivingLicense");
             }
             // Check Validition
@@ -113,7 +113,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "RenterDrivingLicense");
             }
-            await SetPageTitleAsync(Status.Insert, pageNumber);
             // Check If code > 9 get error , because code is char(1)
             if (int.Parse(await GenerateLicenseCodeAsync()) > 9)
             {
@@ -130,17 +129,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> AddRenterDrivingLicense(RenterDrivingLicenseVM renterDrivingLicenseVM)
         {
             var pageNumber = SubTasks.CrMasSupRenterDrivingLicense;
-            
+
             var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
 
             if (!ModelState.IsValid || renterDrivingLicenseVM == null)
             {
-                await SetPageTitleAsync(Status.Insert, pageNumber);
                 return View("AddRenterDrivingLicense", renterDrivingLicenseVM);
             }
             try
             {
-                await SetPageTitleAsync(Status.Insert, pageNumber);
                 // Map ViewModel to Entity
                 var renterDrivingLicenseEntity = _mapper.Map<CrMasSupRenterDrivingLicense>(renterDrivingLicenseVM);
 
@@ -174,7 +172,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                await SetPageTitleAsync(Status.Insert, pageNumber);
                 return View("AddRenterDrivingLicense", renterDrivingLicenseVM);
             }
         }
@@ -206,10 +203,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         {
             var pageNumber = SubTasks.CrMasSupRenterDrivingLicense;
             var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+
             if (user == null && renterDrivingLicenseVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                await SetPageTitleAsync(Status.Update, pageNumber);
                 return RedirectToAction("Index", "RenterDrivingLicense");
             }
             try
@@ -227,7 +225,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 // Check if the entity already exists
                 if (await _masRenterDrivingLicense.ExistsByDetailsAsync(renterDrivingLicenseEntity))
                 {
-                    await SetPageTitleAsync(Status.Update, pageNumber);
                     await AddModelErrorsAsync(renterDrivingLicenseEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return View("Edit", renterDrivingLicenseVM);
@@ -242,7 +239,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                await SetPageTitleAsync(Status.Update, pageNumber);
                 return View("Edit", renterDrivingLicenseVM);
             }
         }
@@ -258,9 +254,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             try
             {
-                
+
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
-                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSupRenterDrivingLicenseStatus = status;
                 _unitOfWork.CrMasSupRenterDrivingLicense.Update(licence);
                 _unitOfWork.Complete();

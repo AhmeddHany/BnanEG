@@ -9,6 +9,7 @@
     "AuthEmplpoyee_AddMore": "You can't Add New Record.",
     "AuthEmplpoyee_NoUpdate": "You can't Update This Record.",
     "toastor_Exist": "This Record is Recorded before",
+    "MobilePatternError": "Enter a valid mobile number",
 
     ///////////
     "RentalSystemCode": "Rental System Code",
@@ -285,7 +286,7 @@
     "AccountBankNameEn_add": "The Bank in English",
     "AccountBankNameAr_edit": "The Bank in Arabic",
     "AccountBankNameEn_edit": "The Bank in English",
-    "AccountBankCount": "Accounts' Count",
+    "AccountBankCount": "Accounts Count",
     "ModalFirstMessage_AccountBank_Delete": "Delete Data And Results1",
     "ModalSecondMessage_AccountBank_Delete": "Delete Data And Results2",
     "ModalFirstMessage_AccountBank_UnDelete": "UnDelete Data And Results1",
@@ -349,9 +350,30 @@
     "ModalFirstMessage_Gender_Hold": "Hold Data And Results1",
     "ModalSecondMessage_Gender_Hold": "Hold Data And Results2",
     "ModalFirstMessage_Gender_UnHold": "UnHold Data And Results1",
-    "ModalSecondMessage_Gender_UnHold": "UnHold Data And Results2"
+    "ModalSecondMessage_Gender_UnHold": "UnHold Data And Results2",
 
-
+    // MAS Users
+    "Add_User_PageTitle": "Add Employee",
+    "Edit_User_PageTitle": "Update The Employee Data",
+    "View_User_PageTitle": "Employees",
+    "UserName_view": "Employee",
+    "UserCode": "Employee Code",
+    "UserID": "Employee ID",
+    "EmployementName": "Employement Name",
+    "EmployementNameAr": "Employement in Arabic",
+    "EmployementNameEn": "Employement in English",
+    "UserNameAr_add": "The Employee in Arabic",
+    "UserNameEn_add": "The Employee in English",
+    "UserNameAr_edit": "The Employee in Arabic",
+    "UserNameEn_edit": "اThe Employee in English",
+    "ModalFirstMessage_User_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_User_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_User_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_User_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_User_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_User_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_User_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_User_UnHold": "UnHold Data And Results2"
   },
   "Arabic": "Arabic",
   "English": "English",
