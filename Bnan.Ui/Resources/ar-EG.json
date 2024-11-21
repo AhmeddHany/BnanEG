@@ -186,6 +186,24 @@
     "ModalFirstMessage_CarCvt_UnHold": "ارجاع بيانات ونتائج1",
     "ModalSecondMessage_CarCvt_UnHold": "ارجاع بيانات ونتائج2",
 
+    // MAS Car Oil
+    "Add_CarOil_PageTitle": "إضافة زيت",
+    "Edit_CarOil_PageTitle": "تحديث بيانات الزيت",
+    "View_CarOil_PageTitle": "الزيت",
+    "CarOilName_view": "نوع الزيت",
+    "CarOilNameAr_add": "الزيت عربي",
+    "CarOilNameEn_add": "الزيت انجليزي",
+    "CarOilNameAr_edit": "الزيت عربي",
+    "CarOilNameEn_edit": "الزيت انجليزي",
+    "ModalFirstMessage_CarOil_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_CarOil_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_CarOil_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_CarOil_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_CarOil_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_CarOil_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_CarOil_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_CarOil_UnHold": "ارجاع بيانات ونتائج2",
+
     // MAS Car Brand
     "Add_CarBrand_PageTitle": "إضافة ماركة",
     "Edit_CarBrand_PageTitle": "تحديث بيانات الماركة",
@@ -276,6 +294,62 @@
     "ModalSecondMessage_AccountBank_Hold": "ايقاف بيانات ونتائج2",
     "ModalFirstMessage_AccountBank_UnHold": "ارجاع بيانات ونتائج1",
     "ModalSecondMessage_AccountBank_UnHold": "ارجاع بيانات ونتائج2",
+
+    // MAS AccountReference
+    "Add_AccountReference_PageTitle": "إضافة مرجع",
+    "Edit_AccountReference_PageTitle": "تحديث بيانات المرجع",
+    "View_AccountReference_PageTitle": "المرجع",
+    "AccountReferenceName_view": "المرجع",
+    "AccountReferenceNameAr_add": "المرجع عربي",
+    "AccountReferenceNameEn_add": "المرجع انجليزي",
+    "AccountReferenceNameAr_edit": "المرجع عربي",
+    "AccountReferenceNameEn_edit": "المرجع انجليزي",
+    "AccountReferenceCount": "العدد",
+    "ModalFirstMessage_AccountReference_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_AccountReference_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_AccountReference_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_AccountReference_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_AccountReference_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_AccountReference_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_AccountReference_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_AccountReference_UnHold": "ارجاع بيانات ونتائج2",
+
+    // MAS Renter Membership
+    "Add_RenterMembership_PageTitle": "إضافة عضوية",
+    "Edit_RenterMembership_PageTitle": "تحديث بيانات العضوية",
+    "View_RenterMembership_PageTitle": "العضويات",
+    "RenterMembershipName_view": "العضوية",
+    "RenterMembershipNameAr_add": "العضوية عربي",
+    "RenterMembershipNameEn_add": "العضوية انجليزي",
+    "RenterMembershipNameAr_edit": "العضوية عربي",
+    "RenterMembershipNameEn_edit": "العضوية إنجليزي",
+    "ModalFirstMessage_Membership_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_Membership_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_Membership_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_Membership_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_Membership_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_Membership_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_Membership_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_Membership_UnHold": "ارجاع بيانات ونتائج2",
+
+    // MAS Renter Gender
+    "Add_RenterGender_PageTitle": "إضافة جنس",
+    "Edit_RenterGender_PageTitle": "تحديث بيانات الجنس",
+    "View_RenterGender_PageTitle": "الجنس",
+    "RenterGenderName_view": "الجنس",
+    "RenterGenderNameAr_add": "الجنس عربي",
+    "RenterGenderNameEn_add": "الجنس انجليزي",
+    "RenterGenderNameAr_edit": "الجنس عربي",
+    "RenterGenderNameEn_edit": "الجنس إنجليزي",
+    "ModalFirstMessage_Gender_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_Gender_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_Gender_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_Gender_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_Gender_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_Gender_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_Gender_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_Gender_UnHold": "ارجاع بيانات ونتائج2",
+
     // MAS Users
     "Add_User_PageTitle": "إضافة موظف",
     "Edit_User_PageTitle": "تحديث بيانات الموظف",
@@ -299,6 +373,7 @@
     "ModalSecondMessage_User_Hold": "ايقاف بيانات ونتائج2",
     "ModalFirstMessage_User_UnHold": "ارجاع بيانات ونتائج1",
     "ModalSecondMessage_User_UnHold": "ارجاع بيانات ونتائج2"
+
   },
 
 

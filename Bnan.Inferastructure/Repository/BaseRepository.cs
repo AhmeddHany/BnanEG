@@ -380,6 +380,33 @@ namespace Bnan.Inferastructure.Repository
             return await resultQuery.ToListAsync(); 
         }
 
+
+        public async Task<List<TResult2>> FindCountByColumnAsync<TResult>(
+            Expression<Func<T, object>> columnSelector,  // العمود الذي سيتم التجميع عليه
+            string[] includes = null)
+        {
+            IQueryable<T> query = _context.Set<T>().AsNoTracking();
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            // التجميع بناءً على العمود المحدد
+            var resultQuery = query
+                .GroupBy(columnSelector) // تجميع النتائج بناءً على العمود المحدد
+                .Select(g => new TResult2
+                {
+                    Column = g.Key,           // إرجاع القيمة من العمود المحدد
+                    RowCount = g.Count()      // حساب عدد الصفوف في هذه المجموعة
+                });
+
+            return await resultQuery.ToListAsync();
+        }
+
         public IQueryable<T> GetTableAsTracking()
         {
             return _context.Set<T>().AsQueryable();

@@ -1,5 +1,5 @@
 ﻿@using Bnan.Core.Extensions
-@model List<CrMasSupRenterMembership>
+@model List<CrMasSupCarOil>
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
@@ -10,7 +10,9 @@
     <thead class="sticky-top">
         <tr>
             <th>@localizer["Count"]</th>
-            <th class="DifferAlign"> @localizer["RenterMembershipName_view"]</th>
+            <th> @localizer["RentalSystemCode"]</th>
+            <th> @localizer["RentalSystemNo"] </th>
+            <th class="DifferAlign"> @localizer["CarOilName_view"]</th>
             <th class="DifferAlign"> @localizer["the_Code"]</th>
             <th></th>
         </tr>
@@ -21,23 +23,29 @@
         }
         @foreach (var item in Model)
         {
-            <tr onclick="location.href='@Url.Action("Edit", "RenterMembership", new { id = item.CrMasSupRenterMembershipCode })'">
-                <td><p>@item.CrCasRenterLessors.Count().ToString("N0")</p></td>
+            <tr onclick="location.href='@Url.Action("Edit", "CarOil", new { id = item.CrMasSupCarOilCode })'">
+                <td><p>@item.CrCasCarInformations.Count().ToString("N0")</p></td>
+                <td>
+                    <p>@(item.CrMasSupCarOilNaqlCode ?? 0)</p>
+                </td>
+                <td>
+                    <p>@(item.CrMasSupCarOilNaqlId ?? 0)</p>
+                </td>
                 <td class="DifferAlign">
                     <p>
-                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupRenterMembershipEnName : item.CrMasSupRenterMembershipArName)
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupCarOilEnName : item.CrMasSupCarOilArName)
                     </p>
                 </td>
                 <td class="DifferAlign">
-                    <p>@item.CrMasSupRenterMembershipCode</p>
+                    <p>@item.CrMasSupCarOilCode</p>
                 </td>
                 <td>
                     <div class="filter-number-td">
                         @{
                             var filterColor = "";
-                            if (item.CrMasSupRenterMembershipStatus == Status.Active) filterColor = "filter2-div";
-                            else if (item.CrMasSupRenterMembershipStatus == Status.Hold) filterColor = "filter1-div";
-                            else if (item.CrMasSupRenterMembershipStatus == Status.Deleted) filterColor = "filter3-div";
+                            if (item.CrMasSupCarOilStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasSupCarOilStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasSupCarOilStatus == Status.Deleted) filterColor = "filter3-div";
                         }
                         <div class="filters @filterColor"></div>
                         <div>@no</div>

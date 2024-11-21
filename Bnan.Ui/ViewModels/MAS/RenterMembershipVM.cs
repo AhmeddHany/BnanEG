@@ -14,9 +14,12 @@ namespace Bnan.Ui.ViewModels.MAS
 
         [Required(ErrorMessage = "requiredFiled"), MaxLength(20, ErrorMessage = "requiredNoLengthFiled20")]
         public string? CrMasSupRenterMembershipEnName { get; set; }
+        [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupRenterMembershipAcceptPicture { get; set; }
+        [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupRenterMembershipRejectPicture { get; set; }
         public string? CrMasSupRenterMembershipStatus { get; set; }
+        [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupRenterMembershipReasons { get; set; }
 
         public virtual CrMasSysGroup? CrMasSupRenterMembershipGroupCodeNavigation { get; set; }

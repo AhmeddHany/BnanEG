@@ -24,6 +24,7 @@ public interface IGenric<T> where T : class
 
     Task<List<TResult>> FindAllWithSelectAsNoTrackingAsync<TResult>(Expression<Func<T, bool>> predicate,Func<IQueryable<T>, IQueryable<TResult>> selectProjection,string[] includes = null);
     Task<List<TResult2>?> FindCountByColumnAsync<TResult>(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> columnSelector, string[] includes = null);
+    Task<List<TResult2>?> FindCountByColumnAsync<TResult>(Expression<Func<T, object>> columnSelector, string[] includes = null);
     T Add(T entity);
     Task<T> AddAsync(T entity);
     //IEnumerable<T> AddRange(IEnumerable<T> entities);

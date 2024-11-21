@@ -1,0 +1,266 @@
+﻿@using Bnan.Ui.ViewModels.MAS
+@model CarOilVM
+
+@inject IViewLocalizer localizer
+
+@{
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="MAS" asp-controller="CarOil" asp-action="AddCarOil" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasSupCarOilCode" />
+            <div class="row  mt-3 g-3">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3>@localizer["Add_CarOil_PageTitle"]</h3>
+                            </div>
+                            <div class="col-md-auto save-col">
+                                <button type="submit" class="custom-img-btn"> <img src="~/MasSystem/images/save.svg" /> </button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/CarOil/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="row  mt-3 g-3 ">
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="DataTitle">@localizer["the_Code"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasSupCarOilCode</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <label for="AR-Licence" class="form-label">
+                                                @localizer["CarOilNameAr_add"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" asp-for="CrMasSupCarOilArName" id="CrMasSupCarOilArName" maxlength="50" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupCarOilArName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarOilArName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="EN-Licence" class="form-label">
+                                                @localizer["CarOilNameEn_add"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupCarOilEnName" maxlength="50" id="CrMasSupCarOilEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupCarOilEnName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarOilEnName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="rental-system-number" class="form-label">@localizer["RentalSystemNo"]</label>
+                                            <input type="tel" class="form-control inputs number-input" asp-for="CrMasSupCarOilNaqlCode" id="CrMasSupCarOilNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupCarOilNaqlCode" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarOilNaqlCode-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="rental-system-pin" class="form-label">@localizer["RentalSystemCode"]</label>
+                                            <input type="tel" class="form-control number-input inputs" asp-for="CrMasSupCarOilNaqlId" id="CrMasSupCarOilNaqlId" maxlength="10" oninput="validateNumberLength(this)">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupCarOilNaqlId" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarOilNaqlId-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row ">
+                                        <div class="col-lg-12">
+                                            <label>@localizer["Reason_s"]</label>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupCarOilReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupCarOilReasons" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="dropzone-Card">
+                                        <div class="drop-zone">
+                                            <div class="layer" style="display: none;">
+                                                <i class="fa-regular fa-circle-xmark removeImage"></i>
+                                            </div>
+                                            <span class="drop-zone__prompt">
+                                                <img src="~/images/upload icon.svg" class="mb-3">
+                                                <br>قم بسحب وإسقاط صورة أو اختر صورة
+                                            </span>
+                                            <input type="file" name="myFile" class="drop-zone__input">
+                                        </div>
+                                        <div class="fileNameDiv">
+                                            <p class="text-center pt-1 mb-1 fileNameP">الميزة </p>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
+
+    <script src="~/MasSystem/js/Scripts.js"></script>
+    <script src="~/MasSystem/js/DragDropImage.js"></script>
+    <!-- Local script -->
+    <script>
+        function AddThumbnail() {
+            document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+                const dropZoneElement = inputElement.closest(".drop-zone");
+                const dropZoneCard = inputElement.closest(".dropzone-Card");
+                const layerElement = dropZoneElement.querySelector(".layer");
+                const removeImageButton = dropZoneElement.querySelector(".removeImage");
+                const fileNameP = dropZoneCard.querySelector(".fileNameP");
+                const fileNameDiv = dropZoneCard.querySelector(".fileNameDiv");
+                let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+                const filePath = "~/MasSystem/images/test-image.svg";
+                console.log(fileNameP)
+                const promptElement = dropZoneElement.querySelector(".drop-zone__prompt");
+                if (promptElement) {
+                    promptElement.remove();
+                }
+
+                if (!thumbnailElement) {
+                    thumbnailElement = document.createElement("div");
+                    thumbnailElement.classList.add("drop-zone__thumb");
+                    dropZoneElement.appendChild(thumbnailElement);
+                    dropZoneElement.style.border = "none";
+                }
+
+                fileNameP.innerHTML = "Sunroof";
+                fileNameDiv.style.background = "#39629C";
+                thumbnailElement.style.backgroundImage = `url('${filePath}')`;
+
+                dropZoneElement.addEventListener("mouseenter", () => {
+                    if (thumbnailElement.style.backgroundImage) {
+                        layerElement.style.display = 'flex';
+                    }
+                });
+
+                dropZoneElement.addEventListener("mouseleave", () => {
+                    layerElement.style.display = 'none';
+                });
+
+                const removeIcon = layerElement.querySelector("i");
+                removeIcon.addEventListener("click", () => {
+                    thumbnailElement.style.backgroundImage = '';
+                    fileNameP.innerHTML = '';
+                    fileNameDiv.style.background = '';
+                    layerElement.style.display = 'none';
+                });
+            });
+        }
+        window.onload = () => {
+            AddThumbnail()
+        }
+
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            // This To Focus On input when page load
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                $("#CrMasSupCarOilEnName").focus();
+            }
+            else {
+                $("#CrMasSupCarOilArName").focus();
+            }
+            //////////////////////////////////////////
+
+
+            function Check_onChange_input(existName, dataField) {
+                $.ajax({
+                    type: "GET",
+                    url: "/MAS/CarOil/CheckChangedField",
+                    data: { existName: existName, dataField: dataField },
+                    success: function (result) {
+                        console.log("feedback", result);
+                        // Hide all previous error messages
+                        $('.invalid-feedback').show();
+
+                        // Show new error messages if they exist
+                        if (result.errors && result.errors.length > 0) {
+                            result.errors.forEach(function (error) {
+                                // Use the ID from the error object to find the correct element
+                                $(`#${error.field}-Error`).text(error.message).show();
+                            });
+                        } else {
+                            // Hide the error message if no errors
+                            $(`#${existName}-Error`).text("");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+
+            $('#CrMasSupCarOilArName').on('change', function () {
+                var newValue = $(this).val();
+                console.log("newValue", newValue)
+                Check_onChange_input('CrMasSupCarOilArName', newValue);
+            });
+
+            $('#CrMasSupCarOilEnName').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupCarOilEnName', newValue);
+            });
+
+            $('#CrMasSupCarOilNaqlCode').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupCarOilNaqlCode', newValue);
+            });
+
+            $('#CrMasSupCarOilNaqlId').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupCarOilNaqlId', newValue);
+            });
+        });
+
+    </script>
+}

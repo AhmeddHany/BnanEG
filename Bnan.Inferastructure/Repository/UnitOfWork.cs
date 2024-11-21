@@ -43,7 +43,7 @@ namespace Bnan.Inferastructure.Repository
         public IGenric<CrMasUserInformation> CrMasUserInformation { get; private set; }
         public IGenric<CrMasSupCarCategory> CrMasSupCarCategory { get; private set; }
         public IGenric<CrMasSupCarModel> CrMasSupCarModel { get; private set; }
-
+        public IGenric<CrMasSupCarOil> CrMasSupCarOil { get; private set; }
         public IGenric<CrMasSupContractAdditional> CrMasSupContractAdditional { get; private set; }
 
         public IGenric<CrMasSupContractOption> CrMasSupContractOption { get; private set; }
@@ -154,6 +154,7 @@ namespace Bnan.Inferastructure.Repository
             CrCasSysAdministrativeProcedure = new BaseRepository<CrCasSysAdministrativeProcedure>(_context);
             CrCasCarInformation = new BaseRepository<CrCasCarInformation>(_context);
             CrMasSupCarRegistration = new BaseRepository<CrMasSupCarRegistration>(_context);
+            CrMasSupCarOil = new BaseRepository<CrMasSupCarOil>(_context);
             CrMasSupCarFuel = new BaseRepository<CrMasSupCarFuel>(_context);
             CrMasSupCarCvt = new BaseRepository<CrMasSupCarCvt>(_context);
             CrMasSupCarColor = new BaseRepository<CrMasSupCarColor>(_context);

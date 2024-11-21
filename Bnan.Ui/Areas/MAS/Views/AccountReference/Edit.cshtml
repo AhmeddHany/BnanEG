@@ -1,6 +1,6 @@
 ﻿@using Bnan.Ui.ViewModels.MAS
 @using Bnan.Core.Extensions
-@model RenterMembershipVM
+@model MasAccountReferenceVM
 
 @inject IViewLocalizer localizer
 @{
@@ -12,16 +12,16 @@
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
-        <form asp-area="MAS" asp-controller="RenterMembership" asp-action="Edit" class="needs-validation" novalidate>
-            <input hidden asp-for="CrMasSupRenterMembershipCode" />
-            <input hidden asp-for="CrMasSupRenterMembershipStatus" />
+        <form asp-area="MAS" asp-controller="AccountReference" asp-action="Edit" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasSupAccountReceiptReferenceCode" />
+            <input hidden asp-for="CrMasSupAccountPaymentMethodStatus" />
             <div class="row mt-3 g-3">
 
                 <div class="row justify-content-center">
                     <div class="col-lg-9">
                         <div class="row g-3 my-2">
                             <div class="col">
-                                <h3>@localizer["Edit_RenterMembership_PageTitle"]</h3>
+                                <h3>@localizer["Edit_AccountReference_PageTitle"]</h3>
                             </div>
                             <div class="col-md-auto save-col btnsContainer">
                                 <button type="submit" class="custom-img-btn" id="SaveEdit">
@@ -33,7 +33,7 @@
                                 <button type="button" class="custom-img-btn" id="DeleteBtn" data-bs-toggle="modal" data-bs-target="#Delete-Modal">
                                     <img id="modalIcon" src="~/MasSystem/images/delete.svg" />
                                 </button>
-                                <button type="button" class="custom-img-btn"> <a href="/MAS/RenterMembership/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/AccountReference/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
                             </div>
                         </div>
 
@@ -47,7 +47,7 @@
                                                     <p class="DataTitle">@localizer["the_Code"]</p>
                                                 </div>
                                                 <div class="col-auto ">
-                                                    <p class="Saved-data">@Model.CrMasSupRenterMembershipCode</p>
+                                                    <p class="Saved-data">@Model.CrMasSupAccountReceiptReferenceCode</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -59,32 +59,33 @@
                                     <div class="row align-items-center">
                                         <div class="col-md-6">
                                             <label for="AR-Licence" class="form-label">
-                                                @localizer["RenterMembershipNameAr_edit"]
+                                                @localizer["AccountReferenceNameAr_edit"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" asp-for="CrMasSupRenterMembershipArName" id="CrMasSupRenterMembershipArName" maxlength="20" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <input type="text" asp-for="CrMasSupAccountReceiptReferenceArName" id="CrMasSupAccountReceiptReferenceArName" maxlength="50" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterMembershipArName" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupRenterMembershipArName-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupAccountReceiptReferenceArName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupAccountReceiptReferenceArName-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="EN-Licence" class="form-label">
-                                                @localizer["RenterMembershipNameEn_edit"]
+                                                @localizer["AccountReferenceNameEn_edit"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupRenterMembershipEnName" maxlength="20" id="CrMasSupRenterMembershipEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupAccountReceiptReferenceEnName" maxlength="50" id="CrMasSupAccountReceiptReferenceEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterMembershipEnName" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupRenterMembershipEnName-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupAccountReceiptReferenceEnName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupAccountReceiptReferenceEnName-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
 
                                 <div class="col-md-12">
                                     <div class="row">
@@ -108,6 +109,7 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
 
@@ -115,15 +117,15 @@
                                     <div class="row ">
                                         <div class="col-lg-12">
                                             <label>@localizer["Reason_s"]</label>
-                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupRenterMembershipReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupAccountPaymentMethodReasons" rows="1" maxlength="100" type="text"></textarea>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterMembershipReasons" class="text-danger"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupAccountPaymentMethodReasons" class="text-danger"></span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                               </div>
                             </div>
                         </div>
                     </div>
@@ -132,6 +134,7 @@
         </form>
     </div>
 </div>
+
 
 <!-- delete modal -->
 <div class="modal fade" id="Delete-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -163,7 +166,6 @@
 </div>
 
 
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/toastr.js"></script>
@@ -175,15 +177,15 @@
     <script>
         // This To Focus On input when page load
         if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
-            $("#CrMasSupRenterMembershipEnName").focus();
+            $("#CrMasSupAccountReceiptReferenceEnName").focus();
         }
         else {
-            $("#CrMasSupRenterMembershipArName").focus();
+            $("#CrMasSupAccountReceiptReferenceArName").focus();
         }
         //////////////////////////////////////////
-        var statusInput = $("#CrMasSupRenterMembershipStatus");
-        var OldArName = $("#CrMasSupRenterMembershipArName").val();
-        var OldEnName = $("#CrMasSupRenterMembershipEnName").val();
+        var statusInput = $("#CrMasSupAccountPaymentMethodStatus");
+        var OldArName = $("#CrMasSupAccountReceiptReferenceArName").val();
+        var OldEnName = $("#CrMasSupAccountReceiptReferenceEnName").val();
 
 
         function Check_onChange_input(existName, dataField, oldValue) {
@@ -196,7 +198,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "/MAS/RenterMembership/CheckChangedField",
+                url: "/MAS/AccountReference/CheckChangedField",
                 data: { existName: existName, dataField: dataField },
                 success: function (result) {
                     console.log("feedback", result);
@@ -221,25 +223,25 @@
         }
 
         // Example usage for Arabic Name input
-        $('#CrMasSupRenterMembershipArName').on('change', function () {
+        $('#CrMasSupAccountReceiptReferenceArName').on('change', function () {
             var newValue = $(this).val();
-            Check_onChange_input('CrMasSupRenterMembershipArName', newValue, OldArName);
+            Check_onChange_input('CrMasSupAccountReceiptReferenceArName', newValue, OldArName);
         });
 
         // Example usage for English Name input
-        $('#CrMasSupRenterMembershipEnName').on('change', function () {
+        $('#CrMasSupAccountReceiptReferenceEnName').on('change', function () {
             var newValue = $(this).val();
-            Check_onChange_input('CrMasSupRenterMembershipEnName', newValue, OldEnName);
+            Check_onChange_input('CrMasSupAccountReceiptReferenceEnName', newValue, OldEnName);
         });
 
     </script>
     <script>
-        function updateRenterMembershipStatus(status) {
-            var code = document.getElementById("CrMasSupRenterMembershipCode").value;
+        function updateAccountReferenceStatus(status) {
+            var code = document.getElementById("CrMasSupAccountReceiptReferenceCode").value;
             return new Promise((resolve, reject) => {
                 $.ajax({
                     type: "POST",
-                    url: "/MAS/RenterMembership/EditStatus",
+                    url: "/MAS/AccountReference/EditStatus",
                     data: { status: status, code: code },
                     success: function (result) {
                         toastr.options = { "positionClass": "@localizer["toastPostion"]" };
@@ -293,49 +295,49 @@
 
             document.getElementById("modalContent").innerHTML = isDeleted
                 ? `
-                                                                    <div class="modal-header border-0">
-                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                        <img src="/MasSystem/images/Green-recycle.svg" /> @localizer["SureToRetriveDelete"]
-                                                                      </h1>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <p>@localizer["ModalFirstMessage_Membership_UnDelete"]</p>
-                                                                        <p>@localizer["ModalSecondMessage_Membership_UnDelete"]</p>
-                                                                    </div>
-                                                                    <div class="modal-footer border-0">
-                                                                      <div class="container">
-                                                                        <div class="row">
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
-                                                                          </div>
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                          </div>
-                                                                        </div>
-                                                                      </div>
-                                                                    </div>`
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/Green-recycle.svg" /> @localizer["SureToRetriveDelete"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_AccountReference_UnDelete"]</p>
+                                                                <p>@localizer["ModalSecondMessage_AccountReference_UnDelete"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`
                 : `
-                                                                    <div class="modal-header border-0">
-                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                        <img src="/MasSystem/images/delete (2).svg" /> @localizer["SureTodelete"]
-                                                                      </h1>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                                <p>@localizer["ModalFirstMessage_Membership_Delete"]</p>
-                                                                                <p>@localizer["ModalSecondMessage_Membership_Delete"]</p>
-                                                                    </div>
-                                                                    <div class="modal-footer border-0">
-                                                                      <div class="container">
-                                                                        <div class="row">
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-modal-Save" id="DeleteBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
-                                                                          </div>
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                          </div>
-                                                                        </div>
-                                                                      </div>
-                                                                    </div>`;
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/delete (2).svg" /> @localizer["SureTodelete"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_AccountReference_Delete"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_AccountReference_Delete"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="DeleteBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`;
         }
         function DeleteLoad() {
             const modalContent = document.getElementById("modalContent");
@@ -352,7 +354,7 @@
                 modal.hide();
 
                 const newStatus = isDeleted ? '@Status.UnDeleted' : '@Status.Deleted';
-                const success = await updateRenterMembershipStatus(newStatus);
+                const success = await updateAccountReferenceStatus(newStatus);
                 if (success) {
                     statusInput.val(isDeleted ? '@Status.Active' : '@Status.Deleted');
                     isDeleted = !isDeleted;
@@ -363,7 +365,7 @@
 
                     DeleteState(isDeleted);
                     setTimeout(function () {
-                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterMembership")';
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "AccountReference")';
                     }, 500); // التأخير لمدة .5 ثوانٍ
                 }
                 else {
@@ -386,49 +388,49 @@
 
             document.getElementById("Stop-modal-Content").innerHTML = isStoped
                 ? `
-                                                                    <div class="modal-header border-0">
-                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                        <img src="/MasSystem/images/GreenStop.svg" /> @localizer["SureToRetriveHold"]
-                                                                      </h1>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <p>@localizer["ModalFirstMessage_Membership_UnHold"]</p>
-                                                                        <p>@localizer["ModalSecondMessage_Membership_UnHold"]</p>
-                                                                    </div>
-                                                                    <div class="modal-footer border-0">
-                                                                      <div class="container">
-                                                                        <div class="row">
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="StopLoad()">@localizer["Okay"]</button>
-                                                                          </div>
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                          </div>
-                                                                        </div>
-                                                                      </div>
-                                                                    </div>`
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/GreenStop.svg" /> @localizer["SureToRetriveHold"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_AccountReference_UnHold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_AccountReference_UnHold"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`
                 : `
-                                                                    <div class="modal-header border-0">
-                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                        <img src="/MasSystem/images/RedStop.svg" /> @localizer["SureToHold"]
-                                                                      </h1>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <p>@localizer["ModalFirstMessage_Membership_Hold"]</p>
-                                                                        <p>@localizer["ModalSecondMessage_Membership_Hold"]</p>
-                                                                    </div>
-                                                                    <div class="modal-footer border-0">
-                                                                      <div class="container">
-                                                                        <div class="row">
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-modal-Save" id="HoldBtn" onclick="StopLoad()">@localizer["Okay"]</button>
-                                                                          </div>
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                          </div>
-                                                                        </div>
-                                                                      </div>
-                                                                    </div>`;
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/RedStop.svg" /> @localizer["SureToHold"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_AccountReference_Hold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_AccountReference_Hold"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="HoldBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`;
         }
         function StopLoad() {
             const stopModalContent = document.getElementById("Stop-modal-Content");
@@ -445,7 +447,7 @@
                 modal.hide();
 
                 const newStatus = isStoped ? '@Status.UnHold' : '@Status.Hold';
-                const success = await updateRenterMembershipStatus(newStatus);
+                const success = await updateAccountReferenceStatus(newStatus);
                 if (success) {
                     statusInput.val(isStoped ? '@Status.Active' : '@Status.Hold');
                     isStoped = !isStoped;
@@ -456,7 +458,7 @@
 
                     StopState(isStoped);
                     setTimeout(function () {
-                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterMembership")';
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "AccountReference")';
                     }, 500); // التأخير لمدة .5 ثوانٍ
                 }
             }, 500);

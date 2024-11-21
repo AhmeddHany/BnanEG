@@ -59,6 +59,7 @@ namespace Bnan.Core.Interfaces
         public IGenric<CrCasCarInformation> CrCasCarInformation { get; }
         public IGenric<CrMasSupCarRegistration> CrMasSupCarRegistration { get; }
         public IGenric<CrMasSupCarFuel> CrMasSupCarFuel { get; }
+        public IGenric<CrMasSupCarOil> CrMasSupCarOil { get; }
         public IGenric<CrMasSupCarCvt> CrMasSupCarCvt { get; }
         public IGenric<CrMasSupCarColor> CrMasSupCarColor { get; }
         public IGenric<CrCasCarDocumentsMaintenance> CrCasCarDocumentsMaintenance { get; }

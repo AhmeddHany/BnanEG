@@ -1,6 +1,6 @@
 ﻿@using Bnan.Ui.ViewModels.MAS
 @using Bnan.Core.Extensions
-@model CarModelVM
+@model CarOilVM
 
 @inject IViewLocalizer localizer
 @{
@@ -12,17 +12,16 @@
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
-        <form asp-area="MAS" asp-controller="CarModel" asp-action="Edit" class="needs-validation" novalidate>
-            <input hidden asp-for="CrMasSupCarModelCode" />
-            <input hidden asp-for="CrMasSupCarModelStatus" />
-            <input hidden asp-for="CrMasSupCarModelCounter" />
+        <form asp-area="MAS" asp-controller="CarOil" asp-action="Edit" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasSupCarOilCode" />
+            <input hidden asp-for="CrMasSupCarOilStatus" />
             <div class="row mt-3 g-3">
 
                 <div class="row justify-content-center">
                     <div class="col-lg-9">
                         <div class="row g-3 my-2">
                             <div class="col">
-                                <h3>@localizer["Edit_CarModel_PageTitle"]</h3>
+                                <h3>@localizer["Edit_CarOil_PageTitle"]</h3>
                             </div>
                             <div class="col-md-auto save-col btnsContainer">
                                 <button type="submit" class="custom-img-btn" id="SaveEdit">
@@ -34,7 +33,7 @@
                                 <button type="button" class="custom-img-btn" id="DeleteBtn" data-bs-toggle="modal" data-bs-target="#Delete-Modal">
                                     <img id="modalIcon" src="~/MasSystem/images/delete.svg" />
                                 </button>
-                                <button type="button" class="custom-img-btn"> <a href="/MAS/CarModel/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/CarOil/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
                             </div>
                         </div>
 
@@ -48,22 +47,11 @@
                                                     <p class="DataTitle">@localizer["the_Code"]</p>
                                                 </div>
                                                 <div class="col-auto ">
-                                                    <p class="Saved-data">@Model.CrMasSupCarModelCode</p>
+                                                    <p class="Saved-data">@Model.CrMasSupCarOilCode</p>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6 ">
-                                                <p class="DataTitle">@localizer["CarBrandName_view"]</p>
 
-                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                                {
-                                                    <p class="Saved-data">@Model.All_Brands.Find(x=>x.CrMasSupCarBrandCode == Model.CrMasSupCarModelBrand)?.CrMasSupCarBrandEnName</p>
-                                                }
-                                                else
-                                                {
-                                                    <p class="Saved-data">@Model.All_Brands.Find(x=>x.CrMasSupCarBrandCode == Model.CrMasSupCarModelBrand)?.CrMasSupCarBrandArName</p>
-                                                }
-                                        </div>
                                     </div>
                                 </div>
 
@@ -71,106 +59,89 @@
                                     <div class="row align-items-center">
                                         <div class="col-md-6">
                                             <label for="AR-Licence" class="form-label">
-                                                @localizer["CarModelNameAr_edit"]
+                                                @localizer["CarOilNameAr_edit"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" asp-for="CrMasSupCarModelArName" id="CrMasSupCarModelArName" maxlength="30" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <input type="text" asp-for="CrMasSupCarOilArName" id="CrMasSupCarOilArName" maxlength="50" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupCarModelArName" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupCarModelArName-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupCarOilArName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarOilArName-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="EN-Licence" class="form-label">
-                                                @localizer["CarModelNameEn_edit"]
+                                                @localizer["CarOilNameEn_edit"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupCarModelEnName" maxlength="30" id="CrMasSupCarModelEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupCarOilEnName" maxlength="50" id="CrMasSupCarOilEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupCarModelEnName" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupCarModelEnName-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupCarOilEnName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarOilEnName-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-
-                                <input hidden asp-for="CrMasSupCarModelBrand" />
-                                @*<div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-6 ">
-                                            <label for="BrandSelect" class="form-label"> @localizer["CarBrandName_view"] <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
-                                            <select class="form-select select-style" asp-for="@Model.CrMasSupCarModelBrand" id="BrandSelect" required>
-                                                <option> </option>
-                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                                {
-                                                    @foreach (var brand in Model.All_Brands)
-                                                    {
-                                                        <option value="@brand.CrMasSupCarBrandCode"> @brand.CrMasSupCarBrandEnName  </option>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    @foreach (var brand in Model.All_Brands)
-                                                    {
-                                                        <option value="@brand.CrMasSupCarBrandCode"> @brand.CrMasSupCarBrandArName  </option>
-                                                    }
-                                                }
-
-                                            </select>
-                                            <div class="invaild">
-                                                <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupCarModelBrand" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupCarModelBrand-Error"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>*@
 
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="rental-system-number" class="form-label">@localizer["RentalSystemNo"]</label>
-                                            <input disabled type="text" class="form-control inputs number-input" id="CrMasSupCarModelNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
+                                            <input type="text" class="form-control inputs number-input" asp-for="CrMasSupCarOilNaqlCode" id="CrMasSupCarOilNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupCarModelNaqlCode-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupCarOilNaqlCode" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarOilNaqlCode-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="rental-system-pin" class="form-label">@localizer["RentalSystemCode"]</label>
-                                            <input disabled type="text" class="form-control number-input inputs" id="CrMasSupCarModelNaqlId" maxlength="10" oninput="validateNumberLength(this)">
+                                            <input type="text" class="form-control number-input inputs" asp-for="CrMasSupCarOilNaqlId" id="CrMasSupCarOilNaqlId" maxlength="10" oninput="validateNumberLength(this)">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupCarModelNaqlId-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupCarOilNaqlId" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarOilNaqlId-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
 
                                     </div>
                                 </div>
-
                                 <div class="col-md-12">
                                     <div class="row ">
                                         <div class="col-lg-12">
                                             <label>@localizer["Reason_s"]</label>
-                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupCarModelReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupCarOilReasons" rows="1" maxlength="100" type="text"></textarea>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupCarModelReasons" class="text-danger"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupCarOilReasons" class="text-danger"></span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                               </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="dropzone-Card">
+                                        <div class="drop-zone">
+                                            <div class="layer" style="display: none;">
+                                                <i class="fa-regular fa-circle-xmark removeImage"></i>
+                                            </div>
+                                            <span class="drop-zone__prompt">
+                                                <img src="~/images/upload icon.svg" class="mb-3">
+                                                <br>قم بسحب وإسقاط صورة أو اختر صورة
+                                            </span>
+                                            <input type="file" name="myFile" class="drop-zone__input">
+                                        </div>
+                                        <div class="fileNameDiv">
+                                            <p class="text-center pt-1 mb-1 fileNameP">الميزة </p>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -179,7 +150,6 @@
         </form>
     </div>
 </div>
-
 
 <!-- delete modal -->
 <div class="modal fade" id="Delete-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -214,14 +184,59 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/toastr.js"></script>
+
+    <script src="~/MasSystem/js/Scripts.js"></script>
+    <script src="~/MasSystem/js/DragDropImage.js"></script>
+    <!-- Local script -->
     <script>
-         
-        $(document).ready(function () {
-            $("#BrandSelect option[value='"+'@Model.CrMasSupCarModelBrand'+"']").prop('selected', true);
-        });
+        function AddThumbnail() {
+            document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+                const dropZoneElement = inputElement.closest(".drop-zone");
+                const dropZoneCard = inputElement.closest(".dropzone-Card");
+                const layerElement = dropZoneElement.querySelector(".layer");
+                const removeImageButton = dropZoneElement.querySelector(".removeImage");
+                const fileNameP = dropZoneCard.querySelector(".fileNameP");
+                const fileNameDiv = dropZoneCard.querySelector(".fileNameDiv");
+                let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+                const filePath = "~/images/test-image.svg";
+                console.log(fileNameP)
+                const promptElement = dropZoneElement.querySelector(".drop-zone__prompt");
+                if (promptElement) {
+                    promptElement.remove();
+                }
+
+                if (!thumbnailElement) {
+                    thumbnailElement = document.createElement("div");
+                    thumbnailElement.classList.add("drop-zone__thumb");
+                    dropZoneElement.appendChild(thumbnailElement);
+                    dropZoneElement.style.border = "none";
+                }
+
+                fileNameP.innerHTML = "Sunroof";
+                fileNameDiv.style.background = "#39629C";
+                thumbnailElement.style.backgroundImage = `url('${filePath}')`;
+
+                dropZoneElement.addEventListener("mouseenter", () => {
+                    if (thumbnailElement.style.backgroundImage) {
+                        layerElement.style.display = 'flex';
+                    }
+                });
+
+                dropZoneElement.addEventListener("mouseleave", () => {
+                    layerElement.style.display = 'none';
+                });
+
+                const removeIcon = layerElement.querySelector("i");
+                removeIcon.addEventListener("click", () => {
+                    thumbnailElement.style.backgroundImage = '';
+                    fileNameP.innerHTML = '';
+                    fileNameDiv.style.background = '';
+                    layerElement.style.display = 'none';
+                });
+            });
+        }
+
     </script>
-
-
     <script>
         // To Handle Background
         $("#wrapper").addClass("Branches-wrapper");
@@ -229,15 +244,17 @@
     <script>
         // This To Focus On input when page load
         if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
-            $("#CrMasSupCarModelEnName").focus();
+            $("#CrMasSupCarOilEnName").focus();
         }
         else {
-            $("#CrMasSupCarModelArName").focus();
+            $("#CrMasSupCarOilArName").focus();
         }
         //////////////////////////////////////////
-        var statusInput = $("#CrMasSupCarModelStatus");
-        var OldArName = $("#CrMasSupCarModelArName").val();
-        var OldEnName = $("#CrMasSupCarModelEnName").val();
+        var statusInput = $("#CrMasSupCarOilStatus");
+        var OldNaqlId = $("#CrMasSupCarOilNaqlId").val();
+        var OldNaqlCode = $("#CrMasSupCarOilNaqlCode").val();
+        var OldArName = $("#CrMasSupCarOilArName").val();
+        var OldEnName = $("#CrMasSupCarOilEnName").val();
 
 
         function Check_onChange_input(existName, dataField, oldValue) {
@@ -247,12 +264,11 @@
                 $(`#${existName}-Error`).hide();
                 return;
             }
-            var brandCode = $("#BrandSelect :selected").val();
 
             $.ajax({
                 type: "GET",
-                url: "/MAS/CarModel/CheckChangedField",
-                data: { existName: existName, dataField: dataField, brandCode: brandCode },
+                url: "/MAS/CarOil/CheckChangedField",
+                data: { existName: existName, dataField: dataField },
                 success: function (result) {
                     console.log("feedback", result);
                     // Hide all previous error messages
@@ -276,25 +292,36 @@
         }
 
         // Example usage for Arabic Name input
-        $('#CrMasSupCarModelArName').on('change', function () {
+        $('#CrMasSupCarOilArName').on('change', function () {
             var newValue = $(this).val();
-            Check_onChange_input('CrMasSupCarModelArName', newValue, OldArName);
+            Check_onChange_input('CrMasSupCarOilArName', newValue, OldArName);
         });
 
         // Example usage for English Name input
-        $('#CrMasSupCarModelEnName').on('change', function () {
+        $('#CrMasSupCarOilEnName').on('change', function () {
             var newValue = $(this).val();
-            Check_onChange_input('CrMasSupCarModelEnName', newValue, OldEnName);
+            Check_onChange_input('CrMasSupCarOilEnName', newValue, OldEnName);
         });
 
+        // Example usage for Naql Code input
+        $('#CrMasSupCarOilNaqlCode').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSupCarOilNaqlCode', newValue, OldNaqlCode);
+        });
+
+        // Example usage for Naql ID input
+        $('#CrMasSupCarOilNaqlId').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSupCarOilNaqlId', newValue, OldNaqlId);
+        });
     </script>
     <script>
-        function updateCarModelStatus(status) {
-            var code = document.getElementById("CrMasSupCarModelCode").value;
+        function updateCarOilStatus(status) {
+            var code = document.getElementById("CrMasSupCarOilCode").value;
             return new Promise((resolve, reject) => {
                 $.ajax({
                     type: "POST",
-                    url: "/MAS/CarModel/EditStatus",
+                    url: "/MAS/CarOil/EditStatus",
                     data: { status: status, code: code },
                     success: function (result) {
                         toastr.options = { "positionClass": "@localizer["toastPostion"]" };
@@ -334,6 +361,7 @@
         }
 
         window.onload = () => {
+            AddThumbnail();
             DeleteState(isDeleted);
             StopState(isStoped);
         };
@@ -354,8 +382,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p>@localizer["ModalFirstMessage_CarModel_UnDelete"]</p>
-                                                                <p>@localizer["ModalSecondMessage_CarModel_UnDelete"]</p>
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_UnDelete"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_UnDelete"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
@@ -376,8 +404,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                                        <p>@localizer["ModalFirstMessage_CarModel_Delete"]</p>
-                                                                        <p>@localizer["ModalSecondMessage_CarModel_Delete"]</p>
+                                                                        <p>@localizer["ModalFirstMessage_DrivingLicense_Delete"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_DrivingLicense_Delete"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
@@ -407,7 +435,7 @@
                 modal.hide();
 
                 const newStatus = isDeleted ? '@Status.UnDeleted' : '@Status.Deleted';
-                const success = await updateCarModelStatus(newStatus);
+                const success = await updateCarOilStatus(newStatus);
                 if (success) {
                     statusInput.val(isDeleted ? '@Status.Active' : '@Status.Deleted');
                     isDeleted = !isDeleted;
@@ -418,7 +446,7 @@
 
                     DeleteState(isDeleted);
                     setTimeout(function () {
-                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "CarModel")';
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "CarOil")';
                     }, 500); // التأخير لمدة .5 ثوانٍ
                 }
                 else {
@@ -447,8 +475,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p>@localizer["ModalFirstMessage_CarModel_UnHold"]</p>
-                                                                <p>@localizer["ModalSecondMessage_CarModel_UnHold"]</p>
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_UnHold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_UnHold"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
@@ -469,8 +497,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p>@localizer["ModalFirstMessage_CarModel_Hold"]</p>
-                                                                <p>@localizer["ModalSecondMessage_CarModel_Hold"]</p>
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_Hold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_Hold"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
@@ -500,7 +528,7 @@
                 modal.hide();
 
                 const newStatus = isStoped ? '@Status.UnHold' : '@Status.Hold';
-                const success = await updateCarModelStatus(newStatus);
+                const success = await updateCarOilStatus(newStatus);
                 if (success) {
                     statusInput.val(isStoped ? '@Status.Active' : '@Status.Hold');
                     isStoped = !isStoped;
@@ -511,7 +539,7 @@
 
                     StopState(isStoped);
                     setTimeout(function () {
-                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "CarModel")';
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "CarOil")';
                     }, 500); // التأخير لمدة .5 ثوانٍ
                 }
             }, 500);

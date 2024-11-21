@@ -25,7 +25,7 @@ namespace Bnan.Ui.ViewModels.MAS
 
         public List<CrMasSupAccountBank> crMasSupAccountBank = new List<CrMasSupAccountBank>();
 
-        public List<TResult2>? cars_count = new List<TResult2>();
+        public List<TResult2>? Banks_count = new List<TResult2>();
 
 
     }
