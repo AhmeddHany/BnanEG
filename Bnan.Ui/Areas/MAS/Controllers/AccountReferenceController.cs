@@ -19,23 +19,23 @@ namespace Bnan.Ui.Areas.MAS.Controllers
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
     [ServiceFilter(typeof(SetCurrentPathMASFilter))]
-    public class BankController : BaseController
+    public class AccountReferenceController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
         private readonly IUserService _userService;
-        private readonly IMasAccountBank _masAccountBank;
+        private readonly IMasAccountReference _masAccountReference;
         private readonly IBaseRepo _baseRepo;
         private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IStringLocalizer<BankController> _localizer;
+        private readonly IStringLocalizer<AccountReferenceController> _localizer;
 
-        public BankController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IMasAccountBank masAccountBank, IBaseRepo BaseRepo,IMasBase masBase,
-            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<BankController> localizer) : base(userManager, unitOfWork, mapper)
+        public AccountReferenceController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
+            IMapper mapper, IUserService userService, IMasAccountReference masAccountReference, IBaseRepo BaseRepo,IMasBase masBase,
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<AccountReferenceController> localizer) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
-            _masAccountBank = masAccountBank;
+            _masAccountReference = masAccountReference;
             _userLoginsService = userLoginsService;
             _baseRepo = BaseRepo;
             _masBase = masBase;
@@ -48,17 +48,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountReference;
             // Set page titles
             await SetPageTitleAsync(string.Empty, pageNumber);
 
             // Retrieve active driving licenses
-            var renterDrivingLicenses = await _unitOfWork.CrMasSupAccountBanks
-                .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Active );
+            var renterDrivingLicenses = await _unitOfWork.CrMasSupAccountReference
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active );
 
-            var Banks_count = await _unitOfWork.CrCasAccountBank.FindCountByColumnAsync<CrMasSupAccountBank>(
-                predicate: x => x.CrCasAccountBankStatus != Status.Deleted,
-                columnSelector: x => x.CrCasAccountBankNo  // تحديد العمود الذي نريد التجميع بناءً عليه
+            var AccountReferences_count = await _unitOfWork.CrCasAccountReceipt.FindCountByColumnAsync<CrMasSupAccountReference>(
+                //predicate: x => x.status != Status.Deleted,
+                columnSelector: x => x.CrCasAccountReceiptReferenceType  // تحديد العمود الذي نريد التجميع بناءً عليه
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
 
@@ -66,120 +66,120 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             // If no active licenses, retrieve all licenses
             if (!renterDrivingLicenses.Any())
             {
-                renterDrivingLicenses = await _unitOfWork.CrMasSupAccountBanks
-                    .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Hold
+                renterDrivingLicenses = await _unitOfWork.CrMasSupAccountReference
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Hold
                                               );
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
-            MasAccountBankVM vm = new MasAccountBankVM();
-            vm.crMasSupAccountBank = renterDrivingLicenses;
-            vm.Banks_count = Banks_count;
+            MasAccountReferenceVM vm = new MasAccountReferenceVM();
+            vm.crMasSupAccountReference = renterDrivingLicenses;
+            vm.AccountReferences_count = AccountReferences_count;
             return View(vm);
         }
         [HttpGet]
-        public async Task<PartialViewResult> GetAccountBankByStatus(string status, string search)
+        public async Task<PartialViewResult> GetAccountReferenceByStatus(string status, string search)
         {
             //sidebar Active
 
             if (!string.IsNullOrEmpty(status))
             {
-                var AccountBanksAll = await _unitOfWork.CrMasSupAccountBanks.FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Active ||
-                                                                                                                            x.CrMasSupAccountBankStatus == Status.Deleted ||
-                                                                                                                            x.CrMasSupAccountBankStatus == Status.Hold );
-                var Banks_count = await _unitOfWork.CrCasAccountBank.FindCountByColumnAsync<CrMasSupAccountBank>(
-                    predicate: x => x.CrCasAccountBankStatus != Status.Deleted,
-                    columnSelector: x => x.CrCasAccountBankNo  // تحديد العمود الذي نريد التجميع بناءً عليه
+                var AccountReferencesAll = await _unitOfWork.CrMasSupAccountReference.FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active ||
+                                                                                                                            x.CrMasSupAccountPaymentMethodStatus == Status.Deleted ||
+                                                                                                                            x.CrMasSupAccountPaymentMethodStatus == Status.Hold );
+                var AccountReferences_count = await _unitOfWork.CrCasAccountReceipt.FindCountByColumnAsync<CrMasSupAccountReference>(
+                    //predicate: x => x.Status != Status.Deleted,
+                    columnSelector: x => x.CrCasAccountReceiptReferenceType  // تحديد العمود الذي نريد التجميع بناءً عليه
                     //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                     );
-                MasAccountBankVM vm = new MasAccountBankVM();
-                vm.Banks_count = Banks_count;
+                MasAccountReferenceVM vm = new MasAccountReferenceVM();
+                vm.AccountReferences_count = AccountReferences_count;
                 if (status == Status.All)
                 {
-                    var FilterAll = AccountBanksAll.FindAll(x => x.CrMasSupAccountBankStatus != Status.Deleted &&
-                                                                         (x.CrMasSupAccountBankArName.Contains(search) ||
-                                                                          x.CrMasSupAccountBankEnName.ToLower().Contains(search.ToLower()) ||
-                                                                          x.CrMasSupAccountBankCode.Contains(search)));
-                    vm.crMasSupAccountBank = FilterAll;
-                    return PartialView("_DataTableAccountBank", vm);
+                    var FilterAll = AccountReferencesAll.FindAll(x => x.CrMasSupAccountPaymentMethodStatus != Status.Deleted &&
+                                                                         (x.CrMasSupAccountReceiptReferenceArName.Contains(search) ||
+                                                                          x.CrMasSupAccountReceiptReferenceEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupAccountReceiptReferenceCode.Contains(search)));
+                    vm.crMasSupAccountReference = FilterAll;
+                    return PartialView("_DataTableAccountReference", vm);
                 }
-                var FilterByStatus = AccountBanksAll.FindAll(x => x.CrMasSupAccountBankStatus == status &&
+                var FilterByStatus = AccountReferencesAll.FindAll(x => x.CrMasSupAccountPaymentMethodStatus == status &&
                                                                             (
-                                                                           x.CrMasSupAccountBankArName.Contains(search) ||
-                                                                           x.CrMasSupAccountBankEnName.ToLower().Contains(search.ToLower()) ||
-                                                                           x.CrMasSupAccountBankCode.Contains(search)));
-                vm.crMasSupAccountBank = FilterByStatus;
-                return PartialView("_DataTableAccountBank", vm);
+                                                                           x.CrMasSupAccountReceiptReferenceArName.Contains(search) ||
+                                                                           x.CrMasSupAccountReceiptReferenceEnName.ToLower().Contains(search.ToLower()) ||
+                                                                           x.CrMasSupAccountReceiptReferenceCode.Contains(search)));
+                vm.crMasSupAccountReference = FilterByStatus;
+                return PartialView("_DataTableAccountReference", vm);
             }
             return PartialView();
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddAccountBank()
+        public async Task<IActionResult> AddAccountReference()
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountReference;
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "AccountReference");
             }
             // Check Validition
             if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "AccountReference");
             }
             await SetPageTitleAsync(Status.Insert, pageNumber);
             // Check If code > 9 get error , because code is char(1)
             if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "AccountReference");
             }
             // Set Title 
-            MasAccountBankVM renterDrivingLicenseVM = new MasAccountBankVM();
-            renterDrivingLicenseVM.CrMasSupAccountBankCode = await GenerateLicenseCodeAsync();
+            MasAccountReferenceVM renterDrivingLicenseVM = new MasAccountReferenceVM();
+            renterDrivingLicenseVM.CrMasSupAccountReceiptReferenceCode = await GenerateLicenseCodeAsync();
             return View(renterDrivingLicenseVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAccountBank(MasAccountBankVM renterDrivingLicenseVM)
+        public async Task<IActionResult> AddAccountReference(MasAccountReferenceVM renterDrivingLicenseVM)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountReference;
             
             var user = await _userManager.GetUserAsync(User);
 
             if (!ModelState.IsValid || renterDrivingLicenseVM == null)
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddAccountBank", renterDrivingLicenseVM);
+                return View("AddAccountReference", renterDrivingLicenseVM);
             }
             try
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
                 // Map ViewModel to Entity
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountBank>(renterDrivingLicenseVM);
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountReference>(renterDrivingLicenseVM);
 
                 // Check if the entity already exists
-                if (await _masAccountBank.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masAccountReference.ExistsByDetailsAsync(renterDrivingLicenseEntity))
                 {
                     await AddModelErrorsAsync(renterDrivingLicenseEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("AddAccountBank", renterDrivingLicenseVM);
+                    return View("AddAccountReference", renterDrivingLicenseVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
                 if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("AddAccountBank", renterDrivingLicenseVM);
+                    return View("AddAccountReference", renterDrivingLicenseVM);
                 }
                 // Generate and set the Driving License Code
-                renterDrivingLicenseVM.CrMasSupAccountBankCode = await GenerateLicenseCodeAsync();
+                renterDrivingLicenseVM.CrMasSupAccountReceiptReferenceCode = await GenerateLicenseCodeAsync();
                 // Set status and add the record
-                renterDrivingLicenseEntity.CrMasSupAccountBankStatus = "A";
-                await _unitOfWork.CrMasSupAccountBanks.AddAsync(renterDrivingLicenseEntity);
+                renterDrivingLicenseEntity.CrMasSupAccountPaymentMethodStatus = "A";
+                await _unitOfWork.CrMasSupAccountReference.AddAsync(renterDrivingLicenseEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
 
@@ -190,34 +190,34 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddAccountBank", renterDrivingLicenseVM);
+                return View("AddAccountReference", renterDrivingLicenseVM);
             }
         }
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountReference;
             await SetPageTitleAsync(Status.Update, pageNumber);
 
-            var contract = await _unitOfWork.CrMasSupAccountBanks.FindAsync(x => x.CrMasSupAccountBankCode == id);
+            var contract = await _unitOfWork.CrMasSupAccountReference.FindAsync(x => x.CrMasSupAccountReceiptReferenceCode == id);
             if (contract == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "AccountReference");
             }
-            var model = _mapper.Map<MasAccountBankVM>(contract);
+            var model = _mapper.Map<MasAccountReferenceVM>(contract);
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(MasAccountBankVM renterDrivingLicenseVM)
+        public async Task<IActionResult> Edit(MasAccountReferenceVM renterDrivingLicenseVM)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountReference;
             var user = await _userManager.GetUserAsync(User);
             if (user == null && renterDrivingLicenseVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "AccountReference");
             }
             try
             {
@@ -227,10 +227,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     return View("Edit", renterDrivingLicenseVM);
                 }
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountBank>(renterDrivingLicenseVM);
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountReference>(renterDrivingLicenseVM);
 
                 // Check if the entity already exists
-                if (await _masAccountBank.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masAccountReference.ExistsByDetailsAsync(renterDrivingLicenseEntity))
                 {
                     await SetPageTitleAsync(Status.Update, pageNumber);
                     await AddModelErrorsAsync(renterDrivingLicenseEntity);
@@ -238,11 +238,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     return View("Edit", renterDrivingLicenseVM);
                 }
 
-                _unitOfWork.CrMasSupAccountBanks.Update(renterDrivingLicenseEntity);
+                _unitOfWork.CrMasSupAccountReference.Update(renterDrivingLicenseEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
                 await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "AccountReference");
             }
             catch (Exception ex)
             {
@@ -254,11 +254,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountReference;
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
-            var licence = await _unitOfWork.CrMasSupAccountBanks.GetByIdAsync(code);
+            var licence = await _unitOfWork.CrMasSupAccountReference.GetByIdAsync(code);
             if (licence == null) return "false";
 
             try
@@ -266,8 +266,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
                 if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
-                licence.CrMasSupAccountBankStatus = status;
-                _unitOfWork.CrMasSupAccountBanks.Update(licence);
+                licence.CrMasSupAccountPaymentMethodStatus = status;
+                _unitOfWork.CrMasSupAccountReference.Update(licence);
                 _unitOfWork.Complete();
                 await SaveTracingForLicenseChange(user, licence, status);
                 return "true";
@@ -279,17 +279,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
 
         //Error exist message when run post action to get what is the exist field << Help Up in Back End
-        private async Task AddModelErrorsAsync(CrMasSupAccountBank entity)
+        private async Task AddModelErrorsAsync(CrMasSupAccountReference entity)
         {
 
-            if (await _masAccountBank.ExistsByArabicNameAsync(entity.CrMasSupAccountBankArName, entity.CrMasSupAccountBankCode))
+            if (await _masAccountReference.ExistsByArabicNameAsync(entity.CrMasSupAccountReceiptReferenceArName, entity.CrMasSupAccountReceiptReferenceCode))
             {
-                ModelState.AddModelError("CrMasSupAccountBankArName", _localizer["Existing"]);
+                ModelState.AddModelError("CrMasSupAccountReceiptReferenceArName", _localizer["Existing"]);
             }
 
-            if (await _masAccountBank.ExistsByEnglishNameAsync(entity.CrMasSupAccountBankEnName, entity.CrMasSupAccountBankCode))
+            if (await _masAccountReference.ExistsByEnglishNameAsync(entity.CrMasSupAccountReceiptReferenceEnName, entity.CrMasSupAccountReceiptReferenceCode))
             {
-                ModelState.AddModelError("CrMasSupAccountBankEnName", _localizer["Existing"]);
+                ModelState.AddModelError("CrMasSupAccountReceiptReferenceEnName", _localizer["Existing"]);
             }
         }
 
@@ -297,20 +297,20 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<JsonResult> CheckChangedField(string existName, string dataField)
         {
-            var All_AccountBanks = await _unitOfWork.CrMasSupAccountBanks.GetAllAsync();
+            var All_AccountReferences = await _unitOfWork.CrMasSupAccountReference.GetAllAsync();
             var errors = new List<ErrorResponse>();
 
-            if (!string.IsNullOrEmpty(dataField) && All_AccountBanks != null)
+            if (!string.IsNullOrEmpty(dataField) && All_AccountReferences != null)
             {
                 // Check for existing Arabic driving license
-                if (existName == "CrMasSupAccountBankArName" && All_AccountBanks.Any(x => x.CrMasSupAccountBankArName == dataField))
+                if (existName == "CrMasSupAccountReceiptReferenceArName" && All_AccountReferences.Any(x => x.CrMasSupAccountReceiptReferenceArName == dataField))
                 {
-                    errors.Add(new ErrorResponse { Field = "CrMasSupAccountBankArName", Message = _localizer["Existing"] });
+                    errors.Add(new ErrorResponse { Field = "CrMasSupAccountReceiptReferenceArName", Message = _localizer["Existing"] });
                 }
                 // Check for existing English driving license
-                else if (existName == "CrMasSupAccountBankEnName" && All_AccountBanks.Any(x => x.CrMasSupAccountBankEnName?.ToLower() == dataField.ToLower()))
+                else if (existName == "CrMasSupAccountReceiptReferenceEnName" && All_AccountReferences.Any(x => x.CrMasSupAccountReceiptReferenceEnName?.ToLower() == dataField.ToLower()))
                 {
-                    errors.Add(new ErrorResponse { Field = "CrMasSupAccountBankEnName", Message = _localizer["Existing"] });
+                    errors.Add(new ErrorResponse { Field = "CrMasSupAccountReceiptReferenceEnName", Message = _localizer["Existing"] });
                 }
             }
 
@@ -320,15 +320,15 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         //Helper Methods 
         private async Task<string> GenerateLicenseCodeAsync()
         {
-            var allLicenses = await _unitOfWork.CrMasSupAccountBanks.GetAllAsync();
-            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupAccountBankCode) + 1).ToString() : "10";
+            var allLicenses = await _unitOfWork.CrMasSupAccountReference.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupAccountReceiptReferenceCode) + 1).ToString() : "10";
         }
-        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupAccountBank licence, string status)
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupAccountReference licence, string status)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupAccountReference;
 
-            var recordAr = licence.CrMasSupAccountBankArName;
-            var recordEn = licence.CrMasSupAccountBankEnName;
+            var recordAr = licence.CrMasSupAccountReceiptReferenceArName;
+            var recordEn = licence.CrMasSupAccountReceiptReferenceEnName;
             var (operationAr, operationEn) = GetStatusTranslation(status);
 
             var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
@@ -363,7 +363,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public IActionResult DisplayToastSuccess_withIndex()
         {
             _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-            return RedirectToAction("Index", "Bank");
+            return RedirectToAction("Index", "AccountReference");
         }
 
 

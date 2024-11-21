@@ -1,6 +1,6 @@
 ﻿@using Bnan.Ui.ViewModels.MAS
 @using Bnan.Core.Extensions
-@model RenterMembershipVM
+@model RenterGenderVM
 
 @inject IViewLocalizer localizer
 @{
@@ -12,16 +12,16 @@
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
-        <form asp-area="MAS" asp-controller="RenterMembership" asp-action="Edit" class="needs-validation" novalidate>
-            <input hidden asp-for="CrMasSupRenterMembershipCode" />
-            <input hidden asp-for="CrMasSupRenterMembershipStatus" />
+        <form asp-area="MAS" asp-controller="RenterGender" asp-action="Edit" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasSupRenterGenderCode" />
+            <input hidden asp-for="CrMasSupRenterGenderStatus" />
             <div class="row mt-3 g-3">
 
                 <div class="row justify-content-center">
                     <div class="col-lg-9">
                         <div class="row g-3 my-2">
                             <div class="col">
-                                <h3>@localizer["Edit_RenterMembership_PageTitle"]</h3>
+                                <h3>@localizer["Edit_RenterGender_PageTitle"]</h3>
                             </div>
                             <div class="col-md-auto save-col btnsContainer">
                                 <button type="submit" class="custom-img-btn" id="SaveEdit">
@@ -33,7 +33,7 @@
                                 <button type="button" class="custom-img-btn" id="DeleteBtn" data-bs-toggle="modal" data-bs-target="#Delete-Modal">
                                     <img id="modalIcon" src="~/MasSystem/images/delete.svg" />
                                 </button>
-                                <button type="button" class="custom-img-btn"> <a href="/MAS/RenterMembership/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/RenterGender/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
                             </div>
                         </div>
 
@@ -47,7 +47,7 @@
                                                     <p class="DataTitle">@localizer["the_Code"]</p>
                                                 </div>
                                                 <div class="col-auto ">
-                                                    <p class="Saved-data">@Model.CrMasSupRenterMembershipCode</p>
+                                                    <p class="Saved-data">@Model.CrMasSupRenterGenderCode</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -59,27 +59,27 @@
                                     <div class="row align-items-center">
                                         <div class="col-md-6">
                                             <label for="AR-Licence" class="form-label">
-                                                @localizer["RenterMembershipNameAr_edit"]
+                                                @localizer["RenterGenderNameAr_edit"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" asp-for="CrMasSupRenterMembershipArName" id="CrMasSupRenterMembershipArName" maxlength="20" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <input type="text" asp-for="CrMasSupRenterGenderArName" id="CrMasSupRenterGenderArName" maxlength="20" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterMembershipArName" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupRenterMembershipArName-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupRenterGenderArName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupRenterGenderArName-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="EN-Licence" class="form-label">
-                                                @localizer["RenterMembershipNameEn_edit"]
+                                                @localizer["RenterGenderNameEn_edit"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupRenterMembershipEnName" maxlength="20" id="CrMasSupRenterMembershipEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupRenterGenderEnName" maxlength="20" id="CrMasSupRenterGenderEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterMembershipEnName" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupRenterMembershipEnName-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupRenterGenderEnName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupRenterGenderEnName-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -115,10 +115,10 @@
                                     <div class="row ">
                                         <div class="col-lg-12">
                                             <label>@localizer["Reason_s"]</label>
-                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupRenterMembershipReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupRenterGenderReasons" rows="1" maxlength="100" type="text"></textarea>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterMembershipReasons" class="text-danger"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupRenterGenderReasons" class="text-danger"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -175,15 +175,15 @@
     <script>
         // This To Focus On input when page load
         if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
-            $("#CrMasSupRenterMembershipEnName").focus();
+            $("#CrMasSupRenterGenderEnName").focus();
         }
         else {
-            $("#CrMasSupRenterMembershipArName").focus();
+            $("#CrMasSupRenterGenderArName").focus();
         }
         //////////////////////////////////////////
-        var statusInput = $("#CrMasSupRenterMembershipStatus");
-        var OldArName = $("#CrMasSupRenterMembershipArName").val();
-        var OldEnName = $("#CrMasSupRenterMembershipEnName").val();
+        var statusInput = $("#CrMasSupRenterGenderStatus");
+        var OldArName = $("#CrMasSupRenterGenderArName").val();
+        var OldEnName = $("#CrMasSupRenterGenderEnName").val();
 
 
         function Check_onChange_input(existName, dataField, oldValue) {
@@ -196,7 +196,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "/MAS/RenterMembership/CheckChangedField",
+                url: "/MAS/RenterGender/CheckChangedField",
                 data: { existName: existName, dataField: dataField },
                 success: function (result) {
                     console.log("feedback", result);
@@ -221,25 +221,25 @@
         }
 
         // Example usage for Arabic Name input
-        $('#CrMasSupRenterMembershipArName').on('change', function () {
+        $('#CrMasSupRenterGenderArName').on('change', function () {
             var newValue = $(this).val();
-            Check_onChange_input('CrMasSupRenterMembershipArName', newValue, OldArName);
+            Check_onChange_input('CrMasSupRenterGenderArName', newValue, OldArName);
         });
 
         // Example usage for English Name input
-        $('#CrMasSupRenterMembershipEnName').on('change', function () {
+        $('#CrMasSupRenterGenderEnName').on('change', function () {
             var newValue = $(this).val();
-            Check_onChange_input('CrMasSupRenterMembershipEnName', newValue, OldEnName);
+            Check_onChange_input('CrMasSupRenterGenderEnName', newValue, OldEnName);
         });
 
     </script>
     <script>
-        function updateRenterMembershipStatus(status) {
-            var code = document.getElementById("CrMasSupRenterMembershipCode").value;
+        function updateRenterGenderStatus(status) {
+            var code = document.getElementById("CrMasSupRenterGenderCode").value;
             return new Promise((resolve, reject) => {
                 $.ajax({
                     type: "POST",
-                    url: "/MAS/RenterMembership/EditStatus",
+                    url: "/MAS/RenterGender/EditStatus",
                     data: { status: status, code: code },
                     success: function (result) {
                         toastr.options = { "positionClass": "@localizer["toastPostion"]" };
@@ -299,8 +299,8 @@
                                                                       </h1>
                                                                     </div>
                                                                     <div class="modal-body">
-                                                                        <p>@localizer["ModalFirstMessage_Membership_UnDelete"]</p>
-                                                                        <p>@localizer["ModalSecondMessage_Membership_UnDelete"]</p>
+                                                                        <p>@localizer["ModalFirstMessage_Gender_UnDelete"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_Gender_UnDelete"]</p>
                                                                     </div>
                                                                     <div class="modal-footer border-0">
                                                                       <div class="container">
@@ -321,8 +321,8 @@
                                                                       </h1>
                                                                     </div>
                                                                     <div class="modal-body">
-                                                                                <p>@localizer["ModalFirstMessage_Membership_Delete"]</p>
-                                                                                <p>@localizer["ModalSecondMessage_Membership_Delete"]</p>
+                                                                                <p>@localizer["ModalFirstMessage_Gender_Delete"]</p>
+                                                                                <p>@localizer["ModalSecondMessage_Gender_Delete"]</p>
                                                                     </div>
                                                                     <div class="modal-footer border-0">
                                                                       <div class="container">
@@ -352,7 +352,7 @@
                 modal.hide();
 
                 const newStatus = isDeleted ? '@Status.UnDeleted' : '@Status.Deleted';
-                const success = await updateRenterMembershipStatus(newStatus);
+                const success = await updateRenterGenderStatus(newStatus);
                 if (success) {
                     statusInput.val(isDeleted ? '@Status.Active' : '@Status.Deleted');
                     isDeleted = !isDeleted;
@@ -363,7 +363,7 @@
 
                     DeleteState(isDeleted);
                     setTimeout(function () {
-                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterMembership")';
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterGender")';
                     }, 500); // التأخير لمدة .5 ثوانٍ
                 }
                 else {
@@ -392,8 +392,8 @@
                                                                       </h1>
                                                                     </div>
                                                                     <div class="modal-body">
-                                                                        <p>@localizer["ModalFirstMessage_Membership_UnHold"]</p>
-                                                                        <p>@localizer["ModalSecondMessage_Membership_UnHold"]</p>
+                                                                        <p>@localizer["ModalFirstMessage_Gender_UnHold"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_Gender_UnHold"]</p>
                                                                     </div>
                                                                     <div class="modal-footer border-0">
                                                                       <div class="container">
@@ -414,8 +414,8 @@
                                                                       </h1>
                                                                     </div>
                                                                     <div class="modal-body">
-                                                                        <p>@localizer["ModalFirstMessage_Membership_Hold"]</p>
-                                                                        <p>@localizer["ModalSecondMessage_Membership_Hold"]</p>
+                                                                        <p>@localizer["ModalFirstMessage_Gender_Hold"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_Gender_Hold"]</p>
                                                                     </div>
                                                                     <div class="modal-footer border-0">
                                                                       <div class="container">
@@ -445,7 +445,7 @@
                 modal.hide();
 
                 const newStatus = isStoped ? '@Status.UnHold' : '@Status.Hold';
-                const success = await updateRenterMembershipStatus(newStatus);
+                const success = await updateRenterGenderStatus(newStatus);
                 if (success) {
                     statusInput.val(isStoped ? '@Status.Active' : '@Status.Hold');
                     isStoped = !isStoped;
@@ -456,7 +456,7 @@
 
                     StopState(isStoped);
                     setTimeout(function () {
-                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterMembership")';
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterGender")';
                     }, 500); // التأخير لمدة .5 ثوانٍ
                 }
             }, 500);

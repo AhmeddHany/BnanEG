@@ -19,23 +19,23 @@ namespace Bnan.Ui.Areas.MAS.Controllers
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
     [ServiceFilter(typeof(SetCurrentPathMASFilter))]
-    public class BankController : BaseController
+    public class CarOilController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
         private readonly IUserService _userService;
-        private readonly IMasAccountBank _masAccountBank;
+        private readonly IMasCarOil _masCarOil;
         private readonly IBaseRepo _baseRepo;
         private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IStringLocalizer<BankController> _localizer;
+        private readonly IStringLocalizer<CarOilController> _localizer;
 
-        public BankController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IMasAccountBank masAccountBank, IBaseRepo BaseRepo,IMasBase masBase,
-            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<BankController> localizer) : base(userManager, unitOfWork, mapper)
+        public CarOilController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
+            IMapper mapper, IUserService userService, IMasCarOil masCarOil, IBaseRepo BaseRepo,IMasBase masBase,
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<CarOilController> localizer) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
-            _masAccountBank = masAccountBank;
+            _masCarOil = masCarOil;
             _userLoginsService = userLoginsService;
             _baseRepo = BaseRepo;
             _masBase = masBase;
@@ -48,138 +48,123 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupCarOil;
             // Set page titles
             await SetPageTitleAsync(string.Empty, pageNumber);
 
             // Retrieve active driving licenses
-            var renterDrivingLicenses = await _unitOfWork.CrMasSupAccountBanks
-                .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Active );
-
-            var Banks_count = await _unitOfWork.CrCasAccountBank.FindCountByColumnAsync<CrMasSupAccountBank>(
-                predicate: x => x.CrCasAccountBankStatus != Status.Deleted,
-                columnSelector: x => x.CrCasAccountBankNo  // تحديد العمود الذي نريد التجميع بناءً عليه
-                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
-                );
-
+            var renterDrivingLicenses = await _unitOfWork.CrMasSupCarOil
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupCarOilStatus == Status.Active, new[] { "CrCasCarInformations" });
 
             // If no active licenses, retrieve all licenses
             if (!renterDrivingLicenses.Any())
             {
-                renterDrivingLicenses = await _unitOfWork.CrMasSupAccountBanks
-                    .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Hold
-                                              );
+                renterDrivingLicenses = await _unitOfWork.CrMasSupCarOil
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupCarOilStatus == Status.Hold,
+                                              new[] { "CrCasCarInformations" });
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
-            MasAccountBankVM vm = new MasAccountBankVM();
-            vm.crMasSupAccountBank = renterDrivingLicenses;
-            vm.Banks_count = Banks_count;
-            return View(vm);
+            return View(renterDrivingLicenses);
         }
         [HttpGet]
-        public async Task<PartialViewResult> GetAccountBankByStatus(string status, string search)
+        public async Task<PartialViewResult> GetCarOilByStatus(string status, string search)
         {
             //sidebar Active
 
             if (!string.IsNullOrEmpty(status))
             {
-                var AccountBanksAll = await _unitOfWork.CrMasSupAccountBanks.FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Active ||
-                                                                                                                            x.CrMasSupAccountBankStatus == Status.Deleted ||
-                                                                                                                            x.CrMasSupAccountBankStatus == Status.Hold );
-                var Banks_count = await _unitOfWork.CrCasAccountBank.FindCountByColumnAsync<CrMasSupAccountBank>(
-                    predicate: x => x.CrCasAccountBankStatus != Status.Deleted,
-                    columnSelector: x => x.CrCasAccountBankNo  // تحديد العمود الذي نريد التجميع بناءً عليه
-                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
-                    );
-                MasAccountBankVM vm = new MasAccountBankVM();
-                vm.Banks_count = Banks_count;
+                var CarOilsAll = await _unitOfWork.CrMasSupCarOil.FindAllAsNoTrackingAsync(x => x.CrMasSupCarOilStatus == Status.Active ||
+                                                                                                                            x.CrMasSupCarOilStatus == Status.Deleted ||
+                                                                                                                            x.CrMasSupCarOilStatus == Status.Hold, new[] { "CrCasCarInformations" });
+
                 if (status == Status.All)
                 {
-                    var FilterAll = AccountBanksAll.FindAll(x => x.CrMasSupAccountBankStatus != Status.Deleted &&
-                                                                         (x.CrMasSupAccountBankArName.Contains(search) ||
-                                                                          x.CrMasSupAccountBankEnName.ToLower().Contains(search.ToLower()) ||
-                                                                          x.CrMasSupAccountBankCode.Contains(search)));
-                    vm.crMasSupAccountBank = FilterAll;
-                    return PartialView("_DataTableAccountBank", vm);
+                    var FilterAll = CarOilsAll.FindAll(x => x.CrMasSupCarOilStatus != Status.Deleted &&
+                                                                         (x.CrMasSupCarOilArName.Contains(search) ||
+                                                                          x.CrMasSupCarOilEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupCarOilCode.Contains(search)));
+                    return PartialView("_DataTableCarOil", FilterAll);
                 }
-                var FilterByStatus = AccountBanksAll.FindAll(x => x.CrMasSupAccountBankStatus == status &&
+                var FilterByStatus = CarOilsAll.FindAll(x => x.CrMasSupCarOilStatus == status &&
                                                                             (
-                                                                           x.CrMasSupAccountBankArName.Contains(search) ||
-                                                                           x.CrMasSupAccountBankEnName.ToLower().Contains(search.ToLower()) ||
-                                                                           x.CrMasSupAccountBankCode.Contains(search)));
-                vm.crMasSupAccountBank = FilterByStatus;
-                return PartialView("_DataTableAccountBank", vm);
+                                                                           x.CrMasSupCarOilArName.Contains(search) ||
+                                                                           x.CrMasSupCarOilEnName.ToLower().Contains(search.ToLower()) ||
+                                                                           x.CrMasSupCarOilCode.Contains(search)));
+                return PartialView("_DataTableCarOil", FilterByStatus);
             }
             return PartialView();
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddAccountBank()
+        public async Task<IActionResult> AddCarOil()
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupCarOil;
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "CarOil");
             }
             // Check Validition
             if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "CarOil");
             }
             await SetPageTitleAsync(Status.Insert, pageNumber);
             // Check If code > 9 get error , because code is char(1)
             if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "CarOil");
             }
             // Set Title 
-            MasAccountBankVM renterDrivingLicenseVM = new MasAccountBankVM();
-            renterDrivingLicenseVM.CrMasSupAccountBankCode = await GenerateLicenseCodeAsync();
+            CarOilVM renterDrivingLicenseVM = new CarOilVM();
+            renterDrivingLicenseVM.CrMasSupCarOilCode = await GenerateLicenseCodeAsync();
             return View(renterDrivingLicenseVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAccountBank(MasAccountBankVM renterDrivingLicenseVM)
+        public async Task<IActionResult> AddCarOil(CarOilVM renterDrivingLicenseVM)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupCarOil;
             
             var user = await _userManager.GetUserAsync(User);
 
             if (!ModelState.IsValid || renterDrivingLicenseVM == null)
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddAccountBank", renterDrivingLicenseVM);
+                return View("AddCarOil", renterDrivingLicenseVM);
             }
             try
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
                 // Map ViewModel to Entity
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountBank>(renterDrivingLicenseVM);
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarOil>(renterDrivingLicenseVM);
+
+                renterDrivingLicenseEntity.CrMasSupCarOilNaqlCode ??= 0;
+                renterDrivingLicenseEntity.CrMasSupCarOilNaqlId ??= 0;
 
                 // Check if the entity already exists
-                if (await _masAccountBank.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masCarOil.ExistsByDetailsAsync(renterDrivingLicenseEntity))
                 {
                     await AddModelErrorsAsync(renterDrivingLicenseEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("AddAccountBank", renterDrivingLicenseVM);
+                    return View("AddCarOil", renterDrivingLicenseVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
                 if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("AddAccountBank", renterDrivingLicenseVM);
+                    return View("AddCarOil", renterDrivingLicenseVM);
                 }
                 // Generate and set the Driving License Code
-                renterDrivingLicenseVM.CrMasSupAccountBankCode = await GenerateLicenseCodeAsync();
+                renterDrivingLicenseVM.CrMasSupCarOilCode = await GenerateLicenseCodeAsync();
                 // Set status and add the record
-                renterDrivingLicenseEntity.CrMasSupAccountBankStatus = "A";
-                await _unitOfWork.CrMasSupAccountBanks.AddAsync(renterDrivingLicenseEntity);
+                renterDrivingLicenseEntity.CrMasSupCarOilStatus = "A";
+                await _unitOfWork.CrMasSupCarOil.AddAsync(renterDrivingLicenseEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
 
@@ -190,34 +175,36 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddAccountBank", renterDrivingLicenseVM);
+                return View("AddCarOil", renterDrivingLicenseVM);
             }
         }
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupCarOil;
             await SetPageTitleAsync(Status.Update, pageNumber);
 
-            var contract = await _unitOfWork.CrMasSupAccountBanks.FindAsync(x => x.CrMasSupAccountBankCode == id);
+            var contract = await _unitOfWork.CrMasSupCarOil.FindAsync(x => x.CrMasSupCarOilCode == id);
             if (contract == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "CarOil");
             }
-            var model = _mapper.Map<MasAccountBankVM>(contract);
+            var model = _mapper.Map<CarOilVM>(contract);
+            model.CrMasSupCarOilNaqlCode ??= 0;
+            model.CrMasSupCarOilNaqlId ??= 0;
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(MasAccountBankVM renterDrivingLicenseVM)
+        public async Task<IActionResult> Edit(CarOilVM renterDrivingLicenseVM)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupCarOil;
             var user = await _userManager.GetUserAsync(User);
             if (user == null && renterDrivingLicenseVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "CarOil");
             }
             try
             {
@@ -227,10 +214,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     return View("Edit", renterDrivingLicenseVM);
                 }
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountBank>(renterDrivingLicenseVM);
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarOil>(renterDrivingLicenseVM);
+                renterDrivingLicenseEntity.CrMasSupCarOilNaqlCode ??= 0;
+                renterDrivingLicenseEntity.CrMasSupCarOilNaqlId ??= 0;
 
                 // Check if the entity already exists
-                if (await _masAccountBank.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masCarOil.ExistsByDetailsAsync(renterDrivingLicenseEntity))
                 {
                     await SetPageTitleAsync(Status.Update, pageNumber);
                     await AddModelErrorsAsync(renterDrivingLicenseEntity);
@@ -238,11 +227,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     return View("Edit", renterDrivingLicenseVM);
                 }
 
-                _unitOfWork.CrMasSupAccountBanks.Update(renterDrivingLicenseEntity);
+                _unitOfWork.CrMasSupCarOil.Update(renterDrivingLicenseEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
                 await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
-                return RedirectToAction("Index", "Bank");
+                return RedirectToAction("Index", "CarOil");
             }
             catch (Exception ex)
             {
@@ -254,11 +243,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupCarOil;
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
-            var licence = await _unitOfWork.CrMasSupAccountBanks.GetByIdAsync(code);
+            var licence = await _unitOfWork.CrMasSupCarOil.GetByIdAsync(code);
             if (licence == null) return "false";
 
             try
@@ -266,8 +255,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
                 if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
-                licence.CrMasSupAccountBankStatus = status;
-                _unitOfWork.CrMasSupAccountBanks.Update(licence);
+                licence.CrMasSupCarOilStatus = status;
+                _unitOfWork.CrMasSupCarOil.Update(licence);
                 _unitOfWork.Complete();
                 await SaveTracingForLicenseChange(user, licence, status);
                 return "true";
@@ -279,17 +268,27 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
 
         //Error exist message when run post action to get what is the exist field << Help Up in Back End
-        private async Task AddModelErrorsAsync(CrMasSupAccountBank entity)
+        private async Task AddModelErrorsAsync(CrMasSupCarOil entity)
         {
 
-            if (await _masAccountBank.ExistsByArabicNameAsync(entity.CrMasSupAccountBankArName, entity.CrMasSupAccountBankCode))
+            if (await _masCarOil.ExistsByArabicNameAsync(entity.CrMasSupCarOilArName, entity.CrMasSupCarOilCode))
             {
-                ModelState.AddModelError("CrMasSupAccountBankArName", _localizer["Existing"]);
+                ModelState.AddModelError("CrMasSupCarOilArName", _localizer["Existing"]);
             }
 
-            if (await _masAccountBank.ExistsByEnglishNameAsync(entity.CrMasSupAccountBankEnName, entity.CrMasSupAccountBankCode))
+            if (await _masCarOil.ExistsByEnglishNameAsync(entity.CrMasSupCarOilEnName, entity.CrMasSupCarOilCode))
             {
-                ModelState.AddModelError("CrMasSupAccountBankEnName", _localizer["Existing"]);
+                ModelState.AddModelError("CrMasSupCarOilEnName", _localizer["Existing"]);
+            }
+
+            if (await _masCarOil.ExistsByNaqlCodeAsync((int)entity.CrMasSupCarOilNaqlCode, entity.CrMasSupCarOilCode))
+            {
+                ModelState.AddModelError("CrMasSupCarOilNaqlCode", _localizer["Existing"]);
+            }
+
+            if (await _masCarOil.ExistsByNaqlIdAsync((int)entity.CrMasSupCarOilNaqlId, entity.CrMasSupCarOilCode))
+            {
+                ModelState.AddModelError("CrMasSupCarOilNaqlId", _localizer["Existing"]);
             }
         }
 
@@ -297,20 +296,30 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<JsonResult> CheckChangedField(string existName, string dataField)
         {
-            var All_AccountBanks = await _unitOfWork.CrMasSupAccountBanks.GetAllAsync();
+            var All_CarOils = await _unitOfWork.CrMasSupCarOil.GetAllAsync();
             var errors = new List<ErrorResponse>();
 
-            if (!string.IsNullOrEmpty(dataField) && All_AccountBanks != null)
+            if (!string.IsNullOrEmpty(dataField) && All_CarOils != null)
             {
                 // Check for existing Arabic driving license
-                if (existName == "CrMasSupAccountBankArName" && All_AccountBanks.Any(x => x.CrMasSupAccountBankArName == dataField))
+                if (existName == "CrMasSupCarOilArName" && All_CarOils.Any(x => x.CrMasSupCarOilArName == dataField))
                 {
-                    errors.Add(new ErrorResponse { Field = "CrMasSupAccountBankArName", Message = _localizer["Existing"] });
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarOilArName", Message = _localizer["Existing"] });
                 }
                 // Check for existing English driving license
-                else if (existName == "CrMasSupAccountBankEnName" && All_AccountBanks.Any(x => x.CrMasSupAccountBankEnName?.ToLower() == dataField.ToLower()))
+                else if (existName == "CrMasSupCarOilEnName" && All_CarOils.Any(x => x.CrMasSupCarOilEnName?.ToLower() == dataField.ToLower()))
                 {
-                    errors.Add(new ErrorResponse { Field = "CrMasSupAccountBankEnName", Message = _localizer["Existing"] });
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarOilEnName", Message = _localizer["Existing"] });
+                }
+                // Check for existing rental system number
+                else if (existName == "CrMasSupCarOilNaqlCode" && int.TryParse(dataField, out var code) && code != 0 && All_CarOils.Any(x => x.CrMasSupCarOilNaqlCode == code))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarOilNaqlCode", Message = _localizer["Existing"] });
+                }
+                // Check for existing rental system ID
+                else if (existName == "CrMasSupCarOilNaqlId" && int.TryParse(dataField, out var id) && id != 0 && All_CarOils.Any(x => x.CrMasSupCarOilNaqlId == id))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupCarOilNaqlId", Message = _localizer["Existing"] });
                 }
             }
 
@@ -320,15 +329,15 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         //Helper Methods 
         private async Task<string> GenerateLicenseCodeAsync()
         {
-            var allLicenses = await _unitOfWork.CrMasSupAccountBanks.GetAllAsync();
-            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupAccountBankCode) + 1).ToString() : "10";
+            var allLicenses = await _unitOfWork.CrMasSupCarOil.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupCarOilCode) + 1).ToString() : "10";
         }
-        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupAccountBank licence, string status)
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupCarOil licence, string status)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+            var pageNumber = SubTasks.CrMasSupCarOil;
 
-            var recordAr = licence.CrMasSupAccountBankArName;
-            var recordEn = licence.CrMasSupAccountBankEnName;
+            var recordAr = licence.CrMasSupCarOilArName;
+            var recordEn = licence.CrMasSupCarOilEnName;
             var (operationAr, operationEn) = GetStatusTranslation(status);
 
             var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
@@ -363,7 +372,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public IActionResult DisplayToastSuccess_withIndex()
         {
             _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-            return RedirectToAction("Index", "Bank");
+            return RedirectToAction("Index", "CarOil");
         }
 
 

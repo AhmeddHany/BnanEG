@@ -1,12 +1,12 @@
 ﻿@using Bnan.Core.Extensions
-@model List<CrMasSupRenterMembership>
+@model List<CrMasSupRenterGender>
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["View_RenterMembership_PageTitle"];
-    ViewData["Page-Hint"] = @localizer["RenterMembership Hint"];
+    ViewData["Page-title"] = @localizer["View_RenterGender_PageTitle"];
+    ViewData["Page-Hint"] = @localizer["RenterGender Hint"];
 }
 <link href="~/css/toastr.css" rel="stylesheet" />
 
@@ -16,7 +16,7 @@
         <form action="">
             <div class="row g-3 mb-2">
                 <div class="col">
-                    <h3>@localizer["View_RenterMembership_PageTitle"]</h3>
+                    <h3>@localizer["View_RenterGender_PageTitle"]</h3>
                 </div>
                 <div class="col-12 col-lg-6 d-flex justify-content-end">
 
@@ -54,13 +54,13 @@
             </div>
             <div class="row table-row px-3">
                 <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
-                    <partial name="_DataTableRenterMembership" />
+                    <partial name="_DataTableRenterGender" />
                 </div>
             </div>
         </form>
-        <a asp-area="MAS" asp-controller="RenterMembership" asp-action="AddRenterMembership" data-bs-toggle="tooltip" data-bs-placement="top"
-           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add_RenterMembership_PageTitle"]" class="new-Page-icon" style="cursor: pointer">
-            <img src="~/MasSystem/images/new membership.svg" alt="new item">
+        <a asp-area="MAS" asp-controller="RenterGender" asp-action="AddRenterGender" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add_RenterGender_PageTitle"]" class="new-Page-icon" style="cursor: pointer">
+            <img src="~/MasSystem/images/new gender.svg" alt="new item">
         </a>
         <a asp-area="MAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
            data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="main-page-icon">
@@ -86,7 +86,7 @@
 
         function showErrorToast_whitController(messageText) {
             $.ajax({
-                url: '@Url.Action("DisplayToastError_NoUpdate", "RenterMembership")',
+                url: '@Url.Action("DisplayToastError_NoUpdate", "RenterGender")',
                 type: 'POST',
                 data: { messageText: messageText },
                 success: function (response) {
@@ -100,20 +100,20 @@
             });
         }
     </script>
-    @*Get RenterMembership Using filter*@
+    @*Get RenterGender Using filter*@
     <script>
         // To Handle Background
         $("#wrapper").addClass("Branches-wrapper");
     </script>
     <script>
-        //get RenterMembership By Status function
-        function GetRenterMembershipFitler(status, search) {
+        //get RenterGender By Status function
+        function GetRenterGenderFitler(status, search) {
             $.ajax({
                 type: "GET",
                 data: {
                     status: status, search: search
                 },
-                url: "@Url.Action("GetRenterMembershipByStatus", "RenterMembership", new { Area = "MAS" })",
+                url: "@Url.Action("GetRenterGenderByStatus", "RenterGender", new { Area = "MAS" })",
                 success: function (response) {
                     $(".dataTable").html(response);
                 },
@@ -123,14 +123,14 @@
         $("input[name='customRadio']").on("click", function () {
             const status = $(this).val();
             const search = $("#search").val(); // الحصول على قيمة البحث
-            GetRenterMembershipFitler(status, search);
+            GetRenterGenderFitler(status, search);
         });
 
         // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
         $("#search").on("keyup", function () {
             const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
             const search = $(this).val(); // الحصول على قيمة البحث
-            GetRenterMembershipFitler(status, search);
+            GetRenterGenderFitler(status, search);
         });
     </script>
 }

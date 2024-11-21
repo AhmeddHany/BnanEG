@@ -377,7 +377,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Gender"],
-                        Url = "#"
+                        Url = Url.Action("Index", "RenterGender", new { area = "MAS" })
                     });
                 }
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1107005" && l.CrMasUserSubValidationAuthorization == true))
@@ -462,7 +462,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Oils"],
-                        Url = "#"
+                        Url = Url.Action("Index", "CarOil", new { area = "MAS" })
                     });
                 }
 
@@ -625,7 +625,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Reference"],
-                        Url = Url.Action("Index", "AccountRefrence", new { area = "MAS" })
+                        Url = Url.Action("Index", "AccountReference", new { area = "MAS" })
                     });
                 }
 

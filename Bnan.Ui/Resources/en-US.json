@@ -184,6 +184,25 @@
     "ModalFirstMessage_CarCvt_UnHold": "UnHold Data And Results1",
     "ModalSecondMessage_CarCvt_UnHold": "UnHold Data And Results2",
 
+    // MAS Car Oil
+    "Add_CarOil_PageTitle": "Add Oil",
+    "Edit_CarOil_PageTitle": "Update The Oil Data",
+    "View_CarOil_PageTitle": "The Oil",
+    "CarOilName_view": "The Oil Type",
+    "CarOilNameAr_add": "The Oil in Arabic",
+    "CarOilNameEn_add": "The Oil in English",
+    "CarOilNameAr_edit": "The Oil in Arabic",
+    "CarOilNameEn_edit": "The Oil in English",
+    "ModalFirstMessage_CarOil_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_CarOil_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_CarOil_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_CarOil_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_CarOil_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_CarOil_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_CarOil_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_CarOil_UnHold": "UnHold Data And Results2",
+
+
     // MAS Car Brand
     "Add_CarBrand_PageTitle": "Add Brand",
     "Edit_CarBrand_PageTitle": "Update The Brand Data",
@@ -274,7 +293,64 @@
     "ModalFirstMessage_AccountBank_Hold": "Hold Data And Results1",
     "ModalSecondMessage_AccountBank_Hold": "Hold Data And Results2",
     "ModalFirstMessage_AccountBank_UnHold": "UnHold Data And Results1",
-    "ModalSecondMessage_AccountBank_UnHold": "UnHold Data And Results2"
+    "ModalSecondMessage_AccountBank_UnHold": "UnHold Data And Results2",
+
+    // MAS AccountReference
+    "Add_AccountReference_PageTitle": "Add Reference",
+    "Edit_AccountReference_PageTitle": "Update The Reference Data",
+    "View_AccountReference_PageTitle": "The Reference",
+    "AccountReferenceName_view": "The Reference",
+    "AccountReferenceNameAr_add": "The Reference in Arabic",
+    "AccountReferenceNameEn_add": "The Reference in English",
+    "AccountReferenceNameAr_edit": "The Reference in Arabic",
+    "AccountReferenceNameEn_edit": "The Reference in English",
+    "AccountReferenceCount": "The Count",
+    "ModalFirstMessage_AccountReference_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_AccountReference_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_AccountReference_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_AccountReference_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_AccountReference_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_AccountReference_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_AccountReference_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_AccountReference_UnHold": "UnHold Data And Results2",
+
+
+    // MAS Renter Membership
+    "Add_RenterMembership_PageTitle": "Add Membership",
+    "Edit_RenterMembership_PageTitle": "Update The Membership Data",
+    "View_RenterMembership_PageTitle": "Memberships",
+    "RenterMembershipName_view": "The Membership",
+    "RenterMembershipNameAr_add": "The Membership in Arabic",
+    "RenterMembershipNameEn_add": "The Membership in English",
+    "RenterMembershipNameAr_edit": "The Membership in Arabic",
+    "RenterMembershipNameEn_edit": "The Membership in English",
+    "ModalFirstMessage_Membership_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_Membership_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_Membership_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_Membership_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_Membership_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_Membership_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_Membership_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_Membership_UnHold": "UnHold Data And Results2",
+
+    // MAS Renter Gender
+    "Add_RenterGender_PageTitle": "Add Gender",
+    "Edit_RenterGender_PageTitle": "Update The Gender Data",
+    "View_RenterGender_PageTitle": "Genders",
+    "RenterGenderName_view": "The Gender",
+    "RenterGenderNameAr_add": "The Gender in Arabic",
+    "RenterGenderNameEn_add": "The Gender in English",
+    "RenterGenderNameAr_edit": "The Gender in Arabic",
+    "RenterGenderNameEn_edit": "The Gender in English",
+    "ModalFirstMessage_Gender_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_Gender_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_Gender_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_Gender_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_Gender_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_Gender_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_Gender_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_Gender_UnHold": "UnHold Data And Results2"
+
 
   },
   "Arabic": "Arabic",
