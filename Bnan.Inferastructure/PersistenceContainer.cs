@@ -165,7 +165,7 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IFeedBoxBS, FeedBoxBS>();
 
 
-            
+
             builder.Services.AddScoped<IMasBase, MasBase>();
             builder.Services.AddScoped<IMasRenterIdtype, MasRenterIdtype>();
             builder.Services.AddScoped<IMasCarFuel, MasCarFuel>();
@@ -199,6 +199,7 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasRenterSector, MasRenterSector>();
             builder.Services.AddScoped<IMasCarModel, MasCarModel>();
             builder.Services.AddScoped<IMasRenterMembership, MasRenterMembership>();
+            builder.Services.AddScoped<IMasUser, MasUser>();
 
 
 

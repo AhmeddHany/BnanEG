@@ -1,12 +1,5 @@
 ﻿using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Azure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -61,23 +54,20 @@ namespace Bnan.Inferastructure.Repository
 
         public async Task<bool> AddMainValiditionsForEachUser(string userCode, string systemCode)
         {
-            var mainTasks = _unitOfWork.CrMasSysMainTasks.FindAll(x => x.CrMasSysMainTasksSystem == systemCode);
+            var mainTasks = await _unitOfWork.CrMasSysMainTasks.FindAllAsNoTrackingAsync(x => x.CrMasSysMainTasksSystem == systemCode);
             foreach (var item in mainTasks)
             {
-                if (item.CrMasSysMainTasksCode != "206")
+                if (item.CrMasSysMainTasksCode != "207")
                 {
                     CrMasUserMainValidation crMasUserMainValidation = new CrMasUserMainValidation();
                     crMasUserMainValidation.CrMasUserMainValidationUser = userCode;
                     crMasUserMainValidation.CrMasUserMainValidationMainSystem = systemCode;
                     crMasUserMainValidation.CrMasUserMainValidationMainTasks = item.CrMasSysMainTasksCode;
                     crMasUserMainValidation.CrMasUserMainValidationAuthorization = false;
-                    _unitOfWork.CrMasUserMainValidations.Add(crMasUserMainValidation);
+                    if (await _unitOfWork.CrMasUserMainValidations.AddAsync(crMasUserMainValidation) == null) return false;
                 }
-
             }
-            await _unitOfWork.CompleteAsync();
             return true;
-
         }
     }
 }

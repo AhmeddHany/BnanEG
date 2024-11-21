@@ -40,18 +40,21 @@ namespace Bnan.Inferastructure.Repository
 
         public async Task<bool> AddSubValiditionsForEachUser(string userCode, string systemCode)
         {
-            var subTasks = _unitOfWork.CrMasSysSubTasks.FindAll(x => x.CrMasSysSubTasksSystemCode == systemCode && x.CrMasSysSubTasksStatus == Status.Active);
+            var subTasks = await _unitOfWork.CrMasSysSubTasks.FindAllAsNoTrackingAsync(x => x.CrMasSysSubTasksSystemCode == systemCode && x.CrMasSysSubTasksStatus == Status.Active);
             foreach (var item in subTasks)
             {
-                CrMasUserSubValidation crMasUserSubValidation = new CrMasUserSubValidation();
-                crMasUserSubValidation.CrMasUserSubValidationUser = userCode;
-                crMasUserSubValidation.CrMasUserSubValidationSystem = systemCode;
-                crMasUserSubValidation.CrMasUserSubValidationMain = item.CrMasSysSubTasksMainCode;
-                crMasUserSubValidation.CrMasUserSubValidationSubTasks = item.CrMasSysSubTasksCode;
-                crMasUserSubValidation.CrMasUserSubValidationAuthorization = false;
-                _unitOfWork.CrMasUserSubValidations.Add(crMasUserSubValidation);
+                if (item.CrMasSysSubTasksCode != "2207001" || item.CrMasSysSubTasksCode != "2207001" || item.CrMasSysSubTasksCode != "2207001")
+                {
+                    CrMasUserSubValidation crMasUserSubValidation = new CrMasUserSubValidation();
+                    crMasUserSubValidation.CrMasUserSubValidationUser = userCode;
+                    crMasUserSubValidation.CrMasUserSubValidationSystem = systemCode;
+                    crMasUserSubValidation.CrMasUserSubValidationMain = item.CrMasSysSubTasksMainCode;
+                    crMasUserSubValidation.CrMasUserSubValidationSubTasks = item.CrMasSysSubTasksCode;
+                    crMasUserSubValidation.CrMasUserSubValidationAuthorization = false;
+                    if (await _unitOfWork.CrMasUserSubValidations.AddAsync(crMasUserSubValidation) == null) return false;
+                }
+
             }
-            await _unitOfWork.CompleteAsync();
             return true;
         }
     }

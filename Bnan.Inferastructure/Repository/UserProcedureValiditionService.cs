@@ -1,14 +1,9 @@
 ﻿using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
-    public class UserProcedureValiditionService:IUserProcedureValidition
+    public class UserProcedureValiditionService : IUserProcedureValidition
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -19,10 +14,10 @@ namespace Bnan.Inferastructure.Repository
 
         public async Task<bool> AddProceduresValiditionsForEachUser(string userCode, string systemCode)
         {
-            var subTasks = _unitOfWork.CrMasSysSubTasks.FindAll(x => x.CrMasSysSubTasksSystemCode == systemCode);
+            var subTasks = await _unitOfWork.CrMasSysSubTasks.FindAllAsNoTrackingAsync(x => x.CrMasSysSubTasksSystemCode == systemCode);
             foreach (var item in subTasks)
             {
-                if (item.CrMasSysSubTasksCode != "2206001" || item.CrMasSysSubTasksCode != "2206002" || item.CrMasSysSubTasksCode != "2206003")
+                if (item.CrMasSysSubTasksCode != "2207001" || item.CrMasSysSubTasksCode != "2207001" || item.CrMasSysSubTasksCode != "2207001")
                 {
                     CrMasUserProceduresValidation crMasUserProceduresValidation = new CrMasUserProceduresValidation();
                     crMasUserProceduresValidation.CrMasUserProceduresValidationCode = userCode;
@@ -35,11 +30,9 @@ namespace Bnan.Inferastructure.Repository
                     crMasUserProceduresValidation.CrMasUserProceduresValidationInsertAuthorization = false;
                     crMasUserProceduresValidation.CrMasUserProceduresValidationHoldAuthorization = false;
                     crMasUserProceduresValidation.CrMasUserProceduresValidationUnHoldAuthorization = false;
-                    _unitOfWork.CrMasUserProceduresValidations.Add(crMasUserProceduresValidation);
+                    if (await _unitOfWork.CrMasUserProceduresValidations.AddAsync(crMasUserProceduresValidation) == null) return false;
                 }
-                
             }
-            await _unitOfWork.CompleteAsync();
             return true;
         }
     }

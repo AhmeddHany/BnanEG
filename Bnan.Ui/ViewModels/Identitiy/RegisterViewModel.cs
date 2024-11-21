@@ -17,25 +17,22 @@ namespace Bnan.Ui.ViewModels.Identitiy
         public bool? CrMasUserInformationAuthorizationOwner { get; set; }
         public bool? CrMasUserInformationAuthorizationFoolwUp { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
-        [MinLength(3)]
         public string? CrMasUserInformationArName { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
-        [MinLength(3)]
         public string? CrMasUserInformationEnName { get; set; }
         public decimal? CrMasUserInformationTotalBalance { get; set; }
         public decimal? CrMasUserInformationReservedBalance { get; set; }
         public decimal? CrMasUserInformationAvailableBalance { get; set; }
         public decimal? CrMasUserInformationCreditLimit { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
-        [MinLength(3)]
         public string? CrMasUserInformationTasksArName { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
-        [MinLength(3)]
         public string? CrMasUserInformationTasksEnName { get; set; }
         public string? CrMasUserInformationRemindMe { get; set; }
         public string? CrMasUserInformationDefaultBranch { get; set; }
         public string? CrMasUserInformationDefaultLanguage { get; set; }
         public string? CrMasUserInformationCallingKey { get; set; }
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "MobilePatternError")]
         public string? CrMasUserInformationMobileNo { get; set; }
         public string? CrMasUserInformationEmail { get; set; }
         public DateTime? CrMasUserInformationChangePassWordLastDate { get; set; }
@@ -43,6 +40,7 @@ namespace Bnan.Ui.ViewModels.Identitiy
         public TimeSpan? CrMasUserInformationEntryLastTime { get; set; }
         public DateTime? CrMasUserInformationExitLastDate { get; set; }
         public TimeSpan? CrMasUserInformationExitLastTime { get; set; }
+        public DateTime? CrMasUserInformationLastActionDate { get; set; }
         public int? CrMasUserInformationExitTimer { get; set; }
         public string? CrMasUserInformationPicture { get; set; }
         public string? CrMasUserInformationSignature { get; set; }
@@ -52,6 +50,7 @@ namespace Bnan.Ui.ViewModels.Identitiy
 
         public List<CrMasUserMainValidation>? CrMasUserMainValidations { get; set; }
         public List<CrMasSysMainTask>? CrMasSysMainTasks { get; set; }
+        public List<CrMasSysCallingKey>? CrMasSysCallingKeys { get; set; }
 
         public List<CrMasUserSubValidation>? CrMasUserSubValidations { get; set; }
         public List<CrMasSysSubTask>? CrMasSysSubTasks { get; set; }
@@ -60,7 +59,7 @@ namespace Bnan.Ui.ViewModels.Identitiy
         public List<CrMasSysProceduresTask>? CrMasSysProceduresTasks { get; set; }
         public List<CrCasBranchInformation>? CrCasBranchInformations { get; set; }
         public List<CrMasUserBranchValidity>? CrMasUserBranchValidities { get; set; }
-        public CrMasUserContractValidity? CrMasUserContractValidity { get; set; } 
+        public CrMasUserContractValidity? CrMasUserContractValidity { get; set; }
 
 
 
