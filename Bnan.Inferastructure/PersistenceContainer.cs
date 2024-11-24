@@ -136,7 +136,7 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IAccountBank, AccountBank>();
             builder.Services.AddScoped<ISalesPoint, SalesPoint>();
             builder.Services.AddScoped<IBankService, BankService>();
-            builder.Services.AddScoped<IPaymentMethods, PaymentMethods>();
+            builder.Services.AddScoped<IMasAccountPaymentMethod, MasAccountPaymentMethod>();
             builder.Services.AddScoped<ICarDistribution, CarDistribution>();
 
             builder.Services.AddScoped<IContractAdditional, ContractAdditional>();
@@ -179,7 +179,8 @@ namespace Bnan.Inferastructure
 
             builder.Services.AddScoped<IMasAccountBank, MasAccountBank>();
             builder.Services.AddScoped<IMasAccountReference, MasAccountReference>();
-
+            builder.Services.AddScoped<IMasLessorClassification, MasLessorClassification>();
+        
 
             //CAS
             builder.Services.AddScoped<IRenterLessorInformation, CasRenterLessorInformation>();

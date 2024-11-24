@@ -1,0 +1,51 @@
+﻿@using Bnan.Core.Extensions
+@model List<CrCasLessorClassification>
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["Count"]</th>
+            <th class="DifferAlign"> @localizer["LessorClassificationName_view"]</th>
+            <th class="DifferAlign"> @localizer["the_Code"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr onclick="if (parseInt(@item.CrCasLessorClassificationCode) > 1) {location.href='@Url.Action("Edit", "LessorClassification", new { id = item.CrCasLessorClassificationCode })';} else{showErrorToast_NoUpdate();}">
+                <td><p>@item.CrMasLessorInformations.Count().ToString("N0")</p></td>
+                <td class="DifferAlign">
+                    <p>
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrCasLessorClassificationEnName : item.CrCasLessorClassificationArName)
+                    </p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@item.CrCasLessorClassificationCode</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasLessorClassificationStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasLessorClassificationStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasLessorClassificationStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>

@@ -17,6 +17,7 @@
     "Count": "Count",
     "the_Code": "Code",
     "Reason_s": "Remarks",
+    "Classification_s": "The classification",
     //////////
 
     // MAS Renter Driving License
@@ -352,6 +353,24 @@
     "ModalFirstMessage_Gender_UnHold": "UnHold Data And Results1",
     "ModalSecondMessage_Gender_UnHold": "UnHold Data And Results2",
 
+    // MAS AccountPaymentMethod
+    "Add_AccountPaymentMethod_PageTitle": "Add Payment Method",
+    "Edit_AccountPaymentMethod_PageTitle": "Update The Payment Method Data",
+    "View_AccountPaymentMethod_PageTitle": "Payment Methods",
+    "AccountPaymentMethodName_view": "The Payment Method",
+    "AccountPaymentMethodNameAr_add": "The Payment Method in Arabic",
+    "AccountPaymentMethodNameEn_add": "The Payment Method in English",
+    "AccountPaymentMethodNameAr_edit": "The Payment Method in Arabic",
+    "AccountPaymentMethodNameEn_edit": "The Payment Method in English",
+    "ModalFirstMessage_AccountPaymentMethod_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_AccountPaymentMethod_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_AccountPaymentMethod_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_AccountPaymentMethod_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_AccountPaymentMethod_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_AccountPaymentMethod_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_AccountPaymentMethod_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_AccountPaymentMethod_UnHold": "UnHold Data And Results2",
+
     // MAS Users
     "Add_User_PageTitle": "Add Employee",
     "Edit_User_PageTitle": "Update The Employee Data",
@@ -373,7 +392,25 @@
     "ModalFirstMessage_User_Hold": "Hold Data And Results1",
     "ModalSecondMessage_User_Hold": "Hold Data And Results2",
     "ModalFirstMessage_User_UnHold": "UnHold Data And Results1",
-    "ModalSecondMessage_User_UnHold": "UnHold Data And Results2"
+    "ModalSecondMessage_User_UnHold": "UnHold Data And Results2",
+
+    // MAS LessorClassification
+    "Add_LessorClassification_PageTitle": "Add Lessor Classification",
+    "Edit_LessorClassification_PageTitle": "Update The Lessor Classification Data",
+    "View_LessorClassification_PageTitle": "Lessors Classification",
+    "LessorClassificationName_view": "The Classification",
+    "LessorClassificationNameAr_add": "The Classification in Arabic",
+    "LessorClassificationNameEn_add": "The Classification in English",
+    "LessorClassificationNameAr_edit": "The Classification in Arabic",
+    "LessorClassificationNameEn_edit": "The Classification in English",
+    "ModalFirstMessage_LessorClassification_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_LessorClassification_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_LessorClassification_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_LessorClassification_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_LessorClassification_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_LessorClassification_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_LessorClassification_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_LessorClassification_UnHold": "UnHold Data And Results2"
   },
   "Arabic": "Arabic",
   "English": "English",
@@ -1716,6 +1753,8 @@
   "PleaseEnterPictureToast": " Sorry .... must upload picture of signture first",
   "UploadSignture": "UploadSignture",
   "Existing": "This field is Existed.",
+  "Erro_entry": "Entry Error in this Field",
+
   "Exist": "ExistEn",
   "CarIsRented": "Sorry... this car has already been rented, please choose another car",
 

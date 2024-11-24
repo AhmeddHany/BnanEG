@@ -16,6 +16,8 @@
     "Count": "العدد",
     "the_Code": "الرمز",
     "Reason_s": "ملاحظات",
+    "Classification_s": "التصنيف",
+
 
     //////////
 
@@ -371,8 +373,43 @@
     "ModalFirstMessage_User_Hold": "ايقاف بيانات ونتائج1",
     "ModalSecondMessage_User_Hold": "ايقاف بيانات ونتائج2",
     "ModalFirstMessage_User_UnHold": "ارجاع بيانات ونتائج1",
-    "ModalSecondMessage_User_UnHold": "ارجاع بيانات ونتائج2"
+    "ModalSecondMessage_User_UnHold": "ارجاع بيانات ونتائج2",
 
+    // MAS AccountPaymentMethod
+    "Add_AccountPaymentMethod_PageTitle": "إضافة طريقة دفع",
+    "Edit_AccountPaymentMethod_PageTitle": "تحديث بيانات طريقة الدفع",
+    "View_AccountPaymentMethod_PageTitle": "طرق الدفع",
+    "AccountPaymentMethodName_view": "طريقة الدفع",
+    "AccountPaymentMethodNameAr_add": "طريقة الدفع عربي",
+    "AccountPaymentMethodNameEn_add": "طريقة الدفع انجليزي",
+    "AccountPaymentMethodNameAr_edit": "طريقة الدفع عربي",
+    "AccountPaymentMethodNameEn_edit": "طريقة الدفع إنجليزي",
+    "ModalFirstMessage_AccountPaymentMethod_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_AccountPaymentMethod_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_AccountPaymentMethod_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_AccountPaymentMethod_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_AccountPaymentMethod_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_AccountPaymentMethod_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_AccountPaymentMethod_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_AccountPaymentMethod_UnHold": "ارجاع بيانات ونتائج2",
+
+    // MAS LessorClassification
+    "Add_LessorClassification_PageTitle": "إضافة تصنيف شركة",
+    "Edit_LessorClassification_PageTitle": "تحديث بيانات تصنيف الشركة",
+    "View_LessorClassification_PageTitle": "تصنيف الشركات",
+    "LessorClassificationName_view": "التصنيف",
+    "LessorClassificationNameAr_add": "التصنيف عربي",
+    "LessorClassificationNameEn_add": "التصنيف انجليزي",
+    "LessorClassificationNameAr_edit": "التصنيف عربي",
+    "LessorClassificationNameEn_edit": "التصنيف إنجليزي",
+    "ModalFirstMessage_LessorClassification_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_LessorClassification_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_LessorClassification_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_LessorClassification_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_LessorClassification_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_LessorClassification_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_LessorClassification_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_LessorClassification_UnHold": "ارجاع بيانات ونتائج2"
   },
 
 
@@ -1711,6 +1748,7 @@
   "UploadSignture": "ارفع صورة التوقيع",
   "PleaseEnterPictureToast": " عفوا ... يجب ارفاق صورة التوقيع اولا",
   "Existing": "هذا الحقل مسجل من قبل",
+  "Erro_entry": "خطأ في الادخال",
   "Exist": "ExistAr",
   "CarIsRented": "عفوا ... هذه السيارة تم تأجيرها بالفعل ، يرجى اختيار سيارة اخرى",
 

@@ -37,6 +37,15 @@
         //MAS  Users
         public static string CrMasUserInformationForMAS { get; set; } = "1106001";
 
+        ////////////
+        //MAS  Services
+        public static string Technical_Connectivity { get; set; } = "1112001";
+        public static string Country_Classification { get; set; } = "1112002";
+        public static string CrCasLessorClassification { get; set; } = "1112003";
+        public static string Evaluation  { get; set; } = "1112004";
+        public static string Currency    { get; set; } = "1112005";
+        public static string Frequently_Asked_Questions   { get; set; } = "1112006";
+
     }
 }
 
