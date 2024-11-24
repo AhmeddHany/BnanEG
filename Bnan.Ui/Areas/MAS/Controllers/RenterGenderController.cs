@@ -29,6 +29,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<RenterGenderController> _localizer;
+        private readonly string pageNumber = SubTasks.CrMasSupRenterGender;
+
 
         public RenterGenderController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IMasRenterGender masRenterGender, IBaseRepo BaseRepo,IMasBase masBase,
@@ -48,10 +50,15 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var pageNumber = SubTasks.CrMasSupRenterGender;
             // Set page titles
+            var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             // Retrieve active driving licenses
             var renterGenders = await _unitOfWork.CrMasSupRenterGender
                 .FindAllAsNoTrackingAsync(x => x.CrMasSupRenterGenderStatus == Status.Active, new [] { "CrCasRenterLessors" } );
@@ -98,7 +105,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddRenterGender()
         {
-            var pageNumber = SubTasks.CrMasSupRenterGender;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -128,7 +135,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRenterGender(RenterGenderVM renterGenderVM)
         {
-            var pageNumber = SubTasks.CrMasSupRenterGender;
+
             
             var user = await _userManager.GetUserAsync(User);
 
@@ -177,7 +184,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasSupRenterGender;
+
             await SetPageTitleAsync(Status.Update, pageNumber);
             // if value with code less than 2 Deleted
             if (int.Parse(id) < 1100000002 + 1)
@@ -199,7 +206,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(RenterGenderVM renterGenderVM)
         {
-            var pageNumber = SubTasks.CrMasSupRenterGender;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null && renterGenderVM == null)
             {
@@ -242,7 +249,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrMasSupRenterGender;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -314,7 +321,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupRenterGender licence, string status)
         {
-            var pageNumber = SubTasks.CrMasSupRenterGender;
+
 
             var recordAr = licence.CrMasSupRenterGenderArName;
             var recordEn = licence.CrMasSupRenterGenderEnName;

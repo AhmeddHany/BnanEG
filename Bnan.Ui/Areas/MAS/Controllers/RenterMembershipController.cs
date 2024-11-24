@@ -29,6 +29,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<RenterMembershipController> _localizer;
+        private readonly string pageNumber = SubTasks.CrMasSupRenterMembership;
+
 
         public RenterMembershipController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IMasRenterMembership masRenterMembership, IBaseRepo BaseRepo,IMasBase masBase,
@@ -48,10 +50,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var pageNumber = SubTasks.CrMasSupRenterMembership;
-            // Set page titles
-            await SetPageTitleAsync(string.Empty, pageNumber);
 
+            // Set page titles
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             // Retrieve active driving licenses
             var renterMemberships = await _unitOfWork.CrMasSupRenterMembership
                 .FindAllAsNoTrackingAsync(x => x.CrMasSupRenterMembershipStatus == Status.Active, new [] { "CrCasRenterLessors" } );
@@ -98,7 +106,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddRenterMembership()
         {
-            var pageNumber = SubTasks.CrMasSupRenterMembership;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -128,7 +136,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRenterMembership(RenterMembershipVM renterMembershipVM)
         {
-            var pageNumber = SubTasks.CrMasSupRenterMembership;
+
             
             var user = await _userManager.GetUserAsync(User);
 
@@ -177,7 +185,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasSupRenterMembership;
+
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var contract = await _unitOfWork.CrMasSupRenterMembership.FindAsync(x => x.CrMasSupRenterMembershipCode == id);
@@ -193,7 +201,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(RenterMembershipVM renterMembershipVM)
         {
-            var pageNumber = SubTasks.CrMasSupRenterMembership;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null && renterMembershipVM == null)
             {
@@ -236,7 +244,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrMasSupRenterMembership;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -308,7 +316,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupRenterMembership licence, string status)
         {
-            var pageNumber = SubTasks.CrMasSupRenterMembership;
+
 
             var recordAr = licence.CrMasSupRenterMembershipArName;
             var recordEn = licence.CrMasSupRenterMembershipEnName;

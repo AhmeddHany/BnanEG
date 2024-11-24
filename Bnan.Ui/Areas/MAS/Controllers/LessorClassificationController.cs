@@ -29,6 +29,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<LessorClassificationController> _localizer;
+        private readonly string pageNumber = SubTasks.CrCasLessorClassification;
+
 
         public LessorClassificationController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IMasLessorClassification masLessorClassification, IBaseRepo BaseRepo,IMasBase masBase,
@@ -47,11 +49,15 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-
-            var pageNumber = SubTasks.CrCasLessorClassification;
             // Set page titles
+            var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             // Retrieve active driving licenses
             var renterSectors = await _unitOfWork.CrCasLessorClassification
                 .FindAllAsNoTrackingAsync(x => x.CrMasLessorClassificationStatus == Status.Active, new[] { "CrMasLessorInformations" });
@@ -99,7 +105,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddLessorClassification()
         {
-            var pageNumber = SubTasks.CrCasLessorClassification;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -129,7 +135,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddLessorClassification(LessorClassificationVM renterSectorVM)
         {
-            var pageNumber = SubTasks.CrCasLessorClassification;
+
             
             var user = await _userManager.GetUserAsync(User);
 
@@ -178,7 +184,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrCasLessorClassification;
+
             await SetPageTitleAsync(Status.Update, pageNumber);
             // if value with code less than 2 Deleted
             if (int.Parse(id) < 1 + 1)
@@ -198,7 +204,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(LessorClassificationVM renterSectorVM)
         {
-            var pageNumber = SubTasks.CrCasLessorClassification;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null && renterSectorVM == null)
             {
@@ -240,7 +246,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrCasLessorClassification;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -311,7 +317,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrCasLessorClassification licence, string status)
         {
-            var pageNumber = SubTasks.CrCasLessorClassification;
+
 
             var recordAr = licence.CrCasLessorClassificationArName;
             var recordEn = licence.CrCasLessorClassificationEnName;

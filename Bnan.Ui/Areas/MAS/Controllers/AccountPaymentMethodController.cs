@@ -28,6 +28,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<AccountPaymentMethodController> _localizer;
+        private readonly string pageNumber = SubTasks.CrMasSupAccountPaymentMethod;
+
 
         public AccountPaymentMethodController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IMasAccountPaymentMethod masAccountPaymentMethod, IBaseRepo BaseRepo, IMasBase masBase,
@@ -46,25 +48,29 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-
-            var pageNumber = SubTasks.CrMasSupAccountPaymentMethod;
             // Set page titles
+            var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             // Retrieve active driving licenses
-            var renterDrivingLicenses = await _unitOfWork.CrMasSupAccountPaymentMethod
+            var paymenMethods = await _unitOfWork.CrMasSupAccountPaymentMethod
                 .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active, new[] { "CrCasAccountReceipts" });
 
             // If no active licenses, retrieve all licenses
-            if (!renterDrivingLicenses.Any())
+            if (!paymenMethods.Any())
             {
-                renterDrivingLicenses = await _unitOfWork.CrMasSupAccountPaymentMethod
+                paymenMethods = await _unitOfWork.CrMasSupAccountPaymentMethod
                     .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Hold,
                                               new[] { "CrCasAccountReceipts" });
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
-            return View(renterDrivingLicenses);
+            return View(paymenMethods);
         }
         [HttpGet]
         public async Task<PartialViewResult> GetAccountPaymentMethodByStatus(string status, string search)
@@ -98,7 +104,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddAccountPaymentMethod()
         {
-            var pageNumber = SubTasks.CrMasSupAccountPaymentMethod;
+
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
 
@@ -120,62 +126,62 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "AccountPaymentMethod");
             }
             // Set Title 
-            AccountPaymentMethodVM renterDrivingLicenseVM = new AccountPaymentMethodVM();
-            return View(renterDrivingLicenseVM);
+            AccountPaymentMethodVM paymenMethodVM = new AccountPaymentMethodVM();
+            return View(paymenMethodVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAccountPaymentMethod(AccountPaymentMethodVM renterDrivingLicenseVM)
+        public async Task<IActionResult> AddAccountPaymentMethod(AccountPaymentMethodVM paymenMethodVM)
         {
-            var pageNumber = SubTasks.CrMasSupAccountPaymentMethod;
+
 
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
 
-            if (!ModelState.IsValid || renterDrivingLicenseVM == null)
+            if (!ModelState.IsValid || paymenMethodVM == null)
             {
-                return View("AddAccountPaymentMethod", renterDrivingLicenseVM);
+                return View("AddAccountPaymentMethod", paymenMethodVM);
             }
             try
             {
                 // Map ViewModel to Entity
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountPaymentMethod>(renterDrivingLicenseVM);
+                var paymenMethodEntity = _mapper.Map<CrMasSupAccountPaymentMethod>(paymenMethodVM);
 
-                renterDrivingLicenseEntity.CrMasSupAccountPaymentMethodNaqlCode ??= 0;
-                renterDrivingLicenseEntity.CrMasSupAccountPaymentMethodNaqlId ??= 0;
+                paymenMethodEntity.CrMasSupAccountPaymentMethodNaqlCode ??= 0;
+                paymenMethodEntity.CrMasSupAccountPaymentMethodNaqlId ??= 0;
 
                 // Check if the entity already exists
-                if (await _masAccountPaymentMethod.ExistsByDetailsAsync(renterDrivingLicenseEntity,false))
+                if (await _masAccountPaymentMethod.ExistsByDetailsAsync(paymenMethodEntity,false))
                 {
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(paymenMethodEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("AddAccountPaymentMethod", renterDrivingLicenseVM);
+                    return View("AddAccountPaymentMethod", paymenMethodVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
                 if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("AddAccountPaymentMethod", renterDrivingLicenseVM);
+                    return View("AddAccountPaymentMethod", paymenMethodVM);
                 }
                 // Set status and add the record
-                renterDrivingLicenseEntity.CrMasSupAccountPaymentMethodStatus = "A";
-                await _unitOfWork.CrMasSupAccountPaymentMethod.AddAsync(renterDrivingLicenseEntity);
+                paymenMethodEntity.CrMasSupAccountPaymentMethodStatus = "A";
+                await _unitOfWork.CrMasSupAccountPaymentMethod.AddAsync(paymenMethodEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Insert);
+                await SaveTracingForLicenseChange(user, paymenMethodEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return View("AddAccountPaymentMethod", renterDrivingLicenseVM);
+                return View("AddAccountPaymentMethod", paymenMethodVM);
             }
         }
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasSupAccountPaymentMethod;
+
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var contract = await _unitOfWork.CrMasSupAccountPaymentMethod.FindAsync(x => x.CrMasSupAccountPaymentMethodCode == id, new[] {"CrCasAccountReceipts" });
@@ -190,13 +196,13 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(AccountPaymentMethodVM renterDrivingLicenseVM)
+        public async Task<IActionResult> Edit(AccountPaymentMethodVM paymenMethodVM)
         {
-            var pageNumber = SubTasks.CrMasSupAccountPaymentMethod;
+
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
 
-            if (user == null && renterDrivingLicenseVM == null)
+            if (user == null && paymenMethodVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "AccountPaymentMethod");
@@ -207,36 +213,36 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", paymenMethodVM);
                 }
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountPaymentMethod>(renterDrivingLicenseVM);
-                renterDrivingLicenseEntity.CrMasSupAccountPaymentMethodNaqlCode ??= 0;
-                renterDrivingLicenseEntity.CrMasSupAccountPaymentMethodNaqlId ??= 0;
+                var paymenMethodEntity = _mapper.Map<CrMasSupAccountPaymentMethod>(paymenMethodVM);
+                paymenMethodEntity.CrMasSupAccountPaymentMethodNaqlCode ??= 0;
+                paymenMethodEntity.CrMasSupAccountPaymentMethodNaqlId ??= 0;
 
                 // Check if the entity already exists
-                if (await _masAccountPaymentMethod.ExistsByDetailsAsync(renterDrivingLicenseEntity,true))
+                if (await _masAccountPaymentMethod.ExistsByDetailsAsync(paymenMethodEntity,true))
                 {
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(paymenMethodEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", paymenMethodVM);
                 }
 
-                _unitOfWork.CrMasSupAccountPaymentMethod.Update(renterDrivingLicenseEntity);
+                _unitOfWork.CrMasSupAccountPaymentMethod.Update(paymenMethodEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
+                await SaveTracingForLicenseChange(user, paymenMethodEntity, Status.Update);
                 return RedirectToAction("Index", "AccountPaymentMethod");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return View("Edit", renterDrivingLicenseVM);
+                return View("Edit", paymenMethodVM);
             }
         }
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrMasSupAccountPaymentMethod;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -339,7 +345,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupAccountPaymentMethod licence, string status)
         {
-            var pageNumber = SubTasks.CrMasSupAccountPaymentMethod;
+
 
             var recordAr = licence.CrMasSupAccountPaymentMethodArName;
             var recordEn = licence.CrMasSupAccountPaymentMethodEnName;

@@ -29,6 +29,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<CarBrandController> _localizer;
+        private readonly string pageNumber = SubTasks.CrMasSupCarBrand;
+
 
         public CarBrandController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IMasCarBrand masCarBrand, IBaseRepo BaseRepo,IMasBase masBase,
@@ -47,13 +49,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-
-            var pageNumber = SubTasks.CrMasSupCarBrand;
             // Set page titles
+            var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             // Retrieve active driving licenses
-            var renterDrivingLicenses = await _unitOfWork.CrMasSupCarBrand
+            var carBrands = await _unitOfWork.CrMasSupCarBrand
                 .FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Active );
 
             var Cars_Count = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrMasSupCarBrand>(
@@ -64,16 +70,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
 
             // If no active licenses, retrieve all licenses
-            if (!renterDrivingLicenses.Any())
+            if (!carBrands.Any())
             {
-                renterDrivingLicenses = await _unitOfWork.CrMasSupCarBrand
+                carBrands = await _unitOfWork.CrMasSupCarBrand
                     .FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Hold
                                               );
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
             CarBrandVM vm = new CarBrandVM();
-            vm.crMasSupCarBrand = renterDrivingLicenses;
+            vm.crMasSupCarBrand = carBrands;
             vm.cars_count = Cars_Count;
             return View(vm);
         }
@@ -117,7 +123,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddCarBrand()
         {
-            var pageNumber = SubTasks.CrMasSupCarBrand;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -139,64 +145,64 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "CarBrand");
             }
             // Set Title 
-            CarBrandVM renterDrivingLicenseVM = new CarBrandVM();
-            renterDrivingLicenseVM.CrMasSupCarBrandCode = await GenerateLicenseCodeAsync();
-            return View(renterDrivingLicenseVM);
+            CarBrandVM carBrandVM = new CarBrandVM();
+            carBrandVM.CrMasSupCarBrandCode = await GenerateLicenseCodeAsync();
+            return View(carBrandVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCarBrand(CarBrandVM renterDrivingLicenseVM)
+        public async Task<IActionResult> AddCarBrand(CarBrandVM carBrandVM)
         {
-            var pageNumber = SubTasks.CrMasSupCarBrand;
+
             
             var user = await _userManager.GetUserAsync(User);
 
-            if (!ModelState.IsValid || renterDrivingLicenseVM == null)
+            if (!ModelState.IsValid || carBrandVM == null)
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddCarBrand", renterDrivingLicenseVM);
+                return View("AddCarBrand", carBrandVM);
             }
             try
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
                 // Map ViewModel to Entity
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarBrand>(renterDrivingLicenseVM);
+                var carBrandEntity = _mapper.Map<CrMasSupCarBrand>(carBrandVM);
 
                 // Check if the entity already exists
-                if (await _masCarBrand.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masCarBrand.ExistsByDetailsAsync(carBrandEntity))
                 {
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(carBrandEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("AddCarBrand", renterDrivingLicenseVM);
+                    return View("AddCarBrand", carBrandVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
                 if (int.Parse(await GenerateLicenseCodeAsync()) > 3999)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("AddCarBrand", renterDrivingLicenseVM);
+                    return View("AddCarBrand", carBrandVM);
                 }
                 // Generate and set the Driving License Code
-                renterDrivingLicenseVM.CrMasSupCarBrandCode = await GenerateLicenseCodeAsync();
+                carBrandVM.CrMasSupCarBrandCode = await GenerateLicenseCodeAsync();
                 // Set status and add the record
-                renterDrivingLicenseEntity.CrMasSupCarBrandStatus = "A";
-                await _unitOfWork.CrMasSupCarBrand.AddAsync(renterDrivingLicenseEntity);
+                carBrandEntity.CrMasSupCarBrandStatus = "A";
+                await _unitOfWork.CrMasSupCarBrand.AddAsync(carBrandEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Insert);
+                await SaveTracingForLicenseChange(user, carBrandEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddCarBrand", renterDrivingLicenseVM);
+                return View("AddCarBrand", carBrandVM);
             }
         }
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasSupCarBrand;
+
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var contract = await _unitOfWork.CrMasSupCarBrand.FindAsync(x => x.CrMasSupCarBrandCode == id);
@@ -209,11 +215,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(CarBrandVM renterDrivingLicenseVM)
+        public async Task<IActionResult> Edit(CarBrandVM carBrandVM)
         {
-            var pageNumber = SubTasks.CrMasSupCarBrand;
+
             var user = await _userManager.GetUserAsync(User);
-            if (user == null && renterDrivingLicenseVM == null)
+            if (user == null && carBrandVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
@@ -225,36 +231,36 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", carBrandVM);
                 }
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarBrand>(renterDrivingLicenseVM);
+                var carBrandEntity = _mapper.Map<CrMasSupCarBrand>(carBrandVM);
 
                 // Check if the entity already exists
-                if (await _masCarBrand.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masCarBrand.ExistsByDetailsAsync(carBrandEntity))
                 {
                     await SetPageTitleAsync(Status.Update, pageNumber);
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(carBrandEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", carBrandVM);
                 }
 
-                _unitOfWork.CrMasSupCarBrand.Update(renterDrivingLicenseEntity);
+                _unitOfWork.CrMasSupCarBrand.Update(carBrandEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
+                await SaveTracingForLicenseChange(user, carBrandEntity, Status.Update);
                 return RedirectToAction("Index", "CarBrand");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
-                return View("Edit", renterDrivingLicenseVM);
+                return View("Edit", carBrandVM);
             }
         }
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrMasSupCarBrand;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -325,7 +331,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupCarBrand licence, string status)
         {
-            var pageNumber = SubTasks.CrMasSupCarBrand;
+
 
             var recordAr = licence.CrMasSupCarBrandArName;
             var recordEn = licence.CrMasSupCarBrandEnName;

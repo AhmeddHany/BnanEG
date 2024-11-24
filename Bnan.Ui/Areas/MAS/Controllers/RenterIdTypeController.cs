@@ -29,6 +29,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<RenterIdtypeController> _localizer;
+        private readonly string pageNumber = SubTasks.CrMasSupRenterIdtype;
+
 
         public RenterIdtypeController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IMasRenterIdtype masRenterIdtype, IBaseRepo BaseRepo,IMasBase masBase,
@@ -47,11 +49,15 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-
-            var pageNumber = SubTasks.CrMasSupRenterIdtype;
             // Set page titles
+            var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             // Retrieve active driving licenses
             var renterIdtypes = await _unitOfWork.CrMasSupRenterIdtype
                 .FindAllAsNoTrackingAsync(x => x.CrMasSupRenterIdtypeStatus == Status.Active, new[] { "CrMasRenterInformations" });
@@ -99,7 +105,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddRenterIdtype()
         {
-            var pageNumber = SubTasks.CrMasSupRenterIdtype;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -129,7 +135,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRenterIdtype(RenterIdtypeVM renterIdtypeVM)
         {
-            var pageNumber = SubTasks.CrMasSupRenterIdtype;
+
             
             var user = await _userManager.GetUserAsync(User);
 
@@ -178,7 +184,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasSupRenterIdtype;
+
             await SetPageTitleAsync(Status.Update, pageNumber);
             var contract = await _unitOfWork.CrMasSupRenterIdtype.FindAsync(x => x.CrMasSupRenterIdtypeCode == id, new[] { "CrCasRenterPrivateDriverInformations", "CrMasRenterInformations" });
             if (contract == null)
@@ -193,7 +199,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(RenterIdtypeVM renterIdtypeVM)
         {
-            var pageNumber = SubTasks.CrMasSupRenterIdtype;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null && renterIdtypeVM == null)
             {
@@ -236,7 +242,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrMasSupRenterIdtype;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -307,7 +313,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupRenterIdtype licence, string status)
         {
-            var pageNumber = SubTasks.CrMasSupRenterIdtype;
+
 
             var recordAr = licence.CrMasSupRenterIdtypeArName;
             var recordEn = licence.CrMasSupRenterIdtypeEnName;

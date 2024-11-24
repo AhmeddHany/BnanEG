@@ -29,6 +29,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<CarCvtController> _localizer;
+        private readonly string pageNumber = SubTasks.CrMasSupCarCvt;
+
 
         public CarCvtController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IMasCarCvt masCarCvt, IBaseRepo BaseRepo,IMasBase masBase,
@@ -47,11 +49,15 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-
-            var pageNumber = SubTasks.CrMasSupCarCvt;
             // Set page titles
+            var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             // Retrieve active driving licenses
             var CarCvt = await _unitOfWork.CrMasSupCarCvt
                 .FindAllAsNoTrackingAsync(x => x.CrMasSupCarCvtStatus == Status.Active);
@@ -115,7 +121,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddCarCvt()
         {
-            var pageNumber = SubTasks.CrMasSupCarCvt;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -145,7 +151,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCarCvt(CarCvtVM CarCvtVM)
         {
-            var pageNumber = SubTasks.CrMasSupCarCvt;
+
             
             var user = await _userManager.GetUserAsync(User);
 
@@ -194,7 +200,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasSupCarCvt;
+
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var contract = await _unitOfWork.CrMasSupCarCvt.FindAsync(x => x.CrMasSupCarCvtCode == id);
@@ -209,7 +215,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(CarCvtVM CarCvtVM)
         {
-            var pageNumber = SubTasks.CrMasSupCarCvt;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null && CarCvtVM == null)
             {
@@ -252,7 +258,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrMasSupCarCvt;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -323,7 +329,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupCarCvt licence, string status)
         {
-            var pageNumber = SubTasks.CrMasSupCarCvt;
+
 
             var recordAr = licence.CrMasSupCarCvtArName;
             var recordEn = licence.CrMasSupCarCvtEnName;

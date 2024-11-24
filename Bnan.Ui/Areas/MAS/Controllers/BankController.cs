@@ -28,6 +28,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<BankController> _localizer;
+        private readonly string pageNumber = SubTasks.CrMasSupAccountBank;
+
 
         public BankController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IMasAccountBank masAccountBank, IBaseRepo BaseRepo, IMasBase masBase,
@@ -46,13 +48,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-
-            var pageNumber = SubTasks.CrMasSupAccountBank;
             // Set page titles
+            var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             // Retrieve active driving licenses
-            var renterDrivingLicenses = await _unitOfWork.CrMasSupAccountBanks
+            var banks = await _unitOfWork.CrMasSupAccountBanks
                 .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Active);
 
             var Banks_count = await _unitOfWork.CrCasAccountBank.FindCountByColumnAsync<CrMasSupAccountBank>(
@@ -63,16 +69,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
 
             // If no active licenses, retrieve all licenses
-            if (!renterDrivingLicenses.Any())
+            if (!banks.Any())
             {
-                renterDrivingLicenses = await _unitOfWork.CrMasSupAccountBanks
+                banks = await _unitOfWork.CrMasSupAccountBanks
                     .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Hold
                                               );
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
             MasAccountBankVM vm = new MasAccountBankVM();
-            vm.crMasSupAccountBank = renterDrivingLicenses;
+            vm.crMasSupAccountBank = banks;
             vm.Banks_count = Banks_count;
             return View(vm);
         }
@@ -116,7 +122,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddAccountBank()
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -138,64 +144,64 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "Bank");
             }
             // Set Title 
-            MasAccountBankVM renterDrivingLicenseVM = new MasAccountBankVM();
-            renterDrivingLicenseVM.CrMasSupAccountBankCode = await GenerateLicenseCodeAsync();
-            return View(renterDrivingLicenseVM);
+            MasAccountBankVM bankVM = new MasAccountBankVM();
+            bankVM.CrMasSupAccountBankCode = await GenerateLicenseCodeAsync();
+            return View(bankVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAccountBank(MasAccountBankVM renterDrivingLicenseVM)
+        public async Task<IActionResult> AddAccountBank(MasAccountBankVM bankVM)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+
 
             var user = await _userManager.GetUserAsync(User);
 
-            if (!ModelState.IsValid || renterDrivingLicenseVM == null)
+            if (!ModelState.IsValid || bankVM == null)
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddAccountBank", renterDrivingLicenseVM);
+                return View("AddAccountBank", bankVM);
             }
             try
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
                 // Map ViewModel to Entity
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountBank>(renterDrivingLicenseVM);
+                var bankEntity = _mapper.Map<CrMasSupAccountBank>(bankVM);
 
                 // Check if the entity already exists
-                if (await _masAccountBank.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masAccountBank.ExistsByDetailsAsync(bankEntity))
                 {
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(bankEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("AddAccountBank", renterDrivingLicenseVM);
+                    return View("AddAccountBank", bankVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
                 if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("AddAccountBank", renterDrivingLicenseVM);
+                    return View("AddAccountBank", bankVM);
                 }
                 // Generate and set the Driving License Code
-                renterDrivingLicenseVM.CrMasSupAccountBankCode = await GenerateLicenseCodeAsync();
+                bankVM.CrMasSupAccountBankCode = await GenerateLicenseCodeAsync();
                 // Set status and add the record
-                renterDrivingLicenseEntity.CrMasSupAccountBankStatus = "A";
-                await _unitOfWork.CrMasSupAccountBanks.AddAsync(renterDrivingLicenseEntity);
+                bankEntity.CrMasSupAccountBankStatus = "A";
+                await _unitOfWork.CrMasSupAccountBanks.AddAsync(bankEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Insert);
+                await SaveTracingForLicenseChange(user, bankEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddAccountBank", renterDrivingLicenseVM);
+                return View("AddAccountBank", bankVM);
             }
         }
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var contract = await _unitOfWork.CrMasSupAccountBanks.FindAsync(x => x.CrMasSupAccountBankCode == id);
@@ -208,11 +214,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(MasAccountBankVM renterDrivingLicenseVM)
+        public async Task<IActionResult> Edit(MasAccountBankVM bankVM)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+
             var user = await _userManager.GetUserAsync(User);
-            if (user == null && renterDrivingLicenseVM == null)
+            if (user == null && bankVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
@@ -224,36 +230,36 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", bankVM);
                 }
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupAccountBank>(renterDrivingLicenseVM);
+                var bankEntity = _mapper.Map<CrMasSupAccountBank>(bankVM);
 
                 // Check if the entity already exists
-                if (await _masAccountBank.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masAccountBank.ExistsByDetailsAsync(bankEntity))
                 {
                     await SetPageTitleAsync(Status.Update, pageNumber);
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(bankEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", bankVM);
                 }
 
-                _unitOfWork.CrMasSupAccountBanks.Update(renterDrivingLicenseEntity);
+                _unitOfWork.CrMasSupAccountBanks.Update(bankEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
+                await SaveTracingForLicenseChange(user, bankEntity, Status.Update);
                 return RedirectToAction("Index", "Bank");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
-                return View("Edit", renterDrivingLicenseVM);
+                return View("Edit", bankVM);
             }
         }
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -324,7 +330,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupAccountBank licence, string status)
         {
-            var pageNumber = SubTasks.CrMasSupAccountBank;
+
 
             var recordAr = licence.CrMasSupAccountBankArName;
             var recordEn = licence.CrMasSupAccountBankEnName;

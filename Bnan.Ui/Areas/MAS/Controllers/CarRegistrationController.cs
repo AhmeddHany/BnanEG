@@ -29,6 +29,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<CarRegistrationController> _localizer;
+        private readonly string pageNumber = SubTasks.CrMasSupCarRegistration;
 
         public CarRegistrationController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IMasCarRegistration masCarRegistration, IBaseRepo BaseRepo,IMasBase masBase,
@@ -47,13 +48,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-
-            var pageNumber = SubTasks.CrMasSupCarRegistration;
             // Set page titles
+            var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             // Retrieve active driving licenses
-            var renterDrivingLicenses = await _unitOfWork.CrMasSupCarRegistration
+            var carRegisterations = await _unitOfWork.CrMasSupCarRegistration
                 .FindAllAsNoTrackingAsync(x => x.CrMasSupCarRegistrationStatus == Status.Active );
 
             //var Cars_Count = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
@@ -74,16 +79,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
 
             // If no active licenses, retrieve all licenses
-            if (!renterDrivingLicenses.Any())
+            if (!carRegisterations.Any())
             {
-                renterDrivingLicenses = await _unitOfWork.CrMasSupCarRegistration
+                carRegisterations = await _unitOfWork.CrMasSupCarRegistration
                     .FindAllAsNoTrackingAsync(x => x.CrMasSupCarRegistrationStatus == Status.Hold
                                               );
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
             CarRegistrationVM vm = new CarRegistrationVM();
-            vm.crMasSupCarRegistration = renterDrivingLicenses;
+            vm.crMasSupCarRegistration = carRegisterations;
             vm.cars_count = Cars_Count;
             return View(vm);
         }
@@ -127,7 +132,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddCarRegistration()
         {
-            var pageNumber = SubTasks.CrMasSupCarRegistration;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -149,67 +154,67 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "CarRegistration");
             }
             // Set Title 
-            CarRegistrationVM renterDrivingLicenseVM = new CarRegistrationVM();
-            renterDrivingLicenseVM.CrMasSupCarRegistrationCode = await GenerateLicenseCodeAsync();
-            return View(renterDrivingLicenseVM);
+            CarRegistrationVM carRegisterationVM = new CarRegistrationVM();
+            carRegisterationVM.CrMasSupCarRegistrationCode = await GenerateLicenseCodeAsync();
+            return View(carRegisterationVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCarRegistration(CarRegistrationVM renterDrivingLicenseVM)
+        public async Task<IActionResult> AddCarRegistration(CarRegistrationVM carRegisterationVM)
         {
-            var pageNumber = SubTasks.CrMasSupCarRegistration;
+
             
             var user = await _userManager.GetUserAsync(User);
 
-            if (!ModelState.IsValid || renterDrivingLicenseVM == null)
+            if (!ModelState.IsValid || carRegisterationVM == null)
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddCarRegistration", renterDrivingLicenseVM);
+                return View("AddCarRegistration", carRegisterationVM);
             }
             try
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
                 // Map ViewModel to Entity
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarRegistration>(renterDrivingLicenseVM);
+                var carRegisterationEntity = _mapper.Map<CrMasSupCarRegistration>(carRegisterationVM);
 
-                renterDrivingLicenseEntity.CrMasSupCarRegistrationNaqlCode ??= 0;
-                renterDrivingLicenseEntity.CrMasSupCarRegistrationNaqlId ??= 0;
+                carRegisterationEntity.CrMasSupCarRegistrationNaqlCode ??= 0;
+                carRegisterationEntity.CrMasSupCarRegistrationNaqlId ??= 0;
 
                 // Check if the entity already exists
-                if (await _masCarRegistration.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masCarRegistration.ExistsByDetailsAsync(carRegisterationEntity))
                 {
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(carRegisterationEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("AddCarRegistration", renterDrivingLicenseVM);
+                    return View("AddCarRegistration", carRegisterationVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
                 if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("AddCarRegistration", renterDrivingLicenseVM);
+                    return View("AddCarRegistration", carRegisterationVM);
                 }
                 // Generate and set the Driving License Code
-                renterDrivingLicenseVM.CrMasSupCarRegistrationCode = await GenerateLicenseCodeAsync();
+                carRegisterationVM.CrMasSupCarRegistrationCode = await GenerateLicenseCodeAsync();
                 // Set status and add the record
-                renterDrivingLicenseEntity.CrMasSupCarRegistrationStatus = "A";
-                await _unitOfWork.CrMasSupCarRegistration.AddAsync(renterDrivingLicenseEntity);
+                carRegisterationEntity.CrMasSupCarRegistrationStatus = "A";
+                await _unitOfWork.CrMasSupCarRegistration.AddAsync(carRegisterationEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Insert);
+                await SaveTracingForLicenseChange(user, carRegisterationEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddCarRegistration", renterDrivingLicenseVM);
+                return View("AddCarRegistration", carRegisterationVM);
             }
         }
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasSupCarRegistration;
+
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var contract = await _unitOfWork.CrMasSupCarRegistration.FindAsync(x => x.CrMasSupCarRegistrationCode == id);
@@ -225,11 +230,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(CarRegistrationVM renterDrivingLicenseVM)
+        public async Task<IActionResult> Edit(CarRegistrationVM carRegisterationVM)
         {
-            var pageNumber = SubTasks.CrMasSupCarRegistration;
+
             var user = await _userManager.GetUserAsync(User);
-            if (user == null && renterDrivingLicenseVM == null)
+            if (user == null && carRegisterationVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
@@ -241,38 +246,38 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", carRegisterationVM);
                 }
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarRegistration>(renterDrivingLicenseVM);
-                renterDrivingLicenseEntity.CrMasSupCarRegistrationNaqlCode ??= 0;
-                renterDrivingLicenseEntity.CrMasSupCarRegistrationNaqlId ??= 0;
+                var carRegisterationEntity = _mapper.Map<CrMasSupCarRegistration>(carRegisterationVM);
+                carRegisterationEntity.CrMasSupCarRegistrationNaqlCode ??= 0;
+                carRegisterationEntity.CrMasSupCarRegistrationNaqlId ??= 0;
 
                 // Check if the entity already exists
-                if (await _masCarRegistration.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masCarRegistration.ExistsByDetailsAsync(carRegisterationEntity))
                 {
                     await SetPageTitleAsync(Status.Update, pageNumber);
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(carRegisterationEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", carRegisterationVM);
                 }
 
-                _unitOfWork.CrMasSupCarRegistration.Update(renterDrivingLicenseEntity);
+                _unitOfWork.CrMasSupCarRegistration.Update(carRegisterationEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
+                await SaveTracingForLicenseChange(user, carRegisterationEntity, Status.Update);
                 return RedirectToAction("Index", "CarRegistration");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
-                return View("Edit", renterDrivingLicenseVM);
+                return View("Edit", carRegisterationVM);
             }
         }
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrMasSupCarRegistration;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -363,7 +368,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupCarRegistration licence, string status)
         {
-            var pageNumber = SubTasks.CrMasSupCarRegistration;
+
 
             var recordAr = licence.CrMasSupCarRegistrationArName;
             var recordEn = licence.CrMasSupCarRegistrationEnName;

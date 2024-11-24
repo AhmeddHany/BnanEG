@@ -29,6 +29,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<CarCategoryController> _localizer;
+        private readonly string pageNumber = SubTasks.CrMasSupCarCategory;
+
 
         public CarCategoryController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IMasCarCategory masCarCategory, IBaseRepo BaseRepo,IMasBase masBase,
@@ -47,13 +49,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-
-            var pageNumber = SubTasks.CrMasSupCarCategory;
             // Set page titles
+            var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             // Retrieve active driving licenses
-            var renterDrivingLicenses = await _unitOfWork.CrMasSupCarCategory
+            var carCategorys = await _unitOfWork.CrMasSupCarCategory
                 .FindAllAsNoTrackingAsync(x => x.CrMasSupCarCategoryStatus == Status.Active );
 
             var Cars_Count = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrMasSupCarCategory>(
@@ -64,16 +70,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
 
             // If no active licenses, retrieve all licenses
-            if (!renterDrivingLicenses.Any())
+            if (!carCategorys.Any())
             {
-                renterDrivingLicenses = await _unitOfWork.CrMasSupCarCategory
+                carCategorys = await _unitOfWork.CrMasSupCarCategory
                     .FindAllAsNoTrackingAsync(x => x.CrMasSupCarCategoryStatus == Status.Hold
                                               );
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
             CarCategoryVM vm = new CarCategoryVM();
-            vm.crMasSupCarCategory = renterDrivingLicenses;
+            vm.crMasSupCarCategory = carCategorys;
             vm.cars_count = Cars_Count;
             return View(vm);
         }
@@ -117,7 +123,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddCarCategory()
         {
-            var pageNumber = SubTasks.CrMasSupCarCategory;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -139,64 +145,64 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "CarCategory");
             }
             // Set Title 
-            CarCategoryVM renterDrivingLicenseVM = new CarCategoryVM();
-            renterDrivingLicenseVM.CrMasSupCarCategoryCode = await GenerateLicenseCodeAsync();
-            return View(renterDrivingLicenseVM);
+            CarCategoryVM carCategoryVM = new CarCategoryVM();
+            carCategoryVM.CrMasSupCarCategoryCode = await GenerateLicenseCodeAsync();
+            return View(carCategoryVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCarCategory(CarCategoryVM renterDrivingLicenseVM)
+        public async Task<IActionResult> AddCarCategory(CarCategoryVM carCategoryVM)
         {
-            var pageNumber = SubTasks.CrMasSupCarCategory;
+
             
             var user = await _userManager.GetUserAsync(User);
 
-            if (!ModelState.IsValid || renterDrivingLicenseVM == null)
+            if (!ModelState.IsValid || carCategoryVM == null)
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddCarCategory", renterDrivingLicenseVM);
+                return View("AddCarCategory", carCategoryVM);
             }
             try
             {
                 await SetPageTitleAsync(Status.Insert, pageNumber);
                 // Map ViewModel to Entity
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarCategory>(renterDrivingLicenseVM);
+                var carCategoryEntity = _mapper.Map<CrMasSupCarCategory>(carCategoryVM);
 
                 // Check if the entity already exists
-                if (await _masCarCategory.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masCarCategory.ExistsByDetailsAsync(carCategoryEntity))
                 {
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(carCategoryEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("AddCarCategory", renterDrivingLicenseVM);
+                    return View("AddCarCategory", carCategoryVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
                 if (Int64.Parse(await GenerateLicenseCodeAsync()) > 3499999999)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("AddCarCategory", renterDrivingLicenseVM);
+                    return View("AddCarCategory", carCategoryVM);
                 }
                 // Generate and set the Driving License Code
-                renterDrivingLicenseVM.CrMasSupCarCategoryCode = await GenerateLicenseCodeAsync();
+                carCategoryVM.CrMasSupCarCategoryCode = await GenerateLicenseCodeAsync();
                 // Set status and add the record
-                renterDrivingLicenseEntity.CrMasSupCarCategoryStatus = "A";
-                await _unitOfWork.CrMasSupCarCategory.AddAsync(renterDrivingLicenseEntity);
+                carCategoryEntity.CrMasSupCarCategoryStatus = "A";
+                await _unitOfWork.CrMasSupCarCategory.AddAsync(carCategoryEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Insert);
+                await SaveTracingForLicenseChange(user, carCategoryEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Insert, pageNumber);
-                return View("AddCarCategory", renterDrivingLicenseVM);
+                return View("AddCarCategory", carCategoryVM);
             }
         }
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasSupCarCategory;
+
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var contract = await _unitOfWork.CrMasSupCarCategory.FindAsync(x => x.CrMasSupCarCategoryCode == id);
@@ -209,11 +215,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(CarCategoryVM renterDrivingLicenseVM)
+        public async Task<IActionResult> Edit(CarCategoryVM carCategoryVM)
         {
-            var pageNumber = SubTasks.CrMasSupCarCategory;
+
             var user = await _userManager.GetUserAsync(User);
-            if (user == null && renterDrivingLicenseVM == null)
+            if (user == null && carCategoryVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
@@ -225,36 +231,36 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", carCategoryVM);
                 }
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupCarCategory>(renterDrivingLicenseVM);
+                var carCategoryEntity = _mapper.Map<CrMasSupCarCategory>(carCategoryVM);
 
                 // Check if the entity already exists
-                if (await _masCarCategory.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masCarCategory.ExistsByDetailsAsync(carCategoryEntity))
                 {
                     await SetPageTitleAsync(Status.Update, pageNumber);
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(carCategoryEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", carCategoryVM);
                 }
 
-                _unitOfWork.CrMasSupCarCategory.Update(renterDrivingLicenseEntity);
+                _unitOfWork.CrMasSupCarCategory.Update(carCategoryEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
+                await SaveTracingForLicenseChange(user, carCategoryEntity, Status.Update);
                 return RedirectToAction("Index", "CarCategory");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
-                return View("Edit", renterDrivingLicenseVM);
+                return View("Edit", carCategoryVM);
             }
         }
         [HttpPost]
         public async Task<string> EditStatus(string code, string status)
         {
-            var pageNumber = SubTasks.CrMasSupCarCategory;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -325,7 +331,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupCarCategory licence, string status)
         {
-            var pageNumber = SubTasks.CrMasSupCarCategory;
+
 
             var recordAr = licence.CrMasSupCarCategoryArName;
             var recordEn = licence.CrMasSupCarCategoryEnName;
