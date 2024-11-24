@@ -312,7 +312,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Users' Responsibilities System"],
-                        Url = Url.Action("SystemValiditions", "Users", new { area = "MAS" })
+                        Url = Url.Action("SystemValiditions", "UsersSystemValiditions", new { area = "MAS" })
                     });
                 }
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1106003" && l.CrMasUserSubValidationAuthorization == true))

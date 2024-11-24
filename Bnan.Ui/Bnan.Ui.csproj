@@ -79,8 +79,8 @@
     <None Include="Areas\MAS\Views\Shared\_ValidationScriptsPartial.cshtml" />
     <None Include="Areas\MAS\Views\Users\AddUser.cshtml" />
     <None Include="Areas\MAS\Views\Users\Edit.cshtml" />
-    <None Include="Areas\MAS\Views\Users\EditSystemValiditions.cshtml" />
-    <None Include="Areas\MAS\Views\Users\SystemValiditions.cshtml" />
+    <None Include="Areas\MAS\Views\UsersSystemValiditions\EditSystemValiditions.cshtml" />
+    <None Include="Areas\MAS\Views\UsersSystemValiditions\SystemValiditions.cshtml" />
     <None Include="Areas\MAS\Views\Users\Users.cshtml" />
     <None Include="Areas\MAS\Views\Users\_DataTableUsers.cshtml" />
     <None Include="Areas\MAS\Views\_ViewImports.cshtml" />

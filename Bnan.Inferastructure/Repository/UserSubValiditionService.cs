@@ -16,7 +16,7 @@ namespace Bnan.Inferastructure.Repository
 
         public async Task<bool> AddSubValidaitionToUserWhenAddLessor(string userCode)
         {
-            var SubTasks = _unitOfWork.CrMasSysSubTask.FindAll(l => l.CrMasSysSubTasksStatus == "A" && l.CrMasSysSubTasksSystemCode == "2", new[] { "CrMasSysSubTasksMainCodeNavigation" });
+            var SubTasks = _unitOfWork.CrMasSysSubTasks.FindAll(l => l.CrMasSysSubTasksStatus == "A" && l.CrMasSysSubTasksSystemCode == "2", new[] { "CrMasSysSubTasksMainCodeNavigation" });
             var user = await _UserService.GetUserByUserNameAsync(userCode);
 
 

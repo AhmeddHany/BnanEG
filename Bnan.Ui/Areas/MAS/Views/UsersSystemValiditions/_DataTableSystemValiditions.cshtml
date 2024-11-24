@@ -5,7 +5,7 @@
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
 
 
@@ -25,7 +25,7 @@
         }
         @foreach (var item in Model)
         {
-            <tr onclick="location.href='@Url.Action("Edit", "Users", new { id = item.CrMasUserInformationCode })'">
+            <tr onclick="location.href='@Url.Action("EditSystemValiditions", "UsersSystemValiditions", new { id = item.CrMasUserInformationCode })'">
                 <td class="DifferAlign"><p>@item.Email</p></td>
                 <td class="DifferAlign">
                     <p>

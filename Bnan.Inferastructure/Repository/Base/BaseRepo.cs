@@ -15,40 +15,60 @@ namespace Bnan.Inferastructure.Repository.Base
 
         }
 
+
         public async Task<bool> CheckValidation(string userCode, string subTask, string status)
         {
-            if (status == Status.Insert)
+            if (status == Status.ViewInformation)
             {
-                var validation = _unitOfWork.CrMasUserProceduresValidations.Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask && x.CrMasUserProceduresValidationInsertAuthorization == true)?.CrMasUserProceduresValidationInsertAuthorization;
-                return validation != null;
+                var validation = _unitOfWork.CrMasUserSubValidations
+                    .Find(x => x.CrMasUserSubValidationUser == userCode && x.CrMasUserSubValidationSubTasks == subTask)
+                    ?.CrMasUserSubValidationAuthorization;
+                return validation ?? false;
+            }
+            else if (status == Status.Insert)
+            {
+                var validation = _unitOfWork.CrMasUserProceduresValidations
+                    .Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask)
+                    ?.CrMasUserProceduresValidationInsertAuthorization;
+                return validation ?? false;
             }
             else if (status == Status.Update)
             {
-                var validation = _unitOfWork.CrMasUserProceduresValidations.Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask && x.CrMasUserProceduresValidationUpDateAuthorization == true)?.CrMasUserProceduresValidationUpDateAuthorization;
-                return validation != null;
+                var validation = _unitOfWork.CrMasUserProceduresValidations
+                    .Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask)
+                    ?.CrMasUserProceduresValidationUpDateAuthorization;
+                return validation ?? false;
             }
             else if (status == Status.Deleted)
             {
-                var validation = _unitOfWork.CrMasUserProceduresValidations.Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask && x.CrMasUserProceduresValidationDeleteAuthorization == true)?.CrMasUserProceduresValidationDeleteAuthorization;
-                return validation != null;
+                var validation = _unitOfWork.CrMasUserProceduresValidations
+                    .Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask)
+                    ?.CrMasUserProceduresValidationDeleteAuthorization;
+                return validation ?? false;
             }
             else if (status == Status.UnDeleted)
             {
-                var validation = _unitOfWork.CrMasUserProceduresValidations.Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask && x.CrMasUserProceduresValidationUnDeleteAuthorization == true)?.CrMasUserProceduresValidationUnDeleteAuthorization;
-                return validation != null;
+                var validation = _unitOfWork.CrMasUserProceduresValidations
+                    .Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask)
+                    ?.CrMasUserProceduresValidationUnDeleteAuthorization;
+                return validation ?? false;
             }
             else if (status == Status.Hold)
             {
-                var validation = _unitOfWork.CrMasUserProceduresValidations.Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask && x.CrMasUserProceduresValidationHoldAuthorization == true)?.CrMasUserProceduresValidationHoldAuthorization;
-                return validation != null;
+                var validation = _unitOfWork.CrMasUserProceduresValidations
+                    .Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask)
+                    ?.CrMasUserProceduresValidationHoldAuthorization;
+                return validation ?? false;
             }
             else if (status == Status.UnHold)
             {
-                var validation = _unitOfWork.CrMasUserProceduresValidations.Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask && x.CrMasUserProceduresValidationUnHoldAuthorization == true)?.CrMasUserProceduresValidationUnHoldAuthorization;
-                return validation != null;
+                var validation = _unitOfWork.CrMasUserProceduresValidations
+                    .Find(x => x.CrMasUserProceduresValidationCode == userCode && x.CrMasUserProceduresValidationSubTasks == subTask)
+                    ?.CrMasUserProceduresValidationUnHoldAuthorization;
+                return validation ?? false;
             }
-            else { return false; }
 
+            return false;
         }
 
         public async Task<CrMasUserProceduresValidation?> GetAll_Mas_Validation_For_All(string userCode, string subTask)

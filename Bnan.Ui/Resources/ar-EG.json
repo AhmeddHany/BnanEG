@@ -2683,6 +2683,7 @@
   "ExtraHours": "ساعات اضافية",
   "ExtraKMsValue": "قيمة الكيلوات الاضافية",
   "ExcessKilos": "كيلوات زائدة",
+  "LateSettlement": "غرامة التأخير",
   "TotalExpenseValue": "إجمالي المصروفات",
   "TotalCompensationValue": "إجمالي التعويضات",
   "ContractValueAfterDiscount": "قيمة العقد بعد الخصم",

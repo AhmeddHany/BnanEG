@@ -35,7 +35,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
         public async Task<IActionResult> MyAccount()
         { //To Set Title 
-            var titles = await setTitle("501", "5501013", "5");
+            var titles = await setTitle("501", "5501005", "5");
             await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             var bsLayoutVM = await GetBranchesAndLayout();
             var userLogin = await _userManager.GetUserAsync(User);

@@ -71,6 +71,7 @@ namespace Bnan.Inferastructure.Repository.MAS
             user.CrMasUserInformationCallingKey = model.CrMasUserInformationCallingKey;
             user.CrMasUserInformationTasksArName = model.CrMasUserInformationTasksArName;
             user.CrMasUserInformationTasksEnName = model.CrMasUserInformationTasksEnName;
+            user.CrMasUserInformationEmail = model.CrMasUserInformationEmail;
             user.CrMasUserInformationReasons = model.CrMasUserInformationReasons;
             if (_unitOfWork.CrMasUserInformation.Update(user) != null) return true;
             return false;

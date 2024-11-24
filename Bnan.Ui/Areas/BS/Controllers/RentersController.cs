@@ -31,8 +31,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             //To Set Title 
             var userLogin = await _userManager.GetUserAsync(User);
-            if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Branches", "Renters", "", "", "", userLogin.CrMasUserInformationEnName);
-            else await ViewData.SetPageTitleAsync("الفروع", "المستأجرين", "", "", "", userLogin.CrMasUserInformationArName);
+            var titles = await setTitle("506", "5506001", "5");
+            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bSLayoutVM = await GetBranchesAndLayout();
             var RenterAll = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == userLogin.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation" }).OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();

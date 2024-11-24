@@ -37,8 +37,6 @@ namespace Bnan.Inferastructure.Repository
         public IGenric<CrMasSupAccountReference> CrMasSupAccountReference { get; private set; }
         public IGenric<CrCasLessorClassification> CrCasLessorClassification { get; private set; }
         public IGenric<CrMasContractCompanyDetailed> CrMasContractCompanyDetailed { get; private set; }
-        public IGenric<CrMasSysMainTask> CrMasSysMainTask { get; private set; }
-        public IGenric<CrMasSysSubTask> CrMasSysSubTask { get; private set; }
         public IGenric<CrMasSupCarDistribution> CrMasSupCarDistribution { get; private set; }
         public IGenric<CrMasUserInformation> CrMasUserInformation { get; private set; }
         public IGenric<CrMasSupCarCategory> CrMasSupCarCategory { get; private set; }
@@ -133,10 +131,8 @@ namespace Bnan.Inferastructure.Repository
             CrMasSupAccountPaymentMethod = new BaseRepository<CrMasSupAccountPaymentMethod>(_context);
             CrMasSupAccountReference = new BaseRepository<CrMasSupAccountReference>(_context);
             CrCasLessorClassification = new BaseRepository<CrCasLessorClassification>(_context);
-            CrMasSysMainTask = new BaseRepository<CrMasSysMainTask>(_context);
             CrMasContractCompanyDetailed = new BaseRepository<CrMasContractCompanyDetailed>(_context);
             CrMasSupCarDistribution = new BaseRepository<CrMasSupCarDistribution>(_context);
-            CrMasSysSubTask = new BaseRepository<CrMasSysSubTask>(_context);
             CrMasSupContractAdditional = new BaseRepository<CrMasSupContractAdditional>(_context);
             CrMasSupContractOption = new BaseRepository<CrMasSupContractOption>(_context);
             CrMasSupContractCarCheckup = new BaseRepository<CrMasSupContractCarCheckup>(_context);
