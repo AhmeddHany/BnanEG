@@ -1,0 +1,60 @@
+﻿@using System.Globalization;
+@using Bnan.Core.Extensions
+@model IEnumerable<CrMasUserInformation>
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th class="DifferAlign">@localizer["Email"]</th>
+            <th class="DifferAlign">@localizer["EmployementName"]</th>
+            <th class="DifferAlign"> @localizer["UserName_view"]</th>
+            <th class="DifferAlign"> @localizer["UserCode"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href='@Url.Action("EditSystemValiditions", "UsersSystemValiditions", new { id = item.CrMasUserInformationCode })'">
+                <td class="DifferAlign"><p>@item.Email</p></td>
+                <td class="DifferAlign">
+                    <p>
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasUserInformationTasksEnName : item.CrMasUserInformationTasksArName)
+                    </p>
+                </td>
+                <td class="DifferAlign">
+                    <p>
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasUserInformationEnName : item.CrMasUserInformationArName)
+                    </p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@item.CrMasUserInformationCode</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasUserInformationStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasUserInformationStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasUserInformationStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>

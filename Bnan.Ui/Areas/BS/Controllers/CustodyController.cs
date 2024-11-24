@@ -32,7 +32,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
         public async Task<IActionResult> Index()
         {
             //To Set Title 
-            var titles = await setTitle("501", "5501011", "5");
+            var titles = await setTitle("509", "5509001", "5");
             await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
 
             var userLogin = await _userManager.GetUserAsync(User);

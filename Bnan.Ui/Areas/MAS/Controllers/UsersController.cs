@@ -9,7 +9,6 @@ using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.Identitiy;
 using Bnan.Ui.ViewModels.MAS;
-using Bnan.Ui.ViewModels.MAS.UserValiditySystem;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -38,9 +37,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IBaseRepo _baseRepo;
         private readonly IMasUser _masUser;
-
-
-
+        private readonly string pageNumber = SubTasks.CrMasUserSystemValiditionsMAS;
         public UsersController(IUserService userService,
                                IAuthService authService,
                                IWebHostEnvironment webHostEnvironment,
@@ -68,10 +65,13 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Users()
         {
             var user = await _userManager.GetUserAsync(User);
-
-            var pageNumber = SubTasks.CrMasUserInformationForMAS;
-            // Set page titles
             await SetPageTitleAsync(string.Empty, pageNumber);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
 
             // Retrieve active driving licenses
             var usersInfo = await _unitOfWork.CrMasUserInformation
@@ -130,7 +130,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
         public async Task<IActionResult> AddUser()
         {
-            var pageNumber = SubTasks.CrMasUserInformationForMAS;
+
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
             if (user == null)
@@ -156,7 +156,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         {
 
             var pageNumber = SubTasks.CrMasSupRenterDrivingLicense;
-
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
 
@@ -164,6 +163,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return View("Users", model);
+            }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Users", "Users");
             }
             try
             {
@@ -225,7 +230,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var pageNumber = SubTasks.CrMasUserInformationForMAS;
             await SetPageTitleAsync(Status.Update, pageNumber);
             var userInfo = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == id);
             if (userInfo == null)
@@ -244,7 +248,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> Edit(RegisterViewModel model)
         {
 
-            var pageNumber = SubTasks.CrMasUserInformationForMAS;
+
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
 
@@ -269,9 +273,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return View("Edit", model);
                 }
-                _unitOfWork.CrMasUserInformation.Update(userInfo);
-                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-
+                if (await _masUser.UpdateUser(userInfo) && await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 await SaveTracingForUserChange(userInfo, Status.Update);
                 return RedirectToAction("Users", "Users");
             }
@@ -284,7 +286,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<string> EditStatus(string status, string code)
         {
-            var pageNumber = SubTasks.CrMasUserInformationForMAS;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
@@ -370,158 +372,208 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
 
 
-        [HttpGet]
-        public async Task<IActionResult> SystemValiditions()
-        {
-            //save Tracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("105", "1105002", "1");
+        //[HttpGet]
+        //public async Task<IActionResult> SystemValiditions()
+        //{
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+        //    var user = await _userManager.GetUserAsync(User);
+        //    await SetPageTitleAsync(string.Empty, pageNumber);
 
 
-            //sidebar Active
-            ViewBag.id = "#sidebarUsers";
-            ViewBag.no = "1";
-            // Set Title
-            var titles = await setTitle("105", "1105002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
+        //    // Check Validition
+        //    if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+        //    {
+        //        _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+        //        return RedirectToAction("Index", "Home");
+        //    }
+        //    // Retrieve active driving licenses
+        //    var usersInfo = await _unitOfWork.CrMasUserInformation
+        //        .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationCode != Status.MASUserCode &&
+        //                                      x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
+        //                                      x.CrMasUserInformationStatus == Status.Active &&
+        //                                      x.CrMasUserInformationLessor == Status.MASLessorCode);
+
+        //    // If no active licenses, retrieve all licenses
+        //    if (!usersInfo.Any())
+        //    {
+        //        usersInfo = await _unitOfWork.CrMasUserInformation
+        //            .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationCode != Status.MASUserCode &&
+        //                                      x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
+        //                                      x.CrMasUserInformationStatus == Status.Hold
+        //                                      && x.CrMasUserInformationLessor == Status.MASLessorCode);
+        //        ViewBag.radio = "All";
+        //    }
+        //    else ViewBag.radio = "A";
+        //    return View(usersInfo);
+        //}
+        //[HttpGet]
+        //public async Task<PartialViewResult> GetUserSystemValiditionsByStatus(string status, string search)
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
+
+        //    if (!string.IsNullOrEmpty(status))
+        //    {
+        //        var usersInfo = await _unitOfWork.CrMasUserInformation.FindAllAsNoTrackingAsync(x => x.CrMasUserInformationCode != Status.MASUserCode &&
+        //                                                                                             x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
+        //                                                                                             x.CrMasUserInformationLessor == Status.MASLessorCode &&
+        //                                                                                            (x.CrMasUserInformationStatus == Status.Active ||
+        //                                                                                             x.CrMasUserInformationStatus == Status.Deleted ||
+        //                                                                                             x.CrMasUserInformationStatus == Status.Hold));
+
+        //        if (status == Status.All)
+        //        {
+        //            var FilterAll = usersInfo.FindAll(x => x.CrMasUserInformationStatus != Status.Deleted &&
+        //                                                                 (x.CrMasUserInformationArName.Contains(search) ||
+        //                                                                  x.CrMasUserInformationEnName.ToLower().Contains(search.ToLower()) ||
+        //                                                                  x.CrMasUserInformationTasksArName.Contains(search) ||
+        //                                                                  x.CrMasUserInformationTasksEnName.ToLower().Contains(search.ToLower()) ||
+        //                                                                  x.CrMasUserInformationCode.Contains(search)));
+        //            return PartialView("_DataTableSystemValiditions", FilterAll);
+        //        }
+        //        var FilterByStatus = usersInfo.FindAll(x => x.CrMasUserInformationStatus == status &&
+        //                                                                 (x.CrMasUserInformationArName.Contains(search) ||
+        //                                                                  x.CrMasUserInformationEnName.ToLower().Contains(search.ToLower()) ||
+        //                                                                  x.CrMasUserInformationTasksArName.Contains(search) ||
+        //                                                                  x.CrMasUserInformationTasksEnName.ToLower().Contains(search.ToLower()) ||
+        //                                                                  x.CrMasUserInformationCode.Contains(search)));
+        //        return PartialView("_DataTableSystemValiditions", FilterByStatus);
+        //    }
+        //    return PartialView();
+        //}
+        //[HttpGet]
+        //public async Task<IActionResult> EditSystemValiditions(string id)
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
+        //    var pageNumber = SubTasks.CrMasUserSystemValiditionsMAS;
+        //    await SetPageTitleAsync(Status.Update, pageNumber);
+        //    // Check Validition
+        //    if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+        //    {
+        //        _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+        //        return RedirectToAction("Index", "Home");
+        //    }
+        //    var EditedUser = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == id);
+        //    if (EditedUser == null || user == null)
+        //    {
+        //        _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+        //        return RedirectToAction("Users", "Users");
+        //    }
+        //    var subTasksHaveStatusDorW = await _unitOfWork.CrMasSysSubTasks.FindAllAsNoTrackingAsync(x => x.CrMasSysSubTasksStatus == Status.Deleted || x.CrMasSysSubTasksStatus == Status.Wating);
+        //    var subTaskIdsWithStatusDorW = subTasksHaveStatusDorW.Select(x => x.CrMasSysSubTasksCode).ToHashSet();
+
+        //    var mainValidition = await _unitOfWork.CrMasUserMainValidations.FindAllAsNoTrackingAsync(x => x.CrMasUserMainValidationUser == id);
+        //    var subValition = await _unitOfWork.CrMasUserSubValidations.FindAllAsNoTrackingAsync(x => x.CrMasUserSubValidationUser == id);
+        //    var procedureValidition = await _unitOfWork.CrMasUserProceduresValidations.FindAllAsNoTrackingAsync(x => x.CrMasUserProceduresValidationCode == id);
+        //    var procedureTasks = await _unitOfWork.CrMasSysProceduresTasks.GetAllAsyncAsNoTrackingAsync();
+        //    RegisterViewModel viewModel = new RegisterViewModel
+        //    {
+        //        CrMasSysMainTasks = (List<CrMasSysMainTask>)_unitOfWork.CrMasSysMainTasks.FindAll(x => x.CrMasSysMainTasksSystem == "1"),
+        //        CrMasUserMainValidations = (List<CrMasUserMainValidation>)mainValidition,
+
+        //        CrMasUserInformationCode = EditedUser.CrMasUserInformationCode,
+        //        CrMasUserInformationArName = EditedUser.CrMasUserInformationArName,
+        //        CrMasUserInformationEnName = EditedUser.CrMasUserInformationEnName,
+
+        //        CrMasSysSubTasks = (List<CrMasSysSubTask>)_unitOfWork.CrMasSysSubTasks.FindAll(x => x.CrMasSysSubTasksSystemCode == "1"),
+        //        CrMasUserSubValidations = (List<CrMasUserSubValidation>)subValition.Where(x => !subTaskIdsWithStatusDorW.Contains(x.CrMasUserSubValidationSubTasks)).ToList(),
+        //        CrMasSysProceduresTasks = (List<CrMasSysProceduresTask>)procedureTasks,
+        //        ProceduresValidations = (List<CrMasUserProceduresValidation>)procedureValidition,
+        //    };
+        //    return View(viewModel);
+        //}
+        //[HttpPost]
+        //public async Task<IActionResult> EditSystemValiditions([FromBody] CheckBoxModels model)
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
+        //    var pageNumber = SubTasks.CrMasUserSystemValiditionsMAS;
+        //    await SetPageTitleAsync(Status.Update, pageNumber);
+        //    // Check Validition
+        //    if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+        //    {
+        //        _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+        //        return RedirectToAction("Index", "Home");
+        //    }
+        //    foreach (var checkboxMain in model.CheckboxesMainTask)
+        //    {
+        //        var mainTask = await _unitOfWork.CrMasUserMainValidations.FindAsync(x => x.CrMasUserMainValidationUser == model.UserId && x.CrMasUserMainValidationMainTasks == checkboxMain.id);
+        //        if (mainTask != null) mainTask.CrMasUserMainValidationAuthorization = checkboxMain.value;
+        //        _unitOfWork.CrMasUserMainValidations.Update(mainTask);
+
+        //    }
+        //    foreach (var checkboxSub in model.CheckboxesSubTask)
+        //    {
+        //        var mainTask = await _unitOfWork.CrMasUserMainValidations.FindAsync(x => x.CrMasUserMainValidationUser == model.UserId && x.CrMasUserMainValidationMainTasks == checkboxSub.mainTaskId);
+        //        var subTask = await _unitOfWork.CrMasUserSubValidations.FindAsync(x => x.CrMasUserSubValidationUser == model.UserId && x.CrMasUserSubValidationMain == checkboxSub.mainTaskId && x.CrMasUserSubValidationSubTasks == checkboxSub.subTaskId);
+        //        if (mainTask.CrMasUserMainValidationAuthorization == true)
+        //        {
+        //            if (subTask != null)
+        //            {
+        //                if (subTask.CrMasUserSubValidationAuthorization == false && checkboxSub.value == true)
+        //                {
+        //                    // SaveTracing
+        //                    var (mainTask1, subTask1, system, currentUser) = await SetTrace("105", "1105002", "1");
+        //                    var RecordAr = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.UserId).CrMasUserInformationArName} - {_unitOfWork.CrMasSysSubTasks.Find(x => x.CrMasSysSubTasksCode == subTask.CrMasUserSubValidationSubTasks).CrMasSysSubTasksArName.ToString()}";
+        //                    var RecordEn = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.UserId).CrMasUserInformationEnName} - {_unitOfWork.CrMasSysSubTasks.Find(x => x.CrMasSysSubTasksCode == subTask.CrMasUserSubValidationSubTasks).CrMasSysSubTasksEnName.ToString()}";
+        //                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "إضافة دور", "Add role", mainTask1.CrMasSysMainTasksCode,
+        //                    subTask1.CrMasSysSubTasksCode, mainTask1.CrMasSysMainTasksArName, subTask1.CrMasSysSubTasksArName, mainTask1.CrMasSysMainTasksEnName,
+        //                    subTask1.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+        //                }
+
+        //                subTask.CrMasUserSubValidationAuthorization = checkboxSub.value;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (subTask.CrMasUserSubValidationAuthorization == true)
+        //            {
+        //                // SaveTracing
+        //                var (mainTask1, subTask1, system, currentUser) = await SetTrace("105", "1105002", "1");
+        //                var RecordAr = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.UserId).CrMasUserInformationArName} - {_unitOfWork.CrMasSysSubTasks.Find(x => x.CrMasSysSubTasksCode == subTask.CrMasUserSubValidationSubTasks).CrMasSysSubTasksArName.ToString()}";
+        //                var RecordEn = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.UserId).CrMasUserInformationEnName} - {_unitOfWork.CrMasSysSubTasks.Find(x => x.CrMasSysSubTasksCode == subTask.CrMasUserSubValidationSubTasks).CrMasSysSubTasksEnName.ToString()}";
+        //                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "حذف دور", "Remove role", mainTask1.CrMasSysMainTasksCode,
+        //                subTask1.CrMasSysSubTasksCode, mainTask1.CrMasSysMainTasksArName, subTask1.CrMasSysSubTasksArName, mainTask1.CrMasSysMainTasksEnName,
+        //                subTask1.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+        //            }
+
+        //            subTask.CrMasUserSubValidationAuthorization = false;
+        //        }
+        //        _unitOfWork.CrMasUserSubValidations.Update(subTask);
+        //    }
+        //    foreach (var checkboxProcedure in model.CheckboxesProcedureTask)
+        //    {
+        //        var mainTask = await _unitOfWork.CrMasUserMainValidations.FindAsync(x => x.CrMasUserMainValidationUser == model.UserId && x.CrMasUserMainValidationMainTasks == checkboxProcedure.mainTaskId);
+        //        var subTask = await _unitOfWork.CrMasUserSubValidations.FindAsync(x => x.CrMasUserSubValidationUser == model.UserId && x.CrMasUserSubValidationMain == checkboxProcedure.mainTaskId && x.CrMasUserSubValidationSubTasks == checkboxProcedure.subTaskId);
+        //        var procedureTask = await _unitOfWork.CrMasUserProceduresValidations.FindAsync(x => x.CrMasUserProceduresValidationCode == model.UserId && x.CrMasUserProceduresValidationMainTask == checkboxProcedure.mainTaskId && x.CrMasUserProceduresValidationSubTasks == checkboxProcedure.subTaskId);
+
+        //        if (mainTask.CrMasUserMainValidationAuthorization == true && subTask.CrMasUserSubValidationAuthorization == true)
+        //        {
+        //            if (procedureTask != null && checkboxProcedure != null)
+        //            {
+        //                if (checkboxProcedure.procedureName.ToLower() == "insert") procedureTask.CrMasUserProceduresValidationInsertAuthorization = checkboxProcedure.value;
+        //                if (checkboxProcedure.procedureName.ToLower() == "update") procedureTask.CrMasUserProceduresValidationUpDateAuthorization = checkboxProcedure.value;
+        //                if (checkboxProcedure.procedureName.ToLower() == "hold") procedureTask.CrMasUserProceduresValidationHoldAuthorization = checkboxProcedure.value;
+        //                if (checkboxProcedure.procedureName.ToLower() == "unhold") procedureTask.CrMasUserProceduresValidationUnHoldAuthorization = checkboxProcedure.value;
+        //                if (checkboxProcedure.procedureName.ToLower() == "delete") procedureTask.CrMasUserProceduresValidationDeleteAuthorization = checkboxProcedure.value;
+        //                if (checkboxProcedure.procedureName.ToLower() == "undelete") procedureTask.CrMasUserProceduresValidationUnDeleteAuthorization = checkboxProcedure.value;
 
 
-            var user = User; // Get the current User object
-            var userLessor = await _userService.GetUserLessor(user);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            procedureTask.CrMasUserProceduresValidationInsertAuthorization = false;
+        //            procedureTask.CrMasUserProceduresValidationUpDateAuthorization = false;
+        //            procedureTask.CrMasUserProceduresValidationHoldAuthorization = false;
+        //            procedureTask.CrMasUserProceduresValidationUnHoldAuthorization = false;
+        //            procedureTask.CrMasUserProceduresValidationDeleteAuthorization = false;
+        //            procedureTask.CrMasUserProceduresValidationUnDeleteAuthorization = false;
+        //        }
+        //        _unitOfWork.CrMasUserProceduresValidations.Update(procedureTask);
 
-            if (userLessor == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-            // Exclude the current user from the list
-            var usersByLessor = await _userService.GetAllUsersByLessor(userLessor.CrMasUserInformationLessor);
-
-            return View(usersByLessor.Where(x => x.CrMasUserInformationCode != userLessor.CrMasUserInformationCode && x.CrMasUserInformationStatus == Status.Active).ToList());
-        }
-        [HttpGet]
-        public async Task<ActionResult> EditSystemValiditions(string id)
-        {
-            //sidebar Active
-            ViewBag.id = "#sidebarUsers";
-            ViewBag.no = "1";
-
-            // Set Title
-            var titles = await setTitle("105", "1105002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
-            var user = await _userService.GetUserByUserNameAsync(id);
-            if (user == null)
-            {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Users");
-            }
-            var mainValidition = _unitOfWork.CrMasUserMainValidations.FindAll(x => x.CrMasUserMainValidationUser == id);
-            var subValition = _unitOfWork.CrMasUserSubValidations.FindAll(x => x.CrMasUserSubValidationUser == id);
-            var procedureValidition = _unitOfWork.CrMasUserProceduresValidations.FindAll(x => x.CrMasUserProceduresValidationCode == id);
-            var procedureTasks = _unitOfWork.CrMasSysProceduresTasks.GetAll();
-
-            RegisterViewModel viewModel = new RegisterViewModel
-            {
-                CrMasSysMainTasks = (List<CrMasSysMainTask>)_unitOfWork.CrMasSysMainTasks.FindAll(x => x.CrMasSysMainTasksStatus == Status.Active),
-                CrMasUserMainValidations = (List<CrMasUserMainValidation>)mainValidition,
-
-                CrMasUserInformationCode = user.CrMasUserInformationCode,
-                CrMasUserInformationArName = user.CrMasUserInformationArName,
-                CrMasUserInformationEnName = user.CrMasUserInformationEnName,
-
-                CrMasSysSubTasks = (List<CrMasSysSubTask>)_unitOfWork.CrMasSysSubTasks.FindAll(x => x.CrMasSysSubTasksStatus == Status.Active),
-                CrMasUserSubValidations = (List<CrMasUserSubValidation>)subValition,
-                CrMasSysProceduresTasks = (List<CrMasSysProceduresTask>)procedureTasks,
-                ProceduresValidations = (List<CrMasUserProceduresValidation>)procedureValidition,
-
-            };
-            return View(viewModel);
-        }
-        [HttpPost]
-        public async Task<IActionResult> EditSystemValiditions([FromBody] CheckBoxModels model)
-        {
-
-            foreach (var checkboxMain in model.CheckboxesMainTask)
-            {
-                var mainTask = _unitOfWork.CrMasUserMainValidations.Find(x => x.CrMasUserMainValidationUser == model.UserId && x.CrMasUserMainValidationMainTasks == checkboxMain.id);
-                if (mainTask != null) mainTask.CrMasUserMainValidationAuthorization = checkboxMain.value;
-            }
-            foreach (var checkboxSub in model.CheckboxesSubTask)
-            {
-                var mainTask = _unitOfWork.CrMasUserMainValidations.Find(x => x.CrMasUserMainValidationUser == model.UserId && x.CrMasUserMainValidationMainTasks == checkboxSub.mainTaskId);
-                var subTask = _unitOfWork.CrMasUserSubValidations.Find(x => x.CrMasUserSubValidationUser == model.UserId && x.CrMasUserSubValidationMain == checkboxSub.mainTaskId && x.CrMasUserSubValidationSubTasks == checkboxSub.subTaskId);
-                if (mainTask.CrMasUserMainValidationAuthorization == true)
-                {
-                    if (subTask != null)
-                    {
-                        if (subTask.CrMasUserSubValidationAuthorization == false && checkboxSub.value == true)
-                        {
-                            // SaveTracing
-                            var (mainTask1, subTask1, system, currentUser) = await SetTrace("105", "1105002", "1");
-                            var RecordAr = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.UserId).CrMasUserInformationArName} - {_unitOfWork.CrMasSysSubTask.Find(x => x.CrMasSysSubTasksCode == subTask.CrMasUserSubValidationSubTasks).CrMasSysSubTasksArName.ToString()}";
-                            var RecordEn = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.UserId).CrMasUserInformationEnName} - {_unitOfWork.CrMasSysSubTask.Find(x => x.CrMasSysSubTasksCode == subTask.CrMasUserSubValidationSubTasks).CrMasSysSubTasksEnName.ToString()}";
-                            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "إضافة دور", "Add role", mainTask1.CrMasSysMainTasksCode,
-                            subTask1.CrMasSysSubTasksCode, mainTask1.CrMasSysMainTasksArName, subTask1.CrMasSysSubTasksArName, mainTask1.CrMasSysMainTasksEnName,
-                            subTask1.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                        }
-
-                        subTask.CrMasUserSubValidationAuthorization = checkboxSub.value;
-
-                    }
-                }
-                else
-                {
-                    if (subTask.CrMasUserSubValidationAuthorization == true)
-                    {
-                        // SaveTracing
-                        var (mainTask1, subTask1, system, currentUser) = await SetTrace("105", "1105002", "1");
-                        var RecordAr = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.UserId).CrMasUserInformationArName} - {_unitOfWork.CrMasSysSubTask.Find(x => x.CrMasSysSubTasksCode == subTask.CrMasUserSubValidationSubTasks).CrMasSysSubTasksArName.ToString()}";
-                        var RecordEn = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.UserId).CrMasUserInformationEnName} - {_unitOfWork.CrMasSysSubTask.Find(x => x.CrMasSysSubTasksCode == subTask.CrMasUserSubValidationSubTasks).CrMasSysSubTasksEnName.ToString()}";
-                        await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "حذف دور", "Remove role", mainTask1.CrMasSysMainTasksCode,
-                        subTask1.CrMasSysSubTasksCode, mainTask1.CrMasSysMainTasksArName, subTask1.CrMasSysSubTasksArName, mainTask1.CrMasSysMainTasksEnName,
-                        subTask1.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                    }
-
-                    subTask.CrMasUserSubValidationAuthorization = false;
-                }
-
-            }
-            foreach (var checkboxProcedure in model.CheckboxesProcedureTask)
-            {
-                var mainTask = _unitOfWork.CrMasUserMainValidations.Find(x => x.CrMasUserMainValidationUser == model.UserId && x.CrMasUserMainValidationMainTasks == checkboxProcedure.mainTaskId);
-                var subTask = _unitOfWork.CrMasUserSubValidations.Find(x => x.CrMasUserSubValidationUser == model.UserId && x.CrMasUserSubValidationMain == checkboxProcedure.mainTaskId && x.CrMasUserSubValidationSubTasks == checkboxProcedure.subTaskId);
-                var procedureTask = _unitOfWork.CrMasUserProceduresValidations.Find(x => x.CrMasUserProceduresValidationCode == model.UserId && x.CrMasUserProceduresValidationMainTask == checkboxProcedure.mainTaskId && x.CrMasUserProceduresValidationSubTasks == checkboxProcedure.subTaskId);
-
-                if (mainTask.CrMasUserMainValidationAuthorization == true && subTask.CrMasUserSubValidationAuthorization == true)
-                {
-                    if (procedureTask != null && checkboxProcedure != null)
-                    {
-                        if (checkboxProcedure.procedureName.ToLower() == "insert") procedureTask.CrMasUserProceduresValidationInsertAuthorization = checkboxProcedure.value;
-                        if (checkboxProcedure.procedureName.ToLower() == "update") procedureTask.CrMasUserProceduresValidationUpDateAuthorization = checkboxProcedure.value;
-                        if (checkboxProcedure.procedureName.ToLower() == "hold") procedureTask.CrMasUserProceduresValidationHoldAuthorization = checkboxProcedure.value;
-                        if (checkboxProcedure.procedureName.ToLower() == "unhold") procedureTask.CrMasUserProceduresValidationUnHoldAuthorization = checkboxProcedure.value;
-                        if (checkboxProcedure.procedureName.ToLower() == "delete") procedureTask.CrMasUserProceduresValidationDeleteAuthorization = checkboxProcedure.value;
-                        if (checkboxProcedure.procedureName.ToLower() == "undelete") procedureTask.CrMasUserProceduresValidationUnDeleteAuthorization = checkboxProcedure.value;
-
-
-                    }
-                }
-                else
-                {
-                    procedureTask.CrMasUserProceduresValidationInsertAuthorization = false;
-                    procedureTask.CrMasUserProceduresValidationUpDateAuthorization = false;
-                    procedureTask.CrMasUserProceduresValidationHoldAuthorization = false;
-                    procedureTask.CrMasUserProceduresValidationUnHoldAuthorization = false;
-                    procedureTask.CrMasUserProceduresValidationDeleteAuthorization = false;
-                    procedureTask.CrMasUserProceduresValidationUnDeleteAuthorization = false;
-                }
-            }
-            _unitOfWork.Complete();
-
-            return Json(new { success = true });
-        }
+        //    }
+        //    await _unitOfWork.CompleteAsync();
+        //    return Json(new { success = true });
+        //}
 
         [HttpGet]
         public async Task<IActionResult> MyAccount()
@@ -667,7 +719,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
         private async Task SaveTracingForUserChange(CrMasUserInformation userCreated, string status)
         {
-            var pageNumber = SubTasks.CrMasUserInformationForMAS;
+
 
             var recordAr = $"{userCreated.CrMasUserInformationArName} - {userCreated.CrMasUserInformationTasksArName}";
             var recordEn = $"{userCreated.CrMasUserInformationEnName} - {userCreated.CrMasUserInformationTasksEnName}";
@@ -709,6 +761,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             return RedirectToAction("Users", "Users");
         }
 
+        //public IActionResult DisplayToastSuccess_ForEditValidtions()
+        //{
+        //    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+        //    return RedirectToAction("SystemValiditions", "Users");
+        //}
+        //public IActionResult DisplayToastError_ForEditValidtions()
+        //{
+        //    _toastNotification.AddSuccessToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+        //    return RedirectToAction("SystemValiditions", "Users");
+        //}
 
     }
 }

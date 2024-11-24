@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Globalization;
 
 namespace Bnan.Ui.Areas.BS.Controllers
 {
@@ -31,8 +30,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             //To Set Title 
             var userLogin = await _userManager.GetUserAsync(User);
-            if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Branches", "Home", "", "", "", userLogin.CrMasUserInformationEnName);
-            else await ViewData.SetPageTitleAsync("الفروع", "الرئيسية", "", "", "", userLogin.CrMasUserInformationArName);
+            var titles = await setTitle("501", "5501001", "5");
+            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bSLayoutVM = await GetBranchesAndLayout();
             var Cars = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode &&
@@ -170,7 +169,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     AvaliableCars = null,
                     SelectedBranch = BranchCode,
                 };
-
+                var titles = await setTitle("501", "5501002", "5");
+                await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
                 return PartialView("_RentedCars", bSLayoutVM);
             }
             catch (Exception ex)
@@ -197,7 +197,6 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
 
             var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
-
             BSLayoutVM bSLayoutVM = new BSLayoutVM()
             {
                 CrCasBranchInformations = branches.ToList(),
@@ -224,7 +223,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
                                                                                               "CrCasCarInformationFuelNavigation","CrCasCarInformationCvtNavigation"});
 
             var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
-
+            var titles = await setTitle("501", "5501004", "5");
+            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             BSLayoutVM bSLayoutVM = new BSLayoutVM()
             {
                 CrCasBranchInformations = branches.ToList(),
@@ -254,7 +254,6 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 carsUnAvailable = carsUnAvailable.Where(x => x.CrCasCarInformationCategory == code).ToList();
             }
             var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
-
             BSLayoutVM bSLayoutVM = new BSLayoutVM()
             {
                 CrCasBranchInformations = branches.ToList(),
@@ -279,6 +278,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
                                                                                new[] { "CrCasCarInformationDistributionNavigation", "CrCasCarInformationCategoryNavigation", "CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics",
                                                                                    "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation" ,"CrCasCarInformationFuelNavigation","CrCasCarInformationCvtNavigation"});
             var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
+            var titles = await setTitle("501", "5501003", "5");
+            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             BSLayoutVM bSLayoutVM = new BSLayoutVM()
             {
                 CrCasBranchInformations = branches.ToList(),
@@ -307,7 +308,6 @@ namespace Bnan.Ui.Areas.BS.Controllers
             {
                 carsAvailable = carsAvailable.Where(x => x.CrCasCarInformationCategory == code).ToList();
             }
-
             var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted);
             BSLayoutVM bSLayoutVM = new BSLayoutVM()
             {

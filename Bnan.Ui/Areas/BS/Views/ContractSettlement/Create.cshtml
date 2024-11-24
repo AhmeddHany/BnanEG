@@ -886,7 +886,11 @@
                                                                 <p> : @localizer["ExtraHours"]</p>
                                                             </div>
                                                             <div class="col personal-data">
-                                                                <p>@Model.ContractSettlement?.CrCasRenterContractBasicHourMax?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                                                <p>
+                                                                    @(Model.ContractSettlement?.CrCasRenterContractBasicHourMax != null
+                                                                        ? $"{(int)Model.ContractSettlement.CrCasRenterContractBasicHourMax}:00"
+                                                                        : "0:00")
+                                                                </p>
                                                             </div>
                                                         </div>
                                                         <div class="row dropdown-content-row">
@@ -1011,6 +1015,14 @@
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p id="ExtraKMsValue">0.00</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row dropdown-content-row">
+                                                            <div class="col-auto ">
+                                                                <p> :@localizer["LateSettlement"]</p>
+                                                            </div>
+                                                            <div class="col personal-data">
+                                                                <p id="LateSettlement">0.00</p>
                                                             </div>
                                                         </div>
 
@@ -2084,7 +2096,8 @@
             var rentValue = totalDaysNo * parseFloat(rentalPricePerDay);
             var settelementRentValue = settlementDay * parseFloat(rentalPricePerDay)
             rentValueTotal = rentValue + settelementRentValue;
-            document.getElementById('RentalValue').textContent = rentValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('RentalValue').textContent = rentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('LateSettlement').textContent = settelementRentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             // FeesTamm
             var FeesTamm = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicAuthorizationValue));
@@ -2206,7 +2219,6 @@
                     AdditionalHoursValueTotal = parseInt(AdditionalHour) * parseFloat(AdditionalHourValue);
                 } else {
                     var HourAfterFreeHour = diffHours - TotalFreeHours;
-
                     if (HourAfterFreeHour >= 0 && diffMinutes > 0) {
                         // إضافة القيمة بناءً على الدقائق المحسوبة، مع تقريب الدقائق إلى الساعات
                         let totalMinutes = HourAfterFreeHour * 60 + diffMinutes; // اجمع الساعات والدقائق
@@ -2215,13 +2227,13 @@
                         AdditionalHoursValueTotal = totalRoundedHours * parseFloat(AdditionalHourValue);
                     }
                 }
-
-                // تحديث القيم المعروضة
-                document.getElementById('ExtraHoursValue').textContent = AdditionalHoursValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                $("#ContractSettlement_MaxHours").val(AdditionalHour);
-                $("#ContractSettlement_MaxMinutes").val(diffMinutes);
-                $("#ContractSettlement_ExtraHoursValue").val(AdditionalHoursValueTotal.toFixed(2));
             }
+            console.log("AdditionalHour", AdditionalHour)
+            console.log("AdditionalHoursValueTotal", AdditionalHoursValueTotal)
+            // تحديث القيم المعروضة
+            document.getElementById('ExtraHoursValue').textContent = AdditionalHoursValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            $("#ContractSettlement_MaxHours").val(AdditionalHour);
+            $("#ContractSettlement_ExtraHoursValue").val(AdditionalHoursValueTotal.toFixed(2));
         }
         function getAdditionalKmValue() {
             const KMValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicKmValue));

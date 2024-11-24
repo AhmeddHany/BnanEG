@@ -5,7 +5,6 @@ using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
-using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +30,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IStringLocalizer<BankController> _localizer;
 
         public BankController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IMasAccountBank masAccountBank, IBaseRepo BaseRepo,IMasBase masBase,
+            IMapper mapper, IUserService userService, IMasAccountBank masAccountBank, IBaseRepo BaseRepo, IMasBase masBase,
             IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<BankController> localizer) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
@@ -54,7 +53,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             // Retrieve active driving licenses
             var renterDrivingLicenses = await _unitOfWork.CrMasSupAccountBanks
-                .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Active );
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Active);
 
             var Banks_count = await _unitOfWork.CrCasAccountBank.FindCountByColumnAsync<CrMasSupAccountBank>(
                 predicate: x => x.CrCasAccountBankStatus != Status.Deleted,
@@ -86,7 +85,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 var AccountBanksAll = await _unitOfWork.CrMasSupAccountBanks.FindAllAsNoTrackingAsync(x => x.CrMasSupAccountBankStatus == Status.Active ||
                                                                                                                             x.CrMasSupAccountBankStatus == Status.Deleted ||
-                                                                                                                            x.CrMasSupAccountBankStatus == Status.Hold );
+                                                                                                                            x.CrMasSupAccountBankStatus == Status.Hold);
                 var Banks_count = await _unitOfWork.CrCasAccountBank.FindCountByColumnAsync<CrMasSupAccountBank>(
                     predicate: x => x.CrCasAccountBankStatus != Status.Deleted,
                     columnSelector: x => x.CrCasAccountBankNo  // تحديد العمود الذي نريد التجميع بناءً عليه
@@ -148,7 +147,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> AddAccountBank(MasAccountBankVM renterDrivingLicenseVM)
         {
             var pageNumber = SubTasks.CrMasSupAccountBank;
-            
+
             var user = await _userManager.GetUserAsync(User);
 
             if (!ModelState.IsValid || renterDrivingLicenseVM == null)
@@ -263,9 +262,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             try
             {
-                
+
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
-                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSupAccountBankStatus = status;
                 _unitOfWork.CrMasSupAccountBanks.Update(licence);
                 _unitOfWork.Complete();

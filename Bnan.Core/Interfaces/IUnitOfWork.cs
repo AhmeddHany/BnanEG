@@ -30,8 +30,6 @@ namespace Bnan.Core.Interfaces
         public IGenric<CrCasAccountSalesPoint> CrCasAccountSalesPoint { get; }
         public IGenric<CrMasSupAccountBank> CrMasSupAccountBanks { get; }
         public IGenric<CrCasLessorClassification> CrCasLessorClassification { get; }
-        public IGenric<CrMasSysMainTask> CrMasSysMainTask { get; }
-        public IGenric<CrMasSysSubTask> CrMasSysSubTask { get; }
         public IGenric<CrMasContractCompanyDetailed> CrMasContractCompanyDetailed { get; }
         public IGenric<CrMasSupCarDistribution> CrMasSupCarDistribution { get; }
         public IGenric<CrMasSupAccountPaymentMethod> CrMasSupAccountPaymentMethod { get; }
