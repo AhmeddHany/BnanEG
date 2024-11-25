@@ -2506,6 +2506,7 @@
   "Age": "Age",
   "MaximumHours": "Maximum Hours",
   "FreeHours": "Free Hours",
+  "FreeHourss": "Free Hours",
   "DailyFreeKilos": "Daily Free KM",
   "RentalTerms": "RentalTerms",
   "FeedNo": "FeedBox No.",
