@@ -26,6 +26,8 @@ namespace Bnan.Inferastructure.Repository
             model.CrMasRenterInformationCommunicationLanguage = "1";
             model.CrMasRenterInformationSector = "1";
             model.CrMasRenterInformationEmployer = GetEmployer(firstChar, EmployerName);
+            if (string.IsNullOrEmpty(model.CrMasRenterInformationDrivingLicenseType)) model.CrMasRenterInformationDrivingLicenseType = null;
+            if (string.IsNullOrEmpty(model.CrMasRenterInformationDrivingLicenseNo)) model.CrMasRenterInformationDrivingLicenseNo = null;
             if (string.IsNullOrEmpty(model.CrMasRenterInformationProfession)) model.CrMasRenterInformationProfession = "1400000002";
             if (string.IsNullOrEmpty(model.CrMasRenterInformationGender)) model.CrMasRenterInformationGender = "1100000002";
             model.CrMasRenterInformationUpDateLicenseData = DateTime.Now.Date;
@@ -155,9 +157,9 @@ namespace Bnan.Inferastructure.Repository
                 //masRenter.CrMasRenterInformationSector = sectorCode;
                 if (personalType != PersonalType.Renter)
                 {
-                    masRenter.CrMasRenterInformationDrivingLicenseNo = model.CrMasRenterInformationDrivingLicenseNo;
-                    masRenter.CrMasRenterInformationDrivingLicenseType = model.CrMasRenterInformationDrivingLicenseType;
-                    masRenter.CrMasRenterInformationExpiryDrivingLicenseDate = model.CrMasRenterInformationExpiryDrivingLicenseDate;
+                    masRenter.CrMasRenterInformationDrivingLicenseNo = model.CrMasRenterInformationDrivingLicenseNo ?? null;
+                    masRenter.CrMasRenterInformationDrivingLicenseType = model.CrMasRenterInformationDrivingLicenseType ?? null;
+                    masRenter.CrMasRenterInformationExpiryDrivingLicenseDate = model.CrMasRenterInformationExpiryDrivingLicenseDate ?? null;
                 }
 
                 if (_unitOfWork.CrMasRenterInformation.Update(masRenter) == null) return null;

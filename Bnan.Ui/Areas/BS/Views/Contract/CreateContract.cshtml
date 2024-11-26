@@ -574,6 +574,7 @@
                                                         <input type="text" class="form-control inputs-style" asp-for="Contract.DriverInfo.CrMasRenterInformationId" maxlength="20">
                                                         <div class="row requird-field-row">
                                                             <span class="requird-field" id="requird-field_DriverID" asp-validation-for="Contract.DriverInfo.CrMasRenterInformationId"></span>
+                                                            <span class="requird-field" id="errorDriverMustNotRenterId"></span>
                                                         </div>
                                                     </div>
                                                     <div class="col-auto seacrh-icon-col" id="seacrh_icon_Driver" style="display:none">
@@ -1045,6 +1046,7 @@
                                                         <input type="text" class="form-control inputs-style" asp-for="Contract.AddDriverInfo.CrMasRenterInformationId" maxlength="20">
                                                         <div class="row requird-field-row">
                                                             <span class="requird-field" id="requird-field_AddDriverID" asp-validation-for="Contract.AddDriverInfo.CrMasRenterInformationId"></span>
+                                                            <span class="requird-field" id="errorAddDriverMustNotRenterId"></span>
                                                         </div>
                                                     </div>
                                                     <div class="col-auto seacrh-icon-col" id="seacrh_icon_AddDriver" style="display:none">
@@ -1221,7 +1223,7 @@
                                         </div>
                                         <hr class="version2-hr">
                                         <div class="row hidden-input-row hidden-input-row-AddDriver ms-2" style="display:none;">
-                                           
+
                                             <div class="col-lg-12">
                                                 <div class="row justify-content-end">
                                                     <div class="col-lg-7  inner-hidden-row-div">
@@ -2387,6 +2389,11 @@
         document.getElementById('birth-date-driver').setAttribute('max', today);
         document.getElementById('birth-date-AddDriver').setAttribute('max', today);
     </script>
+    <script>
+        $(document).ready(function () {
+            toastr.options = { "positionClass": '@localizer["toastPostion"]', "title": " " };
+        });
+    </script>
     <!-- script for جهة العمل و الجنسيات و المنطقة / المدينة dropdown autocomplete list -->
     <script>
         const nationalities = @Html.Raw(Json.Serialize(ViewBag.RenterNationalities));
@@ -2710,9 +2717,9 @@
 
                 if (!videoElement) {
                     IDuploadContainer.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <video id="videoElement" autoplay></video>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <video id="videoElement" autoplay></video>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <img id="photo" alt="The screen capture will appear in this box." style="display:none;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
                     videoElement = document.getElementById('videoElement');
                     photo = document.getElementById('photo');
 
@@ -2991,7 +2998,7 @@
             }
             if (!imgeURL) {
                 $('#PicsignatureModal').modal('hide');
-                // toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+                //
                 // toastr.error('@localizer["PleaseEnterPictureToast"]');
                 return;
             }
@@ -3014,7 +3021,7 @@
                     console.log("CheckUpdateSigntureForRenter", 000000000000);
                 }
                 else {
-                    toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                     toastr.error('@localizer["SomethingWrongPleaseCallAdmin"]');
                 }
             }, 2000);
@@ -3141,9 +3148,11 @@
             reasons: null
         };
         var CheckIfConfirmByPhone = false;
-        var CheckIfRenterIdExist = false;
-        var CheckIfDriverIdExist = false;
-        var CheckIfAddDriverIdExist = false;
+        var CheckIfRenterIdChecked = false;
+        var CheckIfDriverIdChecked = false;
+        var CheckIfAddDriverIdChecked = false;
+        var CheckIfDriverIdSameRenterId = false;
+        var CheckIfAddDriverIdSameRenterOrDriverId = false;
         var RenterInformation = { ...modelPersonal };
         var DriverInformation = { ...modelPersonal };
         var AddDriverInformation = { ...modelPersonal };
@@ -3193,7 +3202,7 @@
                     return true; // Renter exists
                 }
             } catch (error) {
-                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                 toastr.error('@localizer["SomethingWrongPleaseCallAdmin"]');
                 return false; // Error occurred or Renter doesn't exist
             }
@@ -3214,7 +3223,7 @@
                     return true; // Renter exists
                 }
             } catch (error) {
-                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                 toastr.error('@localizer["SomethingWrongPleaseCallAdmin"]');
                 return false; // Error occurred or Renter doesn't exist
             }
@@ -3247,23 +3256,33 @@
             }
         }
         document.getElementById("CheckRenter").addEventListener("click", async function () {
-            await checkPerson("Renter", SetInformationForRenter);
+            CheckIfRenterIdChecked = await checkPerson("Renter", SetInformationForRenter, true);
         });
         document.getElementById("CheckDriver").addEventListener("click", async function () {
-            await checkPerson("Driver", SetInformationForDriver);
+            CheckIfDriverIdChecked = await checkPerson("Driver", SetInformationForDriver, CheckIfDriverIdSameRenterId);
         });
         document.getElementById("CheckAddDriver").addEventListener("click", async function () {
-            await checkPerson("AddDriver", SetInformationForAddDriver);
+            CheckIfAddDriverIdChecked = await checkPerson("AddDriver", SetInformationForAddDriver, CheckIfAddDriverIdSameRenterOrDriverId);
         });
-        async function checkPerson(type, SetPersonInfoFunction) {
+        async function checkPerson(type, SetPersonInfoFunction, checkIdIsExist) {
             if ($("#msform").valid()) {
+                if (!checkIdIsExist) {
+                    var errorMsg = "";
+                    if (type === "Driver") {
+                        $(`#error${type}MustNotRenterId`).text("@localizer["DriverIdExistRenter"]")
+                    }
+                    else {
+                        $(`#error${type}MustNotRenterId`).text("@localizer["DriverAndRenterIdExistAddDriver"]")
+                    }
+                    return false;
+                }
+                $(`#error${type}MustNotRenterId`).text("")
                 var personID = document.getElementById(`Contract_${type}Info_CrMasRenterInformationId`).value;
                 console.log(`${type}ID`, personID);
-
                 await GetPersonInformation(personID, type);
                 SetPersonInfoFunction();
-
                 HandleInputAfterChecks(type);
+                return true;
             }
         }
         function HandleInputAfterChecks(type) {
@@ -3359,7 +3378,7 @@
         //         await sendMessageToWhatsApp(randomNumberRenter, phoneNoSendCode);
         //     }
         //     else if (selectedWayToSendMessage == "SMS") {
-        //         toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+        //
         //         toastr.warning('@localizer["ThisFeatureNotAvaliable"]');
         //         return;
         //     }
@@ -3559,7 +3578,7 @@
         //Restart all values
         $(document).ready(function () {
             var initialRenterID = $('#Contract_RenterInfo_CrMasRenterInformationId').val();
-            $('#Contract_RenterInfo_CrMasRenterInformationId').on('change', function () {
+            $('#Contract_RenterInfo_CrMasRenterInformationId').on('input', function () {
                 // Check if the value has changed
                 if ($(this).val() !== initialRenterID) {
                     // Clear previous data and style
@@ -3573,14 +3592,11 @@
                     $("#RenterIsdriverDiv").hide();
                     $("#seacrh_icon_Renter").hide();
                     $("#CheckRenter").show();
-                    $("#country-code").val($("#country-code option:first").val());
-                    $("#CheckModal-PhoneInput").val('');
                     EmptyDriverRequiredInputs();
                     EmptyAddDriverRequiredInputs();
-                    CheckIfConfirmByPhone = false;
-                    CheckIfRenterIdExist = false;
-                    CheckIfDriverIdExist = false;
-                    CheckIfAddDriverIdExist = false;
+                    CheckIfRenterIdChecked = false;
+                    CheckIfDriverIdChecked = false;
+                    CheckIfAddDriverIdChecked = false;
                     clearPaymentData();
                     // Update the initial value of RenterID
                     initialRenterID = $(this).val();
@@ -3783,27 +3799,32 @@
         //Restart Driver values
         $(document).ready(function () {
             var initialRenterID = $('#Contract_DriverInfo_CrMasRenterInformationId').val();
-            $('#Contract_DriverInfo_CrMasRenterInformationId').on('change', function () {
+            $('#Contract_DriverInfo_CrMasRenterInformationId').on('input', function () {
                 // Check if the value has changed
                 if ($(this).val() !== initialRenterID) {
                     // Clear previous data and style
+                    CheckIfDriverIdSameRenterId = true;
+                    $("#errorDriverMustNotRenterId").text("");
                     EmptyDriverInput();
                     EmptyAddDriverRequiredInputs();
                     DriverInformation = null;
                     AddDriverInformation = null;
-                    CheckIfDriverIdExist = false;
-                    CheckIfAddDriverIdExist = false;
+                    CheckIfDriverIdChecked = false;
+                    CheckIfAddDriverIdChecked = false;
                     $(".requird-field").text('');
-
-                    $("#nationality-type-driver").val('');
                     $("#birth-date-driver").val("");
                     $(".hidden-input-row-Driver").hide();
                     $("#seacrh_icon_Driver").hide();
                     $("#CheckDriver").show();
-                    $("#country-code").val($("#country-code option:first").val());
-                    $("#CheckModal-PhoneInput").val('');
-                    CheckIfConfirmByPhone = false;
+                    $("#nationality-type-driver").val('');
+                    $("#nationality-type-driver").prop('disabled', false);
                     clearPaymentData();
+                    //Check If driver have the same renter id
+                    if ($(this).val() == $("#Contract_RenterInfo_CrMasRenterInformationId").val()) {
+                        CheckIfDriverIdSameRenterId = false;
+                        $("#errorDriverMustNotRenterId").text("@localizer["DriverIdExistRenter"]")
+                        return;
+                    }
                     // Update the initial value of RenterID
                     initialRenterID = $(this).val();
                 }
@@ -3995,6 +4016,8 @@
                 $('#divGenderDriver').remove();
             }
             $(".hidden-input-row-Driver").show();
+            CheckIfDriverIdChecked = true;
+            CheckIfDriverIdSameRenterId = true;
             console.log("DriverInformation", DriverInformation);
         }
         function SetInformationForDriverIfNotExist() {
@@ -4100,24 +4123,29 @@
         // Add Driver
         $(document).ready(function () {
             var initialID = $('#Contract_AddDriverInfo_CrMasRenterInformationId').val();
-            $('#Contract_AddDriverInfo_CrMasRenterInformationId').on('change', function () {
+            $('#Contract_AddDriverInfo_CrMasRenterInformationId').on('input', function () {
                 // Check if the value has changed
                 if ($(this).val() !== initialID) {
                     // Clear previous data and style
+                    CheckIfAddDriverIdSameRenterOrDriverId = true;
+                    $("#errorAddDriverMustNotRenterId").text("");
                     EmptyAddDriverInput();
                     AddDriverInformation = null;
-                    CheckIfAddDriverIdExist = false;
+                    CheckIfAddDriverIdChecked = false;
                     $(".requird-field").text('');
-
-                    $("#nationality-type-addDriver").val('');
                     $("#birth-date-addDriver").val("");
                     $(".hidden-input-row-addDriver").hide();
                     $("#seacrh_icon_AddDriver").hide();
                     $("#CheckAddDriver").show();
-                    $("#country-code").val($("#country-code option:first").val());
-                    $("#CheckModal-PhoneInput").val('');
-                    CheckIfConfirmByPhone = false;
+                    $("#nationality-type-addDriver").val('');
+                    $("#nationality-type-addDriver").prop('disabled', false);
                     clearPaymentData();
+                    //Check If add driver have the same renter or driver id
+                    if ($(this).val() == $("#Contract_RenterInfo_CrMasRenterInformationId").val() || $(this).val() == $("#Contract_DriverInfo_CrMasRenterInformationId").val()) {
+                        CheckIfAddDriverIdSameRenterOrDriverId = false;
+                        $("#errorAddDriverMustNotRenterId").text("@localizer["DriverAndRenterIdExistAddDriver"]")
+                        return;
+                    }
                     // Update the initial value of RenterID
                     initialID = $(this).val();
                 }
@@ -4339,10 +4367,11 @@
             PreviousField = $("#progressbar li").eq($("fieldset").index(next_fs))[0].id;
             if (currentField === "tenant") {
                 if ($("#msform").valid()) {
-
+                    if (!CheckIfRenterIdChecked) {
+                        toastr.error('@localizer["PleaseCheckYourID"]');
+                        return;
+                    }
                     if (!listsIsTrueOrNotRenter) {
-                        console.log("listsIsTrueOrNotRenter", listsIsTrueOrNotRenter)
-                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
                         toastr.error('@localizer["PleaseCheckInputs"]');
                         return;
                     }
@@ -4390,20 +4419,20 @@
                                     var check = data;
                                     if (check == "id") {
                                         $("#PrivateDriverRequired").text('').css("color", "");
-                                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                                         toastr.error('@localizer["IdIsExpriredAndYouNotAuth"]');
                                         return;
                                     }
                                     else if (check == "address") {
                                         $("#PrivateDriverRequired").text('').css("color", "");
-                                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                                         toastr.error('@localizer["AddressIsExpriredAndYouNotAuth"]');
                                         return
                                     }
                                     else if (check == "employeer") {
                                         $("#tenant-workplace").focus();
                                         $("#PrivateDriverRequired").text('').css("color", "");
-                                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                                         toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
                                         return
                                     }
@@ -4507,15 +4536,22 @@
             }
             else if (currentField === "driver") {
                 if ($("#msform").valid()) {
+                    if (!CheckIfDriverIdChecked) {
+                        toastr.error('@localizer["PleaseCheckYourID"]');
+                        return;
+                    }
+                    if (!CheckIfDriverIdSameRenterId) {
+                        $("#errorDriverMustNotRenterId").text("@localizer["DriverIdExistRenter"]")
+                        return;
+                    }
+                    else {
+                        $("#errorDriverMustNotRenterId").text("")
+                    }
                     if (!listsIsTrueOrNotDriver) {
-                        console.log("listsIsTrueOrNotDriver", listsIsTrueOrNotDriver)
-                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
                         toastr.error('@localizer["PleaseCheckInputs"]');
                         return;
                     }
-                    if (DriverInformation == null) {
-                        SetInformationForDriverIfNotExist();
-                    }
+                    SetInformationForDriverIfNotExist();
                     var additionalDriver = document.getElementById("addational-driver");
                     var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
                     var BirthDateDriver = new Date($("#birth-date-driver").val());
@@ -4561,30 +4597,30 @@
                     var Authrize = true;
                     if (!(id && address && license && isAgeInRange && employer)) {
                         if (id == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityId" == "False") {
-                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                             toastr.error('@localizer["IdIsExpriredAndYouNotAuth"]');
                             return;
                         }
                         else if (address == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityRenterAddress" == "False") {
-                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                             toastr.error('@localizer["AddressIsExpriredAndYouNotAuth"]');
                             return
                         }
                         else if (employer == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityEmployer" == "False") {
                             $("#driver-workplace").focus();
-                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                             toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
                             return
                         }
                         else if (license == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityDrivingLicense" == "False") {
                             console.log("555555")
                             $("#licence-driver-number").focus();
-                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                             toastr.error('@localizer["LicenseIsExpriredAndYouNotAuth"]');
                             return
                         }
                         else if (isAgeInRange == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityAge" == "False") {
-                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                             toastr.error('@localizer["AgeIsExpriredAndYouNotAuth"]');
                             return
                         }
@@ -4669,9 +4705,17 @@
             }
             else if (currentField === "add-driver") {
                 if ($("#msform").valid()) {
+                    if (!CheckIfAddDriverIdChecked) {
+                        toastr.error('@localizer["PleaseCheckYourID"]');
+                        return;
+                    }
+                    if (!CheckIfAddDriverIdSameRenterOrDriverId) {
+                        $("#errorDriverMustNotRenterId").text("@localizer["DriverIdExistRenter"]")
+                        return;
+                    }
                     if (!listsIsTrueOrNotAddDriver) {
                         console.log("listsIsTrueOrNotAddDriver", listsIsTrueOrNotAddDriver)
-                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                         toastr.error('@localizer["PleaseCheckInputs"]');
                         return;
                     }
@@ -4710,29 +4754,29 @@
 
 
                         if (id == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityId" == "False") {
-                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                             toastr.error('@localizer["IdIsExpriredAndYouNotAuth"]');
                             return;
                         }
                         else if (address == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityRenterAddress" == "False") {
-                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                             toastr.error('@localizer["AddressIsExpriredAndYouNotAuth"]');
                             return
                         }
                         else if (employer == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityEmployer" == "False") {
                             $("#addDriver-workplace").focus();
-                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                             toastr.error('@localizer["EmployerIsExpriredAndYouNotAuth"]');
                             return
                         }
                         else if (license == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityDrivingLicense" == "False") {
                             $("#licence-addDriver-number").focus();
-                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                             toastr.error('@localizer["LicenseIsExpriredAndYouNotAuth"]');
                             return
                         }
                         else if (isAgeInRange == false && "@user.CrMasUserContractValidity.CrMasUserContractValidityAge" == "False") {
-                            toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                             toastr.error('@localizer["AgeIsExpriredAndYouNotAuth"]');
                             return
                         }
@@ -5705,7 +5749,7 @@
             var userAuthAmount = @Html.Raw(Json.Serialize(userInfo?.CrMasUserContractValidity?.CrMasUserContractValidityLessContractValue));
             var AmountPayed = document.getElementById("AmountPayed").value;
             if (userAuthAmount == false && TotalAmount > AmountPayed) {
-                toastr.options = { "positionClass": '@localizer["toastPostion"]', };
+
                 toastr.error('@localizer["DontHaveAuthPayLessThanTotalAmount"]');
                 $("#AmountPayed").css({ "border": "2px solid red" });    //This For last Check When i submit Form
                 somethingIsNotOkay = false;
