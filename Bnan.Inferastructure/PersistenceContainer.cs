@@ -180,7 +180,9 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasAccountBank, MasAccountBank>();
             builder.Services.AddScoped<IMasAccountReference, MasAccountReference>();
             builder.Services.AddScoped<IMasLessorClassification, MasLessorClassification>();
-        
+            builder.Services.AddScoped<IMasRate, MasRate>();
+            builder.Services.AddScoped<IMasCurrency, MasCurrency>();
+
 
             //CAS
             builder.Services.AddScoped<IRenterLessorInformation, CasRenterLessorInformation>();

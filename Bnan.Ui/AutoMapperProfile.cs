@@ -104,7 +104,9 @@ namespace Bnan.Inferastructure
             CreateMap<RenterInformationsVM, CrMasRenterInformation>().ReverseMap();
 
             CreateMap<RenterLessorInformationVM, CrCasRenterLessor>().ReverseMap();
-
+            CreateMap<RateVM, CrMasSysEvaluation>().ReverseMap();
+            CreateMap<CurrencyVM, CrMasSysConvertNoToText>().ReverseMap();
+            
             CreateMap<CasRenterContractVM, CrCasRenterLessor>().ReverseMap();
             CreateMap<RenterInfoVM, CrMasRenterInformation>().ReverseMap();
 

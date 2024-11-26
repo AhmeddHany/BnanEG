@@ -10,6 +10,8 @@
     <thead class="sticky-top">
         <tr>
             <th>@localizer["Count"]</th>
+            <th> @localizer["RentalSystemCode"]</th>
+            <th> @localizer["RentalSystemNo"] </th>
             <th class="DifferAlign"> @localizer["RenterIdtypeName_view"]</th>
             <th class="DifferAlign"> @localizer["the_Code"]</th>
             <th></th>
@@ -21,8 +23,10 @@
         }
         @foreach (var item in Model)
         {
-            <tr onclick="location.href='@Url.Action("Edit", "RenterIdtype", new { id = item.CrMasSupRenterIdtypeCode })';">
+            <tr onclick="if (parseInt(@item.CrMasSupRenterIdtypeCode) > 0) {location.href='@Url.Action("Edit", "RenterIdtype", new { id = item.CrMasSupRenterIdtypeCode })';} else{showErrorToast_NoUpdate();}">
                 <td><p>@item.CrMasRenterInformations.Count().ToString("N0")</p></td>
+                <td><p>0</p></td>
+                <td><p>0</p></td>
                 <td class="DifferAlign">
                     <p>
                         @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupRenterIdtypeEnName : item.CrMasSupRenterIdtypeArName)

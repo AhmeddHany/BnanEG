@@ -12,7 +12,5 @@ namespace Bnan.Core.Interfaces.MAS
         Task<bool> CheckClassificationAsync(string classfication);
         Task<bool> ExistsByArabicNameAsync(string arabicName, string code);
         Task<bool> ExistsByEnglishNameAsync(string englishName, string code);
-        Task<bool> ExistsByNaqlCodeAsync(int naqlCode, string code);
-        Task<bool> ExistsByNaqlIdAsync(int naqlId, string code);
     }
 }

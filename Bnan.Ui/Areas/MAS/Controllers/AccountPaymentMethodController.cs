@@ -286,16 +286,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 ModelState.AddModelError("CrMasSupAccountPaymentMethodEnName", _localizer["Existing"]);
             }
-
-            if (await _masAccountPaymentMethod.ExistsByNaqlCodeAsync((int)entity.CrMasSupAccountPaymentMethodNaqlCode, entity.CrMasSupAccountPaymentMethodCode))
-            {
-                ModelState.AddModelError("CrMasSupAccountPaymentMethodNaqlCode", _localizer["Existing"]);
-            }
-
-            if (await _masAccountPaymentMethod.ExistsByNaqlIdAsync((int)entity.CrMasSupAccountPaymentMethodNaqlId, entity.CrMasSupAccountPaymentMethodCode))
-            {
-                ModelState.AddModelError("CrMasSupAccountPaymentMethodNaqlId", _localizer["Existing"]);
-            }
         }
 
         //Error exist message when change input without run post action >> help us in front end
@@ -323,12 +313,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     errors.Add(new ErrorResponse { Field = "CrMasSupAccountPaymentMethodEnName", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system number
-                else if (existName == "CrMasSupAccountPaymentMethodNaqlCode" && int.TryParse(dataField, out var code) && code != 0 && All_AccountPaymentMethods.Any(x => x.CrMasSupAccountPaymentMethodNaqlCode == code))
+                else if (existName == "CrMasSupAccountPaymentMethodNaqlCode" && int.TryParse(dataField, out var code) && code != 0)
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupAccountPaymentMethodNaqlCode", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system ID
-                else if (existName == "CrMasSupAccountPaymentMethodNaqlId" && int.TryParse(dataField, out var id) && id != 0 && All_AccountPaymentMethods.Any(x => x.CrMasSupAccountPaymentMethodNaqlId == id))
+                else if (existName == "CrMasSupAccountPaymentMethodNaqlId" && int.TryParse(dataField, out var id) && id != 0)
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupAccountPaymentMethodNaqlId", Message = _localizer["Existing"] });
                 }

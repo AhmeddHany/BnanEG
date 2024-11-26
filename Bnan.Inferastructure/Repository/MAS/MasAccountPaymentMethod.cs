@@ -41,9 +41,7 @@ namespace Bnan.Inferastructure.Repository.MAS
                 x.CrMasSupAccountPaymentMethodCode != entity.CrMasSupAccountPaymentMethodCode && // Exclude the current entity being updated
                 (
                     x.CrMasSupAccountPaymentMethodArName == entity.CrMasSupAccountPaymentMethodArName ||
-                    x.CrMasSupAccountPaymentMethodEnName.ToLower().Equals(entity.CrMasSupAccountPaymentMethodEnName.ToLower()) ||
-                    (x.CrMasSupAccountPaymentMethodNaqlCode == entity.CrMasSupAccountPaymentMethodNaqlCode && entity.CrMasSupAccountPaymentMethodNaqlCode != 0) ||
-                    (x.CrMasSupAccountPaymentMethodNaqlId == entity.CrMasSupAccountPaymentMethodNaqlId && entity.CrMasSupAccountPaymentMethodNaqlId != 0)
+                    x.CrMasSupAccountPaymentMethodEnName.ToLower().Equals(entity.CrMasSupAccountPaymentMethodEnName.ToLower())
                 )
             );
         }
@@ -72,20 +70,6 @@ namespace Bnan.Inferastructure.Repository.MAS
             if (string.IsNullOrEmpty(englishName)) return false;
             var allLicenses = await GetAllAsync();
             return allLicenses.Any(x => x.CrMasSupAccountPaymentMethodEnName.ToLower().Equals(englishName.ToLower()) && x.CrMasSupAccountPaymentMethodCode != code);
-        }
-
-        public async Task<bool> ExistsByNaqlCodeAsync(int naqlCode, string code)
-        {
-            if (naqlCode == 0) return false;
-            return await _unitOfWork.CrMasSupAccountPaymentMethod
-                .FindAsync(x => x.CrMasSupAccountPaymentMethodNaqlCode == naqlCode && x.CrMasSupAccountPaymentMethodCode != code) != null;
-        }
-
-        public async Task<bool> ExistsByNaqlIdAsync(int naqlId, string code)
-        {
-            if (naqlId == 0) return false;
-            return await _unitOfWork.CrMasSupAccountPaymentMethod
-                .FindAsync(x => x.CrMasSupAccountPaymentMethodNaqlId == naqlId && x.CrMasSupAccountPaymentMethodCode != code) != null;
         }
 
         public async Task<bool> CheckIfCanDeleteIt(string code)
