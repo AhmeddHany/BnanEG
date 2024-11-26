@@ -410,7 +410,23 @@
     "ModalFirstMessage_LessorClassification_Hold": "ايقاف بيانات ونتائج1",
     "ModalSecondMessage_LessorClassification_Hold": "ايقاف بيانات ونتائج2",
     "ModalFirstMessage_LessorClassification_UnHold": "ارجاع بيانات ونتائج1",
-    "ModalSecondMessage_LessorClassification_UnHold": "ارجاع بيانات ونتائج2"
+    "ModalSecondMessage_LessorClassification_UnHold": "ارجاع بيانات ونتائج2",
+
+    //MAS Lessor_renter Rate
+    "the_Renter_rate": "تقييم المستأجر",
+    "View_Lessor_renterRate_PageTitle": "التقييم",
+    "the_Rate": "التقييم",
+    "the_Company_rate": "تقييم الشركة",
+    "the_Code": "الرمز",
+    "the_ArabicRate": "التقييم عربي",
+    "the_EnglishRate": "التقييم إنجليزي",
+    "the_value": "القيمة",
+
+    //MAS Currency
+    "View_Currency_PageTitle": "العملة",
+    "the_Currency": "العملة",
+    "the_RealNumber": "الرقم الصحيح",
+    "the_RatioNumber": "الرقم العشري"
   },
 
 

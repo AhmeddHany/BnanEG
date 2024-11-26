@@ -738,8 +738,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Evaluation"],
-                        Url = Url.Action("Index", "Evaluation", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
-                    });
+                        Url = Url.Action("Edit", "Rate", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
+                    }); 
                 }
 
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112005" && l.CrMasUserSubValidationAuthorization == true))
@@ -748,7 +748,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Currency"],
-                        Url = "#" // استخدم Url الفعلي للـ Action
+                        Url = Url.Action("Edit", "Currency", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
                     });
                 }
 

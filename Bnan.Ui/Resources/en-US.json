@@ -411,7 +411,25 @@
     "ModalFirstMessage_LessorClassification_Hold": "Hold Data And Results1",
     "ModalSecondMessage_LessorClassification_Hold": "Hold Data And Results2",
     "ModalFirstMessage_LessorClassification_UnHold": "UnHold Data And Results1",
-    "ModalSecondMessage_LessorClassification_UnHold": "UnHold Data And Results2"
+    "ModalSecondMessage_LessorClassification_UnHold": "UnHold Data And Results2",
+
+
+    //MAS Lessor_renter Rate
+    "the_Renter_rate": "The Renter Rate",
+    "View_Lessor_renterRate_PageTitle": "The Rate",
+    "the_Rate": "The Rate",
+    "the_Company_rate": "The Company Rate",
+    "the_Code": "The Code",
+    "the_ArabicRate": "The Arabic Rate",
+    "the_EnglishRate": "The English Rate",
+    "the_value": "The Value",
+
+
+    //MAS Currency
+    "View_Currency_PageTitle": "The Currency",
+    "the_Currency": "The Currency",
+    "the_RealNumber": "The Real Number",
+    "the_RatioNumber": "The Ratio Number"
   },
   "Arabic": "Arabic",
   "English": "English",
