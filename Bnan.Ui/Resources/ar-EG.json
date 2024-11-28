@@ -498,14 +498,14 @@
     "RenterNationalitiesNameEn_add": "الجنسية انجليزي",
     "RenterNationalitiesNameAr_edit": "الجنسية عربي",
     "RenterNationalitiesNameEn_edit": "الجنسية إنجليزي",
-    "ModalFirstMessage_RenterNationalities_Delete": "حذف بيانات ونتائج1",
-    "ModalSecondMessage_RenterNationalities_Delete": "حذف بيانات ونتائج2",
-    "ModalFirstMessage_RenterNationalities_UnDelete": "استعادة بيانات ونتائج1",
-    "ModalSecondMessage_RenterNationalities_UnDelete": "استعادة بيانات ونتائج2",
-    "ModalFirstMessage_RenterNationalities_Hold": "ايقاف بيانات ونتائج1",
-    "ModalSecondMessage_RenterNationalities_Hold": "ايقاف بيانات ونتائج2",
-    "ModalFirstMessage_RenterNationalities_UnHold": "ارجاع بيانات ونتائج1",
-    "ModalSecondMessage_RenterNationalities_UnHold": "ارجاع بيانات ونتائج2"
+    "ModalFirstMessage_Nationalities_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_Nationalities_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_Nationalities_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_Nationalities_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_Nationalities_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_Nationalities_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_Nationalities_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_Nationalities_UnHold": "ارجاع بيانات ونتائج2"
   },
 
 

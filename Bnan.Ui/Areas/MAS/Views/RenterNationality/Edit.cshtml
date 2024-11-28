@@ -274,7 +274,7 @@
             return new Promise((resolve, reject) => {
                 $.ajax({
                     type: "POST",
-                    url: "/MAS/RenterNationalities/EditStatus",
+                    url: "/MAS/RenterNationality/EditStatus",
                     data: { status: status, code: code },
                     success: function (result) {
                         toastr.options = { "positionClass": "@localizer["toastPostion"]" };

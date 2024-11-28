@@ -504,14 +504,14 @@
     "RenterNationalitiesNameEn_add": "The Nationality in English",
     "RenterNationalitiesNameAr_edit": "The Nationality in Arabic",
     "RenterNationalitiesNameEn_edit": "The Nationality in English",
-    "ModalFirstMessage_RenterNationalities_Delete": "Delete Data And Results1",
-    "ModalSecondMessage_RenterNationalities_Delete": "Delete Data And Results2",
-    "ModalFirstMessage_RenterNationalities_UnDelete": "UnDelete Data And Results1",
-    "ModalSecondMessage_RenterNationalities_UnDelete": "UnDelete Data And Results2",
-    "ModalFirstMessage_RenterNationalities_Hold": "Hold Data And Results1",
-    "ModalSecondMessage_RenterNationalities_Hold": "Hold Data And Results2",
-    "ModalFirstMessage_RenterNationalities_UnHold": "UnHold Data And Results1",
-    "ModalSecondMessage_RenterNationalities_UnHold": "UnHold Data And Results2"
+    "ModalFirstMessage_Nationalities_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_Nationalities_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_Nationalities_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_Nationalities_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_Nationalities_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_Nationalities_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_Nationalities_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_Nationalities_UnHold": "UnHold Data And Results2"
 
   },
   "Arabic": "Arabic",
