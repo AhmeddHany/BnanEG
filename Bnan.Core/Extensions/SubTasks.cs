@@ -47,6 +47,12 @@
         public static string Currency    { get; set; } = "1112005";
         public static string Frequently_Asked_Questions   { get; set; } = "1112006";
 
+        ////////////
+        //MAS  Post services
+        public static string CrMasSysCallingKeys { get; set; } = "1109001";
+        public static string Region { get; set; } = "1109002";
+        public static string City { get; set; } = "1109003";
+        
     }
 }
 

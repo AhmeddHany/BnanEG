@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.Security.Claims;
+using static Pipelines.Sockets.Unofficial.SocketConnection;
 
 namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
 {
@@ -558,7 +559,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Countries"],
-                        Url = "#"
+                        Url = Url.Action("Index", "Countries", new { area = "MAS" })
+
                     });
                 }
                 // Add submenu items based on permissions
@@ -568,7 +570,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Regions"],
-                        Url = Url.Action("Index", "PostRegion", new { area = "MAS" })
+                        Url = Url.Action("Index", "PostRegions", new { area = "MAS" })
                     });
                 }
 

@@ -1,11 +1,11 @@
 ﻿@using Bnan.Core.Extensions
-@model RenterNationalityVM
+@model CountriesVM
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["View_RenterNationalities_PageTitle"];
+    ViewData["Page-title"] = @localizer["View_Countries_PageTitle"];
 }
 <link href="~/css/toastr.css" rel="stylesheet" />
 
@@ -15,7 +15,7 @@
         <form action="">
             <div class="row g-3 mb-2">
                 <div class="col">
-                    <h3>@localizer["View_RenterNationalities_PageTitle"]</h3>
+                    <h3>@localizer["View_Countries_PageTitle"]</h3>
                 </div>
                 <div class="col-12 col-lg-6 d-flex justify-content-end">
 
@@ -53,13 +53,13 @@
             </div>
             <div class="row table-row px-3">
                 <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
-                    <partial name="_DataTableRenterNationality" />
+                    <partial name="_DataTableCountries" />
                 </div>
             </div>
         </form>
-        <a asp-area="MAS" asp-controller="RenterNationality" asp-action="AddRenterNationality" data-bs-toggle="tooltip" data-bs-placement="top"
-           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add_RenterNationalities_PageTitle"]" class="new-Page-icon" style="cursor: pointer">
-            <img src="~/MasSystem/images/new nationality.svg" alt="new item">
+        <a asp-area="MAS" asp-controller="Countries" asp-action="AddCountries" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add_Countries_PageTitle"]" class="new-Page-icon" style="cursor: pointer">
+            <img src="~/MasSystem/images/new country.svg" alt="new item">
         </a>
         <a asp-area="MAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
            data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="main-page-icon">
@@ -85,7 +85,7 @@
 
         function showErrorToast_whitController(messageText) {
             $.ajax({
-                url: '@Url.Action("DisplayToastError_NoUpdate", "RenterNationality")',
+                url: '@Url.Action("DisplayToastError_NoUpdate", "Countries")',
                 type: 'POST',
                 data: { messageText: messageText },
                 success: function (response) {
@@ -99,20 +99,20 @@
             });
         }
     </script>
-    @*Get RenterNationalities Using filter*@
+    @*Get Countries Using filter*@
     <script>
         // To Handle Background
         $("#wrapper").addClass("Branches-wrapper");
     </script>
     <script>
-        //get RenterNationalities By Status function
-        function GetRenterNationalitiesFitler(status, search) {
+        //get Countries By Status function
+        function GetCountriesFitler(status, search) {
             $.ajax({
                 type: "GET",
                 data: {
                     status: status, search: search
                 },
-                url: "@Url.Action("GetRenterNationalitiesByStatus", "RenterNationality", new { Area = "MAS" })",
+                url: "@Url.Action("GetCountriesByStatus", "Countries", new { Area = "MAS" })",
                 success: function (response) {
                     $(".dataTable").html(response);
                 },
@@ -122,14 +122,14 @@
         $("input[name='customRadio']").on("click", function () {
             const status = $(this).val();
             const search = $("#search").val(); // الحصول على قيمة البحث
-            GetRenterNationalitiesFitler(status, search);
+            GetCountriesFitler(status, search);
         });
 
         // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
         $("#search").on("keyup", function () {
             const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
             const search = $(this).val(); // الحصول على قيمة البحث
-            GetRenterNationalitiesFitler(status, search);
+            GetCountriesFitler(status, search);
         });
     </script>
 }

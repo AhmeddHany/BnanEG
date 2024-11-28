@@ -1,6 +1,6 @@
 ﻿@using Bnan.Ui.ViewModels.MAS
 @using Bnan.Core.Extensions
-@model RenterNationalityVM
+@model PostRegionsVM
 
 @inject IViewLocalizer localizer
 @{
@@ -12,18 +12,18 @@
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
-        <form asp-area="MAS" asp-controller="RenterNationality" asp-action="Edit" class="needs-validation" novalidate>
-            <input hidden asp-for="CrMasSupRenterNationalitiesCode" />
-            <input hidden asp-for="CrMasSupRenterNationalitiesStatus" />
-            <input hidden asp-for="CrMasSupRenterNationalitiesCounter" />
-            <input hidden asp-for="CrMasSupRenterNationalitiesFlag" />
+        <form asp-area="MAS" asp-controller="PostRegions" asp-action="Edit" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasSupPostRegionsCode" />
+            <input hidden asp-for="CrMasSupPostRegionsStatus" />
+            <input hidden asp-for="CrMasSupPostRegionsArName" />
+            <input hidden asp-for="CrMasSupPostRegionsEnName" />
             <div class="row mt-3 g-3">
 
                 <div class="row justify-content-center">
                     <div class="col-lg-9">
                         <div class="row g-3 my-2">
                             <div class="col">
-                                <h3>@localizer["Edit_RenterNationalities_PageTitle"]</h3>
+                                <h3>@localizer["Edit_PostRegions_PageTitle"]</h3>
                             </div>
                             <div class="col-md-auto save-col btnsContainer">
                                 <button type="submit" class="custom-img-btn" id="SaveEdit">
@@ -35,74 +35,118 @@
                                 <button type="button" class="custom-img-btn" id="DeleteBtn" data-bs-toggle="modal" data-bs-target="#Delete-Modal">
                                     <img id="modalIcon" src="~/MasSystem/images/delete.svg" />
                                 </button>
-                                <button type="button" class="custom-img-btn"> <a href="/MAS/RenterNationality/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/PostRegions/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
                             </div>
                         </div>
 
                         <div class="container-fluid">
                             <div class="row g-3 mt-3">
-                                
-                                    <div class="col-md-12">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="row">
-                                                    <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
                                                     <p class="DataTitle">@localizer["the_Code"]</p>
                                                 </div>
-                                                    <div class="col-auto ">
-                                                    <p class="Saved-data">@Model.CrMasSupRenterNationalitiesCode</p>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasSupPostRegionsCode</p>
                                                 </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 ">
-                                            <label for="Category" class="form-label">@localizer["Classification_s"]<i class="fa-solid fa-star-of-life RequirdStar"></i></label>
-                                            <select asp-for="CrMasSupRenterNationalitiesNaqlGcc" class="form-select select-style " id="Category" required>
-                                                <option> </option>
-                                                <option value="0"> 0 </option>
-                                                <option value="1"> 1 </option>
-                                                <option value="2"> 2 </option>
-                                                <option value="3"> 3 </option>
-                                                <option value="4"> 4 </option>
-                                                <option value="5"> 5 </option>
-                                                <option value="6"> 6 </option>
-                                                <option value="7"> 7 </option>
-                                            </select>
-                                            <div class="invaild">
-                                                <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterNationalitiesNaqlGcc" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupRenterNationalitiesNaqlGcc-Error"></span>
-                                                </div>
-                                            </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
 
                                 <div class="col-md-12">
                                     <div class="row align-items-center">
-                                        <div class="col-md-6">
+                                        @*<div class="col-md-6">
                                             <label for="AR-Licence" class="form-label">
-                                                @localizer["RenterNationalitiesNameAr_edit"]
+                                                @localizer["PostRegionsNameAr_edit"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" asp-for="CrMasSupRenterNationalitiesArName" id="CrMasSupRenterNationalitiesArName" maxlength="30" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <input type="text" asp-for="CrMasSupPostRegionsArName" id="CrMasSupPostRegionsArName" maxlength="30" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterNationalitiesArName" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupRenterNationalitiesArName-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupPostRegionsArName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupPostRegionsArName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="DataTitle">@localizer["PostRegionsNameAr_edit"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasSupPostRegionsArName</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*<div class="col-md-6">
+                                            <label for="EN-Licence" class="form-label">
+                                                @localizer["PostRegionsNameEn_edit"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupPostRegionsEnName" maxlength="30" id="CrMasSupPostRegionsEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupPostRegionsEnName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupPostRegionsEnName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="DataTitle">@localizer["PostRegionsNameEn_edit"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasSupPostRegionsEnName</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-12">
+                                            <label for="location" class="form-label">
+                                                @localizer["the_Location"]
+                                            </label>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupPostRegionsLocation" maxlength="500">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupPostRegionsLocation" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupPostRegionsLocation-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <label for="Longitude" class="form-label">
+                                                @localizer["the_Longitude"]
+                                            </label>
+                                            <input type="number" class="form-control inputs" asp-for="CrMasSupPostRegionsLongitude"  step="0.01" max="999999999.99" >
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupPostRegionsLongitude" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupPostRegionsLongitude-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="EN-Licence" class="form-label">
-                                                @localizer["RenterNationalitiesNameEn_edit"]
-                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            <label for="latitude" class="form-label">
+                                                @localizer["the_Latitude"]
                                             </label>
-                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupRenterNationalitiesEnName" maxlength="30" id="CrMasSupRenterNationalitiesEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <input type="number" class="form-control inputs" asp-for="CrMasSupPostRegionsLatitude" step="0.01" max="999999999.99" >
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterNationalitiesEnName" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupRenterNationalitiesEnName-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupPostRegionsLatitude" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupPostRegionsLatitude-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -113,21 +157,21 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="rental-system-number" class="form-label">@localizer["RentalSystemNo"]</label>
-                                            <input type="text" class="form-control inputs number-input" asp-for="CrMasSupRenterNationalitiesNaqlCode" id="CrMasSupRenterNationalitiesNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
+                                            <input type="tel" disabled class="form-control inputs number-input" id="CrMasSupPostRegionsNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterNationalitiesNaqlCode" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupRenterNationalitiesNaqlCode-Error"></span>
+                                                    <span  class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupPostRegionsNaqlCode-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="rental-system-pin" class="form-label">@localizer["RentalSystemCode"]</label>
-                                            <input type="text" class="form-control number-input inputs" asp-for="CrMasSupRenterNationalitiesNaqlId" id="CrMasSupRenterNationalitiesNaqlId" maxlength="10" oninput="validateNumberLength(this)">
+                                            <input type="tel" disabled class="form-control number-input inputs" id="CrMasSupPostRegionsNaqlId" maxlength="10" oninput="validateNumberLength(this)">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterNationalitiesNaqlId" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupRenterNationalitiesNaqlId-Error"></span>
+                                                    <span class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupPostRegionsNaqlId-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -138,10 +182,10 @@
                                     <div class="row ">
                                         <div class="col-lg-12">
                                             <label>@localizer["Reason_s"]</label>
-                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupRenterNationalitiesReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupPostRegionsReasons" rows="1" maxlength="100" type="text"></textarea>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupRenterNationalitiesReasons" class="text-danger"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupPostRegionsReasons" class="text-danger"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -191,23 +235,44 @@
     <script src="~/js/toastr.js"></script>
 
     <script>
+        // دالة للتحقق من صحة المدخل
+        function validateDecimalInput(event) {
+            let input = event.target.value;
+
+            // استبدال الفاصلة بالنقطة لتصحيح الإدخال
+            input = input.replace(',', '.');
+
+            // استخدام التعبير العادي للتأكد من صحة الرقم العشري
+            const regex = /^\d{1,8}(\.\d{0,2})?$/;
+
+            // إذا كان الإدخال يتطابق مع التنسيق المسموح به
+            if (regex.test(input)) {
+                // إعادة قيمة المدخل بعد استبدال الفاصلة بالنقطة
+                event.target.value = input.replace('.', ',');
+            } else {
+                // إذا كانت المدخل غير صالح، إعادة القيمة السابقة
+                event.target.setCustomValidity(0.00);
+            }
+        }
+    </script>
+    <script>
         // To Handle Background
         $("#wrapper").addClass("Branches-wrapper");
     </script>
     <script>
         // This To Focus On input when page load
         if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
-            $("#CrMasSupRenterNationalitiesEnName").focus();
+            $("#CrMasSupPostRegionsEnName").focus();
         }
         else {
-            $("#CrMasSupRenterNationalitiesArName").focus();
+            $("#CrMasSupPostRegionsArName").focus();
         }
         //////////////////////////////////////////
-        var statusInput = $("#CrMasSupRenterNationalitiesStatus");
-        var OldNaqlId = $("#CrMasSupRenterNationalitiesNaqlId").val();
-        var OldNaqlCode = $("#CrMasSupRenterNationalitiesNaqlCode").val();
-        var OldArName = $("#CrMasSupRenterNationalitiesArName").val();
-        var OldEnName = $("#CrMasSupRenterNationalitiesEnName").val();
+        var statusInput = $("#CrMasSupPostRegionsStatus");
+        var OldNaqlId = $("#CrMasSupPostRegionsNaqlId").val();
+        var OldNaqlCode = $("#CrMasSupPostRegionsNaqlCode").val();
+        var OldArName = $("#CrMasSupPostRegionsArName").val();
+        var OldEnName = $("#CrMasSupPostRegionsEnName").val();
 
 
         function Check_onChange_input(existName, dataField, oldValue) {
@@ -220,7 +285,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "/MAS/RenterNationality/CheckChangedField",
+                url: "/MAS/PostRegions/CheckChangedField",
                 data: { existName: existName, dataField: dataField },
                 success: function (result) {
                     console.log("feedback", result);
@@ -245,36 +310,36 @@
         }
 
         // Example usage for Arabic Name input
-        $('#CrMasSupRenterNationalitiesArName').on('change', function () {
+        $('#CrMasSupPostRegionsArName').on('change', function () {
             var newValue = $(this).val();
-            Check_onChange_input('CrMasSupRenterNationalitiesArName', newValue, OldArName);
+            Check_onChange_input('CrMasSupPostRegionsArName', newValue, OldArName);
         });
 
         // Example usage for English Name input
-        $('#CrMasSupRenterNationalitiesEnName').on('change', function () {
+        $('#CrMasSupPostRegionsEnName').on('change', function () {
             var newValue = $(this).val();
-            Check_onChange_input('CrMasSupRenterNationalitiesEnName', newValue, OldEnName);
+            Check_onChange_input('CrMasSupPostRegionsEnName', newValue, OldEnName);
         });
 
         // Example usage for Naql Code input
-        $('#CrMasSupRenterNationalitiesNaqlCode').on('change', function () {
+        $('#CrMasSupPostRegionsNaqlCode').on('change', function () {
             var newValue = $(this).val();
-            Check_onChange_input('CrMasSupRenterNationalitiesNaqlCode', newValue, OldNaqlCode);
+            Check_onChange_input('CrMasSupPostRegionsNaqlCode', newValue, OldNaqlCode);
         });
 
         // Example usage for Naql ID input
-        $('#CrMasSupRenterNationalitiesNaqlId').on('change', function () {
+        $('#CrMasSupPostRegionsNaqlId').on('change', function () {
             var newValue = $(this).val();
-            Check_onChange_input('CrMasSupRenterNationalitiesNaqlId', newValue, OldNaqlId);
+            Check_onChange_input('CrMasSupPostRegionsNaqlId', newValue, OldNaqlId);
         });
     </script>
     <script>
-        function updateRenterNationalitiesStatus(status) {
-            var code = document.getElementById("CrMasSupRenterNationalitiesCode").value;
+        function updatePostRegionsStatus(status) {
+            var code = document.getElementById("CrMasSupPostRegionsCode").value;
             return new Promise((resolve, reject) => {
                 $.ajax({
                     type: "POST",
-                    url: "/MAS/RenterNationalities/EditStatus",
+                    url: "/MAS/PostRegions/EditStatus",
                     data: { status: status, code: code },
                     success: function (result) {
                         toastr.options = { "positionClass": "@localizer["toastPostion"]" };
@@ -334,8 +399,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p>@localizer["ModalFirstMessage_Nationalities_UnDelete"]</p>
-                                                                <p>@localizer["ModalSecondMessage_Nationalities_UnDelete"]</p>
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_UnDelete"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_UnDelete"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
@@ -356,8 +421,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                                        <p>@localizer["ModalFirstMessage_Nationalities_Delete"]</p>
-                                                                        <p>@localizer["ModalSecondMessage_Nationalities_Delete"]</p>
+                                                                        <p>@localizer["ModalFirstMessage_DrivingLicense_Delete"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_DrivingLicense_Delete"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
@@ -387,7 +452,7 @@
                 modal.hide();
 
                 const newStatus = isDeleted ? '@Status.UnDeleted' : '@Status.Deleted';
-                const success = await updateRenterNationalitiesStatus(newStatus);
+                const success = await updatePostRegionsStatus(newStatus);
                 if (success) {
                     statusInput.val(isDeleted ? '@Status.Active' : '@Status.Deleted');
                     isDeleted = !isDeleted;
@@ -398,7 +463,7 @@
 
                     DeleteState(isDeleted);
                     setTimeout(function () {
-                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterNationality")';
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "PostRegions")';
                     }, 500); // التأخير لمدة .5 ثوانٍ
                 }
                 else {
@@ -427,8 +492,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p>@localizer["ModalFirstMessage_Nationalities_UnHold"]</p>
-                                                                <p>@localizer["ModalSecondMessage_Nationalities_UnHold"]</p>
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_UnHold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_UnHold"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
@@ -449,8 +514,8 @@
                                                               </h1>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p>@localizer["ModalFirstMessage_Nationalities_Hold"]</p>
-                                                                <p>@localizer["ModalSecondMessage_Nationalities_Hold"]</p>
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_Hold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_Hold"]</p>
                                                             </div>
                                                             <div class="modal-footer border-0">
                                                               <div class="container">
@@ -480,7 +545,7 @@
                 modal.hide();
 
                 const newStatus = isStoped ? '@Status.UnHold' : '@Status.Hold';
-                const success = await updateRenterNationalitiesStatus(newStatus);
+                const success = await updatePostRegionsStatus(newStatus);
                 if (success) {
                     statusInput.val(isStoped ? '@Status.Active' : '@Status.Hold');
                     isStoped = !isStoped;
@@ -491,7 +556,7 @@
 
                     StopState(isStoped);
                     setTimeout(function () {
-                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterNationality")';
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "PostRegions")';
                     }, 500); // التأخير لمدة .5 ثوانٍ
                 }
             }, 500);
