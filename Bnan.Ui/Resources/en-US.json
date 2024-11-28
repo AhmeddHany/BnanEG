@@ -511,7 +511,12 @@
     "ModalFirstMessage_Nationalities_Hold": "Hold Data And Results1",
     "ModalSecondMessage_Nationalities_Hold": "Hold Data And Results2",
     "ModalFirstMessage_Nationalities_UnHold": "UnHold Data And Results1",
-    "ModalSecondMessage_Nationalities_UnHold": "UnHold Data And Results2"
+    "ModalSecondMessage_Nationalities_UnHold": "UnHold Data And Results2",
+    //TechnicalConnectivity
+    "Company": "Company",
+    "CompaniesInformations": "Companies Informations",
+    "BranchesNo": "Branches No.",
+    "CountryRegion": "Country/Region"
 
   },
   "Arabic": "Arabic",

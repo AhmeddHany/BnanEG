@@ -426,7 +426,12 @@
     "View_Currency_PageTitle": "العملة",
     "the_Currency": "العملة",
     "the_RealNumber": "الرقم الصحيح",
-    "the_RatioNumber": "الرقم العشري"
+    "the_RatioNumber": "الرقم العشري",
+    //TechnicalConnectivity
+    "Company": "الشركة",
+    "CompaniesInformations": "بيانات الشركات Informations",
+    "BranchesNo": "عدد الفروع.",
+    "CountryRegion": "المدينة/المنطقة"
   },
 
 
