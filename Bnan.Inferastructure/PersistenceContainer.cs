@@ -151,7 +151,7 @@ namespace Bnan.Inferastructure
 
 
             builder.Services.AddScoped<IMasRenterGender, MasRenterGender>();
-            builder.Services.AddScoped<IRenterNationality, RenterNationality>();
+            builder.Services.AddScoped<IMasRenterNationality, MasRenterNationality>();
             builder.Services.AddScoped<IUserContractValididation, UserContractValididation>();
             builder.Services.AddScoped<IAdminstritiveProcedures, AdminstritiveProcedures>();
             builder.Services.AddScoped<ICarInformation, CarInformation>();
@@ -182,7 +182,10 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasLessorClassification, MasLessorClassification>();
             builder.Services.AddScoped<IMasRate, MasRate>();
             builder.Services.AddScoped<IMasCurrency, MasCurrency>();
-
+            builder.Services.AddScoped<IMasCountries, MasCountries>();
+            builder.Services.AddScoped<IMasPostRegions, MasPostRegions>();
+            builder.Services.AddScoped<IMasPostCity, MasPostCity>();
+            
 
             //CAS
             builder.Services.AddScoped<IRenterLessorInformation, CasRenterLessorInformation>();

@@ -426,13 +426,7 @@
     "View_Currency_PageTitle": "العملة",
     "the_Currency": "العملة",
     "the_RealNumber": "الرقم الصحيح",
-    "the_RatioNumber": "الرقم العشري",
-
-    //TechnicalConnectivity
-    "Company": "الشركة",
-    "CompaniesInformations": "بيانات الشركات",
-    "BranchesNo": "عدد الفروع",
-    "CountryRegion": "المنطقة/المدينة"
+    "the_RatioNumber": "الرقم العشري"
   },
 
 
@@ -1609,6 +1603,7 @@
   "requiredAgeAtLeast15": "المستأجر يجب ان يكون 15 سنة على الاقل",
   "requiredNoLengthFiled": "هذا الحقل يلازم {0} ارقام",
   "requiredNoLengthFiledd10": "هذا الحقل يلازم 10 ارقام",
+  "requiredNoLengthFiled10_decimal": "هذا الحقل يلازم 10 ارقام وكسر",
   "requiredNoLengthFiled15": "هذا الحقل يلازم 15 ارقام",
   "requiredNoLengthFiled30": "هذا الحقل يلازم اقل من 30 خانة",
   "requiredNoLengthFiled40": "هذا الحقل يلازم اقل من 40 خانة",

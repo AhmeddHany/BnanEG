@@ -1,5 +1,5 @@
 ﻿@using Bnan.Ui.ViewModels.MAS
-@model PostCityVM
+@model CountriesVM
 
 @inject IViewLocalizer localizer
 
@@ -12,18 +12,18 @@
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
-        <form asp-area="MAS" asp-controller="PostCity" asp-action="AddPostCity" class="needs-validation" novalidate>
-            <input hidden asp-for="CrMasSupPostCityCode" />
+        <form asp-area="MAS" asp-controller="Countries" asp-action="AddCountries" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasSysCallingKeysCode" />
             <div class="row  mt-3 g-3">
                 <div class="row justify-content-center">
                     <div class="col-lg-9">
                         <div class="row g-3 my-2">
                             <div class="col">
-                                <h3>@localizer["Add_PostCity_PageTitle"]</h3>
+                                <h3>@localizer["Add_Countries_PageTitle"]</h3>
                             </div>
                             <div class="col-md-auto save-col">
                                 <button type="submit" class="custom-img-btn"> <img src="~/MasSystem/images/save.svg" /> </button>
-                                <button type="button" class="custom-img-btn"> <a href="/MAS/PostCity/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/Countries/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
                             </div>
                         </div>
                         <div class="container-fluid">
@@ -37,7 +37,7 @@
                                                     <p class="DataTitle">@localizer["the_Code"]</p>
                                                 </div>
                                                 <div class="col-auto ">
-                                                    <p class="Saved-data">@Model.CrMasSupPostCityCode</p>
+                                                    <p class="Saved-data">@Model.CrMasSysCallingKeysCode</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -48,27 +48,27 @@
                                     <div class="row align-items-center">
                                         <div class="col-md-6">
                                             <label for="AR-Licence" class="form-label">
-                                                @localizer["PostCityNameAr_add"]
+                                                @localizer["CountriesNameAr_add"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" asp-for="CrMasSupPostCityArName" id="CrMasSupPostCityArName" maxlength="30" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <input type="text" asp-for="CrMasSysCallingKeysArName" id="CrMasSysCallingKeysArName" maxlength="50" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupPostCityArName" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupPostCityArName-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSysCallingKeysArName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysCallingKeysArName-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="EN-Licence" class="form-label">
-                                                @localizer["PostCityNameEn_add"]
+                                                @localizer["CountriesNameEn_add"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupPostCityEnName" maxlength="30" id="CrMasSupPostCityEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSysCallingKeysEnName" maxlength="50" id="CrMasSysCallingKeysEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupPostCityEnName" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupPostCityEnName-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSysCallingKeysEnName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysCallingKeysEnName-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -78,97 +78,60 @@
                                 <div class="col-md-12">
                                     <div class="row align-items-center">
                                         <div class="col-md-6 ">
-                                            <label for="Area" class="form-label"> @localizer["PostRegionsName_view"] <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
-                                            <select class="form-select select-style " asp-for="CrMasSupPostCityRegionsCode" id="region_select" required>
+                                            <label for="Category" class="form-label">@localizer["the_c_Classefication"]<i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
+                                            <select class="form-select select-style" asp-for="CrMasSysCallingKeysClassificationCode" id="Category" required>
                                                 <option> </option>
-                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                                {
-                                                    @foreach (var single in Model.Regions)
-                                                    {
-                                                        <option value="@single.CrMasSupPostRegionsCode"> @single.CrMasSupPostRegionsEnName  </option>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    @foreach (var single2 in Model.Regions)
-                                                    {
-                                                        <option value="@single2.CrMasSupPostRegionsCode"> @single2.CrMasSupPostRegionsArName  </option>
-                                                    }
-                                                }
-
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
                                             </select>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupPostCityRegionsCode" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupPostCityRegionsCode-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSysCallingKeysClassificationCode" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysCallingKeysClassificationCode-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                         <div class="col-md-6">
-                                            <label for="location" class="form-label">
-                                                @localizer["the_Location"]
+                                            <label for="Country-code" class="form-label">
+                                                @localizer["the_Country_Key"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupPostCityLocation" maxlength="500">
+                                            <input type="text" asp-for="CrMasSysCallingKeysNo" id="CrMasSysCallingKeysNo" class="form-control inputs arabic-input" maxlength="10" inputmode="numeric" oninput="validateNumberInput(this)" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupPostCityLocation" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupPostCityLocation-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSysCallingKeysNo" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysCallingKeysNo-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-
-                                <div class="col-md-12">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-6">
-                                            <label for="Longitude" class="form-label">
-                                                @localizer["the_Longitude"]
-                                            </label>
-                                            <input type="number" class="form-control inputs" asp-for="CrMasSupPostCityLongitude" step="0.01" max="999999999.99">
-                                            <div class="invaild">
-                                                <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupPostCityLongitude" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupPostCityLongitude-Error"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="latitude" class="form-label">
-                                                @localizer["the_Latitude"]
-                                            </label>
-                                            <input type="number" class="form-control inputs" asp-for="CrMasSupPostCityLatitude" step="0.01" max="999999999.99">
-                                            <div class="invaild">
-                                                <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupPostCityLatitude" class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupPostCityLatitude-Error"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
 
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="rental-system-number" class="form-label">@localizer["RentalSystemNo"]</label>
-                                            <input type="tel" disabled class="form-control inputs number-input" id="CrMasSupPostCityNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
+                                            <input type="tel" class="form-control inputs number-input" asp-for="CrMasSysCallingKeysNaqlCode" id="CrMasSysCallingKeysNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span  class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupPostCityNaqlCode-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSysCallingKeysNaqlCode" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysCallingKeysNaqlCode-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="rental-system-pin" class="form-label">@localizer["RentalSystemCode"]</label>
-                                            <input type="tel" disabled class="form-control number-input inputs" id="CrMasSupPostCityNaqlId" maxlength="10" oninput="validateNumberLength(this)">
+                                            <input type="tel" class="form-control number-input inputs" asp-for="CrMasSysCallingKeysNaqlId" id="CrMasSysCallingKeysNaqlId" maxlength="10" oninput="validateNumberLength(this)">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span  class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupPostCityNaqlId-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSysCallingKeysNaqlId" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysCallingKeysNaqlId-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -179,10 +142,10 @@
                                     <div class="row ">
                                         <div class="col-lg-12">
                                             <label>@localizer["Reason_s"]</label>
-                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupPostCityReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSysCallingKeysReasons" rows="1" maxlength="100" type="text"></textarea>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasSupPostCityReasons" class="text-danger"></span>
+                                                    <span asp-validation-for="@Model.CrMasSysCallingKeysReasons" class="text-danger"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -212,10 +175,10 @@
 
             // This To Focus On input when page load
             if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
-                $("#CrMasSupPostCityEnName").focus();
+                $("#CrMasSysCallingKeysEnName").focus();
             }
             else {
-                $("#CrMasSupPostCityArName").focus();
+                $("#CrMasSysCallingKeysArName").focus();
             }
             //////////////////////////////////////////
 
@@ -223,7 +186,7 @@
             function Check_onChange_input(existName, dataField) {
                 $.ajax({
                     type: "GET",
-                    url: "/MAS/PostCity/CheckChangedField",
+                    url: "/MAS/Countries/CheckChangedField",
                     data: { existName: existName, dataField: dataField },
                     success: function (result) {
                         console.log("feedback", result);
@@ -248,25 +211,25 @@
             }
 
 
-            $('#CrMasSupPostCityArName').on('change', function () {
+            $('#CrMasSysCallingKeysArName').on('change', function () {
                 var newValue = $(this).val();
                 console.log("newValue", newValue)
-                Check_onChange_input('CrMasSupPostCityArName', newValue);
+                Check_onChange_input('CrMasSysCallingKeysArName', newValue);
             });
 
-            $('#CrMasSupPostCityEnName').on('change', function () {
+            $('#CrMasSysCallingKeysEnName').on('change', function () {
                 var newValue = $(this).val();
-                Check_onChange_input('CrMasSupPostCityEnName', newValue);
+                Check_onChange_input('CrMasSysCallingKeysEnName', newValue);
             });
 
-            $('#CrMasSupPostCityNaqlCode').on('change', function () {
+            $('#CrMasSysCallingKeysNaqlCode').on('change', function () {
                 var newValue = $(this).val();
-                Check_onChange_input('CrMasSupPostCityNaqlCode', newValue);
+                Check_onChange_input('CrMasSysCallingKeysNaqlCode', newValue);
             });
 
-            $('#CrMasSupPostCityNaqlId').on('change', function () {
+            $('#CrMasSysCallingKeysNaqlId').on('change', function () {
                 var newValue = $(this).val();
-                Check_onChange_input('CrMasSupPostCityNaqlId', newValue);
+                Check_onChange_input('CrMasSysCallingKeysNaqlId', newValue);
             });
         });
 

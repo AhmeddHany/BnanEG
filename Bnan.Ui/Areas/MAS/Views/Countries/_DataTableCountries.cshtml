@@ -1,0 +1,64 @@
+﻿@using Bnan.Core.Extensions
+@model CountriesVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["Count"]</th>
+            <th> @localizer["Country_Classefication"]</th>
+            <th> @localizer["RentalSystemCode"]</th>
+            <th> @localizer["RentalSystemNo"] </th>
+            <th> @localizer["Country_key"] </th>
+            <th class="DifferAlign"> @localizer["CountriesName_view"]</th>
+            <th class="DifferAlign"> @localizer["the_Code"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.Countries)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "Countries", new { id = item.CrMasSysCallingKeysCode })'">
+
+                <td><p>@(Model.Country_count?.Find(x => x.Column.ToString() == item.CrMasSysCallingKeysNo?.Trim())?.RowCount.ToString("N0") ?? "0" )</p></td>
+                <td><p>@item.CrMasSysCallingKeysClassificationCode</p></td>
+                <td>
+                    <p>@(item.CrMasSysCallingKeysNaqlCode ?? 0)</p>
+                </td>
+                <td>
+                    <p>@(item.CrMasSysCallingKeysNaqlId ?? 0)</p>
+                </td>
+                <td><p>@item.CrMasSysCallingKeysNo</p></td>
+                <td class="DifferAlign">
+                    <p>
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSysCallingKeysEnName : item.CrMasSysCallingKeysArName)
+                    </p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@item.CrMasSysCallingKeysCode</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasSysCallingKeysStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasSysCallingKeysStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasSysCallingKeysStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>

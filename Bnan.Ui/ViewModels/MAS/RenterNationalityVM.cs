@@ -6,16 +6,32 @@ namespace Bnan.Ui.ViewModels.MAS
     public class RenterNationalityVM
     {
         public string CrMasSupRenterNationalitiesCode { get; set; } = null!;
-        public string? CrMasSupRenterNationalitiesGroupCode { get; set; }
+        [Range(0, 9999999999, ErrorMessage = "requiredNoLengthFiled10")]
+        public int? CrMasSupRenterNationalitiesNaqlCode { get; set; } = 0;
 
-        [Required(ErrorMessage = "requiredFiled"), MaxLength(30)]
+        [Range(0, 9999999999, ErrorMessage = "requiredNoLengthFiled10")]
+        public int? CrMasSupRenterNationalitiesNaqlId { get; set; } = 0;
+
+        [Required(ErrorMessage = "requiredFiled"), MaxLength(30, ErrorMessage = "requiredNoLengthFiled30")]
         public string? CrMasSupRenterNationalitiesArName { get; set; }
-        [Required(ErrorMessage = "requiredFiled"), MaxLength(30)]
+        [Required(ErrorMessage = "requiredFiled"), MaxLength(30, ErrorMessage = "requiredNoLengthFiled30")]
         public string? CrMasSupRenterNationalitiesEnName { get; set; }
+        public string? CrMasSupRenterNationalitiesStatus { get; set; }
+        [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
+        public string? CrMasSupRenterNationalitiesReasons { get; set; }
+        public int? RentersHave_withType_Count { get; set; }
+
+        public string? CrMasSupRenterNationalitiesGroupCode { get; set; } = "10";
+        [Required(ErrorMessage = "requiredFiled"), Range(0, 7, ErrorMessage = "requiredFiled")]
+        public string? CrMasSupRenterNationalitiesNaqlGcc { get; set; }
         public string? CrMasSupRenterNationalitiesFlag { get; set; }
         public int? CrMasSupRenterNationalitiesCounter { get; set; }
-        public string? CrMasSupRenterNationalitiesStatus { get; set; }
-        public string? CrMasSupRenterNationalitiesReasons { get; set; }
+
+        public List<CrMasSupRenterNationality> List_Nationality = new List<CrMasSupRenterNationality>();
+
+        public List<TResult2>? Nationality_count_1 = new List<TResult2>();
+
+        public List<TResult2>? Nationality_count_2 = new List<TResult2>();
 
         public virtual CrMasSysGroup? CrMasSupRenterNationalitiesGroupCodeNavigation { get; set; }
     }

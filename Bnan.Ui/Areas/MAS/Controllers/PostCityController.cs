@@ -1,387 +1,447 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
+using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS;
-using MessagePack.Formatters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System;
-using System.Globalization;
+using System.Drawing;
 using System.Numerics;
-
 namespace Bnan.Ui.Areas.MAS.Controllers
 {
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
     public class PostCityController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
         private readonly IUserService _userService;
-        private readonly IPostCity _PostCityService;
+        private readonly IMasPostCity _masPostCity;
+        private readonly IBaseRepo _baseRepo;
+        private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<PostCityController> _localizer;
+        private readonly string pageNumber = SubTasks.City;
 
 
-
-        public PostCityController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, 
-            IMapper mapper, IUserService userService, IPostCity PostCityService,
-            IUserLoginsService userLoginsService, IToastNotification toastNotification,
-           IStringLocalizer<PostCityController> localizer) :
-            base(userManager, unitOfWork, mapper)
+        public PostCityController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
+            IMapper mapper, IUserService userService, IMasPostCity masPostCity, IBaseRepo BaseRepo, IMasBase masBase,
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<PostCityController> localizer) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
-            _PostCityService = PostCityService;
+            _masPostCity = masPostCity;
             _userLoginsService = userLoginsService;
+            _baseRepo = BaseRepo;
+            _masBase = masBase;
             _toastNotification = toastNotification;
+            _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var (mainTask, subTask, system, currentUser) = await SetTrace("108", "1108002", "1");
+            // Set page titles
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
+            // Retrieve active driving licenses
+            var City = await _unitOfWork.CrMasSupPostCity
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupPostCityStatus == Status.Active);
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-
-            var titles = await setTitle("108", "1108002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var PostCitys = await _unitOfWork.CrMasSupPostCity.GetAllAsync();
-            var PostCity = PostCitys.Where(x => x.CrMasSupPostCityStatus == "A").ToList();
-
-            return View(PostCity);
+            var City_count = await _unitOfWork.CrMasRenterPost.FindCountByColumnAsync<CrMasRenterPost>(
+                predicate: x => x.CrMasRenterPostStatus != Status.Deleted,
+                columnSelector: x => x.CrMasRenterPostCity  // تحديد العمود الذي نريد التجميع بناءً عليه
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
+            // If no active licenses, retrieve all licenses
+            if (!City.Any())
+            {
+                City = await _unitOfWork.CrMasSupPostCity
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupPostCityStatus == Status.Hold);
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
+            PostCityVM vm = new PostCityVM();
+            vm.PostCity = City;
+            vm.City_count = City_count;
+            return View(vm);
         }
-
-
         [HttpGet]
-        public PartialViewResult GetPostCityByStatus(string status)
+        public async Task<PartialViewResult> GetPostCityByStatus(string status, string search)
         {
+            //sidebar Active
+
             if (!string.IsNullOrEmpty(status))
             {
+                var PostCitysAll = await _unitOfWork.CrMasSupPostCity.FindAllAsNoTrackingAsync(x => x.CrMasSupPostCityStatus == Status.Active ||
+                                                                                                                            x.CrMasSupPostCityStatus == Status.Deleted ||
+                                                                                                                            x.CrMasSupPostCityStatus == Status.Hold);
+
+                var City_count = await _unitOfWork.CrMasRenterPost.FindCountByColumnAsync<CrMasRenterPost>(
+                    predicate: x => x.CrMasRenterPostStatus != Status.Deleted,
+                    columnSelector: x => x.CrMasRenterPostCity  // تحديد العمود الذي نريد التجميع بناءً عليه
+                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                    );
+                PostCityVM vm = new PostCityVM();
+                vm.City_count = City_count;
                 if (status == Status.All)
                 {
-                    var PostCitybyStatusAll = _unitOfWork.CrMasSupPostCity.GetAll();
-                    return PartialView("_DataTablePostCity", PostCitybyStatusAll);
+                    var FilterAll = PostCitysAll.FindAll(x => x.CrMasSupPostCityStatus != Status.Deleted &&
+                                                                         (x.CrMasSupPostCityArName.Contains(search) ||
+                                                                          x.CrMasSupPostCityEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupPostCityCode.Contains(search)));
+                    vm.PostCity = FilterAll;
+                    return PartialView("_DataTablePostCity", vm);
                 }
-                var PostCitybyStatus = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityStatus == status).ToList();
-                return PartialView("_DataTablePostCity", PostCitybyStatus);
+                var FilterByStatus = PostCitysAll.FindAll(x => x.CrMasSupPostCityStatus == status &&
+                                                                            (
+                                                                           x.CrMasSupPostCityArName.Contains(search) ||
+                                                                           x.CrMasSupPostCityEnName.ToLower().Contains(search.ToLower()) ||
+                                                                           x.CrMasSupPostCityCode.Contains(search)));
+                vm.PostCity = FilterByStatus;
+                return PartialView("_DataTablePostCity", vm);
             }
             return PartialView();
         }
-
 
         [HttpGet]
         public async Task<IActionResult> AddPostCity()
         {
 
-            // Set Title !!!!!!!!!!!!!!!!!!!!!!!!!!
-            var titles = await setTitle("108", "1108002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
 
-
-            var PostCity = await _unitOfWork.CrMasSupPostCity.GetAllAsync();
-
-            var PostCityCode = (BigInteger.Parse(PostCity.LastOrDefault().CrMasSupPostCityCode) + 1).ToString();
-            ViewBag.PostCityCode = PostCityCode;
-            return View();
-        }
-
-        [HttpGet]
-        public JsonResult GetPostCityRegionNameAr(string? prefix)
-        {
-
-            var res = _unitOfWork.CrMasSupPostRegion.GetAll();
-            var list = res.ToList();
-            var CountriesArabic = (from c in list
-                                   where c.CrMasSupPostRegionsArName.Contains(prefix) &&c.CrMasSupPostRegionsStatus=="A"
-                                   select new
-                                   {
-                                       label = c.CrMasSupPostRegionsArName,
-                                       val = c.CrMasSupPostRegionsArName
-                                   }).ToList();
-
-            return Json(CountriesArabic);
-        }
-        [HttpGet]
-        public JsonResult GetPostCityRegionNameEn(string? prefix)
-        {
-
-            var res = _unitOfWork.CrMasSupPostRegion.GetAll();
-            var list = res.ToList();
-            var CountriesEnglish = (from c in list
-                                    where c.CrMasSupPostRegionsEnName.Contains(prefix) && c.CrMasSupPostRegionsStatus=="A"
-                                    select new
-                                    {
-                                        label = c.CrMasSupPostRegionsEnName,
-                                        val = c.CrMasSupPostRegionsEnName
-                                    }).ToList();
-            return Json(CountriesEnglish);
-        }
-
-        [HttpGet]
-        public ActionResult GetCode(string selectedOption)
-        {
-
-            var res = _unitOfWork.CrMasSupPostRegion.GetAll();
-            var list = res.ToList();
-            var CountriesCode = (from c in list
-                                 where c.CrMasSupPostRegionsArName == selectedOption || c.CrMasSupPostRegionsEnName == selectedOption
-                                 select c.CrMasSupPostRegionsCode).ToList()[0].ToString();
-
-            var list2 = res.ToList();
-            var data2 = (from c in list
-                         where c.CrMasSupPostRegionsCode == CountriesCode
-                         select new
-                         {
-                             c.CrMasSupPostRegionsStatus
-                         }).ToList();
-
-            ViewBag.PostCityRegionCode = CountriesCode;
-            ViewBag.PostCityRegionStatus = data2[0].CrMasSupPostRegionsStatus.ToString();
-            var Status = data2[0].CrMasSupPostRegionsStatus.ToString();
-
-            Console.WriteLine("Stataus    ...     "+Status);
-            return Json(new { data1 = CountriesCode, data2 = Status });
-        }
-
-
-        [HttpGet]
-        public ActionResult GetData(string code, string CitynameAr)
-        {
-
-            var res = _unitOfWork.CrMasSupPostRegion.GetAll();
-            var list = res.ToList();
-            var data = (from c in list
-                        where c.CrMasSupPostRegionsCode == code
-                        select new
-                        {
-                            c.CrMasSupPostRegionsArName
-                        }).ToList();
-
-            ViewBag.PostCityConcateAr = CitynameAr + " - " + data[0].CrMasSupPostRegionsArName.ToString();
-            var concate = CitynameAr + " - " + data[0].CrMasSupPostRegionsArName.ToString();
-            return Json(new { data1 = concate });
-        }
-
-        [HttpGet]
-        public ActionResult GetDataEn(string code, string CitynameEn)
-        {
-
-            var res = _unitOfWork.CrMasSupPostRegion.GetAll();
-            var list = res.ToList();
-            var data = (from c in list
-                        where c.CrMasSupPostRegionsCode == code
-                        select new
-                        {
-                            c.CrMasSupPostRegionsEnName
-                        }).ToList();
-
-            ViewBag.PostCityConcateEn = CitynameEn + " - " + data[0].CrMasSupPostRegionsEnName.ToString();
-            var concate = CitynameEn + " - " + data[0].CrMasSupPostRegionsEnName.ToString();
-            return Json(new { data1 = concate });
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "PostCity");
+            }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "PostCity");
+            }
+            // Check If code > 9 get error , because code is char(1)
+            if (Int64.Parse(await GenerateLicenseCodeAsync()) > 1799999999)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "PostCity");
+            }
+            var regions = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
+                predicate: x => x.CrMasSupPostRegionsStatus != Status.Deleted,
+                selectProjection: query => query.Select(x => new CrMasSupPostRegion
+                {
+                    CrMasSupPostRegionsCode = x.CrMasSupPostRegionsCode,
+                    CrMasSupPostRegionsArName = x.CrMasSupPostRegionsArName,
+                    CrMasSupPostRegionsEnName = x.CrMasSupPostRegionsEnName
+                })
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
+            // Set Title 
+            PostCityVM CityVM = new PostCityVM();
+            CityVM.CrMasSupPostCityCode = await GenerateLicenseCodeAsync();
+            CityVM.Regions = regions;
+            return View(CityVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPostCity(PostCityVM PostCitymodel)
+        public async Task<IActionResult> AddPostCity(PostCityVM CityVM)
         {
-            string currentCulture = CultureInfo.CurrentCulture.Name;
-            if (ModelState.IsValid)
-            {
-                if (PostCitymodel != null)
+            if (CityVM.CrMasSupPostCityLongitude == null) CityVM.CrMasSupPostCityLongitude = 0;
+            if (CityVM.CrMasSupPostCityLatitude == null) CityVM.CrMasSupPostCityLatitude = 0;
+
+            var regions = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
+                predicate: x => x.CrMasSupPostRegionsStatus != Status.Deleted,
+                selectProjection: query => query.Select(x => new CrMasSupPostRegion
                 {
-                    var PostCitys = await _unitOfWork.CrMasSupPostCity.GetAllAsync();
-                    var existingPostCity = PostCitys.FirstOrDefault(x =>
-                        x.CrMasSupPostCityEnName == PostCitymodel.CrMasSupPostCityEnName ||
-                        x.CrMasSupPostCityArName == PostCitymodel.CrMasSupPostCityArName);
+                    CrMasSupPostRegionsCode = x.CrMasSupPostRegionsCode,
+                    CrMasSupPostRegionsArName = x.CrMasSupPostRegionsArName,
+                    CrMasSupPostRegionsEnName = x.CrMasSupPostRegionsEnName
+                })
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
 
-                    // Generate code for the second time
-                    var PostCityCode = (int.Parse(PostCitys.LastOrDefault().CrMasSupPostCityCode) + 1).ToString();
-                    PostCitymodel.CrMasSupPostCityCode = PostCityCode;
-                    ViewBag.PostCityCode = PostCityCode;
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
 
-                    if (existingPostCity != null)
-                    {
-                        if (existingPostCity.CrMasSupPostCityArName != null &&
-                            existingPostCity.CrMasSupPostCityArName == PostCitymodel.CrMasSupPostCityArName &&
-                             existingPostCity.CrMasSupPostCityEnName != PostCitymodel.CrMasSupPostCityEnName)
-                        {
-                            if (currentCulture != "en-US")
-                            {
-                                ModelState.AddModelError("ExistAr", "هذا الحقل مسجل من قبل.");
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("ExistAr", "This field is Existed.");
-                            }
+            if (!ModelState.IsValid || CityVM == null)
+            {
+                CityVM.Regions = regions;
+                return View("AddPostCity", CityVM);
+            }
+            try
+            {
+                // Map ViewModel to Entity
+                var CityEntity = _mapper.Map<CrMasSupPostCity>(CityVM);
 
-                        }
-                        if (existingPostCity.CrMasSupPostCityEnName != null &&
-                            existingPostCity.CrMasSupPostCityEnName == PostCitymodel.CrMasSupPostCityEnName &&
-                             existingPostCity.CrMasSupPostCityArName != PostCitymodel.CrMasSupPostCityArName)
-                        {
-                            if (currentCulture != "en-US")
-                            {
-                                ModelState.AddModelError("ExistEn", "هذا الحقل مسجل من قبل.");
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("ExistEn", "This field is Existed.");
-                            }
-                        }
-                        if (existingPostCity.CrMasSupPostCityArName != null && existingPostCity.CrMasSupPostCityEnName != null
-                            && existingPostCity.CrMasSupPostCityEnName == PostCitymodel.CrMasSupPostCityEnName &&
-                           existingPostCity.CrMasSupPostCityArName == PostCitymodel.CrMasSupPostCityArName)
-                        {
-                            if (currentCulture != "en-US")
-                            {
-                                ModelState.AddModelError("ExistEn", "هذا الحقل مسجل من قبل.");
-                                ModelState.AddModelError("ExistAr", "هذا الحقل مسجل من قبل.");
 
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("ExistAr", "This field is Existed.");
-                                ModelState.AddModelError("ExistEn", "This field is Existed.");
-                            }
-                        }
-                        return View(PostCitymodel);
-                    }
-                    PostCitymodel.CrMasSupPostCityStatus = "A";
-                    PostCitymodel.CrMasSupPostCityCounter = 0;
-                    PostCitymodel.CrMasSupPostCityGroupCode = "17";
-
-                    var PostCityVMTPostCity = _mapper.Map<CrMasSupPostCity>(PostCitymodel);
-                    await _unitOfWork.CrMasSupPostCity.AddAsync(PostCityVMTPostCity);
-
-                    _unitOfWork.Complete();
-
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("108", "1108002", "1");
-                    var RecordAr = PostCityVMTPostCity.CrMasSupPostCityArName;
-                    var RecordEn = PostCityVMTPostCity.CrMasSupPostCityEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "اضافة", "Add", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
+                // Check if the entity already exists
+                if (await _masPostCity.ExistsByDetailsAsync(CityEntity))
+                {
+                    await AddModelErrorsAsync(CityEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    CityVM.Regions = regions;
+                    return View("AddPostCity", CityVM);
                 }
+                // Check If code > 9 get error , because code is char(1)
+                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 1799999999)
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    CityVM.Regions = regions;
+                    return View("AddPostCity", CityVM);
+                }
+                var region = await _unitOfWork.CrMasSupPostRegion.FindAsync(x => x.CrMasSupPostRegionsCode == CityEntity.CrMasSupPostCityRegionsCode);
+                // Generate and set the Driving License Code
+                CityVM.CrMasSupPostCityCode = await GenerateLicenseCodeAsync();
+                // Set status and add the record
+                CityEntity.CrMasSupPostCityStatus = "A";
+                CityEntity.CrMasSupPostCityCounter = 0;
+                CityEntity.CrMasSupPostCityConcatenateArName = region?.CrMasSupPostRegionsArName + " - " + CityEntity.CrMasSupPostCityArName;
+                CityEntity.CrMasSupPostCityConcatenateEnName = region?.CrMasSupPostRegionsEnName + " - " + CityEntity.CrMasSupPostCityEnName;
+                CityEntity.CrMasSupPostCityRegionsStatus = region?.CrMasSupPostRegionsStatus ?? "D";
+
+                await _unitOfWork.CrMasSupPostCity.AddAsync(CityEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+
+                await SaveTracingForLicenseChange(user, CityEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
-            return View("AddPostCity", PostCitymodel);
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                CityVM.Regions = regions;
+                return View("AddPostCity", CityVM);
+            }
         }
-
-
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            //To Set Title !!!!!!!!!!!!!
-            var titles = await setTitle("108", "1108002", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
-
-            var PostCity = await _unitOfWork.CrMasSupPostCity.GetByIdAsync(id);
-            if (PostCity == null)
+            await SetPageTitleAsync(Status.Update, pageNumber);
+            // if value with code less than 2 Deleted
+            if (Int64.Parse(id) < 1700000002 + 1)
             {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Index");
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_NoUpdate"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "PostCity");
             }
-            if (id == "00")
+            var contract = await _unitOfWork.CrMasSupPostCity.FindAsync(x => x.CrMasSupPostCityCode == id);
+            if (contract == null)
             {
-                ModelState.AddModelError("Exist", "You Can't Edit This.");
-                var PostCity2 = await _unitOfWork.CrMasSupPostCity.GetAllAsync();
-                return View("Index", PostCity2);
-
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "PostCity");
             }
-            var model = _mapper.Map<PostCityVM>(PostCity);
-
+            var model = _mapper.Map<PostCityVM>(contract);
             return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(PostCityVM CityVM)
+        {
+            if (CityVM.CrMasSupPostCityLongitude == null) CityVM.CrMasSupPostCityLongitude = 0;
+            if (CityVM.CrMasSupPostCityLatitude == null) CityVM.CrMasSupPostCityLatitude = 0;
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+
+            if (user == null && CityVM == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "PostCity");
+            }
+            try
+            {
+                //Check Validition
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("Edit", CityVM);
+                }
+                var CityEntity = _mapper.Map<CrMasSupPostCity>(CityVM);
+                CityEntity.CrMasSupPostCityArName = "أأ";
+                CityEntity.CrMasSupPostCityEnName = "AA";
+                // Check if the entity already exists
+                if (await _masPostCity.ExistsByDetailsAsync(CityEntity))
+                {
+                    await AddModelErrorsAsync(CityEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Edit", CityVM);
+                }
+                var contract = await _unitOfWork.CrMasSupPostCity.FindAsync(x => x.CrMasSupPostCityCode == CityVM.CrMasSupPostCityCode);
+                if (contract == null) { return View("Edit", CityVM); }
+                contract.CrMasSupPostCityLocation = CityVM.CrMasSupPostCityLocation;
+                contract.CrMasSupPostCityLongitude = CityVM.CrMasSupPostCityLongitude;
+                contract.CrMasSupPostCityLatitude = CityVM.CrMasSupPostCityLatitude;
+                contract.CrMasSupPostCityReasons = CityVM.CrMasSupPostCityReasons;
+                _unitOfWork.CrMasSupPostCity.Update(contract);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+                await SaveTracingForLicenseChange(user, contract, Status.Update);
+                return RedirectToAction("Index", "PostCity");
+            }
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View("Edit", CityVM);
+            }
+        }
+        [HttpPost]
+        public async Task<string> EditStatus(string code, string status)
+        {
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return "false";
+
+            var licence = await _unitOfWork.CrMasSupPostCity.GetByIdAsync(code);
+            if (licence == null) return "false";
+
+            try
+            {
+
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                licence.CrMasSupPostCityStatus = status;
+                _unitOfWork.CrMasSupPostCity.Update(licence);
+                _unitOfWork.Complete();
+                await SaveTracingForLicenseChange(user, licence, status);
+                return "true";
+            }
+            catch (Exception ex)
+            {
+                return "false";
+            }
+        }
+
+        //Error exist message when run post action to get what is the exist field << Help Up in Back End
+        private async Task AddModelErrorsAsync(CrMasSupPostCity entity)
+        {
+
+            if (await _masPostCity.ExistsByArabicNameAsync(entity.CrMasSupPostCityArName, entity.CrMasSupPostCityCode))
+            {
+                ModelState.AddModelError("CrMasSupPostCityArName", _localizer["Existing"]);
+            }
+
+            if (await _masPostCity.ExistsByEnglishNameAsync(entity.CrMasSupPostCityEnName, entity.CrMasSupPostCityCode))
+            {
+                ModelState.AddModelError("CrMasSupPostCityEnName", _localizer["Existing"]);
+            }
+
+            if (await _masPostCity.ExistsByLocationAsync(entity.CrMasSupPostCityLocation, entity.CrMasSupPostCityCode))
+            {
+                ModelState.AddModelError("CrMasSupPostCityLocation", _localizer["Existing"]);
+            }
+
+            if (await _masPostCity.ExistsByLongitudeAsync((decimal)entity.CrMasSupPostCityLongitude, entity.CrMasSupPostCityCode))
+            {
+                ModelState.AddModelError("CrMasSupPostCityLongitude", _localizer["Existing"]);
+            }
+
+            if (await _masPostCity.ExistsByLatitudeAsync((decimal)entity.CrMasSupPostCityLatitude, entity.CrMasSupPostCityCode))
+            {
+                ModelState.AddModelError("CrMasSupPostCityLatitude", _localizer["Existing"]);
+            }
+        }
+
+        //Error exist message when change input without run post action >> help us in front end
+        [HttpGet]
+        public async Task<JsonResult> CheckChangedField(string existName, string dataField)
+        {
+            var All_PostCitys = await _unitOfWork.CrMasSupPostCity.GetAllAsync();
+            var errors = new List<ErrorResponse>();
+
+            if (!string.IsNullOrEmpty(dataField) && All_PostCitys != null)
+            {
+                // Check for existing Arabic driving license
+                if (existName == "CrMasSupPostCityArName" && All_PostCitys.Any(x => x.CrMasSupPostCityArName == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupPostCityArName", Message = _localizer["Existing"] });
+                }
+                // Check for existing English driving license
+                else if (existName == "CrMasSupPostCityEnName" && All_PostCitys.Any(x => x.CrMasSupPostCityEnName?.ToLower() == dataField.ToLower()))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupPostCityEnName", Message = _localizer["Existing"] });
+                }
+                // Check for existing 
+                else if (existName == "CrMasSupPostCityLocation" && All_PostCitys.Any(x => x.CrMasSupPostCityLocation?.ToLower() == dataField.ToLower()))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupPostCityLocation", Message = _localizer["Existing"] });
+                }
+                // Check for existing 
+                else if (existName == "CrMasSupPostCityLongitude" && decimal.TryParse(dataField, out var code) && code != 0 && All_PostCitys.Any(x => x.CrMasSupPostCityLongitude == code))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupPostCityLongitude", Message = _localizer["Existing"] });
+                }
+                // Check for existing 
+                else if (existName == "CrMasSupPostCityLatitude" && decimal.TryParse(dataField, out var id) && id != 0 && All_PostCitys.Any(x => x.CrMasSupPostCityLatitude == id))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupPostCityLatitude", Message = _localizer["Existing"] });
+                }
+            }
+
+            return Json(new { errors });
+        }
+
+        //Helper Methods 
+        private async Task<string> GenerateLicenseCodeAsync()
+        {
+            var allLicenses = await _unitOfWork.CrMasSupPostCity.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupPostCityCode) + 1).ToString() : "1700000001";
+        }
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupPostCity licence, string status)
+        {
+
+
+            var recordAr = licence.CrMasSupPostCityArName;
+            var recordEn = licence.CrMasSupPostCityEnName;
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+
+        [HttpPost]
+        public IActionResult DisplayToastError_NoUpdate(string messageText)
+        {
+            //نص الرسالة _localizer["AuthEmplpoyee_NoUpdate"] === messageText ; 
+            if (messageText == null || messageText == "") messageText = "..";
+            _toastNotification.AddErrorToastMessage(messageText, new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            return Json(new { success = true });
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(PostCityVM model)
+        public IActionResult DisplayToastSuccess_withIndex()
         {
-
-            var user = await _userService.GetUserByUserNameAsync(HttpContext.User.Identity.Name);
-            var PostCity = _mapper.Map<CrMasSupPostCity>(model);
-
-            if (user != null)
-            {
-                if (PostCity != null)
-                {
-                    _unitOfWork.CrMasSupPostCity.Update(PostCity);
-                    _unitOfWork.Complete();
-
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("108", "1108002", "1");
-                    var RecordAr = PostCity.CrMasSupPostCityArName;
-                    var RecordEn = PostCity.CrMasSupPostCityEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-                }
-
-            }
-
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
             return RedirectToAction("Index", "PostCity");
         }
 
-
-        [HttpPost]
-        public async Task<IActionResult> EditStatus(string code, string status)
-        {
-            string sAr = "";
-            string sEn = "";
-            var PostCity = await _unitOfWork.CrMasSupPostCity.GetByIdAsync(code);
-            if (PostCity != null)
-            {
-                if (await CheckUserSubValidationProcdures("1108002", status))
-                {
-                    if (status == Status.Hold)
-                    {
-                        sAr = "ايقاف";
-                        sEn = "Hold";
-                        PostCity.CrMasSupPostCityStatus = Status.Hold;
-                    }
-                    else if (status == Status.Deleted)
-                    {
-                        sAr = "حذف";
-                        sEn = "Remove";
-                        PostCity.CrMasSupPostCityStatus = Status.Deleted;
-                    }
-                    else if (status == "Reactivate")
-                    {
-                        sAr = "استرجاع";
-                        sEn = "Retrive";
-                        PostCity.CrMasSupPostCityStatus = Status.Active;
-                    }
-
-                    await _unitOfWork.CompleteAsync();
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("108", "1108002", "1");
-                    var RecordAr = PostCity.CrMasSupPostCityArName;
-                    var RecordEn = PostCity.CrMasSupPostCityEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                    return RedirectToAction("Index", "PostCity");
-                }
-            }
-
-
-            return View(PostCity);
-
-        }
 
     }
 }

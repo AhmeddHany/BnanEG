@@ -58,11 +58,14 @@
                                                             <div class="col-md-5">
                                                                 <input type="text" 
                                                                        class="form-control inputs arabic-input"
-                                                                           maxlength="30" asp-for="@Model.Cuurency_full[i].CrMasSysConvertNoToTextArName" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                                                           maxlength="30" asp-for="@Model.Cuurency_full[i].CrMasSysConvertNoToTextArName" id="Cuurency_full_+@i+__CrMasSysConvertNoToTextArName" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
                                                                 <div class="invaild">
                                                                     <div class="invalid-feedback">
+                                                                            @*<span class="text-danger" data-valmsg-for="Cuurency_full_+@i+__CrMasSysConvertNoToTextArName" data-valmsg-replace="true"></span>*@
                                                                             <span asp-validation-for="@Model.Cuurency_full[i].CrMasSysConvertNoToTextArName" class="text-danger"></span>
-                                                                            <span class="text-danger" id="Description2'@Model.Cuurency_full[i].CrMasSysConvertNoToTextArName'-Error"></span>
+                                                                            @*<span data-valmsg-for="Cuurency_full_i__.CrMasSysConvertNoToTextArName" class="text-danger"></span>*@
+                                                                            @*<span class="text-danger" id="Description2'@Model.Cuurency_full[i].CrMasSysConvertNoToTextArName'-Error"></span>*@
+                                                                            @*@Html.ValidationMessage(@Model.Cuurency_full[i].CrMasSysConvertNoToTextArName, null, new { @class = "text-danger" })*@
                                                                         </div>
                                                                 </div>
                                                             </div>

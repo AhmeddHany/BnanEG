@@ -1,5 +1,5 @@
 ﻿@using Bnan.Core.Extensions
-@model PostCityVM
+@model PostRegionsVM
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
@@ -11,7 +11,7 @@
         <tr>
             <th>@localizer["Count"]</th>
 
-            <th class="DifferAlign"> @localizer["PostCityName_view"]</th>
+            <th class="DifferAlign"> @localizer["PostRegionsName_view"]</th>
             <th class="DifferAlign"> @localizer["the_Code"]</th>
             <th></th>
         </tr>
@@ -20,27 +20,27 @@
         @{
             int no = 1;
         }
-        @foreach (var item in Model.PostCity)
+        @foreach (var item in Model.PostRegions)
         {
-            <tr onclick="if (parseInt(@item.CrMasSupPostCityCode) > 1700000002) {location.href='@Url.Action("Edit", "PostCity", new { id = item.CrMasSupPostCityCode })';} else{showErrorToast_NoUpdate();}">
+            <tr onclick="if (parseInt(@item.CrMasSupPostRegionsCode) > 11) {location.href='@Url.Action("Edit", "PostRegions", new { id = item.CrMasSupPostRegionsCode })';} else{showErrorToast_NoUpdate();}">
 
-                <td><p>@(Model.City_count?.Find(x => x.Column.ToString() == item.CrMasSupPostCityCode?.Trim())?.RowCount.ToString("N0") ?? "0" )</p></td>
+                <td><p>@(Model.Region_count?.Find(x => x.Column.ToString() == item.CrMasSupPostRegionsCode?.Trim())?.RowCount.ToString("N0") ?? "0" )</p></td>
                 
                 <td class="DifferAlign">
                     <p>
-                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupPostCityConcatenateEnName : item.CrMasSupPostCityConcatenateArName)
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupPostRegionsEnName : item.CrMasSupPostRegionsArName)
                     </p>
                 </td>
                 <td class="DifferAlign">
-                    <p>@item.CrMasSupPostCityCode</p>
+                    <p>@item.CrMasSupPostRegionsCode</p>
                 </td>
                 <td>
                     <div class="filter-number-td">
                         @{
                             var filterColor = "";
-                            if (item.CrMasSupPostCityStatus == Status.Active) filterColor = "filter2-div";
-                            else if (item.CrMasSupPostCityStatus == Status.Hold) filterColor = "filter1-div";
-                            else if (item.CrMasSupPostCityStatus == Status.Deleted) filterColor = "filter3-div";
+                            if (item.CrMasSupPostRegionsStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasSupPostRegionsStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasSupPostRegionsStatus == Status.Deleted) filterColor = "filter3-div";
                         }
                         <div class="filters @filterColor"></div>
                         <div>@no</div>
