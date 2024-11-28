@@ -1677,6 +1677,8 @@
         var totalDaysNo = 0;
         var settlementDay = 0;
         var roundedHours = 0;
+        var roundedLateAddHours = 0;
+        var roundedLateSettelmentHours = 0;
         document.addEventListener("DOMContentLoaded", function () {
             customizeDate();
             const elementToHide = document.getElementById("mechanismSettlement");
@@ -1738,7 +1740,7 @@
                 if (endContractDate < now && (diffHours > 0 || (diffHours === 0 && diffMinutes > 0))) {
                     let totalMinutes = diffHours * 60 + diffMinutes;
                     roundedHours = Math.ceil(totalMinutes / 60); // Rounded to next hour
-
+                    roundedLateAddHours = roundedHours;
                     updateTimeDisplay(roundedHours);
 
                     if (!isSettlementAuthValid) {
@@ -1750,26 +1752,40 @@
                     resetTimeDisplay();
                 }
 
-                function updateTimeDisplay(roundedHours) {
+                function updateTimeDisplay(roundedHoursVal) {
                     $("#divLateHours").css("display", ""); // أو أي قيمة أخرى تناسبك
-                    $("#diffHours").text(roundedHours.toString().padStart(2, '0'));
+                    $("#diffHours").text(roundedHoursVal.toString().padStart(2, '0'));
                     $("#diffMinutes").text('00');
                 }
 
-                function handleSettlementAuth(roundedHours) {
-                    if (roundedHours <= parseInt(TotalFreeHours)) {
+                function handleSettlementAuth(roundedHoursVal) {
+                    let displayHour = 0;
+                    if (roundedHoursVal <= parseInt(TotalFreeHours)) {
                         $("#AddOrLateHoursText").text("@localizer["FreeHourss"]");
-                    } else if ((roundedHours - parseInt(TotalFreeHours)) <= parseInt(MaxHours)) {
-                        roundedHours -= parseInt(TotalFreeHours);
+                        displayHour = roundedHoursVal;
+                        roundedLateAddHours = 0;
+                        roundedLateSettelmentHours = 0;
+                    } else if ((roundedHoursVal - parseInt(TotalFreeHours)) <= parseInt(MaxHours)) {
+                        roundedLateAddHours -= parseInt(TotalFreeHours);
+                        displayHour = roundedLateAddHours;
+                        roundedLateSettelmentHours = 0;
                         $("#AddOrLateHoursText").text("@localizer["AddHourslate"]");
-                    } else if (elementToHide && roundedHours > (parseInt(MaxHours) + parseInt(TotalFreeHours))) {
-                        roundedHours -= parseInt(TotalFreeHours);
+                    } else if (elementToHide && roundedHoursVal > (parseInt(MaxHours) + parseInt(TotalFreeHours))) {
+                        roundedLateAddHours -= parseInt(TotalFreeHours);
+                        displayHour = roundedLateAddHours;
+                        roundedLateSettelmentHours = roundedLateAddHours - parseInt(MaxHours);
+                        roundedLateAddHours -= roundedLateSettelmentHours;
                         elementToHide.style.display = "";
                         $("#AddOrLateHoursText").text("@localizer["AddHourslate"]");
                     } else {
                         $("#AddOrLateHoursText").text("@localizer["AddHourslate"]");
                     }
-                    updateTimeDisplay(roundedHours);
+                    updateTimeDisplay(displayHour);
+                    console.log("roundedHoursVal", roundedHoursVal);
+                    console.log("roundedHours", roundedHours);
+                    console.log("roundedLateAddHours", roundedLateAddHours);
+                    console.log("roundedLateSettelmentHours", roundedLateSettelmentHours);
+                    console.log("displayHour", displayHour);
                 }
 
                 function resetTimeDisplay() {
@@ -1826,7 +1842,6 @@
             const endContractDateString = "@Model.ContractSettlement.CrCasRenterContractBasicExpectedEndDate?.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture)";
             const now = new Date();
             const endContractDate = new Date(endContractDateString);
-
             var settlementMechanismValue = parseInt($("#Settlement-mechanism").val());
             if (settlementMechanismValue == 0) {
                 settlementDay = 0;
@@ -1841,7 +1856,7 @@
                 settlementDay = 1 / 4;
             }
             else {
-                if (endContractDate < now && roundedHours > 0) {
+                if (endContractDate < now && roundedLateSettelmentHours > 0) {
                     settlementDay = 1;
                 }
                 else {
@@ -2232,11 +2247,11 @@
                 AdditionalHoursValueTotal = 0; // للتأكد من أنها فارغة في البداية
 
                 // إذا كانت الفرق الزمني أكبر أو يساوي الساعات القصوى
-                if (roundedHours >= AdditionalHour) {
+                if (roundedLateAddHours == AdditionalHour) {
                     AdditionalHoursValueTotal = parseInt(AdditionalHour) * parseFloat(AdditionalHourValue);
                 } else {
-                    if (roundedHours >= 0) {
-                        AdditionalHoursValueTotal = roundedHours * parseFloat(AdditionalHourValue);
+                    if (roundedLateAddHours >= 0) {
+                        AdditionalHoursValueTotal = roundedLateAddHours * parseFloat(AdditionalHourValue);
                     }
                 }
             }
@@ -2582,38 +2597,20 @@
                 }
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // استرجاع القيم المطلوبة
-                const TotalFreeHours = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicTotalFreeHours));
                 var AdditionalHourValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourValue));
                 var AdditionalHour = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourMax));
 
                 // التأكد أن عدد الساعات الإضافية أكبر من 0
                 if (AdditionalHour > 0) {
-                    let totalRoundedHours = 0; // عدد الساعات المحسوبة بعد التقريب
-
-                    // إذا كانت الفرق الزمني أكبر أو يساوي الساعات القصوى
-                    if (diff >= AdditionalHour) {
-                        totalRoundedHours = parseInt(AdditionalHour); // استخدام الساعات القصوى كعدد الساعات
-                    } else {
-                        var HourAfterFreeHour = diffHours - TotalFreeHours;
-
-                        if (HourAfterFreeHour >= 0 && diffMinutes > 0) {
-                            // إضافة القيمة بناءً على الدقائق المحسوبة، مع تقريب الدقائق إلى الساعات
-                            let totalMinutes = HourAfterFreeHour * 60 + diffMinutes; // اجمع الساعات والدقائق
-                            totalRoundedHours = Math.ceil(totalMinutes / 60); // تقريب الساعات لأعلى
-                        }
-                    }
-
                     // حساب عدد الساعات التأخير
-                    let totalLateHours = totalRoundedHours;
-                    let totalLateHourValue = totalLateHours * parseFloat(AdditionalHourValue);
-
+                    let totalLateHourValue = roundedLateAddHours * parseFloat(AdditionalHourValue);
                     // التأكد من قيمة الساعات المتأخرة
                     totalLateHourValue = totalLateHourValue || 0;
 
                     // الآن يمكنك استخدام هذه القيم كما تريد
                     if (totalLateHourValue > 0) {
                         // رسم القيم في الـ canvas
-                        YHeight = calculateAndDrawAr(ctx, canvas, "ساعات التأخير", AdditionalHourValue, totalLateHours, DiscountInput, TaxPercent, YHeight);
+                        YHeight = calculateAndDrawAr(ctx, canvas, "ساعات التأخير", AdditionalHourValue, roundedLateAddHours, DiscountInput, TaxPercent, YHeight);
                     }
                 }
 
@@ -2858,30 +2855,13 @@
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////Additional Hours
                 // استرجاع القيم المطلوبة
-                const TotalFreeHours = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicTotalFreeHours));
                 var AdditionalHourValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourValue));
                 var AdditionalHour = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourMax));
 
                 // التأكد أن عدد الساعات الإضافية أكبر من 0
                 if (AdditionalHour > 0) {
-                    let totalRoundedHours = 0; // عدد الساعات المحسوبة بعد التقريب
 
-                    // إذا كانت الفرق الزمني أكبر أو يساوي الساعات القصوى
-                    if (diff >= AdditionalHour) {
-                        totalRoundedHours = parseInt(AdditionalHour); // استخدام الساعات القصوى كعدد الساعات
-                    } else {
-                        var HourAfterFreeHour = diffHours - TotalFreeHours;
-
-                        if (HourAfterFreeHour >= 0 && diffMinutes > 0) {
-                            // إضافة القيمة بناءً على الدقائق المحسوبة، مع تقريب الدقائق إلى الساعات
-                            let totalMinutes = HourAfterFreeHour * 60 + diffMinutes; // اجمع الساعات والدقائق
-                            totalRoundedHours = Math.ceil(totalMinutes / 60); // تقريب الساعات لأعلى
-                        }
-                    }
-
-                    // حساب عدد الساعات التأخير
-                    let totalLateHours = totalRoundedHours;
-                    let totalLateHourValue = totalLateHours * parseFloat(AdditionalHourValue);
+                    let totalLateHourValue = roundedLateAddHours * parseFloat(AdditionalHourValue);
 
                     // التأكد من قيمة الساعات المتأخرة
                     totalLateHourValue = totalLateHourValue || 0;
@@ -2889,7 +2869,7 @@
                     // الآن يمكنك استخدام هذه القيم كما تريد
                     if (totalLateHourValue > 0) {
                         // رسم القيم في الـ canvas
-                        YHeight = calculateAndDrawEn(ctx, canvas, "Late Hours", AdditionalHourValue, totalLateHours, DiscountInput, TaxPercent, YHeight);
+                        YHeight = calculateAndDrawEn(ctx, canvas, "Late Hours", AdditionalHourValue, roundedLateAddHours, DiscountInput, TaxPercent, YHeight);
                     }
                 }
 
