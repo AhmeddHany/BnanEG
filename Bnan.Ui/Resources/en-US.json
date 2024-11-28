@@ -429,7 +429,12 @@
     "View_Currency_PageTitle": "The Currency",
     "the_Currency": "The Currency",
     "the_RealNumber": "The Real Number",
-    "the_RatioNumber": "The Ratio Number"
+    "the_RatioNumber": "The Ratio Number",
+    //TechnicalConnectivity
+    "Company": "Company",
+    "CompaniesInformations": "Companies Informations",
+    "BranchesNo": "Branches No.",
+    "CountryRegion": "Country/Region"
   },
   "Arabic": "Arabic",
   "English": "English",
@@ -607,7 +612,7 @@
   "BnanJo": "Bnan-Bnan",
   //companies
   "Companies": "Companies",
-  "CompaniesInformations": "Informations",
+  "CompaniesInformations": "Companies Informations",
   "Supportphotos": "Support Photos",
   "Dues": "Dues",
   "Clearingdues": "Clearing Dues",

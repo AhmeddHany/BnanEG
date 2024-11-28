@@ -84,6 +84,8 @@ namespace Bnan.Ui.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+            if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Log in", "Bnan", "", "", "", "");
+            else await ViewData.SetPageTitleAsync("تسجيل الدخول", "بنان", "", "", "", "");
             if (ModelState.IsValid)
             {
                 var user = _unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.UserName, new[] { "CrMasUserInformationLessorNavigation", "CrMasUserBranchValidities.CrMasUserBranchValidity1" });
@@ -103,9 +105,7 @@ namespace Bnan.Ui.Areas.Identity.Controllers
                     {
                         ModelState.AddModelError("Hint", _localizer["PasswordInvalid"]);
                     }
-                    if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Log in", "Bnan", "", "", "", "");
-                    else await ViewData.SetPageTitleAsync("تسجيل الدخول", "بنان", "", "", "", "");
-                    return View("Login",model);
+                    return View("Login", model);
                 }
                 //else if (await _authService.CheckPassword(model.UserName, model.Password) == true)
                 //{

@@ -709,7 +709,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["TechnicalConnectivity"],
-                        Url = "#" // استخدم Url الفعلي للـ Action
+                        Url = Url.Action("Connect", "TechnicalConnectivity", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
                     });
                 }
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112002" && l.CrMasUserSubValidationAuthorization == true))
@@ -739,7 +739,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                         Authorization = true,
                         Title = _localizer["Evaluation"],
                         Url = Url.Action("Edit", "Rate", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
-                    }); 
+                    });
                 }
 
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112005" && l.CrMasUserSubValidationAuthorization == true))

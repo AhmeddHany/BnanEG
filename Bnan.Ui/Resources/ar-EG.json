@@ -417,7 +417,7 @@
     "View_Lessor_renterRate_PageTitle": "التقييم",
     "the_Rate": "التقييم",
     "the_Company_rate": "تقييم الشركة",
-    "the_Code": "الرمز",
+    //"the_Code": "الرمز",
     "the_ArabicRate": "التقييم عربي",
     "the_EnglishRate": "التقييم إنجليزي",
     "the_value": "القيمة",
@@ -426,7 +426,13 @@
     "View_Currency_PageTitle": "العملة",
     "the_Currency": "العملة",
     "the_RealNumber": "الرقم الصحيح",
-    "the_RatioNumber": "الرقم العشري"
+    "the_RatioNumber": "الرقم العشري",
+
+    //TechnicalConnectivity
+    "Company": "الشركة",
+    "CompaniesInformations": "بيانات الشركات",
+    "BranchesNo": "عدد الفروع",
+    "CountryRegion": "المنطقة/المدينة"
   },
 
 
