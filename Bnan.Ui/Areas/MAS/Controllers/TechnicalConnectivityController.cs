@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
+using System.ComponentModel.Design;
 
 namespace Bnan.Ui.Areas.MAS.Controllers
 {
@@ -117,6 +118,44 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return Content(content, "application/json");
             }
             return StatusCode((int)response.StatusCode, "Error fetching QR Code");
+        }
+        [HttpGet]
+        public async Task<IActionResult> IsClientReady(string companyId)
+        {
+            var url = $"http://62.84.187.79:3000/api/isClientReady_data/{companyId}"; // رابط API الخارجي
+            using var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                return Content(content, "application/json");
+            }
+            return StatusCode((int)response.StatusCode, "Error checking client connection");
+        }
+        [HttpGet]
+        public async Task<IActionResult> LogoutClient(string select_Connect_id)
+        {
+            try
+            {
+                // URL الخاص بالـ API الذي يتعامل مع قطع الاتصال
+                var url = $"http://62.84.187.79:3000/api/logout_whats/{select_Connect_id}";
+                using var httpClient = new HttpClient();
+                var response = await httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { status = true, message = "تم قطع الاتصال بنجاح" });
+                }
+                else
+                {
+                    return Json(new { status = false, message = "حدث خطأ أثناء قطع الاتصال" });
+                }
+            }
+            catch (Exception ex)
+            {
+                // التعامل مع الأخطاء في حال حدوث استثناء
+                return Json(new { status = false, message = "حدث خطأ أثناء قطع الاتصال: " + ex.Message });
+            }
         }
     }
 }
