@@ -122,7 +122,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             }
             await SetPageTitleAsync(Status.Insert, pageNumber);
             // Check If code > 9 get error , because code is char(1)
-            if (int.Parse(await GenerateLicenseCodeAsync()) > 9)
+            if (Int64.Parse(await GenerateLicenseCodeAsync()) > 9)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "RenterSector");
@@ -159,7 +159,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     return View("AddRenterSector", renterSectorVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
-                if (int.Parse(await GenerateLicenseCodeAsync()) > 9)
+                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 9)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     return View("AddRenterSector", renterSectorVM);

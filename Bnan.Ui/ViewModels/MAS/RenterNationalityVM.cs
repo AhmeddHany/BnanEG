@@ -24,6 +24,7 @@ namespace Bnan.Ui.ViewModels.MAS
         public string? CrMasSupRenterNationalitiesGroupCode { get; set; } = "10";
         [Required(ErrorMessage = "requiredFiled"), Range(0, 7, ErrorMessage = "requiredFiled")]
         public string? CrMasSupRenterNationalitiesNaqlGcc { get; set; }
+        [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupRenterNationalitiesFlag { get; set; }
         public int? CrMasSupRenterNationalitiesCounter { get; set; }
 

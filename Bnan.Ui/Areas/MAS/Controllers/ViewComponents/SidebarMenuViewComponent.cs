@@ -664,7 +664,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Choices"],
-                        Url = Url.Action("Index", "ContractOptions", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
+                        Url = Url.Action("Index", "ContractOption", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
                     });
                 }
 

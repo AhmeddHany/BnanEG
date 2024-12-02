@@ -1,410 +1,366 @@
-﻿@using Bnan.Core.Extensions
-@model Bnan.Ui.ViewModels.MAS.ContractAdditionalVM
+﻿@using Bnan.Ui.ViewModels.MAS
+@using Bnan.Core.Extensions
+@model ContractAdditionalVM
 
 @inject IViewLocalizer localizer
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
-
-@{
-    ViewData["Page-title"] = localizer["Edit ContractAdditional Data"];
-    ViewData["Page-Hint"] = localizer["Edit ContractAdditional Hint"];
-}
-
-<title>@ViewData["Title"]</title>
-
-<style>
-    .row {
-        align-items: center;
-    }
-
-    #signaturePreview, #imagePreview {
-        display: block;
-        margin-top: -5px;
-        float: right;
-        margin-right: 20px;
-        height: 100px;
-        width: auto;
-        object-fit: cover;
-        border: .5px solid rgb(231, 231, 231);
-        position: relative;
-    }
-
-    #spanInput {
-        height: 35px;
-    }
-
-    .sub-container form .row > div:nth-child(odd):nth-child(-n+5), .sub-container-form form .row > div:nth-child(odd):nth-child(-n+5) {
-        margin: 0;
-    }
-
-    .file-upload {
-        background-color: #ffffff;
-        width: 200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    .file-upload-btn, .file-upload-btn2, .file-upload-btn3 {
-        width: 200px;
-        max-height: 200px;
-        max-width: 200px;
-        margin: 0;
-        color: #fff;
-        background: #727cf5;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        border-bottom: 4px solid #727cf5;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-    }
-
-        .file-upload-btn:hover {
-            background: #5661e3;
-            color: #ffffff;
-            transition: all .2s ease;
-            cursor: pointer;
-        }
-
-    /* .file-upload-btn:active {
-                        border: 0;
-                        transition: all .2s ease;
-                    }*/
-
-    .file-upload-content {
-    }
-
-    .file-upload-input-picture1, .file-upload-input-signature, .file-upload-input-picture2, .file-upload-input-picture3 {
-        position: absolute;
-        margin: 0;
-        padding: 0;
-        width: 200px;
-        height: 200px;
-        max-height: 200px;
-        max-width: 200px;
-        outline: none;
-        opacity: 0;
-        cursor: pointer;
-    }
-
-    .image-upload-wrap {
-        max-height: 200px;
-        max-width: 200px;
-        width: 200px;
-        margin-top: 5px;
-        border: 4px dashed rgb(231, 231, 231);
-        position: relative;
-        display: none;
-    }
-
-        .image-dropping,
-        .image-upload-wrap:hover {
-            background-color: rgb(231, 231, 231);
-            border: 4px dashed #ffffff;
-        }
-
-    .image-title-wrap {
-        color: #222;
-    }
-
-    .drag-text {
-        text-align: center;
-    }
-
-        .drag-text h3 {
-            font-weight: 100;
-            text-transform: uppercase;
-            padding: 60px 0;
-        }
-
-    .file-upload-image {
-        height: 200px;
-        max-width: 200px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        padding: 20px;
-        border: .5px solid rgb(231, 231, 231);
-    }
-
-    .remove-image {
-        margin: 0;
-        max-height: 200px;
-        max-width: 200px;
-        width: 200px;
-        color: #fff;
-        background: #fa5c7c;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        border-bottom: 4px solid #fa5c7c;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-    }
-
-        .remove-image:hover {
-            background: #f35474;
-            color: #ffffff;
-            transition: all .2s ease;
-            cursor: pointer;
-        }
+<link href="~/css/toastr.css" rel="stylesheet" />
 
 
-</style>
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="MAS" asp-controller="ContractAdditional" asp-action="Edit" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasSupContractAdditionalCode" />
+            <input hidden asp-for="CrMasSupContractAdditionalStatus" />
+            <input hidden asp-for="CrMasSupContractAdditionalArName" />
+            <input hidden asp-for="CrMasSupContractAdditionalEnName" />
+            <div class="row mt-3 g-3">
 
-
-<div class="sub-container-form">
-    <form class="needs-validation" novalidate asp-area="MAS" asp-controller="ContractAdditional" asp-action="Edit" method="post" enctype="multipart/form-data">
-        <div class="form-contain">
-            @*ContractAdditional Code*@
-            <div class="row mt-2">
-                <div class="col-md-2">
-                    <label class="form-label" for="ContractAdditionalCode">@localizer["ContractAdditionalCode"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="CrMasSupContractAdditionalCode" id="ContractAdditionalCode" maxlength="100" width="80%" readonly />
-                    <input type="text" class="form-control" asp-for="CrMasSupContractAdditionalStatus" id="ContractAdditionalStatus" maxlength="100" width="80%" hidden />
-                    <input type="text" class="form-control" asp-for="CrMasSupContractAdditionalGroup" id="ContractAdditionalGroup" maxlength="100" width="80%" hidden />
-                    <input type="text" class="form-control" asp-for="CrMasSupContractAdditionalEnName" id="CrMasSupContractAdditionalEnName" maxlength="100" width="80%" hidden />
-                    <input type="text" class="form-control" asp-for="CrMasSupContractAdditionalArName" id="CrMasSupContractAdditionalArName" maxlength="100" width="80%" hidden />
-                    <input type="text" class="form-control" asp-for="CrMasSupContractAdditionalAcceptImage" id="CrMasSupContractAdditionalAcceptImage" maxlength="100" width="80%" hidden />
-                    <input type="text" class="form-control" asp-for="CrMasSupContractAdditionalRejectImage" id="CrMasSupContractAdditionalRejectImage" maxlength="100" width="80%" hidden />
-                    <input type="text" class="form-control" asp-for="CrMasSupContractAdditionalBlockImage" id="CrMasSupContractAdditionalBlockImage" maxlength="100" width="80%" hidden />
-
-                </div>
-            </div>
-
-            @if (requestCulture.RequestCulture.UICulture.Name != "en-US")
-            {
-                @*ContractAdditional name arabic*@
-                <div class="row mt-2">
-                    <div class="col-md-2">
-                        <label class="form-label" for="ContractAdditionalNameAr">@localizer["ContractAdditionalNameAr"]</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" asp-for="CrMasSupContractAdditionalArName" id="ContractAdditionalNameAr" maxlength="50" width="80%" data-val-required="@localizer["requiredFiled"]" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" readonly />
-                        <div style="margin-top:2px">
-                            <div style="height: 1.0em">
-                                <span asp-validation-for="@Model.CrMasSupContractAdditionalArName" class="text-danger"></span>
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3>@localizer["Edit_ContractAdditional_PageTitle"]</h3>
+                            </div>
+                            <div class="col-md-auto save-col btnsContainer">
+                                <button type="submit" class="custom-img-btn" id="SaveEdit">
+                                    <img src="~/MasSystem/images/save.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn" id="HoldBtn" data-bs-toggle="modal" data-bs-target="#Stop-Modal">
+                                    <img id="StopModalIcon" src="~/MasSystem/images/stop.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn" id="DeleteBtn" data-bs-toggle="modal" data-bs-target="#Delete-Modal">
+                                    <img id="modalIcon" src="~/MasSystem/images/delete.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/ContractAdditional/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            }
 
-            @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
-            {
-                @*ContractAdditional name English*@
-                <div class="row mt-2">
-                    <div class="col-md-2">
-                        <label class="form-label" for="ContractAdditionalNameEn">@localizer["ContractAdditionalNameEn"]</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" asp-for="CrMasSupContractAdditionalEnName" data-val-required="@localizer["requiredFiled"]" maxlength="50" id="ContractAdditionalNameEn" width="80%" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" readonly />
-                        <div style="margin-top:2px">
-                            <div style="height: 1.0em">
-                                <span asp-validation-for="@Model.CrMasSupContractAdditionalEnName" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-            @*reasons*@
-            <div class="row mt-2">
-                <div class="col-md-2">
-                    <label class="form-label" for="Reasons">@localizer["reasons"]</label>
-                </div>
-                <div class="col-md-7">
-                    <input type="text" class="form-control" asp-for="CrMasSupContractAdditionalReasons" maxlength="120" id="ContractAdditionalReasons" width="80%">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                            <span asp-validation-for="@Model.CrMasSupContractAdditionalReasons" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @*AcceptImg*@
-            <div class="row mt-1">
-                <div class="col-md-4">
-                    <div class="file-upload">
-                        <button class="file-upload-btn" type="button" onclick="$('.file-upload-input-picture1').trigger('click')">@localizer["ContractAdditionalAcceptImg"]</button>
-                        <div class="image-upload-wrap">
-                            <input class="file-upload-input-picture1" type="file" onchange="readURL(this, 'picture1');" accept="image/*" id="AcceptImg" name="AcceptImg" />
-                            <div class="drag-text">
-                                <h3>@localizer["DragAndDrop"]</h3>
-                            </div>
-                        </div>
-                        <div class="file-upload-content picture1">
-                            <img class="file-upload-image picture1" src="@Url.Content(Model.CrMasSupContractAdditionalAcceptImage?.ToString())" />
-                            <div class="image-title-wrap">
-                                <button type="button" onclick="removeUpload(this)" class="remove-image">@localizer["Remove"]</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="file-upload">
-                        <button class="file-upload-btn2" type="button" onclick="$('.file-upload-input-picture2').trigger('click')">@localizer["ContractAdditionalRejectImg"]</button>
-                        <div class="image-upload-wrap">
-                            <input class="file-upload-input-picture2" type="file" onchange="readURL(this, 'picture2');" accept="image/*" id="RejectImg" name="RejectImg" />
-                            <div class="drag-text">
-                                <h3>@localizer["DragAndDrop"]</h3>
-                            </div>
-                        </div>
-                        <div class="file-upload-content picture2">
-                            <img class="file-upload-image picture2" src="@Url.Content(Model.CrMasSupContractAdditionalRejectImage?.ToString())" />
-                            <div class="image-title-wrap">
-                                <button type="button" onclick="removeUpload(this)" class="remove-image">@localizer["Remove"]</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="file-upload">
-                        <button class="file-upload-btn3" type="button" onclick="$('.file-upload-input-picture3').trigger('click')">@localizer["ContractAdditionalBlockImg"]</button>
-                        <div class="image-upload-wrap">
-                            <input class="file-upload-input-picture3" type="file" onchange="readURL(this, 'picture3');" accept="image/*" id="BlockImg" name="BlockImg" />
-                            <div class="drag-text">
-                                <h3>@localizer["DragAndDrop"]</h3>
-                            </div>
-                        </div>
-                        <div class="file-upload-content picture3">
-                            <img class="file-upload-image picture3" src="@Url.Content(Model.CrMasSupContractAdditionalBlockImage?.ToString())" />
-                            <div class="image-title-wrap">
-                                <button type="button" onclick="removeUpload(this)" class="remove-image">@localizer["Remove"]</button>
+                        <div class="container-fluid">
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="DataTitle">@localizer["the_Code"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasSupContractAdditionalCode</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <label for="AR-Licence" class="form-label">
+                                                @localizer["ContractAdditionalNameAr_edit"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <div class="col-auto ">
+                                                <p class="Saved-data">@Model.CrMasSupContractAdditionalArName</p>
+                                            </div>
+                                            @*<input type="text" asp-for="CrMasSupContractAdditionalArName" id="CrMasSupContractAdditionalArName" maxlength="50" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>*@
+                                            @*<div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupContractAdditionalArName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupContractAdditionalArName-Error"></span>
+                                                </div>
+                                            </div>*@
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="EN-Licence" class="form-label">
+                                                @localizer["ContractAdditionalNameEn_edit"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <div class="col-auto ">
+                                                <p class="Saved-data">@Model.CrMasSupContractAdditionalEnName</p>
+                                            </div>
+                                            @*<input type="text" class="form-control inputs english-input" asp-for="CrMasSupContractAdditionalEnName" maxlength="50" id="CrMasSupContractAdditionalEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>*@
+                                            @*<div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupContractAdditionalEnName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupContractAdditionalEnName-Error"></span>
+                                                </div>
+                                            </div>*@
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="rental-system-number" class="form-label">@localizer["RentalSystemCode"]</label>
+                                            <input type="text" class="form-control inputs number-input" asp-for="CrMasSupContractAdditionalNaqlCode" id="CrMasSupContractAdditionalNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupContractAdditionalNaqlCode" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupContractAdditionalNaqlCode-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="rental-system-pin" class="form-label">@localizer["RentalSystemNo"]</label>
+                                            <input type="text" disabled class="form-control number-input inputs" id="CrMasSupContractAdditionalNaqlId" maxlength="10" oninput="validateNumberLength(this)">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    @*<span asp-validation-for="@Model.CrMasSupContractAdditionalNaqlId" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupContractAdditionalNaqlId-Error"></span>*@
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row ">
+                                        <div class="col-lg-12">
+                                            <label>@localizer["Reason_s"]</label>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupContractAdditionalReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupContractAdditionalReasons" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="row g-3">
+                                                <div class="col-auto col-md-4">
+                                                    <div class="dropzone-Card">
+                                                        <div class="drop-zone">
+                                                            <div class="layer" style="display: none;">
+                                                                <i class="fa-regular fa-circle-xmark removeImage"></i>
+                                                            </div>
+                                                            <span class="drop-zone__prompt">
+                                                                <img src="~/MasSystem/images/upload icon.svg" class="mb-3"> <br>@localizer["img_drop_orChoose"]
+                                                            </span>
+                                                            <input type="file" name="Selected-Addition" class="drop-zone__input">
+                                                        </div>
+                                                        <div class="fileNameDiv">
+                                                            <p class="text-center pt-1 mb-1 fileNameP">@localizer["img_add_Chosen"]</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto col-md-4 d-flex justify-content-md-center">
+                                                    <div class="dropzone-Card">
+                                                        <div class="drop-zone">
+                                                            <div class="layer" style="display: none;">
+                                                                <i class="fa-regular fa-circle-xmark removeImage"></i>
+                                                            </div>
+                                                            <span class="drop-zone__prompt">
+                                                                <img src="~/MasSystem/images/upload icon.svg" class="mb-3"> <br>@localizer["img_drop_orChoose"]
+                                                            </span>
+                                                            <input type="file" name="Unselected-Addition" class="drop-zone__input">
+                                                        </div>
+                                                        <div class="fileNameDiv">
+                                                            <p class="text-center pt-1 mb-1 fileNameP">@localizer["img_add_No_Chosen"]</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto col-md-4 d-flex justify-content-md-end">
+                                                    <div class="dropzone-Card">
+                                                        <div class="drop-zone">
+                                                            <div class="layer" style="display: none;">
+                                                                <i class="fa-regular fa-circle-xmark removeImage"></i>
+                                                            </div>
+                                                            <span class="drop-zone__prompt">
+                                                                <img src="~/MasSystem/images/upload icon.svg" class="mb-3"> <br>@localizer["img_drop_orChoose"]
+                                                            </span>
+                                                            <input type="file" name="Ban-Addition" class="drop-zone__input">
+                                                        </div>
+                                                        <div class="fileNameDiv">
+                                                            <p class="text-center pt-1 mb-1 fileNameP">@localizer["img_add_Block"]</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-        </div>
-        @Html.ValidationMessage("NoCHanged", null, new { @class = "text-danger" })
-
-        <div class="mt-4" id="buttonContainer">
-
-            <button type="submit" id="saveEdit" class="btn btn-primary ms-1">@localizer["Save"]</button>
-
-            @if (Model.CrMasSupContractAdditionalStatus == "A")
-            {
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Hold" data-bs-targett="#centermodalhold">
-                    @localizer["Hold"]
-                </a>
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Deleted" data-bs-targett="#centermodalDelete">
-                    @localizer["Delete"]
-                </a>
-            }
-            else if (Model.CrMasSupContractAdditionalStatus == "H")
-            {
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.UnHold" data-bs-targett="#centermodalRHold">
-                    @localizer["ReactiveHold"]
-                </a>
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Deleted" data-bs-targett="#centermodalDelete">
-                    @localizer["Delete"]
-                </a>
-            }
-            else if (Model.CrMasSupContractAdditionalStatus == "D")
-            {
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Hold" data-bs-targett="#centermodalhold">
-                    @localizer["Hold"]
-                </a>
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.UnDeleted" data-bs-targett="#centermodalRDelete">
-                    @localizer["ReactiveDelete"]
-                </a>
-            }
-
-            <a type="button" class="btn btn-danger ms-2" asp-area="MAS" asp-controller="ContractAdditional" asp-action="Index">
-                @localizer["Back"]
-            </a>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 
 
-<!-- MOdel-->
-<!-- Reactive Hold ContractAdditional MOdel-->
-<div class="modal fade" id="centermodalRHold" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- delete modal -->
+<div class="modal fade" id="Delete-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="Delete-ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h4>@localizer["SureToRetriveHold"]</h4>
-                <p>@localizer["HintSureToRetriveHContractAdditional"]</p>
+        <div class="modal-content" style="border: 1px solid var(--main-color);">
+            <div class="content" id="modalContent">
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="retriveUserButtonH" class="btn btn-primary">@localizer["Okay"]</button>
+            <!-- Hidden spinner  -->
+            <div class="modal-body text-center" id="spinner" style="display: none;">
+                <span class="State-Modal-loader"></span>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<!-- Reactive Delete ContractAdditional MOdel-->
-<div class="modal fade" id="centermodalRDelete" tabindex="-1" role="dialog" aria-hidden="true">
+        </div>
+    </div>
+</div>
+<!-- Stopp  modal -->
+<div class="modal fade" id="Stop-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="Stop-ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content" style="border: 1px solid var(--main-color);">
+            <div class=" content" id="Stop-modal-Content">
+            </div>
+            <!-- Hidden spinner  -->
+            <div class="modal-body text-center" id="spinner2" style="display: none;">
+                <span class="State-Modal-loader"></span>
+            </div>
+        </div>
+    </div>
+</div>
 
-            <div class="modal-body">
-                <h4>@localizer["SureToRetriveDelete"]</h4>
-                <p>@localizer["HintSureToRetriveDContractAdditional"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="retriveUserButtonD" class="btn btn-primary">@localizer["Okay"]</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<!-- Delete ContractAdditional Modal-->
-<div class="modal fade" id="centermodalDelete" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
 
-            <div class="modal-body">
-                <h4>@localizer["SureTodelete"]</h4>
-                <p> @localizer["HintSureTodeleteContractAdditional"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="deleteUserButton" class="btn btn-primary">@localizer["Okay"]</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<!-- Hold ContractAdditional MOdel-->
-<div class="modal fade" id="centermodalhold" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-body">
-                <h4>@localizer["SureToHold"]</h4>
-                <p> @localizer["HintSureToHoldContractAdditional"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="holdUserButton" class="btn btn-primary">@localizer["Okay"]</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
 
     <script>
-        function updateContractAdditionalStatus(status) {
-            var code = document.getElementById("ContractAdditionalCode").value;
-            $.ajax({
-                type: "POST",
-                url: "/MAS/ContractAdditional/EditStatus",
-                data: { status: status, code: code },
-                success: function (result) {
-                    $('.modal').modal('hide');
-                    window.location.href = "/MAS/ContractAdditional/Index";
-                    console.log(result);
+        function validateNumberInput(input) {
+            input.value = input.value.replace(/\D/g, ''); // استبدال كل الأحرف غير الرقمية
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="~/MasSystem/scripts/Scripts.js"></script>
+    <script src="~/MasSystem/scripts/DragDropImage.js"></script>
+    <!-- Local script -->
+    <script>
+        function AddThumbnail() {
+            document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+                const dropZoneElement = inputElement.closest(".drop-zone");
+                const dropZoneCard = inputElement.closest(".dropzone-Card");
+                const layerElement = dropZoneElement.querySelector(".layer");
+                const removeImageButton = dropZoneElement.querySelector(".removeImage");
+                const fileNameP = dropZoneCard.querySelector(".fileNameP");
+                const fileNameDiv = dropZoneCard.querySelector(".fileNameDiv");
+                let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
 
+                let filePath = "";
+                let fileName = "";
+
+                switch (inputElement.getAttribute('name')) {
+                    case "Selected-Addition":
+                        filePath = "~/MasSystem/images/test-image.svg";
+                        fileName = "@localizer["img_add_Chosen"]";
+                        break;
+                    case "Unselected-Addition":
+                        filePath = "~/MasSystem/images/test-image.svg";
+                        fileName = "@localizer["img_add_No_Chosen"]";
+                        break;
+                    case "Ban-Addition":
+                        filePath = "~/MasSystem/images/test-image.svg";
+                        fileName = "@localizer["img_add_Block"]";
+                        break;
+                }
+
+                // Remove prompt if it exists
+                const promptElement = dropZoneElement.querySelector(".drop-zone__prompt");
+                if (promptElement) {
+                    promptElement.remove();
+                }
+
+                // Create thumbnail element if it doesn't exist
+                if (!thumbnailElement) {
+                    thumbnailElement = document.createElement("div");
+                    thumbnailElement.classList.add("drop-zone__thumb");
+                    dropZoneElement.appendChild(thumbnailElement);
+                    dropZoneElement.style.border = "none";
+                }
+
+                // Set file name and background style
+                fileNameP.innerHTML = fileName;
+                fileNameDiv.style.background = "#39629C";
+                thumbnailElement.style.backgroundImage = `url('${filePath}')`;
+
+                // Show layer on mouse enter
+                dropZoneElement.addEventListener("mouseenter", () => {
+                    if (thumbnailElement.style.backgroundImage) {
+                        layerElement.style.display = 'flex';
+                    }
+                });
+
+                // Hide layer on mouse leave
+                dropZoneElement.addEventListener("mouseleave", () => {
+                    layerElement.style.display = 'none';
+                });
+
+                // Remove thumbnail when clicking the remove icon
+                const removeIcon = layerElement.querySelector("i");
+                removeIcon.addEventListener("click", () => {
+                    thumbnailElement.style.backgroundImage = '';
+                    fileNameP.innerHTML = '';
+                    fileNameDiv.style.background = '';
+                    layerElement.style.display = 'none';
+                });
+            });
+        }
+
+    </script>
+    <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        // This To Focus On input when page load
+        if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+            $("#CrMasSupContractAdditionalEnName").focus();
+        }
+        else {
+            $("#CrMasSupContractAdditionalArName").focus();
+        }
+        //////////////////////////////////////////
+        var statusInput = $("#CrMasSupContractAdditionalStatus");
+        var OldNaqlId = $("#CrMasSupContractAdditionalNaqlId").val();
+        var OldNaqlCode = $("#CrMasSupContractAdditionalNaqlCode").val();
+        var OldArName = $("#CrMasSupContractAdditionalArName").val();
+        var OldEnName = $("#CrMasSupContractAdditionalEnName").val();
+        var OldCode = $("#CrMasSupContractAdditionalCode").val();
+        
+
+        function Check_onChange_input(existName, dataField, oldValue) {
+            //get the old value
+            if (dataField === oldValue) {
+                // Clear any existing error message if the values match
+                $(`#${existName}-Error`).hide();
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/MAS/ContractAdditional/CheckChangedField",
+                data: { existName: existName, dataField: dataField },
+                success: function (result) {
+                    console.log("feedback", result);
+                    // Hide all previous error messages
+                    $('.invalid-feedback').show();
+
+                    // Show new error messages if they exist
+                    if (result.errors && result.errors.length > 0) {
+                        result.errors.forEach(function (error) {
+                            // Use the ID from the error object to find the correct element
+                            $(`#${error.field}-Error`).text(error.message).show();
+                        });
+                    } else {
+                        // Hide the error message if no errors
+                        $(`#${existName}-Error`).text("");
+                    }
                 },
                 error: function (error) {
                     console.log(error);
@@ -412,91 +368,264 @@
             });
         }
 
-        // Event listener for delete Lessor button
-        $('#deleteUserButton').click(function () {
-            updateContractAdditionalStatus('D');
+        // Example usage for Code input
+        $('#CrMasSupContractAdditionalCode').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSupContractAdditionalCode', newValue, OldCode);
+        });
+        // Example usage for Arabic Name input
+        $('#CrMasSupContractAdditionalArName').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSupContractAdditionalArName', newValue, OldArName);
         });
 
-        // Event listener for hold Lessor button
-        $('#holdUserButton').click(function () {
-            updateContractAdditionalStatus('H');
+        // Example usage for English Name input
+        $('#CrMasSupContractAdditionalEnName').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSupContractAdditionalEnName', newValue, OldEnName);
         });
 
-        // Event listener for retrieve Lessor button
-        $('#retriveUserButtonD').click(function () {
-            updateContractAdditionalStatus('Reactivate');
+        // Example usage for Naql Code input
+        $('#CrMasSupContractAdditionalNaqlCode').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSupContractAdditionalNaqlCode', newValue, OldNaqlCode);
         });
 
-        $('#retriveUserButtonH').click(function () {
-            updateContractAdditionalStatus('Reactivate');
+        // Example usage for Naql ID input
+        $('#CrMasSupContractAdditionalNaqlId').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSupContractAdditionalNaqlId', newValue, OldNaqlId);
         });
-
-        $("#buttonContainer a").on("click", function (event) {
-            var status = $(this).attr("data-error")
-            var Modal = $(this).attr("data-bs-targett")
-            CheckValidation('1110001', status).done(function (data) {
-                if (data) $(Modal).modal('show');
-            });
-        })
-
-        $("#saveEdit").on("click", function (event) {
-            event.preventDefault();
-            CheckValidation('1110001', '@Status.Insert').done(function (data) {
-                if (data) {
-                    $('form').submit();
-                }
-            });
-        })
     </script>
     <script>
-        function validateInput(event, inId, InEr, No) {
-            event.target.value = event.target.value.replace(/[^0-9]/g, '');
+        function updateContractAdditionalStatus(status) {
+            var code = document.getElementById("CrMasSupContractAdditionalCode").value;
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: "POST",
+                    url: "/MAS/ContractAdditional/EditStatus",
+                    data: { status: status, code: code },
+                    success: function (result) {
+                        toastr.options = { "positionClass": "@localizer["toastPostion"]" };
 
-            const inputElement = document.getElementById(inId);
-            const errorMessageElement = document.getElementById(InEr);
-
-            const inputValue = inputElement.value;
-            const isValid = inputValue.startsWith(No);
-
-            if (!isValid) {
-                errorMessageElement.textContent = errorMessageElement.getAttribute('data-val-err');
-                inputElement.value = "";
-            } else {
-                errorMessageElement.textContent = '';
-            }
+                        if (result == "true") {
+                            //@*toastr.success("@localizer["ToastSave"]");*@
+                            resolve(true);
+                        } else if (result == "false_auth") {
+                            toastr.error("@localizer["AuthEmplpoyee_No_auth"]");
+                            resolve(false);
+                        } else if (result == "udelete") {
+                            toastr.error("@localizer["SureTo_Cannot_delete"]");
+                            resolve(false);
+                        } else {
+                            toastr.error("@localizer["ToastFailed"]");
+                            resolve(false);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("@localizer["ToastFailed"]");
+                        resolve(false);
+                    }
+                });
+            });
+        }
+    </script>
+    <script>
+        let isDeleted = false;
+        let isStoped = false
+        if (statusInput.val() == '@Status.Hold') {
+            isDeleted = false;
+            isStoped = true
+        }
+        else if (statusInput.val() == '@Status.Deleted') {
+            isDeleted = true;
+            isStoped = false
         }
 
-        function readURL(input, type) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var container = $(input).closest('.file-upload');
-                    container.find('.file-upload-image.' + type).attr('src', e.target.result);
-                    container.find('.file-upload-content.' + type).show();
-                    container.find('.image-title.' + type).html(input.files[0].name);
-                    container.find('.image-upload-wrap').hide();
-                };
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                removeUpload(input);
-            }
+        window.onload = () => {
+            DeleteState(isDeleted);
+            AddThumbnail();
+            StopState(isStoped);
+        };
+
+        function DeleteState(deleted) {
+            isDeleted = deleted;
+
+            document.getElementById("modalContent").style.display = "block";
+            document.getElementById("modalIcon").src = isDeleted
+                ? "/MasSystem/images/Property 1=recycle.svg"
+                : "/MasSystem/images/delete.svg";
+
+            document.getElementById("modalContent").innerHTML = isDeleted
+                ? `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/Green-recycle.svg" /> @localizer["SureToRetriveDelete"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_ContractAdditional_UnDelete"]</p>
+                                                                <p>@localizer["ModalSecondMessage_ContractAdditional_UnDelete"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`
+                : `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/delete (2).svg" /> @localizer["SureTodelete"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_ContractAdditional_Delete"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_ContractAdditional_Delete"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="DeleteBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`;
+        }
+        function DeleteLoad() {
+            const modalContent = document.getElementById("modalContent");
+            const spinner = document.getElementById("spinner");
+            const deleteModal = document.getElementById("Delete-Modal");
+            const modalIcon = document.getElementById("modalIcon");
+
+            modalContent.style.display = "none";
+            spinner.style.display = "flex";
+
+            setTimeout(async () => {
+                spinner.style.display = "none";
+                const modal = bootstrap.Modal.getInstance(deleteModal);
+                modal.hide();
+
+                const newStatus = isDeleted ? '@Status.UnDeleted' : '@Status.Deleted';
+                const success = await updateContractAdditionalStatus(newStatus);
+                if (success) {
+                    statusInput.val(isDeleted ? '@Status.Active' : '@Status.Deleted');
+                    isDeleted = !isDeleted;
+
+                    modalIcon.src = isDeleted
+                        ? "/MasSystem/images/Property 1=recycle.svg"
+                        : "/MasSystem/images/delete.svg";
+
+                    DeleteState(isDeleted);
+                    setTimeout(function () {
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "ContractAdditional")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
+                }
+                else {
+                    modalIcon.src = isDeleted
+                        ? "/MasSystem/images/Property 1=recycle.svg"
+                        : "/MasSystem/images/delete.svg";
+
+                    DeleteState(isDeleted);
+                }
+            }, 500);
         }
 
-        function removeUpload(button) {
-            var container = $(button).closest('.file-upload');
-            var type = container.find('.file-upload-content').hasClass('picture2') ? 'picture2' : (container.find('.file-upload-content').hasClass('picture1') ? 'picture1' : 'picture3');
-            container.find('.file-upload-input-' + type).val('');
-            container.find('.file-upload-image.' + type).attr('src', null)
-            container.find('.file-upload-content.' + type).hide();
-            container.find('.image-upload-wrap').show();
+        function StopState(Stoped) {
+            isStoped = Stoped;
+
+            document.getElementById("Stop-modal-Content").style.display = "block";
+            document.getElementById("StopModalIcon").src = isStoped
+                ? "/MasSystem/images/Property 1=active.svg"
+                : "/MasSystem/images/stop.svg";
+
+            document.getElementById("Stop-modal-Content").innerHTML = isStoped
+                ? `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/GreenStop.svg" /> @localizer["SureToRetriveHold"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_ContractAdditional_UnHold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_ContractAdditional_UnHold"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`
+                : `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/RedStop.svg" /> @localizer["SureToHold"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_ContractAdditional_Hold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_ContractAdditional_Hold"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="HoldBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`;
+        }
+        function StopLoad() {
+            const stopModalContent = document.getElementById("Stop-modal-Content");
+            const spinner = document.getElementById("spinner2");
+            const modalElement = document.getElementById("Stop-Modal");
+            const stopModalIcon = document.getElementById("StopModalIcon");
+
+            stopModalContent.style.display = "none";
+            spinner.style.display = "flex";
+
+            setTimeout(async () => {
+                spinner.style.display = "none";
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+
+                const newStatus = isStoped ? '@Status.UnHold' : '@Status.Hold';
+                const success = await updateContractAdditionalStatus(newStatus);
+                if (success) {
+                    statusInput.val(isStoped ? '@Status.Active' : '@Status.Hold');
+                    isStoped = !isStoped;
+
+                    stopModalIcon.src = isStoped
+                        ? "/MasSystem/images/Property 1=active.svg"
+                        : "/MasSystem/images/stop.svg";
+
+                    StopState(isStoped);
+                    setTimeout(function () {
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "ContractAdditional")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
+                }
+            }, 500);
         }
 
-        $('.image-upload-wrap').bind('dragover', function () {
-            $(this).addClass('image-dropping');
-        });
-        $('.image-upload-wrap').bind('dragleave', function () {
-            $(this).removeClass('image-dropping');
-        });
     </script>
 }
-

@@ -139,8 +139,8 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasAccountPaymentMethod, MasAccountPaymentMethod>();
             builder.Services.AddScoped<ICarDistribution, CarDistribution>();
 
-            builder.Services.AddScoped<IContractAdditional, ContractAdditional>();
-            builder.Services.AddScoped<IContractOptions, ContractOptions>();
+            builder.Services.AddScoped<IMasContractAdditional, MasContractAdditional>();
+            builder.Services.AddScoped<IMasContractOptions, MasContractOptions>();
             builder.Services.AddScoped<IPostCity, PostCity>();
             builder.Services.AddScoped<ICarCheckup, CarCheckup>();
             builder.Services.AddScoped<IPostRegion, PostRegion>();

@@ -148,7 +148,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             }
             await SetPageTitleAsync(Status.Insert, pageNumber);
             // Check If code > 9 get error , because code is char(1)
-            if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+            if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "CarRegistration");
@@ -188,7 +188,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     return View("AddCarRegistration", carRegisterationVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
-                if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     return View("AddCarRegistration", carRegisterationVM);
@@ -346,12 +346,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     errors.Add(new ErrorResponse { Field = "CrMasSupCarRegistrationEnName", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system number
-                else if (existName == "CrMasSupCarRegistrationNaqlCode" && int.TryParse(dataField, out var code) && code != 0 && All_CarRegistrations.Any(x => x.CrMasSupCarRegistrationNaqlCode == code))
+                else if (existName == "CrMasSupCarRegistrationNaqlCode" && Int64.TryParse(dataField, out var code) && code != 0 && All_CarRegistrations.Any(x => x.CrMasSupCarRegistrationNaqlCode == code))
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupCarRegistrationNaqlCode", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system ID
-                else if (existName == "CrMasSupCarRegistrationNaqlId" && int.TryParse(dataField, out var id) && id != 0 && All_CarRegistrations.Any(x => x.CrMasSupCarRegistrationNaqlId == id))
+                else if (existName == "CrMasSupCarRegistrationNaqlId" && Int64.TryParse(dataField, out var id) && id != 0 && All_CarRegistrations.Any(x => x.CrMasSupCarRegistrationNaqlId == id))
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupCarRegistrationNaqlId", Message = _localizer["Existing"] });
                 }

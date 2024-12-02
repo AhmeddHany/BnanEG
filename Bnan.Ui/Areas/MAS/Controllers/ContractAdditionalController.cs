@@ -1,345 +1,409 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
+using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Numerics;
-
 namespace Bnan.Ui.Areas.MAS.Controllers
 {
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
     public class ContractAdditionalController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
         private readonly IUserService _userService;
-        private readonly IContractAdditional _contractAdditional;
+        private readonly IMasContractAdditional _masContractAdditional;
+        private readonly IBaseRepo _baseRepo;
+        private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<ContractAdditionalController> _localizer;
+        private readonly string pageNumber = SubTasks.CrMasSupContractAdditional;
 
 
-        public ContractAdditionalController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, 
-            IMapper mapper, IUserService userService, IContractAdditional contractAdditional,
-            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment , IStringLocalizer<ContractAdditionalController> localizer) : base(userManager, unitOfWork, mapper)
+        public ContractAdditionalController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
+            IMapper mapper, IUserService userService, IMasContractAdditional masContractAdditional, IBaseRepo BaseRepo, IMasBase masBase,
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<ContractAdditionalController> localizer) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
-            _contractAdditional = contractAdditional;
+            _masContractAdditional = masContractAdditional;
             _userLoginsService = userLoginsService;
+            _baseRepo = BaseRepo;
+            _masBase = masBase;
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
         }
 
         [HttpGet]
-
         public async Task<IActionResult> Index()
         {
-            var (mainTask, subTask, system, currentUser) = await SetTrace("110", "1110001", "1");
+            // Set page titles
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
+            // Retrieve active driving licenses
+            var renterDrivingLicenses = await _unitOfWork.CrMasSupContractAdditional
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupContractAdditionalStatus == Status.Active);
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-
-            var titles = await setTitle("110", "1110001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var contracts = await _unitOfWork.CrMasSupContractAdditional.GetAllAsync();
-            var contract = contracts.Where(x => x.CrMasSupContractAdditionalStatus == "A").ToList();
-            return View(contract);
+            // If no active licenses, retrieve all licenses
+            if (!renterDrivingLicenses.Any())
+            {
+                renterDrivingLicenses = await _unitOfWork.CrMasSupContractAdditional
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupContractAdditionalStatus == Status.Hold);
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
+            return View(renterDrivingLicenses);
         }
-
         [HttpGet]
-        public PartialViewResult GetContractAdditionalByStatus(string status)
+        public async Task<PartialViewResult> GetContractAdditionalByStatus(string status, string search)
         {
+            //sidebar Active
+
             if (!string.IsNullOrEmpty(status))
             {
+                var ContractAdditionalsAll = await _unitOfWork.CrMasSupContractAdditional.FindAllAsNoTrackingAsync(x => x.CrMasSupContractAdditionalStatus == Status.Active ||
+                                                                                                                            x.CrMasSupContractAdditionalStatus == Status.Deleted ||
+                                                                                                                            x.CrMasSupContractAdditionalStatus == Status.Hold);
+
                 if (status == Status.All)
                 {
-                    var ContractAdditionalbyStatusAll = _unitOfWork.CrMasSupContractAdditional.GetAll();
-                    return PartialView("_DataTableContractAdditional", ContractAdditionalbyStatusAll);
+                    var FilterAll = ContractAdditionalsAll.FindAll(x => x.CrMasSupContractAdditionalStatus != Status.Deleted &&
+                                                                         (x.CrMasSupContractAdditionalArName.Contains(search) ||
+                                                                          x.CrMasSupContractAdditionalEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupContractAdditionalCode.Contains(search)));
+                    return PartialView("_DataTableContractAdditional", FilterAll);
                 }
-                var ContractAdditionalbyStatus = _unitOfWork.CrMasSupContractAdditional.FindAll(l => l.CrMasSupContractAdditionalStatus == status).ToList();
-                return PartialView("_DataTableContractAdditional", ContractAdditionalbyStatus);
+                var FilterByStatus = ContractAdditionalsAll.FindAll(x => x.CrMasSupContractAdditionalStatus == status &&
+                                                                            (
+                                                                           x.CrMasSupContractAdditionalArName.Contains(search) ||
+                                                                           x.CrMasSupContractAdditionalEnName.ToLower().Contains(search.ToLower()) ||
+                                                                           x.CrMasSupContractAdditionalCode.Contains(search)));
+                return PartialView("_DataTableContractAdditional", FilterByStatus);
             }
             return PartialView();
         }
-
 
         [HttpGet]
         public async Task<IActionResult> AddContractAdditional()
         {
 
-            // Set Title !!!!!!!!!!!!!!!!!!!!!!!!!!
-            var titles = await setTitle("110", "1110001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
 
-            var ContractAdditionalCode = "";
-            var ContractAdditionals = await _unitOfWork.CrMasSupContractAdditional.GetAllAsync();
-            if (ContractAdditionals.Count() != 0)
+            if (user == null)
             {
-                 ContractAdditionalCode = (BigInteger.Parse(ContractAdditionals.LastOrDefault().CrMasSupContractAdditionalCode) + 1).ToString();
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "ContractAdditional");
             }
-            else
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
             {
-                ContractAdditionalCode = "5000000001";
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "ContractAdditional");
             }
-            ViewBag.ContractAdditionalCode = ContractAdditionalCode;
-            return View();
+            // Check If code > 9 get error , because code is char(1)
+            if (Int64.Parse(await GenerateLicenseCodeAsync()) > 5099999999)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "ContractAdditional");
+            }
+            // Set Title 
+            ContractAdditionalVM renterDrivingLicenseVM = new ContractAdditionalVM();
+            //renterDrivingLicenseVM.CrMasSupContractAdditionalCode = await GenerateLicenseCodeAsync();
+            return View(renterDrivingLicenseVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddContractAdditional(ContractAdditionalVM ContractAdditional,  IFormFile? AcceptImg , IFormFile? RejectImg, IFormFile? BlockImg)
+        public async Task<IActionResult> AddContractAdditional(ContractAdditionalVM renterDrivingLicenseVM)
         {
-            string currentCulture = CultureInfo.CurrentCulture.Name;
-            string foldername = $"{"images\\Common"}";
-            string filePathImageAccept = "";
-            string filePathImageReject = "";
-            string filePathImageBlock = "";
 
 
-            if (ModelState.IsValid)
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+
+            if (!ModelState.IsValid || renterDrivingLicenseVM == null)
             {
-                if (ContractAdditional != null)
+                return View("AddContractAdditional", renterDrivingLicenseVM);
+            }
+            try
+            {
+                // Map ViewModel to Entity
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupContractAdditional>(renterDrivingLicenseVM);
+
+                renterDrivingLicenseEntity.CrMasSupContractAdditionalNaqlCode ??= 0;
+                //renterDrivingLicenseEntity.CrMasSupContractAdditionalNaqlId ??= 0;
+
+                // Check if the entity already exists
+                if (await _masContractAdditional.ExistsByDetails_Add_Async(renterDrivingLicenseEntity))
                 {
-                    var ContractAdditionalVMT = _mapper.Map<CrMasSupContractAdditional>(ContractAdditional);
-                    var ContractAdditionals = await _unitOfWork.CrMasSupContractAdditional.GetAllAsync();
-                    var existingContractAdditional = ContractAdditionals.FirstOrDefault(x =>
-                        x.CrMasSupContractAdditionalEnName == ContractAdditionalVMT.CrMasSupContractAdditionalEnName ||
-                        x.CrMasSupContractAdditionalArName == ContractAdditionalVMT.CrMasSupContractAdditionalArName);
-
-                    // Generate code for the second time
-                    var ContractAdditionalCode = (BigInteger.Parse(ContractAdditionals.LastOrDefault().CrMasSupContractAdditionalCode) + 1).ToString();
-                    ContractAdditional.CrMasSupContractAdditionalCode = ContractAdditionalCode;
-                    ViewBag.ContractAdditionalCode = ContractAdditionalCode;
-
-                    if (existingContractAdditional != null)
-                    {
-                        if (existingContractAdditional.CrMasSupContractAdditionalArName != null &&
-                            existingContractAdditional.CrMasSupContractAdditionalArName == ContractAdditional.CrMasSupContractAdditionalArName &&
-                             existingContractAdditional.CrMasSupContractAdditionalEnName != ContractAdditional.CrMasSupContractAdditionalEnName)
-                        {
-                            if (currentCulture != "en-US")
-                            {
-                                ModelState.AddModelError("ExistAr", "هذا الحقل مسجل من قبل.");
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("ExistAr", "This field is Existed.");
-                            }
-
-                        }
-                        if (existingContractAdditional.CrMasSupContractAdditionalEnName != null &&
-                            existingContractAdditional.CrMasSupContractAdditionalEnName == ContractAdditional.CrMasSupContractAdditionalEnName &&
-                             existingContractAdditional.CrMasSupContractAdditionalArName != ContractAdditional.CrMasSupContractAdditionalArName)
-                        {
-                            if (currentCulture != "en-US")
-                            {
-                                ModelState.AddModelError("ExistEn", "هذا الحقل مسجل من قبل.");
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("ExistEn", "This field is Existed.");
-                            }
-                        }
-                        if (existingContractAdditional.CrMasSupContractAdditionalArName != null && existingContractAdditional.CrMasSupContractAdditionalEnName != null
-                            && existingContractAdditional.CrMasSupContractAdditionalEnName == ContractAdditional.CrMasSupContractAdditionalEnName &&
-                           existingContractAdditional.CrMasSupContractAdditionalArName == ContractAdditional.CrMasSupContractAdditionalArName)
-                        {
-                            if (currentCulture != "en-US")
-                            {
-                                ModelState.AddModelError("ExistEn", "هذا الحقل مسجل من قبل.");
-                                ModelState.AddModelError("ExistAr", "هذا الحقل مسجل من قبل.");
-
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("ExistAr", "This field is Existed.");
-                                ModelState.AddModelError("ExistEn", "This field is Existed.");
-                            }
-                        }
-                        return View(ContractAdditional);
-                    }
-
-
-                    if (AcceptImg != null)
-                    {
-                        string fileNameImg = ContractAdditional.CrMasSupContractAdditionalEnName + "_Accept_" + ContractAdditional.CrMasSupContractAdditionalCode.ToString().Substring(ContractAdditional.CrMasSupContractAdditionalCode.ToString().Length - 3);
-                        filePathImageAccept = await AcceptImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
-                    }
-                    if (RejectImg != null)
-                    {
-                        string fileNameImg = ContractAdditional.CrMasSupContractAdditionalEnName + "_Reject_" + ContractAdditional.CrMasSupContractAdditionalCode.ToString().Substring(ContractAdditional.CrMasSupContractAdditionalCode.ToString().Length - 3);
-                        filePathImageReject = await RejectImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
-                    }
-                    if (BlockImg != null)
-                    {
-                        string fileNameImg = ContractAdditional.CrMasSupContractAdditionalEnName + "_Block_" + ContractAdditional.CrMasSupContractAdditionalCode.ToString().Substring(ContractAdditional.CrMasSupContractAdditionalCode.ToString().Length - 3);
-                        filePathImageBlock = await BlockImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
-                    }
-
-                    ContractAdditionalVMT.CrMasSupContractAdditionalRejectImage = filePathImageReject;
-                    ContractAdditionalVMT.CrMasSupContractAdditionalAcceptImage = filePathImageAccept;
-                    ContractAdditionalVMT.CrMasSupContractAdditionalBlockImage= filePathImageBlock;
-                    ContractAdditionalVMT.CrMasSupContractAdditionalStatus = "A";
-                    ContractAdditionalVMT.CrMasSupContractAdditionalGroup = "50";
-                    await _unitOfWork.CrMasSupContractAdditional.AddAsync(ContractAdditionalVMT);
-
-                    _unitOfWork.Complete();
-
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("110", "1110001", "1");
-                    var RecordAr = ContractAdditionalVMT.CrMasSupContractAdditionalArName;
-                    var RecordEn = ContractAdditionalVMT.CrMasSupContractAdditionalEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "اضافة", "Add", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
+                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("AddContractAdditional", renterDrivingLicenseVM);
                 }
+                // Check If code > 9 get error , because code is char(1)
+                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 5099999999)
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("AddContractAdditional", renterDrivingLicenseVM);
+                }
+                //// Generate and set the Driving License Code
+                //renterDrivingLicenseVM.CrMasSupContractAdditionalCode = await GenerateLicenseCodeAsync();
+                // Set status and add the record
+                renterDrivingLicenseEntity.CrMasSupContractAdditionalStatus = "A";
+                await _unitOfWork.CrMasSupContractAdditional.AddAsync(renterDrivingLicenseEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+
+                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
-            return View("AddContractAdditional", ContractAdditional);
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View("AddContractAdditional", renterDrivingLicenseVM);
+            }
         }
-
-
-
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            //To Set Title !!!!!!!!!!!!!
-            var titles = await setTitle("110", "1110001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
 
-            var contract = await _unitOfWork.CrMasSupContractAdditional.GetByIdAsync(id);
+            await SetPageTitleAsync(Status.Update, pageNumber);
+            var contract = await _unitOfWork.CrMasSupContractAdditional.FindAsync(x => x.CrMasSupContractAdditionalCode == id);
             if (contract == null)
             {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Index");
-            }
-            var model = _mapper.Map<ContractAdditionalVM>(contract);
-
-            return View(model);
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> Edit(ContractAdditionalVM model, IFormFile? AcceptImg, IFormFile? RejectImg, IFormFile? BlockImg)
-        {
-            string foldername = $"{"images\\Common"}";
-            string filePathImageAccept = "";
-            string filePathImageReject = "";
-            string filePathImageBlock = "";
-            var user = await _userService.GetUserByUserNameAsync(HttpContext.User.Identity.Name);
-
-          
-            if (user != null)
-            {
-                if (model != null)
-                {
-
-                    if (AcceptImg != null)
-                    {
-                        string fileNameImg = model.CrMasSupContractAdditionalEnName + "_Accept_" + model.CrMasSupContractAdditionalCode.ToString().Substring(model.CrMasSupContractAdditionalCode.ToString().Length - 3);
-                        filePathImageAccept = await AcceptImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
-                        model.CrMasSupContractAdditionalAcceptImage = filePathImageAccept;
-                    }
-
-                    if (RejectImg != null)
-                    {
-                        string fileNameImg = model.CrMasSupContractAdditionalEnName + "_Reject_" + model.CrMasSupContractAdditionalCode.ToString().Substring(model.CrMasSupContractAdditionalCode.ToString().Length - 3);
-                        filePathImageReject = await RejectImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
-                        model.CrMasSupContractAdditionalRejectImage = filePathImageReject;
-
-                    }
-
-                    if (BlockImg != null)
-                    {
-                        string fileNameImg = model.CrMasSupContractAdditionalEnName + "_Block_" + model.CrMasSupContractAdditionalCode.ToString().Substring(model.CrMasSupContractAdditionalCode.ToString().Length - 3);
-                        filePathImageBlock = await BlockImg.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
-                        model.CrMasSupContractAdditionalBlockImage = filePathImageBlock;
-                    }
-
-
-                    var contract = _mapper.Map<CrMasSupContractAdditional>(model);
-
-                    _unitOfWork.CrMasSupContractAdditional.Update(contract);
-                     _unitOfWork.Complete();
-
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("110", "1110001", "1");
-                    var RecordAr = contract.CrMasSupContractAdditionalArName;
-                    var RecordEn = contract.CrMasSupContractAdditionalEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-
-                }
-
-            }
-
-            return RedirectToAction("Index", "ContractAdditional");
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> EditStatus(string code, string status)
-        {
-            string sAr = "";
-            string sEn = "";
-            var Contract = await _unitOfWork.CrMasSupContractAdditional.GetByIdAsync(code);
-            if (Contract != null)
-            {
-                if (status == Status.Hold)
-                {
-                    sAr = "ايقاف";
-                    sEn = "Hold";
-                    Contract.CrMasSupContractAdditionalStatus = Status.Hold;
-                }
-                else if (status == Status.Deleted)
-                {
-                    sAr = "حذف";
-                    sEn = "Remove";
-                    Contract.CrMasSupContractAdditionalStatus = Status.Deleted;
-                }
-                else if (status == "Reactivate")
-                {
-                    sAr = "استرجاع";
-                    sEn = "Retrive";
-                    Contract.CrMasSupContractAdditionalStatus = Status.Active;
-                }
-
-                await _unitOfWork.CompleteAsync();
-
-                // SaveTracing
-
-                var (mainTask, subTask, system, currentUser) = await SetTrace("110", "1110001", "1");
-                var RecordAr = Contract.CrMasSupContractAdditionalArName;
-                var RecordEn = Contract.CrMasSupContractAdditionalEnName;
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "ContractAdditional");
             }
+            var model = _mapper.Map<ContractAdditionalVM>(contract);
+            model.CrMasSupContractAdditionalNaqlCode ??= 0;
+            //model.CrMasSupContractAdditionalNaqlId ??= 0;
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(ContractAdditionalVM renterDrivingLicenseVM)
+        {
+
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+
+            if (user == null && renterDrivingLicenseVM == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "ContractAdditional");
+            }
+            try
+            {
+                //Check Validition
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("Edit", renterDrivingLicenseVM);
+                }
+                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupContractAdditional>(renterDrivingLicenseVM);
+                renterDrivingLicenseEntity.CrMasSupContractAdditionalNaqlCode ??= 0;
+                //renterDrivingLicenseEntity.CrMasSupContractAdditionalNaqlId ??= 0;
+
+                // Check if the entity already exists
+                if (await _masContractAdditional.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                {
+                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("Edit", renterDrivingLicenseVM);
+                }
+
+                _unitOfWork.CrMasSupContractAdditional.Update(renterDrivingLicenseEntity);
+                if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+
+                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
+                return RedirectToAction("Index", "ContractAdditional");
+            }
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View("Edit", renterDrivingLicenseVM);
+            }
+        }
+        [HttpPost]
+        public async Task<string> EditStatus(string code, string status)
+        {
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return "false";
+
+            var licence = await _unitOfWork.CrMasSupContractAdditional.GetByIdAsync(code);
+            if (licence == null) return "false";
+
+            try
+            {
+
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                licence.CrMasSupContractAdditionalStatus = status;
+                _unitOfWork.CrMasSupContractAdditional.Update(licence);
+                _unitOfWork.Complete();
+                await SaveTracingForLicenseChange(user, licence, status);
+                return "true";
+            }
+            catch (Exception ex)
+            {
+                return "false";
+            }
+        }
+
+        //Error exist message when run post action to get what is the exist field << Help Up in Back End
+        private async Task AddModelErrorsAsync(CrMasSupContractAdditional entity)
+        {
+
+            var existedCode = await _masContractAdditional.ExistsByCodeAsync(entity.CrMasSupContractAdditionalCode);
+            if (existedCode== "error_Codestart50")
+            {
+                ModelState.AddModelError("CrMasSupContractAdditionalCode", _localizer["error_Codestart50"]);
+            }
+            else if(existedCode== "Existing")
+            {
+                ModelState.AddModelError("CrMasSupContractAdditionalCode", _localizer["Existing"]);
+            }
+
+            if (await _masContractAdditional.ExistsByArabicNameAsync(entity.CrMasSupContractAdditionalArName, entity.CrMasSupContractAdditionalCode))
+            {
+                ModelState.AddModelError("CrMasSupContractAdditionalArName", _localizer["Existing"]);
+            }
+
+            if (await _masContractAdditional.ExistsByEnglishNameAsync(entity.CrMasSupContractAdditionalEnName, entity.CrMasSupContractAdditionalCode))
+            {
+                ModelState.AddModelError("CrMasSupContractAdditionalEnName", _localizer["Existing"]);
+            }
+
+            if (await _masContractAdditional.ExistsByNaqlCodeAsync((int)entity.CrMasSupContractAdditionalNaqlCode, entity.CrMasSupContractAdditionalCode))
+            {
+                ModelState.AddModelError("CrMasSupContractAdditionalNaqlCode", _localizer["Existing"]);
+            }
+
+            //if (await _masContractAdditional.ExistsByNaqlIdAsync((int)entity.CrMasSupContractAdditionalNaqlId, entity.CrMasSupContractAdditionalCode))
+            //{
+            //    ModelState.AddModelError("CrMasSupContractAdditionalNaqlId", _localizer["Existing"]);
+            //}
+        }
+
+        //Error exist message when change input without run post action >> help us in front end
+        [HttpGet]
+        public async Task<JsonResult> CheckChangedField(string existName, string dataField)
+        {
+            var All_ContractAdditionals = await _unitOfWork.CrMasSupContractAdditional.GetAllAsync();
+            var errors = new List<ErrorResponse>();
+
+            if (!string.IsNullOrEmpty(dataField) && All_ContractAdditionals != null)
+            {
+                errors.Add(new ErrorResponse { Field = existName, Message = " " });
+                // Check for existing rental system ID
+                if (existName == "CrMasSupContractAdditionalCode")
+                {
+                    //if (Int64.TryParse(dataField, out var code) == false)
+                    //{
+                    //    errors.Add(new ErrorResponse { Field = "CrMasSupContractAdditionalCode", Message = _localizer["error_Codestart50"] });
+                    //}
+                    //else if (dataField.ToString().Substring(0, 2) != "50")
+                    //{
+                    //    errors.Add(new ErrorResponse { Field = "CrMasSupContractAdditionalCode", Message = _localizer["error_Codestart50"] });
+                    //}
+                    //else if (dataField.ToString().Length != 10)
+                    //{
+                    //    errors.Add(new ErrorResponse { Field = "CrMasSupContractAdditionalCode", Message = _localizer["error_Codestart50"] });
+                    //}
+                    if(Int64.TryParse(dataField, out var id) && id != 0 && All_ContractAdditionals.Any(x => x.CrMasSupContractAdditionalCode == id.ToString()))
+                    {
+                        errors.Add(new ErrorResponse { Field = "CrMasSupContractAdditionalCode", Message = _localizer["Existing"] });
+                    }
+                }
+                // Check for existing Arabic driving license
+                else if(existName == "CrMasSupContractAdditionalArName" && All_ContractAdditionals.Any(x => x.CrMasSupContractAdditionalArName == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupContractAdditionalArName", Message = _localizer["Existing"] });
+                }
+                // Check for existing English driving license
+                else if (existName == "CrMasSupContractAdditionalEnName" && All_ContractAdditionals.Any(x => x.CrMasSupContractAdditionalEnName?.ToLower() == dataField.ToLower()))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupContractAdditionalEnName", Message = _localizer["Existing"] });
+                }
+                // Check for existing rental system number
+                else if (existName == "CrMasSupContractAdditionalNaqlCode" && Int64.TryParse(dataField, out var code) && code != 0 && All_ContractAdditionals.Any(x => x.CrMasSupContractAdditionalNaqlCode == code))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupContractAdditionalNaqlCode", Message = _localizer["Existing"] });
+                }
+                //// Check for existing rental system ID
+                //else if (existName == "CrMasSupContractAdditionalNaqlId" && Int64.TryParse(dataField, out var id) && id != 0 && All_ContractAdditionals.Any(x => x.CrMasSupContractAdditionalNaqlId == id))
+                //{
+                //    errors.Add(new ErrorResponse { Field = "CrMasSupContractAdditionalNaqlId", Message = _localizer["Existing"] });
+                //}
+            }
+
+            return Json(new { errors });
+        }
+
+        //Helper Methods 
+        private async Task<string> GenerateLicenseCodeAsync()
+        {
+            var allLicenses = await _unitOfWork.CrMasSupContractAdditional.GetAllAsync();
+            return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupContractAdditionalCode) + 1).ToString() : "5000000001";
+        }
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupContractAdditional licence, string status)
+        {
 
 
-            return View(Contract);
+            var recordAr = licence.CrMasSupContractAdditionalArName;
+            var recordEn = licence.CrMasSupContractAdditionalEnName;
+            var (operationAr, operationEn) = GetStatusTranslation(status);
 
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+
+        [HttpPost]
+        public IActionResult DisplayToastError_NoUpdate(string messageText)
+        {
+            //نص الرسالة _localizer["AuthEmplpoyee_NoUpdate"] === messageText ; 
+            if (messageText == null || messageText == "") messageText = "..";
+            _toastNotification.AddErrorToastMessage(messageText, new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            return Json(new { success = true });
+        }
+
+
+        public IActionResult DisplayToastSuccess_withIndex()
+        {
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+            return RedirectToAction("Index", "ContractAdditional");
         }
 
 

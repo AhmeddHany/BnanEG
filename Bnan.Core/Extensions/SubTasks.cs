@@ -52,7 +52,16 @@
         public static string CrMasSysCallingKeys { get; set; } = "1109001";
         public static string Region { get; set; } = "1109002";
         public static string City { get; set; } = "1109003";
-        
+
+
+        ////////////
+        //MAS  Contract services
+        public static string CrMasSupContractAdditional { get; set; } = "1111001";
+        public static string CrMasSupContractOption { get; set; } = "1111002";
+        public static string CrMasSupContractCarCheckup { get; set; } = "1111003";
+        public static string CrMasSupContractCarCheckupDetail { get; set; } = "1111004";
+
+
     }
 }
 
