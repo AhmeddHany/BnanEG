@@ -14,9 +14,6 @@ namespace Bnan.Core.Models
         public string? CrMasLessorCommunicationsShomoosAuthorization { get; set; }
         public string? CrMasLessorCommunicationsDefaultLanguage { get; set; }
         public string? CrMasLessorCommunicationsShomoosStatus { get; set; }
-        public string? CrMasLessorCommunicationsWhatUpApi { get; set; }
-        public string? CrMasLessorCommunicationsWhatUpDevice { get; set; }
-        public string? CrMasLessorCommunicationsWhatUpStatus { get; set; }
         public string? CrMasLessorCommunicationsSmsName { get; set; }
         public string? CrMasLessorCommunicationsSmsApi { get; set; }
         public string? CrMasLessorCommunicationsSmsStatus { get; set; }

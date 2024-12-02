@@ -419,7 +419,7 @@
     "View_Lessor_renterRate_PageTitle": "التقييم",
     "the_Rate": "التقييم",
     "the_Company_rate": "تقييم الشركة",
-    "the_Code": "الرمز",
+    //"the_Code": "الرمز",
     "the_ArabicRate": "التقييم عربي",
     "the_EnglishRate": "التقييم إنجليزي",
     "the_value": "القيمة",
@@ -528,7 +528,12 @@
     "ModalFirstMessage_ContractAdditional_Hold": "ايقاف بيانات ونتائج1",
     "ModalSecondMessage_ContractAdditional_Hold": "ايقاف بيانات ونتائج2",
     "ModalFirstMessage_ContractAdditional_UnHold": "ارجاع بيانات ونتائج1",
-    "ModalSecondMessage_ContractAdditional_UnHold": "ارجاع بيانات ونتائج2"
+    "ModalSecondMessage_ContractAdditional_UnHold": "ارجاع بيانات ونتائج2",
+    //TechnicalConnectivity
+    "Company": "الشركة",
+    "CompaniesInformations": "بيانات الشركات Informations",
+    "BranchesNo": "عدد الفروع.",
+    "CountryRegion": "المدينة/المنطقة"
   },
 
 

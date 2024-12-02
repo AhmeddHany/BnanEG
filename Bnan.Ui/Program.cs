@@ -38,6 +38,7 @@ else
 }
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseRouting();
 var supportedCultures = new[] { "en-US", "ar-EG" };
 var localizationOptions = new RequestLocalizationOptions()

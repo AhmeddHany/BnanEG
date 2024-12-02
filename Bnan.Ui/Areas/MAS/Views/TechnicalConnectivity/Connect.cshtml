@@ -1,0 +1,607 @@
+﻿@using Bnan.Core.Extensions
+@model List<CrMasLessorInformation>
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<link href="~/css/toastr.css" rel="stylesheet" />
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form action="" class="needs-validation" novalidate>
+            <div class="row mt-3 g-3">
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3> الربط التقني </h3>
+                            </div>
+                            <div class="col-md-auto save-col">
+                                <button type="submit" class="custom-img-btn">
+                                    <img src="/MasSystem/images/save.svg" />
+                                </button>
+                            </div>
+                        </div>
+                        <main class="mt-3 g-3">
+                            <div class="accordion inputs-accordion">
+                               @*  <div class=" inputs-accordion-item">
+                                    <div class=" inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            <i class="fa-solid fa-check data-check"></i> هيئة النقل
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
+                                            <div class="container-fluid ">
+                                                <div class="row techncal-connect-rows">
+                                                    <div class="col-md-6">
+                                                        <label for="Content-Type" class="form-label">
+                                                            Content-Type
+                                                        </label>
+                                                        <input type="text" id="Content-Type"
+                                                               class="form-control inputs english-input"
+                                                               name="Content-Type " maxlength="100"
+                                                               required>
+                                                        <div class="invaild  techncal-connect-error   ">
+                                                            <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="App-ID" class="form-label">
+                                                            App-ID
+                                                        </label>
+                                                        <input type="text" id="App-ID"
+                                                               class="form-control inputs  english-input"
+                                                               name="App-ID " maxlength="100" required>
+                                                        <div class="invaild  techncal-connect-error   ">
+                                                            <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row techncal-connect-rows">
+                                                    <div class="col-md-6">
+                                                        <label for="App-Key" class="form-label">
+                                                            App-Key
+                                                        </label>
+                                                        <input type="text" id="App-Key"
+                                                               class="form-control inputs english-input"
+                                                               name="App-Key " maxlength="100" required>
+                                                        <div class="invaild  techncal-connect-error   ">
+                                                            <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="Authorization " class="form-label">
+                                                            Authorization
+                                                        </label>
+                                                        <input type="text" id="Authorization "
+                                                               class="form-control inputs  english-input"
+                                                               name="Authorization  " maxlength="100"
+                                                               required>
+                                                        <div class="invaild  techncal-connect-error   ">
+                                                            <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="inputs-accordion-item">
+                                    <div class="inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            <i class="fa-solid fa-check data-check"></i> شموس
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
+                                            <div class="container-fluid ">
+                                                <div class="row techncal-connect-rows">
+                                                    <div class="col-md-6">
+                                                        <label for="Content-Type-Shomoos"
+                                                               class="form-label"> Content-Type </label>
+                                                        <input type="text" id="Content-Type-Shomoos"
+                                                               class="form-control inputs english-input"
+                                                               name="Content-Type-Shomoos " maxlength="100"
+                                                               required>
+                                                        <div class="invaild  techncal-connect-error   ">
+                                                            <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="App-ID-Shomoos" class="form-label">
+                                                            App-ID
+                                                        </label>
+                                                        <input type="text" id="App-ID-Shomoos"
+                                                               class="form-control inputs  english-input"
+                                                               name="App-ID-Shomoos " maxlength="100"
+                                                               required>
+                                                        <div class="invaild  techncal-connect-error   ">
+                                                            <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row techncal-connect-rows">
+                                                    <div class="col-md-6">
+                                                        <label for="App-Key-Shomoos" class="form-label">
+                                                            App-Key
+                                                        </label>
+                                                        <input type="text" id="App-Key-Shomoos"
+                                                               class="form-control inputs english-input"
+                                                               name="App-Key-Shomoos " maxlength="100"
+                                                               required>
+                                                        <div class="invaild  techncal-connect-error   ">
+                                                            <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="Authorization-Shomoos "
+                                                               class="form-label"> Authorization </label>
+                                                        <input type="text" id="Authorization-Shomoos "
+                                                               class="form-control inputs  english-input"
+                                                               name="Authorization-Shomoos  "
+                                                               maxlength="100" required>
+                                                        <div class="invaild  techncal-connect-error   ">
+                                                            <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="inputs-accordion-item">
+                                    <div class="inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            <i class="fa-solid fa-check data-check"></i> رسائل نصية
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
+                                            <div class="container-fluid ">
+                                                <div class="row techncal-connect-rows">
+                                                    <div class="col-md-6">
+                                                        <label for="UserName" class="form-label">
+                                                            User
+                                                            Name
+                                                        </label>
+                                                        <input type="text" id="UserName"
+                                                               class="form-control inputs english-input"
+                                                               name="UserName " maxlength="100" required>
+                                                        <div class="invaild  techncal-connect-error   ">
+                                                            <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="API-Token " class="form-label">
+                                                            API-Token
+                                                        </label>
+                                                        <input type="text" id="API-Token "
+                                                               class="form-control inputs  english-input"
+                                                               name="API-Token  " maxlength="100" required>
+                                                        <div class="invaild  techncal-connect-error   ">
+                                                            <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> *@
+                                <div class="inputs-accordion-item">
+                                    <div class="inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            <i class="fa-solid fa-check data-check" id="data-check-whatsup"></i> واتساب
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
+                                            <div class="container-fluid ">
+                                                <div class="row techncal-connect-rows ">
+                                                    <div class="col-md-7">
+                                                        <div class="row">
+                                                            <div class="col-md-10">
+                                                                <label for="DeviceName-whatsapp"
+                                                                       class="form-label">
+                                                                    اسم الجهاز
+                                                                </label>
+                                                                <input type="text"
+                                                                       id="DeviceName-whatsapp"
+                                                                       class="form-control inputs"
+                                                                       name="DeviceName-whatsapp"
+                                                                       maxlength="100" required disabled>
+                                                               @*  <div class="invaild ">
+                                                                    <div class="invalid-feedback">
+                                                                        الحقل مطلوب
+                                                                    </div>
+                                                                </div> *@
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-10">
+                                                                <label for="DeviceName-whatsapp"
+                                                                       class="form-label">
+                                                                    نوع الجهاز
+                                                                </label>
+                                                                <input type="text"
+                                                                       id="DeviceNameType-whatsapp"
+                                                                       class="form-control inputs"
+                                                                       name="DeviceNameType-whatsapp"
+                                                                       maxlength="100" required disabled>
+                                                               @*  <div class="invaild ">
+                                                                    <div class="invalid-feedback">
+                                                                        الحقل مطلوب
+                                                                    </div>
+                                                                </div> *@
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-10">
+                                                                <label for="phone2" class="form-label">
+                                                                    الجوال
+                                                                </label>
+                                                                <div class="input-group ">
+                                                                    <input type="tel" class="form-control inputs" id="phone2" name="phone2" maxlength="20" required disabled>
+                                                                   @*  <select class="input-group-text select-style counterCode"
+                                                                            name="counterCode-phone2">
+                                                                        <option value="+966">+966</option>
+                                                                        <option value="+962">+962</option>
+                                                                        <option value="+20">+20</option>
+                                                                    </select> *@
+                                                                    @* <div class="invaild">
+                                                                        <div class="invalid-feedback">
+                                                                            الحقل مطلوب
+                                                                        </div>
+                                                                    </div> *@
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                       @*  <div class="row">
+                                                            <div class="col-md-10">
+                                                                <label for="API-Token-whatsapp"
+                                                                       class="form-label">
+                                                                    رمز واجهة برمجة التطبيقات
+                                                                </label>
+                                                                <input type="text"
+                                                                       id="API-Token-whatsapp"
+                                                                       class="form-control inputs"
+                                                                       name="API-Token-whatsapp"
+                                                                       maxlength="100" required>
+                                                                <div class="invaild">
+                                                                    <div class="invalid-feedback">
+                                                                        الحقل مطلوب
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div> *@
+                                                    </div>
+                                                    <div class="col-lg-5 d-flex flex-column text-center" style="min-height: 190px;">
+                                                        <!-- منطقة QR Code -->
+                                                        <div class="d-flex align-items-center justify-content-center h-100" id="QRArea">
+                                                            @* <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                            </button> *@
+                                                            <!-- رسالة انتهاء الصلاحية -->
+                                                        </div>
+                                                        @* <div class="d-flex align-items-center justify-content-center h-100" id="QRArea">
+                                                        <div class="row justify-content-center gap-2">
+                                                        <div class="col-auto"><img src="../../../images/whatsapp-icon.svg"></div>
+                                                        <div class="col-auto dots-div"><span class="loader2"></span></div>
+                                                        <div class="col-auto"><img src="../../../images/benan-icon.svg"></div>
+                                                        <p>...جارٍ ربط الشركة بالواتساب</p>
+                                                        </div>
+                                                        </div> *@
+                                                        @* <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+                                                        <img src="/MasSystem/images/qrcode 2.svg">
+                                                        <br>
+                                                        <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
+                                                        <div></div>
+                                                        </div> *@
+                                                        @* <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
+                                                            <img src="/MasSystem/images/done.svg" style="width: 50px;">
+                                                            <p>أنت متصل بالواتساب </p>
+                                                            <button class="btn cut-connect-btn" type="button">قطع الاتصال </button>
+                                                        </div> *@
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <a asp-area="MAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="main-page-icon">
+            <img src="~/MasSystem/images/back to main.svg" alt="man">
+        </a>
+    </div>
+</div>
+@section scripts {
+    <script src="~/js/toastr.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+    <script>
+        $(document).ready(async () => {
+            // استدعاء دالة التحقق عند تحميل الصفحة
+            await checkClientConnection();
+        });
+
+        let qrTimer; // لتخزين المؤقت
+        const companyId = "4016"; // معرف الشركة
+
+        // دالة لتحميل QR Code
+        async function fetchQrCode() {
+            const isConnected = await checkClientConnection(true); // تحقق من الاتصال فقط
+
+            if (isConnected) {
+                // إذا كان العميل متصل، إيقاف العملية
+                return;
+            }
+
+            const url = `/MAS/TechnicalConnectivity/GenerateQrCode?companyId=${companyId}`;
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 60000); // تعيين timeout بـ 60 ثانية
+
+            try {
+                // عرض مؤشر تحميل
+                showLoader();
+
+                // طلب جلب QR Code
+                const response = await fetch(url, {
+                    method: 'GET',
+                    signal: controller.signal,
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+                const qr = data.response.qr;
+
+                // عرض QR Code
+                displayQrCode(qr);
+
+                // إعادة ضبط المؤقت
+                resetTimer();
+            } catch (error) {
+                clearTimeout(timeoutId);
+                handleFetchError(error);
+            }
+        }
+
+        // دالة لإعادة ضبط المؤقت
+        function resetTimer() {
+            if (qrTimer) clearTimeout(qrTimer);
+
+            qrTimer = setTimeout(() => {
+                showQrExpiredMessage();
+            }, 30000); // 30 ثانية
+        }
+
+        // دالة للتحقق من اتصال العميل
+        async function checkClientConnection(returnOnlyStatus = false) {
+            const url = `/MAS/TechnicalConnectivity/IsClientReady?companyId=${companyId}`;
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // تعيين timeout بـ 30 ثانية
+
+            try {
+                showLoader();
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    signal: controller.signal,
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+
+                if (data.status && data.data) {
+                    const { name, mobile, deviceType } = data.data;
+                    showClientConnected(name, mobile, deviceType);
+
+                    if (returnOnlyStatus) return true;
+                } else {
+                    showQrButton();
+                    if (returnOnlyStatus) return false;
+                }
+            } catch (error) {
+                clearTimeout(timeoutId);
+                handleConnectionError(error);
+                if (returnOnlyStatus) return false;
+            }
+        }
+
+        // دالة لقطع الاتصال
+        async function logoutClient() {
+            const url = `/MAS/TechnicalConnectivity/LogoutClient?select_Connect_id=${companyId}`;
+
+            try {
+                const response = await fetch(url, { method: "GET" });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const result = await response.json();
+
+                if (result.status) {
+                    showLoader();
+                    setTimeout(() => {
+                        clearClientInfo();
+                        showSuccessMessage(result.message || "تم قطع الاتصال بنجاح");
+                    }, 45000);
+                } else {
+                    showFailureMessage(result.message || "فشل في قطع الاتصال");
+                }
+            } catch (error) {
+                showFailureMessage("حدث خطأ أثناء قطع الاتصال. حاول مجددًا.");
+                console.error("Error during logout:", error);
+            }
+        }
+
+        // دوال مساعدة لعرض الرسائل والعناصر:
+
+        function showLoader() {
+            $('#QRArea').empty();
+            $('#QRArea').append('<span class="loader"></span>');
+        }
+
+        function displayQrCode(qr) {
+            $('#QRArea').empty();
+            $("#data-check-whatsup").css("background-color", "#666666");
+            $('#QRArea').append(`
+                <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+                    <div id="QRCode"></div>
+                    <br>
+                    <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
+                </div>
+            `);
+            $('#QRCode').qrcode(qr);
+        }
+
+        function showQrExpiredMessage() {
+            $('#QRArea').empty();
+            $("#data-check-whatsup").css("background-color", "#666666");
+            $('#QRArea').append(`
+                <div class="col-auto d-flex gap-4 flex-column justify-content-center align-items-center"
+                     style="cursor:pointer;" id="ExpiredQRMessage" onclick="fetchQrCode()">
+                    <img src="/MasSystem/images/NotScannedQR.svg" alt="Expired QR">
+                    <p>انتهت صلاحية الرمز اضغط لإعادة التحميل</p>
+                </div>
+            `);
+        }
+
+        function showQrButton() {
+            $('#QRArea').empty();
+            $('#QRArea').append(`
+                <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                </button>
+            `);
+        }
+
+        function showClientConnected(name, mobile, deviceType) {
+            $("#data-check-whatsup").css("background-color", "green");
+            $('#QRArea').empty();
+            $('#QRArea').append(`
+                <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
+                    <img src="/MasSystem/images/done.svg" style="width: 50px;">
+                    <p>أنت متصل بالواتساب</p>
+                    <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
+                </div>
+            `);
+            $("#DeviceName-whatsapp").val(name);
+            $("#DeviceNameType-whatsapp").val(deviceType);
+            $("#phone2").val(mobile);
+        }
+
+        function showSuccessMessage(message) {
+            $("#data-check-whatsup").css("background-color", "#666666");
+            $('#QRArea').empty();
+            $('#QRArea').append(`
+                <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                </button>
+                <p>${message}</p>
+            `);
+        }
+
+        function showFailureMessage(message) {
+            $('#QRArea').empty();
+             $('#QRArea').append(`
+                <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                </button>
+                <p>${message}</p>
+            `);
+        }
+
+        function clearClientInfo() {
+            $("#DeviceName-whatsapp").val("");
+            $("#DeviceNameType-whatsapp").val("");
+            $("#phone2").val("");
+        }
+
+        function handleFetchError(error) {
+            $('#QRArea').empty();
+            $("#data-check-whatsup").css("background-color", "#666666");
+            const message = error.name === 'AbortError'
+                ? "حدث تأخير في الاتصال. الرجاء المحاولة مرة أخرى."
+                : "حدث خطأ أثناء تحميل رمز الـ QR.";
+            showFailureMessage(message);
+        }
+
+        function handleConnectionError(error) {
+            $('#QRArea').empty();
+            $("#data-check-whatsup").css("background-color", "#666666");
+            const message = error.name === 'AbortError'
+                ? "حدث تأخير في الاتصال. الرجاء المحاولة مرة أخرى."
+                : "حدث خطأ في الشبكة.";
+            showFailureMessage(message);
+        }
+    </script>
+}
