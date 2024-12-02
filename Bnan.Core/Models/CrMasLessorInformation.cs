@@ -14,6 +14,7 @@ namespace Bnan.Core.Models
             CrCasBranchDocuments = new HashSet<CrCasBranchDocument>();
             CrCasBranchInformations = new HashSet<CrCasBranchInformation>();
             CrCasCarAdvantages = new HashSet<CrCasCarAdvantage>();
+            CrCasLessorConnects = new HashSet<CrCasLessorConnect>();
             CrCasLessorMechanisms = new HashSet<CrCasLessorMechanism>();
             CrCasLessorMemberships = new HashSet<CrCasLessorMembership>();
             CrCasOwners = new HashSet<CrCasOwner>();
@@ -24,6 +25,7 @@ namespace Bnan.Core.Models
             CrCasRenterLessors = new HashSet<CrCasRenterLessor>();
             CrCasRenterPrivateDriverInformations = new HashSet<CrCasRenterPrivateDriverInformation>();
             CrMasContractCompanies = new HashSet<CrMasContractCompany>();
+            CrMasLessorMessages = new HashSet<CrMasLessorMessage>();
             CrMasUserInformations = new HashSet<CrMasUserInformation>();
             CrMasUserLogins = new HashSet<CrMasUserLogin>();
         }
@@ -65,6 +67,7 @@ namespace Bnan.Core.Models
         public virtual ICollection<CrCasBranchDocument> CrCasBranchDocuments { get; set; }
         public virtual ICollection<CrCasBranchInformation> CrCasBranchInformations { get; set; }
         public virtual ICollection<CrCasCarAdvantage> CrCasCarAdvantages { get; set; }
+        public virtual ICollection<CrCasLessorConnect> CrCasLessorConnects { get; set; }
         public virtual ICollection<CrCasLessorMechanism> CrCasLessorMechanisms { get; set; }
         public virtual ICollection<CrCasLessorMembership> CrCasLessorMemberships { get; set; }
         public virtual ICollection<CrCasOwner> CrCasOwners { get; set; }
@@ -75,6 +78,7 @@ namespace Bnan.Core.Models
         public virtual ICollection<CrCasRenterLessor> CrCasRenterLessors { get; set; }
         public virtual ICollection<CrCasRenterPrivateDriverInformation> CrCasRenterPrivateDriverInformations { get; set; }
         public virtual ICollection<CrMasContractCompany> CrMasContractCompanies { get; set; }
+        public virtual ICollection<CrMasLessorMessage> CrMasLessorMessages { get; set; }
         public virtual ICollection<CrMasUserInformation> CrMasUserInformations { get; set; }
         public virtual ICollection<CrMasUserLogin> CrMasUserLogins { get; set; }
     }

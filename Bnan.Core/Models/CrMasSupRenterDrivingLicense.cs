@@ -1,4 +1,7 @@
-﻿namespace Bnan.Core.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace Bnan.Core.Models
 {
     public partial class CrMasSupRenterDrivingLicense
     {

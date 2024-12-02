@@ -35,6 +35,7 @@ namespace Bnan.Core.Models
         public string? CrCasCarInformationSeatColor { get; set; }
         public string? CrCasCarInformationFloorColor { get; set; }
         public string? CrCasCarInformationFuel { get; set; }
+        public decimal? CrCasCarInformationFuelValue { get; set; }
         public string? CrCasCarInformationOil { get; set; }
         public string? CrCasCarInformationCvt { get; set; }
         public string? CrCasCarInformationPlateArNo { get; set; }

@@ -12,6 +12,7 @@ namespace Bnan.Core.Models
             CrCasLessorMechanisms = new HashSet<CrCasLessorMechanism>();
             CrCasSysAdministrativeProcedures = new HashSet<CrCasSysAdministrativeProcedure>();
             CrMasContractCompanies = new HashSet<CrMasContractCompany>();
+            CrMasLessorMessages = new HashSet<CrMasLessorMessage>();
         }
 
         public string CrMasSysProceduresCode { get; set; } = null!;
@@ -29,5 +30,6 @@ namespace Bnan.Core.Models
         public virtual ICollection<CrCasLessorMechanism> CrCasLessorMechanisms { get; set; }
         public virtual ICollection<CrCasSysAdministrativeProcedure> CrCasSysAdministrativeProcedures { get; set; }
         public virtual ICollection<CrMasContractCompany> CrMasContractCompanies { get; set; }
+        public virtual ICollection<CrMasLessorMessage> CrMasLessorMessages { get; set; }
     }
 }

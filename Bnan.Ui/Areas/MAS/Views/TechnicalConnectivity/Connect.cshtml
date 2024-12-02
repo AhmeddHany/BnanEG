@@ -389,263 +389,219 @@
         });
 
         let qrTimer; // لتخزين المؤقت
-        const companyId = "4016"; // استبدل بـ ID الخاص بالشركة
+        const companyId = "4016"; // معرف الشركة
 
         // دالة لتحميل QR Code
         async function fetchQrCode() {
-            // أولاً تحقق من اتصال العميل
-            const isConnected = await checkClientConnection(true);  // تمرير true للتأكد من الاتصال فقط
+            const isConnected = await checkClientConnection(true); // تحقق من الاتصال فقط
 
             if (isConnected) {
-                // إذا كان العميل متصل، عرض رسالة الاتصال ووقف العملية
+                // إذا كان العميل متصل، إيقاف العملية
                 return;
             }
 
-            // إذا كان غير متصل، استمر في توليد رمز QR
             const url = `/MAS/TechnicalConnectivity/GenerateQrCode?companyId=${companyId}`;
-
-            // إنشاء AbortController
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 60000); // تعيين timeout بـ 60 ثانية
 
             try {
-                // تفريغ محتوى منطقة QR وإظهار الـ Loader
-                $('#QRArea').empty();
-                $('#QRArea').append('<span class="loader"></span>'); // عرض مؤشر تحميل
+                // عرض مؤشر تحميل
+                showLoader();
 
-                // إرسال طلب GET لتحميل QR Code مع التحكم في إلغاء الطلب عبر AbortController
+                // طلب جلب QR Code
                 const response = await fetch(url, {
                     method: 'GET',
-                    signal: controller.signal, // إضافة signal للتحكم في إلغاء الطلب
+                    signal: controller.signal,
                 });
 
-                // إلغاء التايم أوت بعد الاستجابة
                 clearTimeout(timeoutId);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-                // استخراج بيانات الـ QR Code
                 const data = await response.json();
-                console.log("dataQr", data);
                 const qr = data.response.qr;
 
-                // عرض QR Code في المنطقة
-                $('#QRArea').empty();
-                $("#data-check-whatsup").css("background-color", "#666666");
-                $('#QRArea').append(`
-                    <div class="col-auto d-flex flex-column justify-content-center align-items-center">
-                        <div id="QRCode"></div>
-                        <br>
-                        <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
-                    </div>
-                `);
-                // إضافة QR Code مع تحديد الحجم (عرض وارتفاع)
-                $('#QRCode').qrcode(qr);
+                // عرض QR Code
+                displayQrCode(qr);
 
-                // تشغيل المؤقت لمدة 30 ثانية لتوليد QR جديد بعد 30 ثانية
+                // إعادة ضبط المؤقت
                 resetTimer();
             } catch (error) {
-                // عرض رسالة خطأ في حالة الفشل
-                console.error("Error fetching QR Code:", error);
-                $('#QRArea').empty();
-                $("#data-check-whatsup").css("background-color", "#666666");
-
-                // التحقق إذا كان الخطأ بسبب timeout
-                if (error.name === 'AbortError') {
-                    $('#QRArea').append(`
-                        <p>حدث تأخير في الاتصال. الرجاء المحاولة مرة أخرى.</p>
-                        <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                            <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                        </button>
-                    `);
-                } else if (error.message.includes("HTTP error")) {
-                    $('#QRArea').append(`
-                        <p>حدث خطأ أثناء تحميل رمز الـ QR. حالة الاتصال بالخادم غير مستقرة.</p>
-                        <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                            <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                        </button>
-                    `);
-                } else {
-                    $('#QRArea').append(`
-                        <p>حدث خطأ في الشبكة. تأكد من اتصال الإنترنت الخاص بك.</p>
-                        <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                            <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                        </button>
-                    `);
-                }
+                clearTimeout(timeoutId);
+                handleFetchError(error);
             }
         }
 
         // دالة لإعادة ضبط المؤقت
         function resetTimer() {
-            // إيقاف أي مؤقت قيد التشغيل
-            if (qrTimer) {
-                clearTimeout(qrTimer);
-            }
+            if (qrTimer) clearTimeout(qrTimer);
 
-            // ضبط مؤقت لمدة 30 ثانية
             qrTimer = setTimeout(() => {
-                // عند انتهاء المؤقت، يتم إخفاء QR Code وإظهار الرسالة
-                $('#QRArea').empty();
-                $("#data-check-whatsup").css("background-color", "#666666");
-                $('#QRArea').append(`
-                            <div class="col-auto d-flex gap-4 flex-column justify-content-center align-items-center"
-                                style="cursor:pointer;" id="ExpiredQRMessage" onclick="fetchQrCode()">
-                                <img src="/MasSystem/images/NotScannedQR.svg" alt="Expired QR">
-                                <p>انتهت صلاحية الرمز اضغط لإعادة التحميل</p>
-                            </div>
-                        `);
+                showQrExpiredMessage();
             }, 30000); // 30 ثانية
         }
+
+        // دالة للتحقق من اتصال العميل
         async function checkClientConnection(returnOnlyStatus = false) {
             const url = `/MAS/TechnicalConnectivity/IsClientReady?companyId=${companyId}`;
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // تعيين timeout بـ 30 ثانية
 
             try {
-                // عرض مؤشر تحميل مؤقت أثناء الاتصال بالـ API
-                $('#QRArea').empty();
-                $('#QRArea').append('<span class="loader"></span>');
+                showLoader();
 
-                // إنشاء AbortController
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000); // تعيين timeout بـ 30 ثانية
-
-                // إرسال طلب GET لتحميل QR Code مع التحكم في إلغاء الطلب عبر AbortController
                 const response = await fetch(url, {
                     method: 'GET',
-                    signal: controller.signal, // إضافة signal للتحكم في إلغاء الطلب
+                    signal: controller.signal,
                 });
 
-                // إلغاء التايم أوت بعد الاستجابة
                 clearTimeout(timeoutId);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-                // معالجة الاستجابة
                 const data = await response.json();
 
-                if (data.status && data.data) {  // إذا كان الاتصال ناجحًا
+                if (data.status && data.data) {
                     const { name, mobile, deviceType } = data.data;
-                    $("#data-check-whatsup").css("background-color", "green");
-                    $('#QRArea').empty();
-                    $('#QRArea').append(`
-                        <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
-                            <img src="/MasSystem/images/done.svg" style="width: 50px;">
-                            <p>أنت متصل بالواتساب</p>
-                            <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
-                        </div>
-                    `);
-                    $("#DeviceName-whatsapp").val(name);
-                    $("#DeviceNameType-whatsapp").val(deviceType);
-                    $("#phone2").val(mobile);
+                    showClientConnected(name, mobile, deviceType);
 
-                    // إذا تم تمرير true، نعيد الحالة فقط
-                    if (returnOnlyStatus) {
-                        return true;
-                    }
+                    if (returnOnlyStatus) return true;
                 } else {
-                    // إذا لم يكن متصل، عرض زر "إعادة التحميل"
-                    $("#data-check-whatsup").css("background-color", "#666666");
-                    $('#QRArea').empty();
-                    $('#QRArea').append(`
-                        <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                            <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                        </button>
-                    `);
-
-                    if (returnOnlyStatus) {
-                        return false;
-                    }
+                    showQrButton();
+                    if (returnOnlyStatus) return false;
                 }
             } catch (error) {
-                // معالجة الأخطاء
-                console.error("Error checking client connection:", error);
-                $("#data-check-whatsup").css("background-color", "#666666");
-                $('#QRArea').empty();
-                $('#QRArea').append(`
-                    <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                        <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                    </button>
-                `);
-
-                if (error.name === 'AbortError') {
-                    $('#QRArea').append('<p>حدث تأخير في الاتصال. الرجاء المحاولة مرة أخرى.</p>');
-                } else if (error.message.includes("HTTP error")) {
-                    $('#QRArea').append('<p>حدث خطأ في الخادم. تأكد من أن الخادم يعمل بشكل صحيح.</p>');
-                } else {
-                    $('#QRArea').append('<p>حدث خطأ في الشبكة. تأكد من اتصال الإنترنت الخاص بك.</p>');
-                }
+                clearTimeout(timeoutId);
+                handleConnectionError(error);
+                if (returnOnlyStatus) return false;
             }
         }
-        // دالة لقطع الاتصال باستخدام fetch (async/await)
+
+        // دالة لقطع الاتصال
         async function logoutClient() {
-            const url = "/MAS/TechnicalConnectivity/LogoutClient";
-            const data = { select_Connect_id: companyId };
+            const url = `/MAS/TechnicalConnectivity/LogoutClient?select_Connect_id=${companyId}`;
 
             try {
-                const response = await fetch(url + `?select_Connect_id=${data.select_Connect_id}`, {
-                    method: "GET",  // نوع الطلب
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                });
+                const response = await fetch(url, { method: "GET" });
 
-                // التحقق من حالة الاستجابة
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                 const result = await response.json();
 
                 if (result.status) {
-                    $('#QRArea').empty();
-                    $('#QRArea').append('<span class="loader"></span>');  // عرض Loader أثناء الانتظار
+                    showLoader();
                     setTimeout(() => {
-                        $("#DeviceName-whatsup").val("");
-                        $("#DeviceNameType-whatsup").val("");
-                        $("#phone2").val("");
-                        // عرض رسالة النجاح بعد 45 ثانية
-                        handleSuccess(result.message || "تم قطع الاتصال بنجاح");
-                    }, 45000); // تأخير 45 ثانية
+                        clearClientInfo();
+                        showSuccessMessage(result.message || "تم قطع الاتصال بنجاح");
+                    }, 45000);
                 } else {
-                    // في حالة فشل عملية قطع الاتصال
-                    handleFailure(result.message || "فشل في قطع الاتصال");
+                    showFailureMessage(result.message || "فشل في قطع الاتصال");
                 }
             } catch (error) {
-                // في حالة حدوث خطأ أثناء الاتصال
-                handleFailure("حدث خطأ أثناء قطع الاتصال. حاول مجددًا.");
+                showFailureMessage("حدث خطأ أثناء قطع الاتصال. حاول مجددًا.");
                 console.error("Error during logout:", error);
             }
         }
-        // دالة لعرض الرسالة عند النجاح
-        function handleSuccess(message) {
+
+        // دوال مساعدة لعرض الرسائل والعناصر:
+
+        function showLoader() {
+            $('#QRArea').empty();
+            $('#QRArea').append('<span class="loader"></span>');
+        }
+
+        function displayQrCode(qr) {
+            $('#QRArea').empty();
+            $("#data-check-whatsup").css("background-color", "#666666");
+            $('#QRArea').append(`
+                <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+                    <div id="QRCode"></div>
+                    <br>
+                    <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
+                </div>
+            `);
+            $('#QRCode').qrcode(qr);
+        }
+
+        function showQrExpiredMessage() {
+            $('#QRArea').empty();
+            $("#data-check-whatsup").css("background-color", "#666666");
+            $('#QRArea').append(`
+                <div class="col-auto d-flex gap-4 flex-column justify-content-center align-items-center"
+                     style="cursor:pointer;" id="ExpiredQRMessage" onclick="fetchQrCode()">
+                    <img src="/MasSystem/images/NotScannedQR.svg" alt="Expired QR">
+                    <p>انتهت صلاحية الرمز اضغط لإعادة التحميل</p>
+                </div>
+            `);
+        }
+
+        function showQrButton() {
+            $('#QRArea').empty();
+            $('#QRArea').append(`
+                <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                </button>
+            `);
+        }
+
+        function showClientConnected(name, mobile, deviceType) {
+            $("#data-check-whatsup").css("background-color", "green");
+            $('#QRArea').empty();
+            $('#QRArea').append(`
+                <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
+                    <img src="/MasSystem/images/done.svg" style="width: 50px;">
+                    <p>أنت متصل بالواتساب</p>
+                    <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
+                </div>
+            `);
+            $("#DeviceName-whatsapp").val(name);
+            $("#DeviceNameType-whatsapp").val(deviceType);
+            $("#phone2").val(mobile);
+        }
+
+        function showSuccessMessage(message) {
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').empty();
             $('#QRArea').append(`
-                    <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                        <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                    </button>
-                    <p>${message}</p>
-
-                `);
+                <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                </button>
+                <p>${message}</p>
+            `);
         }
 
-        // دالة لعرض الرسالة عند الفشل
-        function handleFailure(message) {
+        function showFailureMessage(message) {
             $('#QRArea').empty();
-            $('#QRArea').append(`
-                        <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
-                            <img src="/MasSystem/images/done.svg" style="width: 50px;">
-                            <p>أنت متصل بالواتساب</p>
-                            <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
-                        </div>
-                        <p>${message}</p>
-                    `);
+             $('#QRArea').append(`
+                <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                </button>
+                <p>${message}</p>
+            `);
         }
 
+        function clearClientInfo() {
+            $("#DeviceName-whatsapp").val("");
+            $("#DeviceNameType-whatsapp").val("");
+            $("#phone2").val("");
+        }
 
+        function handleFetchError(error) {
+            $('#QRArea').empty();
+            $("#data-check-whatsup").css("background-color", "#666666");
+            const message = error.name === 'AbortError'
+                ? "حدث تأخير في الاتصال. الرجاء المحاولة مرة أخرى."
+                : "حدث خطأ أثناء تحميل رمز الـ QR.";
+            showFailureMessage(message);
+        }
+
+        function handleConnectionError(error) {
+            $('#QRArea').empty();
+            $("#data-check-whatsup").css("background-color", "#666666");
+            const message = error.name === 'AbortError'
+                ? "حدث تأخير في الاتصال. الرجاء المحاولة مرة أخرى."
+                : "حدث خطأ في الشبكة.";
+            showFailureMessage(message);
+        }
     </script>
 }

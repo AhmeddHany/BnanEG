@@ -29,6 +29,7 @@ namespace Bnan.Core.Models
         public virtual DbSet<CrCasCarDocumentsMaintenance> CrCasCarDocumentsMaintenances { get; set; } = null!;
         public virtual DbSet<CrCasCarInformation> CrCasCarInformations { get; set; } = null!;
         public virtual DbSet<CrCasLessorClassification> CrCasLessorClassifications { get; set; } = null!;
+        public virtual DbSet<CrCasLessorConnect> CrCasLessorConnects { get; set; } = null!;
         public virtual DbSet<CrCasLessorMechanism> CrCasLessorMechanisms { get; set; } = null!;
         public virtual DbSet<CrCasLessorMembership> CrCasLessorMemberships { get; set; } = null!;
         public virtual DbSet<CrCasOwner> CrCasOwners { get; set; } = null!;
@@ -76,6 +77,8 @@ namespace Bnan.Core.Models
         public virtual DbSet<CrMasSupContractCarCheckup> CrMasSupContractCarCheckups { get; set; } = null!;
         public virtual DbSet<CrMasSupContractCarCheckupDetail> CrMasSupContractCarCheckupDetails { get; set; } = null!;
         public virtual DbSet<CrMasSupContractOption> CrMasSupContractOptions { get; set; } = null!;
+        public virtual DbSet<CrMasSupContractSource> CrMasSupContractSources { get; set; } = null!;
+        public virtual DbSet<CrMasSupCountryClassification> CrMasSupCountryClassifications { get; set; } = null!;
         public virtual DbSet<CrMasSupPostCity> CrMasSupPostCities { get; set; } = null!;
         public virtual DbSet<CrMasSupPostRegion> CrMasSupPostRegions { get; set; } = null!;
         public virtual DbSet<CrMasSupRenterAge> CrMasSupRenterAges { get; set; } = null!;
@@ -1525,6 +1528,10 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Cas_Car_Information_Fuel")
                     .IsFixedLength();
 
+                entity.Property(e => e.CrCasCarInformationFuelValue)
+                    .HasColumnType("decimal(13, 2)")
+                    .HasColumnName("CR_Cas_Car_Information_Fuel_Value");
+
                 entity.Property(e => e.CrCasCarInformationJoinedFleetDate)
                     .HasColumnType("date")
                     .HasColumnName("CR_Cas_Car_Information_Joined_Fleet_Date");
@@ -1765,6 +1772,79 @@ namespace Bnan.Core.Models
                     .IsUnicode(false)
                     .HasColumnName("CR_Mas_Lessor_Classification_Status")
                     .IsFixedLength();
+            });
+
+            modelBuilder.Entity<CrCasLessorConnect>(entity =>
+            {
+                entity.HasKey(e => new { e.CrCasLessorConnectId, e.CrCasLessorConnectSerial });
+
+                entity.ToTable("CR_Cas_Lessor_Connect");
+
+                entity.Property(e => e.CrCasLessorConnectId)
+                    .HasMaxLength(4)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Connect_Id")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrCasLessorConnectSerial)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Connect_Serial");
+
+                entity.Property(e => e.CrCasLessorConnectDeviceType)
+                    .HasMaxLength(20)
+                    .HasColumnName("CR_Cas_Lessor_Connect_DeviceType");
+
+                entity.Property(e => e.CrCasLessorConnectIsBusiness).HasColumnName("CR_Cas_Lessor_Connect_IsBusiness");
+
+                entity.Property(e => e.CrCasLessorConnectLoginDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CR_Cas_Lessor_Connect_Login_Datetime");
+
+                entity.Property(e => e.CrCasLessorConnectLogoutDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CR_Cas_Lessor_Connect_Logout_Datetime");
+
+                entity.Property(e => e.CrCasLessorConnectMobile)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Connect_Mobile");
+
+                entity.Property(e => e.CrCasLessorConnectName)
+                    .HasMaxLength(50)
+                    .HasColumnName("CR_Cas_Lessor_Connect_Name");
+
+                entity.Property(e => e.CrCasLessorConnectStatus)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Connect_Status")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrCasLessorConnectUserLogin)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Connect_User_Login");
+
+                entity.Property(e => e.CrCasLessorConnectUserLogout)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Connect_User_Logout");
+
+                entity.HasOne(d => d.CrCasLessorConnectNavigation)
+                    .WithMany(p => p.CrCasLessorConnects)
+                    .HasForeignKey(d => d.CrCasLessorConnectId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CR_Cas_Lessor_Connect_CR_Mas_Lessor_Information");
+
+                entity.HasOne(d => d.CrCasLessorConnectUserLoginNavigation)
+                    .WithMany(p => p.CrCasLessorConnectCrCasLessorConnectUserLoginNavigations)
+                    .HasForeignKey(d => d.CrCasLessorConnectUserLogin)
+                    .HasConstraintName("FK_CR_Cas_Lessor_Connect_CR_Mas_User_Information_Login");
+
+                entity.HasOne(d => d.CrCasLessorConnectUserLogoutNavigation)
+                    .WithMany(p => p.CrCasLessorConnectCrCasLessorConnectUserLogoutNavigations)
+                    .HasForeignKey(d => d.CrCasLessorConnectUserLogout)
+                    .HasConstraintName("FK_CR_Cas_Lessor_Connect_CR_Mas_User_Information_Logout");
             });
 
             modelBuilder.Entity<CrCasLessorMechanism>(entity =>
@@ -2654,6 +2734,12 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Cas_Renter_Contract_Basic_Branch")
                     .IsFixedLength();
 
+                entity.Property(e => e.CrCasRenterContractBasicBranchRecevied)
+                    .HasMaxLength(3)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Renter_Contract_Basic_Branch_Recevied")
+                    .IsFixedLength();
+
                 entity.Property(e => e.CrCasRenterContractBasicCarSerailNo)
                     .HasMaxLength(20)
                     .HasColumnName("CR_Cas_Renter_Contract_Basic_Car_Serail_No");
@@ -2812,6 +2898,12 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Cas_Renter_Contract_Basic_Sector")
                     .IsFixedLength();
 
+                entity.Property(e => e.CrCasRenterContractBasicSource)
+                    .HasMaxLength(2)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Renter_Contract_Basic_Source")
+                    .IsFixedLength();
+
                 entity.Property(e => e.CrCasRenterContractBasicStatus)
                     .HasMaxLength(1)
                     .IsUnicode(false)
@@ -2821,6 +2913,18 @@ namespace Bnan.Core.Models
                 entity.Property(e => e.CrCasRenterContractBasicTaxRate)
                     .HasColumnType("decimal(5, 2)")
                     .HasColumnName("CR_Cas_Renter_Contract_Basic_Tax_Rate");
+
+                entity.Property(e => e.CrCasRenterContractBasicTgaEndSave)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CR_Cas_Renter_Contract_Basic_Tga_End_Save");
+
+                entity.Property(e => e.CrCasRenterContractBasicTgaNo).HasColumnName("CR_Cas_Renter_Contract_Basic_Tga_No");
+
+                entity.Property(e => e.CrCasRenterContractBasicTgaToken)
+                    .HasMaxLength(100)
+                    .HasColumnName("CR_Cas_Renter_Contract_Basic_Tga_Token");
+
+                entity.Property(e => e.CrCasRenterContractBasicTgaType).HasColumnName("CR_Cas_Renter_Contract_Basic_Tga_Type");
 
                 entity.Property(e => e.CrCasRenterContractBasicTotalDailyFreeKm).HasColumnName("CR_Cas_Renter_Contract_Basic_Total_Daily_Free_KM");
 
@@ -2870,6 +2974,11 @@ namespace Bnan.Core.Models
                     .WithMany(p => p.CrCasRenterContractBasics)
                     .HasForeignKey(d => d.CrCasRenterContractBasicCarSerailNo)
                     .HasConstraintName("fk_CR_Cas_Renter_Contract_Basic_CR_Cas_Car_Information");
+
+                entity.HasOne(d => d.CrCasRenterContractBasicSourceNavigation)
+                    .WithMany(p => p.CrCasRenterContractBasics)
+                    .HasForeignKey(d => d.CrCasRenterContractBasicSource)
+                    .HasConstraintName("FK_CR_Cas_Renter_Contract_Basic_CR_Mas_Sup_Contract_Source");
 
                 entity.HasOne(d => d.CrCasRenterContractBasicNavigation)
                     .WithMany(p => p.CrCasRenterContractBasicCrCasRenterContractBasicNavigations)
@@ -4187,20 +4296,6 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Mas_Lessor_Communications_TGA_Status")
                     .IsFixedLength();
 
-                entity.Property(e => e.CrMasLessorCommunicationsWhatUpApi)
-                    .HasMaxLength(200)
-                    .HasColumnName("CR_Mas_Lessor_Communications_WhatUp_Api");
-
-                entity.Property(e => e.CrMasLessorCommunicationsWhatUpDevice)
-                    .HasMaxLength(200)
-                    .HasColumnName("CR_Mas_Lessor_Communications_WhatUp_Device");
-
-                entity.Property(e => e.CrMasLessorCommunicationsWhatUpStatus)
-                    .HasMaxLength(1)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Mas_Lessor_Communications_WhatUp_Status")
-                    .IsFixedLength();
-
                 entity.HasOne(d => d.CrMasLessorCommunicationsLessorCodeNavigation)
                     .WithOne(p => p.CrMasLessorCommunication)
                     .HasForeignKey<CrMasLessorCommunication>(d => d.CrMasLessorCommunicationsLessorCode)
@@ -4626,9 +4721,19 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Mas_Lessor_Messages_Lessor")
                     .IsFixedLength();
 
+                entity.Property(e => e.CrMasLessorMessagesLessorReceiver)
+                    .HasMaxLength(4)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Lessor_Messages_Lessor_Receiver")
+                    .IsFixedLength();
+
                 entity.Property(e => e.CrMasLessorMessagesMobile)
                     .HasMaxLength(20)
                     .HasColumnName("CR_Mas_Lessor_Messages_Mobile");
+
+                entity.Property(e => e.CrMasLessorMessagesPath)
+                    .HasMaxLength(100)
+                    .HasColumnName("CR_Mas_Lessor_Messages_Path");
 
                 entity.Property(e => e.CrMasLessorMessagesProcedures)
                     .HasMaxLength(3)
@@ -4636,9 +4741,9 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Mas_Lessor_Messages_Procedures")
                     .IsFixedLength();
 
-                entity.Property(e => e.CrMasLessorMessagesRenter)
+                entity.Property(e => e.CrMasLessorMessagesRenterReceiver)
                     .HasMaxLength(20)
-                    .HasColumnName("CR_Mas_Lessor_Messages_Renter");
+                    .HasColumnName("CR_Mas_Lessor_Messages_Renter_Receiver");
 
                 entity.Property(e => e.CrMasLessorMessagesStatus)
                     .HasMaxLength(1)
@@ -4646,11 +4751,10 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Mas_Lessor_Messages_Status")
                     .IsFixedLength();
 
-                entity.Property(e => e.CrMasLessorMessagesType)
-                    .HasMaxLength(1)
+                entity.Property(e => e.CrMasLessorMessagesUserSender)
+                    .HasMaxLength(10)
                     .IsUnicode(false)
-                    .HasColumnName("CR_Mas_Lessor_Messages_Type")
-                    .IsFixedLength();
+                    .HasColumnName("CR_Mas_Lessor_Messages_User_Sender");
 
                 entity.Property(e => e.CrMasLessorMessagesYear)
                     .HasMaxLength(2)
@@ -4658,10 +4762,25 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Mas_Lessor_Messages_Year")
                     .IsFixedLength();
 
-                entity.HasOne(d => d.CrMasLessorMessagesRenterNavigation)
+                entity.HasOne(d => d.CrMasLessorMessagesLessorReceiverNavigation)
                     .WithMany(p => p.CrMasLessorMessages)
-                    .HasForeignKey(d => d.CrMasLessorMessagesRenter)
+                    .HasForeignKey(d => d.CrMasLessorMessagesLessorReceiver)
+                    .HasConstraintName("FK_CR_Mas_Lessor_Messages_CR_Mas_Lessor_Information");
+
+                entity.HasOne(d => d.CrMasLessorMessagesProceduresNavigation)
+                    .WithMany(p => p.CrMasLessorMessages)
+                    .HasForeignKey(d => d.CrMasLessorMessagesProcedures)
+                    .HasConstraintName("FK_CR_Mas_Lessor_Messages_CR_Mas_Lessor_Messages_Procedures");
+
+                entity.HasOne(d => d.CrMasLessorMessagesRenterReceiverNavigation)
+                    .WithMany(p => p.CrMasLessorMessages)
+                    .HasForeignKey(d => d.CrMasLessorMessagesRenterReceiver)
                     .HasConstraintName("FK_CR_Mas_Lessor_Messages_CR_Mas_Renter_Information");
+
+                entity.HasOne(d => d.CrMasLessorMessagesUserSenderNavigation)
+                    .WithMany(p => p.CrMasLessorMessages)
+                    .HasForeignKey(d => d.CrMasLessorMessagesUserSender)
+                    .HasConstraintName("FK_CR_Mas_Lessor_Messages_CR_Mas_User_Information");
 
                 entity.HasOne(d => d.CrMasLessorMessages)
                     .WithMany(p => p.CrMasLessorMessages)
@@ -5828,6 +5947,77 @@ namespace Bnan.Core.Models
                     .HasConstraintName("FK_CR_Mas_Sup_Contract_Options_CR_Mas_Sys_Group");
             });
 
+            modelBuilder.Entity<CrMasSupContractSource>(entity =>
+            {
+                entity.HasKey(e => e.CrMasSupContractSourceCode);
+
+                entity.ToTable("CR_Mas_Sup_Contract_Source");
+
+                entity.Property(e => e.CrMasSupContractSourceCode)
+                    .HasMaxLength(2)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Sup_Contract_Source_Code")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrMasSupContractSourceArName)
+                    .HasMaxLength(30)
+                    .HasColumnName("CR_Mas_Sup_Contract_Source_Ar_Name");
+
+                entity.Property(e => e.CrMasSupContractSourceEmail)
+                    .HasMaxLength(100)
+                    .HasColumnName("CR_Mas_Sup_Contract_Source_Email");
+
+                entity.Property(e => e.CrMasSupContractSourceEnName)
+                    .HasMaxLength(30)
+                    .HasColumnName("CR_Mas_Sup_Contract_Source_En_Name");
+
+                entity.Property(e => e.CrMasSupContractSourceMobile)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Sup_Contract_Source_Mobile");
+
+                entity.Property(e => e.CrMasSupContractSourceReasons)
+                    .HasMaxLength(100)
+                    .HasColumnName("CR_Mas_Sup_Contract_Source_Reasons");
+
+                entity.Property(e => e.CrMasSupContractSourceStatus)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Sup_Contract_Source_Status")
+                    .IsFixedLength();
+            });
+
+            modelBuilder.Entity<CrMasSupCountryClassification>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("CR_Mas_Sup_Country_Classification");
+
+                entity.Property(e => e.CrMasLessorCountryClassificationArName)
+                    .HasMaxLength(30)
+                    .HasColumnName("CR_Mas_Lessor_Country_Classification_Ar_Name");
+
+                entity.Property(e => e.CrMasLessorCountryClassificationCode)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Lessor_Country_Classification_Code")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrMasLessorCountryClassificationEnName)
+                    .HasMaxLength(30)
+                    .HasColumnName("CR_Mas_Lessor_Country_Classification_En_Name");
+
+                entity.Property(e => e.CrMasLessorCountryClassificationReasons)
+                    .HasMaxLength(100)
+                    .HasColumnName("CR_Mas_Lessor_Country_Classification_Reasons");
+
+                entity.Property(e => e.CrMasLessorCountryClassificationStatus)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Lessor_Country_Classification_Status")
+                    .IsFixedLength();
+            });
+
             modelBuilder.Entity<CrMasSupPostCity>(entity =>
             {
                 entity.HasKey(e => e.CrMasSupPostCityCode);
@@ -5991,8 +6181,7 @@ namespace Bnan.Core.Models
                     .IsUnicode(false)
                     .HasColumnName("CR_Mas_Sup_Renter_Driving_License_Code")
                     .IsFixedLength();
-                entity.Property(e => e.CrMasSupRenterDrivingLicenseNaqlCode).HasColumnName("CR_Mas_Sup_Renter_Driving_License_Naql_Code");
-                entity.Property(e => e.CrMasSupRenterDrivingLicenseNaqlId).HasColumnName("CR_Mas_Sup_Renter_Driving_License_Naql_Id");
+
                 entity.Property(e => e.CrMasSupRenterDrivingLicenseArName)
                     .HasMaxLength(30)
                     .HasColumnName("CR_Mas_Sup_Renter_Driving_License_Ar_Name");
@@ -6000,6 +6189,10 @@ namespace Bnan.Core.Models
                 entity.Property(e => e.CrMasSupRenterDrivingLicenseEnName)
                     .HasMaxLength(30)
                     .HasColumnName("CR_Mas_Sup_Renter_Driving_License_En_Name");
+
+                entity.Property(e => e.CrMasSupRenterDrivingLicenseNaqlCode).HasColumnName("CR_Mas_Sup_Renter_Driving_License_Naql_Code");
+
+                entity.Property(e => e.CrMasSupRenterDrivingLicenseNaqlId).HasColumnName("CR_Mas_Sup_Renter_Driving_License_Naql_Id");
 
                 entity.Property(e => e.CrMasSupRenterDrivingLicenseReasons)
                     .HasMaxLength(100)
@@ -6134,6 +6327,10 @@ namespace Bnan.Core.Models
                 entity.Property(e => e.CrMasSupRenterIdtypeEnName)
                     .HasMaxLength(30)
                     .HasColumnName("CR_Mas_Sup_Renter_IDType_En_Name");
+
+                entity.Property(e => e.CrMasSupRenterIdtypeNaqlCode).HasColumnName("CR_Mas_Sup_Renter_IDType_Naql_Code");
+
+                entity.Property(e => e.CrMasSupRenterIdtypeNaqlId).HasColumnName("CR_Mas_Sup_Renter_IDType_Naql_Id");
 
                 entity.Property(e => e.CrMasSupRenterIdtypeReasons)
                     .HasMaxLength(100)
@@ -7128,6 +7325,7 @@ namespace Bnan.Core.Models
                 entity.HasIndex(e => e.CrMasUserInformationLessor, "IX_CR_Mas_User_Information_CR_Mas_User_Information_Lessor");
 
 
+
                 entity.Property(e => e.CrMasUserInformationCode)
                     .HasMaxLength(10)
                     .IsUnicode(false)
@@ -7269,10 +7467,14 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Mas_User_Information_Total_Balance")
                     .HasDefaultValueSql("((0))");
 
+
+
                 entity.HasOne(d => d.CrMasUserInformationLessorNavigation)
                     .WithMany(p => p.CrMasUserInformations)
                     .HasForeignKey(d => d.CrMasUserInformationLessor)
                     .HasConstraintName("FK_CR_Mas_User_Information_CR_Mas_Lessor_Information");
+
+
             });
 
             modelBuilder.Entity<CrMasUserLogin>(entity =>
@@ -7626,6 +7828,8 @@ namespace Bnan.Core.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CR_Mas_User_Sub_Validation_CR_Mas_User_Information");
             });
+
+
             OnModelCreatingPartial(modelBuilder);
         }
 

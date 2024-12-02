@@ -9,10 +9,13 @@ namespace Bnan.Core.Models
             CrCasAccountContractTaxOweds = new HashSet<CrCasAccountContractTaxOwed>();
             CrCasAccountInvoices = new HashSet<CrCasAccountInvoice>();
             CrCasAccountReceipts = new HashSet<CrCasAccountReceipt>();
+            CrCasLessorConnectCrCasLessorConnectUserLoginNavigations = new HashSet<CrCasLessorConnect>();
+            CrCasLessorConnectCrCasLessorConnectUserLogoutNavigations = new HashSet<CrCasLessorConnect>();
             CrCasRenterContractEvaluations = new HashSet<CrCasRenterContractEvaluation>();
             CrCasRenterContractStatisticCrCasRenterContractStatisticsUserCloseNavigations = new HashSet<CrCasRenterContractStatistic>();
             CrCasRenterContractStatisticCrCasRenterContractStatisticsUserOpenNavigations = new HashSet<CrCasRenterContractStatistic>();
             CrCasSysAdministrativeProcedures = new HashSet<CrCasSysAdministrativeProcedure>();
+            CrMasLessorMessages = new HashSet<CrMasLessorMessage>();
             CrMasUserBranchValidities = new HashSet<CrMasUserBranchValidity>();
             CrMasUserLogins = new HashSet<CrMasUserLogin>();
             CrMasUserMainValidations = new HashSet<CrMasUserMainValidation>();
@@ -65,10 +68,13 @@ namespace Bnan.Core.Models
         public virtual ICollection<CrCasAccountContractTaxOwed> CrCasAccountContractTaxOweds { get; set; }
         public virtual ICollection<CrCasAccountInvoice> CrCasAccountInvoices { get; set; }
         public virtual ICollection<CrCasAccountReceipt> CrCasAccountReceipts { get; set; }
+        public virtual ICollection<CrCasLessorConnect> CrCasLessorConnectCrCasLessorConnectUserLoginNavigations { get; set; }
+        public virtual ICollection<CrCasLessorConnect> CrCasLessorConnectCrCasLessorConnectUserLogoutNavigations { get; set; }
         public virtual ICollection<CrCasRenterContractEvaluation> CrCasRenterContractEvaluations { get; set; }
         public virtual ICollection<CrCasRenterContractStatistic> CrCasRenterContractStatisticCrCasRenterContractStatisticsUserCloseNavigations { get; set; }
         public virtual ICollection<CrCasRenterContractStatistic> CrCasRenterContractStatisticCrCasRenterContractStatisticsUserOpenNavigations { get; set; }
         public virtual ICollection<CrCasSysAdministrativeProcedure> CrCasSysAdministrativeProcedures { get; set; }
+        public virtual ICollection<CrMasLessorMessage> CrMasLessorMessages { get; set; }
         public virtual ICollection<CrMasUserBranchValidity> CrMasUserBranchValidities { get; set; }
         public virtual ICollection<CrMasUserLogin> CrMasUserLogins { get; set; }
         public virtual ICollection<CrMasUserMainValidation> CrMasUserMainValidations { get; set; }
