@@ -149,7 +149,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             }
             await SetPageTitleAsync(Status.Insert, pageNumber);
             // Check If code > 9 get error , because code is char(1)
-            if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+            if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "CarFuel");
@@ -189,7 +189,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     return View("AddCarFuel", carFuelVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
-                if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     return View("AddCarFuel", carFuelVM);
@@ -347,12 +347,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     errors.Add(new ErrorResponse { Field = "CrMasSupCarFuelEnName", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system number
-                else if (existName == "CrMasSupCarFuelNaqlCode" && int.TryParse(dataField, out var code) && code != 0 && All_CarFuels.Any(x => x.CrMasSupCarFuelNaqlCode == code))
+                else if (existName == "CrMasSupCarFuelNaqlCode" && Int64.TryParse(dataField, out var code) && code != 0 && All_CarFuels.Any(x => x.CrMasSupCarFuelNaqlCode == code))
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupCarFuelNaqlCode", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system ID
-                else if (existName == "CrMasSupCarFuelNaqlId" && int.TryParse(dataField, out var id) && id != 0 && All_CarFuels.Any(x => x.CrMasSupCarFuelNaqlId == id))
+                else if (existName == "CrMasSupCarFuelNaqlId" && Int64.TryParse(dataField, out var id) && id != 0 && All_CarFuels.Any(x => x.CrMasSupCarFuelNaqlId == id))
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupCarFuelNaqlId", Message = _localizer["Existing"] });
                 }

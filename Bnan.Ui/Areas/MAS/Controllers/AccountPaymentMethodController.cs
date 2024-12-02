@@ -120,7 +120,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "AccountPaymentMethod");
             }
             // Check If code > 9 get error , because code is char(1)
-            if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+            if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "AccountPaymentMethod");
@@ -158,7 +158,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     return View("AddAccountPaymentMethod", paymenMethodVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
-                if (int.Parse(await GenerateLicenseCodeAsync()) > 99)
+                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     return View("AddAccountPaymentMethod", paymenMethodVM);
@@ -313,12 +313,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     errors.Add(new ErrorResponse { Field = "CrMasSupAccountPaymentMethodEnName", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system number
-                else if (existName == "CrMasSupAccountPaymentMethodNaqlCode" && int.TryParse(dataField, out var code) && code != 0)
+                else if (existName == "CrMasSupAccountPaymentMethodNaqlCode" && Int64.TryParse(dataField, out var code) && code != 0)
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupAccountPaymentMethodNaqlCode", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system ID
-                else if (existName == "CrMasSupAccountPaymentMethodNaqlId" && int.TryParse(dataField, out var id) && id != 0)
+                else if (existName == "CrMasSupAccountPaymentMethodNaqlId" && Int64.TryParse(dataField, out var id) && id != 0)
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupAccountPaymentMethodNaqlId", Message = _localizer["Existing"] });
                 }

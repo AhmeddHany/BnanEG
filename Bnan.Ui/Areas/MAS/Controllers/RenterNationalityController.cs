@@ -356,12 +356,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     errors.Add(new ErrorResponse { Field = "CrMasSupRenterNationalitiesEnName", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system number
-                else if (existName == "CrMasSupRenterNationalitiesNaqlCode" && int.TryParse(dataField, out var code) && code != 0 && All_RenterNationalitiess.Any(x => x.CrMasSupRenterNationalitiesNaqlCode == code))
+                else if (existName == "CrMasSupRenterNationalitiesNaqlCode" && Int64.TryParse(dataField, out var code) && code != 0 && All_RenterNationalitiess.Any(x => x.CrMasSupRenterNationalitiesNaqlCode == code))
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupRenterNationalitiesNaqlCode", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system ID
-                else if (existName == "CrMasSupRenterNationalitiesNaqlId" && int.TryParse(dataField, out var id) && id != 0 && All_RenterNationalitiess.Any(x => x.CrMasSupRenterNationalitiesNaqlId == id))
+                else if (existName == "CrMasSupRenterNationalitiesNaqlId" && Int64.TryParse(dataField, out var id) && id != 0 && All_RenterNationalitiess.Any(x => x.CrMasSupRenterNationalitiesNaqlId == id))
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupRenterNationalitiesNaqlId", Message = _localizer["Existing"] });
                 }

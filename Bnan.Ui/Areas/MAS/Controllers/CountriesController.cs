@@ -136,7 +136,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "Countries");
             }
             // Check If code > 9 get error , because code is char(1)
-            if (int.Parse(await GenerateLicenseCodeAsync()) > 999)
+            if (Int64.Parse(await GenerateLicenseCodeAsync()) > 999)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Countries");
@@ -175,7 +175,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     return View("AddCountries", countryVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
-                if (int.Parse(await GenerateLicenseCodeAsync()) > 999)
+                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 999)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     return View("AddCountries", countryVM);
@@ -335,12 +335,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     errors.Add(new ErrorResponse { Field = "CrMasSysCallingKeysEnName", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system number
-                else if (existName == "CrMasSysCallingKeysNaqlCode" && int.TryParse(dataField, out var code) && code != 0 && All_Countriess.Any(x => x.CrMasSysCallingKeysNaqlCode == code))
+                else if (existName == "CrMasSysCallingKeysNaqlCode" && Int64.TryParse(dataField, out var code) && code != 0 && All_Countriess.Any(x => x.CrMasSysCallingKeysNaqlCode == code))
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSysCallingKeysNaqlCode", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system ID
-                else if (existName == "CrMasSysCallingKeysNaqlId" && int.TryParse(dataField, out var id) && id != 0 && All_Countriess.Any(x => x.CrMasSysCallingKeysNaqlId == id))
+                else if (existName == "CrMasSysCallingKeysNaqlId" && Int64.TryParse(dataField, out var id) && id != 0 && All_Countriess.Any(x => x.CrMasSysCallingKeysNaqlId == id))
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSysCallingKeysNaqlId", Message = _localizer["Existing"] });
                 }

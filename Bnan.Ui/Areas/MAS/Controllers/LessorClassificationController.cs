@@ -121,7 +121,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             }
             await SetPageTitleAsync(Status.Insert, pageNumber);
             // Check If code > 9 get error , because code is char(1)
-            if (int.Parse(await GenerateLicenseCodeAsync()) > 9)
+            if (Int64.Parse(await GenerateLicenseCodeAsync()) > 9)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "LessorClassification");
@@ -158,7 +158,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     return View("AddLessorClassification", renterSectorVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
-                if (int.Parse(await GenerateLicenseCodeAsync()) > 9)
+                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 9)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     return View("AddLessorClassification", renterSectorVM);
@@ -187,7 +187,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             await SetPageTitleAsync(Status.Update, pageNumber);
             // if value with code less than 2 Deleted
-            if (int.Parse(id) < 1 + 1)
+            if (Int64.Parse(id) < 1 + 1)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_NoUpdate"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "LessorClassification");
