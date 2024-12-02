@@ -385,30 +385,74 @@
     <script>
         $(document).ready(async () => {
             // استدعاء دالة التحقق عند تحميل الصفحة
-            await checkClientConnection();
+            await checkClientConnectionWithUI();
         });
-
-        let qrTimer; // لتخزين المؤقت
         const companyId = "4016"; // معرف الشركة
+        const qrCodeTimeout = 30000; // صلاحية QR Code (30 ثانية)
+        const connectionCheckInterval = 5000; // زمن التحقق (5 ثواني)
 
-        // دالة لتحميل QR Code
-        async function fetchQrCode() {
-            const isConnected = await checkClientConnection(true); // تحقق من الاتصال فقط
 
-            if (isConnected) {
-                // إذا كان العميل متصل، إيقاف العملية
-                return;
+
+        async function checkClientConnection() {
+            const url = `/MAS/TechnicalConnectivity/IsClientReady?companyId=${companyId}`;
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 ثانية
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    signal: controller.signal,
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+                console.log("data.status", data.status)
+                return data.status && data.data ? true : false;
+            } catch (error) {
+                console.log("err data.status", data.status)
+                clearTimeout(timeoutId);
+                return false;
             }
+        }
+        async function checkClientConnectionWithUI() {
+            const url = `/MAS/TechnicalConnectivity/IsClientReady?companyId=${companyId}`;
+
+            // إظهار Loader أثناء التحقق
+            showLoader();
+
+            try {
+                const isConnected = await checkClientConnection();
+
+                if (isConnected) {
+                    // العميل متصل، إظهار الحالة المناسبة
+                    const response = await fetch(url);
+                    const { name, mobile, deviceType } = (await response.json()).data;
+                    showClientConnected(name, mobile, deviceType);
+                } else {
+                    // العميل غير متصل، إظهار زر إنشاء QR
+                    showQrButton();
+                }
+            } catch (error) {
+                // معالجة الخطأ أثناء التحقق
+                handleConnectionError(error);
+            }
+        }
+
+        async function fetchQrCode(event) {
+            if (event) event.preventDefault(); // منع السلوك الافتراضي
+            const isConnected = await checkClientConnection();
+
+            if (isConnected) return;
 
             const url = `/MAS/TechnicalConnectivity/GenerateQrCode?companyId=${companyId}`;
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 60000); // تعيين timeout بـ 60 ثانية
+            const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 ثانية
 
             try {
-                // عرض مؤشر تحميل
                 showLoader();
-
-                // طلب جلب QR Code
                 const response = await fetch(url, {
                     method: 'GET',
                     signal: controller.signal,
@@ -421,73 +465,23 @@
                 const data = await response.json();
                 const qr = data.response.qr;
 
-                // عرض QR Code
                 displayQrCode(qr);
-
-                // إعادة ضبط المؤقت
-                resetTimer();
+                monitorClientConnection(); // بدأ التحقق الدوري
             } catch (error) {
                 clearTimeout(timeoutId);
                 handleFetchError(error);
             }
         }
 
-        // دالة لإعادة ضبط المؤقت
-        function resetTimer() {
-            if (qrTimer) clearTimeout(qrTimer);
-
-            qrTimer = setTimeout(() => {
-                showQrExpiredMessage();
-            }, 30000); // 30 ثانية
-        }
-
-        // دالة للتحقق من اتصال العميل
-        async function checkClientConnection(returnOnlyStatus = false) {
-            const url = `/MAS/TechnicalConnectivity/IsClientReady?companyId=${companyId}`;
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // تعيين timeout بـ 30 ثانية
-
-            try {
-                showLoader();
-
-                const response = await fetch(url, {
-                    method: 'GET',
-                    signal: controller.signal,
-                });
-
-                clearTimeout(timeoutId);
-
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-                const data = await response.json();
-
-                if (data.status && data.data) {
-                    const { name, mobile, deviceType } = data.data;
-                    showClientConnected(name, mobile, deviceType);
-
-                    if (returnOnlyStatus) return true;
-                } else {
-                    showQrButton();
-                    if (returnOnlyStatus) return false;
-                }
-            } catch (error) {
-                clearTimeout(timeoutId);
-                handleConnectionError(error);
-                if (returnOnlyStatus) return false;
-            }
-        }
-
-        // دالة لقطع الاتصال
         async function logoutClient() {
             const url = `/MAS/TechnicalConnectivity/LogoutClient?select_Connect_id=${companyId}`;
-
             try {
                 const response = await fetch(url, { method: "GET" });
 
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                 const result = await response.json();
-
+                console.log("result.Disconnect", result.status)
                 if (result.status) {
                     showLoader();
                     setTimeout(() => {
@@ -499,11 +493,41 @@
                 }
             } catch (error) {
                 showFailureMessage("حدث خطأ أثناء قطع الاتصال. حاول مجددًا.");
-                console.error("Error during logout:", error);
             }
         }
 
-        // دوال مساعدة لعرض الرسائل والعناصر:
+        let monitoringTimer;
+
+        async function monitorClientConnection() {
+            let elapsedTime = 0;
+
+            async function checkAndRepeat() {
+                elapsedTime += connectionCheckInterval;
+
+                const isConnected = await checkClientConnection();
+                if (isConnected) {
+                    clearTimeout(monitoringTimer); // إيقاف التحقق
+                    const response = await fetch(`/MAS/TechnicalConnectivity/IsClientReady?companyId=${companyId}`);
+                    const { name, mobile, deviceType } = (await response.json()).data;
+                    showClientConnected(name, mobile, deviceType);
+                    return; // إيقاف التكرار عند الاتصال
+                }
+
+                if (elapsedTime >= qrCodeTimeout) {
+                    clearTimeout(monitoringTimer); // إيقاف المؤقت بعد انتهاء الصلاحية
+                    showQrExpiredMessage();
+                    return; // إنهاء التنفيذ بعد انتهاء الوقت
+                }
+
+                // إعداد استدعاء متكرر بعد انتهاء التنفيذ الحالي
+                monitoringTimer = setTimeout(checkAndRepeat, connectionCheckInterval);
+            }
+
+            // بدء أول عملية تحقق
+            checkAndRepeat();
+        }
+
+
 
         function showLoader() {
             $('#QRArea').empty();
@@ -538,7 +562,7 @@
         function showQrButton() {
             $('#QRArea').empty();
             $('#QRArea').append(`
-                <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
                     <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
                 </button>
             `);
@@ -559,21 +583,17 @@
             $("#phone2").val(mobile);
         }
 
-        function showSuccessMessage(message) {
-            $("#data-check-whatsup").css("background-color", "#666666");
-            $('#QRArea').empty();
-            $('#QRArea').append(`
-                <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                </button>
-                <p>${message}</p>
-            `);
+        function handleFetchError(error) {
+            const message = error.name === 'AbortError'
+                ? "حدث تأخير في الاتصال. الرجاء المحاولة مرة أخرى."
+                : "حدث خطأ أثناء تحميل رمز الـ QR.";
+            showFailureMessage(message);
         }
 
         function showFailureMessage(message) {
             $('#QRArea').empty();
-             $('#QRArea').append(`
-                <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+            $('#QRArea').append(`
+                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
                     <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
                 </button>
                 <p>${message}</p>
@@ -585,23 +605,15 @@
             $("#DeviceNameType-whatsapp").val("");
             $("#phone2").val("");
         }
-
-        function handleFetchError(error) {
-            $('#QRArea').empty();
+        function showSuccessMessage(message) {
             $("#data-check-whatsup").css("background-color", "#666666");
-            const message = error.name === 'AbortError'
-                ? "حدث تأخير في الاتصال. الرجاء المحاولة مرة أخرى."
-                : "حدث خطأ أثناء تحميل رمز الـ QR.";
-            showFailureMessage(message);
-        }
-
-        function handleConnectionError(error) {
             $('#QRArea').empty();
-            $("#data-check-whatsup").css("background-color", "#666666");
-            const message = error.name === 'AbortError'
-                ? "حدث تأخير في الاتصال. الرجاء المحاولة مرة أخرى."
-                : "حدث خطأ في الشبكة.";
-            showFailureMessage(message);
+            $('#QRArea').append(`
+                        <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                </button>
+                <p>${message}</p>
+            `);
         }
     </script>
 }
