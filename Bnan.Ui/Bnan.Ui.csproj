@@ -71,7 +71,6 @@
     <None Include="Areas\MAS\Views\LessorsKSA\AddLessorKSA.cshtml" />
     <None Include="Areas\MAS\Views\LessorsKSA\Edit.cshtml" />
     <None Include="Areas\MAS\Views\LessorsKSA\Index.cshtml" />
-    <None Include="Areas\MAS\Views\LessorsKSA\_DataTablelessors.cshtml" />
     <None Include="Areas\MAS\Views\Procedures\Add.cshtml" />
     <None Include="Areas\MAS\Views\Procedures\Edit.cshtml" />
     <None Include="Areas\MAS\Views\Procedures\GetProcedures.cshtml" />

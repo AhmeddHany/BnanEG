@@ -26,7 +26,7 @@
                         </div>
                         <main class="mt-3 g-3">
                             <div class="accordion inputs-accordion">
-                               @*  <div class=" inputs-accordion-item">
+                                <div class=" inputs-accordion-item">
                                     <div class=" inputs-accordion-item-header">
                                         <span class="accordion-item-header-title">
                                             <i class="fa-solid fa-check data-check"></i> هيئة النقل
@@ -238,7 +238,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div> *@
+                                </div>
                                 <div class="inputs-accordion-item">
                                     <div class="inputs-accordion-item-header">
                                         <span class="accordion-item-header-title">
@@ -315,6 +315,37 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div class="row">
+                                                            <div class="col-md-10">
+                                                                <label for="phone2" class="form-label">
+                                                                    ارسال الرسالة
+                                                                </label>
+                                                                <div class="input-group ">
+                                                                    <input type="text" class="form-control inputs" id="message" maxlength="100" placeholder="message" required>
+                                                                    <input type="tel" class="form-control inputs" id="toPhone" maxlength="100" placeholder="20123456789" required>
+                                                                    <button type="button" class="form-control inputs" id="sendMessage">ارسال</button>
+                                                                    @*  <select class="input-group-text select-style counterCode"
+                                                                    name="counterCode-phone2">
+                                                                    <option value="+966">+966</option>
+                                                                    <option value="+962">+962</option>
+                                                                    <option value="+20">+20</option>
+                                                                    </select> *@
+                                                                    @* <div class="invaild">
+                                                                    <div class="invalid-feedback">
+                                                                    الحقل مطلوب
+                                                                    </div>
+                                                                    </div> *@
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-10">
+                                                                
+                                                                <div class="input-group ">
+                                                                    <p id="statusMessage"></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                        @*  <div class="row">
                                                             <div class="col-md-10">
                                                                 <label for="API-Token-whatsapp"
@@ -387,7 +418,7 @@
             // استدعاء دالة التحقق عند تحميل الصفحة
             await checkClientConnectionWithUI();
         });
-        const companyId = "4016"; // معرف الشركة
+        const companyId = "4008"; // معرف الشركة
         const qrCodeTimeout = 30000; // صلاحية QR Code (30 ثانية)
         const connectionCheckInterval = 5000; // زمن التحقق (5 ثواني)
 
@@ -396,7 +427,7 @@
         async function checkClientConnection() {
             const url = `/MAS/TechnicalConnectivity/IsClientReady?companyId=${companyId}`;
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 ثانية
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
 
             try {
                 const response = await fetch(url, {
@@ -437,7 +468,7 @@
                 }
             } catch (error) {
                 // معالجة الخطأ أثناء التحقق
-                handleConnectionError(error);
+                showFailureMessage(error);
             }
         }
 
@@ -474,7 +505,7 @@
         }
 
         async function logoutClient() {
-            const url = `/MAS/TechnicalConnectivity/LogoutClient?select_Connect_id=${companyId}`;
+            const url = `/MAS/TechnicalConnectivity/LogoutClient?companyId=${companyId}`;
             try {
                 const response = await fetch(url, { method: "GET" });
 
@@ -615,5 +646,36 @@
                 <p>${message}</p>
             `);
         }
+
+
+
+        $(document).ready(function () {
+            $("#sendMessage").click(function (e) {
+                e.preventDefault();
+                const phone = $("#toPhone").val();
+                const message = $("#message").val();
+
+                if (!phone || !message) {
+                    alert("يرجى إدخال رقم الهاتف والرسالة");
+                    return;
+                }
+                $.ajax({
+                    url: "/MAS/TechnicalConnectivity/SendMessage", // استبدل ControllerName باسم الـ Controller
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        phone: phone,
+                        message: message,
+                        companyId: companyId
+                    }),
+                    success: function (response) {
+                        $("#statusMessage").text(response.message)
+                    },
+                    error: function (xhr, status, error) {
+                        $("#statusMessage").text("حدث خطأ أثناء إرسال الرسالة: " + error)
+                    }
+                });
+            });
+        });
     </script>
 }

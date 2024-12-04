@@ -14,9 +14,9 @@ namespace Bnan.Core.Models
             CrCasBranchDocuments = new HashSet<CrCasBranchDocument>();
             CrCasBranchInformations = new HashSet<CrCasBranchInformation>();
             CrCasCarAdvantages = new HashSet<CrCasCarAdvantage>();
-            CrCasLessorConnects = new HashSet<CrCasLessorConnect>();
             CrCasLessorMechanisms = new HashSet<CrCasLessorMechanism>();
             CrCasLessorMemberships = new HashSet<CrCasLessorMembership>();
+            CrCasLessorWhatsupConnects = new HashSet<CrCasLessorWhatsupConnect>();
             CrCasOwners = new HashSet<CrCasOwner>();
             CrCasPriceCarBasics = new HashSet<CrCasPriceCarBasic>();
             CrCasRenterContractAuthorizations = new HashSet<CrCasRenterContractAuthorization>();
@@ -67,9 +67,9 @@ namespace Bnan.Core.Models
         public virtual ICollection<CrCasBranchDocument> CrCasBranchDocuments { get; set; }
         public virtual ICollection<CrCasBranchInformation> CrCasBranchInformations { get; set; }
         public virtual ICollection<CrCasCarAdvantage> CrCasCarAdvantages { get; set; }
-        public virtual ICollection<CrCasLessorConnect> CrCasLessorConnects { get; set; }
         public virtual ICollection<CrCasLessorMechanism> CrCasLessorMechanisms { get; set; }
         public virtual ICollection<CrCasLessorMembership> CrCasLessorMemberships { get; set; }
+        public virtual ICollection<CrCasLessorWhatsupConnect> CrCasLessorWhatsupConnects { get; set; }
         public virtual ICollection<CrCasOwner> CrCasOwners { get; set; }
         public virtual ICollection<CrCasPriceCarBasic> CrCasPriceCarBasics { get; set; }
         public virtual ICollection<CrCasRenterContractAuthorization> CrCasRenterContractAuthorizations { get; set; }

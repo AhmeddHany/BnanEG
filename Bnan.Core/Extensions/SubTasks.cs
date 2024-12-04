@@ -43,9 +43,9 @@
         public static string Technical_Connectivity { get; set; } = "1112001";
         public static string Country_Classification { get; set; } = "1112002";
         public static string CrCasLessorClassification { get; set; } = "1112003";
-        public static string Evaluation  { get; set; } = "1112004";
-        public static string Currency    { get; set; } = "1112005";
-        public static string Frequently_Asked_Questions   { get; set; } = "1112006";
+        public static string Evaluation { get; set; } = "1112004";
+        public static string Currency { get; set; } = "1112005";
+        public static string Frequently_Asked_Questions { get; set; } = "1112006";
 
         ////////////
         //MAS  Post services
@@ -60,6 +60,9 @@
         public static string CrMasSupContractOption { get; set; } = "1111002";
         public static string CrMasSupContractCarCheckup { get; set; } = "1111003";
         public static string CrMasSupContractCarCheckupDetail { get; set; } = "1111004";
+        // Company Data
+        public static string CrMasLessorInformation { get; set; } = "1101001";
+
 
 
     }

@@ -41,6 +41,7 @@ namespace Bnan.Core.Interfaces
         public IGenric<CrMasSupContractOption> CrMasSupContractOption { get; }
         public IGenric<CrMasSupContractCarCheckup> CrMasSupContractCarCheckup { get; }
         public IGenric<CrMasUserBranchValidity> CrMasUserBranchValidity { get; }
+        public IGenric<CrCasLessorWhatsupConnect> CrCasLessorWhatsupConnect { get; }
 
         public IGenric<CrMasSupPostRegion> CrMasSupPostRegion { get; }
 

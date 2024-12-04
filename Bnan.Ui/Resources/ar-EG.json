@@ -531,8 +531,8 @@
     "ModalSecondMessage_ContractAdditional_UnHold": "ارجاع بيانات ونتائج2",
     //TechnicalConnectivity
     "Company": "الشركة",
-    "CompaniesInformations": "بيانات الشركات Informations",
-    "BranchesNo": "عدد الفروع.",
+    "CompaniesInformations": "بيانات الشركات",
+    "BranchesNo": "عدد الفروع",
     "CountryRegion": "المدينة/المنطقة"
   },
 

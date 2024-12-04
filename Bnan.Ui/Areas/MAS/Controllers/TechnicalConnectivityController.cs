@@ -6,13 +6,14 @@ using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
+using Bnan.Ui.ViewModels.MAS.WhatsupVMS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 using NToastNotify;
-using System.ComponentModel.Design;
 
 namespace Bnan.Ui.Areas.MAS.Controllers
 {
@@ -27,13 +28,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IMasWhatsupConnect _masTechnicalConnect;
+
         private readonly IStringLocalizer<TechnicalConnectivityController> _localizer;
         private readonly string pageNumber = SubTasks.Technical_Connectivity;
+        private readonly string IPWhatsupService = "http://62.84.187.79:3000";
 
 
         public TechnicalConnectivityController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IBaseRepo BaseRepo, IMasBase masBase,
-            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<TechnicalConnectivityController> localizer) : base(userManager, unitOfWork, mapper)
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<TechnicalConnectivityController> localizer, IMasWhatsupConnect masTechnicalConnect) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
             _userLoginsService = userLoginsService;
@@ -42,56 +46,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
+            _masTechnicalConnect = masTechnicalConnect;
         }
-        public async Task<IActionResult> Index()
-        {
-            // Set page titles
-            var user = await _userManager.GetUserAsync(User);
-            await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
-            // استعلام رئيسي مع NoTracking
-            var query = _unitOfWork.CrMasLessorInformation.GetTableNoTracking().Include("CrCasBranchInformations.CrCasBranchPost.CrCasBranchPostCityNavigation");
-            // استرجاع التراخيص الفعّالة
-            var lessors = await query.Where(x => x.CrMasLessorInformationStatus == Status.Active).ToListAsync();
-            // إذا لم توجد تراخيص فعّالة، استرجاع التراخيص المعلّقة
-            if (!lessors.Any())
-            {
-                lessors = await query.Where(x => x.CrMasLessorInformationStatus == Status.Hold).ToListAsync();
-                ViewBag.radio = "All";
-            }
-            else ViewBag.radio = "A";
-            return View(lessors);
-        }
-        [HttpGet]
-        public async Task<PartialViewResult> GetLessorsByStatus(string status, string search)
-        {
-            // استعلام أساسي مع Include
-            IQueryable<CrMasLessorInformation> query = _unitOfWork.CrMasLessorInformation.GetTableNoTracking().Include("CrCasBranchInformations.CrCasBranchPost.CrCasBranchPostCityNavigation");
-
-            // فلترة حسب حالة status
-            if (!string.IsNullOrEmpty(status))
-            {
-                if (status == Status.All) query = query.Where(x => x.CrMasLessorInformationStatus != Status.Deleted);
-                else query = query.Where(x => x.CrMasLessorInformationStatus == status);
-            }
-
-            // فلترة حسب search
-            if (!string.IsNullOrEmpty(search))
-            {
-                search = search.ToLower();
-                query = query.Where(x => x.CrMasLessorInformationArLongName.Contains(search) || x.CrMasLessorInformationEnLongName.ToLower().Contains(search) || x.CrMasLessorInformationCode.Contains(search));
-            }
-
-            // تنفيذ الاستعلام وتحميل البيانات
-            var lessors = await query.ToListAsync();
-            return PartialView("_DataTableCompaniesInformations", lessors);
-        }
-
         [HttpGet]
         public async Task<IActionResult> Connect()
         { // Set page titles
@@ -109,7 +65,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> GenerateQrCode(string companyId)
         {
-            var url = $"http://62.84.187.79:3000/api/generateQrCodeNew2/{companyId}";
+            var url = $"{IPWhatsupService}/api/generateQrCodeNew2/{companyId}";
             using var httpClient = new HttpClient();
             var response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
@@ -122,28 +78,55 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> IsClientReady(string companyId)
         {
-            var url = $"http://62.84.187.79:3000/api/isClientReady_data/{companyId}"; // رابط API الخارجي
+            var url = $"{IPWhatsupService}/api/isClientReady_data/{companyId}";
             using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-                return Content(content, "application/json");
-            }
-            return StatusCode((int)response.StatusCode, "Error checking client connection");
-        }
-        [HttpGet]
-        public async Task<IActionResult> LogoutClient(string select_Connect_id)
-        {
             try
             {
-                // URL الخاص بالـ API الذي يتعامل مع قطع الاتصال
-                var url = $"http://62.84.187.79:3000/api/logout_whats/{select_Connect_id}";
+                var response = await httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
+
+                    if (apiResponse?.Status == true)
+                    {
+                        var clientData = apiResponse.Data;
+                        bool updateResult = await UpdateClientInfo(companyId, clientData);
+
+                        if (updateResult)
+                        {
+                            return Content(content, "application/json");
+                        }
+                        else
+                        {
+                            return StatusCode(500, "Error updating client info.");
+                        }
+                    }
+                    return Content(content, "application/json");
+                }
+                return StatusCode((int)response.StatusCode, "Error checking client connection.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> LogoutClient(string companyId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            try
+            {
+                var url = $"{IPWhatsupService}/api/logout_whats/{companyId}";
                 using var httpClient = new HttpClient();
                 var response = await httpClient.GetAsync(url);
 
                 if (response.IsSuccessStatusCode)
                 {
+                    await _masTechnicalConnect.ChangeStatusOldWhatsupConnect(companyId, user.CrMasUserInformationCode);
+                    await _masTechnicalConnect.AddNewWhatsupConnect(companyId);
+                    await _unitOfWork.CompleteAsync();
                     return Json(new { status = true, message = "تم قطع الاتصال بنجاح" });
                 }
                 else
@@ -156,6 +139,89 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 // التعامل مع الأخطاء في حال حدوث استثناء
                 return Json(new { status = false, message = "حدث خطأ أثناء قطع الاتصال: " + ex.Message });
             }
+        }
+        [HttpPost]
+        public async Task<IActionResult> SendMessage([FromBody] MessageRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.Phone) || string.IsNullOrEmpty(request.Message))
+                {
+                    return Json(new { status = false, message = "رقم الهاتف والرسالة مطلوبان" });
+                }
+
+                var url = $"{IPWhatsupService}/api/sendMessage_text";
+
+                var httpClient = new HttpClient();
+
+                // إعداد البيانات بتنسيق x-www-form-urlencoded
+                var formData = new Dictionary<string, string>
+        {
+            { "phone", request.Phone },
+            { "message", request.Message },
+            { "apiToken", "Bnan_fgfghgfhnbbbmhhjhgmghhgghhgj" },
+            { "id", request.CompanyId }
+        };
+                var content = new FormUrlEncodedContent(formData);
+
+                // إرسال الطلب
+                var response = await httpClient.PostAsync(url, content);
+
+                // التحقق من نجاح الطلب
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { status = true, message = "تم إرسال الرسالة بنجاح" });
+                }
+                else
+                {
+                    return Json(new { status = false, message = $"فشل إرسال الرسالة: {response.ReasonPhrase}" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = false, message = $"حدث خطأ أثناء إرسال الرسالة: {ex.Message}" });
+            }
+        }
+
+
+        private async Task<bool> UpdateClientInfo(string lessorCode, ClientInfoWhatsup clientInfoWhatsup)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                bool isBusiness = clientInfoWhatsup.IsBussenis != "false" && clientInfoWhatsup.IsBussenis != "undefined";
+
+                var lastConnect = await GetLastConnect(lessorCode);
+                if (lastConnect == null) return false;
+                if (lastConnect.CrCasLessorWhatsupConnectStatus == Status.Active) return true;
+
+                var updateClient = await _masTechnicalConnect.UpdateWhatsupConnectInfo(
+                    lessorCode,
+                    clientInfoWhatsup.Name,
+                    clientInfoWhatsup.Mobile,
+                    clientInfoWhatsup.DeviceType,
+                    isBusiness,
+                    user.CrMasUserInformationCode
+                );
+
+                if (updateClient) if (await _unitOfWork.CompleteAsync() > 0) return true;
+                return false;
+
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        private async Task<CrCasLessorWhatsupConnect> GetLastConnect(string LessorCode)
+        {
+            var lastConnect = await _unitOfWork.CrCasLessorWhatsupConnect.FindAllAsync(x => x.CrCasLessorWhatsupConnectLessor == LessorCode);
+            return lastConnect.OrderByDescending(x => x.CrCasLessorWhatsupConnectSerial).FirstOrDefault();
         }
     }
 }

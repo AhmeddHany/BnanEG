@@ -1,15 +1,17 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.CAS;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Globalization;
@@ -38,8 +40,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         private readonly IAccountBank _AccountBank;
         private readonly ISalesPoint _SalesPoint;
         private readonly IAuthService _authService;
+        private readonly IMasWhatsupConnect _masTechnicalConnect;
         private readonly IUserMainValidtion _UserMainValidtion;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IBaseRepo _baseRepo;
+
+        private readonly string pageNumber = SubTasks.CrMasLessorInformation;
 
 
 
@@ -61,7 +67,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                                     ISalesPoint salesPoint,
                                     IStringLocalizer<LessorsKSAController> localizer,
                                     IAuthService authService,
-                                    IUserMainValidtion userMainValidtion, IWebHostEnvironment webHostEnvironment) : base(userManager, unitOfWork, mapper)
+                                    IUserMainValidtion userMainValidtion, IWebHostEnvironment webHostEnvironment, IMasWhatsupConnect masTechnicalConnect, IBaseRepo baseRepo) : base(userManager, unitOfWork, mapper)
         {
             _userLoginsService = userLoginsService;
             _userService = userService;
@@ -82,50 +88,58 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             _authService = authService;
             _UserMainValidtion = userMainValidtion;
             _webHostEnvironment = webHostEnvironment;
+            _masTechnicalConnect = masTechnicalConnect;
+            _baseRepo = baseRepo;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-
-            var (mainTask, subTask, system, currentUser) = await SetTrace("101", "1101001", "1");
-
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-
-            //sidebar Active
-            ViewBag.id = "#sidebarCompany";
-            ViewBag.no = "0";
-
-            // Set Title
-            var titles = await setTitle("101", "1101001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            //Check User Sub Validation
-            var UserValidation = await CheckUserSubValidation("1101001");
-            if (UserValidation == false) return RedirectToAction("Index", "Home", new { area = "MAS" });
-
-            var Lessors = _unitOfWork.CrMasLessorInformation.FindAll(l => l.CrMasLessorInformationCode != "0000");
-            return View(Lessors);
+            // Set page titles
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
+            // استعلام رئيسي مع NoTracking
+            var query = _unitOfWork.CrMasLessorInformation.GetTableNoTracking().Include("CrCasBranchInformations.CrCasBranchPost.CrCasBranchPostCityNavigation");
+            // استرجاع التراخيص الفعّالة
+            var lessors = await query.Where(x => x.CrMasLessorInformationStatus == Status.Active).ToListAsync();
+            // إذا لم توجد تراخيص فعّالة، استرجاع التراخيص المعلّقة
+            if (!lessors.Any())
+            {
+                lessors = await query.Where(x => x.CrMasLessorInformationStatus == Status.Hold).ToListAsync();
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
+            return View(lessors);
         }
-
         [HttpGet]
-        public PartialViewResult GetLessorsByStatus(string status)
+        public async Task<PartialViewResult> GetLessorsByStatus(string status, string search)
         {
+            // استعلام أساسي مع Include
+            IQueryable<CrMasLessorInformation> query = _unitOfWork.CrMasLessorInformation.GetTableNoTracking().Include("CrCasBranchInformations.CrCasBranchPost.CrCasBranchPostCityNavigation");
+
+            // فلترة حسب حالة status
             if (!string.IsNullOrEmpty(status))
             {
-                if (status == Status.All)
-                {
-                    var LessorbyStatusAll = _unitOfWork.CrMasLessorInformation.FindAll(l => l.CrMasLessorInformationCode != "0000");
-                    return PartialView("_DataTablelessors", LessorbyStatusAll);
-                }
-                var LessorbyStatus = _unitOfWork.CrMasLessorInformation.FindAll(l => l.CrMasLessorInformationStatus == status && l.CrMasLessorInformationCode != "0000").ToList();
-                return PartialView("_DataTablelessors", LessorbyStatus);
+                if (status == Status.All) query = query.Where(x => x.CrMasLessorInformationStatus != Status.Deleted);
+                else query = query.Where(x => x.CrMasLessorInformationStatus == status);
             }
-            return PartialView();
+
+            // فلترة حسب search
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.ToLower();
+                query = query.Where(x => x.CrMasLessorInformationArLongName.Contains(search) || x.CrMasLessorInformationEnLongName.ToLower().Contains(search) || x.CrMasLessorInformationCode.Contains(search));
+            }
+
+            // تنفيذ الاستعلام وتحميل البيانات
+            var lessors = await query.ToListAsync();
+            return PartialView("_DataTableCompaniesInformations", lessors);
         }
 
 
@@ -149,7 +163,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             ClassificationDropDownEn.Add(new SelectListItem { Text = "", Value = "", Selected = true });
             ViewData["ClassificationDropDownEn"] = ClassificationDropDownEn;
 
-        
+
             //To Set Title;
             var titles = await setTitle("101", "1101001", "1");
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "اضافة", "Create", titles[3]);
@@ -177,7 +191,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         [HttpGet]
         public JsonResult GetCities()
         {
-            if(CultureInfo.CurrentCulture.Name == "ar-EG")
+            if (CultureInfo.CurrentCulture.Name == "ar-EG")
             {
                 var citiesAr = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityRegionsCode != "10" && l.CrMasSupPostCityRegionsCode != "11");
                 var citiesArarrayAr = citiesAr.Select(c => new { text = c.CrMasSupPostCityConcatenateArName, value = c.CrMasSupPostCityCode });
@@ -185,7 +199,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             }
 
             var citiesEn = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityRegionsCode != "10" && l.CrMasSupPostCityRegionsCode != "11");
-            var citiesArarrayEn = citiesEn.Select(c => new { text =  c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode});
+            var citiesArarrayEn = citiesEn.Select(c => new { text = c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode });
             return Json(citiesArarrayEn);
         }
 
@@ -220,7 +234,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     var LessorVMTlessor = _mapper.Map<CrMasLessorInformation>(lessorVM);
                     var BranchPostVMToBranchPost = _mapper.Map<CrCasBranchPost>(lessorVM.BranchPostVM);
                     // To create generate Code start from 4000 ;
-                    if (LessorVMTlessor.CrMasLessorInformationCode=="1")
+                    if (LessorVMTlessor.CrMasLessorInformationCode == "1")
                     {
                         int code = 4000 + int.Parse(lessorVM.CrMasLessorInformationCode);
                         LessorVMTlessor.CrMasLessorInformationCode = code.ToString();
@@ -248,9 +262,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     await _SalesPoint.AddSalesPointDefault(LessorVMTlessor.CrMasLessorInformationCode);
 
                     await _BranchDocument.AddBranchDocumentDefault(LessorVMTlessor.CrMasLessorInformationCode);
+                    // add whatsup record
+                    // add TGA And shomos record
+                    //await _authService.AddUserDefault(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _authService.AddUserDefault(LessorVMTlessor.CrMasLessorInformationCode);
-
+                    await _masTechnicalConnect.AddDefaultWhatsupConnect(LessorVMTlessor.CrMasLessorInformationCode);
                     _unitOfWork.Complete();
 
                     // SaveTracing
@@ -337,7 +353,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "اضافة", "Create", titles[3]);
 
             // Pass the KSA callingKeys to the view 
-            var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active );
+            var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active);
             var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo }).ToList();
             ViewData["CallingKeys"] = callingKeyList;
 
@@ -375,14 +391,14 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             ViewData["ClassificationDropDownEn"] = ClassificationDropDownEn;
 
             // Pass the City Post Arabic key to the view 
-           /* var citiesAr = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityRegionsCode != "10" && l.CrMasSupPostCityRegionsCode != "11");
-            var CityDropDownAr = citiesAr.Select(c => new SelectListItem { Value = c.CrMasSupPostCityCode?.ToString(), Text = c.CrMasSupPostCityConcatenateArName }).ToList();
-            ViewData["CityDropDownAr"] = CityDropDownAr;
+            /* var citiesAr = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityRegionsCode != "10" && l.CrMasSupPostCityRegionsCode != "11");
+             var CityDropDownAr = citiesAr.Select(c => new SelectListItem { Value = c.CrMasSupPostCityCode?.ToString(), Text = c.CrMasSupPostCityConcatenateArName }).ToList();
+             ViewData["CityDropDownAr"] = CityDropDownAr;
 
-            // Pass the City Post English key to the view 
-            var citiesEn = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityRegionsCode != "10" && l.CrMasSupPostCityRegionsCode != "11");
-            var CityDropDownEn = citiesEn.Select(c => new SelectListItem { Value = c.CrMasSupPostCityCode?.ToString(), Text = c.CrMasSupPostCityConcatenateEnName }).ToList();
-            ViewData["CityDropDownEn"] = CityDropDownEn;*/
+             // Pass the City Post English key to the view 
+             var citiesEn = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityRegionsCode != "10" && l.CrMasSupPostCityRegionsCode != "11");
+             var CityDropDownEn = citiesEn.Select(c => new SelectListItem { Value = c.CrMasSupPostCityCode?.ToString(), Text = c.CrMasSupPostCityConcatenateEnName }).ToList();
+             ViewData["CityDropDownEn"] = CityDropDownEn;*/
 
             // Pass the City Post Arabic key to the view 
             var citiesAr = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityRegionsCode != "10" && l.CrMasSupPostCityRegionsCode != "11").FirstOrDefault(l => l.CrMasSupPostCityCode == BranchPost.CrCasBranchPostCity);

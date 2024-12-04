@@ -29,9 +29,9 @@ namespace Bnan.Core.Models
         public virtual DbSet<CrCasCarDocumentsMaintenance> CrCasCarDocumentsMaintenances { get; set; } = null!;
         public virtual DbSet<CrCasCarInformation> CrCasCarInformations { get; set; } = null!;
         public virtual DbSet<CrCasLessorClassification> CrCasLessorClassifications { get; set; } = null!;
-        public virtual DbSet<CrCasLessorConnect> CrCasLessorConnects { get; set; } = null!;
         public virtual DbSet<CrCasLessorMechanism> CrCasLessorMechanisms { get; set; } = null!;
         public virtual DbSet<CrCasLessorMembership> CrCasLessorMemberships { get; set; } = null!;
+        public virtual DbSet<CrCasLessorWhatsupConnect> CrCasLessorWhatsupConnects { get; set; } = null!;
         public virtual DbSet<CrCasOwner> CrCasOwners { get; set; } = null!;
         public virtual DbSet<CrCasPriceCarAdditional> CrCasPriceCarAdditionals { get; set; } = null!;
         public virtual DbSet<CrCasPriceCarAdvantage> CrCasPriceCarAdvantages { get; set; } = null!;
@@ -112,11 +112,12 @@ namespace Bnan.Core.Models
         public virtual DbSet<CrMasUserProceduresValidation> CrMasUserProceduresValidations { get; set; } = null!;
         public virtual DbSet<CrMasUserSubValidation> CrMasUserSubValidations { get; set; } = null!;
 
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=.;Database=BnanSC;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=.;Database=BnanEG;Trusted_Connection=True;");
             }
         }
 
@@ -133,7 +134,6 @@ namespace Bnan.Core.Models
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
             modelBuilder.Entity<CrMasUserInformation>().Ignore(x => x.Email).Ignore(x => x.EmailConfirmed)
                 .Ignore(x => x.NormalizedEmail).Ignore(x => x.PhoneNumber).Ignore(x => x.PhoneNumberConfirmed);
-
             modelBuilder.Entity<CrCasAccountBank>(entity =>
             {
                 entity.HasKey(e => e.CrCasAccountBankCode);
@@ -1774,79 +1774,6 @@ namespace Bnan.Core.Models
                     .IsFixedLength();
             });
 
-            modelBuilder.Entity<CrCasLessorConnect>(entity =>
-            {
-                entity.HasKey(e => new { e.CrCasLessorConnectId, e.CrCasLessorConnectSerial });
-
-                entity.ToTable("CR_Cas_Lessor_Connect");
-
-                entity.Property(e => e.CrCasLessorConnectId)
-                    .HasMaxLength(4)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Cas_Lessor_Connect_Id")
-                    .IsFixedLength();
-
-                entity.Property(e => e.CrCasLessorConnectSerial)
-                    .HasMaxLength(5)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Cas_Lessor_Connect_Serial");
-
-                entity.Property(e => e.CrCasLessorConnectDeviceType)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Cas_Lessor_Connect_DeviceType");
-
-                entity.Property(e => e.CrCasLessorConnectIsBusiness).HasColumnName("CR_Cas_Lessor_Connect_IsBusiness");
-
-                entity.Property(e => e.CrCasLessorConnectLoginDatetime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("CR_Cas_Lessor_Connect_Login_Datetime");
-
-                entity.Property(e => e.CrCasLessorConnectLogoutDatetime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("CR_Cas_Lessor_Connect_Logout_Datetime");
-
-                entity.Property(e => e.CrCasLessorConnectMobile)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Cas_Lessor_Connect_Mobile");
-
-                entity.Property(e => e.CrCasLessorConnectName)
-                    .HasMaxLength(50)
-                    .HasColumnName("CR_Cas_Lessor_Connect_Name");
-
-                entity.Property(e => e.CrCasLessorConnectStatus)
-                    .HasMaxLength(1)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Cas_Lessor_Connect_Status")
-                    .IsFixedLength();
-
-                entity.Property(e => e.CrCasLessorConnectUserLogin)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Cas_Lessor_Connect_User_Login");
-
-                entity.Property(e => e.CrCasLessorConnectUserLogout)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Cas_Lessor_Connect_User_Logout");
-
-                entity.HasOne(d => d.CrCasLessorConnectNavigation)
-                    .WithMany(p => p.CrCasLessorConnects)
-                    .HasForeignKey(d => d.CrCasLessorConnectId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CR_Cas_Lessor_Connect_CR_Mas_Lessor_Information");
-
-                entity.HasOne(d => d.CrCasLessorConnectUserLoginNavigation)
-                    .WithMany(p => p.CrCasLessorConnectCrCasLessorConnectUserLoginNavigations)
-                    .HasForeignKey(d => d.CrCasLessorConnectUserLogin)
-                    .HasConstraintName("FK_CR_Cas_Lessor_Connect_CR_Mas_User_Information_Login");
-
-                entity.HasOne(d => d.CrCasLessorConnectUserLogoutNavigation)
-                    .WithMany(p => p.CrCasLessorConnectCrCasLessorConnectUserLogoutNavigations)
-                    .HasForeignKey(d => d.CrCasLessorConnectUserLogout)
-                    .HasConstraintName("FK_CR_Cas_Lessor_Connect_CR_Mas_User_Information_Logout");
-            });
-
             modelBuilder.Entity<CrCasLessorMechanism>(entity =>
             {
                 entity.HasKey(e => new { e.CrCasLessorMechanismCode, e.CrCasLessorMechanismProcedures });
@@ -1957,6 +1884,78 @@ namespace Bnan.Core.Models
                     .HasForeignKey(d => d.CrCasLessorMembershipConditionsLessor)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("CR_Mas_Lessor_Information_CR_Mas_Sup_Renter_Membership");
+            });
+
+            modelBuilder.Entity<CrCasLessorWhatsupConnect>(entity =>
+            {
+                entity.ToTable("CR_Cas_Lessor_Whatsup_Connect");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectId)
+                    .HasMaxLength(22)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Id");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectDeviceType)
+                    .HasMaxLength(20)
+                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_DeviceType");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectIsBusiness).HasColumnName("CR_Cas_Lessor_Whatsup_Connect_IsBusiness");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectLessor)
+                    .HasMaxLength(4)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Lessor")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectLoginDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Login_Datetime");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectLogoutDatetime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Logout_Datetime");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectMobile)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Mobile");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectName)
+                    .HasMaxLength(50)
+                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Name");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectSerial).HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Serial");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectStatus)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Status")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectUserLogin)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_User_Login");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectUserLogout)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_User_Logout");
+
+                entity.HasOne(d => d.CrCasLessorWhatsupConnectLessorNavigation)
+                    .WithMany(p => p.CrCasLessorWhatsupConnects)
+                    .HasForeignKey(d => d.CrCasLessorWhatsupConnectLessor)
+                    .HasConstraintName("FK_CR_Cas_Lessor_Whatsup_Connect_CR_Mas_Lessor_Information");
+
+                entity.HasOne(d => d.CrCasLessorWhatsupConnectUserLoginNavigation)
+                    .WithMany(p => p.CrCasLessorWhatsupConnectCrCasLessorWhatsupConnectUserLoginNavigations)
+                    .HasForeignKey(d => d.CrCasLessorWhatsupConnectUserLogin)
+                    .HasConstraintName("FK_CR_Cas_Lessor_Whatsup_Connect_CR_Mas_User_Information_Login");
+
+                entity.HasOne(d => d.CrCasLessorWhatsupConnectUserLogoutNavigation)
+                    .WithMany(p => p.CrCasLessorWhatsupConnectCrCasLessorWhatsupConnectUserLogoutNavigations)
+                    .HasForeignKey(d => d.CrCasLessorWhatsupConnectUserLogout)
+                    .HasConstraintName("FK_CR_Cas_Lessor_Whatsup_Connect_CR_Mas_User_Information_Logout");
             });
 
             modelBuilder.Entity<CrCasOwner>(entity =>
@@ -7325,7 +7324,6 @@ namespace Bnan.Core.Models
                 entity.HasIndex(e => e.CrMasUserInformationLessor, "IX_CR_Mas_User_Information_CR_Mas_User_Information_Lessor");
 
 
-
                 entity.Property(e => e.CrMasUserInformationCode)
                     .HasMaxLength(10)
                     .IsUnicode(false)
@@ -7473,8 +7471,6 @@ namespace Bnan.Core.Models
                     .WithMany(p => p.CrMasUserInformations)
                     .HasForeignKey(d => d.CrMasUserInformationLessor)
                     .HasConstraintName("FK_CR_Mas_User_Information_CR_Mas_Lessor_Information");
-
-
             });
 
             modelBuilder.Entity<CrMasUserLogin>(entity =>
@@ -7828,6 +7824,7 @@ namespace Bnan.Core.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CR_Mas_User_Sub_Validation_CR_Mas_User_Information");
             });
+
 
 
             OnModelCreatingPartial(modelBuilder);
