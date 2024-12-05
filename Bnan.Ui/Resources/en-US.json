@@ -13,7 +13,10 @@
     "MobilePatternError": "Enter a valid mobile number",
     "error_Codestart50": "This Code should start with 50 and add another 8 numbers",
     "error_Codestart51": "This Code should start with 51 and add another 8 numbers",
-    ///////////
+    "error_Codestart2": "This Code contain 2 Digits",
+    "error_Codestart1": "Insert Code From 1 - 9",
+    "error_Codestart9": "Insert Code From 1 - 99",
+    /////////// 
     "RentalSystemCode": "Tajeer Code",
     "RentalSystemNo": "Tajeer No",
     "Count": "Count",
@@ -139,9 +142,9 @@
 
     // MAS Car Registration
     "Add_CarRegistration_PageTitle": "Add Registration",
-    "Edit_CarRegistration_PageTitle": "Update The Registration Data",
-    "View_CarRegistration_PageTitle": "Registration",
-    "CarRegistrationName_view": "Car Registration Type",
+    "Edit_CarRegistration_PageTitle": "Update Registration Data",
+    "View_CarRegistration_PageTitle": "Registration Car",
+    "CarRegistrationName_view": "Registration",
     "CarRegistrationNameAr_add": "Arabic Registration",
     "CarRegistrationNameEn_add": "English Registration",
     "CarRegistrationNameAr_edit": "Arabic Registration",
@@ -157,9 +160,9 @@
 
     // MAS Car Fuel
     "Add_CarFuel_PageTitle": "Add Fuel",
-    "Edit_CarFuel_PageTitle": "Update The Fuel Data",
-    "View_CarFuel_PageTitle": "Fuel",
-    "CarFuelName_view": "Fuel Type",
+    "Edit_CarFuel_PageTitle": "Update Fuel Data",
+    "View_CarFuel_PageTitle": "Fuel Car",
+    "CarFuelName_view": "Fuel",
     "CarFuelNameAr_add": "Arabic Fuel",
     "CarFuelNameEn_add": "English Fuel",
     "CarFuelNameAr_edit": "Arabic Fuel",
@@ -175,9 +178,9 @@
 
     // MAS Car Cvt
     "Add_CarCvt_PageTitle": "Add Transporter",
-    "Edit_CarCvt_PageTitle": "Update The Transporter Data",
-    "View_CarCvt_PageTitle": "Transporter",
-    "CarCvtName_view": "Transporter Type",
+    "Edit_CarCvt_PageTitle": "Update Transporter Data",
+    "View_CarCvt_PageTitle": "Transporter Car",
+    "CarCvtName_view": "Transporter",
     "CarCvtNameAr_add": "Arabic Transporter",
     "CarCvtNameEn_add": "English Transporter",
     "CarCvtNameAr_edit": "Arabic Transporter",
@@ -193,9 +196,9 @@
 
     // MAS Car Oil
     "Add_CarOil_PageTitle": "Add Oil",
-    "Edit_CarOil_PageTitle": "Update The Oil Data",
-    "View_CarOil_PageTitle": "Oil",
-    "CarOilName_view": "Oil Type",
+    "Edit_CarOil_PageTitle": "Update Oil Data",
+    "View_CarOil_PageTitle": "Oil Car",
+    "CarOilName_view": "Oil",
     "CarOilNameAr_add": "Arabic Oil",
     "CarOilNameEn_add": "English Oil",
     "CarOilNameAr_edit": "Arabic Oil",
@@ -212,8 +215,8 @@
 
     // MAS Car Brand
     "Add_CarBrand_PageTitle": "Add Brand",
-    "Edit_CarBrand_PageTitle": "Update The Brand Data",
-    "View_CarBrand_PageTitle": "Brands",
+    "Edit_CarBrand_PageTitle": "Update Brand Data",
+    "View_CarBrand_PageTitle": "Brand Car",
     "CarBrandName_view": "Brand",
     "CarBrandNameAr_add": "Arabic Brand",
     "CarBrandNameEn_add": "English Brand",
@@ -230,8 +233,8 @@
 
     // MAS Car Model
     "Add_CarModel_PageTitle": "Add Model",
-    "Edit_CarModel_PageTitle": "Update The Model Data",
-    "View_CarModel_PageTitle": "Models",
+    "Edit_CarModel_PageTitle": "Update Model Data",
+    "View_CarModel_PageTitle": "Model Car",
     "CarModelName_view": "Model",
     "CarModelNameAr_add": "Arabic Model",
     "CarModelNameEn_add": "English Model",
@@ -248,8 +251,8 @@
 
     // MAS Car Category
     "Add_CarCategory_PageTitle": "Add Category",
-    "Edit_CarCategory_PageTitle": "Update The Category Data",
-    "View_CarCategory_PageTitle": "Categorys",
+    "Edit_CarCategory_PageTitle": "Update Category Data",
+    "View_CarCategory_PageTitle": "Category Car",
     "CarCategoryName_view": "Category",
     "CarCategoryNameAr_add": "Arabic Category",
     "CarCategoryNameEn_add": "English Category",
@@ -267,8 +270,8 @@
 
     // MAS Car Color
     "Add_CarColor_PageTitle": "Add Color",
-    "Edit_CarColor_PageTitle": "Update The Color Data",
-    "View_CarColor_PageTitle": "Colors",
+    "Edit_CarColor_PageTitle": "Update Color Data",
+    "View_CarColor_PageTitle": "Color Car",
     "CarColorName_view": "Color",
     "CarColorNameAr_add": "Arabic Color",
     "CarColorNameEn_add": "English Color",
@@ -285,7 +288,7 @@
 
     // MAS AccountBank
     "Add_AccountBank_PageTitle": "Add Bank",
-    "Edit_AccountBank_PageTitle": "Update The Bank Data",
+    "Edit_AccountBank_PageTitle": "Update Bank Data",
     "View_AccountBank_PageTitle": "Banks",
     "AccountBankName_view": "Bank",
     "AccountBankNameAr_add": "Arabic Bank",
@@ -304,7 +307,7 @@
 
     // MAS AccountReference
     "Add_AccountReference_PageTitle": "Add Reference",
-    "Edit_AccountReference_PageTitle": "Update The Reference Data",
+    "Edit_AccountReference_PageTitle": "Update Reference Data",
     "View_AccountReference_PageTitle": "References",
     "AccountReferenceName_view": "Reference",
     "AccountReferenceNameAr_add": "Arabic Reference",
@@ -514,7 +517,6 @@
     "ModalSecondMessage_Nationalities_Hold": "Hold Data And Results2",
     "ModalFirstMessage_Nationalities_UnHold": "UnHold Data And Results1",
     "ModalSecondMessage_Nationalities_UnHold": "UnHold Data And Results2",
-    "ModalSecondMessage_Nationalities_UnHold": "UnHold Data And Results2",
 
     // MAS Contract Additional
     "Add_ContractAdditional_PageTitle": "Add Addition",
@@ -536,6 +538,96 @@
     "ModalSecondMessage_ContractAdditional_Hold": "Hold Data And Results2",
     "ModalFirstMessage_ContractAdditional_UnHold": "UnHold Data And Results1",
     "ModalSecondMessage_ContractAdditional_UnHold": "UnHold Data And Results2",
+
+    // MAS Contract Options
+    "Add_ContractOptions_PageTitle": "Add Option",
+    "Edit_ContractOptions_PageTitle": "Update Option Data",
+    "View_ContractOptions_PageTitle": "Options",
+    "ContractOptionsName_view": "Option",
+    "ContractOptionsNameAr_add": "Arabic Option",
+    "ContractOptionsNameEn_add": "English Option",
+    "ContractOptionsNameAr_edit": "Arabic Option",
+    "ContractOptionsNameEn_edit": "English Option",
+    "img_ContractOptions_Chosen": "Choosen Option",
+    "img_ContractOptions_No_Chosen": "Not Choosen Option",
+    "img_ContractOptions_Block": "Block The Option",
+    "ModalFirstMessage_ContractOptions_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_ContractOptions_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_ContractOptions_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_ContractOptions_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_ContractOptions_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_ContractOptions_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_ContractOptions_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_ContractOptions_UnHold": "UnHold Data And Results2",
+
+    // MAS Contract CarCheckup
+    "Add_ContractCarCheckup_PageTitle": "Add Virtual Checkup",
+    "Edit_ContractCarCheckup_PageTitle": "Update Virtual Checkup Data",
+    "View_ContractCarCheckup_PageTitle": "Virtual Checkup",
+    "ContractCarCheckupName_view": "Checkup",
+    "ContractCarCheckupNameAr_add": "Arabic Checkup",
+    "ContractCarCheckupNameEn_add": "English Checkup",
+    "ContractCarCheckupNameAr_edit": "Arabic Checkup",
+    "ContractCarCheckupNameEn_edit": "English Checkup",
+    "img_ContractCarCheckup_Chosen": "Choosen Checkup",
+    "img_ContractCarCheckup_No_Chosen": "Not Choosen Checkup",
+    "img_ContractCarCheckup_Block": "Block The Checkup",
+    "ModalFirstMessage_ContractCarCheckup_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_ContractCarCheckup_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_ContractCarCheckup_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_ContractCarCheckup_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_ContractCarCheckup_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_ContractCarCheckup_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_ContractCarCheckup_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_ContractCarCheckup_UnHold": "UnHold Data And Results2",
+
+    // MAS Contract CarCheckupDetails
+    "Add_ContractCarCheckupDetails_PageTitle": "Add Virtual Checkup Details",
+    "Edit_ContractCarCheckupDetails_PageTitle": "Update Virtual Checkup status",
+    "View_ContractCarCheckupDetails_PageTitle": "Virtual Checkup Details",
+    "ContractCarCheckupDetailsName_view": "Checkup / Status",
+    "ContractCarCheckupDetailsNameAr_add": "Arabic Checkup Status",
+    "ContractCarCheckupDetailsNameEn_add": "English Checkup Status",
+    "ContractCarCheckupDetailsNameAr_edit": "Arabic Checkup Status",
+    "ContractCarCheckupDetailsNameEn_edit": "English Checkup Status",
+    "img_ContractCarCheckupDetails_Chosen": "Choosen Checkup",
+    "img_ContractCarCheckupDetails_No_Chosen": "Not Choosen Checkup",
+    "img_ContractCarCheckupDetails_Block": "Block The Checkup",
+    "singleOptionName_view": "Checkup Type",
+    "Code_Check_view": "Checkup Code",
+    "Code_No_view": "Status Code",
+    "ModalFirstMessage_ContractCarCheckupDetails_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_ContractCarCheckupDetails_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_ContractCarCheckupDetails_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_ContractCarCheckupDetails_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_ContractCarCheckupDetails_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_ContractCarCheckupDetails_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_ContractCarCheckupDetails_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_ContractCarCheckupDetails_UnHold": "UnHold Data And Results2",
+
+    // MAS QuestionsAnswer
+    "Add_QuestionsAnswer_PageTitle": "Add Question",
+    "Edit_QuestionsAnswer_PageTitle": "Update Question Data",
+    "View_QuestionsAnswer_PageTitle": "Frequently Asked Questions",
+    "QuestionsAnswerName_view": "List",
+    "QuestionsAnswerNameAr_add": "Arabic Question",
+    "QuestionsAnswerNameEn_add": "English Question",
+    "QuestionsAnswerNameAr_edit": "Arabic Question",
+    "QuestionsAnswerNameEn_edit": "English Question",
+    "QuestionsAnswerName_answer_view": "Answer",
+    "QuestionsAnswerName_question_view": "Question",
+    "QuestionsAnswerName_list_view": "List",
+    "QuestionsAnswerName_system_view": "System",
+    "QuestionsAnswerName_ArAnswer": "Arabic Answer",
+    "QuestionsAnswerName_EnAnswer": "English Answer",
+    "ModalFirstMessage_QuestionsAnswer_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_QuestionsAnswer_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_QuestionsAnswer_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_QuestionsAnswer_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_QuestionsAnswer_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_QuestionsAnswer_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_QuestionsAnswer_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_QuestionsAnswer_UnHold": "UnHold Data And Results2",
 
     //TechnicalConnectivity
     "Company": "Company",

@@ -1,5 +1,5 @@
 ﻿@using Bnan.Core.Extensions
-@model List<CrMasSupCarAdvantage>
+@model CarAdvantageVM
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
@@ -9,7 +9,7 @@
 <table class=" tables-style table table-borderless " id="Table">
     <thead class="sticky-top">
         <tr>
-            @*<th>@localizer["Count"]</th>*@
+            <th>@localizer["Count"]</th>
             <th class="DifferAlign"> @localizer["CarAdvantageName_view"]</th>
             <th class="DifferAlign"> @localizer["the_Code"]</th>
             <th></th>
@@ -19,10 +19,10 @@
         @{
             int no = 1;
         }
-        @foreach (var item in Model)
+        @foreach (var item in Model.crMasSupCarAdvantage)
         {
-            <tr onclick="if (parseInt(@item.CrMasSupCarAdvantagesCode) > 2) {location.href='@Url.Action("Edit", "CarAdvantage", new { id = item.CrMasSupCarAdvantagesCode })';} else{showErrorToast_NoUpdate();}">
-                @*<td><p>@item.CrMasRenterInformations.Count().ToString("N0")</p></td>*@
+            <tr onclick="location.href='@Url.Action("Edit", "CarAdvantage", new { id = item.CrMasSupCarAdvantagesCode })'">
+                <td><p>@(Model.advantages_count?.Find(x => x.Column.ToString() == item.CrMasSupCarAdvantagesCode)?.RowCount.ToString("N0") ?? "0")</p></td>
                 <td class="DifferAlign">
                     <p>
                         @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupCarAdvantagesEnName : item.CrMasSupCarAdvantagesArName)

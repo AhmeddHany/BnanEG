@@ -1,0 +1,256 @@
+﻿@using Bnan.Ui.ViewModels.MAS
+@model ContractCarCheckupVM
+
+@inject IViewLocalizer localizer
+
+@{
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="MAS" asp-controller="ContractCarCheckup" asp-action="AddContractCarCheckup" class="needs-validation" novalidate>
+            <div class="row  mt-3 g-3">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3>@localizer["Add_ContractCarCheckup_PageTitle"]</h3>
+                            </div>
+                            <div class="col-md-auto save-col">
+                                <button type="submit" class="custom-img-btn"> <img src="~/MasSystem/images/save.svg" /> </button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/ContractCarCheckup/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="row  mt-3 g-3 ">
+                                
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="Code" class="form-label">@localizer["the_Code"]<i class="fa-solid fa-star-of-life RequirdStar"></i></label>
+                                            <input type="text" asp-for="CrMasSupContractCarCheckupCode" id="CrMasSupContractCarCheckupCode" class="form-control inputs" maxlength="2" inputmode="numeric" oninput="validateNumberInput(this)" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupContractCarCheckupCode" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupContractCarCheckupCode-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <label for="AR-Licence" class="form-label">
+                                                @localizer["ContractCarCheckupNameAr_add"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" asp-for="CrMasSupContractCarCheckupArName" id="CrMasSupContractCarCheckupArName" maxlength="50" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupContractCarCheckupArName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupContractCarCheckupArName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="EN-Licence" class="form-label">
+                                                @localizer["ContractCarCheckupNameEn_add"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupContractCarCheckupEnName" maxlength="50" id="CrMasSupContractCarCheckupEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupContractCarCheckupEnName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupContractCarCheckupEnName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="rental-system-pin" class="form-label">@localizer["RentalSystemCode"]</label>
+                                            <input disabled type="text" class="form-control number-input inputs " id="CrMasSupContractCarCheckupNaqlCode" id="CrMasSupContractCarCheckupNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupContractCarCheckupNaqlCode-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="rental-system-number" class="form-label"> @localizer["RentalSystemNo"]</label>
+                                            <input type="text" disabled id="CrMasSupContractCarCheckupNaqlId" class="form-control inputs number-input" name="rental-system-number" maxlength="10" oninput="validateNumberLength(this)">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    @*<span asp-validation-for="@Model.CrMasSupContractCarCheckupNaqlId" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupContractCarCheckupNaqlId-Error"></span>*@
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="row ">
+                                        <div class="col-lg-12">
+                                            <label>@localizer["Reason_s"]</label>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupContractCarCheckupReasons" rows="1" maxlength="100" type="text"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="row g-3">
+                                                <div class="col-auto col-md-4">
+                                                    <div class="dropzone-Card">
+                                                        <div class="drop-zone">
+                                                            <div class="layer" style="display: none;">
+                                                                <i class="fa-regular fa-circle-xmark removeImage"></i>
+                                                            </div>
+                                                            <span class="drop-zone__prompt">
+                                                                <img src="~/MasSystem/images/upload icon.svg" class="mb-3"> <br>@localizer["img_drop_orChoose"]
+                                                            </span>
+                                                            <input type="file" name="Selected-Addition" class="drop-zone__input">
+                                                        </div>
+                                                        <div class="fileNameDiv">
+                                                            <p class="text-center pt-1 mb-1 fileNameP">@localizer["img_ContractCarCheckup_Chosen"]</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto col-md-4 d-flex justify-content-md-center">
+                                                    <div class="dropzone-Card">
+                                                        <div class="drop-zone">
+                                                            <div class="layer" style="display: none;">
+                                                                <i class="fa-regular fa-circle-xmark removeImage"></i>
+                                                            </div>
+                                                            <span class="drop-zone__prompt">
+                                                                <img src="~/MasSystem/images/upload icon.svg" class="mb-3"> <br>@localizer["img_drop_orChoose"]
+                                                            </span>
+                                                            <input type="file" name="Unselected-Addition" class="drop-zone__input">
+                                                        </div>
+                                                        <div class="fileNameDiv">
+                                                            <p class="text-center pt-1 mb-1 fileNameP">@localizer["img_ContractCarCheckup_No_Chosen"]</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto col-md-4 d-flex justify-content-md-end">
+                                                    <div class="dropzone-Card">
+                                                        <div class="drop-zone">
+                                                            <div class="layer" style="display: none;">
+                                                                <i class="fa-regular fa-circle-xmark removeImage"></i>
+                                                            </div>
+                                                            <span class="drop-zone__prompt">
+                                                                <img src="~/MasSystem/images/upload icon.svg" class="mb-3"> <br>@localizer["img_drop_orChoose"]
+                                                            </span>
+                                                            <input type="file" name="Ban-Addition" class="drop-zone__input">
+                                                        </div>
+                                                        <div class="fileNameDiv">
+                                                            <p class="text-center pt-1 mb-1 fileNameP">@localizer["img_ContractCarCheckup_Block"]</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
+
+    <script>
+        function validateNumberInput(input) {
+            input.value = input.value.replace(/\D/g, ''); // استبدال كل الأحرف غير الرقمية
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            // This To Focus On input when page load
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                $("#CrMasSupContractCarCheckupEnName").focus();
+            }
+            else {
+                $("#CrMasSupContractCarCheckupArName").focus();
+            }
+            //////////////////////////////////////////
+
+
+            function Check_onChange_input(existName, dataField) {
+                $.ajax({
+                    type: "GET",
+                    url: "/MAS/ContractCarCheckup/CheckChangedField",
+                    data: { existName: existName, dataField: dataField },
+                    success: function (result) {
+                        console.log("feedback", result);
+                        // Hide all previous error messages
+                        $('.invalid-feedback').show();
+
+                        // Show new error messages if they exist
+                        if (result.errors && result.errors.length > 0) {
+                            result.errors.forEach(function (error) {
+                                // Use the ID from the error object to find the correct element
+                                $(`#${error.field}-Error`).text(error.message).show();
+                            });
+                        } else {
+                            // Hide the error message if no errors
+                            $(`#${existName}-Error`).text("");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            $('#CrMasSupContractCarCheckupCode').on('input', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupContractCarCheckupCode', newValue);
+            });
+            $('#CrMasSupContractCarCheckupArName').on('change', function () {
+                var newValue = $(this).val();
+                console.log("newValue", newValue)
+                Check_onChange_input('CrMasSupContractCarCheckupArName', newValue);
+            });
+
+            $('#CrMasSupContractCarCheckupEnName').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupContractCarCheckupEnName', newValue);
+            });
+
+            $('#CrMasSupContractCarCheckupNaqlCode').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupContractCarCheckupNaqlCode', newValue);
+            });
+
+            $('#CrMasSupContractCarCheckupNaqlId').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupContractCarCheckupNaqlId', newValue);
+            });
+            
+        });
+
+    </script>
+}

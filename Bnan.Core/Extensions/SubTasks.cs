@@ -45,7 +45,7 @@
         public static string CrCasLessorClassification { get; set; } = "1112003";
         public static string Evaluation  { get; set; } = "1112004";
         public static string Currency    { get; set; } = "1112005";
-        public static string Frequently_Asked_Questions   { get; set; } = "1112006";
+        public static string CrMasSysQuestionsAnswer { get; set; } = "1112006";
 
         ////////////
         //MAS  Post services

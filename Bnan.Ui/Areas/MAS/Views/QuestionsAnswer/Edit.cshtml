@@ -1,0 +1,531 @@
+﻿@using Bnan.Ui.ViewModels.MAS
+@using Bnan.Core.Extensions
+@model QuestionsAnswerVM
+
+@inject IViewLocalizer localizer
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="MAS" asp-controller="QuestionsAnswer" asp-action="Edit" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasSysQuestionsAnswerNo" />
+            <input hidden asp-for="CrMasSysQuestionsAnswerMainTask" />
+            <input hidden asp-for="CrMasSysQuestionsAnswerSystem" />
+            <input hidden asp-for="CrMasSysQuestionsAnswerStatus" />
+            <div class="row mt-3 g-3">
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3>@localizer["Edit_QuestionsAnswer_PageTitle"]</h3>
+                            </div>
+                            <div class="col-md-auto save-col btnsContainer">
+                                <button type="submit" class="custom-img-btn" id="SaveEdit">
+                                    <img src="~/MasSystem/images/save.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn" id="HoldBtn" data-bs-toggle="modal" data-bs-target="#Stop-Modal">
+                                    <img id="StopModalIcon" src="~/MasSystem/images/stop.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn" id="DeleteBtn" data-bs-toggle="modal" data-bs-target="#Delete-Modal">
+                                    <img id="modalIcon" src="~/MasSystem/images/delete.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/QuestionsAnswer/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="row g-3 mt-3">
+                                
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 ">
+                                            <label for="System_select" class="form-label"> @localizer["QuestionsAnswerName_system_view"] <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
+                                            <select class="form-select select-style " asp-for="@Model.CrMasSysQuestionsAnswerSystem"  id="System_select" required>
+                                                <option> </option>
+                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                {
+                                                    @foreach (var single in Model.allsystemNames)
+                                                    {
+                                                        <option value="@single.CrMasSysSystemCode">@single.CrMasSysSystemEnName</option>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @foreach (var single in Model.allsystemNames)
+                                                    {
+                                                        <option value="@single.CrMasSysSystemCode">@single.CrMasSysSystemArName</option>
+                                                    }
+                                                }
+
+                                            </select>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSysQuestionsAnswerSystem" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysQuestionsAnswerSystem-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 ">
+                                            <label for="list_mainTask" class="form-label"> @localizer["QuestionsAnswerName_list_view"] <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
+                                            <select class="form-select select-style " asp-for="@Model.CrMasSysQuestionsAnswerMainTask" id="list_mainTask" required>
+                                                <option> </option>
+                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                {
+                                                    @foreach (var single in Model.allMainTaskSystem)
+                                                    {
+                                                        <option value="@single.CrMasSysMainTasksCode">@single.CrMasSysMainTasksEnName</option>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @foreach (var single in Model.allMainTaskSystem)
+                                                    {
+                                                        <option value="@single.CrMasSysMainTasksCode">@single.CrMasSysMainTasksArName</option>
+                                                    }
+                                                }
+
+                                            </select>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSysQuestionsAnswerMainTask" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysQuestionsAnswerMainTask-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="DataTitle">@localizer["the_Code"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasSysQuestionsAnswerNo</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <label for="AR-Licence" class="form-label">
+                                                @localizer["QuestionsAnswerNameAr_edit"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" asp-for="CrMasSysQuestionsAnswerArQuestions" id="CrMasSysQuestionsAnswerArQuestions" maxlength="50" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSysQuestionsAnswerArQuestions" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysQuestionsAnswerArQuestions-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="EN-Licence" class="form-label">
+                                                @localizer["QuestionsAnswerNameEn_edit"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSysQuestionsAnswerEnQuestions" maxlength="50" id="CrMasSysQuestionsAnswerEnQuestions" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSysQuestionsAnswerEnQuestions" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysQuestionsAnswerEnQuestions-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="row ">
+                                        <div class="col-lg-12">
+                                            <label>@localizer["Reason_s"]</label>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSysQuestionsAnswerReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSysQuestionsAnswerReasons" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>@localizer["QuestionsAnswerName_ArAnswer"]</label>
+                                            <textarea class=" form-control textarea-inputs" rows="3"
+                                                       name="AR-Answer" type="text">@Model.CrMasSysQuestionsAnswerArAnswer</textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>@localizer["QuestionsAnswerName_EnAnswer"]</label>
+                                            <textarea class=" form-control textarea-inputs english-input" rows="3"
+                                                      name="AR-Answer" type="text">@Model.CrMasSysQuestionsAnswerEnAnswer</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- delete modal -->
+<div class="modal fade" id="Delete-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="Delete-ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: 1px solid var(--main-color);">
+            <div class="content" id="modalContent">
+            </div>
+            <!-- Hidden spinner  -->
+            <div class="modal-body text-center" id="spinner" style="display: none;">
+                <span class="State-Modal-loader"></span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Stopp  modal -->
+<div class="modal fade" id="Stop-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="Stop-ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: 1px solid var(--main-color);">
+            <div class=" content" id="Stop-modal-Content">
+            </div>
+            <!-- Hidden spinner  -->
+            <div class="modal-body text-center" id="spinner2" style="display: none;">
+                <span class="State-Modal-loader"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
+
+    <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        // This To Focus On input when page load
+        if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+            $("#CrMasSysQuestionsAnswerEnQuestions").focus();
+        }
+        else {
+            $("#CrMasSysQuestionsAnswerArQuestions").focus();
+        }
+        //////////////////////////////////////////
+        var statusInput = $("#CrMasSysQuestionsAnswerStatus");
+        var OldNaqlId = $("#CrMasSysQuestionsAnswerNaqlId").val();
+        var OldNaqlCode = $("#CrMasSysQuestionsAnswerNaqlCode").val();
+        var OldArName = $("#CrMasSysQuestionsAnswerArQuestions").val();
+        var OldEnName = $("#CrMasSysQuestionsAnswerEnQuestions").val();
+
+
+        function Check_onChange_input(existName, dataField, oldValue) {
+            //get the old value
+            if (dataField === oldValue) {
+                // Clear any existing error message if the values match
+                $(`#${existName}-Error`).hide();
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/MAS/QuestionsAnswer/CheckChangedField",
+                data: { existName: existName, dataField: dataField },
+                success: function (result) {
+                    console.log("feedback", result);
+                    // Hide all previous error messages
+                    $('.invalid-feedback').show();
+
+                    // Show new error messages if they exist
+                    if (result.errors && result.errors.length > 0) {
+                        result.errors.forEach(function (error) {
+                            // Use the ID from the error object to find the correct element
+                            $(`#${error.field}-Error`).text(error.message).show();
+                        });
+                    } else {
+                        // Hide the error message if no errors
+                        $(`#${existName}-Error`).text("");
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        // Example usage for Arabic Name input
+        $('#CrMasSysQuestionsAnswerArQuestions').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSysQuestionsAnswerArQuestions', newValue, OldArName);
+        });
+
+        // Example usage for English Name input
+        $('#CrMasSysQuestionsAnswerEnQuestions').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSysQuestionsAnswerEnQuestions', newValue, OldEnName);
+        });
+
+        // Example usage for Naql Code input
+        $('#CrMasSysQuestionsAnswerNaqlCode').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSysQuestionsAnswerNaqlCode', newValue, OldNaqlCode);
+        });
+
+        // Example usage for Naql ID input
+        $('#CrMasSysQuestionsAnswerNaqlId').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSysQuestionsAnswerNaqlId', newValue, OldNaqlId);
+        });
+    </script>
+    <script>
+        function updateQuestionsAnswerStatus(status) {
+            var code = document.getElementById("CrMasSysQuestionsAnswerNo").value;
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: "POST",
+                    url: "/MAS/QuestionsAnswer/EditStatus",
+                    data: { status: status, code: code },
+                    success: function (result) {
+                        toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+
+                        if (result == "true") {
+                            //@*toastr.success("@localizer["ToastSave"]");*@
+                            resolve(true);
+                        } else if (result == "false_auth") {
+                            toastr.error("@localizer["AuthEmplpoyee_No_auth"]");
+                            resolve(false);
+                        } else if (result == "udelete") {
+                            toastr.error("@localizer["SureTo_Cannot_delete"]");
+                            resolve(false);
+                        } else {
+                            toastr.error("@localizer["ToastFailed"]");
+                            resolve(false);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("@localizer["ToastFailed"]");
+                        resolve(false);
+                    }
+                });
+            });
+        }
+    </script>
+    <script>
+        let isDeleted = false;
+        let isStoped = false
+        if (statusInput.val() == '@Status.Hold') {
+            isDeleted = false;
+            isStoped = true
+        }
+        else if (statusInput.val() == '@Status.Deleted') {
+            isDeleted = true;
+            isStoped = false
+        }
+
+        window.onload = () => {
+            DeleteState(isDeleted);
+            StopState(isStoped);
+        };
+
+        function DeleteState(deleted) {
+            isDeleted = deleted;
+
+            document.getElementById("modalContent").style.display = "block";
+            document.getElementById("modalIcon").src = isDeleted
+                ? "/MasSystem/images/Property 1=recycle.svg"
+                : "/MasSystem/images/delete.svg";
+
+            document.getElementById("modalContent").innerHTML = isDeleted
+                ? `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/Green-recycle.svg" /> @localizer["SureToRetriveDelete"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_UnDelete"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_UnDelete"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`
+                : `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/delete (2).svg" /> @localizer["SureTodelete"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_DrivingLicense_Delete"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_DrivingLicense_Delete"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="DeleteBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`;
+        }
+        function DeleteLoad() {
+            const modalContent = document.getElementById("modalContent");
+            const spinner = document.getElementById("spinner");
+            const deleteModal = document.getElementById("Delete-Modal");
+            const modalIcon = document.getElementById("modalIcon");
+
+            modalContent.style.display = "none";
+            spinner.style.display = "flex";
+
+            setTimeout(async () => {
+                spinner.style.display = "none";
+                const modal = bootstrap.Modal.getInstance(deleteModal);
+                modal.hide();
+
+                const newStatus = isDeleted ? '@Status.UnDeleted' : '@Status.Deleted';
+                const success = await updateQuestionsAnswerStatus(newStatus);
+                if (success) {
+                    statusInput.val(isDeleted ? '@Status.Active' : '@Status.Deleted');
+                    isDeleted = !isDeleted;
+
+                    modalIcon.src = isDeleted
+                        ? "/MasSystem/images/Property 1=recycle.svg"
+                        : "/MasSystem/images/delete.svg";
+
+                    DeleteState(isDeleted);
+                    setTimeout(function () {
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "QuestionsAnswer")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
+                }
+                else {
+                    modalIcon.src = isDeleted
+                        ? "/MasSystem/images/Property 1=recycle.svg"
+                        : "/MasSystem/images/delete.svg";
+
+                    DeleteState(isDeleted);
+                }
+            }, 500);
+        }
+
+        function StopState(Stoped) {
+            isStoped = Stoped;
+
+            document.getElementById("Stop-modal-Content").style.display = "block";
+            document.getElementById("StopModalIcon").src = isStoped
+                ? "/MasSystem/images/Property 1=active.svg"
+                : "/MasSystem/images/stop.svg";
+
+            document.getElementById("Stop-modal-Content").innerHTML = isStoped
+                ? `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/GreenStop.svg" /> @localizer["SureToRetriveHold"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_UnHold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_UnHold"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`
+                : `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/RedStop.svg" /> @localizer["SureToHold"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_DrivingLicense_Hold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_DrivingLicense_Hold"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="HoldBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`;
+        }
+        function StopLoad() {
+            const stopModalContent = document.getElementById("Stop-modal-Content");
+            const spinner = document.getElementById("spinner2");
+            const modalElement = document.getElementById("Stop-Modal");
+            const stopModalIcon = document.getElementById("StopModalIcon");
+
+            stopModalContent.style.display = "none";
+            spinner.style.display = "flex";
+
+            setTimeout(async () => {
+                spinner.style.display = "none";
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+
+                const newStatus = isStoped ? '@Status.UnHold' : '@Status.Hold';
+                const success = await updateQuestionsAnswerStatus(newStatus);
+                if (success) {
+                    statusInput.val(isStoped ? '@Status.Active' : '@Status.Hold');
+                    isStoped = !isStoped;
+
+                    stopModalIcon.src = isStoped
+                        ? "/MasSystem/images/Property 1=active.svg"
+                        : "/MasSystem/images/stop.svg";
+
+                    StopState(isStoped);
+                    setTimeout(function () {
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "QuestionsAnswer")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
+                }
+            }, 500);
+        }
+
+    </script>
+}

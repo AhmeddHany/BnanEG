@@ -25,8 +25,12 @@
         {
             <tr onclick="if (parseInt(@item.CrMasSupRenterIdtypeCode) > 0) {location.href='@Url.Action("Edit", "RenterIdtype", new { id = item.CrMasSupRenterIdtypeCode })';} else{showErrorToast_NoUpdate();}">
                 <td><p>@item.CrMasRenterInformations.Count().ToString("N0")</p></td>
-                <td><p>0</p></td>
-                <td><p>0</p></td>
+                <td>
+                    <p>@(item.CrMasSupRenterIdtypeNaqlId ?? 0)</p>
+                </td>
+                <td>
+                    <p>@(item.CrMasSupRenterIdtypeNaqlCode ?? 0)</p>
+                </td>
                 <td class="DifferAlign">
                     <p>
                         @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupRenterIdtypeEnName : item.CrMasSupRenterIdtypeArName)

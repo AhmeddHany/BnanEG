@@ -62,6 +62,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             var CarAdvantages = await _unitOfWork.CrMasSupCarAdvantage
                 .FindAllAsNoTrackingAsync(x => x.CrMasSupCarAdvantagesStatus == Status.Active);
 
+            var advantages_Count = await _unitOfWork.CrCasRenterContractAdvantage.FindCountByColumnAsync<CrCasCarAdvantage>(
+                predicate: null,
+                columnSelector: x => x.CrCasRenterContractAdvantagesCode  // تحديد العمود الذي نريد التجميع بناءً عليه
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
             // If no active licenses, retrieve all licenses
             if (!CarAdvantages.Any())
             {
@@ -70,18 +75,30 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
-            return View(CarAdvantages);
+            CarAdvantageVM VM = new CarAdvantageVM();
+            VM.crMasSupCarAdvantage = CarAdvantages;
+            VM.advantages_count = advantages_Count;
+            return View(VM);
         }
         [HttpGet]
         public async Task<PartialViewResult> GetCarAdvantageByStatus(string status, string search)
         {
+            
             //sidebar Active
-
             if (!string.IsNullOrEmpty(status))
             {
                 var CarAdvantagesAll = await _unitOfWork.CrMasSupCarAdvantage.FindAllAsNoTrackingAsync(x => x.CrMasSupCarAdvantagesStatus == Status.Active ||
                                                                                                                             x.CrMasSupCarAdvantagesStatus == Status.Deleted ||
                                                                                                                             x.CrMasSupCarAdvantagesStatus == Status.Hold);
+
+                var advantages_Count = await _unitOfWork.CrCasRenterContractAdvantage.FindCountByColumnAsync<CrCasCarAdvantage>(
+                    predicate: null,
+                    columnSelector: x => x.CrCasRenterContractAdvantagesCode  // تحديد العمود الذي نريد التجميع بناءً عليه
+                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                    );
+                
+                CarAdvantageVM VM = new CarAdvantageVM();
+                VM.advantages_count = advantages_Count;
 
                 if (status == Status.All)
                 {
@@ -89,14 +106,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                                                                          (x.CrMasSupCarAdvantagesArName.Contains(search) ||
                                                                           x.CrMasSupCarAdvantagesEnName.ToLower().Contains(search.ToLower()) ||
                                                                           x.CrMasSupCarAdvantagesCode.Contains(search)));
-                    return PartialView("_DataTableCarAdvantage", FilterAll);
+                    VM.crMasSupCarAdvantage = FilterAll;
+                    return PartialView("_DataTableCarAdvantage", VM);
                 }
                 var FilterByStatus = CarAdvantagesAll.FindAll(x => x.CrMasSupCarAdvantagesStatus == status &&
                                                                             (
                                                                            x.CrMasSupCarAdvantagesArName.Contains(search) ||
                                                                            x.CrMasSupCarAdvantagesEnName.ToLower().Contains(search.ToLower()) ||
                                                                            x.CrMasSupCarAdvantagesCode.Contains(search)));
-                return PartialView("_DataTableCarAdvantage", FilterByStatus);
+                VM.crMasSupCarAdvantage = FilterByStatus;
+                return PartialView("_DataTableCarAdvantage", VM);
             }
             return PartialView();
         }

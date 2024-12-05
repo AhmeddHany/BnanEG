@@ -127,7 +127,9 @@ var Tooltip = function () {
    *      [boundariesElement docs](https://popper.js.org/popper-documentation.html)
    * @param {Number|String} options.offset=0 - Offset of the tooltip relative to its reference. For more information refer to Popper.js'
    *      [offset docs](https://popper.js.org/popper-documentation.html)
-   * @param {Object} options.popperOptions={} - Popper options, will be passed directly to popper instance. For more information refer to Popper.js'
+   * @param {Object} options.popper
+   * 
+   * ={} - Popper options, will be passed directly to popper instance. For more information refer to Popper.js'
    *      [options docs](https://popper.js.org/popper-documentation.html)
    * @return {Object} instance - The generated tooltip instance
    */

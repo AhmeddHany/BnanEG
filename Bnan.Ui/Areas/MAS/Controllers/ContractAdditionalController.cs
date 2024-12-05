@@ -58,18 +58,18 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "Home");
             }
             // Retrieve active driving licenses
-            var renterDrivingLicenses = await _unitOfWork.CrMasSupContractAdditional
+            var contractAdditionals = await _unitOfWork.CrMasSupContractAdditional
                 .FindAllAsNoTrackingAsync(x => x.CrMasSupContractAdditionalStatus == Status.Active);
 
             // If no active licenses, retrieve all licenses
-            if (!renterDrivingLicenses.Any())
+            if (!contractAdditionals.Any())
             {
-                renterDrivingLicenses = await _unitOfWork.CrMasSupContractAdditional
+                contractAdditionals = await _unitOfWork.CrMasSupContractAdditional
                     .FindAllAsNoTrackingAsync(x => x.CrMasSupContractAdditionalStatus == Status.Hold);
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
-            return View(renterDrivingLicenses);
+            return View(contractAdditionals);
         }
         [HttpGet]
         public async Task<PartialViewResult> GetContractAdditionalByStatus(string status, string search)
@@ -125,59 +125,59 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "ContractAdditional");
             }
             // Set Title 
-            ContractAdditionalVM renterDrivingLicenseVM = new ContractAdditionalVM();
-            //renterDrivingLicenseVM.CrMasSupContractAdditionalCode = await GenerateLicenseCodeAsync();
-            return View(renterDrivingLicenseVM);
+            ContractAdditionalVM contractAdditionalVM = new ContractAdditionalVM();
+            //contractAdditionalVM.CrMasSupContractAdditionalCode = await GenerateLicenseCodeAsync();
+            return View(contractAdditionalVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddContractAdditional(ContractAdditionalVM renterDrivingLicenseVM)
+        public async Task<IActionResult> AddContractAdditional(ContractAdditionalVM contractAdditionalVM)
         {
 
 
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
 
-            if (!ModelState.IsValid || renterDrivingLicenseVM == null)
+            if (!ModelState.IsValid || contractAdditionalVM == null)
             {
-                return View("AddContractAdditional", renterDrivingLicenseVM);
+                return View("AddContractAdditional", contractAdditionalVM);
             }
             try
             {
                 // Map ViewModel to Entity
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupContractAdditional>(renterDrivingLicenseVM);
+                var contractAdditionalEntity = _mapper.Map<CrMasSupContractAdditional>(contractAdditionalVM);
 
-                renterDrivingLicenseEntity.CrMasSupContractAdditionalNaqlCode ??= 0;
-                //renterDrivingLicenseEntity.CrMasSupContractAdditionalNaqlId ??= 0;
+                contractAdditionalEntity.CrMasSupContractAdditionalNaqlCode ??= 0;
+                //contractAdditionalEntity.CrMasSupContractAdditionalNaqlId ??= 0;
 
                 // Check if the entity already exists
-                if (await _masContractAdditional.ExistsByDetails_Add_Async(renterDrivingLicenseEntity))
+                if (await _masContractAdditional.ExistsByDetails_Add_Async(contractAdditionalEntity))
                 {
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(contractAdditionalEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("AddContractAdditional", renterDrivingLicenseVM);
+                    return View("AddContractAdditional", contractAdditionalVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
                 if (Int64.Parse(await GenerateLicenseCodeAsync()) > 5099999999)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("AddContractAdditional", renterDrivingLicenseVM);
+                    return View("AddContractAdditional", contractAdditionalVM);
                 }
                 //// Generate and set the Driving License Code
-                //renterDrivingLicenseVM.CrMasSupContractAdditionalCode = await GenerateLicenseCodeAsync();
+                //contractAdditionalVM.CrMasSupContractAdditionalCode = await GenerateLicenseCodeAsync();
                 // Set status and add the record
-                renterDrivingLicenseEntity.CrMasSupContractAdditionalStatus = "A";
-                await _unitOfWork.CrMasSupContractAdditional.AddAsync(renterDrivingLicenseEntity);
+                contractAdditionalEntity.CrMasSupContractAdditionalStatus = "A";
+                await _unitOfWork.CrMasSupContractAdditional.AddAsync(contractAdditionalEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Insert);
+                await SaveTracingForLicenseChange(user, contractAdditionalEntity, Status.Insert);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return View("AddContractAdditional", renterDrivingLicenseVM);
+                return View("AddContractAdditional", contractAdditionalVM);
             }
         }
         [HttpGet]
@@ -197,13 +197,13 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(ContractAdditionalVM renterDrivingLicenseVM)
+        public async Task<IActionResult> Edit(ContractAdditionalVM contractAdditionalVM)
         {
 
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
 
-            if (user == null && renterDrivingLicenseVM == null)
+            if (user == null && contractAdditionalVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "ContractAdditional");
@@ -214,30 +214,30 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", contractAdditionalVM);
                 }
-                var renterDrivingLicenseEntity = _mapper.Map<CrMasSupContractAdditional>(renterDrivingLicenseVM);
-                renterDrivingLicenseEntity.CrMasSupContractAdditionalNaqlCode ??= 0;
-                //renterDrivingLicenseEntity.CrMasSupContractAdditionalNaqlId ??= 0;
+                var contractAdditionalEntity = _mapper.Map<CrMasSupContractAdditional>(contractAdditionalVM);
+                contractAdditionalEntity.CrMasSupContractAdditionalNaqlCode ??= 0;
+                //contractAdditionalEntity.CrMasSupContractAdditionalNaqlId ??= 0;
 
                 // Check if the entity already exists
-                if (await _masContractAdditional.ExistsByDetailsAsync(renterDrivingLicenseEntity))
+                if (await _masContractAdditional.ExistsByDetailsAsync(contractAdditionalEntity))
                 {
-                    await AddModelErrorsAsync(renterDrivingLicenseEntity);
+                    await AddModelErrorsAsync(contractAdditionalEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return View("Edit", renterDrivingLicenseVM);
+                    return View("Edit", contractAdditionalVM);
                 }
 
-                _unitOfWork.CrMasSupContractAdditional.Update(renterDrivingLicenseEntity);
+                _unitOfWork.CrMasSupContractAdditional.Update(contractAdditionalEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
-                await SaveTracingForLicenseChange(user, renterDrivingLicenseEntity, Status.Update);
+                await SaveTracingForLicenseChange(user, contractAdditionalEntity, Status.Update);
                 return RedirectToAction("Index", "ContractAdditional");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return View("Edit", renterDrivingLicenseVM);
+                return View("Edit", contractAdditionalVM);
             }
         }
         [HttpPost]

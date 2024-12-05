@@ -1,0 +1,245 @@
+﻿@using Bnan.Ui.ViewModels.MAS
+@model QuestionsAnswerVM
+
+@inject IViewLocalizer localizer
+
+@{
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="MAS" asp-controller="QuestionsAnswer" asp-action="AddQuestionsAnswer" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasSysQuestionsAnswerNo" />
+            <div class="row  mt-3 g-3">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3>@localizer["Add_QuestionsAnswer_PageTitle"]</h3>
+                            </div>
+                            <div class="col-md-auto save-col">
+                                <button type="submit" class="custom-img-btn"> <img src="~/MasSystem/images/save.svg" /> </button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/QuestionsAnswer/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="row g-3 mt-3">
+
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 ">
+                                            <label for="System_select" class="form-label"> @localizer["QuestionsAnswerName_system_view"] <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
+                                            <select class="form-select select-style " asp-for="@Model.CrMasSysQuestionsAnswerSystem" id="System_select" required>
+                                                <option> </option>
+                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                {
+                                                    @foreach (var single in Model.allsystemNames)
+                                                    {
+                                                        <option value="@single.CrMasSysSystemCode">@single.CrMasSysSystemEnName</option>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @foreach (var single in Model.allsystemNames)
+                                                    {
+                                                        <option value="@single.CrMasSysSystemCode">@single.CrMasSysSystemArName</option>
+                                                    }
+                                                }
+
+                                            </select>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSysQuestionsAnswerSystem" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysQuestionsAnswerSystem-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 ">
+                                            <label for="list_mainTask" class="form-label"> @localizer["QuestionsAnswerName_list_view"] <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
+                                            <select class="form-select select-style " asp-for="@Model.CrMasSysQuestionsAnswerMainTask" id="list_mainTask" required>
+                                                <option> </option>
+                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                {
+                                                    @foreach (var single in Model.allMainTaskSystem)
+                                                    {
+                                                        <option value="@single.CrMasSysMainTasksCode">@single.CrMasSysMainTasksEnName</option>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @foreach (var single in Model.allMainTaskSystem)
+                                                    {
+                                                        <option value="@single.CrMasSysMainTasksCode">@single.CrMasSysMainTasksArName</option>
+                                                    }
+                                                }
+
+                                            </select>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSysQuestionsAnswerMainTask" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysQuestionsAnswerMainTask-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="DataTitle">@localizer["the_Code"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasSysQuestionsAnswerNo</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <label for="AR-Licence" class="form-label">
+                                                @localizer["QuestionsAnswerNameAr_edit"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" asp-for="CrMasSysQuestionsAnswerArQuestions" id="CrMasSysQuestionsAnswerArQuestions" maxlength="50" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSysQuestionsAnswerArQuestions" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysQuestionsAnswerArQuestions-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="EN-Licence" class="form-label">
+                                                @localizer["QuestionsAnswerNameEn_edit"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSysQuestionsAnswerEnQuestions" maxlength="50" id="CrMasSysQuestionsAnswerEnQuestions" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSysQuestionsAnswerEnQuestions" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSysQuestionsAnswerEnQuestions-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="row ">
+                                        <div class="col-lg-12">
+                                            <label>@localizer["Reason_s"]</label>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSysQuestionsAnswerReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSysQuestionsAnswerReasons" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>@localizer["QuestionsAnswerName_ArAnswer"]</label>
+                                            <textarea class=" form-control textarea-inputs" rows="3"
+                                                      name="AR-Answer" type="text">@Model.CrMasSysQuestionsAnswerArAnswer</textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>@localizer["QuestionsAnswerName_EnAnswer"]</label>
+                                            <textarea class=" form-control textarea-inputs english-input" rows="3"
+                                                      name="AR-Answer" type="text">@Model.CrMasSysQuestionsAnswerEnAnswer</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // This To Focus On input when page load
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                $("#CrMasSysQuestionsAnswerEnQuestions").focus();
+            }
+            else {
+                $("#CrMasSysQuestionsAnswerArQuestions").focus();
+            }
+            //////////////////////////////////////////
+
+
+            function Check_onChange_input(existName, dataField) {
+                $.ajax({
+                    type: "GET",
+                    url: "/MAS/QuestionsAnswer/CheckChangedField",
+                    data: { existName: existName, dataField: dataField },
+                    success: function (result) {
+                        console.log("feedback", result);
+                        // Hide all previous error messages
+                        $('.invalid-feedback').show();
+
+                        // Show new error messages if they exist
+                        if (result.errors && result.errors.length > 0) {
+                            result.errors.forEach(function (error) {
+                                // Use the ID from the error object to find the correct element
+                                $(`#${error.field}-Error`).text(error.message).show();
+                            });
+                        } else {
+                            // Hide the error message if no errors
+                            $(`#${existName}-Error`).text("");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+
+            $('#CrMasSysQuestionsAnswerArQuestions').on('change', function () {
+                var newValue = $(this).val();
+                console.log("newValue", newValue)
+                Check_onChange_input('CrMasSysQuestionsAnswerArQuestions', newValue);
+            });
+
+            $('#CrMasSysQuestionsAnswerEnQuestions').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSysQuestionsAnswerEnQuestions', newValue);
+            });
+
+            $('#CrMasSysQuestionsAnswerNaqlCode').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSysQuestionsAnswerNaqlCode', newValue);
+            });
+
+            $('#CrMasSysQuestionsAnswerNaqlId').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSysQuestionsAnswerNaqlId', newValue);
+            });
+        });
+
+    </script>
+}

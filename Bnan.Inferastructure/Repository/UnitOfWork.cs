@@ -19,6 +19,7 @@ namespace Bnan.Inferastructure.Repository
         public IGenric<CrMasUserProceduresValidation> CrMasUserProceduresValidations { get; private set; }
         public IGenric<CrMasSysProceduresTask> CrMasSysProceduresTasks { get; private set; }
         public IGenric<CrMasSysCallingKey> CrMasSysCallingKeys { get; private set; }
+        public IGenric<CrMasSysQuestionsAnswer> CrMasSysQuestionsAnswer { get; private set; }
         public IGenric<CrMasLessorImage> CrMasLessorImage { get; private set; }
         public IGenric<CrCasOwner> CrCasOwner { get; private set; }
         public IGenric<CrCasBeneficiary> CrCasBeneficiary { get; private set; }
@@ -84,6 +85,8 @@ namespace Bnan.Inferastructure.Repository
         public IGenric<CrCasRenterContractChoice> CrCasRenterContractChoice { get; private set; }
         public IGenric<CrCasRenterContractAdditional> CrCasRenterContractAdditional { get; private set; }
         public IGenric<CrCasRenterContractCarCheckup> CrCasRenterContractCarCheckup { get; private set; }
+        public IGenric<CrMasSupContractCarCheckupDetail> CrMasSupContractCarCheckupDetail { get; private set; }
+        
         public IGenric<CrCasRenterContractBasic> CrCasRenterContractBasic { get; private set; }
         public IGenric<CrCasRenterContractAdvantage> CrCasRenterContractAdvantage { get; private set; }
         public IGenric<CrCasRenterContractAuthorization> CrCasRenterContractAuthorization { get; private set; }
@@ -114,6 +117,7 @@ namespace Bnan.Inferastructure.Repository
             CrMasUserProceduresValidations = new BaseRepository<CrMasUserProceduresValidation>(_context);
             CrMasSysProceduresTasks = new BaseRepository<CrMasSysProceduresTask>(_context);
             CrMasSysCallingKeys = new BaseRepository<CrMasSysCallingKey>(_context);
+            CrMasSysQuestionsAnswer = new BaseRepository<CrMasSysQuestionsAnswer>(_context);           
             CrMasLessorImage = new BaseRepository<CrMasLessorImage>(_context);
             CrCasOwner = new BaseRepository<CrCasOwner>(_context);
             CrCasBeneficiary = new BaseRepository<CrCasBeneficiary>(_context);
@@ -171,6 +175,7 @@ namespace Bnan.Inferastructure.Repository
             CrCasRenterContractChoice = new BaseRepository<CrCasRenterContractChoice>(_context);
             CrCasRenterContractAdditional = new BaseRepository<CrCasRenterContractAdditional>(_context);
             CrCasRenterContractCarCheckup = new BaseRepository<CrCasRenterContractCarCheckup>(_context);
+            CrMasSupContractCarCheckupDetail = new BaseRepository<CrMasSupContractCarCheckupDetail>(_context);
             CrCasRenterContractBasic = new BaseRepository<CrCasRenterContractBasic>(_context);
             CrCasRenterContractAdvantage = new BaseRepository<CrCasRenterContractAdvantage>(_context);
             CrCasRenterContractAuthorization = new BaseRepository<CrCasRenterContractAuthorization>(_context);

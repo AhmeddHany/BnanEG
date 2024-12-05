@@ -1,0 +1,135 @@
+﻿@using Bnan.Core.Extensions
+@model ContractCarCheckupDetailsVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    ViewData["Page-title"] = @localizer["View_ContractCarCheckupDetails_PageTitle"];
+}
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3 mb-2">
+                <div class="col">
+                    <h3>@localizer["View_ContractCarCheckupDetails_PageTitle"]</h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
+
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search" class="form-control inputs search-input" name="search" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12 filters-col">
+                    <div class="filters-custom-order">
+                        <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioAll" name="customRadio" value="All" />
+                    </div>
+
+                    <div class="filters-custom-order">
+                        <label class="form-check-label filter2" for="customRadioActive">@localizer["Active"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioActive" name="customRadio" value="A" checked />
+                    </div>
+
+                    <div class="filters-custom-order">
+                        <label class="form-check-label  filter1" for="customRadioStoped">@localizer["Stoped"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioStoped" name="customRadio" value="H" />
+                    </div>
+                    <div class="filters-custom-order">
+                        <label class="form-check-label filter3" for="customRadioRemoved">@localizer["Deleted"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioRemoved" name="customRadio" value="D" />
+                    </div>
+
+                </div>
+            </div>
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
+                    <partial name="_DataTableContractCarCheckupDetails" />
+                </div>
+            </div>
+        </form>
+        <a asp-area="MAS" asp-controller="ContractCarCheckupDetails" asp-action="AddContractCarCheckupDetails" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add_ContractCarCheckupDetails_PageTitle"]" class="new-Page-icon" style="cursor: pointer">
+            <img src="~/MasSystem/images/new virtual.svg" alt="new item">
+        </a>
+        <a asp-area="MAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="main-page-icon">
+            <img src="~/MasSystem/images/back to main.svg" alt="man">
+        </a>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/js/toastr.js"></script>
+
+    <script>
+        // لجعل الحالة حسب ما هي جاية من index نشط او الكل
+        $(document).ready(function () {
+            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+        });
+        ///////
+
+        function showErrorToast_NoUpdate() {
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+            toastr.error("@localizer["AuthEmplpoyee_NoUpdate"]");
+        }
+
+        function showErrorToast_whitController(messageText) {
+            $.ajax({
+                url: '@Url.Action("DisplayToastError_NoUpdate", "ContractCarCheckupDetails")',
+                type: 'POST',
+                data: { messageText: messageText },
+                success: function (response) {
+                    if (response.success) {
+                        console.log('showErrorToast_whitController : ', messageText);
+                    }
+                },
+                error: function () {
+                    toastr.error('تعذر الاتصال بالخادم');
+                }
+            });
+        }
+    </script>
+    @*Get ContractCarCheckupDetails Using filter*@
+    <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        //get ContractCarCheckupDetails By Status function
+        function GetContractCarCheckupDetailsFitler(status, search) {
+            $.ajax({
+                type: "GET",
+                data: {
+                    status: status, search: search
+                },
+                url: "@Url.Action("GetContractCarCheckupDetailsByStatus", "ContractCarCheckupDetails", new { Area = "MAS" })",
+                success: function (response) {
+                    $(".dataTable").html(response);
+                },
+            })
+        }
+
+        $("input[name='customRadio']").on("click", function () {
+            const status = $(this).val();
+            const search = $("#search").val(); // الحصول على قيمة البحث
+            GetContractCarCheckupDetailsFitler(status, search);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#search").on("keyup", function () {
+            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+            const search = $(this).val(); // الحصول على قيمة البحث
+            GetContractCarCheckupDetailsFitler(status, search);
+        });
+    </script>
+}

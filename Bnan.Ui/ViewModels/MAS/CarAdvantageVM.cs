@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Bnan.Core.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bnan.Ui.ViewModels.MAS
 {
@@ -19,7 +20,9 @@ namespace Bnan.Ui.ViewModels.MAS
         [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupCarAdvantagesReasons { get; set; }
         public int? RentersHave_withType_Count { get; set; }
+       
+        public List<CrMasSupCarAdvantage> crMasSupCarAdvantage = new List<CrMasSupCarAdvantage>();
 
-
+        public List<TResult2>? advantages_count = new List<TResult2>();
     }
 }

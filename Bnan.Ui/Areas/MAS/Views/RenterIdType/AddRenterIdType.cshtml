@@ -79,21 +79,21 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="rental-system-number" class="form-label">@localizer["RentalSystemCode"]</label>
-                                            <input disabled type="text" class="form-control inputs number-input" id="CrMasSupCarModelNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
+                                            <input type="text" class="form-control inputs number-input" asp-for="CrMasSupRenterIdtypeNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupCarModelNaqlCode-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupRenterIdtypeNaqlCode" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupRenterIdtypeNaqlCode-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="rental-system-pin" class="form-label">@localizer["RentalSystemNo"]</label>
-                                            <input disabled type="text" class="form-control number-input inputs" id="CrMasSupCarModelNaqlId" maxlength="10" oninput="validateNumberLength(this)">
+                                            <input type="text" class="form-control number-input inputs" asp-for="CrMasSupRenterIdtypeNaqlId" maxlength="10" oninput="validateNumberLength(this)">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span class="text-danger"></span>
-                                                    <span class="text-danger" id="CrMasSupCarModelNaqlId-Error"></span>
+                                                    <span asp-validation-for="@Model.CrMasSupRenterIdtypeNaqlId" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupRenterIdtypeNaqlId-Error"></span>
                                                 </div>
                                             </div>
                                         </div>

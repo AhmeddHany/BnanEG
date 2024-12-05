@@ -142,7 +142,8 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasContractAdditional, MasContractAdditional>();
             builder.Services.AddScoped<IMasContractOptions, MasContractOptions>();
             builder.Services.AddScoped<IPostCity, PostCity>();
-            builder.Services.AddScoped<ICarCheckup, CarCheckup>();
+            builder.Services.AddScoped<IMasContractCarCheckup, MasContractCarCheckup>();
+            builder.Services.AddScoped<IMasContractCarCheckupDetails, MasContractCarCheckupDetails>();
             builder.Services.AddScoped<IPostRegion, PostRegion>();
 
             builder.Services.AddScoped<IUserBranchValidity, UserBranchValidity>();
@@ -208,6 +209,8 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasCarModel, MasCarModel>();
             builder.Services.AddScoped<IMasRenterMembership, MasRenterMembership>();
             builder.Services.AddScoped<IMasUser, MasUser>();
+            builder.Services.AddScoped<IMasQuestionsAnswer, MasQuestionsAnswer>();
+            
 
 
 

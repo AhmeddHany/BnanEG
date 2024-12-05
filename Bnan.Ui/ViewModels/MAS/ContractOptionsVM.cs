@@ -6,7 +6,7 @@ namespace Bnan.Ui.ViewModels.MAS
 {
     public class ContractOptionsVM 
     {
-        [Range(5100000001, 5199999999, ErrorMessage = "error_Codestart51")]
+        [Range(5100000001, 5199999999, ErrorMessage = "error_Codestart51"),Required(ErrorMessage = "requiredFiled")]
         public string CrMasSupContractOptionsCode { get; set; } = null!;
         [MaxLength(2, ErrorMessage = "requiredFiled")]
         public string? CrMasSupContractOptionsGroup { get; set; } = "51";

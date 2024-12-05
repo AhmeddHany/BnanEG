@@ -33,7 +33,9 @@ namespace Bnan.Inferastructure.Repository.MAS
                 x.CrMasSupRenterIdtypeCode != entity.CrMasSupRenterIdtypeCode && // Exclude the current entity being updated
                 (
                     x.CrMasSupRenterIdtypeArName == entity.CrMasSupRenterIdtypeArName ||
-                    x.CrMasSupRenterIdtypeEnName.ToLower().Equals(entity.CrMasSupRenterIdtypeEnName.ToLower())
+                    x.CrMasSupRenterIdtypeEnName.ToLower().Equals(entity.CrMasSupRenterIdtypeEnName.ToLower()) ||
+                    (x.CrMasSupRenterIdtypeNaqlCode == entity.CrMasSupRenterIdtypeNaqlCode && entity.CrMasSupRenterIdtypeNaqlCode != 0) ||
+                    (x.CrMasSupRenterIdtypeNaqlId == entity.CrMasSupRenterIdtypeNaqlId && entity.CrMasSupRenterIdtypeNaqlId != 0)
                 )
             );
         }
@@ -51,6 +53,20 @@ namespace Bnan.Inferastructure.Repository.MAS
             if (string.IsNullOrEmpty(englishName)) return false;
             var allLicenses = await GetAllAsync();
             return allLicenses.Any(x => x.CrMasSupRenterIdtypeEnName.ToLower().Equals(englishName.ToLower()) && x.CrMasSupRenterIdtypeCode != code);
+        }
+
+        public async Task<bool> ExistsByNaqlCodeAsync(int naqlCode, string code)
+        {
+            if (naqlCode == 0) return false;
+            return await _unitOfWork.CrMasSupRenterIdtype
+                .FindAsync(x => x.CrMasSupRenterIdtypeNaqlCode == naqlCode && x.CrMasSupRenterIdtypeCode != code) != null;
+        }
+
+        public async Task<bool> ExistsByNaqlIdAsync(int naqlId, string code)
+        {
+            if (naqlId == 0) return false;
+            return await _unitOfWork.CrMasSupRenterIdtype
+                .FindAsync(x => x.CrMasSupRenterIdtypeNaqlId == naqlId && x.CrMasSupRenterIdtypeCode != code) != null;
         }
 
         public async Task<bool> CheckIfCanDeleteIt(string code)

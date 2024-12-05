@@ -1,0 +1,69 @@
+﻿@using Bnan.Core.Extensions
+@model QuestionsAnswerVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th class="DifferAlign"> @localizer["QuestionsAnswerName_answer_view"]</th>
+            <th class="DifferAlign"> @localizer["QuestionsAnswerName_question_view"]</th>
+            <th class="DifferAlign"> @localizer["QuestionsAnswerName_list_view"]</th>
+            <th class="DifferAlign"> @localizer["QuestionsAnswerName_system_view"]</th>
+            <th class="DifferAlign"> @localizer["the_Code"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.crMasSysQuestionsAnswer)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "QuestionsAnswer", new { id = item.CrMasSysQuestionsAnswerNo })'">
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+                    <td class="DifferAlign">
+                        <textarea class=" form-control FAQ-textArea" rows="1" name="textareaEn'@Model.CrMasSysQuestionsAnswerNo'" type="text" data-bs-toggle="tooltip" data-bs-placement="top"
+                                  data-bs-custom-class="FAQ-tooltip" id="textareaEn'@Model.CrMasSysQuestionsAnswerNo'" data-bs-title="@(item.CrMasSysQuestionsAnswerEnAnswer ?? " ")">@(item.CrMasSysQuestionsAnswerEnAnswer ?? " ") </textarea>
+                    </td>
+                    <td class="DifferAlign"><p>@(item.CrMasSysQuestionsAnswerEnQuestions ?? " ")</p></td>
+
+                    <td class="DifferAlign"><p>@(Model.allMainTaskSystem?.Find(x => x.CrMasSysMainTasksCode == item.CrMasSysQuestionsAnswerMainTask)?.CrMasSysMainTasksEnName ?? " ")</p></td>
+                    <td class="DifferAlign"><p>@(Model.allsystemNames?.Find(x => x.CrMasSysSystemCode == item.CrMasSysQuestionsAnswerSystem)?.CrMasSysSystemEnName ?? " ")</p></td>
+                }
+                else
+                {
+                    <td class="DifferAlign">
+                        <textarea class=" form-control FAQ-textArea" rows="1" name="textareaAr'@Model.CrMasSysQuestionsAnswerNo'" type="text" data-bs-toggle="tooltip" data-bs-placement="top"
+                                  data-bs-custom-class="FAQ-tooltip" id="textareaAr'@Model.CrMasSysQuestionsAnswerNo'" data-bs-title="@(item.CrMasSysQuestionsAnswerArAnswer ?? " ")">@(item.CrMasSysQuestionsAnswerArAnswer ?? " ") </textarea>
+                    </td>
+                    <td class="DifferAlign"><p>@(item.CrMasSysQuestionsAnswerArQuestions ?? " ")</p></td>
+                    <td class="DifferAlign"><p>@(Model.allMainTaskSystem?.Find(x => x.CrMasSysMainTasksCode == item.CrMasSysQuestionsAnswerMainTask)?.CrMasSysMainTasksArName ?? " ")</p></td>
+                    <td class="DifferAlign"><p>@(Model.allsystemNames?.Find(x => x.CrMasSysSystemCode == item.CrMasSysQuestionsAnswerSystem)?.CrMasSysSystemArName ?? " ")</p></td>
+                }
+
+                <td class="DifferAlign">
+                    <p>@item.CrMasSysQuestionsAnswerNo</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasSysQuestionsAnswerStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasSysQuestionsAnswerStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasSysQuestionsAnswerStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>

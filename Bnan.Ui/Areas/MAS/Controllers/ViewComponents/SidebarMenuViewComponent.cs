@@ -664,7 +664,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Choices"],
-                        Url = Url.Action("Index", "ContractOption", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
+                        Url = Url.Action("Index", "ContractOptions", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
                     });
                 }
 
@@ -674,7 +674,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["VirtualInspection"],
-                        Url = Url.Action("Index", "CarCheckup", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
+                        Url = Url.Action("Index", "ContractCarCheckup", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
                     });
                 }
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1111004" && l.CrMasUserSubValidationAuthorization == true))
@@ -683,7 +683,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["VirtualInspectionDetails"],
-                        Url = "#" // استخدم Url الفعلي للـ Action
+                        Url = Url.Action("Index", "ContractCarCheckupDetails", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
+                        
                     });
                 }
 
@@ -790,8 +791,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                 servicesMenu.SubItems.Add(new SidebarMenuItem
                 {
                     Authorization = true,
-                    Title = _localizer["Messages To Users"],
-                    Url = Url.Action("Index", "MessagesToUsers", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
+                    Title = _localizer["FrequentlyAskedQuestions"],
+                    Url = Url.Action("Index", "QuestionsAnswer", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
                 });
 
                 sidebarMenu.Add(servicesMenu);

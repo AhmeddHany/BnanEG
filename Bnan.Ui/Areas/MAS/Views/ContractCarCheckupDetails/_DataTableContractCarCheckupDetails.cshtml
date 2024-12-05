@@ -1,0 +1,56 @@
+﻿@using Bnan.Core.Extensions
+@model ContractCarCheckupDetailsVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            @*<th> @localizer["RentalSystemCode"]</th>*@
+            @*<th> @localizer["RentalSystemNo"] </th>*@
+            <th class="DifferAlign"> @localizer["ContractCarCheckupDetailsName_view"]</th>
+            <th> @localizer["Code_No_view"]</th>
+            <th class="DifferAlign"> @localizer["Code_Check_view"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.crMasSupContractCarCheckupDetails)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "ContractCarCheckupDetails", new { id = item.CrMasSupContractCarCheckupDetailsCode,no=item.CrMasSupContractCarCheckupDetailsNo })'">
+
+                <td class="DifferAlign">
+                    <p>
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.crMasSupContractCarCheckup?.Find(x => x.CrMasSupContractCarCheckupCode == item.CrMasSupContractCarCheckupDetailsCode)?.CrMasSupContractCarCheckupEnName + " / " + item.CrMasSupContractCarCheckupDetailsEnName : Model.crMasSupContractCarCheckup?.Find(x => x.CrMasSupContractCarCheckupCode == item.CrMasSupContractCarCheckupDetailsCode)?.CrMasSupContractCarCheckupArName + " / " + item.CrMasSupContractCarCheckupDetailsArName)
+                    </p>
+                </td>
+                <td>
+                    <p>@item.CrMasSupContractCarCheckupDetailsNo</p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@item.CrMasSupContractCarCheckupDetailsCode</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasSupContractCarCheckupDetailsStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasSupContractCarCheckupDetailsStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasSupContractCarCheckupDetailsStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>

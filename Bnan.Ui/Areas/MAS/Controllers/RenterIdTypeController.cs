@@ -284,6 +284,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 ModelState.AddModelError("CrMasSupRenterIdtypeEnName", _localizer["Existing"]);
             }
+
+            if (await _masRenterIdtype.ExistsByNaqlCodeAsync((int)entity.CrMasSupRenterIdtypeNaqlCode, entity.CrMasSupRenterIdtypeCode))
+            {
+                ModelState.AddModelError("CrMasSupRenterIdtypeNaqlCode", _localizer["Existing"]);
+            }
+
+            if (await _masRenterIdtype.ExistsByNaqlIdAsync((int)entity.CrMasSupRenterIdtypeNaqlId, entity.CrMasSupRenterIdtypeCode))
+            {
+                ModelState.AddModelError("CrMasSupRenterIdtypeNaqlId", _localizer["Existing"]);
+            }
         }
 
         //Error exist message when change input without run post action >> help us in front end
@@ -304,6 +314,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 else if (existName == "CrMasSupRenterIdtypeEnName" && All_RenterIdtypes.Any(x => x.CrMasSupRenterIdtypeEnName?.ToLower() == dataField.ToLower()))
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupRenterIdtypeEnName", Message = _localizer["Existing"] });
+                }
+                // Check for existing rental system number
+                else if (existName == "CrMasSupRenterIdtypeNaqlCode" && Int64.TryParse(dataField, out var code) && code != 0 && All_RenterIdtypes.Any(x => x.CrMasSupRenterIdtypeNaqlCode == code))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupRenterIdtypeNaqlCode", Message = _localizer["Existing"] });
+                }
+                // Check for existing rental system ID
+                else if (existName == "CrMasSupRenterIdtypeNaqlId" && Int64.TryParse(dataField, out var id) && id != 0 && All_RenterIdtypes.Any(x => x.CrMasSupRenterIdtypeNaqlId == id))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasSupRenterIdtypeNaqlId", Message = _localizer["Existing"] });
                 }
             }
 

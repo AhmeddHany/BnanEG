@@ -15,6 +15,7 @@ namespace Bnan.Core.Interfaces
         public IGenric<CrMasSysProcedure> CrMasSysProcedure { get; }
         public IGenric<CrMasSysProceduresTask> CrMasSysProceduresTasks { get; }
         public IGenric<CrMasSysCallingKey> CrMasSysCallingKeys { get; }
+        public IGenric<CrMasSysQuestionsAnswer> CrMasSysQuestionsAnswer { get; }
         public IGenric<CrMasLessorImage> CrMasLessorImage { get; }
         public IGenric<CrCasOwner> CrCasOwner { get; }
         public IGenric<CrCasBeneficiary> CrCasBeneficiary { get; }
@@ -77,6 +78,7 @@ namespace Bnan.Core.Interfaces
         public IGenric<CrCasRenterContractChoice> CrCasRenterContractChoice { get; }
         public IGenric<CrCasRenterContractAdditional> CrCasRenterContractAdditional { get; }
         public IGenric<CrCasRenterContractCarCheckup> CrCasRenterContractCarCheckup { get; }
+        public IGenric<CrMasSupContractCarCheckupDetail> CrMasSupContractCarCheckupDetail { get; }
         public IGenric<CrCasRenterContractBasic> CrCasRenterContractBasic { get; }
         public IGenric<CrCasRenterContractAdvantage> CrCasRenterContractAdvantage { get; }
         public IGenric<CrCasRenterContractAuthorization> CrCasRenterContractAuthorization { get; }

@@ -1,0 +1,57 @@
+﻿@using Bnan.Core.Extensions
+@model List<CrMasSupContractOption>
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th> @localizer["RentalSystemCode"]</th>
+            @*<th> @localizer["RentalSystemNo"] </th>*@
+            <th class="DifferAlign"> @localizer["ContractOptionsName_view"]</th>
+            <th class="DifferAlign"> @localizer["the_Code"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "ContractOptions", new { id = item.CrMasSupContractOptionsCode })'">
+                <td>
+                    <p>@(item.CrMasSupContractOptionsNaqlCode ?? 0)</p>
+                </td>
+                @*<td>
+                    <p>@(item.CrMasSupContractOptionsNaqlId ?? 0)</p>
+                </td>*@
+                <td class="DifferAlign">
+                    <p>
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupContractOptionsEnName : item.CrMasSupContractOptionsArName)
+                    </p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@item.CrMasSupContractOptionsCode</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasSupContractOptionsStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasSupContractOptionsStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasSupContractOptionsStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>
