@@ -9,8 +9,8 @@ namespace Bnan.Core.Models
             CrCasAccountContractTaxOweds = new HashSet<CrCasAccountContractTaxOwed>();
             CrCasAccountInvoices = new HashSet<CrCasAccountInvoice>();
             CrCasAccountReceipts = new HashSet<CrCasAccountReceipt>();
-            CrCasLessorConnectCrCasLessorConnectUserLoginNavigations = new HashSet<CrCasLessorConnect>();
-            CrCasLessorConnectCrCasLessorConnectUserLogoutNavigations = new HashSet<CrCasLessorConnect>();
+            CrCasLessorWhatsupConnectCrCasLessorWhatsupConnectUserLoginNavigations = new HashSet<CrCasLessorWhatsupConnect>();
+            CrCasLessorWhatsupConnectCrCasLessorWhatsupConnectUserLogoutNavigations = new HashSet<CrCasLessorWhatsupConnect>();
             CrCasRenterContractEvaluations = new HashSet<CrCasRenterContractEvaluation>();
             CrCasRenterContractStatisticCrCasRenterContractStatisticsUserCloseNavigations = new HashSet<CrCasRenterContractStatistic>();
             CrCasRenterContractStatisticCrCasRenterContractStatisticsUserOpenNavigations = new HashSet<CrCasRenterContractStatistic>();
@@ -23,6 +23,7 @@ namespace Bnan.Core.Models
             CrMasUserMessageCrMasUserMessageUserSenderNavigations = new HashSet<CrMasUserMessage>();
             CrMasUserProceduresValidations = new HashSet<CrMasUserProceduresValidation>();
             CrMasUserSubValidations = new HashSet<CrMasUserSubValidation>();
+
         }
 
         public string CrMasUserInformationCode { get; set; } = null!;
@@ -63,13 +64,14 @@ namespace Bnan.Core.Models
         public bool? CrMasUserInformationOperationStatus { get; set; }
         public string? CrMasUserInformationStatus { get; set; }
         public string? CrMasUserInformationReasons { get; set; }
+
         public virtual CrMasLessorInformation? CrMasUserInformationLessorNavigation { get; set; }
         public virtual CrMasUserContractValidity CrMasUserContractValidity { get; set; } = null!;
         public virtual ICollection<CrCasAccountContractTaxOwed> CrCasAccountContractTaxOweds { get; set; }
         public virtual ICollection<CrCasAccountInvoice> CrCasAccountInvoices { get; set; }
         public virtual ICollection<CrCasAccountReceipt> CrCasAccountReceipts { get; set; }
-        public virtual ICollection<CrCasLessorConnect> CrCasLessorConnectCrCasLessorConnectUserLoginNavigations { get; set; }
-        public virtual ICollection<CrCasLessorConnect> CrCasLessorConnectCrCasLessorConnectUserLogoutNavigations { get; set; }
+        public virtual ICollection<CrCasLessorWhatsupConnect> CrCasLessorWhatsupConnectCrCasLessorWhatsupConnectUserLoginNavigations { get; set; }
+        public virtual ICollection<CrCasLessorWhatsupConnect> CrCasLessorWhatsupConnectCrCasLessorWhatsupConnectUserLogoutNavigations { get; set; }
         public virtual ICollection<CrCasRenterContractEvaluation> CrCasRenterContractEvaluations { get; set; }
         public virtual ICollection<CrCasRenterContractStatistic> CrCasRenterContractStatisticCrCasRenterContractStatisticsUserCloseNavigations { get; set; }
         public virtual ICollection<CrCasRenterContractStatistic> CrCasRenterContractStatisticCrCasRenterContractStatisticsUserOpenNavigations { get; set; }

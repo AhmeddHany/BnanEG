@@ -186,7 +186,7 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasCountries, MasCountries>();
             builder.Services.AddScoped<IMasPostRegions, MasPostRegions>();
             builder.Services.AddScoped<IMasPostCity, MasPostCity>();
-            
+
 
             //CAS
             builder.Services.AddScoped<IRenterLessorInformation, CasRenterLessorInformation>();
@@ -210,7 +210,7 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasRenterMembership, MasRenterMembership>();
             builder.Services.AddScoped<IMasUser, MasUser>();
             builder.Services.AddScoped<IMasQuestionsAnswer, MasQuestionsAnswer>();
-            
+            builder.Services.AddScoped<IMasWhatsupConnect, MasWhatsupConnect>();
 
 
 

@@ -49,6 +49,7 @@ namespace Bnan.Inferastructure.Repository
 
         public IGenric<CrMasSupContractCarCheckup> CrMasSupContractCarCheckup { get; private set; }
         public IGenric<CrMasUserBranchValidity> CrMasUserBranchValidity { get; private set; }
+        public IGenric<CrCasLessorWhatsupConnect> CrCasLessorWhatsupConnect { get; }
 
         public IGenric<CrMasSupPostRegion> CrMasSupPostRegion { get; private set; }
         public IGenric<CrCasRenterPrivateDriverInformation> CrCasRenterPrivateDriverInformation { get; private set; }
@@ -190,6 +191,7 @@ namespace Bnan.Inferastructure.Repository
             CrMasSysConvertNoToText = new BaseRepository<CrMasSysConvertNoToText>(_context);
             CrMasSupCarYear = new BaseRepository<CrMasSupCarYear>(_context);
             CrCasRenterContractEvaluation = new BaseRepository<CrCasRenterContractEvaluation>(_context);
+            CrCasLessorWhatsupConnect = new BaseRepository<CrCasLessorWhatsupConnect>(_context);
         }
         public int Complete()
         {

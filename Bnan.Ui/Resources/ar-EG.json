@@ -625,8 +625,8 @@
 
     //TechnicalConnectivity
     "Company": "الشركة",
-    "CompaniesInformations": "بيانات الشركات Informations",
-    "BranchesNo": "عدد الفروع.",
+    "CompaniesInformations": "بيانات الشركات",
+    "BranchesNo": "عدد الفروع",
     "CountryRegion": "المدينة/المنطقة"
   },
 
