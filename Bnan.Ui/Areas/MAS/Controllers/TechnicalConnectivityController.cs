@@ -4,6 +4,7 @@ using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
+using Bnan.Inferastructure.Extensions;
 using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS.WhatsupVMS;
@@ -65,52 +66,44 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> GenerateQrCode(string companyId)
         {
-            var url = $"{IPWhatsupService}/api/generateQrCodeNew2/{companyId}";
-            using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-                return Content(content, "application/json");
-            }
-            return StatusCode((int)response.StatusCode, "Error fetching QR Code");
-        }
-        [HttpGet]
-        public async Task<IActionResult> IsClientReady(string companyId)
-        {
-            var url = $"{IPWhatsupService}/api/isClientReady_data/{companyId}";
-            using var httpClient = new HttpClient();
             try
             {
-                var response = await httpClient.GetAsync(url);
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
-
-                    if (apiResponse?.Status == true)
-                    {
-                        var clientData = apiResponse.Data;
-                        bool updateResult = await UpdateClientInfo(companyId, clientData);
-
-                        if (updateResult)
-                        {
-                            return Content(content, "application/json");
-                        }
-                        else
-                        {
-                            return StatusCode(500, "Error updating client info.");
-                        }
-                    }
-                    return Content(content, "application/json");
-                }
-                return StatusCode((int)response.StatusCode, "Error checking client connection.");
+                var response = await WhatsAppServicesExtension.GenerateQrCode(companyId);
+                return Content(response, "application/json");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error.");
+                return StatusCode(500, new { status = false, message = $"حدث خطأ أثناء توليد رمز الاستجابة السريعة. {ex.Message}" });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> IsClientReady(string companyId)
+        {
+            try
+            {
+                var content = await WhatsAppServicesExtension.IsClientReady(companyId);
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
+
+                if (apiResponse?.Status == true)
+                {
+                    var clientData = apiResponse.Data;
+                    bool updateResult = await UpdateClientInfo(companyId, clientData);
+
+                    if (updateResult)
+                        return Content(content, "application/json");
+                    else
+                        return StatusCode(500, new { status = false, message = "فشل في تحديث بيانات العميل." });
+                }
+
+                return Content(content, "application/json");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = false, message = $"حدث خطأ أثناء التحقق من جاهزية العميل. {ex.Message}" });
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> LogoutClient(string companyId)
         {
@@ -118,26 +111,24 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             try
             {
-                var url = $"{IPWhatsupService}/api/logout_whats/{companyId}";
-                using var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync(url);
+                var response = await WhatsAppServicesExtension.LogoutAsync(companyId);
 
                 if (response.IsSuccessStatusCode)
                 {
                     await _masTechnicalConnect.ChangeStatusOldWhatsupConnect(companyId, user.CrMasUserInformationCode);
                     await _masTechnicalConnect.AddNewWhatsupConnect(companyId);
                     await _unitOfWork.CompleteAsync();
+
                     return Json(new { status = true, message = "تم قطع الاتصال بنجاح" });
                 }
                 else
                 {
-                    return Json(new { status = false, message = "حدث خطأ أثناء قطع الاتصال" });
+                    return Json(new { status = false, message = "حدث خطأ أثناء قطع الاتصال. تأكد من حالة الخادم." });
                 }
             }
             catch (Exception ex)
             {
-                // التعامل مع الأخطاء في حال حدوث استثناء
-                return Json(new { status = false, message = "حدث خطأ أثناء قطع الاتصال: " + ex.Message });
+                return Json(new { status = false, message = $"حدث خطأ أثناء قطع الاتصال: {ex.Message}" });
             }
         }
         [HttpPost]
@@ -150,35 +141,15 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     return Json(new { status = false, message = "رقم الهاتف والرسالة مطلوبان" });
                 }
 
-                var url = $"{IPWhatsupService}/api/sendMessage_text";
+                // استخدام الـ Extension Method لإرسال الرسالة
+                var result = await WhatsAppServicesExtension.SendMessageAsync(request.Phone, request.Message, request.CompanyId);
 
-                var httpClient = new HttpClient();
-
-                // إعداد البيانات بتنسيق x-www-form-urlencoded
-                var formData = new Dictionary<string, string>
-        {
-            { "phone", request.Phone },
-            { "message", request.Message },
-            { "apiToken", "Bnan_fgfghgfhnbbbmhhjhgmghhgghhgj" },
-            { "id", request.CompanyId }
-        };
-                var content = new FormUrlEncodedContent(formData);
-
-                // إرسال الطلب
-                var response = await httpClient.PostAsync(url, content);
-
-                // التحقق من نجاح الطلب
-                if (response.IsSuccessStatusCode)
-                {
-                    return Json(new { status = true, message = "تم إرسال الرسالة بنجاح" });
-                }
-                else
-                {
-                    return Json(new { status = false, message = $"فشل إرسال الرسالة: {response.ReasonPhrase}" });
-                }
+                // إرجاع الاستجابة الناجحة
+                return Json(new { status = true, message = result });
             }
             catch (Exception ex)
             {
+                // التعامل مع الأخطاء
                 return Json(new { status = false, message = $"حدث خطأ أثناء إرسال الرسالة: {ex.Message}" });
             }
         }
