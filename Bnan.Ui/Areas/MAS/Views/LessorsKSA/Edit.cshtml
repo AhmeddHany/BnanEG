@@ -7,781 +7,825 @@
        ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
 }
 
-@{
-    ViewData["Page-title"] = localizer["Edit Lessor Data"];
-    ViewData["Page-Hint"] = localizer["Edit Lessor Hint"];
-}
-<style>
-    .row {
-        align-items: center;
-    }
 
-    .text-danger {
-        white-space: nowrap;
-    }
 
-    .select2-selection.select2-selection--single {
-        border: none;
-    }
 
-    .select2-selection__rendered {
-        height: 37px;
-        display: block;
-        width: 100%;
-        padding: 0.45rem 0.9rem;
-        font-size: 0.9rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: #6c757d;
-        background-color: #fff;
-        background-clip: padding-box;
-        border: 1px solid #dee2e6;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0.25rem;
-        -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-        transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-    }
-
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 26px;
-        position: absolute;
-        top: 8px;
-        right: 1px;
-        width: 20px;
-    }
-</style>
-
-@if (requestCulture.RequestCulture.UICulture.Name == "ar-EG")
-{
-    <style>
-        .LessorInfoEmailInstagramecol, .LessorDirNameEnCol {
-            width: 27%;
-        }
-    </style>
-}
-<title>@ViewData["Title"]</title>
-<div class="sub-container-form">
-    <form class="needs-validation" id="LessorForm" novalidate asp-area="MAS" asp-controller="LessorsKSA" asp-action="Edit" method="post">
-        <div class="form-contain">
-            @*lessor name arabic*@
-            <div class="row mt-2" hidden>
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorCode">@localizer["LessorCode"]</label>
-                </div>
-                <input asp-for="CrMasLessorInformationStatus" hidden />
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationCode" id="LessorCode" maxlength="100" width="80%" />
-                </div>
-            </div>
-
-            @if (requestCulture.RequestCulture.UICulture.Name != "en-US")
-            {
-                @*lessor name arabic*@
-                <div class="row mt-2">
-                    <div class="col-md-1">
-                        <label class="form-label" for="LessorNameAr">@localizer["LessorNameAr"]</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" asp-for="CrMasLessorInformationArLongName" id="LessorNameAr" maxlength="100" width="80%" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" readonly />
-                        <div style="margin-top:2px">
-                            <div style="height: 0">
-                                <span asp-validation-for="@Model.CrMasLessorInformationArLongName" class="text-danger"></span>
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="MAS" asp-controller="LessorsKSA" asp-action="Edit" method="post" class="needs-validation" novalidate>
+            <div class="row">
+                <input hidden id="CrMasLessorInformationStatus" asp-for="CrMasLessorInformationStatus" />
+                <input hidden id="CrMasLessorInformationCode" asp-for="CrMasLessorInformationCode" />
+                <input hidden id="CrMasLessorInformationArLongName" asp-for="CrMasLessorInformationArLongName" />
+                <input hidden id="CrMasLessorInformationArShortName" asp-for="CrMasLessorInformationArShortName" />
+                <input hidden id="CrMasLessorInformationEnLongName" asp-for="CrMasLessorInformationEnLongName" />
+                <input hidden id="CrMasLessorInformationEnShortName" asp-for="CrMasLessorInformationEnShortName" />
+                <input hidden id="CrMasLessorInformationTaxNo" asp-for="CrMasLessorInformationTaxNo" />
+                <input hidden id="CrMasLessorInformationGovernmentNo" asp-for="CrMasLessorInformationGovernmentNo" />
+                <input hidden id="BranchPostVM.CrCasBranchPostCity" asp-for="BranchPostVM.CrCasBranchPostCity" />
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3> @localizer["LessorUpdateInfo"] </h3>
+                            </div>
+                            <div class="col-md-auto save-col btnsContainer">
+                                <button type="submit" class="custom-img-btn" id="SaveEdit">
+                                    <img src="~/MasSystem/images/save.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn" id="HoldBtn" data-bs-toggle="modal" data-bs-target="#Stop-Modal">
+                                    <img id="StopModalIcon" src="~/MasSystem/images/stop.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn" id="DeleteBtn" data-bs-toggle="modal" data-bs-target="#Delete-Modal">
+                                    <img id="modalIcon" src="~/MasSystem/images/delete.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/LessorsKSA/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
                             </div>
                         </div>
-                    </div>
+                        <main class="mt-4 g-3">
+                            <h4 class="subtitle mb-3">@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.CrMasLessorInformationEnLongName : Model.CrMasLessorInformationArLongName) </h4>
+                            <h6>
+                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? ViewBag.CityDropDownEn : ViewBag.CityDropDownAr)
+                            </h6>
+                            <div class="accordion inputs-accordion">
+                                <div class=" inputs-accordion-item">
+                                    <div class=" inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            @localizer["Data"]
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
+                                            <div class="container-fluid Update-data-scroll-container">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <p class="DataTitle">@localizer["TaxNo"]</p>
+                                                            </div>
+                                                            <div class="col-auto ">
+                                                                <p class="Saved-data">
+                                                                    @Model.CrMasLessorInformationTaxNo
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <p class="DataTitle">@localizer["governmentNo"] </p>
+                                                            </div>
+                                                            <div class="col-auto ">
+                                                                <p class="Saved-data"> @Model.CrMasLessorInformationGovernmentNo </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 ">
+                                                        <label for="Category" class="form-label">
+                                                            @localizer["Classification"]
+                                                        </label>
+                                                        <select class="form-select select-style "
+                                                                asp-for="@Model.CrMasLessorInformationClassification" id="Category">
+                                                            @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                                                            {
+                                                                @foreach (var classification in (List<SelectListItem>)ViewData["ClassificationDropDownAr"])
+                                                                {
 
-                    <div class="col-md-1">
-                        <label class="form-label" for="LessorNameArShort">@localizer["LessorNameArShort"]</label>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" asp-for="CrMasLessorInformationArShortName" id="LessorNameArShort" data-val-required="@localizer["requiredFiled"]" required width="80%" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" readonly>
-                        <span asp-validation-for="@Model.CrMasLessorInformationArShortName" class="text-danger"></span>
-                    </div>
-                </div>
+                                                                    <option value="@classification.Value" selected="@(classification.Value.Trim() == "" ? "selected" : null)">@classification.Text</option>
 
-                @*lessor name English*@
-                <div class="row mt-2" hidden>
-                    <div class="col-md-1">
-                        <label class="form-label" for="LessorNameEn">@localizer["LessosorNameEn"]</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" asp-for="CrMasLessorInformationEnLongName" maxlength="100" id="LessorNameEn" width="80%" readonly>
-                        <div style="margin-top:2px">
-                            <div style="height: 0">
-                                <span asp-validation-for="@Model.CrMasLessorInformationEnLongName" class="text-danger"></span>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                @foreach (var classification in (List<SelectListItem>)ViewData["ClassificationDropDownEn"])
+                                                                {
+
+                                                                    <option value="@classification.Value" selected="@(classification.Value.Trim() == "" ? "selected" : null)">@classification.Text</option>
+
+                                                                }
+                                                            }
+                                                        </select>
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasLessorInformationClassification" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="manager-name-ar"
+                                                               class="form-label">@localizer["DirNameAr"]</label>
+                                                        <input type="text" id="manager-name-ar"
+                                                               class="form-control inputs arabic-input"
+                                                               asp-for="CrMasLessorInformationDirectorArName" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" maxlength="50">
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasLessorInformationDirectorArName" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="manager-name-en"
+                                                               class="form-label">
+                                                            @localizer["DirNameEn"]
+                                                        </label>
+                                                        <input type="text" id="manager-name-en"
+                                                               class="form-control inputs english-input"
+                                                               asp-for="CrMasLessorInformationDirectorEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" maxlength="50">
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasLessorInformationDirectorEnName" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="phone1" class="form-label">
+                                                            @localizer["TelePhone"]
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="tel"
+                                                                   class="form-control inputs tel-input"
+                                                                   id="phone1" asp-for="CrMasLessorInformationCallFree"
+                                                                   oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="15">
+                                                            <select class="input-group-text select-style counterCode" asp-for="CrMasLessorInformationCallFreeKey">
+                                                                @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
+                                                                {
+                                                                    <option value="@callingKey.Text.Trim()">@callingKey.Text.Trim()</option>
+                                                                }
+
+                                                            </select>
+                                                            <div class="invaild">
+                                                                <div class="invalid-feedback">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="phone2" class="form-label">
+                                                            @localizer["LessorPhone"]
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="tel"
+                                                                   class="form-control inputs tel-input"
+                                                                   id="phone2" asp-for="CrMasLessorInformationCommunicationMobile" maxlength="10" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                                                            <select class="input-group-text select-style counterCode"
+                                                                    asp-for="CrMasLessorInformationCommunicationMobileKey">
+                                                                @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
+                                                                {
+                                                                    <option value="@callingKey.Text">@callingKey.Text</option>
+                                                                }
+                                                            </select>
+                                                            <div class="invaild">
+                                                                <div class="invalid-feedback">
+                                                                    <span asp-validation-for="@Model.CrMasLessorInformationCommunicationMobile" class="text-danger" id="CommunicationMobileError"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="email"
+                                                               class="form-label">@localizer["LessorEmail"] </label>
+                                                        <input type="email" id="email"
+                                                               class="form-control inputs english-input"
+                                                               asp-for="CrMasLessorInformationEmail" maxlength="100">
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasLessorInformationEmail" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="contact-mail"
+                                                               class="form-label">@localizer["LessorContractEmail"]</label>
+                                                        <input type="email" id="contact-mail"
+                                                               class="form-control inputs english-input"
+                                                               asp-for="CrMasLessorInformationContEmail" maxlength="100">
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasLessorInformationContEmail" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row align-items-end g-3 ">
+                                                    <div class="col-md-8">
+                                                        <label>@localizer["reasons"]</label>
+                                                        <textarea class=" form-control textarea-inputs" rows="1" maxlength="100" asp-for="CrMasLessorInformationReasons" type="text"></textarea>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="row align-items-center justify-content-end">
+                                                            <div class="col-auto">
+                                                                <button type="button"
+                                                                        class="custom-img-btn">
+                                                                    <img src="~/MasSystem/images/icon.svg"
+                                                                         data-bs-toggle="modal"
+                                                                         href="#signature-modal" />
+                                                                </button>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <img src="~/MasSystem/images/signature.svg"
+                                                                     id="previewSignature">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="inputs-accordion-item">
+                                    <div class="inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            @localizer["LessorAddress"]
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
+                                            <div class="container-fluid Update-data-scroll-container">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="District-name-ar" class="form-label">@localizer["DistrictNameAr"]</label>
+                                                        <input type="text" id="District-name-ar"
+                                                               class="form-control inputs arabic-input"
+                                                               asp-for="BranchPostVM.CrCasBranchPostArDistrict" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" maxlength="50">
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="BranchPostVM.CrCasBranchPostArDistrict" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="District-name-en" class="form-label"> @localizer["DistrictNameEn"]</label>
+                                                        <input type="text" id="District-name-en"
+                                                               class="form-control inputs english-input"
+                                                               asp-for="BranchPostVM.CrCasBranchPostEnDistrict" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" maxlength="50">
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="BranchPostVM.CrCasBranchPostEnDistrict" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="street-name-ar"
+                                                               class="form-label">@localizer["StreetNameAr"]</label>
+                                                        <input type="text" id="street-name-ar" asp-for="BranchPostVM.CrCasBranchPostArStreet"
+                                                               class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" maxlength="50">
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="BranchPostVM.CrCasBranchPostArStreet" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="street-name-en"
+                                                               class="form-label">
+                                                            @localizer["StreetNameEn"]
+                                                        </label>
+                                                        <input type="text" id="street-name-en"
+                                                               class="form-control inputs english-input"
+                                                               asp-for="BranchPostVM.CrCasBranchPostEnStreet" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" maxlength="50">
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="BranchPostVM.CrCasBranchPostEnDistrict" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 ">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label for="Building-number"
+                                                                       class="form-label">
+                                                                    @localizer["BulidingNumber"]
+                                                                </label>
+                                                                <input type="text" id="Building-number" class="form-control inputs text-center"
+                                                                       asp-for="BranchPostVM.CrCasBranchPostBuilding" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10">
+                                                                <div class="invaild">
+                                                                    <div class="invalid-feedback">
+                                                                        <span asp-validation-for="BranchPostVM.CrCasBranchPostBuilding" class="text-danger"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="Unit-number"
+                                                                       class="form-label">
+                                                                    @localizer["UnitNumber"]
+                                                                </label>
+                                                                <input type="text" id="Unit-number"
+                                                                       class="form-control inputs text-center"
+                                                                       asp-for="BranchPostVM.CrCasBranchPostUnitNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="20">
+                                                                <div class="invaild">
+                                                                    <div class="invalid-feedback">
+                                                                        <span asp-validation-for="BranchPostVM.CrCasBranchPostUnitNo" class="text-danger"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 ">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label for="zip-code"
+                                                                       class="form-label">
+                                                                    @localizer["symbolMailAr"]
+                                                                </label>
+                                                                <input type="text" id="zip-code" class="form-control inputs text-center" asp-for="BranchPostVM.CrCasBranchPostZipCode" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10">
+                                                                <div class="invaild">
+                                                                    <div class="invalid-feedback">
+                                                                        <span asp-validation-for="BranchPostVM.CrCasBranchPostZipCode" class="text-danger"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="Additional-number"
+                                                                       class="form-label">
+                                                                    @localizer["AdditionalNumber"]
+                                                                </label>
+                                                                <input type="text"
+                                                                       id="Additional-number"
+                                                                       class="form-control inputs text-center"
+                                                                       asp-for="BranchPostVM.CrCasBranchPostAdditionalNumbers" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10">
+                                                                <div class="invaild">
+                                                                    <div class="invalid-feedback">
+                                                                        <span asp-validation-for="BranchPostVM.CrCasBranchPostAdditionalNumbers" class="text-danger"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-1">
-                        <label class="form-label" for="LessorNameEnShort">@localizer["LessosorNameEnShort"]</label>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" asp-for="CrMasLessorInformationEnShortName" data-val-required="@localizer["requiredFiled"]" id="LessorNameEnShort" readonly>
-                        <div style="margin-top:2px">
-                            <div style="height: 0">
-                                <span asp-validation-for="@Model.CrMasLessorInformationEnShortName" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-
-            @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
-            {
-                @*lessor name arabic*@
-                <div class="row mt-2" hidden>
-                    <div class="col-md-1">
-                        <label class="form-label" for="LessorNameAr">@localizer["LessorNameAr"]</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" asp-for="CrMasLessorInformationArLongName" id="LessorNameAr" maxlength="100" width="80%" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" readonly />
-                        <div style="margin-top:2px">
-                            <div style="height: 0">
-                                <span asp-validation-for="@Model.CrMasLessorInformationArLongName" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-1">
-                        <label class="form-label" for="LessorNameArShort">@localizer["LessorNameArShort"]</label>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" asp-for="CrMasLessorInformationArShortName" id="LessorNameArShort" data-val-required="@localizer["requiredFiled"]" required width="80%" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" readonly>
-                        <span asp-validation-for="@Model.CrMasLessorInformationArShortName" class="text-danger"></span>
-                    </div>
-                </div>
-
-                @*lessor name English*@
-                <div class="row mt-2">
-                    <div class="col-md-1">
-                        <label class="form-label" for="LessorNameEn">@localizer["LessosorNameEn"]</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" asp-for="CrMasLessorInformationEnLongName" maxlength="100" id="LessorNameEn" width="80%" readonly>
-                        <div style="margin-top:2px">
-                            <div style="height: 0">
-                                <span asp-validation-for="@Model.CrMasLessorInformationEnLongName" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-1">
-                        <label class="form-label" for="LessorNameEnShort">@localizer["LessosorNameEnShort"]</label>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" asp-for="CrMasLessorInformationEnShortName" data-val-required="@localizer["requiredFiled"]" id="LessorNameEnShort" readonly>
-                        <div style="margin-top:2px">
-                            <div style="height: 0">
-                                <span asp-validation-for="@Model.CrMasLessorInformationEnShortName" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-
-
-            @*lessor government and Tax number And classification*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorTaxNo">@localizer["TaxNo"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationTaxNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="100" id="LessorTaxNo" width="80%" readonly>
-                    <div style="margin-top:2px">
-                        <div style="height: 0">
-                            <span asp-validation-for="@Model.CrMasLessorInformationTaxNo" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorClass">@localizer["Classification"]</label>
-                </div>
-                <div class="col-md-2">
-                    @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
-                    {
-                        <select class="form-select" asp-for="@Model.CrMasLessorInformationClassification" style="width: 100%;">
-                            @foreach (var callingKey in (List<SelectListItem>)ViewData["ClassificationDropDownAr"])
-                            {
-                                <option value="@callingKey.Value">@callingKey.Text</option>
-                            }
-                        </select>
-                        <div style="margin-top:2px">
-                            <div style="height: 1.35em">
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <select class="form-select" asp-for="@Model.CrMasLessorInformationClassification" style="width: 100%;">
-                            @foreach (var callingKey in (List<SelectListItem>)ViewData["ClassificationDropDownEn"])
-                            {
-                                <option value="@callingKey.Value">@callingKey.Text</option>
-                            }
-                        </select>
-                        <div style="margin-top:2px">
-                            <div style="height: 1.35em">
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                    }
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationClassification" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-1 m-0">
-                    <label class="form-label" for="LessorGovNo">@localizer["governmentNo"]</label>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationGovernmentNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" id="LessorGovNo" readonly>
-                    <div style="margin-top:2px">
-                        <div style="height: 0">
-                            <span asp-validation-for="@Model.CrMasLessorInformationGovernmentNo" class="text-danger"></span>
-                        </div>
+                        </main>
                     </div>
                 </div>
             </div>
-
-            @*Director Name*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorDirNameAr">@localizer["DirNameAr"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationDirectorArName" data-val-required="@localizer["requiredFiled"]" maxlength="100" id="LessorDirNameAr" width="80%" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationDirectorArName" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorDirNameEn">@localizer["DirNameEn"]</label>
-                </div>
-                <div class="col-md-3 LessorDirNameEnCol">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationDirectorEnName" data-val-required="@localizer["requiredFiled"]" maxlength="100" id="LessorDirNameEn" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationDirectorEnName" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @*mobil phone*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorInfoEmailTwitter">@localizer["LessorTwitter"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationTwiter" maxlength="100" id="LessorInfoEmailTwitter">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationTwiter" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1 mb-3">
-                    <label class="form-label" for="LessorCallFree">@localizer["TelePhone"]</label>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationCallFree" id="LessorCallFree" maxlength="9" data-val-regex="@localizer["requiredNoLengthFiled","9"]" oninput="validateInput(event, 'LessorCallFree', 'callfreeErorr', '1')">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationCallFree" id="callfreeErorr" class="text-danger" data-error="@localizer["requiredNoStartWithFiled1"]"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <select class="form-select" id="countryCode" asp-for="CrMasLessorInformationCallFreeKey" style="width: 90px;">
-                        @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
-                        {
-                            <option value="@callingKey.Text" selected="@(callingKey.Value.Trim() == Model.CrMasLessorInformationCallFreeKey ? "selected" : null)">@callingKey.Text</option>
-                        }
-                    </select>
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @*Information and Phone email*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorInfoEmail">@localizer["LessorEmail"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationEmail" maxlength="100" id="LessorInfoEmail" width="80%">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationEmail" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-1 mb-3">
-                    <label class="form-label" for="LessorMobilePhone">@localizer["LessorPhone"]</label>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationCommunicationMobile" maxlength="10" id="LessorMobilePhone" data-val-regex="@localizer["requiredNoLengthFiled","10"]" width="80%" oninput="validateInput(event, 'LessorMobilePhone', 'CommunicationMobileError', '5')">
-                    <div style="margin-top:2px">
-                        <div style="height:1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationCommunicationMobile" class="text-danger" id="CommunicationMobileError" data-error="@localizer["requiredNoStartWithFiled5"]"></span>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <select class="form-select" id="countryCode" asp-for="CrMasLessorInformationCommunicationMobileKey" style="width: 90px;">
-                        @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
-                        {
-                            <option value="@callingKey.Text" selected="@(callingKey.Value.Trim() == Model.CrMasLessorInformationCommunicationMobileKey ? "selected" : null)">@callingKey.Text</option>
-                        }
-                    </select>
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @*facebook and instgram email*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorInfoEmailFacebook">@localizer["LessorFacebook"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationFaceBook" maxlength="100" id="LessorInfoEmailFacebook" width="80%">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationFaceBook" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorInfoEmailWhatisapp">@localizer["LessorWhats"]</label>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationContWhatsapp" id="LessorInfoEmailWhatisapp">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationContWhatsapp" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-select" id="countryCode" asp-for="CrMasLessorInformationContWhatsappKey" style="width: 90px;">
-                        @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeysWhats"])
-                        {
-                            <option value="@callingKey.Text" selected="@(callingKey.Text.Trim() == Model.CrMasLessorInformationContWhatsappKey ? "selected" : null)">@callingKey.Text</option>
-                        }
-                    </select>
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @*contackemail and whatisapp*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorInfoEmailCont">@localizer["LessorContractEmail"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationContEmail" maxlength="100" id="LessorInfoEmailCont" width="80%">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationContEmail" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorInfoEmailInstagrame">@localizer["LessorInstagram"]</label>
-                </div>
-                <div class="col-md-3 LessorInfoEmailInstagramecol">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationInstagram" id="LessorInfoEmailInstagrame">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationInstagram" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @*City*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" asp-for="BranchPostVM.CrCasBranchPostCity">@localizer["lessorCityPost"]</label>
-                </div>
-
-                <div class="col-md-4">
-                    @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
-                    {
-                        <input type="text" class="form-control" id="CityField" autocomplete="off" value="@ViewBag.CityDropDownAr" readonly>
-
-                        <div style="margin-top:12px">
-                            <div style="height: 1.35em">
-                                <span asp-validation-for="BranchPostVM.CrCasBranchPostCity" class="text-danger"></span>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <input type="text" class="form-control" id="CityField" autocomplete="off" value="@ViewBag.CityDropDownEn" readonly>
-
-                        <div style="margin-top:12px">
-                            <div style="height: 1.35em">
-                                <span asp-validation-for="BranchPostVM.CrCasBranchPostCity" class="text-danger"></span>
-                            </div>
-                        </div>
-                    }
-
-                    <input id="CityCode" asp-for="BranchPostVM.CrCasBranchPostCity" hidden>
-
-                </div>
-
-                <div class="col-md-1">
-                </div>
-                <div class="col-md-4">
-                </div>
-            </div>
-
-            @*district name arabic And English*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" asp-for="BranchPostVM.CrCasBranchPostArDistrict">@localizer["DistrictNameAr"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="BranchPostVM.CrCasBranchPostArDistrict" id="LessorNameAr" maxlength="100" width="80%" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')"  />
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="BranchPostVM.CrCasBranchPostArDistrict" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label" asp-for="BranchPostVM.CrCasBranchPostEnDistrict">@localizer["DistrictNameEn"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="BranchPostVM.CrCasBranchPostEnDistrict" id="LessorNameArShort" width="80%" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" >
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="BranchPostVM.CrCasBranchPostEnDistrict" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @*street name arabic And English*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" asp-for="BranchPostVM.CrCasBranchPostArStreet">@localizer["StreetNameAr"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="BranchPostVM.CrCasBranchPostArStreet" id="StreetNameAr" maxlength="100" width="80%" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')"  />
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="BranchPostVM.CrCasBranchPostArStreet" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label" asp-for="BranchPostVM.CrCasBranchPostEnStreet">@localizer["StreetNameEn"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="BranchPostVM.CrCasBranchPostEnStreet" id="StreetNameEn" width="80%" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" >
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="BranchPostVM.CrCasBranchPostEnStreet" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @*buliding Number  And Unit Number*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" asp-for="BranchPostVM.CrCasBranchPostBuilding">@localizer["BulidingNumber"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="BranchPostVM.CrCasBranchPostBuilding" id="BulidingNumber" maxlength="100" width="80%" oninput="this.value=this.value.replace(/[^0-9]/g,'')"  />
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="BranchPostVM.CrCasBranchPostBuilding" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label" asp-for="BranchPostVM.CrCasBranchPostUnitNo">@localizer["UnitNumber"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="BranchPostVM.CrCasBranchPostUnitNo" id="UnitNumber" width="80%" oninput="this.value=this.value.replace(/[^0-9]/g,'')" >
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="BranchPostVM.CrCasBranchPostUnitNo" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @*zip code And AdditionalNumber*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" asp-for="BranchPostVM.CrCasBranchPostZipCode">@localizer["symbolMailAr"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="BranchPostVM.CrCasBranchPostZipCode" id="symbolMail" maxlength="100" width="80%" oninput="this.value=this.value.replace(/[^0-9]/g,'')"  />
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="BranchPostVM.CrCasBranchPostZipCode" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label" asp-for="BranchPostVM.CrCasBranchPostAdditionalNumbers">@localizer["AdditionalNumber"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="BranchPostVM.CrCasBranchPostAdditionalNumbers" id="AdditionalNumber" width="80%" oninput="this.value=this.value.replace(/[^0-9]/g,'')" >
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="BranchPostVM.CrCasBranchPostAdditionalNumbers" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @*reasons*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="LessorInfoEmailCont">@localizer["reasons"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" asp-for="CrMasLessorInformationReasons" maxlength="100" id="LessorInfoEmailCont" width="80%">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.35em">
-                            <span asp-validation-for="@Model.CrMasLessorInformationReasons" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @Html.ValidationMessage("NoCHanged", null, new { @class = "text-danger" })
-
-        <div class="mt-4" id="buttonContainer">
-
-            <button type="submit" id="saveEdit" class="btn btn-primary ms-1">@localizer["Save"]</button>
-
-            @if (Model.CrMasLessorInformationStatus == "A")
-            {
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Hold" data-bs-targett="#centermodalhold">
-                    @localizer["Hold"]
-                </a>
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Deleted" data-bs-targett="#centermodalDelete">
-                    @localizer["Delete"]
-                </a>
-            }
-            else if (Model.CrMasLessorInformationStatus == "H")
-            {
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.UnHold" data-bs-targett="#centermodalRHold">
-                    @localizer["ReactiveHold"]
-                </a>
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Deleted" data-bs-targett="#centermodalDelete">
-                    @localizer["Delete"]
-                </a>
-            }
-            else if (Model.CrMasLessorInformationStatus == "D")
-            {
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Hold" data-bs-targett="#centermodalhold">
-                    @localizer["Hold"]
-                </a>
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.UnDeleted" data-bs-targett="#centermodalRDelete">
-                    @localizer["ReactiveDelete"]
-                </a>
-            }
-
-            <a type="button" class="btn btn-danger ms-2" asp-area="MAS" asp-controller="LessorsKSA" asp-action="Index">
-                @localizer["Back"]
-            </a>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 
-
-<!-- MOdel-->
-<!-- Reactive Hold Lessor MOdel-->
-<div class="modal fade" id="centermodalRHold" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- delete modal -->
+<div class="modal fade" id="Delete-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="Delete-ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h4>@localizer["SureToRetriveHold"]</h4>
-                <p>@localizer["HintSureToRetriveH"]</p>
+        <div class="modal-content" style="border: 1px solid var(--main-color);">
+            <div class="content" id="modalContent">
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="retriveUserButtonH" class="btn btn-primary">@localizer["Okay"]</button>
+            <!-- Hidden spinner  -->
+            <div class="modal-body text-center" id="spinner" style="display: none;">
+                <span class="State-Modal-loader"></span>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<!-- Reactive Delete Lessor MOdel-->
-<div class="modal fade" id="centermodalRDelete" tabindex="-1" role="dialog" aria-hidden="true">
+        </div>
+    </div>
+</div>
+<!-- Stopp  modal -->
+<div class="modal fade" id="Stop-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="Stop-ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content" style="border: 1px solid var(--main-color);">
+            <div class=" content" id="Stop-modal-Content">
+            </div>
+            <!-- Hidden spinner  -->
+            <div class="modal-body text-center" id="spinner2" style="display: none;">
+                <span class="State-Modal-loader"></span>
+            </div>
+        </div>
+    </div>
+</div>
 
-            <div class="modal-body">
-                <h4>@localizer["SureToRetriveDelete"]</h4>
-                <p>@localizer["HintSureToRetriveD"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="retriveUserButtonD" class="btn btn-primary">@localizer["Okay"]</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<!-- Delete Lessor Modal-->
-<div class="modal fade" id="centermodalDelete" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-body">
-                <h4>@localizer["SureTodelete"]</h4>
-                <p> @localizer["HintSureTodelete"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="deleteUserButton" class="btn btn-primary">@localizer["Okay"]</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<!-- Hold Lessor MOdel-->
-<div class="modal fade" id="centermodalhold" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-body">
-                <h4>@localizer["SureToHold"]</h4>
-                <p> @localizer["HintSureToHold"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="holdUserButton" class="btn btn-primary">@localizer["Okay"]</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 @section Scripts {
 
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
+
     <script>
-        function updateUserStatus(status) {
-            var code = document.getElementById("LessorCode").value;
-            $.ajax({
-                type: "POST",
-                url: "/MAS/LessorsKSA/EditStatus",
-                data: { status: status, code: code },
-                success: function (result) {
-                    $('.modal').modal('hide');
-                    window.location.href = "/MAS/LessorsKSA/Index";
-                },
-                error: function (error) {
-                    console.log(error);
-                }
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        var statusInput = $("#CrMasLessorInformationStatus");
+
+        function updateLessorStatus(status) {
+            var code = document.getElementById("CrMasLessorInformationCode").value;
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: "POST",
+                    url: "/MAS/LessorsKSA/EditStatus",
+                    data: { status: status, code: code },
+                    success: function (result) {
+                        toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+
+                        if (result == "true") {
+                            //@*toastr.success("@localizer["ToastSave"]");*@
+                            resolve(true);
+                        } else if (result == "false_auth") {
+                            toastr.error("@localizer["AuthEmplpoyee_No_auth"]");
+                            resolve(false);
+                        } else if (result == "udelete") {
+                            toastr.error("@localizer["SureTo_Cannot_delete"]");
+                            resolve(false);
+                        } else {
+                            toastr.error("@localizer["ToastFailed"]");
+                            resolve(false);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("@localizer["ToastFailed"]");
+                        resolve(false);
+                    }
+                });
             });
         }
+    </script>
+    <script>
 
-        // Event listener for delete Lessor button
-        $('#deleteUserButton').click(function () {
-            updateUserStatus('D');
-        });
+        let isDeleted = false;
+        let isStoped = false
+        if (statusInput.val() == '@Status.Hold') {
+            isDeleted = false;
+            isStoped = true
+        }
+        else if (statusInput.val() == '@Status.Deleted') {
+            isDeleted = true;
+            isStoped = false
+        }
 
-        // Event listener for hold Lessor button
-        $('#holdUserButton').click(function () {
-            updateUserStatus('H');
-        });
+        window.onload = () => {
+            DeleteState(isDeleted);
+            StopState(isStoped);
+        };
 
-        // Event listener for retrieve Lessor button
-        $('#retriveUserButtonD').click(function () {
-            updateUserStatus('Reactivate');
-        });
+        function DeleteState(deleted) {
+            isDeleted = deleted;
 
-        $('#retriveUserButtonH').click(function () {
-            updateUserStatus('Reactivate');
-        });
+            document.getElementById("modalContent").style.display = "block";
+            document.getElementById("modalIcon").src = isDeleted
+                ? "/MasSystem/images/Property 1=recycle.svg"
+                : "/MasSystem/images/delete.svg";
 
-        $("#buttonContainer a").on("click", function (event) {
-            var status = $(this).attr("data-error")
-            var Modal = $(this).attr("data-bs-targett")
-            CheckValidation('1101001', status).done(function (data) {
-                if (data) $(Modal).modal('show');
-            });
-        })
+            document.getElementById("modalContent").innerHTML = isDeleted
+                ? `
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                        <img src="/MasSystem/images/Green-recycle.svg" /> @localizer["SureToRetriveDelete"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_lessor_UnDelete"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_lessor_UnDelete"]</p>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`
+                : `
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                        <img src="/MasSystem/images/delete (2).svg" /> @localizer["SureTodelete"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                                <p>@localizer["ModalFirstMessage_lessor_Delete"]</p>
+                                                                                <p>@localizer["ModalSecondMessage_lessor_Delete"]</p>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="DeleteBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`;
+        }
+        function DeleteLoad() {
+            const modalContent = document.getElementById("modalContent");
+            const spinner = document.getElementById("spinner");
+            const deleteModal = document.getElementById("Delete-Modal");
+            const modalIcon = document.getElementById("modalIcon");
 
-        $("#saveEdit").on("click", function (event) {
-            event.preventDefault();
-            CheckValidation('1101001', '@Status.Insert').done(function (data) {
-                if (data) {
-                    $('form').submit();
+            modalContent.style.display = "none";
+            spinner.style.display = "flex";
+
+            setTimeout(async () => {
+                spinner.style.display = "none";
+                const modal = bootstrap.Modal.getInstance(deleteModal);
+                modal.hide();
+
+                const newStatus = isDeleted ? '@Status.UnDeleted' : '@Status.Deleted';
+                const success = await updateLessorStatus(newStatus);
+                if (success) {
+                    statusInput.val(isDeleted ? '@Status.Active' : '@Status.Deleted');
+                    isDeleted = !isDeleted;
+
+                    modalIcon.src = isDeleted
+                        ? "/MasSystem/images/Property 1=recycle.svg"
+                        : "/MasSystem/images/delete.svg";
+
+                    DeleteState(isDeleted);
+                    setTimeout(function () {
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "LessorsKSA")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
                 }
-            });
-        })
+                else {
+                    modalIcon.src = isDeleted
+                        ? "/MasSystem/images/Property 1=recycle.svg"
+                        : "/MasSystem/images/delete.svg";
+
+                    DeleteState(isDeleted);
+                }
+            }, 500);
+        }
+
+        function StopState(Stoped) {
+            isStoped = Stoped;
+
+            document.getElementById("Stop-modal-Content").style.display = "block";
+            document.getElementById("StopModalIcon").src = isStoped
+                ? "/MasSystem/images/Property 1=active.svg"
+                : "/MasSystem/images/stop.svg";
+
+            document.getElementById("Stop-modal-Content").innerHTML = isStoped
+                ? `
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                        <img src="/MasSystem/images/GreenStop.svg" /> @localizer["SureToRetriveHold"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_lessor_UnHold"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_lessor_UnHold"]</p>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`
+                : `
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                        <img src="/MasSystem/images/RedStop.svg" /> @localizer["SureToHold"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_lessor_Hold"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_lessor_Hold"]</p>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="HoldBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`;
+        }
+        function StopLoad() {
+            const stopModalContent = document.getElementById("Stop-modal-Content");
+            const spinner = document.getElementById("spinner2");
+            const modalElement = document.getElementById("Stop-Modal");
+            const stopModalIcon = document.getElementById("StopModalIcon");
+
+            stopModalContent.style.display = "none";
+            spinner.style.display = "flex";
+
+            setTimeout(async () => {
+                spinner.style.display = "none";
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+
+                const newStatus = isStoped ? '@Status.UnHold' : '@Status.Hold';
+                const success = await updateLessorStatus(newStatus);
+                if (success) {
+                    statusInput.val(isStoped ? '@Status.Active' : '@Status.Hold');
+                    isStoped = !isStoped;
+
+                    stopModalIcon.src = isStoped
+                        ? "/MasSystem/images/Property 1=active.svg"
+                        : "/MasSystem/images/stop.svg";
+
+                    StopState(isStoped);
+                    setTimeout(function () {
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "LessorsKSA")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
+                }
+            }, 500);
+        }
+
+    </script>
+
+
+
+
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script>
+       
+       
+        // function Check_onChange_input(existName, dataField, oldValue) {
+        //     //get the old value
+        //     if (dataField === oldValue) {
+        //         // Clear any existing error message if the values match
+        //         $(`#${existName}-Error`).hide();
+        //         return;
+        //     }
+
+        //     $.ajax({
+        //         type: "GET",
+        //         url: "/MAS/Bank/CheckChangedField",
+        //         data: { existName: existName, dataField: dataField },
+        //         success: function (result) {
+        //             console.log("feedback", result);
+        //             // Hide all previous error messages
+        //             $('.invalid-feedback').show();
+
+        //             // Show new error messages if they exist
+        //             if (result.errors && result.errors.length > 0) {
+        //                 result.errors.forEach(function (error) {
+        //                     // Use the ID from the error object to find the correct element
+        //                     $(`#${error.field}-Error`).text(error.message).show();
+        //                 });
+        //             } else {
+        //                 // Hide the error message if no errors
+        //                 $(`#${existName}-Error`).text("");
+        //             }
+        //         },
+        //         error: function (error) {
+        //             console.log(error);
+        //         }
+        //     });
+        // }
+
+        // // Example usage for Arabic Name input
+        // $('#CrMasSupAccountBankArName').on('change', function () {
+        //     var newValue = $(this).val();
+        //     Check_onChange_input('CrMasSupAccountBankArName', newValue, OldArName);
+        // });
+
+        // // Example usage for English Name input
+        // $('#CrMasSupAccountBankEnName').on('change', function () {
+        //     var newValue = $(this).val();
+        //     Check_onChange_input('CrMasSupAccountBankEnName', newValue, OldEnName);
+        // });
+
+    </script>
+    <script>
+        // function updateUserStatus(status) {
+        //     var code = document.getElementById("LessorCode").value;
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "/MAS/LessorsKSA/EditStatus",
+        //         data: { status: status, code: code },
+        //         success: function (result) {
+        //             $('.modal').modal('hide');
+        //             window.location.href = "/MAS/LessorsKSA/Index";
+        //         },
+        //         error: function (error) {
+        //             console.log(error);
+        //         }
+        //     });
+        // }
+
+        // // Event listener for delete Lessor button
+        // $('#deleteUserButton').click(function () {
+        //     updateUserStatus('D');
+        // });
+
+        // // Event listener for hold Lessor button
+        // $('#holdUserButton').click(function () {
+        //     updateUserStatus('H');
+        // });
+
+        // // Event listener for retrieve Lessor button
+        // $('#retriveUserButtonD').click(function () {
+        //     updateUserStatus('Reactivate');
+        // });
+
+        // $('#retriveUserButtonH').click(function () {
+        //     updateUserStatus('Reactivate');
+        // });
+
+        // $("#buttonContainer a").on("click", function (event) {
+        //     var status = $(this).attr("data-error")
+        //     var Modal = $(this).attr("data-bs-targett")
+        //     CheckValidation('1101001', status).done(function (data) {
+        //         if (data) $(Modal).modal('show');
+        //     });
+        // })
+
+        // $("#saveEdit").on("click", function (event) {
+        //     event.preventDefault();
+        //     CheckValidation('1101001', '@Status.Insert').done(function (data) {
+        //         if (data) {
+        //             $('form').submit();
+        //         }
+        //     });
+        // })
     </script>
 
     <script>
-        function validateInput(event, inId, InEr, No) {
-            event.target.value = event.target.value.replace(/[^0-9]/g, '');
-            const inputElement = document.getElementById(inId);
-            const errorMessageElement = document.getElementById(InEr);
+        // function validateInput(event, inId, InEr, No) {
+        //     event.target.value = event.target.value.replace(/[^0-9]/g, '');
+        //     const inputElement = document.getElementById(inId);
+        //     const errorMessageElement = document.getElementById(InEr);
 
-            const inputValue = inputElement.value;
-            const isValid = inputValue.startsWith(No);
+        //     const inputValue = inputElement.value;
+        //     const isValid = inputValue.startsWith(No);
 
-            if (!isValid) {
-                errorMessageElement.textContent = errorMessageElement.getAttribute('data-error');
-                inputElement.value = "";
-            } else {
-                errorMessageElement.textContent = '';
-            }
-        }
+        //     if (!isValid) {
+        //         errorMessageElement.textContent = errorMessageElement.getAttribute('data-error');
+        //         inputElement.value = "";
+        //     } else {
+        //         errorMessageElement.textContent = '';
+        //     }
+        // }
     </script>
 
     <script>
-        $(document).ready(function () {
-            $.ajax({
-                type: "GET",
-                url: "@Url.Action("GetCities", "LessorsKSA", new { Area = "MAS" })",
-                success: function (response) {
-                    console.log(response)
-                    const newArray = response.map(obj => obj.text);
-                    $("#CityField").autocomplete({
-                        source: newArray
-                    });
-                },
-            })
+        // $(document).ready(function () {
+        //     $.ajax({
+        //         type: "GET",
+        //         url: "@Url.Action("GetCities", "LessorsKSA", new { Area = "MAS" })",
+        //         success: function (response) {
+        //             console.log(response)
+        //             const newArray = response.map(obj => obj.text);
+        //             $("#CityField").autocomplete({
+        //                 source: newArray
+        //             });
+        //         },
+        //     })
 
-        });
+        // });
     </script>
 
 }

@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Localization;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Bnan.Ui.ViewModels.MAS
 {
@@ -54,7 +52,6 @@ namespace Bnan.Ui.ViewModels.MAS
 
         [RegularExpression(@"^\d{10}$")]
         [Required(ErrorMessage = "requiredNoStartWithFiled7")]
-        [StartsWith7(ErrorMessage = "requiredNoLengthFiled")]
         public string? CrMasLessorInformationGovernmentNo { get; set; }
 
         [RegularExpression(@"^\d{15}$")]
@@ -68,7 +65,7 @@ namespace Bnan.Ui.ViewModels.MAS
         public string? CrMasLessorInformationDirectorEnName { get; set; }
 
         //[RegularExpression(@"^\d{10}$")]
-        //[Required(ErrorMessage = "requiredNoStartWithFiled5")]
+        [Required(ErrorMessage = "requiredNoStartWithFiled5")]
         //[StartsWith5Attribute(ErrorMessage = "Must Start With Number 5")]
         public string? CrMasLessorInformationCommunicationMobile { get; set; }
         public string? CrMasLessorInformationCommunicationMobileKey { get; set; }

@@ -8,21 +8,21 @@ namespace Bnan.Ui.ViewModels.MAS
         public string? CrCasBranchPostRegions { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchPostCity { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchPostArDistrict { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchPostEnDistrict { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchPostArStreet { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchPostEnStreet { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchPostBuilding { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchPostUnitNo { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchPostZipCode { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchPostAdditionalNumbers { get; set; }
         public string? CrCasBranchPostArConcatenate { get; set; }
         public string? CrCasBranchPostEnConcatenate { get; set; }

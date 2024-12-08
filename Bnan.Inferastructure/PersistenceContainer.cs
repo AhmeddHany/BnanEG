@@ -211,6 +211,7 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasUser, MasUser>();
             builder.Services.AddScoped<IMasQuestionsAnswer, MasQuestionsAnswer>();
             builder.Services.AddScoped<IMasWhatsupConnect, MasWhatsupConnect>();
+            builder.Services.AddScoped<IMasLessor, MasLessor>();
 
 
 
