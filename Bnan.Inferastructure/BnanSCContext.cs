@@ -6963,7 +6963,7 @@ namespace Bnan.Core.Models
 
             modelBuilder.Entity<CrMasSysQuestionsAnswer>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(x=>x.CrMasSysQuestionsAnswerNo);
 
                 entity.ToTable("CR_Mas_Sys_Questions_Answer");
 

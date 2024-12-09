@@ -104,11 +104,13 @@
                                                                     <td>
                                                                             <input type="text" 
                                                                                class="form-control inputs Rate-page-inputs "
-                                                                                   asp-for="@Model.lessor_Rates[i].CrMasSysServiceEvaluationsValue" maxlength="3" inputmode="numeric" oninput="validateNumberInput(this)" required>
+                                                                                   asp-for="@Model.lessor_Rates[i].CrMasSysServiceEvaluationsValue" maxlength="3" inputmode="numeric" oninput="validateNumberInput(this,'error_@Model.renter_Rates[i].CrMasSysEvaluationsCode')" required>
                                                                         <div class="invaild">
                                                                             <div class="invalid-feedback">
                                                                                     <span asp-validation-for="@Model.lessor_Rates[i].CrMasSysServiceEvaluationsValue" class="text-danger"></span>
                                                                                     <span class="text-danger" ></span>
+                                                                                    <span id="error_@Model.renter_Rates[i].CrMasSysEvaluationsCode" style="display: none;color: red;">@localizer["value1_100"]</span>
+
                                                                                 </div>
                                                                         </div>
                                                                     </td>
@@ -201,11 +203,12 @@
                                                                     <td>
                                                                         <input type="text" id="Value2'@Model.renter_Rates[i].CrMasSysEvaluationsCode'"
                                                                                class="form-control inputs Rate-page-inputs "
-                                                                               asp-for="@Model.renter_Rates[i].CrMasSysServiceEvaluationsValue" maxlength="3" inputmode="numeric" oninput="validateNumberInput(this)" required>
+                                                                               asp-for="@Model.renter_Rates[i].CrMasSysServiceEvaluationsValue" maxlength="3" inputmode="numeric" oninput="validateNumberInput(this,'error2_@Model.renter_Rates[i].CrMasSysEvaluationsCode')" required>
                                                                         <div class="invaild">
                                                                             <div class="invalid-feedback form-group">
                                                                                 <span asp-validation-for="@Model.renter_Rates[i].CrMasSysServiceEvaluationsValue" class="text-danger"></span>
                                                                                 @Html.ValidationMessageFor(model => model.renter_Rates[i].CrMasSysServiceEvaluationsValue, "", new { @class = "text-danger" })
+                                                                                <span id="error2_@Model.renter_Rates[i].CrMasSysEvaluationsCode" style="display: none;color: red;">@localizer["value1_100"]</span>
                                                                             </div>
                                                                         </div>
                                                                     </td>
@@ -286,8 +289,16 @@
     <script src="~/js/toastr.js"></script>
 
     <script>
-        function validateNumberInput(input) {
+        function validateNumberInput(input,idError) {
+            const errorMessage = document.getElementById(idError);
             input.value = input.value.replace(/\D/g, ''); // استبدال كل الأحرف غير الرقمية
+            const value = parseInt(input.value);
+            const max = 100; // الحد الأقصى المسموح به
+            if (value > max || value < 0) {
+                errorMessage.style.display = "inline"; // عرض الرسالة
+            } else {
+                errorMessage.style.display = "none"; // إخفاء الرسالة إذا كان الرقم ضمن الحد المسموح
+            }
         }
     </script>
     <script>

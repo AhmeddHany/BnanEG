@@ -13,7 +13,7 @@
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
         <form asp-area="MAS" asp-controller="QuestionsAnswer" asp-action="AddQuestionsAnswer" class="needs-validation" novalidate>
-            <input hidden asp-for="CrMasSysQuestionsAnswerNo" />
+            @*<input hidden asp-for="CrMasSysQuestionsAnswerNo" />*@
             <div class="row  mt-3 g-3">
                 <div class="row justify-content-center">
                     <div class="col-lg-9">
@@ -33,7 +33,7 @@
                                     <div class="row align-items-center">
                                         <div class="col-md-6 ">
                                             <label for="System_select" class="form-label"> @localizer["QuestionsAnswerName_system_view"] <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
-                                            <select class="form-select select-style " asp-for="@Model.CrMasSysQuestionsAnswerSystem" id="System_select" required>
+                                            <select class="form-select select-style " asp-for="@Model.CrMasSysQuestionsAnswerSystem" id="System_select" onchange="generateCode_ajax()" required>
                                                 <option> </option>
                                                 @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                                                 {
@@ -60,7 +60,7 @@
                                         </div>
                                         <div class="col-md-6 ">
                                             <label for="list_mainTask" class="form-label"> @localizer["QuestionsAnswerName_list_view"] <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
-                                            <select class="form-select select-style " asp-for="@Model.CrMasSysQuestionsAnswerMainTask" id="list_mainTask" required>
+                                            <select class="form-select select-style " asp-for="@Model.CrMasSysQuestionsAnswerMainTask" id="list_mainTask" onchange="generateCode_ajax()" required>
                                                 <option> </option>
                                                 @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                                                 {
@@ -96,7 +96,7 @@
                                                     <p class="DataTitle">@localizer["the_Code"]</p>
                                                 </div>
                                                 <div class="col-auto ">
-                                                    <p class="Saved-data">@Model.CrMasSysQuestionsAnswerNo</p>
+                                                    <p class="Saved-data" id="codeGenerated">@Model.CrMasSysQuestionsAnswerNo</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -241,5 +241,98 @@
             });
         });
 
+    </script>
+   @* <script>
+
+        function generateCode_ajax() {
+            var task = $('#list_mainTask').val();
+            var system = $('#System_select').val();
+            if (task == null || task == undefined || task == "") task = "0";
+            if (system == null || system == undefined || system == "") system = "0";
+            $.ajax({
+                type: "GET",
+                url: "/MAS/QuestionsAnswer/GenerateajaxCodeAsync?task=" + task + "&system=" + system,
+                //data: { task: task, system: system },
+                success: function (result) {
+                    console.log("code is", result);
+                    $('#codeGenerated').text = result.code;
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+    </script>*@
+@*    <script>
+        async function generateCode_ajax() {
+
+            var task = $('#list_mainTask').val();
+            var system = $('#System_select').val();
+            var settings = {
+                url: "/MAS/QuestionsAnswer/GenerateajaxCodeAsync?task=" + task + "&system=" + system,
+                type: "GET",
+
+                //url: "/MAS/QuestionsAnswer/Generate_ajax_CodeAsync",
+                //data: { task: task, system: system },
+                //method: "POST",
+                timeout: 20000, // sets timeout to 20 seconds
+                contentType: "application/json",
+                //headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept" },
+
+                success: function (result) {
+                    //do something
+                    console.log(result);
+                },
+                error: function (xhr) {
+
+                }
+            };
+            try {
+                $.ajax(settings).then(await function (result) {
+
+                    console.log(result);
+                    $('#codeGenerated').text = result.code;
+
+
+
+                });
+            } catch (err) {
+                alert(err);
+            }
+
+        }
+    </script>*@
+
+    <script>
+        function generateCode_ajax() {
+            var task = $('#list_mainTask').val();
+            var system = $('#System_select').val();
+            console.log({ task, system });
+
+                // التحقق من وجود القيم في الحقول
+                if (task && system) {
+                    $.ajax({
+                        url: '/MAS/QuestionsAnswer/GenerateajaxCodeAsync', // تحديد المسار الصحيح
+                        type: 'GET', // أو POST إذا كنت تحتاج إلى إرسال بيانات في جسم الطلب
+                        data: {
+                            task: task,
+                            system: system
+                        },
+                        dataType: 'json', // تأكد من أن النوع هو JSON
+
+                        success: function (response) {
+                            // عرض الكود الذي تم توليده
+                            //$('#generatedCode').text('Generated Code: ' + response.code);
+                        console.log(response);
+                        },
+                        error: function (xht) {
+                            alert('حدث خطأ أثناء توليد الكود!');
+                            console.log(xht);
+                        }
+                    });
+                } else {
+                    alert('الرجاء إدخال جميع الحقول!');
+                }
+        };
     </script>
 }

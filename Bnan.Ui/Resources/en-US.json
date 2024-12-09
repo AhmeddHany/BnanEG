@@ -327,7 +327,7 @@
 
     // MAS Renter Membership
     "Add_RenterMembership_PageTitle": "Add Membership",
-    "Edit_RenterMembership_PageTitle": "Update The Membership Data",
+    "Edit_RenterMembership_PageTitle": "Update Membership Data",
     "View_RenterMembership_PageTitle": "Memberships",
     "RenterMembershipName_view": "Membership",
     "RenterMembershipNameAr_add": "Arabic Membership",
@@ -381,7 +381,7 @@
 
     // MAS Users
     "Add_User_PageTitle": "Add Employee",
-    "Edit_User_PageTitle": "Update The Employee Data",
+    "Edit_User_PageTitle": "Update Employee Data",
     "View_User_PageTitle": "Employees",
     "UserName_view": "Employee",
     "UserCode": "Employee Code",
@@ -405,7 +405,7 @@
 
     // MAS Lessor Classification
     "Add_LessorClassification_PageTitle": "Add Lessor Classification",
-    "Edit_LessorClassification_PageTitle": "Update The Lessor Classification Data",
+    "Edit_LessorClassification_PageTitle": "Update Lessor Classification Data",
     "View_LessorClassification_PageTitle": "Lessors Classification",
     "LessorClassificationName_view": "Classification",
     "LessorClassificationNameAr_add": "Arabic Classification",
@@ -423,25 +423,27 @@
 
 
     //MAS Lessor_renter Rate
-    "the_Renter_rate": "The Renter Rate",
-    "View_Lessor_renterRate_PageTitle": "The Rate",
+    "the_Renter_rate": "Renter Rate",
+    "View_Lessor_renterRate_PageTitle": "Rate",
     "the_Rate": "The Rate",
-    "the_Company_rate": "The Company Rate",
+    "the_Company_rate": "Company Rate",
     "the_Code": "The Code",
-    "the_ArabicRate": "The Arabic Rate",
-    "the_EnglishRate": "The English Rate",
-    "the_value": "The Value",
-
+    "the_ArabicRate": "Arabic Rate",
+    "the_EnglishRate": "English Rate",
+    "the_value": "Value",
+    "ClassificationOfCountries": "Countries' Classification",
+    "ClassificationOfCompanies": "Lessors' Classification",
 
     //MAS Currency
     "View_Currency_PageTitle": "The Currency",
     "the_Currency": "The Currency",
-    "the_RealNumber": "The Real Number",
-    "the_RatioNumber": "The Ratio Number",
+    "the_RealNumber": "Real Number",
+    "the_RatioNumber": "Ratio Number",
+    "value1_100": "Insert from 1 - 100",
 
     // MAS Countries
     "Add_Countries_PageTitle": "Add Country",
-    "Edit_Countries_PageTitle": "Update The Country Data",
+    "Edit_Countries_PageTitle": "Update Country Data",
     "View_Countries_PageTitle": "Countries",
     "CountriesName_view": "Country",
     "CountriesNameAr_add": "Arabic Country",
@@ -463,7 +465,7 @@
 
     // MAS PostRegions
     "Add_PostRegions_PageTitle": "Add Region",
-    "Edit_PostRegions_PageTitle": "Update The Region Data",
+    "Edit_PostRegions_PageTitle": "Update Region Data",
     "View_PostRegions_PageTitle": "Regions",
     "PostRegionsName_view": "Region",
     "PostRegionsNameAr_add": "Arabic Region",
@@ -484,7 +486,7 @@
 
     // MAS PostCity
     "Add_PostCity_PageTitle": "Add City",
-    "Edit_PostCity_PageTitle": "Update The City Data",
+    "Edit_PostCity_PageTitle": "Update City Data",
     "View_PostCity_PageTitle": "Cities",
     "PostCityName_view": "City / Region",
     "PostCityNameAr_add": "Arabic City",

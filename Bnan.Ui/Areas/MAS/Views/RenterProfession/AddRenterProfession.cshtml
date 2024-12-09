@@ -50,8 +50,8 @@
                                             <label for="AR-Licence" class="form-label">
                                                 @localizer["RenterProfessionNameAr_add"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
-                                            </label>
-                                            <input type="text" asp-for="CrMasSupRenterProfessionsArName" id="CrMasSupRenterProfessionsArName" maxlength="30" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            </label>                                                                                                                                                                                        
+                                            <input type="text" asp-for="CrMasSupRenterProfessionsArName" id="CrMasSupRenterProfessionsArName" maxlength="30" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s\/-]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasSupRenterProfessionsArName" class="text-danger"></span>
@@ -64,7 +64,7 @@
                                                 @localizer["RenterProfessionNameEn_add"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupRenterProfessionsEnName" maxlength="30" id="CrMasSupRenterProfessionsEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupRenterProfessionsEnName" maxlength="30" id="CrMasSupRenterProfessionsEnName" oninput="this.value = this.value.replace(/[^a-zA-Z\s\/\-]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasSupRenterProfessionsEnName" class="text-danger"></span>

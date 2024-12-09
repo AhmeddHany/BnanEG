@@ -313,12 +313,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     errors.Add(new ErrorResponse { Field = "CrMasSupAccountPaymentMethodEnName", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system number
-                else if (existName == "CrMasSupAccountPaymentMethodNaqlCode" && Int64.TryParse(dataField, out var code) && code != 0)
+                else if (existName == "CrMasSupAccountPaymentMethodNaqlCode" && Int64.TryParse(dataField, out var code) && code != 0 && All_AccountPaymentMethods.Any(x => x.CrMasSupAccountPaymentMethodNaqlCode == code)) 
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupAccountPaymentMethodNaqlCode", Message = _localizer["Existing"] });
                 }
                 // Check for existing rental system ID
-                else if (existName == "CrMasSupAccountPaymentMethodNaqlId" && Int64.TryParse(dataField, out var id) && id != 0)
+                else if (existName == "CrMasSupAccountPaymentMethodNaqlId" && Int64.TryParse(dataField, out var id) && id != 0 && All_AccountPaymentMethods.Any(x => x.CrMasSupAccountPaymentMethodNaqlId == id))
                 {
                     errors.Add(new ErrorResponse { Field = "CrMasSupAccountPaymentMethodNaqlId", Message = _localizer["Existing"] });
                 }
