@@ -16,7 +16,8 @@ namespace Bnan.Inferastructure.Repository.MAS
         public async Task<bool> AddDefaultWhatsupConnect(string LessorCode)
         {
             CrCasLessorWhatsupConnect crCasLessorConnect = new CrCasLessorWhatsupConnect();
-            crCasLessorConnect.CrCasLessorWhatsupConnectId = LessorCode;
+            crCasLessorConnect.CrCasLessorWhatsupConnectId = await GetNextWhatsupConnectId(LessorCode);
+            crCasLessorConnect.CrCasLessorWhatsupConnectLessor = LessorCode;
             crCasLessorConnect.CrCasLessorWhatsupConnectSerial = 0;
             crCasLessorConnect.CrCasLessorWhatsupConnectStatus = Status.Renewed;
             if (await _unitOfWork.CrCasLessorWhatsupConnect.AddAsync(crCasLessorConnect) != null) return true;
