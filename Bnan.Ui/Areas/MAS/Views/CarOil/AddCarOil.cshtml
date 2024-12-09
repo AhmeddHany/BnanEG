@@ -51,7 +51,7 @@
                                                 @localizer["CarOilNameAr_add"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" asp-for="CrMasSupCarOilArName" id="CrMasSupCarOilArName" maxlength="50" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <input type="text" asp-for="CrMasSupCarOilArName" id="CrMasSupCarOilArName" maxlength="30" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s\/\.\-0-9]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasSupCarOilArName" class="text-danger"></span>
@@ -64,7 +64,7 @@
                                                 @localizer["CarOilNameEn_add"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupCarOilEnName" maxlength="50" id="CrMasSupCarOilEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupCarOilEnName" maxlength="30" id="CrMasSupCarOilEnName" oninput="this.value = this.value.replace(/[^a-zA-Z\s\/\.\-0-9]/g, '')" autoComplete="off" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasSupCarOilEnName" class="text-danger"></span>

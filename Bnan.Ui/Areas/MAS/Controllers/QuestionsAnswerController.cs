@@ -342,7 +342,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
-            var licence = await _unitOfWork.CrMasSysQuestionsAnswer.GetByIdAsync(code);
+            var licence = await _unitOfWork.CrMasSysQuestionsAnswer.FindAsync(x=>x.CrMasSysQuestionsAnswerNo == code);
             if (licence == null) return "false";
 
             try
@@ -462,6 +462,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 system.CrMasSysSystemArName,
                 system.CrMasSysSystemEnName);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GenerateajaxCodeAsync(string task, string system)
+        {
+            var allLicenses = await _unitOfWork.CrMasSysQuestionsAnswer.FindAllAsNoTrackingAsync(x => x.CrMasSysQuestionsAnswerMainTask == task && x.CrMasSysQuestionsAnswerSystem == system);
+
+            var thisCode = allLicenses.Any() ? (BigInteger.Parse(allLicenses.MaxBy(x => x.CrMasSysQuestionsAnswerNo).CrMasSysQuestionsAnswerNo) + 1).ToString() : system + task + "01";
+            return new JsonResult(new { code = thisCode });
+
+        }
+
 
         [HttpPost]
         public IActionResult DisplayToastError_NoUpdate(string messageText)

@@ -136,7 +136,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         public async Task<IActionResult> AddRenterIdtype(RenterIdtypeVM renterIdtypeVM)
         {
 
-            
+            if (renterIdtypeVM.CrMasSupRenterIdtypeNaqlCode == null) renterIdtypeVM.CrMasSupRenterIdtypeNaqlCode = 0;
+            if (renterIdtypeVM.CrMasSupRenterIdtypeNaqlId == null) renterIdtypeVM.CrMasSupRenterIdtypeNaqlId = 0;
             var user = await _userManager.GetUserAsync(User);
 
             if (!ModelState.IsValid || renterIdtypeVM == null)
@@ -197,6 +198,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "RenterIdtype");
             }
+            if (contract.CrMasSupRenterIdtypeNaqlCode == null) contract.CrMasSupRenterIdtypeNaqlCode = 0;
+            if (contract.CrMasSupRenterIdtypeNaqlId == null) contract.CrMasSupRenterIdtypeNaqlId = 0;
             var model = _mapper.Map<RenterIdtypeVM>(contract);
             model.RentersHave_withType_Count = contract.CrCasRenterPrivateDriverInformations.Count + contract.CrMasRenterInformations.Count;
             return View(model);
@@ -222,6 +225,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 }
                 var renterIdtypeEntity = _mapper.Map<CrMasSupRenterIdtype>(renterIdtypeVM);
 
+                if (renterIdtypeVM.CrMasSupRenterIdtypeNaqlCode == null) renterIdtypeEntity.CrMasSupRenterIdtypeNaqlCode = 0;
+                if (renterIdtypeVM.CrMasSupRenterIdtypeNaqlId == null) renterIdtypeEntity.CrMasSupRenterIdtypeNaqlId = 0;
                 // Check if the entity already exists
                 if (await _masRenterIdtype.ExistsByDetailsAsync(renterIdtypeEntity))
                 {
