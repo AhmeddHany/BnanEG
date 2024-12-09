@@ -5,6 +5,7 @@ using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
+using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 {
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
     public class LessorsKSAController : BaseController
     {
 
@@ -419,7 +421,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Update, pageNumber);
-            if (user == null || CrMasLessorInformationVM == null|| CrMasLessorInformationVM.CrMasLessorInformationCode=="0000")
+            if (user == null || CrMasLessorInformationVM == null || CrMasLessorInformationVM.CrMasLessorInformationCode == "0000")
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
@@ -499,8 +501,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             }
         }
 
-
-
+        [HttpGet]
+        public async Task<IActionResult> Connect(string companyId, string companyName)
+        {
+            var status = await WhatsAppServicesExtension.ConnectLessor(companyId, companyName);
+            return Json(new { status });
+        }
         private async Task AddModelErrorsAsync(CrMasLessorInformation entity)
         {
             if (await _masLessor.ExistsByLongArabicNameAsync(entity.CrMasLessorInformationArLongName, entity.CrMasLessorInformationCode))

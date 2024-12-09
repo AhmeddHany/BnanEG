@@ -4,6 +4,6 @@
     {
         public bool Status { get; set; }
         public string Message { get; set; }
-        public ClientInfoWhatsup Data { get; set; }
+        public ClientInfoWhatsup? Data { get; set; }
     }
 }

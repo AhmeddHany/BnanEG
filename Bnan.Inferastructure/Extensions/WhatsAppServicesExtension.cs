@@ -1,4 +1,6 @@
-﻿namespace Bnan.Inferastructure.Extensions
+﻿using Bnan.Core.Extensions;
+
+namespace Bnan.Inferastructure.Extensions
 {
     public static class WhatsAppServicesExtension
     {
@@ -105,6 +107,48 @@
                 throw new Exception($"Error sending message: {ex.Message}", ex);
             }
         }
+
+        /// <summary>
+        /// Connects a lessor by adding a new device with the provided company ID and name.
+        /// </summary>
+        /// <param name="companyId">The ID of the company.</param>
+        /// <param name="companyName">The name of the company.</param>
+        /// <returns>A string indicating success or failure of the operation.</returns>
+        public static async Task<string> ConnectLessor(string companyId, string companyName)
+        {
+            if (string.IsNullOrWhiteSpace(companyId))
+                return ApiResponseStatus.ValidationError;
+
+            if (string.IsNullOrWhiteSpace(companyName))
+                return ApiResponseStatus.ValidationError;
+
+            string url = $"{api}/api/addNew_Device?id={companyId}&name={companyName}";
+
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return ApiResponseStatus.Success;
+                }
+                else
+                {
+                    return ApiResponseStatus.AlreadyExists;
+                }
+            }
+            catch (HttpRequestException)
+            {
+                // Specific error for HTTP request issues
+                return ApiResponseStatus.ServerError;
+            }
+            catch (Exception)
+            {
+                // General error handling
+                return ApiResponseStatus.ServerError;
+            }
+        }
+
     }
 
 }
