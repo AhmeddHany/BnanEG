@@ -754,8 +754,9 @@
 
     </script>
 
-
     <script>
+
+
         $('#Connect input[type="checkbox"]').on('click', async function () {
             // تعطيل الـ checkbox مؤقتًا أثناء الانتظار
             event.preventDefault();
@@ -763,12 +764,9 @@
             toastr.options = { "positionClass": "@localizer["toastPostion"]" };
 
             var companyId = $('#CrMasLessorInformationCode').val();
-            var companyName = $('#CrMasLessorInformationArShortName').val();
             console.log("companyId", companyId);
-            console.log("companyName", companyName);
-
             try {
-                const status = await connectLessorAsync(companyId, companyName);
+                const status = await connectLessorAsync(companyId);
                 console.log("status:", status);  // تحقق من القيم القادمة من الخادم
 
                 if (status == '@ApiResponseStatus.Success') {
@@ -800,12 +798,12 @@
             }
         });
 
-        async function connectLessorAsync(companyId, companyName) {
+        async function connectLessorAsync(companyId) {
             return new Promise((resolve, reject) => {
                 $.ajax({
                     type: "GET",
                     url: "/MAS/LessorsKSA/Connect",
-                    data: { companyId: companyId, companyName: companyName },
+                    data: { companyId: companyId },
                     success: function (result) {
                         console.log("result", result.status);
                         resolve(result.status);  // إرجاع status في حالة النجاح
@@ -817,6 +815,52 @@
                 });
             });
         }
+
+
+
+
+        $(document).ready(async function () {
+            var companyId = $('#CrMasLessorInformationCode').val(); // افترض وجود الـ ID للشركة
+            console.log("Initializing checkbox for Company ID: ", companyId);
+
+            // التحقق من حالة التهيئة عند تحميل الصفحة
+            const status = await checkClientInitialized(companyId);
+
+            if (status === '@ApiResponseStatus.AlreadyExists') {
+                // إذا كانت مهيأة بالفعل، يتم تفعيل checkbox
+                $('#Connect input[type="checkbox"]').prop('checked', true);
+                $('#Connect input[type="checkbox"]').prop('disabled', true);
+                console.log("Client is already initialized. Checkbox set to true.");
+            } else if (status === '@ApiResponseStatus.NotFound') {
+                // إذا لم تكن مهيأة، يتم إلغاء تحديد checkbox
+                $('#Connect input[type="checkbox"]').prop('checked', false);
+                $('#Connect input[type="checkbox"]').prop('disabled', false);
+                console.log("Client is not initialized. Checkbox set to false.");
+            } else {
+                console.error("An error occurred while checking client initialization.");
+            }
+        });
+
+        async function checkClientInitialized(companyId) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: "GET",
+                    url: "/MAS/LessorsKSA/CheckClientInitialized",
+                    data: { companyId: companyId },
+                    success: function (result) {
+                        console.log("result", result.status);
+                        resolve(result.status);  // إرجاع status في حالة النجاح
+                    },
+                    error: function () {
+                        console.log("AJAX error");
+                        reject("Failed to connect to the server");  // إرجاع رسالة خطأ في حالة الفشل
+                    }
+                });
+            });
+        }
+
+
+
     </script>
 
 }

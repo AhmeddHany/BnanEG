@@ -1,4 +1,5 @@
 ﻿using Bnan.Core.Extensions;
+using Newtonsoft.Json;
 
 namespace Bnan.Inferastructure.Extensions
 {
@@ -114,28 +115,19 @@ namespace Bnan.Inferastructure.Extensions
         /// <param name="companyId">The ID of the company.</param>
         /// <param name="companyName">The name of the company.</param>
         /// <returns>A string indicating success or failure of the operation.</returns>
-        public static async Task<string> ConnectLessor(string companyId, string companyName)
+        public static async Task<string> ConnectLessor(string companyId)
         {
             if (string.IsNullOrWhiteSpace(companyId))
                 return ApiResponseStatus.ValidationError;
-
-            if (string.IsNullOrWhiteSpace(companyName))
-                return ApiResponseStatus.ValidationError;
-
-            string url = $"{api}/api/addNew_Device?id={companyId}&name={companyName}";
+            string url = $"{api}/api/addNew_Device?id={companyId}";
 
             try
             {
                 var response = await _httpClient.GetAsync(url);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return ApiResponseStatus.Success;
-                }
-                else
-                {
-                    return ApiResponseStatus.AlreadyExists;
-                }
+                var content = await response.Content.ReadAsStringAsync();
+                var jsonResult = JsonConvert.DeserializeObject<dynamic>(content);
+                if (jsonResult != null && jsonResult.status == true) return ApiResponseStatus.Success;
+                else return ApiResponseStatus.Failure;
             }
             catch (HttpRequestException)
             {
@@ -148,7 +140,29 @@ namespace Bnan.Inferastructure.Extensions
                 return ApiResponseStatus.ServerError;
             }
         }
+        public static async Task<string> CheckIsClientInitialized(string companyId)
+        {
+            if (string.IsNullOrWhiteSpace(companyId)) return ApiResponseStatus.ValidationError;
 
+            var url = $"{ApiUrl.IPWhatsService}/api/checkisClientInitialized/{companyId}";
+
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+                var content = await response.Content.ReadAsStringAsync();
+                var jsonResult = JsonConvert.DeserializeObject<dynamic>(content);
+
+                if (jsonResult != null && jsonResult.status == true)
+                    return ApiResponseStatus.AlreadyExists;
+                else
+                    return ApiResponseStatus.NotFound;
+
+            }
+            catch (Exception ex)
+            {
+                return ApiResponseStatus.ServerError;
+            }
+        }
     }
 
 }
