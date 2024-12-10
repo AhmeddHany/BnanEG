@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System.Security.Claims;
-using static Pipelines.Sockets.Unofficial.SocketConnection;
 
 namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
 {
@@ -322,7 +321,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["CompanyUsers"],
-                        Url = "#"
+                        Url = Url.Action("Index", "UsersForCompanies", new { area = "MAS" })
                     });
                 }
 
@@ -684,7 +683,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                         Authorization = true,
                         Title = _localizer["VirtualInspectionDetails"],
                         Url = Url.Action("Index", "ContractCarCheckupDetails", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
-                        
+
                     });
                 }
 

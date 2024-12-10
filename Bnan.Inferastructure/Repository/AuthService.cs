@@ -1,6 +1,5 @@
 ﻿using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using Bnan.Inferastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
@@ -41,15 +40,66 @@ namespace Bnan.Core.Repository
             return result.Succeeded;
         }
 
-        public async Task<bool> AddUserDefault(string LessorCode)
+        //public async Task<bool> AddUserDefault(string LessorCode)
+        //{
+        //    var lessor = await _unitOfWork.CrMasLessorInformation.GetByIdAsync(LessorCode);
+        //    var user = new CrMasUserInformation
+        //    {
+        //        CrMasUserInformationCode = $"CAS{lessor.CrMasLessorInformationCode}",
+        //        CrMasUserInformationPassWord = $"CAS{LessorCode}",
+        //        CrMasUserInformationLessor = lessor.CrMasLessorInformationCode,
+        //        CrMasUserInformationRemindMe = "رقم الشركة",
+        //        CrMasUserInformationDefaultBranch = "100",
+        //        CrMasUserInformationDefaultLanguage = "AR",
+        //        CrMasUserInformationAuthorizationAdmin = true,
+        //        CrMasUserInformationAuthorizationBnan = false,
+        //        CrMasUserInformationAuthorizationBranch = false,
+        //        CrMasUserInformationAuthorizationFoolwUp = false,
+        //        CrMasUserInformationAuthorizationOwner = false,
+        //        CrMasUserInformationArName = lessor.CrMasLessorInformationDirectorArName,
+        //        CrMasUserInformationEnName = lessor.CrMasLessorInformationDirectorEnName,
+        //        CrMasUserInformationTasksArName = "مدير الشركة و مسؤول النظام",
+        //        CrMasUserInformationTasksEnName = " Company Manager And System Administrator",
+        //        CrMasUserInformationAvailableBalance = 0,
+        //        CrMasUserInformationReservedBalance = 0,
+        //        CrMasUserInformationTotalBalance = 0,
+        //        CrMasUserInformationCreditLimit = 0,
+        //        CrMasUserInformationMobileNo = lessor.CrMasLessorInformationCommunicationMobile,
+        //        CrMasUserInformationCallingKey = lessor.CrMasLessorInformationCommunicationMobileKey,
+        //        Email = lessor.CrMasLessorInformationEmail,
+        //        CrMasUserInformationExitTimer = 5,
+        //        CrMasUserInformationChangePassWordLastDate = null,
+        //        CrMasUserInformationEntryLastDate = null,
+        //        CrMasUserInformationExitLastDate = null,
+        //        CrMasUserInformationPicture = "~/images/common/user.jpg",
+        //        CrMasUserInformationSignature = "~/images/common/DefualtUserSignature.png",
+        //        CrMasUserInformationOperationStatus = false,
+        //        CrMasUserInformationStatus = "A",
+        //        UserName = $"CAS{LessorCode}",
+        //        Id = $"CAS{LessorCode}",
+
+        //    };
+        //    var result = await _userManager.CreateAsync(user, user.CrMasUserInformationPassWord);
+        //    if (result.Succeeded)
+        //    {
+        //        await AddRoleAsync(user, "CAS");
+        //        await _UserMainValidtion.AddMainValidaitionToUserWhenAddLessor(user.CrMasUserInformationCode);
+        //        await _UserSubValidition.AddSubValidaitionToUserWhenAddLessor(user.CrMasUserInformationCode);
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
+        public async Task<string> AddUserCompanyForCas(CrMasUserInformation model)
         {
-            var lessor = await _unitOfWork.CrMasLessorInformation.GetByIdAsync(LessorCode);
             var user = new CrMasUserInformation
             {
-                CrMasUserInformationCode = $"CAS{lessor.CrMasLessorInformationCode}",
-                CrMasUserInformationPassWord = $"CAS{LessorCode}",
-                CrMasUserInformationLessor = lessor.CrMasLessorInformationCode,
-                CrMasUserInformationRemindMe = "رقم الشركة",
+                CrMasUserInformationCode = model.CrMasUserInformationCode,
+                CrMasUserInformationPassWord = model.CrMasUserInformationCode,
+                CrMasUserInformationLessor = model.CrMasUserInformationLessor,
+                CrMasUserInformationRemindMe = "رقم الموظف",
                 CrMasUserInformationDefaultBranch = "100",
                 CrMasUserInformationDefaultLanguage = "AR",
                 CrMasUserInformationAuthorizationAdmin = true,
@@ -57,17 +107,17 @@ namespace Bnan.Core.Repository
                 CrMasUserInformationAuthorizationBranch = false,
                 CrMasUserInformationAuthorizationFoolwUp = false,
                 CrMasUserInformationAuthorizationOwner = false,
-                CrMasUserInformationArName = lessor.CrMasLessorInformationDirectorArName,
-                CrMasUserInformationEnName = lessor.CrMasLessorInformationDirectorEnName,
-                CrMasUserInformationTasksArName = "مدير الشركة و مسؤول النظام",
-                CrMasUserInformationTasksEnName = " Company Manager And System Administrator",
+                CrMasUserInformationArName = model.CrMasUserInformationArName,
+                CrMasUserInformationEnName = model.CrMasUserInformationEnName,
+                CrMasUserInformationTasksArName = "المدير الفني للنظام",
+                CrMasUserInformationTasksEnName = "Technical Director of the System",
                 CrMasUserInformationAvailableBalance = 0,
                 CrMasUserInformationReservedBalance = 0,
                 CrMasUserInformationTotalBalance = 0,
                 CrMasUserInformationCreditLimit = 0,
-                CrMasUserInformationMobileNo = lessor.CrMasLessorInformationCommunicationMobile,
-                CrMasUserInformationCallingKey = lessor.CrMasLessorInformationCommunicationMobileKey,
-                Email = lessor.CrMasLessorInformationEmail,
+                CrMasUserInformationMobileNo = model.CrMasUserInformationMobileNo,
+                CrMasUserInformationCallingKey = model.CrMasUserInformationCallingKey,
+                Email = model.CrMasUserInformationEmail,
                 CrMasUserInformationExitTimer = 5,
                 CrMasUserInformationChangePassWordLastDate = null,
                 CrMasUserInformationEntryLastDate = null,
@@ -76,22 +126,23 @@ namespace Bnan.Core.Repository
                 CrMasUserInformationSignature = "~/images/common/DefualtUserSignature.png",
                 CrMasUserInformationOperationStatus = false,
                 CrMasUserInformationStatus = "A",
-                UserName = $"CAS{LessorCode}",
-                Id = $"CAS{LessorCode}",
+                UserName = model.CrMasUserInformationCode,
+                Id = model.CrMasUserInformationCode,
+                CrMasUserInformationEmail = model.CrMasUserInformationEmail,
+                CrMasUserInformationReasons = model.CrMasUserInformationReasons,
 
             };
             var result = await _userManager.CreateAsync(user, user.CrMasUserInformationPassWord);
             if (result.Succeeded)
             {
-                await AddRoleAsync(user, "CAS");
-                await _UserMainValidtion.AddMainValidaitionToUserWhenAddLessor(user.CrMasUserInformationCode);
-                await _UserSubValidition.AddSubValidaitionToUserWhenAddLessor(user.CrMasUserInformationCode);
-                return true;
+                if (await AddRoleAsync(user, "CAS") &&
+                 await _UserMainValidtion.AddMainValidaitionToUserCASFromMAS(user.CrMasUserInformationCode) &&
+                 await _UserSubValidition.AddSubValidaitionToUserCASFromMAS(user.CrMasUserInformationCode))
+                {
+                    return user.CrMasUserInformationCode;
+                }
             }
-            else
-            {
-                return false;
-            }
+            return string.Empty;
         }
 
         public async Task<bool> CheckPassword(string username, string password)
@@ -193,9 +244,9 @@ namespace Bnan.Core.Repository
 
             };
             var result = await _userManager.CreateAsync(user, user.CrMasUserInformationPassWord);
-            if (result.Succeeded)return true;
+            if (result.Succeeded) return true;
             else return false;
-            
+
         }
 
         public async Task SignOut()

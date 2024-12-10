@@ -667,7 +667,10 @@
     "ModalFirstMessage_lessor_Hold": "ايقاف بيانات ونتائج1",
     "ModalSecondMessage_lessor_Hold": "ايقاف بيانات ونتائج2",
     "ModalFirstMessage_lessor_UnHold": "ارجاع بيانات ونتائج1",
-    "ModalSecondMessage_lessor_UnHold": "ارجاع بيانات ونتائج2"
+    "ModalSecondMessage_lessor_UnHold": "ارجاع بيانات ونتائج2",
+    // UsersForCompanies
+    "UsersForCompanies": "بيانات موظفي الشركات",
+    "AddCompanyUser": "اضافة موظف شركة"
   },
 
 
@@ -1866,7 +1869,7 @@
   "PleaseEnterRequiredInfo": "من فضلك ادخل البيانات المطلوبة",
   "requiredFiledEmail": "من فضلك ادخل البريد الالكتروني بشكل صحيح",
   "PleaseEnterCorrectFormatDate": "الرجاء إدخال التاريخ بالتنسيق yyyy/MM/dd",
-
+  "requiredFiledMaxLength7": "الحد الأقصى للطول هو 7",
 
   // buttons
   "Hold": "ايقاف",

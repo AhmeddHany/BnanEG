@@ -87,25 +87,28 @@ namespace Bnan.Inferastructure.Extensions
             { "id", companyId }
         };
 
-            var content = new FormUrlEncodedContent(formData);
+            var data = new FormUrlEncodedContent(formData);
 
             try
             {
-                // إرسال الطلب
-                var response = await _httpClient.PostAsync(url, content);
+                var response = await _httpClient.PostAsync(url, data);
+                if (!response.IsSuccessStatusCode)
+                    return ApiResponseStatus.Failure;
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return "Message sent successfully.";
-                }
-                else
-                {
-                    throw new Exception($"Failed to send message: {response.ReasonPhrase}");
-                }
+                var content = await response.Content.ReadAsStringAsync();
+                var jsonResult = JsonConvert.DeserializeObject<dynamic>(content);
+
+                // التحقق من الحالة
+                if (jsonResult != null && (jsonResult.status == true || jsonResult.status.ToString().ToLower() == "true")) return ApiResponseStatus.Success;
+                return ApiResponseStatus.Failure;
             }
-            catch (Exception ex)
+            catch (HttpRequestException)
             {
-                throw new Exception($"Error sending message: {ex.Message}", ex);
+                return ApiResponseStatus.ServerError;
+            }
+            catch (Exception)
+            {
+                return ApiResponseStatus.ServerError;
             }
         }
 

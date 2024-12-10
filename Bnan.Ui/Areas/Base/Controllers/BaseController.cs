@@ -76,6 +76,7 @@ namespace Bnan.Ui.Areas.Base.Controllers
             else if (status == Status.Deleted) return ("حذف", "Remove");
             else if (status == Status.UnHold) return ("استرجاع الايقاف", "Retrieve Hold");
             else if (status == Status.UnDeleted) return ("استرجاع الحذف", "Retrieve Delete");
+            else if (status == Status.ResetPassword) return ("استرجاع كلمة السر", "Retrieve Password");
             else return ("", "");
         }
 

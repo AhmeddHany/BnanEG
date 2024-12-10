@@ -1,26 +1,25 @@
-﻿@model Bnan.Ui.ViewModels.Identitiy.RegisterViewModel
+﻿@model Bnan.Ui.ViewModels.MAS.Users.CompanyUserVM
 
 @inject IViewLocalizer localizer
 
 @{
-    ViewData["Page-title"] = localizer["Add_User_PageTitle"];
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
 }
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
-        <form class="needs-validation" novalidate asp-area="MAS" asp-controller="Users" asp-action="AddUser" enctype="multipart/form-data">
+        <form class="needs-validation" novalidate asp-area="MAS" asp-controller="UsersForCompanies" asp-action="AddUser" enctype="multipart/form-data">
             <div class="row  mt-3 g-3">
                 <div class="row justify-content-center">
                     <div class="col-lg-9">
                         <div class="row g-3 my-2">
                             <div class="col">
-                                <h3>@localizer["Add_User_PageTitle"]</h3>
+                                <h3>@localizer["AddCompanyUser"]</h3>
                             </div>
                             <div class="col-md-auto save-col">
                                 <button type="submit" class="custom-img-btn"><img src="~/MasSystem/images/save.svg" /></button>
                                 <button type="button" class="custom-img-btn">
-                                    <a href="/MAS/Users/Users">
+                                    <a href="/MAS/UsersForCompanies/Index">
                                         <img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" />
                                     </a>
                                 </button>
@@ -36,8 +35,7 @@
                                                 @localizer["UserCode"]
                                                 <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" id="CrMasUserInformationCode" class="form-control inputs"
-                                                   asp-for="CrMasUserInformationCode" maxlength="10" onkeypress="return isEnglishAndNumbers(event)" oninput="removeInvalidChars(this)" required>
+                                            <input type="text" id="CrMasUserInformationCode" class="form-control inputs" asp-for="CrMasUserInformationCode" maxlength="7" onkeypress="return isEnglishAndNumbers(event)" oninput="removeInvalidChars(this)" required>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasUserInformationCode" class="text-danger"></span>
@@ -48,9 +46,8 @@
                                         <div class="col-md-6">
                                             <label for="CrMasUserInformationId" class="form-label">
                                                 @localizer["UserID"]
-                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" id="CrMasUserInformationId" class="form-control inputs " asp-for="CrMasUserInformationId" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10" required>
+                                            <input type="text" id="CrMasUserInformationId" class="form-control inputs " asp-for="CrMasUserInformationId" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasUserInformationId" class="text-danger"></span>
@@ -92,28 +89,29 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-6">
-                                            <label for="CrMasUserInformationTasksArName" class="form-label">
-                                                @localizer["EmployementNameAr"]
-                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
-                                            </label>
-                                            <input type="text" id="CrMasUserInformationTasksArName" asp-for="CrMasUserInformationTasksArName" class="form-control inputs arabic-input" maxlength="40" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" required>
+                                    <div class="row">
+                                        <div class="col-md-6 ">
+                                            <label for="Category" class="form-label"> @localizer["Company"] <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
+                                            <select class="form-select select-style " asp-for="CrMasUserInformationLessor" id="Company" required>
+                                                <option></option>
+                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                {
+                                                    foreach (var callingKey in (List<SelectListItem>)ViewData["LessorsEn"])
+                                                    {
+                                                        <option value="@callingKey.Value">@callingKey.Text</option>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    foreach (var callingKey in (List<SelectListItem>)ViewData["LessorsAr"])
+                                                    {
+                                                        <option value="@callingKey.Value">@callingKey.Text</option>
+                                                    }
+                                                }
+                                            </select>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasUserInformationTasksArName" class="text-danger"></span>
-                                              </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="CrMasUserInformationTasksEnName" class="form-label">
-                                                @localizer["EmployementNameEn"]
-                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
-                                            </label>
-                                            <input type="text" id="CrMasUserInformationTasksEnName" asp-for="CrMasUserInformationTasksEnName" class="form-control inputs english-input" maxlength="40" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" required>
-                                            <div class="invaild">
-                                                <div class="invalid-feedback">
-                                                    <span asp-validation-for="@Model.CrMasUserInformationTasksEnName" class="text-danger"></span>
+                                                    <span asp-validation-for="@Model.CrMasUserInformationLessor" class="text-danger"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -194,7 +192,7 @@
             function Check_onChange_input(existName, dataField) {
                 $.ajax({
                     type: "GET",
-                    url: "/MAS/Users/CheckChangedField",
+                    url: "/MAS/UsersForCompanies/CheckChangedField",
                     data: { existName: existName, dataField: dataField },
                     success: function (result) {
                         console.log("feedback", result);
@@ -228,18 +226,18 @@
                 Check_onChange_input('CrMasUserInformationId', newValue);
             });
 
-            $('#CrMasUserInformationArName').on('change', function () {
-                var newValue = $(this).val();
-                console.log("newValue", newValue)
-                Check_onChange_input('CrMasUserInformationArName', newValue);
-            });
+            // $('#CrMasUserInformationArName').on('change', function () {
+            //     var newValue = $(this).val();
+            //     console.log("newValue", newValue)
+            //     Check_onChange_input('CrMasUserInformationArName', newValue);
+            // });
 
-            $('#CrMasUserInformationEnName').on('change', function () {
-                var newValue = $(this).val();
-                Check_onChange_input('CrMasUserInformationEnName', newValue);
-            });
+            // $('#CrMasUserInformationEnName').on('change', function () {
+            //     var newValue = $(this).val();
+            //     Check_onChange_input('CrMasUserInformationEnName', newValue);
+            // });
 
-            
+
         });
 
     </script>
