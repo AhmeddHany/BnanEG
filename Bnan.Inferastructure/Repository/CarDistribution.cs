@@ -31,6 +31,7 @@ namespace Bnan.Inferastructure.Repository
                 CrMasSupCarDistributionBagBags = crMasSupCarDistribution.CrMasSupCarDistributionBagBags,
                 CrMasSupCarDistributionSmallBags = crMasSupCarDistribution.CrMasSupCarDistributionSmallBags,
                 CrMasSupCarDistributionPassengers = crMasSupCarDistribution.CrMasSupCarDistributionPassengers,
+                CrMasSupCarDistributionCount = 0,
                 CrMasSupCarDistributionConcatenateArName = CarDistributionArConcat,
                 CrMasSupCarDistributionConcatenateEnName = CarDistributionEnConcat,
                 CrMasSupCarDistributionImage = crMasSupCarDistribution.CrMasSupCarDistributionImage,

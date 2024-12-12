@@ -2,12 +2,6 @@
 using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.UpdateDataBaseJobs;
 using Bnan.Core.Models;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository.UpdateDataBaseJobs
 {
@@ -135,8 +129,28 @@ namespace Bnan.Inferastructure.Repository.UpdateDataBaseJobs
             // حفظ التغييرات
             await _unitOfWork.CompleteAsync();
         }
+        public async Task UpdateDistributionCarCount()
+        {
+            var distributions = await _unitOfWork.CrMasSupCarDistribution.FindAllAsync(x => x.CrMasSupCarDistributionStatus == Status.Active);
+            var cars = await _unitOfWork.CrCasCarInformation
+                .FindAllAsNoTrackingAsync(x => x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationStatus != Status.Deleted);
 
+            var updatedDistributions = new List<CrMasSupCarDistribution>();
 
-
+            foreach (var distribution in distributions)
+            {
+                var count = cars.Count(x => x.CrCasCarInformationDistribution == distribution.CrMasSupCarDistributionCode);
+                if (count > 0 && count != distribution.CrMasSupCarDistributionCount)
+                {
+                    distribution.CrMasSupCarDistributionCount = count;
+                    updatedDistributions.Add(distribution);
+                }
+            }
+            if (updatedDistributions.Any())
+            {
+                _unitOfWork.CrMasSupCarDistribution.UpdateRange(updatedDistributions);
+                await _unitOfWork.CompleteAsync();
+            }
+        }
     }
 }

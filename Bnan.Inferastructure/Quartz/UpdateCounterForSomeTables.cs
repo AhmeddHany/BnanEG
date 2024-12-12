@@ -1,11 +1,5 @@
 ﻿using Bnan.Core.Interfaces.UpdateDataBaseJobs;
-using Microsoft.Extensions.Logging;
 using Quartz;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Quartz
 {
@@ -27,7 +21,7 @@ namespace Bnan.Inferastructure.Quartz
             await _updateCountOfType.UpdateNationalitiesCount(Renters);
             await _updateCountOfType.UpdateCountriesPostRenterCount(RentersPost);
             await _updateCountOfType.UpdateKeyCallingsCount(Renters);
-
+            await _updateCountOfType.UpdateDistributionCarCount();
         }
     }
 }

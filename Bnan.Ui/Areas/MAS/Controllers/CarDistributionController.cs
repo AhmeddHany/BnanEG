@@ -302,6 +302,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                if (status == Status.Deleted && CarDistribution.CrMasSupCarDistributionCount > 0) return "udelete";
                 CarDistribution.CrMasSupCarDistributionStatus = status;
                 _unitOfWork.CrMasSupCarDistribution.Update(CarDistribution);
                 await _unitOfWork.CompleteAsync();
