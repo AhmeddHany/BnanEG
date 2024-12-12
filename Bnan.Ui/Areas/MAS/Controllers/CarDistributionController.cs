@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
+using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.Areas.CAS.Controllers;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 
@@ -20,6 +21,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
     public class CarDistributionController : BaseController
     {
         private readonly IStringLocalizer<LessorsKSAController> _localizer;
@@ -28,9 +30,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IUserLoginsService _userLoginsService;
         private readonly IUserService _UserService;
+        private readonly IBaseRepo _baseRepo;
+
+        private readonly string pageNumber = SubTasks.CrMasSupCarDistribution;
 
 
-        public CarDistributionController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, IStringLocalizer<LessorsKSAController> localizer, IWebHostEnvironment webHostEnvironment, ICarDistribution carDistribution, IToastNotification toastNotification, IUserLoginsService userLoginsService, IUserService userService) : base(userManager, unitOfWork, mapper)
+        public CarDistributionController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, IStringLocalizer<LessorsKSAController> localizer, IWebHostEnvironment webHostEnvironment, ICarDistribution carDistribution, IToastNotification toastNotification, IUserLoginsService userLoginsService, IUserService userService, IBaseRepo baseRepo) : base(userManager, unitOfWork, mapper)
         {
             _localizer = localizer;
             _webHostEnvironment = webHostEnvironment;
@@ -38,57 +43,100 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             _toastNotification = toastNotification;
             _userLoginsService = userLoginsService;
             _UserService = userService;
+            _baseRepo = baseRepo;
         }
-
+        [HttpGet]
         public async Task<IActionResult> CarDistribution()
         {
-            //save Tracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107007", "1");
-
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-            //sidebar active
-            ViewBag.id = "#sidebarcarsservices";
-            ViewBag.no = "5";
-
-            // set title
-            var titles = await setTitle("107", "1107007", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            //check user sub validation
-            var uservalidation = await CheckUserSubValidation("1107007");
-            if (uservalidation == false) return RedirectToAction("index", "home", new { area = "mas" });
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
+            IQueryable<CrMasSupCarDistribution> query = _unitOfWork.CrMasSupCarDistribution.GetTableNoTracking(); // جلب البيانات بدون تتبع
+            var carDistribution = await query.Where(x => x.CrMasSupCarDistributionStatus == Status.Active).ToListAsync();
 
             var cardistribution = await _unitOfWork.CrMasSupCarDistribution.GetAllAsync();
+            if (!cardistribution.Any())
+            {
+                cardistribution = await query.Where(x => x.CrMasSupCarDistributionStatus == Status.Hold).ToListAsync();
+                ViewBag.radio = "All";
+            }
+            else
+            {
+                ViewBag.radio = "A";
+            }
             return View(cardistribution);
+        }
 
+        [HttpGet]
+        public async Task<PartialViewResult> GetCarDistributionByStatus(string status, string search)
+        {
+            // Get the current user (if needed for further filtering)
+            var user = await _userManager.GetUserAsync(User);
+
+            // Start building the query
+            IQueryable<CrMasSupCarDistribution> query = _unitOfWork.CrMasSupCarDistribution.GetTableNoTracking(); // Use strongly-typed Include
+            // Filter by status if not "All"
+            if (status != Status.All) query = query.Where(x => x.CrMasSupCarDistributionStatus == status);
+            else query = query.Where(x => x.CrMasSupCarDistributionStatus != Status.Deleted);
+
+            // Search in multiple fields if the search parameter is provided
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(x =>
+                    x.CrMasSupCarDistributionConcatenateArName.Contains(search) ||
+                    x.CrMasSupCarDistributionConcatenateEnName.ToLower().Contains(search.ToLower()) ||
+                    x.CrMasSupCarDistributionCode.Contains(search) ||
+                    x.CrMasSupCarDistributionYear.Contains(search));
+            }
+
+            // Execute the query and retrieve the results
+            var result = await query.AsNoTracking().ToListAsync();
+
+            // Return the results in a partial view
+            return PartialView("_DataTableDistribution", result);
         }
 
         [HttpGet]
         public async Task<IActionResult> AddCarDistribution()
         {
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("CarDistribution", "CarDistribution");
+            }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("CarDistribution", "CarDistribution");
+            }
             // Pass the category Arabic key to the view 
-            var categoryAr = await _unitOfWork.CrMasSupCarCategory.GetAllAsync();
+            var categoryAr = await _unitOfWork.CrMasSupCarCategory.GetAllAsyncAsNoTrackingAsync();
             var categoryDropDownAr = categoryAr.Select(c => new SelectListItem { Value = c.CrMasSupCarCategoryCode?.ToString(), Text = c.CrMasSupCarCategoryArName }).ToList();
             categoryDropDownAr.Add(new SelectListItem { Text = "", Value = "", Selected = true });
             ViewData["categoryAr"] = categoryDropDownAr;
 
             // Pass the category Arabic key to the view 
-            var categoryEn = await _unitOfWork.CrMasSupCarCategory.GetAllAsync();
+            var categoryEn = await _unitOfWork.CrMasSupCarCategory.GetAllAsyncAsNoTrackingAsync();
             var categoryDropDownEn = categoryEn.Select(c => new SelectListItem { Value = c.CrMasSupCarCategoryCode?.ToString(), Text = c.CrMasSupCarCategoryEnName }).ToList();
             categoryDropDownEn.Add(new SelectListItem { Text = "", Value = "", Selected = true });
             ViewData["categoryEn"] = categoryDropDownEn;
 
             // Pass the Model English  key to the view 
-            var ModelEn = await _unitOfWork.CrMasSupCarModel.GetAllAsync();
+            var ModelEn = await _unitOfWork.CrMasSupCarModel.GetAllAsyncAsNoTrackingAsync();
             var ModelDropDownEn = ModelEn.Select(c => new SelectListItem { Value = c.CrMasSupCarModelCode?.ToString(), Text = c.CrMasSupCarModelConcatenateEnName }).ToList();
             ModelDropDownEn.Add(new SelectListItem { Text = "", Value = "", Selected = true });
             ViewData["ModelEn"] = ModelDropDownEn;
 
             // Pass the Model English key to the view 
-            var ModelAr = await _unitOfWork.CrMasSupCarModel.GetAllAsync();
+            var ModelAr = await _unitOfWork.CrMasSupCarModel.GetAllAsyncAsNoTrackingAsync();
             var ModelDropDownAr = ModelAr.Select(c => new SelectListItem { Value = c.CrMasSupCarModelCode?.ToString(), Text = c.CrMasSupCarModelArConcatenateName }).ToList();
             ModelDropDownAr.Add(new SelectListItem { Text = "", Value = "", Selected = true });
             ViewData["ModelAr"] = ModelDropDownAr;
@@ -100,37 +148,31 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCarDistribution(CrMasSupCarDistributionVM crMasSupCarDistributionVM, IFormFile? CarDistributionFile)
         {
-            if (crMasSupCarDistributionVM.CrMasSupCarDistributionModel == "") ModelState.AddModelError("CrMasSupCarDistributionModel", _localizer["requiredFiled"]);
-            if (crMasSupCarDistributionVM.CrMasSupCarDistributionCategory == "") ModelState.AddModelError("CrMasSupCarDistributionCategory", _localizer["requiredFiled"]);
-            if (crMasSupCarDistributionVM.CrMasSupCarDistributionYear == "") ModelState.AddModelError("CrMasSupCarDistributionYear", _localizer["requiredFiled"]);
-            bool isExists =  _unitOfWork.CrMasSupCarDistribution.FindAll(x => x.CrMasSupCarDistributionModel == crMasSupCarDistributionVM.CrMasSupCarDistributionModel &&
-            x.CrMasSupCarDistributionYear == crMasSupCarDistributionVM.CrMasSupCarDistributionYear).Count() > 0;
-            if (isExists) ModelState.AddModelError("IsExist", _localizer["IsExistModel"]);
-
+            var pageNumber = SubTasks.CrMasUserInformationFromMASToCAS;
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+            if (crMasSupCarDistributionVM == null || user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View("CarDistribution");
+            }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("CarDistribution", "CarDistribution");
+            }
+            if (await CheckIfDistributionIsExist(crMasSupCarDistributionVM.CrMasSupCarDistributionModel, crMasSupCarDistributionVM.CrMasSupCarDistributionYear, crMasSupCarDistributionVM.CrMasSupCarDistributionCategory)) ModelState.AddModelError("IsExist", _localizer["IsExistModel"]);
             if (ModelState.IsValid)
             {
-                var CarDistribution = _unitOfWork.CrMasSupCarDistribution.FindAll(l => l.CrMasSupCarDistributionYear == crMasSupCarDistributionVM.CrMasSupCarDistributionYear)
-               .Max(x => x.CrMasSupCarDistributionCode.Substring(x.CrMasSupCarDistributionCode.Length - 5, 5));
-                string Serial;
-                if (CarDistribution != null)
-                {
-                    Int64 val = Int64.Parse(CarDistribution) + 1;
-                    Serial = val.ToString("000000");
-                }
-                else
-                {
-                    Serial = "000001";
-                }
-
                 var crMasSupCarDistribution = _mapper.Map<CrMasSupCarDistribution>(crMasSupCarDistributionVM);
-                crMasSupCarDistribution.CrMasSupCarDistributionCode = crMasSupCarDistributionVM.CrMasSupCarDistributionYear + Serial;
+                crMasSupCarDistribution.CrMasSupCarDistributionCode = await GetDistributionCode(crMasSupCarDistributionVM.CrMasSupCarDistributionYear);
                 string foldername = $"{"images\\Bnan\\Models"}";
                 string filePathImage;
 
                 if (CarDistributionFile != null)
                 {
                     string fileNameImg = crMasSupCarDistribution.CrMasSupCarDistributionCode;
-                    //string fileNameImgExtenstion = Path.GetExtension(UserImgFile.FileName);
                     filePathImage = await CarDistributionFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
                     crMasSupCarDistribution.CrMasSupCarDistributionImage = filePathImage;
                 }
@@ -139,9 +181,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     crMasSupCarDistribution.CrMasSupCarDistributionImage = "~/images/common/DefaultCar.png";
                 }
 
-                await _CarDistribution.AddCarDisribtion(crMasSupCarDistribution);
-                _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return RedirectToAction("CarDistribution");
+                var result = await _CarDistribution.AddCarDisribtion(crMasSupCarDistribution);
+                if (result && _unitOfWork.Complete() > 0)
+                {
+                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    await SaveTracingForUserChange(user, Status.Insert);
+                    return RedirectToAction("CarDistribution", "CarDistribution");
+                }
+
             }
 
             // Pass the category Arabic key to the view 
@@ -167,22 +214,41 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             var ModelDropDownAr = ModelAr.Select(c => new SelectListItem { Value = c.CrMasSupCarModelCode?.ToString(), Text = c.CrMasSupCarModelArConcatenateName }).ToList();
             //ModelDropDownAr.Add(new SelectListItem { Text = "", Value = "", Selected = true });
             ViewData["ModelAr"] = ModelDropDownAr;
-
-            // SaveTracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107007", "1");
-            var RecordAr = crMasSupCarDistributionVM.CrMasSupCarDistributionConcatenateArName;
-            var RecordEn = crMasSupCarDistributionVM.CrMasSupCarDistributionConcatenateEnName;
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "إضافه", "Add", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             return View(crMasSupCarDistributionVM);
         }
-
+        public async Task<string> GetDistributionCode(string year)
+        {
+            var CarDistributions = await _unitOfWork.CrMasSupCarDistribution.FindAllAsNoTrackingAsync(l => l.CrMasSupCarDistributionYear == year);
+            var CarDistribution = CarDistributions.Max(x => x.CrMasSupCarDistributionCode.Substring(x.CrMasSupCarDistributionCode.Length - 5, 5));
+            string Serial;
+            if (CarDistribution != null)
+            {
+                Int64 val = Int64.Parse(CarDistribution) + 1;
+                Serial = val.ToString("000000");
+            }
+            else
+            {
+                Serial = "000001";
+            }
+            return year + Serial;
+        }
+        public async Task<bool> CheckIfDistributionIsExist(string model, string year, string category)
+        {
+            var result = await _unitOfWork.CrMasSupCarDistribution.FindAllAsNoTrackingAsync(x => x.CrMasSupCarDistributionModel == model && x.CrMasSupCarDistributionCategory == category && x.CrMasSupCarDistributionYear == year);
+            return result.Count() > 0;
+        }
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-
+            await SetPageTitleAsync(Status.Update, pageNumber);
             var DistruibtionCar = await _unitOfWork.CrMasSupCarDistribution.GetByIdAsync(id);
+            if (DistruibtionCar == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("CarDistribution", "CarDistribution");
+            }
+
             var DistruibtionCarVM = _mapper.Map<CrMasSupCarDistributionVM>(DistruibtionCar);
             return View(DistruibtionCarVM);
         }
@@ -190,104 +256,93 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(CrMasSupCarDistributionVM CrMasSupCarDistributionVM, IFormFile? CarDistributionFile)
         {
-            if (ModelState.IsValid)
+            var user = await _userManager.GetUserAsync(User);
+
+            string foldername = Path.Combine("images", "Bnan", "Models"); // تحديد المجلد لحفظ الصورة
+            string filePathImage;
+
+            // العثور على الكائن في قاعدة البيانات
+            var oldCrMasSupCarDistribution = await _unitOfWork.CrMasSupCarDistribution.FindAsync(x => x.CrMasSupCarDistributionCode == CrMasSupCarDistributionVM.CrMasSupCarDistributionCode);
+            if (oldCrMasSupCarDistribution == null)
             {
-                //var CrMasSupCarDistribution = _mapper.Map<CrMasSupCarDistribution>(CrMasSupCarDistributionVM);
-                string foldername = $"{"images\\Bnan\\Models"}";
-                string filePathImage;
-                var oldCrMasSupCarDistribution= _unitOfWork.CrMasSupCarDistribution.Find(x=>x.CrMasSupCarDistributionCode== CrMasSupCarDistributionVM.CrMasSupCarDistributionCode);
-                if (CarDistributionFile != null)
-                {
-                    string fileNameImg = CrMasSupCarDistributionVM.CrMasSupCarDistributionModel + "_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوق
-                    filePathImage = await CarDistributionFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png",oldCrMasSupCarDistribution.CrMasSupCarDistributionImage);
-                    oldCrMasSupCarDistribution.CrMasSupCarDistributionImage = filePathImage;
-                }
-                else if (!string.IsNullOrEmpty(CrMasSupCarDistributionVM.CrMasSupCarDistributionImage))
-                {
-                    oldCrMasSupCarDistribution.CrMasSupCarDistributionImage = CrMasSupCarDistributionVM.CrMasSupCarDistributionImage;
-                }
-                else {
-                    oldCrMasSupCarDistribution.CrMasSupCarDistributionImage = "~/images/common/DefaultCar.png";
-                }
-                oldCrMasSupCarDistribution.CrMasSupCarDistributionReasons= CrMasSupCarDistributionVM.CrMasSupCarDistributionReasons;
-                await _CarDistribution.editCarDisribtion(oldCrMasSupCarDistribution);
+                _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("CarDistribution", "CarDistribution");
+            }
+            var crMasSupCarDistribution = _mapper.Map<CrMasSupCarDistribution>(CrMasSupCarDistributionVM);
+            if (CarDistributionFile != null)
+            {
+                // إذا تم رفع صورة جديدة، قم بتخزينها في المجلد المخصص
+                string fileNameImg = $"{oldCrMasSupCarDistribution.CrMasSupCarDistributionModel}_{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+                filePathImage = await CarDistributionFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png", oldCrMasSupCarDistribution.CrMasSupCarDistributionImage);
+                crMasSupCarDistribution.CrMasSupCarDistributionImage = filePathImage; // تحديث المسار في الكائن
+            }
+            else if (!string.IsNullOrEmpty(CrMasSupCarDistributionVM.CrMasSupCarDistributionImage)) crMasSupCarDistribution.CrMasSupCarDistributionImage = CrMasSupCarDistributionVM.CrMasSupCarDistributionImage;
+            else crMasSupCarDistribution.CrMasSupCarDistributionImage = "~/images/common/DefaultCar.png";
+            var result = await _CarDistribution.UpdateCarDisribtion(crMasSupCarDistribution);
+            if (result && await _unitOfWork.CompleteAsync() > 0)
+            {
                 _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                // SaveTracing
-                var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107007", "1");
-                var RecordAr = CrMasSupCarDistributionVM.CrMasSupCarDistributionConcatenateArName;
-                var RecordEn = CrMasSupCarDistributionVM.CrMasSupCarDistributionConcatenateEnName;
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                return RedirectToAction("CarDistribution");
-            }
-
-            return View(CrMasSupCarDistributionVM);
-        }
-
-        [HttpGet]
-        public async Task<PartialViewResult> GetCarDistributionByStatus(string status)
-        {
-            if (!string.IsNullOrEmpty(status))
-            {
-                if (status == Status.All)
-                {
-                    var LessorbyStatusAll = await _unitOfWork.CrMasSupCarDistribution.GetAllAsync();
-                    return PartialView("_DataTableDistribution", LessorbyStatusAll);
-                }
-                var LessorbyStatus = _unitOfWork.CrMasSupCarDistribution.FindAll(l => l.CrMasSupCarDistributionStatus == status).ToList();
-                return PartialView("_DataTableDistribution", LessorbyStatus);
-            }
-            return PartialView();
+                await SaveTracingForUserChange(user, Status.Update);
+                return RedirectToAction("CarDistribution", "CarDistribution");
+            };
+            _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            return RedirectToAction("CarDistribution", "CarDistribution");
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditStatus(string code, string status)
+        public async Task<string> EditStatus(string status, string code)
         {
-            string sAr = "";
-            string sEn = "";
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return "false";
+
             var CarDistribution = await _unitOfWork.CrMasSupCarDistribution.GetByIdAsync(code);
-            if (CarDistribution != null)
+            if (CarDistribution == null) return "false";
+            try
             {
-
-                if (await CheckUserSubValidationProcdures("1107007", status))
-                {
-                    if (status == Status.Hold)
-                    {
-                        sAr = "ايقاف";
-                        sEn = "Hold";
-                        CarDistribution.CrMasSupCarDistributionStatus = Status.Hold;
-                    }
-                    else if (status == Status.Deleted)
-                    {
-                        sAr = "حذف";
-                        sEn = "Remove ";
-                        CarDistribution.CrMasSupCarDistributionStatus = Status.Deleted; 
-                    }
-                    else if (status == "Reactivate")
-                    {
-                        sAr = "استرجاع";
-                        sEn = "Retrive";
-                        CarDistribution.CrMasSupCarDistributionStatus = Status.Active;
-                    }
-
-                    await _unitOfWork.CompleteAsync();
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("107", "1107007", "1");
-                    var RecordAr = CarDistribution.CrMasSupCarDistributionConcatenateArName;
-                    var RecordEn = CarDistribution.CrMasSupCarDistributionConcatenateEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-                    return RedirectToAction("Index", "LessorsKSA");
-                }
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                CarDistribution.CrMasSupCarDistributionStatus = status;
+                _unitOfWork.CrMasSupCarDistribution.Update(CarDistribution);
+                await _unitOfWork.CompleteAsync();
+                await SaveTracingForUserChange(user, status);
+                return "true";
             }
-
-
-            return View(CarDistribution);
-
+            catch (Exception ex)
+            {
+                return "false";
+            }
         }
+        private async Task SaveTracingForUserChange(CrMasUserInformation userCreated, string status)
+        {
 
+
+            var recordAr = $"{userCreated.CrMasUserInformationArName} - {userCreated.CrMasUserInformationTasksArName}";
+            var recordEn = $"{userCreated.CrMasUserInformationEnName} - {userCreated.CrMasUserInformationTasksEnName}";
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+        public IActionResult DisplayToastSuccess_withIndex()
+        {
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+            return RedirectToAction("CarDistribution", "CarDistribution");
+        }
     }
 }

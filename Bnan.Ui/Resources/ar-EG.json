@@ -670,7 +670,32 @@
     "ModalSecondMessage_lessor_UnHold": "ارجاع بيانات ونتائج2",
     // UsersForCompanies
     "UsersForCompanies": "بيانات موظفي الشركات",
-    "AddCompanyUser": "اضافة موظف شركة"
+    "AddCompanyUser": "اضافة موظف شركة",
+    //CategoriesDistribution
+    "CategoriesDistribution": "توزيع الفئات",
+    "AddDistribution": "إضافة توزيع فئة",
+    "DistributionCount": "العدد",
+    "SmallBags": "حقائب صغيرة",
+    "BigBags": "حقائب كبيرة",
+    "Doors": "الأبواب",
+    "Passengers": "الركاب",
+    "CategoryDistribution": "توزيع الفئة",
+    "UpdateCategoryDistribution": "تحديث بيانات توزيع الفئة",
+    "CarDistribution": "السيارة",
+    "DistributionNo": "الرقم",
+    "DistributionYear": "سنة الصنع",
+    "DistributionCategory": "الفئة",
+    "DistributionBrandCategory": "الماركه/الطراز",
+    "DropAndDragImage": "قم بسحب وإسقاط صورة أو اختر صورة",
+    "ModalFirstMessage_CarDistribution_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_CarDistribution_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_CarDistribution_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_CarDistribution_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_CarDistribution_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_CarDistribution_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_CarDistribution_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_CarDistribution_UnHold": "ارجاع بيانات ونتائج2"
+
   },
 
 

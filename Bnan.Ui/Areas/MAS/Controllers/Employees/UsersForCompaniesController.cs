@@ -139,7 +139,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             ViewData["LessorsAr"] = lessorsListAr; // Pass the callingKeys to the view
             ViewData["LessorsEn"] = lessorsListEn; // Pass the callingKeys to the view
 
-            var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active);
+            var callingKeys = await _unitOfWork.CrMasSysCallingKeys.FindAllAsNoTrackingAsync(x => x.CrMasSysCallingKeysStatus == Status.Active);
             var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString().Trim(), Text = c.CrMasSysCallingKeysNo?.Trim() }).ToList();
             ViewData["CallingKeys"] = callingKeyList; // Pass the callingKeys to the view
             CompanyUserVM registerViewModel = new CompanyUserVM();

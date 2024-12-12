@@ -10,26 +10,26 @@ namespace Bnan.Ui.ViewModels.MAS
         [Required(ErrorMessage = "requiredFiled")]
         public string CrMasSupCarDistributionModel { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
-        public string CrMasSupCarDistributionCategory { get; set; } 
+        public string CrMasSupCarDistributionCategory { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
-        public string CrMasSupCarDistributionYear { get; set; } 
+        public string CrMasSupCarDistributionYear { get; set; }
 
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         [RegularExpression("^[0-9]+$", ErrorMessage = "requiredNumber")]
         [Range(1, int.MaxValue, ErrorMessage = "requiredGreaterThan0")]
         public int? CrMasSupCarDistributionDoor { get; set; }
 
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         [RegularExpression("^[0-9]+$", ErrorMessage = "requiredNumber")]
         [Range(1, int.MaxValue, ErrorMessage = "requiredGreaterThan0")]
         public int? CrMasSupCarDistributionBagBags { get; set; }
 
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         [RegularExpression("^[0-9]+$", ErrorMessage = "requiredNumber")]
         [Range(1, int.MaxValue, ErrorMessage = "requiredGreaterThan0")]
         public int? CrMasSupCarDistributionSmallBags { get; set; }
 
-        [Required(ErrorMessage = "requiredFiled")]
+        //[Required(ErrorMessage = "requiredFiled")]
         [RegularExpression("^[0-9]+$", ErrorMessage = "requiredNumber")]
         [Range(1, int.MaxValue, ErrorMessage = "requiredGreaterThan0")]
         public int? CrMasSupCarDistributionPassengers { get; set; }
