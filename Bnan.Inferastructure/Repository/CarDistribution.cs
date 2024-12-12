@@ -1,10 +1,5 @@
 ﻿using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -19,7 +14,7 @@ namespace Bnan.Inferastructure.Repository
 
         public async Task<bool> AddCarDisribtion(CrMasSupCarDistribution crMasSupCarDistribution)
         {
-           
+
             var model = await _unitOfWork.CrMasSupCarModel.GetByIdAsync(crMasSupCarDistribution.CrMasSupCarDistributionModel);
             var Category = await _unitOfWork.CrMasSupCarCategory.GetByIdAsync(crMasSupCarDistribution.CrMasSupCarDistributionCategory);
             var CarDistributionArConcat = $"{model.CrMasSupCarModelArConcatenateName} - {Category.CrMasSupCarCategoryArName} - {crMasSupCarDistribution.CrMasSupCarDistributionYear}";
@@ -36,29 +31,31 @@ namespace Bnan.Inferastructure.Repository
                 CrMasSupCarDistributionBagBags = crMasSupCarDistribution.CrMasSupCarDistributionBagBags,
                 CrMasSupCarDistributionSmallBags = crMasSupCarDistribution.CrMasSupCarDistributionSmallBags,
                 CrMasSupCarDistributionPassengers = crMasSupCarDistribution.CrMasSupCarDistributionPassengers,
+                CrMasSupCarDistributionCount = 0,
                 CrMasSupCarDistributionConcatenateArName = CarDistributionArConcat,
                 CrMasSupCarDistributionConcatenateEnName = CarDistributionEnConcat,
                 CrMasSupCarDistributionImage = crMasSupCarDistribution.CrMasSupCarDistributionImage,
+                CrMasSupCarDistributionReasons = crMasSupCarDistribution.CrMasSupCarDistributionReasons,
                 CrMasSupCarDistributionStatus = "A"
 
             };
-            await _unitOfWork.CrMasSupCarDistribution.AddAsync(NewcrMasSupCarDistribution);
-            _unitOfWork.Complete();
-            return true;
+            if (await _unitOfWork.CrMasSupCarDistribution.AddAsync(NewcrMasSupCarDistribution) != null) return true;
+            return false;
         }
 
-        public async Task<bool> editCarDisribtion(CrMasSupCarDistribution crMasSupCarDistribution)
+        public async Task<bool> UpdateCarDisribtion(CrMasSupCarDistribution crMasSupCarDistribution)
         {
-            var model = await _unitOfWork.CrMasSupCarModel.GetByIdAsync(crMasSupCarDistribution.CrMasSupCarDistributionModel);
-            var Category = await _unitOfWork.CrMasSupCarCategory.GetByIdAsync(crMasSupCarDistribution.CrMasSupCarDistributionCategory);
-            var CarDistributionArConcat = $"{model.CrMasSupCarModelArConcatenateName} - {Category.CrMasSupCarCategoryArName} - {crMasSupCarDistribution.CrMasSupCarDistributionYear}";
-            var CarDistributionEnConcat = $"{model.CrMasSupCarModelConcatenateEnName} - {Category.CrMasSupCarCategoryEnName} - {crMasSupCarDistribution.CrMasSupCarDistributionYear}";
-            crMasSupCarDistribution.CrMasSupCarDistributionBrand = model.CrMasSupCarModelBrand;
-            crMasSupCarDistribution.CrMasSupCarDistributionConcatenateArName = CarDistributionArConcat;
-            crMasSupCarDistribution.CrMasSupCarDistributionConcatenateEnName = CarDistributionEnConcat;
-            _unitOfWork.CrMasSupCarDistribution.Update(crMasSupCarDistribution);
-            await _unitOfWork.CompleteAsync();
-            return true;
+            var carDis = await _unitOfWork.CrMasSupCarDistribution.FindAsync(x => x.CrMasSupCarDistributionCode == crMasSupCarDistribution.CrMasSupCarDistributionCode);
+            if (carDis == null) return false;
+
+            carDis.CrMasSupCarDistributionDoor = crMasSupCarDistribution.CrMasSupCarDistributionDoor;
+            carDis.CrMasSupCarDistributionBagBags = crMasSupCarDistribution.CrMasSupCarDistributionBagBags;
+            carDis.CrMasSupCarDistributionSmallBags = crMasSupCarDistribution.CrMasSupCarDistributionSmallBags;
+            carDis.CrMasSupCarDistributionPassengers = crMasSupCarDistribution.CrMasSupCarDistributionPassengers;
+            carDis.CrMasSupCarDistributionImage = crMasSupCarDistribution.CrMasSupCarDistributionImage;
+            carDis.CrMasSupCarDistributionReasons = crMasSupCarDistribution.CrMasSupCarDistributionReasons;
+            if (_unitOfWork.CrMasSupCarDistribution.Update(carDis) != null) return true;
+            return false;
         }
     }
 }

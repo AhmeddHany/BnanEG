@@ -2,6 +2,7 @@
 using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
+using Bnan.Core.Interfaces.MAS.Users;
 using Bnan.Core.Interfaces.UpdateDataBaseJobs;
 using Bnan.Core.Models;
 using Bnan.Core.Repository;
@@ -214,7 +215,8 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasLessor, MasLessor>();
             builder.Services.AddScoped<IMasCountryClassification, MasCountryClassification>();
             builder.Services.AddScoped<IMasRenterInformation, MasRenterInformation>();
-            
+            builder.Services.AddScoped<IMasCompanyUsers, MasCompanyUsers>();
+
 
 
             return builder;

@@ -15,7 +15,7 @@ using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Data;
 
-namespace Bnan.Ui.Areas.MAS.Controllers
+namespace Bnan.Ui.Areas.MAS.Controllers.Employees
 {
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
@@ -152,16 +152,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             RegisterViewModel viewModel = new RegisterViewModel
             {
                 CrMasSysMainTasks = (List<CrMasSysMainTask>)_unitOfWork.CrMasSysMainTasks.FindAll(x => x.CrMasSysMainTasksSystem == "1"),
-                CrMasUserMainValidations = (List<CrMasUserMainValidation>)mainValidition,
+                CrMasUserMainValidations = mainValidition,
 
                 CrMasUserInformationCode = EditedUser.CrMasUserInformationCode,
                 CrMasUserInformationArName = EditedUser.CrMasUserInformationArName,
                 CrMasUserInformationEnName = EditedUser.CrMasUserInformationEnName,
 
                 CrMasSysSubTasks = (List<CrMasSysSubTask>)_unitOfWork.CrMasSysSubTasks.FindAll(x => x.CrMasSysSubTasksSystemCode == "1"),
-                CrMasUserSubValidations = (List<CrMasUserSubValidation>)subValition.Where(x => !subTaskIdsWithStatusDorW.Contains(x.CrMasUserSubValidationSubTasks)).ToList(),
+                CrMasUserSubValidations = subValition.Where(x => !subTaskIdsWithStatusDorW.Contains(x.CrMasUserSubValidationSubTasks)).ToList(),
                 CrMasSysProceduresTasks = (List<CrMasSysProceduresTask>)procedureTasks,
-                ProceduresValidations = (List<CrMasUserProceduresValidation>)procedureValidition,
+                ProceduresValidations = procedureValidition,
             };
             return View(viewModel);
         }

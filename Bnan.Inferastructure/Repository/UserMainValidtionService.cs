@@ -14,41 +14,61 @@ namespace Bnan.Inferastructure.Repository
             _UserService = userService;
         }
 
-        public async Task<bool> AddMainValidaitionToUserWhenAddLessor(string userCode)
+        //public async Task<bool> AddMainValidaitionToUserWhenAddLessor(string userCode)
+        //{
+        //    var MainTasks = _unitOfWork.CrMasSysMainTasks.FindAll(l => l.CrMasSysMainTasksStatus == "A" && l.CrMasSysMainTasksSystem == "2");
+        //    var user = await _UserService.GetUserByUserNameAsync(userCode);
+
+
+        //    foreach (var item in MainTasks)
+        //    {
+        //        CrMasUserMainValidation CrMasUserMainValidation = new CrMasUserMainValidation();
+        //        if (item.CrMasSysMainTasksCode == "206")
+        //        {
+        //            CrMasUserMainValidation = new CrMasUserMainValidation
+        //            {
+        //                CrMasUserMainValidationUser = user.CrMasUserInformationCode,
+        //                CrMasUserMainValidationMainTasks = item.CrMasSysMainTasksCode,
+        //                CrMasUserMainValidationMainSystem = "2",
+        //                CrMasUserMainValidationAuthorization = true
+        //            };
+        //            await _unitOfWork.CrMasUserMainValidations.AddAsync(CrMasUserMainValidation);
+        //        }
+        //        /*  else
+        //          {
+        //              CrMasUserMainValidation = new CrMasUserMainValidation
+        //              {
+        //                  CrMasUserMainValidationUser = user.CrMasUserInformationCode,
+        //                  CrMasUserMainValidationMainTasks = item.CrMasSysMainTasksCode,
+        //                  CrMasUserMainValidationMainSystem = "2",
+        //                  CrMasUserMainValidationAuthorization = false
+        //              };
+        //          }*/
+
+        //    }
+
+
+
+        //    return true;
+        //}
+
+        public async Task<bool> AddMainValidaitionToUserCASFromMAS(string userCode)
         {
-            var MainTasks = _unitOfWork.CrMasSysMainTasks.FindAll(l => l.CrMasSysMainTasksStatus == "A" && l.CrMasSysMainTasksSystem == "2");
+            var MainTasks = await _unitOfWork.CrMasSysMainTasks.FindAllAsNoTrackingAsync(l => l.CrMasSysMainTasksStatus == "A" && l.CrMasSysMainTasksSystem == "2" &&
+                                                                                             (l.CrMasSysMainTasksCode == "207" || l.CrMasSysMainTasksCode == "208"));
             var user = await _UserService.GetUserByUserNameAsync(userCode);
-
-
             foreach (var item in MainTasks)
             {
                 CrMasUserMainValidation CrMasUserMainValidation = new CrMasUserMainValidation();
-                if (item.CrMasSysMainTasksCode == "206")
+                CrMasUserMainValidation = new CrMasUserMainValidation
                 {
-                    CrMasUserMainValidation = new CrMasUserMainValidation
-                    {
-                        CrMasUserMainValidationUser = user.CrMasUserInformationCode,
-                        CrMasUserMainValidationMainTasks = item.CrMasSysMainTasksCode,
-                        CrMasUserMainValidationMainSystem = "2",
-                        CrMasUserMainValidationAuthorization = true
-                    };
-                    await _unitOfWork.CrMasUserMainValidations.AddAsync(CrMasUserMainValidation);
-                }
-                /*  else
-                  {
-                      CrMasUserMainValidation = new CrMasUserMainValidation
-                      {
-                          CrMasUserMainValidationUser = user.CrMasUserInformationCode,
-                          CrMasUserMainValidationMainTasks = item.CrMasSysMainTasksCode,
-                          CrMasUserMainValidationMainSystem = "2",
-                          CrMasUserMainValidationAuthorization = false
-                      };
-                  }*/
-
+                    CrMasUserMainValidationUser = user.CrMasUserInformationCode,
+                    CrMasUserMainValidationMainTasks = item.CrMasSysMainTasksCode,
+                    CrMasUserMainValidationMainSystem = "2",
+                    CrMasUserMainValidationAuthorization = true
+                };
+                if (await _unitOfWork.CrMasUserMainValidations.AddAsync(CrMasUserMainValidation) == null) return false;
             }
-
-
-
             return true;
         }
 

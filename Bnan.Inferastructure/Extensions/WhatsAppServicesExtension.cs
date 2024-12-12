@@ -1,4 +1,7 @@
-﻿namespace Bnan.Inferastructure.Extensions
+﻿using Bnan.Core.Extensions;
+using Newtonsoft.Json;
+
+namespace Bnan.Inferastructure.Extensions
 {
     public static class WhatsAppServicesExtension
     {
@@ -84,25 +87,83 @@
             { "id", companyId }
         };
 
-            var content = new FormUrlEncodedContent(formData);
+            var data = new FormUrlEncodedContent(formData);
 
             try
             {
-                // إرسال الطلب
-                var response = await _httpClient.PostAsync(url, content);
+                var response = await _httpClient.PostAsync(url, data);
+                if (!response.IsSuccessStatusCode)
+                    return ApiResponseStatus.Failure;
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return "Message sent successfully.";
-                }
+                var content = await response.Content.ReadAsStringAsync();
+                var jsonResult = JsonConvert.DeserializeObject<dynamic>(content);
+
+                // التحقق من الحالة
+                if (jsonResult != null && (jsonResult.status == true || jsonResult.status.ToString().ToLower() == "true")) return ApiResponseStatus.Success;
+                return ApiResponseStatus.Failure;
+            }
+            catch (HttpRequestException)
+            {
+                return ApiResponseStatus.ServerError;
+            }
+            catch (Exception)
+            {
+                return ApiResponseStatus.ServerError;
+            }
+        }
+
+        /// <summary>
+        /// Connects a lessor by adding a new device with the provided company ID and name.
+        /// </summary>
+        /// <param name="companyId">The ID of the company.</param>
+        /// <param name="companyName">The name of the company.</param>
+        /// <returns>A string indicating success or failure of the operation.</returns>
+        public static async Task<string> ConnectLessor(string companyId)
+        {
+            if (string.IsNullOrWhiteSpace(companyId))
+                return ApiResponseStatus.ValidationError;
+            string url = $"{api}/api/addNew_Device?id={companyId}";
+
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+                var content = await response.Content.ReadAsStringAsync();
+                var jsonResult = JsonConvert.DeserializeObject<dynamic>(content);
+                if (jsonResult != null && jsonResult.status == true) return ApiResponseStatus.Success;
+                else return ApiResponseStatus.Failure;
+            }
+            catch (HttpRequestException)
+            {
+                // Specific error for HTTP request issues
+                return ApiResponseStatus.ServerError;
+            }
+            catch (Exception)
+            {
+                // General error handling
+                return ApiResponseStatus.ServerError;
+            }
+        }
+        public static async Task<string> CheckIsClientInitialized(string companyId)
+        {
+            if (string.IsNullOrWhiteSpace(companyId)) return ApiResponseStatus.ValidationError;
+
+            var url = $"{ApiUrl.IPWhatsService}/api/checkisClientInitialized/{companyId}";
+
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+                var content = await response.Content.ReadAsStringAsync();
+                var jsonResult = JsonConvert.DeserializeObject<dynamic>(content);
+
+                if (jsonResult != null && jsonResult.status == true)
+                    return ApiResponseStatus.AlreadyExists;
                 else
-                {
-                    throw new Exception($"Failed to send message: {response.ReasonPhrase}");
-                }
+                    return ApiResponseStatus.NotFound;
+
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error sending message: {ex.Message}", ex);
+                return ApiResponseStatus.ServerError;
             }
         }
     }

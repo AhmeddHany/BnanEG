@@ -5,6 +5,7 @@ using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
+using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 {
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
+    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
     public class LessorsKSAController : BaseController
     {
 
@@ -107,13 +109,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 return RedirectToAction("Index", "Home");
             }
             // استعلام رئيسي مع NoTracking
-            IQueryable<CrMasLessorInformation> query = _unitOfWork.CrMasLessorInformation.GetTableNoTracking().Include("CrCasBranchInformations.CrCasBranchPost.CrCasBranchPostCityNavigation").Where(x => x.CrMasLessorInformationCode != "0000");
+            IQueryable<CrMasLessorInformation> query = _unitOfWork.CrMasLessorInformation.GetTableNoTracking().Include("CrCasBranchInformations.CrCasBranchPost.CrCasBranchPostCityNavigation")/*.Where(x => x.CrMasLessorInformationCode != "0000")*/;
             // استرجاع التراخيص الفعّالة
-            var lessors = await query.Where(x => x.CrMasLessorInformationCode != "0000" && x.CrMasLessorInformationStatus == Status.Active).ToListAsync();
+            var lessors = await query.Where(x => x.CrMasLessorInformationStatus == Status.Active).ToListAsync();
             // إذا لم توجد تراخيص فعّالة، استرجاع التراخيص المعلّقة
             if (!lessors.Any())
             {
-                lessors = await query.Where(x => x.CrMasLessorInformationCode != "0000" && x.CrMasLessorInformationStatus == Status.Hold).ToListAsync();
+                lessors = await query.Where(x => x.CrMasLessorInformationStatus == Status.Hold).ToListAsync();
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
@@ -123,7 +125,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         public async Task<PartialViewResult> GetLessorsByStatus(string status, string search)
         {
             // استعلام أساسي مع Include
-            IQueryable<CrMasLessorInformation> query = _unitOfWork.CrMasLessorInformation.GetTableNoTracking().Include("CrCasBranchInformations.CrCasBranchPost.CrCasBranchPostCityNavigation").Where(x => x.CrMasLessorInformationCode != "0000");
+            IQueryable<CrMasLessorInformation> query = _unitOfWork.CrMasLessorInformation.GetTableNoTracking().Include("CrCasBranchInformations.CrCasBranchPost.CrCasBranchPostCityNavigation")/*.Where(x => x.CrMasLessorInformationCode != "0000")*/;
 
             // فلترة حسب حالة status
             if (!string.IsNullOrEmpty(status))
@@ -294,7 +296,15 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     _unitOfWork.Complete();
 
                     await SaveTracingForLessorChange(user, LessorVMTlessor, Status.Insert);
-
+                    #region Whatsup
+                    await WhatsAppServicesExtension.ConnectLessor(LessorVMTlessor.CrMasLessorInformationCode);
+                    string fullPhoneNumber = $"{LessorVMTlessor.CrMasLessorInformationCommunicationMobileKey}{LessorVMTlessor.CrMasLessorInformationCommunicationMobile}";
+                    await WhatsAppServicesExtension.SendMessageAsync(
+                        fullPhoneNumber,
+                        $"تم انشاء الشركة الخاصة بك باسم / {LessorVMTlessor.CrMasLessorInformationArLongName}",
+                        "0000" //mas lessor 0000
+                    );
+                    #endregion
                     await FileExtensions.CreateFolderLessor(_webHostEnvironment, LessorVMTlessor.CrMasLessorInformationCode);
                     _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return RedirectToAction("Index");
@@ -386,20 +396,22 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             // جلب بيانات المؤجر
             var lessor = await _unitOfWork.CrMasLessorInformation.GetByIdAsync(id);
-            if (lessor == null || id == "0000")
+            if (lessor == null /*|| id == "0000"*/)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "LessorsKSA");
             }
 
             var model = _mapper.Map<CrMasLessorInformationVM>(lessor);
-            var branchPost = await _unitOfWork.CrCasBranchPost.FindAsync(l => l.CrCasBranchPostLessor == lessor.CrMasLessorInformationCode && l.CrCasBranchPostBranch == "100", new[] { "CrCasBranchPostCityNavigation" });
+            var branch = "100";
+            if (lessor.CrMasLessorInformationCode == "0000") branch = "000";
+            var branchPost = await _unitOfWork.CrCasBranchPost.FindAsync(l => l.CrCasBranchPostLessor == lessor.CrMasLessorInformationCode && l.CrCasBranchPostBranch == branch, new[] { "CrCasBranchPostCityNavigation" });
             model.BranchPostVM = _mapper.Map<BranchPostVM>(branchPost);
 
             var classifications = _unitOfWork.CrCasLessorClassification.GetAll();
             ViewData["ClassificationDropDownAr"] = classifications.Select(c => new SelectListItem { Value = c.CrCasLessorClassificationCode?.ToString(), Text = c.CrCasLessorClassificationArName }).ToList();
             ViewData["ClassificationDropDownEn"] = classifications.Select(c => new SelectListItem { Value = c.CrCasLessorClassificationCode?.ToString(), Text = c.CrCasLessorClassificationEnName }).ToList();
-            var city = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityRegionsCode != "10" && l.CrMasSupPostCityRegionsCode != "11").FirstOrDefault(l => l.CrMasSupPostCityCode == branchPost.CrCasBranchPostCity);
+            var city = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityRegionsCode != "10" && l.CrMasSupPostCityRegionsCode != "11")?.FirstOrDefault(l => l.CrMasSupPostCityCode == branchPost.CrCasBranchPostCity);
 
             if (city != null)
             {
@@ -411,15 +423,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             ViewData["CallingKeys"] = callingKeys;
             return View(model);
         }
-
-
         [HttpPost]
         public async Task<IActionResult> Edit(CrMasLessorInformationVM CrMasLessorInformationVM)
         {
 
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Update, pageNumber);
-            if (user == null || CrMasLessorInformationVM == null|| CrMasLessorInformationVM.CrMasLessorInformationCode=="0000")
+            if (user == null || CrMasLessorInformationVM == null /*|| CrMasLessorInformationVM.CrMasLessorInformationCode == "0000"*/)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
@@ -429,7 +439,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var BranchPost = _mapper.Map<CrCasBranchPost>(CrMasLessorInformationVM.BranchPostVM);
             BranchPost.CrCasBranchPostLessor = lessor.CrMasLessorInformationCode;
             BranchPost.CrCasBranchPostBranch = "100";
-
+            if (lessor.CrMasLessorInformationCode == "0000") BranchPost.CrCasBranchPostBranch = "000";
             if (ModelState.IsValid)
             {
                 try
@@ -499,8 +509,18 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             }
         }
 
-
-
+        [HttpGet]
+        public async Task<IActionResult> Connect(string companyId)
+        {
+            var status = await WhatsAppServicesExtension.ConnectLessor(companyId);
+            return Json(new { status });
+        }
+        [HttpGet]
+        public async Task<IActionResult> CheckClientInitialized(string companyId)
+        {
+            var status = await WhatsAppServicesExtension.CheckIsClientInitialized(companyId);
+            return Json(new { status });
+        }
         private async Task AddModelErrorsAsync(CrMasLessorInformation entity)
         {
             if (await _masLessor.ExistsByLongArabicNameAsync(entity.CrMasLessorInformationArLongName, entity.CrMasLessorInformationCode))

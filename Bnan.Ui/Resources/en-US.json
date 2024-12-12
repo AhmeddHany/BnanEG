@@ -701,7 +701,35 @@
     "ModalFirstMessage_lessor_Hold": "Hold Data And Results1",
     "ModalSecondMessage_lessor_Hold": "Hold Data And Results2",
     "ModalFirstMessage_lessor_UnHold": "UnHold Data And Results1",
-    "ModalSecondMessage_lessor_UnHold": "UnHold Data And Results2"
+    "ModalSecondMessage_lessor_UnHold": "UnHold Data And Results2",
+    // UsersForCompanies
+    "UsersForCompanies": "Company Employee Data",
+    "AddCompanyUser": "Add Company User",
+    //CategoriesDistribution
+    "CategoriesDistribution": "Categories Distribution",
+    "AddDistribution": "Add Category Distribution",
+    "DistributionCount": "Count",
+    "SmallBags": "Small Bags",
+    "BigBags": "Big Bags",
+    "Doors": "Doors",
+    "Passengers": "Passengers",
+    "CategoryDistribution": "Category Distribution",
+    "UpdateCategoryDistribution": "Update Category Distribution",
+    "CarDistribution": "Car",
+    "DistributionNo": "The Number",
+    "DistributionYear": "Made year",
+    "DistributionCategory": "Category",
+    "DistributionBrandCategory": "Brand/Model",
+    "DropAndDragImage": "Drop And Drag Image or Upload",
+    "ModalFirstMessage_CarDistribution_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_CarDistribution_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_CarDistribution_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_CarDistribution_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_CarDistribution_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_CarDistribution_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_CarDistribution_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_CarDistribution_UnHold": "UnHold Data And Results2"
+
   },
   "Arabic": "Arabic",
   "English": "English",
@@ -1958,6 +1986,7 @@
   "PleaseEnterRequiredInfo": "Please Enter Required Information",
   "requiredFiledEmail": "Please enter a valid email address.",
   "PleaseEnterCorrectFormatDate": "Please enter the date in the format yyyy/MM/dd",
+  "requiredFiledMaxLength7": "Maximum length is 7 characters.",
 
 
 

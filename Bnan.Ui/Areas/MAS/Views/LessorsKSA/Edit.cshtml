@@ -4,11 +4,85 @@
 @inject IViewLocalizer localizer
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
 
 
+<style>
+    .save-col {
+        align-items: center;
+    }
 
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 5px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: green;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px green;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+    .fa-whatsapp.icon {
+        color: green;
+        font-size: 16px;
+        position: absolute;
+        left: 9.5px;
+        transition: transform 0.4s;
+    }
+
+    input:checked + .slider .icon {
+        transform: translateX(26px);
+    }
+</style>
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
@@ -30,6 +104,12 @@
                                 <h3> @localizer["LessorUpdateInfo"] </h3>
                             </div>
                             <div class="col-md-auto save-col btnsContainer">
+                                <label class="switch" id="Connect">
+                                    <input type="checkbox">
+                                    <span class="slider round">
+                                        <i class="fab fa-whatsapp icon"></i>
+                                    </span>
+                                </label>
                                 <button type="submit" class="custom-img-btn" id="SaveEdit">
                                     <img src="~/MasSystem/images/save.svg" />
                                 </button>
@@ -503,49 +583,49 @@
 
             document.getElementById("modalContent").innerHTML = isDeleted
                 ? `
-                                                                    <div class="modal-header border-0">
-                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                        <img src="/MasSystem/images/Green-recycle.svg" /> @localizer["SureToRetriveDelete"]
-                                                                      </h1>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <p>@localizer["ModalFirstMessage_lessor_UnDelete"]</p>
-                                                                        <p>@localizer["ModalSecondMessage_lessor_UnDelete"]</p>
-                                                                    </div>
-                                                                    <div class="modal-footer border-0">
-                                                                      <div class="container">
-                                                                        <div class="row">
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
-                                                                          </div>
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                          </div>
-                                                                        </div>
-                                                                      </div>
-                                                                    </div>`
+                                                                            <div class="modal-header border-0">
+                                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                                <img src="/MasSystem/images/Green-recycle.svg" /> @localizer["SureToRetriveDelete"]
+                                                                              </h1>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <p>@localizer["ModalFirstMessage_lessor_UnDelete"]</p>
+                                                                                <p>@localizer["ModalSecondMessage_lessor_UnDelete"]</p>
+                                                                            </div>
+                                                                            <div class="modal-footer border-0">
+                                                                              <div class="container">
+                                                                                <div class="row">
+                                                                                  <div class="col-md-6 text-center">
+                                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                                  </div>
+                                                                                  <div class="col-md-6 text-center">
+                                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                                  </div>
+                                                                                </div>
+                                                                              </div>
+                                                                            </div>`
                 : `
-                                                                    <div class="modal-header border-0">
-                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                        <img src="/MasSystem/images/delete (2).svg" /> @localizer["SureTodelete"]
-                                                                      </h1>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                                <p>@localizer["ModalFirstMessage_lessor_Delete"]</p>
-                                                                                <p>@localizer["ModalSecondMessage_lessor_Delete"]</p>
-                                                                    </div>
-                                                                    <div class="modal-footer border-0">
-                                                                      <div class="container">
-                                                                        <div class="row">
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-modal-Save" id="DeleteBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
-                                                                          </div>
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                          </div>
-                                                                        </div>
-                                                                      </div>
-                                                                    </div>`;
+                                                                            <div class="modal-header border-0">
+                                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                                <img src="/MasSystem/images/delete (2).svg" /> @localizer["SureTodelete"]
+                                                                              </h1>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                        <p>@localizer["ModalFirstMessage_lessor_Delete"]</p>
+                                                                                        <p>@localizer["ModalSecondMessage_lessor_Delete"]</p>
+                                                                            </div>
+                                                                            <div class="modal-footer border-0">
+                                                                              <div class="container">
+                                                                                <div class="row">
+                                                                                  <div class="col-md-6 text-center">
+                                                                                    <button type="button" class="btn btn-modal-Save" id="DeleteBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                                  </div>
+                                                                                  <div class="col-md-6 text-center">
+                                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                                  </div>
+                                                                                </div>
+                                                                              </div>
+                                                                            </div>`;
         }
         function DeleteLoad() {
             const modalContent = document.getElementById("modalContent");
@@ -596,49 +676,49 @@
 
             document.getElementById("Stop-modal-Content").innerHTML = isStoped
                 ? `
-                                                                    <div class="modal-header border-0">
-                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                        <img src="/MasSystem/images/GreenStop.svg" /> @localizer["SureToRetriveHold"]
-                                                                      </h1>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <p>@localizer["ModalFirstMessage_lessor_UnHold"]</p>
-                                                                        <p>@localizer["ModalSecondMessage_lessor_UnHold"]</p>
-                                                                    </div>
-                                                                    <div class="modal-footer border-0">
-                                                                      <div class="container">
-                                                                        <div class="row">
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="StopLoad()">@localizer["Okay"]</button>
-                                                                          </div>
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                          </div>
-                                                                        </div>
-                                                                      </div>
-                                                                    </div>`
+                                                                            <div class="modal-header border-0">
+                                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                                <img src="/MasSystem/images/GreenStop.svg" /> @localizer["SureToRetriveHold"]
+                                                                              </h1>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <p>@localizer["ModalFirstMessage_lessor_UnHold"]</p>
+                                                                                <p>@localizer["ModalSecondMessage_lessor_UnHold"]</p>
+                                                                            </div>
+                                                                            <div class="modal-footer border-0">
+                                                                              <div class="container">
+                                                                                <div class="row">
+                                                                                  <div class="col-md-6 text-center">
+                                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                                  </div>
+                                                                                  <div class="col-md-6 text-center">
+                                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                                  </div>
+                                                                                </div>
+                                                                              </div>
+                                                                            </div>`
                 : `
-                                                                    <div class="modal-header border-0">
-                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
-                                                                        <img src="/MasSystem/images/RedStop.svg" /> @localizer["SureToHold"]
-                                                                      </h1>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <p>@localizer["ModalFirstMessage_lessor_Hold"]</p>
-                                                                        <p>@localizer["ModalSecondMessage_lessor_Hold"]</p>
-                                                                    </div>
-                                                                    <div class="modal-footer border-0">
-                                                                      <div class="container">
-                                                                        <div class="row">
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-modal-Save" id="HoldBtn" onclick="StopLoad()">@localizer["Okay"]</button>
-                                                                          </div>
-                                                                          <div class="col-md-6 text-center">
-                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                                                                          </div>
-                                                                        </div>
-                                                                      </div>
-                                                                    </div>`;
+                                                                            <div class="modal-header border-0">
+                                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                                <img src="/MasSystem/images/RedStop.svg" /> @localizer["SureToHold"]
+                                                                              </h1>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <p>@localizer["ModalFirstMessage_lessor_Hold"]</p>
+                                                                                <p>@localizer["ModalSecondMessage_lessor_Hold"]</p>
+                                                                            </div>
+                                                                            <div class="modal-footer border-0">
+                                                                              <div class="container">
+                                                                                <div class="row">
+                                                                                  <div class="col-md-6 text-center">
+                                                                                    <button type="button" class="btn btn-modal-Save" id="HoldBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                                  </div>
+                                                                                  <div class="col-md-6 text-center">
+                                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                                  </div>
+                                                                                </div>
+                                                                              </div>
+                                                                            </div>`;
         }
         function StopLoad() {
             const stopModalContent = document.getElementById("Stop-modal-Content");
@@ -674,158 +754,113 @@
 
     </script>
 
-
-
-
-   
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <script>
-       
-       
-        // function Check_onChange_input(existName, dataField, oldValue) {
-        //     //get the old value
-        //     if (dataField === oldValue) {
-        //         // Clear any existing error message if the values match
-        //         $(`#${existName}-Error`).hide();
-        //         return;
-        //     }
 
-        //     $.ajax({
-        //         type: "GET",
-        //         url: "/MAS/Bank/CheckChangedField",
-        //         data: { existName: existName, dataField: dataField },
-        //         success: function (result) {
-        //             console.log("feedback", result);
-        //             // Hide all previous error messages
-        //             $('.invalid-feedback').show();
 
-        //             // Show new error messages if they exist
-        //             if (result.errors && result.errors.length > 0) {
-        //                 result.errors.forEach(function (error) {
-        //                     // Use the ID from the error object to find the correct element
-        //                     $(`#${error.field}-Error`).text(error.message).show();
-        //                 });
-        //             } else {
-        //                 // Hide the error message if no errors
-        //                 $(`#${existName}-Error`).text("");
-        //             }
-        //         },
-        //         error: function (error) {
-        //             console.log(error);
-        //         }
-        //     });
-        // }
+        $('#Connect input[type="checkbox"]').on('click', async function () {
+            // تعطيل الـ checkbox مؤقتًا أثناء الانتظار
+            event.preventDefault();
 
-        // // Example usage for Arabic Name input
-        // $('#CrMasSupAccountBankArName').on('change', function () {
-        //     var newValue = $(this).val();
-        //     Check_onChange_input('CrMasSupAccountBankArName', newValue, OldArName);
-        // });
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
 
-        // // Example usage for English Name input
-        // $('#CrMasSupAccountBankEnName').on('change', function () {
-        //     var newValue = $(this).val();
-        //     Check_onChange_input('CrMasSupAccountBankEnName', newValue, OldEnName);
-        // });
+            var companyId = $('#CrMasLessorInformationCode').val();
+            console.log("companyId", companyId);
+            try {
+                const status = await connectLessorAsync(companyId);
+                console.log("status:", status);  // تحقق من القيم القادمة من الخادم
 
-    </script>
-    <script>
-        // function updateUserStatus(status) {
-        //     var code = document.getElementById("LessorCode").value;
-        //     $.ajax({
-        //         type: "POST",
-        //         url: "/MAS/LessorsKSA/EditStatus",
-        //         data: { status: status, code: code },
-        //         success: function (result) {
-        //             $('.modal').modal('hide');
-        //             window.location.href = "/MAS/LessorsKSA/Index";
-        //         },
-        //         error: function (error) {
-        //             console.log(error);
-        //         }
-        //     });
-        // }
+                if (status == '@ApiResponseStatus.Success') {
+                    // تفعيل الـ checkbox بعد نجاح الرد
+                    $('#Connect input[type="checkbox"]').prop('checked', true);
+                    toastr.success("Device successfully added!");
+                } else if (status == '@ApiResponseStatus.AlreadyExists') {
+                    // إلغاء تفعيل الـ checkbox إذا كان الجهاز موجود بالفعل
+                    $('#Connect input[type="checkbox"]').prop('checked', false);
+                    toastr.error("Device already exists!");
+                } else if (status == '@ApiResponseStatus.ValidationError') {
+                    // إلغاء تفعيل الـ checkbox إذا كانت هناك مشكلة في التحقق
+                    $('#Connect input[type="checkbox"]').prop('checked', false);
+                    toastr.error("Validation error! Please check the inputs.");
+                } else {
+                    // في حالة حدوث خطأ غير متوقع
+                    $('#Connect input[type="checkbox"]').prop('checked', false);
+                    toastr.error("An error occurred. Please try again later.");
+                }
 
-        // // Event listener for delete Lessor button
-        // $('#deleteUserButton').click(function () {
-        //     updateUserStatus('D');
-        // });
+            } catch (error) {
+                console.error("Error:", error);
+                // إلغاء تفعيل الـ checkbox إذا حدث خطأ أثناء الـ AJAX
+                $('#Connect input[type="checkbox"]').prop('checked', false);
+                toastr.error("Failed to connect to the server.");
+            } finally {
+                // إعادة تمكين الـ checkbox بعد استلام الرد
+                $('#Connect input[type="checkbox"]').prop('disabled', false);
+            }
+        });
 
-        // // Event listener for hold Lessor button
-        // $('#holdUserButton').click(function () {
-        //     updateUserStatus('H');
-        // });
+        async function connectLessorAsync(companyId) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: "GET",
+                    url: "/MAS/LessorsKSA/Connect",
+                    data: { companyId: companyId },
+                    success: function (result) {
+                        console.log("result", result.status);
+                        resolve(result.status);  // إرجاع status في حالة النجاح
+                    },
+                    error: function () {
+                        console.log("AJAX error");
+                        reject("Failed to connect to the server");  // إرجاع رسالة خطأ في حالة الفشل
+                    }
+                });
+            });
+        }
 
-        // // Event listener for retrieve Lessor button
-        // $('#retriveUserButtonD').click(function () {
-        //     updateUserStatus('Reactivate');
-        // });
 
-        // $('#retriveUserButtonH').click(function () {
-        //     updateUserStatus('Reactivate');
-        // });
 
-        // $("#buttonContainer a").on("click", function (event) {
-        //     var status = $(this).attr("data-error")
-        //     var Modal = $(this).attr("data-bs-targett")
-        //     CheckValidation('1101001', status).done(function (data) {
-        //         if (data) $(Modal).modal('show');
-        //     });
-        // })
 
-        // $("#saveEdit").on("click", function (event) {
-        //     event.preventDefault();
-        //     CheckValidation('1101001', '@Status.Insert').done(function (data) {
-        //         if (data) {
-        //             $('form').submit();
-        //         }
-        //     });
-        // })
-    </script>
+        $(document).ready(async function () {
+            var companyId = $('#CrMasLessorInformationCode').val(); // افترض وجود الـ ID للشركة
+            console.log("Initializing checkbox for Company ID: ", companyId);
 
-    <script>
-        // function validateInput(event, inId, InEr, No) {
-        //     event.target.value = event.target.value.replace(/[^0-9]/g, '');
-        //     const inputElement = document.getElementById(inId);
-        //     const errorMessageElement = document.getElementById(InEr);
+            // التحقق من حالة التهيئة عند تحميل الصفحة
+            const status = await checkClientInitialized(companyId);
 
-        //     const inputValue = inputElement.value;
-        //     const isValid = inputValue.startsWith(No);
+            if (status === '@ApiResponseStatus.AlreadyExists') {
+                // إذا كانت مهيأة بالفعل، يتم تفعيل checkbox
+                $('#Connect input[type="checkbox"]').prop('checked', true);
+                $('#Connect input[type="checkbox"]').prop('disabled', true);
+                console.log("Client is already initialized. Checkbox set to true.");
+            } else if (status === '@ApiResponseStatus.NotFound') {
+                // إذا لم تكن مهيأة، يتم إلغاء تحديد checkbox
+                $('#Connect input[type="checkbox"]').prop('checked', false);
+                $('#Connect input[type="checkbox"]').prop('disabled', false);
+                console.log("Client is not initialized. Checkbox set to false.");
+            } else {
+                console.error("An error occurred while checking client initialization.");
+            }
+        });
 
-        //     if (!isValid) {
-        //         errorMessageElement.textContent = errorMessageElement.getAttribute('data-error');
-        //         inputElement.value = "";
-        //     } else {
-        //         errorMessageElement.textContent = '';
-        //     }
-        // }
-    </script>
+        async function checkClientInitialized(companyId) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: "GET",
+                    url: "/MAS/LessorsKSA/CheckClientInitialized",
+                    data: { companyId: companyId },
+                    success: function (result) {
+                        console.log("result", result.status);
+                        resolve(result.status);  // إرجاع status في حالة النجاح
+                    },
+                    error: function () {
+                        console.log("AJAX error");
+                        reject("Failed to connect to the server");  // إرجاع رسالة خطأ في حالة الفشل
+                    }
+                });
+            });
+        }
 
-    <script>
-        // $(document).ready(function () {
-        //     $.ajax({
-        //         type: "GET",
-        //         url: "@Url.Action("GetCities", "LessorsKSA", new { Area = "MAS" })",
-        //         success: function (response) {
-        //             console.log(response)
-        //             const newArray = response.map(obj => obj.text);
-        //             $("#CityField").autocomplete({
-        //                 source: newArray
-        //             });
-        //         },
-        //     })
 
-        // });
+
     </script>
 
 }

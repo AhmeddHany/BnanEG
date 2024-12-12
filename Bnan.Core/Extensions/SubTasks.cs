@@ -37,6 +37,7 @@
         //MAS  Users
         public static string CrMasUserInformationForMAS { get; set; } = "1106001";
         public static string CrMasUserSystemValiditionsMAS { get; set; } = "1106002";
+        public static string CrMasUserInformationFromMASToCAS { get; set; } = "1106003";
 
         ////////////
         //MAS  Services

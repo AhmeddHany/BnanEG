@@ -1,19 +1,12 @@
 ﻿using AutoMapper;
-using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Repository;
-using Bnan.Ui.ViewModels;
 using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.BS.CreateContract;
 using Bnan.Ui.ViewModels.CAS;
 using Bnan.Ui.ViewModels.Identitiy;
 using Bnan.Ui.ViewModels.MAS;
+using Bnan.Ui.ViewModels.MAS.Users;
 using Bnan.Ui.ViewModels.Owners;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure
 {
@@ -135,7 +128,7 @@ namespace Bnan.Inferastructure
             CreateMap<PostRegionsVM, CrMasSupPostRegion>().ReverseMap();
             CreateMap<QuestionsAnswerVM, CrMasSysQuestionsAnswer>().ReverseMap();
             CreateMap <CountryClassificationVM, CrMasSupCountryClassification>().ReverseMap();
-
+            CreateMap<CompanyUserVM, CrMasUserInformation>().ReverseMap();
 
         }
 

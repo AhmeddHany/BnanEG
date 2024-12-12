@@ -29,6 +29,7 @@
         public static string Extension { get; set; } = "Y";
         public static string UnDeleted { get; set; } = "UD";
         public static string UnHold { get; set; } = "UH";
+        public static string ResetPassword { get; set; } = "RP";
         public static string UpdateStatus { get; set; } = "US";
         public static string Update { get; set; } = "U";
         public static string Custody { get; set; } = "1";

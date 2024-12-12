@@ -1,5 +1,5 @@
-﻿@using Bnan.Core.Extensions
-@model IEnumerable<CrMasSupCarDistribution>
+﻿@using Bnan.Core.Extensions;
+@model IEnumerable<CrMasUserInformation>
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
@@ -13,7 +13,7 @@
         <form action="">
             <div class="row g-3 mb-2">
                 <div class="col">
-                    <h3>@localizer["CategoriesDistribution"]</h3>
+                    <h3>@localizer["UsersForCompanies"]</h3>
                 </div>
                 <div class="col-12 col-lg-6 d-flex justify-content-end">
 
@@ -51,12 +51,12 @@
             </div>
             <div class="row table-row px-3">
                 <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
-                    <partial name="_DataTableDistribution">
+                    <partial name="_DataTableUsersCompanies">
                 </div>
             </div>
         </form>
-        <a asp-area="MAS" asp-controller="CarDistribution" asp-action="AddCarDistribution" data-bs-toggle="tooltip" data-bs-placement="top"
-           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["AddDistribution"]" class="new-Page-icon" style="cursor: pointer">
+        <a asp-area="MAS" asp-controller="UsersForCompanies" asp-action="AddUser" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add_User_PageTitle"]" class="new-Page-icon" style="cursor: pointer">
             <img src="~/MasSystem/images/new employee (2).svg" alt="new item">
         </a>
         <a asp-area="MAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
@@ -74,6 +74,28 @@
         $(document).ready(function () {
             $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
         });
+        ///////
+
+        function showErrorToast_NoUpdate() {
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+            toastr.error("@localizer["AuthEmplpoyee_NoUpdate"]");
+        }
+
+        function showErrorToast_whitController(messageText) {
+            $.ajax({
+                url: '@Url.Action("DisplayToastError_NoUpdate", "UsersForCompanies")',
+                type: 'POST',
+                data: { messageText: messageText },
+                success: function (response) {
+                    if (response.success) {
+                        console.log('showErrorToast_whitController : ', messageText);
+                    }
+                },
+                error: function () {
+                    toastr.error('تعذر الاتصال بالخادم');
+                }
+            });
+        }
     </script>
     @*Get AccountBank Using filter*@
     <script>
@@ -82,13 +104,13 @@
     </script>
     <script>
         //get AccountBank By Status function
-        function GetCarDistributionFitler(status, search) {
+        function GetUserFitler(status, search) {
             $.ajax({
                 type: "GET",
                 data: {
                     status: status, search: search
                 },
-                url: "@Url.Action("GetCarDistributionByStatus", "CarDistribution", new { Area = "MAS" })",
+                url: "@Url.Action("GetUserByStatus", "UsersForCompanies", new { Area = "MAS" })",
                 success: function (response) {
                     $(".dataTable").html(response);
                 },
@@ -98,14 +120,14 @@
         $("input[name='customRadio']").on("click", function () {
             const status = $(this).val();
             const search = $("#search").val(); // الحصول على قيمة البحث
-            GetCarDistributionFitler(status, search);
+            GetUserFitler(status, search);
         });
 
         // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
         $("#search").on("keyup", function () {
             const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
             const search = $(this).val(); // الحصول على قيمة البحث
-            GetCarDistributionFitler(status, search);
+            GetUserFitler(status, search);
         });
     </script>
 }

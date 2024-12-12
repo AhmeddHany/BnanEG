@@ -33,7 +33,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
         private readonly IStringLocalizer<TechnicalConnectivityController> _localizer;
         private readonly string pageNumber = SubTasks.Technical_Connectivity;
-        private readonly string IPWhatsupService = "http://62.84.187.79:3000";
 
 
         public TechnicalConnectivityController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
@@ -80,6 +79,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> IsClientReady(string companyId)
         {
+            companyId= "0000";
             try
             {
                 var content = await WhatsAppServicesExtension.IsClientReady(companyId);

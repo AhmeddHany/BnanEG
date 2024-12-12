@@ -4,139 +4,56 @@
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";  
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
 
 
-@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-{
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-            <thead>
-                <tr role="row">
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["ClassifyCategory"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["doors"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Passengers"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["BigBags"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["SmallBags"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["DistributionCount"]</th>
+            <th>@localizer["SmallBags"]</th>
+            <th>@localizer["BigBags"]</th>
+            <th>@localizer["Passengers"]</th>
+            <th class="DifferAlign"> @localizer["Doors"]   </th>
+            <th class="DifferAlign"> @localizer["CategoryDistribution"] </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "CarDistribution", new { id = item.CrMasSupCarDistributionCode })'">
+                <td><p>@(item.CrMasSupCarDistributionCount != null ? item.CrMasSupCarDistributionCount : 0)</p></td>
+                <td>
+                    <p>@item.CrMasSupCarDistributionSmallBags</p>
+                </td>
+                <td>
+                    <p>@item.CrMasSupCarDistributionBagBags</p>
+                </td>
+                <td>
+                    <p>@item.CrMasSupCarDistributionPassengers</p>
+                </td>
+                <td class="DifferAlign">
+                    <p> @item.CrMasSupCarDistributionDoor</p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupCarDistributionConcatenateEnName : item.CrMasSupCarDistributionConcatenateArName)</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
 
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model)
-                {
-                    @if (item.CrMasSupCarDistributionStatus == @Status.Deleted || item.CrMasSupCarDistributionStatus == @Status.Hold)
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarDistribution", new { id = item.CrMasSupCarDistributionCode })'" style="cursor:pointer;color:red">
-                            <td>@no</td>
-                            <td>@item.CrMasSupCarDistributionConcatenateEnName</td>
-                            <td>@item.CrMasSupCarDistributionDoor</td>
-                            <td>@item.CrMasSupCarDistributionPassengers</td>
-                            <td>@item.CrMasSupCarDistributionBagBags</td>
-                            <td>@item.CrMasSupCarDistributionSmallBags</td>
-                            <td>
-                                @if (@item.CrMasSupCarDistributionStatus == @Status.Hold)
-                                {
-                                    @localizer["Stoped"]
-                                }
-                                else if (@item.CrMasSupCarDistributionStatus == @Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarDistribution", new { id = item.CrMasSupCarDistributionCode })'">
-                            <td>@no</td>
-                            <td>@item.CrMasSupCarDistributionConcatenateEnName</td>
-                            <td>@item.CrMasSupCarDistributionDoor</td>
-                            <td>@item.CrMasSupCarDistributionPassengers</td>
-                            <td>@item.CrMasSupCarDistributionBagBags</td>
-                            <td>@item.CrMasSupCarDistributionSmallBags</td>
-                            <td>
-                                @if (@item.CrMasSupCarDistributionStatus == @Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    no++;
-                }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-            <thead>
-                <tr role="row">
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["ClassifyCategory"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["doors"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Passengers"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["BigBags"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["SmallBags"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model)
-                {
-                    @if (item.CrMasSupCarDistributionStatus == @Status.Deleted || item.CrMasSupCarDistributionStatus == "H")
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarDistribution", new { id = item.CrMasSupCarDistributionCode })'" style="cursor:pointer; color:red ">
-                            <td>@no</td>
-                            <td>@item.CrMasSupCarDistributionConcatenateArName</td>
-                            <td>@item.CrMasSupCarDistributionDoor</td>
-                            <td>@item.CrMasSupCarDistributionPassengers</td>
-                            <td>@item.CrMasSupCarDistributionBagBags</td>
-                            <td>@item.CrMasSupCarDistributionSmallBags</td>
+                        <div class="filters filter2-div"></div>
 
-                            <td>
-                                @if (@item.CrMasSupCarDistributionStatus == @Status.Hold)
-                                {
-                                    @localizer["Stoped"]
-                                }
-                                else if (@item.CrMasSupCarDistributionStatus == @Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarDistribution", new { id = item.CrMasSupCarDistributionCode })'" style="cursor:pointer; ">
-                            <td>@no</td>
-                            <td>@item.CrMasSupCarDistributionConcatenateArName</td>
-                            <td>@item.CrMasSupCarDistributionDoor</td>
-                            <td>@item.CrMasSupCarDistributionPassengers</td>
-                            <td>@item.CrMasSupCarDistributionBagBags</td>
-                            <td>@item.CrMasSupCarDistributionSmallBags</td>
-                            <td>
-                                @if (@item.CrMasSupCarDistributionStatus == @Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    no++;
-                }
-            </tbody>
-        </table>
-    </div>
-}
+                        <div>@no</div>
+
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+    </tbody>
+</table>

@@ -2,13 +2,7 @@
 using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.UpdateDataBaseJobs;
 using Bnan.Core.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository.UpdateDataBaseJobs
 {
@@ -94,7 +88,7 @@ namespace Bnan.Inferastructure.Repository.UpdateDataBaseJobs
             {
                 var originalStatus = priceCarBasic.CrCasPriceCarBasicStatus;
                 if (priceCarBasic.CrCasPriceCarBasicDateAboutToFinish <= DateTime.Now.Date) priceCarBasic.CrCasPriceCarBasicStatus = Status.AboutToExpire;
-                
+
                 if (priceCarBasic.CrCasPriceCarBasicEndDate <= DateTime.Now.Date)
                 {
                     priceCarBasic.CrCasPriceCarBasicStatus = Status.Expire;
@@ -104,17 +98,17 @@ namespace Bnan.Inferastructure.Repository.UpdateDataBaseJobs
                                    x.CrCasCarInformationCategory == priceCarBasic.CrCasPriceCarBasicCategoryCode &&
                                    x.CrCasCarInformationBrand == priceCarBasic.CrCasPriceCarBasicBrandCode);
 
-                        foreach (var car in cars)
+                    foreach (var car in cars)
+                    {
+                        car.CrCasCarInformationPriceStatus = false;
+                        if (!updatedCarInformations.Contains(car))
                         {
-                            car.CrCasCarInformationPriceStatus = false;
-                            if (!updatedCarInformations.Contains(car))
-                            {
-                                updatedCarInformations.Add(car);
-                            }
+                            updatedCarInformations.Add(car);
                         }
+                    }
                 }
                 if (priceCarBasic.CrCasPriceCarBasicStatus != originalStatus) updatedPriceCarBasics.Add(priceCarBasic);
-                
+
             }
             if (updatedPriceCarBasics.Any()) _unitOfWork.CrCasPriceCarBasic.UpdateRange(updatedPriceCarBasics);
             if (updatedCarInformations.Any()) _unitOfWork.CrCasCarInformation.UpdateRange(updatedCarInformations);

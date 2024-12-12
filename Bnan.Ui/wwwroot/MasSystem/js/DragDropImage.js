@@ -76,7 +76,7 @@ function removeImage(dropZoneElement, dropZoneCard, inputElement) {
     if (!promptElement) {
         const newPromptElement = document.createElement("span");
         newPromptElement.classList.add("drop-zone__prompt");
-        newPromptElement.innerHTML = `<img src="../../../images/upload icon.svg" class="mb-3"> <br>قم بسحب وإسقاط صورة أو اختر صورة`;
+        newPromptElement.innerHTML = `<img src="/MasSystem/images/upload icon.svg" class="mb-3"> <br>قم بسحب وإسقاط صورة أو اختر صورة`;
         dropZoneElement.appendChild(newPromptElement);
     }
 
