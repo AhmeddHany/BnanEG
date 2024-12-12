@@ -5,6 +5,7 @@ using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
+using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
@@ -270,6 +271,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if (status == Status.Deleted) { if (!await _masAccountBank.CheckIfCanDeleteIt(licence.CrMasSupAccountBankCode)) return "udelete"; }
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSupAccountBankStatus = status;
                 _unitOfWork.CrMasSupAccountBanks.Update(licence);

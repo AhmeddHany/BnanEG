@@ -41,7 +41,7 @@
         ////////////
         //MAS  Services
         public static string Technical_Connectivity { get; set; } = "1112001";
-        public static string Country_Classification { get; set; } = "1112002";
+        public static string CrMasSupCountryClassification { get; set; } = "1112002";
         public static string CrCasLessorClassification { get; set; } = "1112003";
         public static string Evaluation { get; set; } = "1112004";
         public static string Currency { get; set; } = "1112005";
@@ -63,7 +63,11 @@
         // Company Data
         public static string CrMasLessorInformation { get; set; } = "1101001";
 
-
+        ////////////
+        //MAS  Renters
+        public static string CrMasRenterInformation { get; set; } = "2203001";
+        public static string CrCasRenterContractBasic { get; set; } = "2203002";
+        public static string CrCasAccountContractCompanyOwed { get; set; } = "2203003";
 
     }
 }

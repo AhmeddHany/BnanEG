@@ -1,0 +1,194 @@
+﻿@using Bnan.Ui.ViewModels.MAS
+@model CountryClassificationVM
+
+@inject IViewLocalizer localizer
+
+@{
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="MAS" asp-controller="CountryClassification" asp-action="AddCountryClassification" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasLessorCountryClassificationCode" />
+            <div class="row  mt-3 g-3">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3>@localizer["Add_CountryClassification_PageTitle"]</h3>
+                            </div>
+                            <div class="col-md-auto save-col">
+                                <button type="submit" class="custom-img-btn"> <img src="~/MasSystem/images/save.svg" /> </button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/CountryClassification/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="row  mt-3 g-3 ">
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="DataTitle">@localizer["the_Code"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasLessorCountryClassificationCode</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <label for="AR-Licence" class="form-label">
+                                                @localizer["CountryClassificationNameAr_add"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" asp-for="CrMasLessorCountryClassificationArName" id="CrMasLessorCountryClassificationArName" maxlength="30" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasLessorCountryClassificationArName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasLessorCountryClassificationArName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="EN-Licence" class="form-label">
+                                                @localizer["CountryClassificationNameEn_add"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasLessorCountryClassificationEnName" maxlength="30" id="CrMasLessorCountryClassificationEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasLessorCountryClassificationEnName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasLessorCountryClassificationEnName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="rental-system-number" class="form-label">@localizer["RentalSystemCode"]</label>
+                                            <input disabled type="text" class="form-control inputs number-input" id="CrMasSupCarModelNaqlCode" maxlength="10" oninput="validateNumberLength(this)">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarModelNaqlCode-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="rental-system-pin" class="form-label">@localizer["RentalSystemNo"]</label>
+                                            <input disabled type="text" class="form-control number-input inputs" id="CrMasSupCarModelNaqlId" maxlength="10" oninput="validateNumberLength(this)">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupCarModelNaqlId-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row ">
+                                        <div class="col-lg-12">
+                                            <label>@localizer["Reason_s"]</label>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasLessorCountryClassificationReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasLessorCountryClassificationReasons" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // This To Focus On input when page load
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                $("#CrMasLessorCountryClassificationEnName").focus();
+            }
+            else {
+                $("#CrMasLessorCountryClassificationArName").focus();
+            }
+            //////////////////////////////////////////
+
+
+            function Check_onChange_input(existName, dataField) {
+                $.ajax({
+                    type: "GET",
+                    url: "/MAS/CountryClassification/CheckChangedField",
+                    data: { existName: existName, dataField: dataField },
+                    success: function (result) {
+                        console.log("feedback", result);
+                        // Hide all previous error messages
+                        $('.invalid-feedback').show();
+
+                        // Show new error messages if they exist
+                        if (result.errors && result.errors.length > 0) {
+                            result.errors.forEach(function (error) {
+                                // Use the ID from the error object to find the correct element
+                                $(`#${error.field}-Error`).text(error.message).show();
+                            });
+                        } else {
+                            // Hide the error message if no errors
+                            $(`#${existName}-Error`).text("");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+
+            $('#CrMasLessorCountryClassificationArName').on('change', function () {
+                var newValue = $(this).val();
+                console.log("newValue", newValue)
+                Check_onChange_input('CrMasLessorCountryClassificationArName', newValue);
+            });
+
+            $('#CrMasLessorCountryClassificationEnName').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasLessorCountryClassificationEnName', newValue);
+            });
+
+            $('#CrMasLessorCountryClassificationNaqlCode').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasLessorCountryClassificationNaqlCode', newValue);
+            });
+
+            $('#CrMasLessorCountryClassificationNaqlId').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasLessorCountryClassificationNaqlId', newValue);
+            });
+        });
+
+    </script>
+}

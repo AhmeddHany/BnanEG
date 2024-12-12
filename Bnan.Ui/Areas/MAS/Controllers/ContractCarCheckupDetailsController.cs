@@ -58,9 +58,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
-            // Retrieve active driving licenses
-            var checkupDetails = await _unitOfWork.CrMasSupContractCarCheckupDetail
-                .FindAllAsNoTrackingAsync(x => x.CrMasSupContractCarCheckupDetailsStatus == Status.Active);
 
             var allCheckups = await _unitOfWork.CrMasSupContractCarCheckup.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
@@ -69,22 +66,28 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 {
                     CrMasSupContractCarCheckupCode = x.CrMasSupContractCarCheckupCode,
                     CrMasSupContractCarCheckupArName = x.CrMasSupContractCarCheckupArName,
-                    CrMasSupContractCarCheckupEnName = x.CrMasSupContractCarCheckupEnName
+                    CrMasSupContractCarCheckupEnName = x.CrMasSupContractCarCheckupEnName,
+                    CrMasSupContractCarCheckupStatus = x.CrMasSupContractCarCheckupStatus
                 })
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
+            var Checkup_activated = allCheckups.Where(x=>x.CrMasSupContractCarCheckupStatus==Status.Active).ToList();
+            var checkupDetails2 = await _unitOfWork.CrMasSupContractCarCheckupDetail.GetAllAsyncAsNoTrackingAsync();
+            List<CrMasSupContractCarCheckupDetail>? checkupDetails = new List<CrMasSupContractCarCheckupDetail>();
+            checkupDetails = checkupDetails2.Where(x => x.CrMasSupContractCarCheckupDetailsStatus == Status.Active && allCheckups.Any(y => y.CrMasSupContractCarCheckupCode.Trim() == x.CrMasSupContractCarCheckupDetailsCode.Trim() && y.CrMasSupContractCarCheckupStatus == Status.Active)).ToList();
+
 
             // If no active licenses, retrieve all licenses
             if (!checkupDetails.Any())
             {
-                checkupDetails = await _unitOfWork.CrMasSupContractCarCheckupDetail
-                    .FindAllAsNoTrackingAsync(x => x.CrMasSupContractCarCheckupDetailsStatus == Status.Hold);
+                checkupDetails = checkupDetails2.Where(x => allCheckups.Any(y => y.CrMasSupContractCarCheckupCode.Trim() == x.CrMasSupContractCarCheckupDetailsCode.Trim()&&y.CrMasSupContractCarCheckupStatus==Status.Hold) || (x.CrMasSupContractCarCheckupDetailsStatus == Status.Hold && allCheckups.Any(y => y.CrMasSupContractCarCheckupCode.Trim() == x.CrMasSupContractCarCheckupDetailsCode.Trim()&&y.CrMasSupContractCarCheckupStatus==Status.Active))).ToList();
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
             ContractCarCheckupDetailsVM VM = new ContractCarCheckupDetailsVM();
             VM.crMasSupContractCarCheckupDetails = checkupDetails;
             VM.crMasSupContractCarCheckup = allCheckups;
+            VM.Checkup_activated = Checkup_activated;
             return View(VM);
         }
         [HttpGet]
@@ -94,10 +97,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             if (!string.IsNullOrEmpty(status))
             {
-                var ContractCarCheckupDetailssAll = await _unitOfWork.CrMasSupContractCarCheckupDetail.FindAllAsNoTrackingAsync(x => x.CrMasSupContractCarCheckupDetailsStatus == Status.Active ||
-                                                                                                                            x.CrMasSupContractCarCheckupDetailsStatus == Status.Deleted ||
-                                                                                                                            x.CrMasSupContractCarCheckupDetailsStatus == Status.Hold);
-
+                var all_CheckupDetails_2 = await _unitOfWork.CrMasSupContractCarCheckupDetail.GetAllAsyncAsNoTrackingAsync();
                 var allCheckups = await _unitOfWork.CrMasSupContractCarCheckup.FindAllWithSelectAsNoTrackingAsync(
                     //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                     predicate: null,
@@ -105,29 +105,53 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     {
                         CrMasSupContractCarCheckupCode = x.CrMasSupContractCarCheckupCode,
                         CrMasSupContractCarCheckupArName = x.CrMasSupContractCarCheckupArName,
-                        CrMasSupContractCarCheckupEnName = x.CrMasSupContractCarCheckupEnName
+                        CrMasSupContractCarCheckupEnName = x.CrMasSupContractCarCheckupEnName,
+                        CrMasSupContractCarCheckupStatus = x.CrMasSupContractCarCheckupStatus
                     })
                     //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                     );
+                var Checkup_activated = allCheckups.Where(x => x.CrMasSupContractCarCheckupStatus == Status.Active).ToList();
                 ContractCarCheckupDetailsVM VM = new ContractCarCheckupDetailsVM();
                 VM.crMasSupContractCarCheckup = allCheckups;
+                VM.Checkup_activated = Checkup_activated;
 
                 if (status == Status.All)
                 {
-                    var FilterAll = ContractCarCheckupDetailssAll.FindAll(x => x.CrMasSupContractCarCheckupDetailsStatus != Status.Deleted &&
+                    var FilterAll = all_CheckupDetails_2.Where(x => (x.CrMasSupContractCarCheckupDetailsStatus != Status.Deleted || allCheckups.Any(y => y.CrMasSupContractCarCheckupCode.Trim() == x.CrMasSupContractCarCheckupDetailsCode.Trim() && y.CrMasSupContractCarCheckupStatus == Status.Deleted)) &&
                                                                          (x.CrMasSupContractCarCheckupDetailsArName.Contains(search) ||
                                                                           x.CrMasSupContractCarCheckupDetailsEnName.ToLower().Contains(search.ToLower()) ||
-                                                                          x.CrMasSupContractCarCheckupDetailsCode.Contains(search)));
+                                                                          x.CrMasSupContractCarCheckupDetailsCode.Contains(search))).ToList();
                     VM.crMasSupContractCarCheckupDetails = FilterAll;
                     return PartialView("_DataTableContractCarCheckupDetails", VM);
                 }
-                var FilterByStatus = ContractCarCheckupDetailssAll.FindAll(x => x.CrMasSupContractCarCheckupDetailsStatus == status &&
-                                                                            (
-                                                                           x.CrMasSupContractCarCheckupDetailsArName.Contains(search) ||
-                                                                           x.CrMasSupContractCarCheckupDetailsEnName.ToLower().Contains(search.ToLower()) ||
-                                                                           x.CrMasSupContractCarCheckupDetailsCode.Contains(search)));
-                VM.crMasSupContractCarCheckupDetails = FilterByStatus;
-                return PartialView("_DataTableContractCarCheckupDetails", VM);
+                if (status == Status.Active)
+                {
+                    var FilterByStatus3 = all_CheckupDetails_2.Where(x => (x.CrMasSupContractCarCheckupDetailsStatus == status && allCheckups.Any(y => y.CrMasSupContractCarCheckupCode.Trim() == x.CrMasSupContractCarCheckupDetailsCode.Trim() && y.CrMasSupContractCarCheckupStatus == Status.Active)) &&
+                                                                         (x.CrMasSupContractCarCheckupDetailsArName.Contains(search) ||
+                                                                          x.CrMasSupContractCarCheckupDetailsEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupContractCarCheckupDetailsCode.Contains(search))).ToList();
+                    VM.crMasSupContractCarCheckupDetails = FilterByStatus3;
+                    return PartialView("_DataTableContractCarCheckupDetails", VM);
+                }
+                if (status == Status.Hold)
+                {
+                    var FilterByStatus = all_CheckupDetails_2.Where(x => (allCheckups.Any(y => y.CrMasSupContractCarCheckupCode.Trim() == x.CrMasSupContractCarCheckupDetailsCode.Trim() && y.CrMasSupContractCarCheckupStatus == Status.Hold) || (x.CrMasSupContractCarCheckupDetailsStatus == status && allCheckups.Any(y => y.CrMasSupContractCarCheckupCode.Trim() == x.CrMasSupContractCarCheckupDetailsCode.Trim() && y.CrMasSupContractCarCheckupStatus == Status.Active))) &&
+                                                                         (x.CrMasSupContractCarCheckupDetailsArName.Contains(search) ||
+                                                                          x.CrMasSupContractCarCheckupDetailsEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupContractCarCheckupDetailsCode.Contains(search))).ToList();
+                    VM.crMasSupContractCarCheckupDetails = FilterByStatus;
+                    return PartialView("_DataTableContractCarCheckupDetails", VM);
+                }
+                if (status == Status.Deleted)
+                {
+                    var FilterByStatus2 = all_CheckupDetails_2.Where(x => (allCheckups.Any(y => y.CrMasSupContractCarCheckupCode.Trim() == x.CrMasSupContractCarCheckupDetailsCode.Trim() && y.CrMasSupContractCarCheckupStatus == Status.Deleted) || (x.CrMasSupContractCarCheckupDetailsStatus == status && allCheckups.Any(y => y.CrMasSupContractCarCheckupCode.Trim() == x.CrMasSupContractCarCheckupDetailsCode.Trim() && y.CrMasSupContractCarCheckupStatus == Status.Active))) &&
+                                                                         (x.CrMasSupContractCarCheckupDetailsArName.Contains(search) ||
+                                                                          x.CrMasSupContractCarCheckupDetailsEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrMasSupContractCarCheckupDetailsCode.Contains(search))).ToList();
+                    VM.crMasSupContractCarCheckupDetails = FilterByStatus2;
+                    return PartialView("_DataTableContractCarCheckupDetails", VM);
+                }
+
             }
             return PartialView();
         }
@@ -157,9 +181,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             //    return RedirectToAction("Index", "ContractCarCheckupDetails");
             //}
 
-            var allCheckups = await _unitOfWork.CrMasSupContractCarCheckup.FindAllWithSelectAsNoTrackingAsync(
+            var allCheckups_activated = await _unitOfWork.CrMasSupContractCarCheckup.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: null,
+                predicate: x=>x.CrMasSupContractCarCheckupStatus == Status.Active,
                 selectProjection: query => query.Select(x => new CrMasSupContractCarCheckup
                 {
                     CrMasSupContractCarCheckupCode = x.CrMasSupContractCarCheckupCode,
@@ -171,7 +195,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             // Set Title 
             ContractCarCheckupDetailsVM contractOptionsVM = new ContractCarCheckupDetailsVM();
-            contractOptionsVM.crMasSupContractCarCheckup = allCheckups;
+            contractOptionsVM.crMasSupContractCarCheckup = allCheckups_activated;
             //contractOptionsVM.CrMasSupContractCarCheckupDetailsCode = await GenerateLicenseCodeAsync();
             return View(contractOptionsVM);
         }
@@ -184,9 +208,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
             
-            var allCheckups = await _unitOfWork.CrMasSupContractCarCheckup.FindAllWithSelectAsNoTrackingAsync(
+            var allCheckups_activated = await _unitOfWork.CrMasSupContractCarCheckup.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: null,
+                predicate: x => x.CrMasSupContractCarCheckupStatus == Status.Active,
                 selectProjection: query => query.Select(x => new CrMasSupContractCarCheckup
                 {
                     CrMasSupContractCarCheckupCode = x.CrMasSupContractCarCheckupCode,
@@ -199,7 +223,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             //// Set Title 
             //if (!ModelState.IsValid || contractOptionsVM == null)
             //{
-            //    contractOptionsVM.crMasSupContractCarCheckup = allCheckups;
+            //    contractOptionsVM.crMasSupContractCarCheckup = allCheckups_activated;
             //    return View("AddContractCarCheckupDetails", contractOptionsVM);
             //}
             try
@@ -212,7 +236,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 {
                     await AddModelErrorsAsync(contractOptionsEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    contractOptionsVM.crMasSupContractCarCheckup = allCheckups;
+                    contractOptionsVM.crMasSupContractCarCheckup = allCheckups_activated;
                     return View("AddContractCarCheckupDetails", contractOptionsVM);
                 }
                 //// Check If code > 9 get error , because code is char(1)
@@ -234,7 +258,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             }
             catch (Exception ex)
             {
-                contractOptionsVM.crMasSupContractCarCheckup = allCheckups;
+                contractOptionsVM.crMasSupContractCarCheckup = allCheckups_activated;
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return View("AddContractCarCheckupDetails", contractOptionsVM);
             }
@@ -253,7 +277,13 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             }
             var model = _mapper.Map<ContractCarCheckupDetailsVM>(contract);
             model.singleCheckup = Checkup;
-
+            var allCheckups_Activated = await _unitOfWork.CrMasSupContractCarCheckup.FindAllAsNoTrackingAsync(x => x.CrMasSupContractCarCheckupStatus == Status.Active);
+            if (!allCheckups_Activated.Any(x => x.CrMasSupContractCarCheckupCode.Trim() == contract.CrMasSupContractCarCheckupDetailsCode.Trim()))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_NoUpdate"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return RedirectToAction("Index", "ContractCarCheckupDetails");
+            }
             return View(model);
         }
         [HttpPost]

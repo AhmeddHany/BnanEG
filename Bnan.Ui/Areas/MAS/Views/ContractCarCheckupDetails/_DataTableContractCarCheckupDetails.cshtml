@@ -23,7 +23,7 @@
         }
         @foreach (var item in Model.crMasSupContractCarCheckupDetails)
         {
-            <tr onclick="location.href='@Url.Action("Edit", "ContractCarCheckupDetails", new { id = item.CrMasSupContractCarCheckupDetailsCode,no=item.CrMasSupContractCarCheckupDetailsNo })'">
+            <tr onclick="if (@Model.Checkup_activated?.Any(x=>x.CrMasSupContractCarCheckupCode.Trim()==item?.CrMasSupContractCarCheckupDetailsCode?.Trim()).ToString().ToLower() ) {location.href='@Url.Action("Edit", "ContractCarCheckupDetails", new { id = item.CrMasSupContractCarCheckupDetailsCode,no=item.CrMasSupContractCarCheckupDetailsNo })';} else{showErrorToast_NoUpdate();}">
 
                 <td class="DifferAlign">
                     <p>

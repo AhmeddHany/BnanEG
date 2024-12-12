@@ -212,7 +212,9 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasQuestionsAnswer, MasQuestionsAnswer>();
             builder.Services.AddScoped<IMasWhatsupConnect, MasWhatsupConnect>();
             builder.Services.AddScoped<IMasLessor, MasLessor>();
-
+            builder.Services.AddScoped<IMasCountryClassification, MasCountryClassification>();
+            builder.Services.AddScoped<IMasRenterInformation, MasRenterInformation>();
+            
 
 
             return builder;

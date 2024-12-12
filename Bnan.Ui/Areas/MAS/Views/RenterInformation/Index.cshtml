@@ -12,126 +12,222 @@
     ViewData["Page-title"] = @localizer["RenterInformations Data"];
     ViewData["Page-Hint"] = @localizer["RenterInformations Hint"];
 }
-<style>
-    body {
-        overflow: hidden
-    }
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3 mb-4">
+                <div class="col">
+                    <h3>بيانات المستأجرين</h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
 
-    @@media (max-width: 600px) {
-        #basic-datatable1_wrapper .row:first-child > div {
-            text-align: left;
-            overflow: scroll;
-            text-overflow: ellipsis;
-        }
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search" class="form-control inputs search-input"
+                                   name="search" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
 
-            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
-                text-align: right;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-    }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f9f9f9;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-    /*     td,th {
-            text-align: center;
-        } */
-
-    #_Nc {
-        text-align: center;
-    }
-
-    
-</style>
-
-<div class="sub-container">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div class="col-sm-12 col-md-9">
-                <div class="col-sm-12 col-md-4 p-0">
-                    <a type="button" class="btn btn-danger" title="@localizer["Back"]" asp-area="MAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
-                   @* <a class="btn btn-secondary InsertBtn" onclick="CheckValidation('1103001', '@Status.Insert', '@Url.Action("AddRenterInformation", "RenterInformation")')">
-                        @localizer["Add RenterInformations Data"]
-                    </a> *@
                 </div>
             </div>
 
-            @*search And Fitler Radio Button*@
-            <div class="col-sm-12 col-md-3 p-0">
-                <input class="form-control" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
-            </div>
-            @*<div class="col-sm-12 col-md-12 mt-3" id="status-filter">
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioAll" name="customRadio" value="All" class="form-check-input">
-                    <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioActive" name="customRadio" value="A" class="form-check-input">
-                    <label class="form-check-label" for="customRadioActive">@localizer["Active"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioStoped" name="customRadio" value="H" class="form-check-input">
-                    <label class="form-check-label" for="customRadioStoped">@localizer["Stoped"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioRemoved" name="customRadio" value="D" class="form-check-input">
-                    <label class="form-check-label" for="customRadioRemoved">@localizer["Deleted"]</label>
-                </div>
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm  w-100  ">
+                    <table class=" tables-style table table-borderless " id="Table">
+                        <thead class="sticky-top">
+                            <tr>
+                                <th>عدد الشركات</th>
+                                <th class="DifferAlign">العنوان</th>
+                                <th> المهنة</th>
+                                <th> الجنسية</th>
+                                <th> الجوال   </th>
+                                <th class="DifferAlign"> المستأجر</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><p>3</p></td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">المدينة المنورة - ينبع</p>
+                                    <p class="secondLineP"> fawaz4957@gmail.com </p>
+                                </td>
+                                <td>
+                                    <p>متقاعد</p>
+                                </td>
+                                <td>
+                                    <p>سعودي</p>
+                                </td>
+                                <td>
+                                    <p> 966578461 </p>
+                                </td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">فواز سعيد فهد العضيبي</p>
+                                    <p class="secondLineP"> 8002176700215983 </p>
+                                </td>
+                                <td>
+                                    <p>1</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p>1</p></td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">مكة المكرمة - مكة المكرمة</p>
+                                    <p class="secondLineP"> fawaz4957@gmail.com </p>
+                                </td>
+                                <td>
+                                    <p>عسكري</p>
+                                </td>
+                                <td>
+                                    <p>سعودي</p>
+                                </td>
+                                <td>
+                                    <p> 966578461 </p>
+                                </td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">أحمد هشام طارق التنيان</p>
+                                    <p class="secondLineP"> 6548418801548481 </p>
+                                </td>
+                                <td>
+                                    <p>1</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p>3</p></td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">المدينة المنورة - ينبع</p>
+                                    <p class="secondLineP"> fawaz4957@gmail.com </p>
+                                </td>
+                                <td>
+                                    <p>مهندس</p>
+                                </td>
+                                <td>
+                                    <p>سعودي</p>
+                                </td>
+                                <td>
+                                    <p> 966578461 </p>
+                                </td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">فيصل صالح بدر الربيعة</p>
+                                    <p class="secondLineP"> 8002176700215983 </p>
+                                </td>
+                                <td>
+                                    <p>1</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p>3</p></td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">المدينة المنورة - ينبع</p>
+                                    <p class="secondLineP"> fawaz4957@gmail.com </p>
+                                </td>
+                                <td>
+                                    <p>طبيب</p>
+                                </td>
+                                <td>
+                                    <p>سعودي</p>
+                                </td>
+                                <td>
+                                    <p> 966578461 </p>
+                                </td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">فواز سعيد فهد العضيبي</p>
+                                    <p class="secondLineP"> 8002176700215983 </p>
+                                </td>
+                                <td>
+                                    <p>1</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p>3</p></td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">المدينة المنورة - ينبع</p>
+                                    <p class="secondLineP"> fawaz4957@gmail.com </p>
+                                </td>
+                                <td>
+                                    <p>مدرس</p>
+                                </td>
+                                <td>
+                                    <p>سعودي</p>
+                                </td>
+                                <td>
+                                    <p> 966578461 </p>
+                                </td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">فواز سعيد فهد العضيبي</p>
+                                    <p class="secondLineP"> 8002176700215983 </p>
+                                </td>
+                                <td>
+                                    <p>1</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p>3</p></td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">المدينة المنورة - ينبع</p>
+                                    <p class="secondLineP"> fawaz4957@gmail.com </p>
+                                </td>
+                                <td>
+                                    <p>متقاعد</p>
+                                </td>
+                                <td>
+                                    <p>سعودي</p>
+                                </td>
+                                <td>
+                                    <p> 966578461 </p>
+                                </td>
+                                <td class="DifferAlign">
+                                    <p class="FirstLineP">فواز سعيد فهد العضيبي</p>
+                                    <p class="secondLineP"> 8002176700215983 </p>
+                                </td>
+                                <td>
+                                    <p>1</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-            </div>*@
-        </div>
-        <div class="dataTable " >
-            <partial name="_DataTableRenterInformation" />
-        </div>
+                </div>
+            </div>
+        </form>
+
+        <a href="../../../index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="العودة الي الرئيسية" class="new-Page-icon">
+            <img src="../../../images/back to main.svg" alt="man">
+        </a>
     </div>
 </div>
+            </div>
 
-@section scripts {
-    @*Get RenterInformation Using filter*@
-    <script>
-        //get RenterInformation By Status function
-        function GetRenterInformationFitler(status) {
-            $.ajax({
-                type: "GET",
-                data: {
-                    status: status
-                },
-                url: "@Url.Action("GetRenterInformationByStatus", "RenterInformation", new { Area = "MAS" })",
-                success: function (response) {
-                    $(".dataTable").html(response);
-                    set_basic_datatable();
-                },
-            })
+
+        </div>
+    </div>
+    @section Scripts{
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@*<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>*@
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="../../../scripts/Scripts.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var table = document.getElementById("Table");
+        var rows = table.getElementsByTagName("tr");
+
+        for (var i = 0; i < rows.length; i++) {
+            var cells = rows[i].getElementsByTagName("td");
+
+            for (var j = 0; j < cells.length; j++) {
+                cells[j].addEventListener("click", function () {
+                    window.location.href = "DetaildData.html";
+                });
+            }
         }
-
-        //on Click Filter Radio Button GetRenterInformationByStatus
-        $("input[name='customRadio']").on("click", function () {
-            GetRenterInformationFitler($(this).val())
-        })
-    </script>
+    });
+</script>
 }
-
-
-<style>
-    .wrapper {
-        margin-bottom: 60px;
-        overflow: hidden;
-        background-image: url("~/Pictures/bg.jpg") !important;
-    }
-
-    .table-bordered td,
-    .table-bordered th {
-        border: none;
-    }
-</style>
-

@@ -55,7 +55,7 @@ namespace Bnan.Inferastructure.Repository.MAS
 
         public async Task<bool> CheckIfCanDeleteIt(string code)
         {
-            var rentersLicenceCount = await _unitOfWork.CrMasRenterInformation.CountAsync(x => x.CrMasRenterInformationDrivingLicenseType == code);
+            var rentersLicenceCount = await _unitOfWork.CrCasRenterContractAdvantage.CountAsync(x => x.CrCasRenterContractAdvantagesCode == code );
             return rentersLicenceCount == 0;
         }
     }

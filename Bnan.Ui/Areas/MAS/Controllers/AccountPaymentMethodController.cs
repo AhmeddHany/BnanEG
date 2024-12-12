@@ -5,6 +5,7 @@ using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
+using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
@@ -68,9 +69,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     .FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Hold,
                                               new[] { "CrCasAccountReceipts" });
                 ViewBag.radio = "All";
-            }
+            }           
             else ViewBag.radio = "A";
-            return View(paymenMethods);
+            var all_Classifications2 = await _unitOfWork.CrMasSupCountryClassification.GetAllAsyncAsNoTrackingAsync();
+            var all_Classifications = all_Classifications2.ToList();
+            AccountPaymentMethodVM Vm = new AccountPaymentMethodVM();
+            Vm.crMasSupAccountPaymentMethod = paymenMethods;
+            Vm.crMasSupCountryClassificationSS = all_Classifications;
+            return View(Vm);
         }
         [HttpGet]
         public async Task<PartialViewResult> GetAccountPaymentMethodByStatus(string status, string search)
@@ -83,20 +89,28 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                                                                                                                             x.CrMasSupAccountPaymentMethodStatus == Status.Deleted ||
                                                                                                                             x.CrMasSupAccountPaymentMethodStatus == Status.Hold, new[] { "CrCasAccountReceipts" });
 
+
+                var all_Classifications2 = await _unitOfWork.CrMasSupCountryClassification.GetAllAsyncAsNoTrackingAsync();
+                var all_Classifications = all_Classifications2.ToList();
+                AccountPaymentMethodVM Vm = new AccountPaymentMethodVM();
+                Vm.crMasSupCountryClassificationSS = all_Classifications;
+
                 if (status == Status.All)
                 {
                     var FilterAll = AccountPaymentMethodsAll.FindAll(x => x.CrMasSupAccountPaymentMethodStatus != Status.Deleted &&
                                                                          (x.CrMasSupAccountPaymentMethodArName.Contains(search) ||
                                                                           x.CrMasSupAccountPaymentMethodEnName.ToLower().Contains(search.ToLower()) ||
                                                                           x.CrMasSupAccountPaymentMethodCode.Contains(search)));
-                    return PartialView("_DataTableAccountPaymentMethod", FilterAll);
+                    Vm.crMasSupAccountPaymentMethod = FilterAll;
+                    return PartialView("_DataTableAccountPaymentMethod", Vm);
                 }
                 var FilterByStatus = AccountPaymentMethodsAll.FindAll(x => x.CrMasSupAccountPaymentMethodStatus == status &&
                                                                             (
                                                                            x.CrMasSupAccountPaymentMethodArName.Contains(search) ||
                                                                            x.CrMasSupAccountPaymentMethodEnName.ToLower().Contains(search.ToLower()) ||
                                                                            x.CrMasSupAccountPaymentMethodCode.Contains(search)));
-                return PartialView("_DataTableAccountPaymentMethod", FilterByStatus);
+                Vm.crMasSupAccountPaymentMethod = FilterByStatus;
+                return PartialView("_DataTableAccountPaymentMethod", Vm);
             }
             return PartialView();
         }
@@ -120,13 +134,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "AccountPaymentMethod");
             }
             // Check If code > 9 get error , because code is char(1)
-            if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
+            if (await GeneratCountCodeAsync() > 98)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "AccountPaymentMethod");
             }
             // Set Title 
+            var all_Classifications = await _unitOfWork.CrMasSupCountryClassification.FindAllAsNoTrackingAsync(x => x.CrMasLessorCountryClassificationStatus == Status.Active);
+
             AccountPaymentMethodVM paymenMethodVM = new AccountPaymentMethodVM();
+            paymenMethodVM.crMasSupCountryClassificationSS = all_Classifications;
             return View(paymenMethodVM);
         }
 
@@ -137,9 +154,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
+            var all_Classifications = await _unitOfWork.CrMasSupCountryClassification.FindAllAsNoTrackingAsync(x => x.CrMasLessorCountryClassificationStatus == Status.Active);
 
             if (!ModelState.IsValid || paymenMethodVM == null)
             {
+                paymenMethodVM.crMasSupCountryClassificationSS = all_Classifications;
                 return View("AddAccountPaymentMethod", paymenMethodVM);
             }
             try
@@ -155,12 +174,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 {
                     await AddModelErrorsAsync(paymenMethodEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    paymenMethodVM.crMasSupCountryClassificationSS = all_Classifications;
                     return View("AddAccountPaymentMethod", paymenMethodVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
-                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
+                if (await GeneratCountCodeAsync() > 98)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    paymenMethodVM.crMasSupCountryClassificationSS = all_Classifications;
                     return View("AddAccountPaymentMethod", paymenMethodVM);
                 }
                 // Set status and add the record
@@ -175,6 +196,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                paymenMethodVM.crMasSupCountryClassificationSS = all_Classifications;
                 return View("AddAccountPaymentMethod", paymenMethodVM);
             }
         }
@@ -190,9 +212,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "AccountPaymentMethod");
             }
+            var all_Classifications = await _unitOfWork.CrMasSupCountryClassification.FindAllAsNoTrackingAsync(x => x.CrMasLessorCountryClassificationStatus == Status.Active || contract.CrMasSupAccountPaymentMethodClassification == x.CrMasLessorCountryClassificationCode);
+
             var model = _mapper.Map<AccountPaymentMethodVM>(contract);
             model.CrMasSupAccountPaymentMethodNaqlCode ??= 0;
             model.CrMasSupAccountPaymentMethodNaqlId ??= 0;
+            model.crMasSupCountryClassificationSS = all_Classifications;
             return View(model);
         }
         [HttpPost]
@@ -201,6 +226,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
+            var all_Classifications = await _unitOfWork.CrMasSupCountryClassification.FindAllAsNoTrackingAsync(x => x.CrMasLessorCountryClassificationStatus == Status.Active || paymenMethodVM.CrMasSupAccountPaymentMethodClassification == x.CrMasLessorCountryClassificationCode);
 
             if (user == null && paymenMethodVM == null)
             {
@@ -213,6 +239,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    paymenMethodVM.crMasSupCountryClassificationSS = all_Classifications;
                     return View("Edit", paymenMethodVM);
                 }
                 var paymenMethodEntity = _mapper.Map<CrMasSupAccountPaymentMethod>(paymenMethodVM);
@@ -224,6 +251,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 {
                     await AddModelErrorsAsync(paymenMethodEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    paymenMethodVM.crMasSupCountryClassificationSS = all_Classifications;
                     return View("Edit", paymenMethodVM);
                 }
 
@@ -236,6 +264,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                paymenMethodVM.crMasSupCountryClassificationSS = all_Classifications;
                 return View("Edit", paymenMethodVM);
             }
         }
@@ -253,6 +282,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if (status == Status.Deleted) { if (!await _masAccountPaymentMethod.CheckIfCanDeleteIt(licence.CrMasSupAccountPaymentMethodCode)) return "udelete"; }
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSupAccountPaymentMethodStatus = status;
                 _unitOfWork.CrMasSupAccountPaymentMethod.Update(licence);
@@ -332,6 +362,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         {
             var allLicenses = await _unitOfWork.CrMasSupAccountPaymentMethod.GetAllAsync();
             return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupAccountPaymentMethodCode) + 1).ToString() : "10";
+        }
+        private async Task<int> GeneratCountCodeAsync()
+        {
+            var Count = await _unitOfWork.CrMasSupAccountPaymentMethod.CountAsync();
+            return Count;
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupAccountPaymentMethod licence, string status)
         {

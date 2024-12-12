@@ -9,7 +9,8 @@
 <table class=" tables-style table table-borderless " id="Table">
     <thead class="sticky-top">
         <tr>
-            <th>@localizer["Count"]</th>
+            <th>@localizer["Count_renters"]</th>
+            <th>@localizer["Count_cities"]</th>
             <th class="DifferAlign"> @localizer["PostRegionsName_view"]</th>
             <th class="DifferAlign"> @localizer["the_Code"]</th>
             <th></th>
@@ -24,7 +25,9 @@
             <tr onclick="if (parseInt(@item.CrMasSupPostRegionsCode) > 11) {location.href='@Url.Action("Edit", "PostRegions", new { id = item.CrMasSupPostRegionsCode })';} else{showErrorToast_NoUpdate();}">
 
                 <td><p>@(Model.Region_count?.Find(x => x.Column.ToString() == item.CrMasSupPostRegionsCode?.Trim())?.RowCount.ToString("N0") ?? "0" )</p></td>
-                
+
+                <td><p>@(Model.cites_count?.Find(x => x.Column.ToString() == item.CrMasSupPostRegionsCode?.Trim())?.RowCount.ToString("N0") ?? "0")</p></td>
+
                 <td class="DifferAlign">
                     <p>
                         @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupPostRegionsEnName : item.CrMasSupPostRegionsArName)

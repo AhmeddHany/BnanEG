@@ -8,6 +8,7 @@
     "AuthEmplpoyee_No_auth": "ليس لديك صلاحية",
     "AuthEmplpoyee_AddMore": "لا يمكن إضافة سجل جديد",
     "AuthEmplpoyee_NoUpdate": "لا يمكن تحديث هذا السجل",
+    "AuthEmplpoyee_NoDelete": "لا يمكن حذفه",
     "toastor_Exist": "هذا السجل مسجل من قبل",
     "MobilePatternError": "ادخل رقم الجوال صحيح",
     "error_Codestart50": "الرمز لابد يبدأ ب 50 ثم اضف 8 ارقام",
@@ -23,6 +24,15 @@
     "Reason_s": "ملاحظات",
     "Classification_s": "التصنيف",
     "img_drop_orChoose": "قم بسحب وإسقاط صورة أو اختر صورة",
+    "Count_renters": "عدد المستأجرين",
+    "Count_models": "عدد الطراز",
+    "Count_cars": "عدد السيارات",
+    "Count_cities": "عدد المدن",
+    "Count_regions": "عدد المناطق",
+    "Count_countries": "عدد الدول",
+    "Count_lessors": "عدد الشركات",
+    "Count_Referances": "عدد المراجع",
+    "Count_Processes": "عدد العمليات",
 
     //////////
 
@@ -613,7 +623,7 @@
     "QuestionsAnswerName_list_view": "القائمة",
     "QuestionsAnswerName_system_view": "النظام",
     "QuestionsAnswerName_ArAnswer": "الإجابة عربي",
-    "QuestionsAnswerName_EnAnswer": "الإجابة عربي",
+    "QuestionsAnswerName_EnAnswer": "الإجابة انجليزي",
     "ModalFirstMessage_QuestionsAnswer_Delete": "حذف بيانات ونتائج1",
     "ModalSecondMessage_QuestionsAnswer_Delete": "حذف بيانات ونتائج2",
     "ModalFirstMessage_QuestionsAnswer_UnDelete": "استعادة بيانات ونتائج1",
@@ -622,6 +632,24 @@
     "ModalSecondMessage_QuestionsAnswer_Hold": "ايقاف بيانات ونتائج2",
     "ModalFirstMessage_QuestionsAnswer_UnHold": "ارجاع بيانات ونتائج1",
     "ModalSecondMessage_QuestionsAnswer_UnHold": "ارجاع بيانات ونتائج2",
+
+    // MAS CountryClassification
+    "Add_CountryClassification_PageTitle": "إضافة تصنيف دولة",
+    "Edit_CountryClassification_PageTitle": "تحديث بيانات تصنيف الدولة",
+    "View_CountryClassification_PageTitle": "تصنيف الدول",
+    "CountryClassificationName_view": "التصنيف",
+    "CountryClassificationNameAr_add": "التصنيف عربي",
+    "CountryClassificationNameEn_add": "التصنيف إنجليزي",
+    "CountryClassificationNameAr_edit": "التصنيف عربي",
+    "CountryClassificationNameEn_edit": "التصنيف إنجليزي",
+    "ModalFirstMessage_CountryClassification_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_CountryClassification_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_CountryClassification_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_CountryClassification_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_CountryClassification_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_CountryClassification_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_CountryClassification_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_CountryClassification_UnHold": "ارجاع بيانات ونتائج2",
 
     //TechnicalConnectivity
     "Company": "الشركة",

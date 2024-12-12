@@ -84,9 +84,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 var sin = nationality1_count.FindIndex(x => x.Column?.ToString()?.Trim() == item.Column?.ToString()?.Trim());
                 nationality1_count[sin].RowCount= nationality1_count[sin].RowCount + item.RowCount;
             }
+            var all_Classifications2 = await _unitOfWork.CrMasSupCountryClassification.GetAllAsyncAsNoTrackingAsync();
+            var all_Classifications = all_Classifications2.ToList();
             RenterNationalityVM VM = new RenterNationalityVM();
             VM.List_Nationality = renterNationalitiess;
             VM.Nationality_count_1 = nationality1_count;
+            VM.crMasSupCountryClassificationSS = all_Classifications;
             return View(VM);
         }
         [HttpGet]
@@ -103,6 +106,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 columnSelector: x => x.CrCasRenterPrivateDriverInformationNationality  // تحديد العمود الذي نريد التجميع بناءً عليه
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
+            var all_Classifications2 = await _unitOfWork.CrMasSupCountryClassification.GetAllAsyncAsNoTrackingAsync();
+            var all_Classifications = all_Classifications2.ToList();
             foreach (var item in nationality2_count)
             {
                 var sin = nationality1_count.FindIndex(x => x.Column?.ToString()?.Trim() == item.Column?.ToString()?.Trim());
@@ -116,6 +121,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                                                                                                                             x.CrMasSupRenterNationalitiesStatus == Status.Hold);
                 RenterNationalityVM VM = new RenterNationalityVM();
                 VM.Nationality_count_1 = nationality1_count;
+                VM.crMasSupCountryClassificationSS = all_Classifications;
                 if (status == Status.All)
                 {
                     var FilterAll = RenterNationalitiessAll.FindAll(x => x.CrMasSupRenterNationalitiesStatus != Status.Deleted &&
@@ -160,8 +166,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "RenterNationality");
             }
+            var all_Classifications = await _unitOfWork.CrMasSupCountryClassification.FindAllAsNoTrackingAsync(x => x.CrMasLessorCountryClassificationStatus == Status.Active);
+
             // Set Title 
             RenterNationalityVM renterNationalitiesVM = new RenterNationalityVM();
+            renterNationalitiesVM.crMasSupCountryClassificationSS = all_Classifications;
             renterNationalitiesVM.CrMasSupRenterNationalitiesCode = await GenerateLicenseCodeAsync();
             return View(renterNationalitiesVM);
         }
@@ -173,7 +182,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
-
+            var all_Classifications = await _unitOfWork.CrMasSupCountryClassification.FindAllAsNoTrackingAsync(x => x.CrMasLessorCountryClassificationStatus == Status.Active);
+            renterNationalitiesVM.crMasSupCountryClassificationSS = all_Classifications;
             if (!ModelState.IsValid || renterNationalitiesVM == null)
             {
                 return View("AddRenterNationality", renterNationalitiesVM);
@@ -234,9 +244,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "RenterNationality");
             }
+            var all_Classifications = await _unitOfWork.CrMasSupCountryClassification.FindAllAsNoTrackingAsync(x => x.CrMasLessorCountryClassificationStatus == Status.Active || contract.CrMasSupRenterNationalitiesNaqlGcc == x.CrMasLessorCountryClassificationCode);
+
             var model = _mapper.Map<RenterNationalityVM>(contract);
             model.CrMasSupRenterNationalitiesNaqlCode ??= 0;
             model.CrMasSupRenterNationalitiesNaqlId ??= 0;
+            model.crMasSupCountryClassificationSS = all_Classifications;
             //model.RentersHave_withType_Count = contract.CrCasRenterPrivateDriverInformations.Count + contract.CrMasRenterInformations.Count;
             return View(model);
         }
@@ -246,7 +259,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
-
+            var all_Classifications = await _unitOfWork.CrMasSupCountryClassification.FindAllAsNoTrackingAsync(x => x.CrMasLessorCountryClassificationStatus == Status.Active || renterNationalitiesVM.CrMasSupRenterNationalitiesNaqlGcc == x.CrMasLessorCountryClassificationCode);
+            renterNationalitiesVM.crMasSupCountryClassificationSS = all_Classifications;
             if (user == null && renterNationalitiesVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -298,6 +312,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if (status == Status.Deleted) { if (!await _masRenterNationalities.CheckIfCanDeleteIt(licence.CrMasSupRenterNationalitiesCode)) return "udelete"; }
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSupRenterNationalitiesStatus = status;
                 _unitOfWork.CrMasSupRenterNationality.Update(licence);

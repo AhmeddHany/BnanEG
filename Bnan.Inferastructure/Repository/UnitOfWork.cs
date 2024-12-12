@@ -101,6 +101,8 @@ namespace Bnan.Inferastructure.Repository
         public IGenric<CrCasAccountInvoice> CrCasAccountInvoice { get; private set; }
         public IGenric<CrMasSysConvertNoToText> CrMasSysConvertNoToText { get; private set; }
         public IGenric<CrMasSupCarYear> CrMasSupCarYear { get; private set; }
+        public IGenric<CrMasSupCountryClassification> CrMasSupCountryClassification { get; private set; }
+        
         public IGenric<CrCasRenterContractEvaluation> CrCasRenterContractEvaluation { get; private set; }
 
 
@@ -191,6 +193,7 @@ namespace Bnan.Inferastructure.Repository
             CrMasSysConvertNoToText = new BaseRepository<CrMasSysConvertNoToText>(_context);
             CrMasSupCarYear = new BaseRepository<CrMasSupCarYear>(_context);
             CrCasRenterContractEvaluation = new BaseRepository<CrCasRenterContractEvaluation>(_context);
+            CrMasSupCountryClassification = new BaseRepository<CrMasSupCountryClassification>(_context);           
             CrCasLessorWhatsupConnect = new BaseRepository<CrCasLessorWhatsupConnect>(_context);
         }
         public int Complete()

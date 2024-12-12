@@ -66,6 +66,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 columnSelector: x => x.CrMasRenterPostRegions  // تحديد العمود الذي نريد التجميع بناءً عليه
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
+            var cites_count = await _unitOfWork.CrMasSupPostCity.FindCountByColumnAsync<CrMasSupPostCity>(
+                predicate: x => x.CrMasSupPostCityStatus != Status.Deleted,
+                columnSelector: x => x.CrMasSupPostCityRegionsCode  // تحديد العمود الذي نريد التجميع بناءً عليه
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
+            
             // If no active licenses, retrieve all licenses
             if (!Regions.Any())
             {
@@ -77,6 +83,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             PostRegionsVM vm = new PostRegionsVM();
             vm.PostRegions = Regions;
             vm.Region_count = Region_count;
+            vm.cites_count = cites_count;
             return View(vm);
         }
         [HttpGet]
@@ -95,8 +102,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     columnSelector: x => x.CrMasRenterPostRegions  // تحديد العمود الذي نريد التجميع بناءً عليه
                     //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                     );
+                var cites_count = await _unitOfWork.CrMasSupPostCity.FindCountByColumnAsync<CrMasSupPostCity>(
+                    predicate: x => x.CrMasSupPostCityStatus != Status.Deleted,
+                    columnSelector: x => x.CrMasSupPostCityRegionsCode  // تحديد العمود الذي نريد التجميع بناءً عليه
+                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                    );
                 PostRegionsVM vm = new PostRegionsVM();
                 vm.Region_count = Region_count;
+                vm.cites_count = cites_count;
                 if (status == Status.All)
                 {
                     var FilterAll = PostRegionssAll.FindAll(x => x.CrMasSupPostRegionsStatus != Status.Deleted &&
@@ -278,6 +291,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if (status == Status.Deleted) { if (!await _masPostRegions.CheckIfCanDeleteIt(licence.CrMasSupPostRegionsCode)) return "udelete"; }
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSupPostRegionsStatus = status;
                 _unitOfWork.CrMasSupPostRegion.Update(licence);

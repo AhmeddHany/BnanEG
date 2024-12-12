@@ -119,7 +119,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "ContractCarCheckup");
             }
             // Check If code > 9 get error , because code is char(1)
-            if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
+            if (await GeneratCountCodeAsync() > 89)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "ContractCarCheckup");
@@ -158,7 +158,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     return View("AddContractCarCheckup", contractOptionsVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
-                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
+                if (await GeneratCountCodeAsync() > 89)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     return View("AddContractCarCheckup", contractOptionsVM);
@@ -358,6 +358,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         {
             var allLicenses = await _unitOfWork.CrMasSupContractCarCheckup.GetAllAsync();
             return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrMasSupContractCarCheckupCode) + 1).ToString() : "10";
+        }
+        private async Task<int> GeneratCountCodeAsync()
+        {
+            var Count = await _unitOfWork.CrMasSupContractCarCheckup.CountAsync();
+            return Count;
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasSupContractCarCheckup licence, string status)
         {

@@ -30,7 +30,13 @@
                         <textarea class=" form-control FAQ-textArea" rows="1" name="textareaEn'@Model.CrMasSysQuestionsAnswerNo'" type="text" data-bs-toggle="tooltip" data-bs-placement="top"
                                   data-bs-custom-class="FAQ-tooltip" id="textareaEn'@Model.CrMasSysQuestionsAnswerNo'" data-bs-title="@(item.CrMasSysQuestionsAnswerEnAnswer ?? " ")">@(item.CrMasSysQuestionsAnswerEnAnswer ?? " ") </textarea>
                     </td>
-                    <td class="DifferAlign"><p>@(item.CrMasSysQuestionsAnswerEnQuestions ?? " ")</p></td>
+                    <td class="DifferAlign">
+                        <p>
+                            @(item.CrMasSysQuestionsAnswerEnQuestions?.Length > 70
+                                ? item.CrMasSysQuestionsAnswerEnQuestions.Substring(0, 70)
+                                : item.CrMasSysQuestionsAnswerEnQuestions ?? " ")
+                        </p>
+                    </td>
 
                     <td class="DifferAlign"><p>@(Model.allMainTaskSystem?.Find(x => x.CrMasSysMainTasksCode == item.CrMasSysQuestionsAnswerMainTask)?.CrMasSysMainTasksEnName ?? " ")</p></td>
                     <td class="DifferAlign"><p>@(Model.allsystemNames?.Find(x => x.CrMasSysSystemCode == item.CrMasSysQuestionsAnswerSystem)?.CrMasSysSystemEnName ?? " ")</p></td>
@@ -41,7 +47,13 @@
                         <textarea class=" form-control FAQ-textArea" rows="1" name="textareaAr'@Model.CrMasSysQuestionsAnswerNo'" type="text" data-bs-toggle="tooltip" data-bs-placement="top"
                                   data-bs-custom-class="FAQ-tooltip" id="textareaAr'@Model.CrMasSysQuestionsAnswerNo'" data-bs-title="@(item.CrMasSysQuestionsAnswerArAnswer ?? " ")">@(item.CrMasSysQuestionsAnswerArAnswer ?? " ") </textarea>
                     </td>
-                    <td class="DifferAlign"><p>@(item.CrMasSysQuestionsAnswerArQuestions ?? " ")</p></td>
+                    <td class="DifferAlign">
+                        <p>
+                            @(item.CrMasSysQuestionsAnswerArQuestions?.Length > 70
+                                ? item.CrMasSysQuestionsAnswerArQuestions.Substring(0, 70)
+                                : item.CrMasSysQuestionsAnswerArQuestions ?? " ")
+                        </p>
+                    </td>
                     <td class="DifferAlign"><p>@(Model.allMainTaskSystem?.Find(x => x.CrMasSysMainTasksCode == item.CrMasSysQuestionsAnswerMainTask)?.CrMasSysMainTasksArName ?? " ")</p></td>
                     <td class="DifferAlign"><p>@(Model.allsystemNames?.Find(x => x.CrMasSysSystemCode == item.CrMasSysQuestionsAnswerSystem)?.CrMasSysSystemArName ?? " ")</p></td>
                 }

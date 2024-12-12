@@ -260,7 +260,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
-                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                if (status == Status.Deleted) { if (!await _masCarOil.CheckIfCanDeleteIt(licence.CrMasSupCarOilCode)) return "udelete"; }
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSupCarOilStatus = status;
                 _unitOfWork.CrMasSupCarOil.Update(licence);
                 _unitOfWork.Complete();

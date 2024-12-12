@@ -11,9 +11,13 @@ namespace Bnan.Ui.ViewModels.MAS
         public string? CrMasSysQuestionsAnswerSystem { get; set; }
         [Required(ErrorMessage = "requiredFiled"), MaxLength(3, ErrorMessage = "requiredFiled")]
         public string? CrMasSysQuestionsAnswerMainTask { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
         public string? CrMasSysQuestionsAnswerArQuestions { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
         public string? CrMasSysQuestionsAnswerArAnswer { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
         public string? CrMasSysQuestionsAnswerEnQuestions { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
         public string? CrMasSysQuestionsAnswerEnAnswer { get; set; }
         [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSysQuestionsAnswerArVideo { get; set; }

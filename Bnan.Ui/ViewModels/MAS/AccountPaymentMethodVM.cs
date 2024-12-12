@@ -6,9 +6,9 @@ namespace Bnan.Ui.ViewModels.MAS
 {
     public class AccountPaymentMethodVM
     {
-        [Required(ErrorMessage = "requiredFiled")]
+        [Required(ErrorMessage = "requiredFiled"),MaxLength(2, ErrorMessage = "requiredFiled"), Range(1, 99, ErrorMessage = "requiredFiled")]
         public string? CrMasSupAccountPaymentMethodCode { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
+        [Required(ErrorMessage = "requiredFiled"), MaxLength(1, ErrorMessage = "requiredFiled"), Range(1, 7, ErrorMessage = "requiredFiled")]
         public string? CrMasSupAccountPaymentMethodClassification { get; set; }
 
         [Range(0, 9999999999, ErrorMessage = "requiredNoLengthFiled10")]
@@ -30,6 +30,8 @@ namespace Bnan.Ui.ViewModels.MAS
         public string? CrMasSupAccountPaymentMethodReasons { get; set; }
 
         public List<CrMasSupAccountPaymentMethod> crMasSupAccountPaymentMethod = new List<CrMasSupAccountPaymentMethod>();
+
+        public List<CrMasSupCountryClassification>? crMasSupCountryClassificationSS = new List<CrMasSupCountryClassification>();
 
         //public List<TResult2>? Banks_count = new List<TResult2>();  new []{ "CrCasAccountReceipts" }
     }

@@ -68,6 +68,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
 
+            var models_Count = await _unitOfWork.CrMasSupCarModel.FindCountByColumnAsync<CrMasSupCarBrand>(
+                predicate: x => x.CrMasSupCarModelStatus != Status.Deleted,
+                columnSelector: x => x.CrMasSupCarModelBrand  // تحديد العمود الذي نريد التجميع بناءً عليه
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
 
             // If no active licenses, retrieve all licenses
             if (!carBrands.Any())
@@ -81,6 +86,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             CarBrandVM vm = new CarBrandVM();
             vm.crMasSupCarBrand = carBrands;
             vm.cars_count = Cars_Count;
+            vm.models_count = models_Count; 
             return View(vm);
         }
         [HttpGet]
@@ -98,8 +104,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     columnSelector: x => x.CrCasCarInformationBrand  // تحديد العمود الذي نريد التجميع بناءً عليه
                     //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                     );
+                var models_Count = await _unitOfWork.CrMasSupCarModel.FindCountByColumnAsync<CrMasSupCarBrand>(
+                    predicate: x => x.CrMasSupCarModelStatus != Status.Deleted,
+                    columnSelector: x => x.CrMasSupCarModelBrand  // تحديد العمود الذي نريد التجميع بناءً عليه
+                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                    );
                 CarBrandVM vm = new CarBrandVM();
                 vm.cars_count = Cars_Count;
+                vm.models_count = models_Count;
                 if (status == Status.All)
                 {
                     var FilterAll = CarBrandsAll.FindAll(x => x.CrMasSupCarBrandStatus != Status.Deleted &&
@@ -271,7 +283,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
-                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                if (status == Status.Deleted) { if (!await _masCarBrand.CheckIfCanDeleteIt(licence.CrMasSupCarBrandCode)) return "udelete"; }
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSupCarBrandStatus = status;
                 _unitOfWork.CrMasSupCarBrand.Update(licence);
                 _unitOfWork.Complete();

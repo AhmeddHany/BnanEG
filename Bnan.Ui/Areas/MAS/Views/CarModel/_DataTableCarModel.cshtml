@@ -9,7 +9,7 @@
 <table class=" tables-style table table-borderless " id="Table">
     <thead class="sticky-top">
         <tr>
-            <th>@localizer["Count"]</th>
+            <th>@localizer["Count_cars"]</th>
             <th class="DifferAlign"> @localizer["CarModelName_view"]</th>
             <th class="DifferAlign"> @localizer["the_Code"]</th>
             <th></th>
@@ -21,7 +21,7 @@
         }
         @foreach (var item in Model.crMasSupCarModel)
         {
-            <tr onclick="location.href='@Url.Action("Edit", "CarModel", new { id = item.CrMasSupCarModelCode })'">
+            <tr onclick="if(@Model.All_Brands?.Any(x=>x.CrMasSupCarBrandCode.Trim()==item?.CrMasSupCarModelBrand?.Trim()).ToString().ToLower()) {location.href='@Url.Action("Edit", "CarModel", new { id = item.CrMasSupCarModelCode })';} else{showErrorToast_NoUpdate();}">
                 <td><p>@(Model.cars_count?.Find(x => x.Column.ToString() == item.CrMasSupCarModelCode)?.RowCount.ToString("N0") ?? "0")</p></td>
                 <td class="DifferAlign">
                     <p>

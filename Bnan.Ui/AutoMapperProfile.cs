@@ -77,7 +77,7 @@ namespace Bnan.Inferastructure
             CreateMap<CrCasCarInformation, CarsInforamtionVM>().ReverseMap();
             CreateMap<CrCasCarDocumentsMaintenance, DocumentsMaintainceCarVM>().ReverseMap();
             CreateMap<CarPriceVM, CrCasPriceCarBasic>().ReverseMap();
-            
+
             CreateMap<RenterLessorVM, CrCasRenterLessor>().ReverseMap();
 
             CreateMap<ContractForExtensionVM, CrCasRenterContractBasic>().ReverseMap();
@@ -94,7 +94,7 @@ namespace Bnan.Inferastructure
             CreateMap<CarCategoryVM, CrMasSupCarCategory>().ReverseMap();
 
             CreateMap<CarAdvantageVM, CrMasSupCarAdvantage>().ReverseMap();
-           
+
             CreateMap<CarRegistrationVM, CrMasSupCarRegistration>().ReverseMap();
 
             CreateMap<UserLoginVM, CrMasUserLogin>().ReverseMap();
@@ -106,7 +106,7 @@ namespace Bnan.Inferastructure
             CreateMap<RenterLessorInformationVM, CrCasRenterLessor>().ReverseMap();
             CreateMap<RateVM, CrMasSysEvaluation>().ReverseMap();
             CreateMap<CurrencyVM, CrMasSysConvertNoToText>().ReverseMap();
-            
+
             CreateMap<CasRenterContractVM, CrCasRenterLessor>().ReverseMap();
             CreateMap<RenterInfoVM, CrMasRenterInformation>().ReverseMap();
 
@@ -134,7 +134,8 @@ namespace Bnan.Inferastructure
             CreateMap<CountriesVM, CrMasSysCallingKey>().ReverseMap();
             CreateMap<PostRegionsVM, CrMasSupPostRegion>().ReverseMap();
             CreateMap<QuestionsAnswerVM, CrMasSysQuestionsAnswer>().ReverseMap();
-            
+            CreateMap <CountryClassificationVM, CrMasSupCountryClassification>().ReverseMap();
+
 
         }
 

@@ -22,7 +22,7 @@ namespace Bnan.Ui.ViewModels.MAS
         public int? RentersHave_withType_Count { get; set; }
 
         public string? CrMasSupRenterNationalitiesGroupCode { get; set; } = "10";
-        [Required(ErrorMessage = "requiredFiled"), Range(0, 7, ErrorMessage = "requiredFiled")]
+        [Required(ErrorMessage = "requiredFiled"), Range(1, 9, ErrorMessage = "requiredFiled")]
         public string? CrMasSupRenterNationalitiesNaqlGcc { get; set; }
         [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         public string? CrMasSupRenterNationalitiesFlag { get; set; }
@@ -33,6 +33,8 @@ namespace Bnan.Ui.ViewModels.MAS
         public List<TResult2>? Nationality_count_1 = new List<TResult2>();
 
         public List<TResult2>? Nationality_count_2 = new List<TResult2>();
+
+        public List<CrMasSupCountryClassification>? crMasSupCountryClassificationSS = new List<CrMasSupCountryClassification>();
 
         public virtual CrMasSysGroup? CrMasSupRenterNationalitiesGroupCodeNavigation { get; set; }
     }

@@ -58,9 +58,31 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
+            var regions_Activated = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
+                predicate: x => x.CrMasSupPostRegionsStatus == Status.Active,
+                selectProjection: query => query.Select(x => new CrMasSupPostRegion
+                {
+                    CrMasSupPostRegionsCode = x.CrMasSupPostRegionsCode,
+                    CrMasSupPostRegionsArName = x.CrMasSupPostRegionsArName,
+                    CrMasSupPostRegionsEnName = x.CrMasSupPostRegionsEnName
+                })
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
+            var regions_Holded = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
+                predicate: x => x.CrMasSupPostRegionsStatus == Status.Hold,
+                selectProjection: query => query.Select(x => new CrMasSupPostRegion
+                {
+                    CrMasSupPostRegionsCode = x.CrMasSupPostRegionsCode,
+                    CrMasSupPostRegionsArName = x.CrMasSupPostRegionsArName,
+                    CrMasSupPostRegionsEnName = x.CrMasSupPostRegionsEnName
+                })
+                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                );
+
             // Retrieve active driving licenses
-            var City = await _unitOfWork.CrMasSupPostCity
-                .FindAllAsNoTrackingAsync(x => x.CrMasSupPostCityStatus == Status.Active);
+            var all_Cities2 = await _unitOfWork.CrMasSupPostCity.GetAllAsyncAsNoTrackingAsync();
+            List<CrMasSupPostCity>? allCities = new List<CrMasSupPostCity>();
+            allCities = all_Cities2.Where(x => x.CrMasSupPostCityStatus == Status.Active && regions_Activated.Any(y => y.CrMasSupPostRegionsCode.Trim() == x.CrMasSupPostCityRegionsCode.Trim())).ToList();
 
             var City_count = await _unitOfWork.CrMasRenterPost.FindCountByColumnAsync<CrMasRenterPost>(
                 predicate: x => x.CrMasRenterPostStatus != Status.Deleted,
@@ -68,16 +90,18 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
             // If no active licenses, retrieve all licenses
-            if (!City.Any())
+            if (!allCities.Any())
             {
-                City = await _unitOfWork.CrMasSupPostCity
-                    .FindAllAsNoTrackingAsync(x => x.CrMasSupPostCityStatus == Status.Hold);
+                allCities = all_Cities2.Where(x => regions_Holded.Any(y => y.CrMasSupPostRegionsCode.Trim() == x.CrMasSupPostCityRegionsCode.Trim()) || (x.CrMasSupPostCityStatus == Status.Hold && regions_Activated.Any(y => y.CrMasSupPostRegionsCode.Trim() == x.CrMasSupPostCityRegionsCode.Trim()))
+              ).ToList();
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
+
             PostCityVM vm = new PostCityVM();
-            vm.PostCity = City;
+            vm.PostCity = allCities;
             vm.City_count = City_count;
+            vm.Regions = regions_Activated;   
             return View(vm);
         }
         [HttpGet]
@@ -87,33 +111,69 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             if (!string.IsNullOrEmpty(status))
             {
-                var PostCitysAll = await _unitOfWork.CrMasSupPostCity.FindAllAsNoTrackingAsync(x => x.CrMasSupPostCityStatus == Status.Active ||
-                                                                                                                            x.CrMasSupPostCityStatus == Status.Deleted ||
-                                                                                                                            x.CrMasSupPostCityStatus == Status.Hold);
 
+                var all_Cities2 = await _unitOfWork.CrMasSupPostCity.GetAllAsyncAsNoTrackingAsync();
+                List<CrMasSupPostCity>? allCities = new List<CrMasSupPostCity>();
                 var City_count = await _unitOfWork.CrMasRenterPost.FindCountByColumnAsync<CrMasRenterPost>(
                     predicate: x => x.CrMasRenterPostStatus != Status.Deleted,
                     columnSelector: x => x.CrMasRenterPostCity  // تحديد العمود الذي نريد التجميع بناءً عليه
                     //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                     );
+                var allregions = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
+                    predicate: null,
+                    selectProjection: query => query.Select(x => new CrMasSupPostRegion
+                    {
+                        CrMasSupPostRegionsCode = x.CrMasSupPostRegionsCode,
+                        CrMasSupPostRegionsArName = x.CrMasSupPostRegionsArName,
+                        CrMasSupPostRegionsEnName = x.CrMasSupPostRegionsEnName,
+                        CrMasSupPostRegionsStatus = x.CrMasSupPostRegionsStatus
+                    })
+                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                    );
+                var allregions_Activated = allregions.Where(x=>x.CrMasSupPostRegionsStatus == Status.Active).ToList();
                 PostCityVM vm = new PostCityVM();
                 vm.City_count = City_count;
+                vm.Regions = allregions_Activated;
                 if (status == Status.All)
                 {
-                    var FilterAll = PostCitysAll.FindAll(x => x.CrMasSupPostCityStatus != Status.Deleted &&
+                    var FilterAll = all_Cities2.Where(x => (x.CrMasSupPostCityStatus != Status.Deleted || allregions.Any(y => y.CrMasSupPostRegionsCode.Trim() == x.CrMasSupPostCityRegionsCode.Trim() && y.CrMasSupPostRegionsStatus == Status.Deleted)) &&
                                                                          (x.CrMasSupPostCityArName.Contains(search) ||
                                                                           x.CrMasSupPostCityEnName.ToLower().Contains(search.ToLower()) ||
-                                                                          x.CrMasSupPostCityCode.Contains(search)));
+                                                                          x.CrMasSupPostCityCode.Contains(search))).ToList();
                     vm.PostCity = FilterAll;
                     return PartialView("_DataTablePostCity", vm);
                 }
-                var FilterByStatus = PostCitysAll.FindAll(x => x.CrMasSupPostCityStatus == status &&
-                                                                            (
-                                                                           x.CrMasSupPostCityArName.Contains(search) ||
-                                                                           x.CrMasSupPostCityEnName.ToLower().Contains(search.ToLower()) ||
-                                                                           x.CrMasSupPostCityCode.Contains(search)));
-                vm.PostCity = FilterByStatus;
-                return PartialView("_DataTablePostCity", vm);
+                if (status == Status.Active)
+                {
+                    var FilterByStatus3 = all_Cities2.Where(x => (x.CrMasSupPostCityStatus == status && allregions.Any(y => y.CrMasSupPostRegionsCode.Trim() == x.CrMasSupPostCityRegionsCode.Trim() && y.CrMasSupPostRegionsStatus == Status.Active)) &&
+                                                                                (
+                                                                               x.CrMasSupPostCityArName.Contains(search) ||
+                                                                               x.CrMasSupPostCityEnName.ToLower().Contains(search.ToLower()) ||
+                                                                               x.CrMasSupPostCityCode.Contains(search))).ToList();
+                    vm.PostCity = FilterByStatus3;
+                    return PartialView("_DataTablePostCity", vm);
+                }
+                if (status == Status.Hold)
+                {
+                    var FilterByStatus = all_Cities2.Where(x => (allregions.Any(y => y.CrMasSupPostRegionsCode.Trim() == x.CrMasSupPostCityRegionsCode.Trim() && y.CrMasSupPostRegionsStatus == Status.Hold) || (x.CrMasSupPostCityStatus == status && allregions.Any(y => y.CrMasSupPostRegionsCode.Trim() == x.CrMasSupPostCityRegionsCode.Trim() && y.CrMasSupPostRegionsStatus ==Status.Active))) &&
+                                                                                (
+                                                                               x.CrMasSupPostCityArName.Contains(search) ||
+                                                                               x.CrMasSupPostCityEnName.ToLower().Contains(search.ToLower()) ||
+                                                                               x.CrMasSupPostCityCode.Contains(search))).ToList();
+                    vm.PostCity = FilterByStatus;
+                    return PartialView("_DataTablePostCity", vm);
+                }
+                if (status == Status.Deleted)
+                {
+                    var FilterByStatus2 = all_Cities2.Where(x => (allregions.Any(y => y.CrMasSupPostRegionsCode.Trim() == x.CrMasSupPostCityRegionsCode.Trim() && y.CrMasSupPostRegionsStatus == Status.Deleted) || (x.CrMasSupPostCityStatus == status && allregions.Any(y => y.CrMasSupPostRegionsCode.Trim() == x.CrMasSupPostCityRegionsCode.Trim() && y.CrMasSupPostRegionsStatus == Status.Active))) &&
+                                                                                (
+                                                                               x.CrMasSupPostCityArName.Contains(search) ||
+                                                                               x.CrMasSupPostCityEnName.ToLower().Contains(search.ToLower()) ||
+                                                                               x.CrMasSupPostCityCode.Contains(search))).ToList();
+                    vm.PostCity = FilterByStatus2;
+                    return PartialView("_DataTablePostCity", vm);
+                }
+
             }
             return PartialView();
         }
@@ -142,8 +202,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "PostCity");
             }
-            var regions = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
-                predicate: x => x.CrMasSupPostRegionsStatus != Status.Deleted,
+            var regions_Activated = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
+                predicate: x => x.CrMasSupPostRegionsStatus != Status.Active,
                 selectProjection: query => query.Select(x => new CrMasSupPostRegion
                 {
                     CrMasSupPostRegionsCode = x.CrMasSupPostRegionsCode,
@@ -155,7 +215,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             // Set Title 
             PostCityVM CityVM = new PostCityVM();
             CityVM.CrMasSupPostCityCode = await GenerateLicenseCodeAsync();
-            CityVM.Regions = regions;
+            CityVM.Regions = regions_Activated;
             return View(CityVM);
         }
 
@@ -165,8 +225,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             if (CityVM.CrMasSupPostCityLongitude == null) CityVM.CrMasSupPostCityLongitude = 0;
             if (CityVM.CrMasSupPostCityLatitude == null) CityVM.CrMasSupPostCityLatitude = 0;
 
-            var regions = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
-                predicate: x => x.CrMasSupPostRegionsStatus != Status.Deleted,
+            var regions_Activated = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
+                predicate: x => x.CrMasSupPostRegionsStatus == Status.Active,
                 selectProjection: query => query.Select(x => new CrMasSupPostRegion
                 {
                     CrMasSupPostRegionsCode = x.CrMasSupPostRegionsCode,
@@ -181,7 +241,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             if (!ModelState.IsValid || CityVM == null)
             {
-                CityVM.Regions = regions;
+                CityVM.Regions = regions_Activated;
                 return View("AddPostCity", CityVM);
             }
             try
@@ -195,14 +255,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 {
                     await AddModelErrorsAsync(CityEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    CityVM.Regions = regions;
+                    CityVM.Regions = regions_Activated;
                     return View("AddPostCity", CityVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
                 if (Int64.Parse(await GenerateLicenseCodeAsync()) > 1799999999)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    CityVM.Regions = regions;
+                    CityVM.Regions = regions_Activated;
                     return View("AddPostCity", CityVM);
                 }
                 var region = await _unitOfWork.CrMasSupPostRegion.FindAsync(x => x.CrMasSupPostRegionsCode == CityEntity.CrMasSupPostCityRegionsCode);
@@ -225,7 +285,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                CityVM.Regions = regions;
+                CityVM.Regions = regions_Activated;
                 return View("AddPostCity", CityVM);
             }
         }
@@ -246,6 +306,13 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "PostCity");
             }
             var model = _mapper.Map<PostCityVM>(contract);
+            var allregions_Activated = await _unitOfWork.CrMasSupPostRegion.FindAllAsNoTrackingAsync(x => x.CrMasSupPostRegionsStatus == Status.Active);
+            if (!allregions_Activated.Any(x => x.CrMasSupPostRegionsCode.Trim() == contract.CrMasSupPostCityRegionsCode.Trim()))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_NoUpdate"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return RedirectToAction("Index", "PostCity");
+            }
             return View(model);
         }
         [HttpPost]
@@ -311,6 +378,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if (status == Status.Deleted) { if (!await _masPostCity.CheckIfCanDeleteIt(licence.CrMasSupPostCityCode)) return "udelete"; }
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSupPostCityStatus = status;
                 _unitOfWork.CrMasSupPostCity.Update(licence);

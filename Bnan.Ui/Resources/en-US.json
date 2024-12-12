@@ -9,6 +9,7 @@
     "AuthEmplpoyee_No_auth": "You don't have Permission.",
     "AuthEmplpoyee_AddMore": "You can't Add New Record.",
     "AuthEmplpoyee_NoUpdate": "You can't Update This Record.",
+    "AuthEmplpoyee_NoDelete": "You can't Delete it.",
     "toastor_Exist": "This Record is Recorded before",
     "MobilePatternError": "Enter a valid mobile number",
     "error_Codestart50": "This Code should start with 50 and add another 8 numbers",
@@ -25,7 +26,15 @@
     "Country_s": "classification",
     "Classification_s": "classification",
     "img_drop_orChoose": "Drag and drop an image or choose",
-
+    "Count_renters": "Renters' Count",
+    "Count_models": "Models' Count",
+    "Count_cars": "Cars' Count",
+    "Count_cities": "Cities' Count",
+    "Count_regions": "Regions' Count",
+    "Count_countries": "Countries' Count",
+    "Count_lessors": "Lessors' Count",
+    "Count_Referances": "Refferences' Count",
+    "Count_Processes": "Processes' Count",
     //////////
 
     // MAS Renter Driving License
@@ -630,6 +639,24 @@
     "ModalSecondMessage_QuestionsAnswer_Hold": "Hold Data And Results2",
     "ModalFirstMessage_QuestionsAnswer_UnHold": "UnHold Data And Results1",
     "ModalSecondMessage_QuestionsAnswer_UnHold": "UnHold Data And Results2",
+
+    // MAS Renter CountryClassification
+    "Add_CountryClassification_PageTitle": "Add Country Classification",
+    "Edit_CountryClassification_PageTitle": "Update Country Classification Data",
+    "View_CountryClassification_PageTitle": "Countries' Classification",
+    "CountryClassificationName_view": "Classification",
+    "CountryClassificationNameAr_add": "Arabic Classification",
+    "CountryClassificationNameEn_add": "English Classification",
+    "CountryClassificationNameAr_edit": "Arabic Classification",
+    "CountryClassificationNameEn_edit": "English Classification",
+    "ModalFirstMessage_CountryClassification_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_CountryClassification_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_CountryClassification_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_CountryClassification_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_CountryClassification_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_CountryClassification_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_CountryClassification_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_CountryClassification_UnHold": "UnHold Data And Results2",
 
     //TechnicalConnectivity
     "Company": "Company",

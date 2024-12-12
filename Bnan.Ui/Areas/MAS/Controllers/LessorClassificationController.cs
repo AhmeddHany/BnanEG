@@ -257,7 +257,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
-                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                if (status == Status.Deleted) { if (!await _masLessorClassification.CheckIfCanDeleteIt(licence.CrCasLessorClassificationCode)) return "udelete"; }
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasLessorClassificationStatus = status;
                 _unitOfWork.CrCasLessorClassification.Update(licence);
                 _unitOfWork.Complete();

@@ -15,6 +15,8 @@
         <form asp-area="MAS" asp-controller="RenterDrivingLicense" asp-action="Edit" class="needs-validation" novalidate>
             <input hidden asp-for="CrMasSupRenterDrivingLicenseCode" />
             <input hidden asp-for="CrMasSupRenterDrivingLicenseStatus" />
+            <input hidden asp-for="RentersHave_withType_Count" id="count_for_delete" />
+            
             <div class="row mt-3 g-3">
 
                 <div class="row justify-content-center">
@@ -178,6 +180,10 @@
         }
         else {
             $("#CrMasSupRenterDrivingLicenseArName").focus();
+        }
+        function showErrorToast_NoDelete() {
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+            toastr.error("@localizer["AuthEmplpoyee_NoDelete"]");
         }
         //////////////////////////////////////////
         var statusInput = $("#CrMasSupRenterDrivingLicenseStatus");
@@ -350,6 +356,13 @@
                                                             </div>`;
         }
         function DeleteLoad() {
+            const count_for_del = $('#count_for_delete').val();
+            console.log(count_for_del);
+            const count_for_delete = parseInt(count_for_del);
+            if (count_for_delete != 0 && !isDeleted && count_for_delete != NaN) {
+                showErrorToast_NoDelete();
+                return;
+            }
             const modalContent = document.getElementById("modalContent");
             const spinner = document.getElementById("spinner");
             const deleteModal = document.getElementById("Delete-Modal");

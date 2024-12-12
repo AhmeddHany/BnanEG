@@ -22,5 +22,7 @@ namespace Bnan.Ui.ViewModels.MAS
         public List<CrMasSupCarBrand> crMasSupCarBrand = new List<CrMasSupCarBrand>();
 
         public List<TResult2>? cars_count = new List<TResult2>();
+
+        public List<TResult2>? models_count = new List<TResult2>();
     }
 }

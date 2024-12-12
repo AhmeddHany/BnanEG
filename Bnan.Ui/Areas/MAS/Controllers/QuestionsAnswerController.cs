@@ -60,13 +60,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             var allMainTaskSystem = await _unitOfWork.CrMasSysMainTasks.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: null,
+                predicate: x=>x.CrMasSysMainTasksStatus == Status.Active,
                 selectProjection: query => query.Select(x => new CrMasSysMainTask
                 {
                     CrMasSysMainTasksCode = x.CrMasSysMainTasksCode,
                     CrMasSysMainTasksSystem = x.CrMasSysMainTasksSystem,
                     CrMasSysMainTasksArName = x.CrMasSysMainTasksArName,
-                    CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName
+                    CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName,
+                    CrMasSysMainTasksStatus = x.CrMasSysMainTasksStatus
                 })
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
@@ -102,14 +103,15 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                                                                                                                             x.CrMasSysQuestionsAnswerStatus == Status.Deleted ||
                                                                                                                             x.CrMasSysQuestionsAnswerStatus == Status.Hold);
                 var allMainTaskSystem = await _unitOfWork.CrMasSysMainTasks.FindAllWithSelectAsNoTrackingAsync(
-                    //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                    predicate: null,
-                    selectProjection: query => query.Select(x => new CrMasSysMainTask
+                //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                predicate: x => x.CrMasSysMainTasksStatus == Status.Active,
+                selectProjection: query => query.Select(x => new CrMasSysMainTask
                     {
                         CrMasSysMainTasksCode = x.CrMasSysMainTasksCode,
                         CrMasSysMainTasksSystem = x.CrMasSysMainTasksSystem,
                         CrMasSysMainTasksArName = x.CrMasSysMainTasksArName,
-                        CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName
+                        CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName,
+                        CrMasSysMainTasksStatus = x.CrMasSysMainTasksStatus
                     })
                     //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                     );
@@ -156,22 +158,18 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "QuestionsAnswer");
             }
-            //// Check If code > 9 get error , because code is char(1)
-            //if (Int64.Parse(await GenerateLicenseCodeAsync()) > 9)
-            //{
-            //    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-            //    return RedirectToAction("Index", "QuestionsAnswer");
-            //}
+
             // Set Title
             var allMainTaskSystem = await _unitOfWork.CrMasSysMainTasks.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: null,
+                predicate: x => x.CrMasSysMainTasksStatus == Status.Active,
                 selectProjection: query => query.Select(x => new CrMasSysMainTask
                 {
                     CrMasSysMainTasksCode = x.CrMasSysMainTasksCode,
                     CrMasSysMainTasksSystem = x.CrMasSysMainTasksSystem,
                     CrMasSysMainTasksArName = x.CrMasSysMainTasksArName,
-                    CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName
+                    CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName,
+                    CrMasSysMainTasksStatus = x.CrMasSysMainTasksStatus
                 })
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
@@ -181,7 +179,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             QuestionsAnswerVM questionsAnswerVM = new QuestionsAnswerVM();
             questionsAnswerVM.allMainTaskSystem = allMainTaskSystem;
             questionsAnswerVM.allsystemNames = allsystemName;
-            questionsAnswerVM.CrMasSysQuestionsAnswerNo = await GenerateLicenseCodeAsync();
+            //questionsAnswerVM.CrMasSysQuestionsAnswerNo = await GenerateLicenseCodeAsync();
             return View(questionsAnswerVM);
         }
 
@@ -195,13 +193,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             var allMainTaskSystem = await _unitOfWork.CrMasSysMainTasks.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: null,
+                predicate: x => x.CrMasSysMainTasksStatus == Status.Active,
                 selectProjection: query => query.Select(x => new CrMasSysMainTask
                 {
                     CrMasSysMainTasksCode = x.CrMasSysMainTasksCode,
                     CrMasSysMainTasksSystem = x.CrMasSysMainTasksSystem,
                     CrMasSysMainTasksArName = x.CrMasSysMainTasksArName,
-                    CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName
+                    CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName,
+                    CrMasSysMainTasksStatus = x.CrMasSysMainTasksStatus
                 })
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
@@ -215,18 +214,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             }
             try
             {
-                // Map ViewModel to Entity
-                var questionsAnswerEntity = _mapper.Map<CrMasSysQuestionsAnswer>(questionsAnswerVM);
-
-
-                // Check If code > 9 get error , because code is char(1)
-                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 9)
+                //// Check If code > 9 get error , because code is char(1)
+                if (questionsAnswerVM.CrMasSysQuestionsAnswerNo.Length != 6 || (questionsAnswerVM.CrMasSysQuestionsAnswerNo.Length == 6 && questionsAnswerVM.CrMasSysQuestionsAnswerNo.Substring(4,2) == "99"))
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     questionsAnswerVM.allMainTaskSystem = allMainTaskSystem;
                     questionsAnswerVM.allsystemNames = allsystemName;
                     return View("AddQuestionsAnswer", questionsAnswerVM);
                 }
+                // Map ViewModel to Entity
+                var questionsAnswerEntity = _mapper.Map<CrMasSysQuestionsAnswer>(questionsAnswerVM);
+
                 // Generate and set the Driving License Code
                 //questionsAnswerVM.CrMasSysQuestionsAnswerNo = await GenerateLicenseCodeAsync();
                 // Set status and add the record
@@ -265,13 +263,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             }
             var allMainTaskSystem = await _unitOfWork.CrMasSysMainTasks.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: null,
+                predicate: x => x.CrMasSysMainTasksStatus == Status.Active,
                 selectProjection: query => query.Select(x => new CrMasSysMainTask
                 {
                     CrMasSysMainTasksCode = x.CrMasSysMainTasksCode,
                     CrMasSysMainTasksSystem = x.CrMasSysMainTasksSystem,
                     CrMasSysMainTasksArName = x.CrMasSysMainTasksArName,
-                    CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName
+                    CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName,
+                    CrMasSysMainTasksStatus = x.CrMasSysMainTasksStatus
                 })
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
@@ -292,13 +291,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             var allMainTaskSystem = await _unitOfWork.CrMasSysMainTasks.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: null,
+                predicate: x => x.CrMasSysMainTasksStatus == Status.Active,
                 selectProjection: query => query.Select(x => new CrMasSysMainTask
                 {
                     CrMasSysMainTasksCode = x.CrMasSysMainTasksCode,
                     CrMasSysMainTasksSystem = x.CrMasSysMainTasksSystem,
                     CrMasSysMainTasksArName = x.CrMasSysMainTasksArName,
-                    CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName
+                    CrMasSysMainTasksEnName = x.CrMasSysMainTasksEnName,
+                    CrMasSysMainTasksStatus = x.CrMasSysMainTasksStatus
                 })
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
@@ -312,7 +312,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             try
             {
                 //Check Validition
-                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update) || ModelState.IsValid == false)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     questionsAnswerVM.allMainTaskSystem = allMainTaskSystem;
@@ -464,7 +464,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GenerateajaxCodeAsync(string task, string system)
+        [Route("/MAS/QuestionsAnswer/GenerateajaxCodeAsync/")]
+        public async Task<JsonResult> GenerateajaxCodeAsync(string task, string system)
         {
             var allLicenses = await _unitOfWork.CrMasSysQuestionsAnswer.FindAllAsNoTrackingAsync(x => x.CrMasSysQuestionsAnswerMainTask == task && x.CrMasSysQuestionsAnswerSystem == system);
 

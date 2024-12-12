@@ -58,9 +58,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
+            var allBrands_actived = await _unitOfWork.CrMasSupCarBrand
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Active);
+            var allBrands_Holded = await _unitOfWork.CrMasSupCarBrand
+                .FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Hold);
+            //var allBrands_Deleted = await _unitOfWork.CrMasSupCarBrand
+            //    .FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Deleted);
+
             // Retrieve active Car Models
-            var allModels = await _unitOfWork.CrMasSupCarModel
-                .FindAllAsNoTrackingAsync(x => x.CrMasSupCarModelStatus == Status.Active );
+            var allModels2 = await _unitOfWork.CrMasSupCarModel.GetAllAsyncAsNoTrackingAsync();
+            List<CrMasSupCarModel>? allModels = new List<CrMasSupCarModel>();
+            allModels = allModels2.Where(x => x.CrMasSupCarModelStatus == Status.Active && allBrands_actived.Any(y=>y.CrMasSupCarBrandCode.Trim() == x.CrMasSupCarModelBrand.Trim())).ToList();
 
             var Cars_Count = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrMasSupCarModel>(
                 predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
@@ -69,18 +77,21 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 );
 
 
+
             // If no active licenses, retrieve all licenses
             if (!allModels.Any())
             {
-                allModels = await _unitOfWork.CrMasSupCarModel
-                    .FindAllAsNoTrackingAsync(x => x.CrMasSupCarModelStatus == Status.Hold
-                                              );
+                //allModels = allModels2.ToList();
+                allModels = allModels2.Where(x => allBrands_Holded.Any(y => y.CrMasSupCarBrandCode.Trim() == x.CrMasSupCarModelBrand.Trim()) || (x.CrMasSupCarModelStatus == Status.Hold && allBrands_actived.Any(y => y.CrMasSupCarBrandCode.Trim() == x.CrMasSupCarModelBrand.Trim()))
+                              ).ToList();
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
             CarModelVM vm = new CarModelVM();
             vm.crMasSupCarModel = allModels;
             vm.cars_count = Cars_Count;
+            vm.All_Brands = allBrands_actived;
+
             return View(vm);
         }
         [HttpGet]
@@ -90,33 +101,69 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             if (!string.IsNullOrEmpty(status))
             {
-                var CarModelsAll = await _unitOfWork.CrMasSupCarModel.FindAllAsNoTrackingAsync(x => x.CrMasSupCarModelStatus == Status.Active ||
-                                                                                                                            x.CrMasSupCarModelStatus == Status.Deleted ||
-                                                                                                                            x.CrMasSupCarModelStatus == Status.Hold );
+                //var CarModelsAll = await _unitOfWork.CrMasSupCarModel.FindAllAsNoTrackingAsync(x => x.CrMasSupCarModelStatus == Status.Active ||
+                //                                                                                                            x.CrMasSupCarModelStatus == Status.Deleted ||
+                //                                                                                                            x.CrMasSupCarModelStatus == Status.Hold );
+
+                var allModels2 = await _unitOfWork.CrMasSupCarModel.GetAllAsyncAsNoTrackingAsync();
+
                 var Cars_Count = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrMasSupCarModel>(
                     predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                     columnSelector: x => x.CrCasCarInformationModel  // تحديد العمود الذي نريد التجميع بناءً عليه
                     //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                     );
 
+                var allBrands_actived = await _unitOfWork.CrMasSupCarBrand
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Active);
+                var allBrands_Holded = await _unitOfWork.CrMasSupCarBrand
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Hold);
+                var allBrands_Deleted = await _unitOfWork.CrMasSupCarBrand
+                    .FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Deleted);
+
                 CarModelVM vm = new CarModelVM();
                 vm.cars_count = Cars_Count;
+                vm.All_Brands = allBrands_actived;
+
                 if (status == Status.All)
                 {
-                    var FilterAll = CarModelsAll.FindAll(x => x.CrMasSupCarModelStatus != Status.Deleted &&
+                    var FilterAll = allModels2.Where(x => (x.CrMasSupCarModelStatus != Status.Deleted || allBrands_Deleted.Any(y => y.CrMasSupCarBrandCode.Trim() == x.CrMasSupCarModelBrand.Trim())) &&
                                                                          (x.CrMasSupCarModelArName.Contains(search) ||
                                                                           x.CrMasSupCarModelEnName.ToLower().Contains(search.ToLower()) ||
-                                                                          x.CrMasSupCarModelCode.Contains(search)));
+                                                                          x.CrMasSupCarModelCode.Contains(search))).ToList();
                     vm.crMasSupCarModel = FilterAll;
                     return PartialView("_DataTableCarModel", vm);
                 }
-                var FilterByStatus = CarModelsAll.FindAll(x => x.CrMasSupCarModelStatus == status &&
-                                                                            (
-                                                                           x.CrMasSupCarModelArName.Contains(search) ||
-                                                                           x.CrMasSupCarModelEnName.ToLower().Contains(search.ToLower()) ||
-                                                                           x.CrMasSupCarModelCode.Contains(search)));
-                vm.crMasSupCarModel = FilterByStatus;
-                return PartialView("_DataTableCarModel", vm);
+                if (status == Status.Active)
+                {
+                    var FilterByStatus3 = allModels2.Where(x => (x.CrMasSupCarModelStatus == status && allBrands_actived.Any(y => y.CrMasSupCarBrandCode.Trim() == x.CrMasSupCarModelBrand.Trim())) &&
+                                                                                (
+                                                                               x.CrMasSupCarModelArName.Contains(search) ||
+                                                                               x.CrMasSupCarModelEnName.ToLower().Contains(search.ToLower()) ||
+                                                                               x.CrMasSupCarModelCode.Contains(search))).ToList();
+                    vm.crMasSupCarModel = FilterByStatus3;
+                    return PartialView("_DataTableCarModel", vm);
+                }
+                if (status == Status.Hold)
+                {
+                    var FilterByStatus = allModels2.Where(x => (allBrands_Holded.Any(y => y.CrMasSupCarBrandCode.Trim() == x.CrMasSupCarModelBrand.Trim()) || (x.CrMasSupCarModelStatus == status && allBrands_actived.Any(y => y.CrMasSupCarBrandCode.Trim() == x.CrMasSupCarModelBrand.Trim()))) &&
+                                                                                (
+                                                                               x.CrMasSupCarModelArName.Contains(search) ||
+                                                                               x.CrMasSupCarModelEnName.ToLower().Contains(search.ToLower()) ||
+                                                                               x.CrMasSupCarModelCode.Contains(search))).ToList();
+                    vm.crMasSupCarModel = FilterByStatus;
+                    return PartialView("_DataTableCarModel", vm);
+                }
+                if (status == Status.Deleted)
+                {
+                    var FilterByStatus2 = allModels2.Where(x => (allBrands_Deleted.Any(y => y.CrMasSupCarBrandCode.Trim() == x.CrMasSupCarModelBrand.Trim()) || (x.CrMasSupCarModelStatus == status && allBrands_actived.Any(y => y.CrMasSupCarBrandCode.Trim() == x.CrMasSupCarModelBrand.Trim()))) &&
+                                                                                (
+                                                                               x.CrMasSupCarModelArName.Contains(search) ||
+                                                                               x.CrMasSupCarModelEnName.ToLower().Contains(search.ToLower()) ||
+                                                                               x.CrMasSupCarModelCode.Contains(search))).ToList();
+                    vm.crMasSupCarModel = FilterByStatus2;
+                    return PartialView("_DataTableCarModel", vm);
+                }
+
             }
             return PartialView();
         }
@@ -128,7 +175,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 await SetPageTitleAsync(Status.Insert, pageNumber);
                 return RedirectToAction("Index", "CarModel");
             }
@@ -225,8 +272,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "CarModel");
             }
             var model = _mapper.Map<CarModelVM>(contract);
-            var allBrands = await _unitOfWork.CrMasSupCarBrand.FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Active);
-            model.All_Brands = allBrands;
+            var allBrands_activated = await _unitOfWork.CrMasSupCarBrand.FindAllAsNoTrackingAsync(x => x.CrMasSupCarBrandStatus == Status.Active);
+            model.All_Brands = allBrands_activated;
+            if (!allBrands_activated.Any(x=>x.CrMasSupCarBrandCode.Trim() == contract.CrMasSupCarModelBrand.Trim()))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_NoUpdate"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                await SetPageTitleAsync(Status.Insert, pageNumber);
+                return RedirectToAction("Index", "CarModel");
+            }
             return View(model);
         }
         [HttpPost]
@@ -294,7 +347,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
-                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                if (status == Status.Deleted) { if (!await _masCarModel.CheckIfCanDeleteIt(licence.CrMasSupCarModelCode)) return "udelete"; }
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSupCarModelStatus = status;
                 _unitOfWork.CrMasSupCarModel.Update(licence);
                 _unitOfWork.Complete();

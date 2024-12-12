@@ -9,8 +9,8 @@
 <table class=" tables-style table table-borderless " id="Table">
     <thead class="sticky-top">
         <tr>
-            <th>@localizer["Count"]</th>
-            <th>@localizer["ClassificationOfNationalities"]</th>
+            <th>@localizer["Count_renters"]</th>
+            <th class="DifferAlign">@localizer["ClassificationOfNationalities"]</th>
             <th> @localizer["RentalSystemNo"] </th>
             <th> @localizer["RentalSystemCode"]</th>
             <th class="DifferAlign"> @localizer["RenterNationalitiesName_view"]</th>
@@ -27,9 +27,18 @@
             <tr onclick="if (parseInt(@item.CrMasSupRenterNationalitiesCode) > 1000000002) {location.href='@Url.Action("Edit", "RenterNationality", new { id = item.CrMasSupRenterNationalitiesCode })';} else{showErrorToast_NoUpdate();}">
                 
                 <td><p>@(Model.Nationality_count_1?.Find(x => x.Column.ToString() == item.CrMasSupRenterNationalitiesCode?.Trim())?.RowCount.ToString("N0") ?? "0")</p></td>
-                <td>
-                    <p>@(item.CrMasSupRenterNationalitiesNaqlGcc ?? "0")</p>
-                </td>
+                @if(requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+                    <td class="DifferAlign">
+                        <p>@(Model.crMasSupCountryClassificationSS?.Find(x => x.CrMasLessorCountryClassificationCode == item.CrMasSupRenterNationalitiesNaqlGcc)?.CrMasLessorCountryClassificationEnName ?? " ")</p>
+                    </td>
+                }
+                else
+                {
+                    <td class="DifferAlign">
+                        <p>@(Model.crMasSupCountryClassificationSS?.Find(x=>x.CrMasLessorCountryClassificationCode == item.CrMasSupRenterNationalitiesNaqlGcc)?.CrMasLessorCountryClassificationArName ?? " ")</p>
+                    </td>
+                }
                 <td>
                     <p>@(item.CrMasSupRenterNationalitiesNaqlId ?? 0)</p>
                 </td>

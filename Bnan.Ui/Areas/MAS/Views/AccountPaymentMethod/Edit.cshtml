@@ -56,13 +56,21 @@
                                             <label for="Category" class="form-label">@localizer["Classification_s"]<i class="fa-solid fa-star-of-life RequirdStar"></i></label>
                                             <select asp-for="CrMasSupAccountPaymentMethodClassification" class="form-select select-style " id="Category" required>
                                                 <option> </option>
-                                                <option value="1"> 1 </option>
-                                                <option value="2"> 2 </option>
-                                                <option value="3"> 3 </option>
-                                                <option value="4"> 4 </option>
-                                                <option value="5"> 5 </option>
-                                                <option value="6"> 6 </option>
-                                                <option value="7"> 7 </option>
+                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                {
+                                                    @foreach (var single in Model.crMasSupCountryClassificationSS)
+                                                    {
+                                                        <option value="@single.CrMasLessorCountryClassificationCode" id="idTask_@single.CrMasLessorCountryClassificationCode">@single.CrMasLessorCountryClassificationEnName</option>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @foreach (var single in Model.crMasSupCountryClassificationSS)
+                                                    {
+                                                        <option value="@single.CrMasLessorCountryClassificationCode" id="idTask_@single.CrMasLessorCountryClassificationCode">@single.CrMasLessorCountryClassificationArName</option>
+                                                    }
+                                                }
+
                                             </select>
                                             <div class="invaild">
                                                 <div class="invalid-feedback">

@@ -48,7 +48,9 @@ namespace Bnan.Ui.ViewModels.MAS
         public List<CrMasSupPostRegion> PostRegions = new List<CrMasSupPostRegion>();
 
         public List<TResult2>? Region_count = new List<TResult2>();
+        public List<TResult2>? cites_count = new List<TResult2>();
 
+        
     }
 }
 // [IsValidLocation(ErrorMessage = "PostLongRequired")]     

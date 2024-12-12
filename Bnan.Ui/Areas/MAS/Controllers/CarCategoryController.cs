@@ -271,7 +271,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
                 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
-                if(status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                if (status == Status.Deleted) { if (!await _masCarCategory.CheckIfCanDeleteIt(licence.CrMasSupCarCategoryCode)) return "udelete"; }
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSupCarCategoryStatus = status;
                 _unitOfWork.CrMasSupCarCategory.Update(licence);
                 _unitOfWork.Complete();

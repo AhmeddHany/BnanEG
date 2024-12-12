@@ -26,7 +26,7 @@ namespace Bnan.Ui.ViewModels.MAS
 
         [Required(ErrorMessage = "requiredFiled"), Range(0, 9999999999, ErrorMessage = "requiredNoLengthFiled10"), MaxLength(10, ErrorMessage = "requiredNoLengthFiled10")]
         public string? CrMasSysCallingKeysNo { get; set; }
-        [Required(ErrorMessage = "requiredFiled"), Range(1, 7, ErrorMessage = "requiredFiled"), MaxLength(1, ErrorMessage = "requiredFiled")]
+        [Required(ErrorMessage = "requiredFiled"), Range(1, 9, ErrorMessage = "requiredFiled"), MaxLength(1, ErrorMessage = "requiredFiled")]
         public string? CrMasSysCallingKeysClassificationCode { get; set; }
         public long? CrMasSysCallingKeysCount { get; set; }
         public string? CrMasSysCallingKeysFlag { get; set; }
@@ -35,6 +35,9 @@ namespace Bnan.Ui.ViewModels.MAS
         public List<CrMasSysCallingKey> Countries = new List<CrMasSysCallingKey>();
 
         public List<TResult2>? Country_count = new List<TResult2>();
+
+        public List<CrMasSupCountryClassification>? crMasSupCountryClassificationSS = new List<CrMasSupCountryClassification>();
+
 
     }
 }

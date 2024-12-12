@@ -5988,7 +5988,7 @@ namespace Bnan.Core.Models
 
             modelBuilder.Entity<CrMasSupCountryClassification>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.CrMasLessorCountryClassificationCode);
 
                 entity.ToTable("CR_Mas_Sup_Country_Classification");
 

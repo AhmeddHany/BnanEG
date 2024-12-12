@@ -721,9 +721,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["ClassificationOfCountries"],
-                        Url = "#" // استخدم Url الفعلي للـ Action
+                        Url = Url.Action("Index", "CountryClassification", new { area = "MAS" }) // استخدم Url الفعلي للـ Action
                     });
                 }
+                
 
 
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1112003" && l.CrMasUserSubValidationAuthorization == true))

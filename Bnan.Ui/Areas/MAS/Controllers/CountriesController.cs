@@ -5,6 +5,7 @@ using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
+using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
@@ -74,9 +75,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
+            var all_Classifications2 = await _unitOfWork.CrMasSupCountryClassification.GetAllAsyncAsNoTrackingAsync();
+            var all_Classifications = all_Classifications2.ToList();
             CountriesVM vm = new CountriesVM();
             vm.Countries = countrys;
             vm.Country_count = country_count;
+            vm.crMasSupCountryClassificationSS = all_Classifications;
             return View(vm);
         }
         [HttpGet]
@@ -95,8 +99,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     columnSelector: x => x.CrMasRenterInformationCountreyKey  // تحديد العمود الذي نريد التجميع بناءً عليه
                     //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                     );
+                var all_Classifications2 = await _unitOfWork.CrMasSupCountryClassification.GetAllAsyncAsNoTrackingAsync();
+                var all_Classifications = all_Classifications2.ToList();
                 CountriesVM vm = new CountriesVM();
                 vm.Country_count = country_count;
+                vm.crMasSupCountryClassificationSS = all_Classifications;
                 if (status == Status.All)
                 {
                     var FilterAll = CountriessAll.FindAll(x => x.CrMasSysCallingKeysStatus != Status.Deleted &&
@@ -142,8 +149,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return RedirectToAction("Index", "Countries");
             }
             // Set Title 
+            var all_Classifications = await _unitOfWork.CrMasSupCountryClassification.FindAllAsNoTrackingAsync(x => x.CrMasLessorCountryClassificationStatus == Status.Active);
+
             CountriesVM countryVM = new CountriesVM();
             countryVM.CrMasSysCallingKeysCode = await GenerateLicenseCodeAsync();
+            countryVM.crMasSupCountryClassificationSS = all_Classifications;
             return View(countryVM);
         }
 
@@ -154,7 +164,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
-
+            var all_Classifications = await _unitOfWork.CrMasSupCountryClassification.FindAllAsNoTrackingAsync(x => x.CrMasLessorCountryClassificationStatus == Status.Active);
+            countryVM.crMasSupCountryClassificationSS = all_Classifications;
             if (!ModelState.IsValid || countryVM == null)
             {
                 return View("AddCountries", countryVM);
@@ -277,6 +288,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             {
 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if (status == Status.Deleted) { if (!await _masCountries.CheckIfCanDeleteIt(licence.CrMasSysCallingKeysNo)) return "udelete"; }
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrMasSysCallingKeysStatus = status;
                 _unitOfWork.CrMasSysCallingKeys.Update(licence);

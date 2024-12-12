@@ -23,7 +23,8 @@ namespace Bnan.Ui.ViewModels.MAS
 
         public CrMasSupContractCarCheckup? singleCheckup { get; set; } = new CrMasSupContractCarCheckup();
 
-    public List<CrMasSupContractCarCheckup>? crMasSupContractCarCheckup = new List<CrMasSupContractCarCheckup>();
+        public List<CrMasSupContractCarCheckup>? crMasSupContractCarCheckup = new List<CrMasSupContractCarCheckup>();
+        public List<CrMasSupContractCarCheckup>? Checkup_activated = new List<CrMasSupContractCarCheckup>();
         public List<CrMasSupContractCarCheckupDetail>? crMasSupContractCarCheckupDetails = new List<CrMasSupContractCarCheckupDetail>();
         // {"CrCasRenterContractCarCheckups"}
     }

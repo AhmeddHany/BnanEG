@@ -1,4 +1,5 @@
-﻿using Bnan.Core.Interfaces;
+﻿using Bnan.Core.Extensions;
+using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 
@@ -55,7 +56,7 @@ namespace Bnan.Inferastructure.Repository.MAS
 
         public async Task<bool> CheckIfCanDeleteIt(string code)
         {
-            var rentersLicenceCount = await _unitOfWork.CrMasRenterInformation.CountAsync(x => x.CrMasRenterInformationSector == code);
+            var rentersLicenceCount = await _unitOfWork.CrMasRenterInformation.CountAsync(x => x.CrMasRenterInformationSector == code && x.CrMasRenterInformationStatus != Status.Deleted);
             return rentersLicenceCount == 0;
         }
     }

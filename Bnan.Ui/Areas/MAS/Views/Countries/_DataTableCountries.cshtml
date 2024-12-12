@@ -9,8 +9,8 @@
 <table class=" tables-style table table-borderless " id="Table">
     <thead class="sticky-top">
         <tr>
-            <th>@localizer["Count"]</th>
-            <th> @localizer["Country_Classefication"]</th>
+            <th>@localizer["Count_renters"]</th>
+            <th class="DifferAlign"> @localizer["Country_Classefication"]</th>
             <th> @localizer["RentalSystemNo"] </th>
             <th> @localizer["RentalSystemCode"]</th>
             <th> @localizer["Country_key"] </th>
@@ -28,7 +28,18 @@
             <tr onclick="location.href='@Url.Action("Edit", "Countries", new { id = item.CrMasSysCallingKeysCode })'">
 
                 <td><p>@(Model.Country_count?.Find(x => x.Column.ToString() == item.CrMasSysCallingKeysNo?.Trim())?.RowCount.ToString("N0") ?? "0" )</p></td>
-                <td><p>@item.CrMasSysCallingKeysClassificationCode</p></td>
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+                    <td class="DifferAlign">
+                        <p>@(Model.crMasSupCountryClassificationSS?.Find(x => x.CrMasLessorCountryClassificationCode == item.CrMasSysCallingKeysClassificationCode)?.CrMasLessorCountryClassificationEnName ?? " ")</p>
+                    </td>
+                }
+                else
+                {
+                    <td class="DifferAlign">
+                        <p>@(Model.crMasSupCountryClassificationSS?.Find(x => x.CrMasLessorCountryClassificationCode == item.CrMasSysCallingKeysClassificationCode)?.CrMasLessorCountryClassificationArName ?? " ")</p>
+                    </td>
+                }
                 <td>
                     <p>@(item.CrMasSysCallingKeysNaqlId ?? 0)</p>
                 </td>
