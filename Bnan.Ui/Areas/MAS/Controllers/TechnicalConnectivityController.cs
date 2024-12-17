@@ -59,7 +59,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
-            return View();
+            var connect = await GetLastConnect(user.CrMasUserInformationLessor);
+            return View(connect);
         }
 
         [HttpGet]
@@ -79,7 +80,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         [HttpGet]
         public async Task<IActionResult> IsClientReady(string companyId)
         {
-            companyId= "0000";
+            companyId = "0000";
             try
             {
                 var content = await WhatsAppServicesExtension.IsClientReady(companyId);
@@ -153,8 +154,36 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return Json(new { status = false, message = $"حدث خطأ أثناء إرسال الرسالة: {ex.Message}" });
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> CheckLessorIsConnected(string companyId)
+        {
+            companyId = "0000"; // افتراضي لاختبار الكود، غيّر حسب المطلوب
 
-
+            try
+            {
+                // استدعاء الميثود الجديدة التي تحقق الاتصال
+                var content = await WhatsAppServicesExtension.CheckIsConnected(companyId);
+                // تحويل الـ Response إلى كائن C#
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
+                if (apiResponse.Key == "3" && apiResponse?.Status == true) return Json(new { status = true, message = "1" });
+                else if (apiResponse.Key == "4" && apiResponse?.Status == true && apiResponse.Data != null)
+                {
+                    var clientData = apiResponse.Data;
+                    var lastConnect = await GetLastConnect(companyId);
+                    if (lastConnect != null && lastConnect.CrCasLessorWhatsupConnectStatus == "N") return Json(new { status = true, message = "2" });
+                    bool updateConnect = await _masTechnicalConnect.ChangeStatusOldWhenDisconnectFromWhatsup(companyId, clientData.LastLogOut);
+                    bool addNewConnect = await _masTechnicalConnect.AddNewWhatsupConnect(companyId);
+                    if (updateConnect && addNewConnect && await _unitOfWork.CompleteAsync() > 0) return Json(new { status = true, message = "3" });
+                    else return Json(new { status = false, message = "حدث خطأ اثناء حفظ البيانات" });
+                }
+                else if (apiResponse?.Status == false && apiResponse.Key == "2") return Json(new { status = true, message = "4" });
+                else return Json(new { status = false, message = "حدث خطأ ف الاتصال" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = false, message = $"حدث خطأ ف الاتصال: {ex.Message}" });
+            }
+        }
         private async Task<bool> UpdateClientInfo(string lessorCode, ClientInfoWhatsup clientInfoWhatsup)
         {
             try
@@ -188,7 +217,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 return false;
             }
         }
-
         private async Task<CrCasLessorWhatsupConnect> GetLastConnect(string LessorCode)
         {
             var lastConnect = await _unitOfWork.CrCasLessorWhatsupConnect.FindAllAsync(x => x.CrCasLessorWhatsupConnectLessor == LessorCode);

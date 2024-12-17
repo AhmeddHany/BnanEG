@@ -54,6 +54,18 @@ namespace Bnan.Inferastructure.Repository.MAS
             return false;
         }
 
+        public async Task<bool> ChangeStatusOldWhenDisconnectFromWhatsup(string LessorCode, string LogoutDateTime)
+        {
+            var lastConnection = await GetLastWhatsupConnect(LessorCode);
+            if (lastConnection == null) return false;
+            lastConnection.CrCasLessorWhatsupConnectStatus = Status.Deleted;
+            // تعيين وقت تسجيل الخروج
+            if (DateTime.TryParse(LogoutDateTime, out DateTime parsedLogoutDateTime)) lastConnection.CrCasLessorWhatsupConnectLogoutDatetime = parsedLogoutDateTime;
+            else lastConnection.CrCasLessorWhatsupConnectLogoutDatetime = DateTime.Now;
+            if (_unitOfWork.CrCasLessorWhatsupConnect.Update(lastConnection) != null) return true;
+            return false;
+        }
+
         public async Task<bool> UpdateWhatsupConnectInfo(string LessorCode, string Name, string Mobile, string DeviceType, bool IsBusiness, string UserLogin)
         {
             var lastConnection = await GetLastWhatsupConnect(LessorCode);

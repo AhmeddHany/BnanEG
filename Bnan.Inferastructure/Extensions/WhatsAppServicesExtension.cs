@@ -6,7 +6,7 @@ namespace Bnan.Inferastructure.Extensions
     public static class WhatsAppServicesExtension
     {
         private static readonly HttpClient _httpClient = new HttpClient();
-        private static readonly string api = "http://62.84.187.79:3000";
+        private static readonly string api = "http://207.180.229.2:3000";
 
         /// <summary>
         /// Generates a QR Code for a given company.
@@ -160,6 +160,36 @@ namespace Bnan.Inferastructure.Extensions
                 else
                     return ApiResponseStatus.NotFound;
 
+            }
+            catch (Exception ex)
+            {
+                return ApiResponseStatus.ServerError;
+            }
+        }
+        public static async Task<string> CheckIsConnected(string companyId)
+        {
+            if (string.IsNullOrWhiteSpace(companyId))
+                throw new ArgumentException("Company ID cannot be null or empty.", nameof(companyId));
+
+            // URL الخاص بـ API الاتصال
+            var url = $"{api}/api/Check_is_Connected_OrNot/{companyId}";
+
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return ApiResponseStatus.ServerError;
+                }
+
+                // قراءة البيانات كـ string وإرجاعها
+                return await response.Content.ReadAsStringAsync();
+
+            }
+            catch (TaskCanceledException ex)
+            {
+                return ApiResponseStatus.ServerError;
             }
             catch (Exception ex)
             {
