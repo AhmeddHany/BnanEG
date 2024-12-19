@@ -1,0 +1,517 @@
+﻿@using Bnan.Ui.ViewModels.MAS
+@using Bnan.Core.Extensions
+@model MASContractSourceVM
+
+@inject IViewLocalizer localizer
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="MAS" asp-controller="LessorMarketing" asp-action="Edit" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasSupContractSourceCode" />
+            <input hidden asp-for="CrMasSupContractSourceStatus" />
+            <input hidden asp-for="CrMasSupContractSourceArName" />
+            <input hidden asp-for="CrMasSupContractSourceEnName" />
+            <div class="row mt-3 g-3">
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3>@localizer["Edit_LessorMarketing_PageTitle"]</h3>
+                            </div>
+                            <div class="col-md-auto save-col btnsContainer">
+                                <button type="submit" class="custom-img-btn" id="SaveEdit">
+                                    <img src="~/MasSystem/images/save.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn" id="HoldBtn" data-bs-toggle="modal" data-bs-target="#Stop-Modal">
+                                    <img id="StopModalIcon" src="~/MasSystem/images/stop.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn" id="DeleteBtn" data-bs-toggle="modal" data-bs-target="#Delete-Modal">
+                                    <img id="modalIcon" src="~/MasSystem/images/delete.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/LessorMarketing/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="DataTitle">@localizer["the_Code"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasSupContractSourceCode</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="DataTitle">@localizer["LessorMarketingNameAr_edit"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasSupContractSourceArName</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="DataTitle">@localizer["LessorMarketingNameEn_edit"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasSupContractSourceEnName</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="phone2" class="form-label">
+                                                @localizer["LessorMarketingMobile"] <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" id="CrMasSupContractSourceMobile" class="form-control inputs english-input" asp-for="CrMasSupContractSourceMobile" maxlength="20" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger" asp-validation-for="CrMasSupContractSourceMobile"></span>
+                                                    <span class="text-danger" id="CrMasSupContractSourceMobile-Error"></span>
+                                                </div>
+                                            </div>
+                                            @*<div class="input-group ">
+                                                <input type="text" id="key33" asp-for="key2"  hidden/>
+                                                <input type="tel" class="form-control inputs tel-input" id="thismobile" asp-for="CrMasSupContractSourceMobile" hidden maxlength="20" required>
+                                            <input type="text" class="form-control inputs tel-input" id="text_mob" asp-for="mob" onchange="edit_mob()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="13" required>
+                                                <select class="input-group-text select-style counterCode" id="key_country" asp-for="key" onchange="changed_key()">
+                                                    <option value=""></option>
+                                                    @foreach (var single in Model.keys)
+                                                    {
+                                                        <option value="@single.CrMasSysCallingKeysNo" id="@single.CrMasSysCallingKeysNo">+@single.CrMasSysCallingKeysNo</option>
+                                                    }
+                                                </select>
+                                                <div class="invaild">
+                                                    <div class="invalid-feedback">
+                                                        <span class="text-danger" asp-validation-for="CrMasSupContractSourceMobile"></span>
+                                                        <span class="text-danger" id="CrMasSupContractSourceMobile-Error"></span>
+                                                    </div>
+                                                </div>
+                                            </div>*@
+
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="email"
+                                                   class="form-label">@localizer["LessorMarketingEmail"]</label>
+                                            <input type="email" id="CrMasSupContractSourceEmail" class="form-control inputs english-input" asp-for="CrMasSupContractSourceEmail" maxlength="100">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger" asp-validation-for="CrMasSupContractSourceEmail"></span>
+                                                    <span class="text-danger" id="CrMasSupContractSourceEmail-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="col-md-12">
+                                    <div class="row ">
+                                        <div class="col-lg-12">
+                                            <label>@localizer["Reason_s"]</label>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupContractSourceReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupContractSourceReasons" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                               </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- delete modal -->
+<div class="modal fade" id="Delete-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="Delete-ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: 1px solid var(--main-color);">
+            <div class="content" id="modalContent">
+            </div>
+            <!-- Hidden spinner  -->
+            <div class="modal-body text-center" id="spinner" style="display: none;">
+                <span class="State-Modal-loader"></span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Stopp  modal -->
+<div class="modal fade" id="Stop-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="Stop-ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: 1px solid var(--main-color);">
+            <div class=" content" id="Stop-modal-Content">
+            </div>
+            <!-- Hidden spinner  -->
+            <div class="modal-body text-center" id="spinner2" style="display: none;">
+                <span class="State-Modal-loader"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
+    <script>
+        $(document).ready(function () {
+            var kkey = $("#key33").val();
+            $("#key_country option[id="+kkey+"]").prop("selected", true);
+        });
+    </script>
+    <script>
+        function changed_key(){
+            $("#text_mob").val("");
+            edit_mob();
+        }
+        // To Handle Background
+        function edit_mob(){
+            var key2 = $("#key_country").val();
+            var text_mob2 = $("#text_mob").val();
+            var key = key2.replace(/\s+/g, '');
+            var text_mob = text_mob2.replace(/\s+/g, '');
+            $("#thismobile").val(key +"-"+ text_mob);
+        }
+    </script>
+    <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        // This To Focus On input when page load
+        if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+            $("#CrMasSupContractSourceEnName").focus();
+        }
+        else {
+            $("#CrMasSupContractSourceArName").focus();
+        }
+        //////////////////////////////////////////
+        var statusInput = $("#CrMasSupContractSourceStatus");
+        var OldArName = $("#CrMasSupContractSourceArName").val();
+        var OldEnName = $("#CrMasSupContractSourceEnName").val();
+        var OldEmail = $("#CrMasSupContractSourceEmail").val();
+        var OldMobile = $("#CrMasSupContractSourceMobile").val();
+
+
+        function Check_onChange_input(existName, dataField, oldValue) {
+            //get the old value
+            if (dataField === oldValue) {
+                // Clear any existing error message if the values match
+                $(`#${existName}-Error`).hide();
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/MAS/LessorMarketing/CheckChangedField",
+                data: { existName: existName, dataField: dataField },
+                success: function (result) {
+                    console.log("feedback", result);
+                    // Hide all previous error messages
+                    $('.invalid-feedback').show();
+
+                    // Show new error messages if they exist
+                    if (result.errors && result.errors.length > 0) {
+                        result.errors.forEach(function (error) {
+                            // Use the ID from the error object to find the correct element
+                            $(`#${error.field}-Error`).text(error.message).show();
+                        });
+                    } else {
+                        // Hide the error message if no errors
+                        $(`#${existName}-Error`).text("");
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        // Example usage for Arabic Name input
+        $('#CrMasSupContractSourceArName').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSupContractSourceArName', newValue, OldArName);
+        });
+
+        // Example usage for English Name input
+        $('#CrMasSupContractSourceEnName').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSupContractSourceEnName', newValue, OldEnName);
+        });
+        $('#CrMasSupContractSourceEmail').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSupContractSourceEmail', newValue, OldEmail);
+        });
+        $('#CrMasSupContractSourceMobile').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrMasSupContractSourceMobile', newValue, OldMobile);
+        });
+
+    </script>
+    <script>
+        function updateLessorMarketingStatus(status) {
+            var code = document.getElementById("CrMasSupContractSourceCode").value;
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: "POST",
+                    url: "/MAS/LessorMarketing/EditStatus",
+                    data: { status: status, code: code },
+                    success: function (result) {
+                        toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+
+                        if (result == "true") {
+                            //@*toastr.success("@localizer["ToastSave"]");*@
+                            resolve(true);
+                        } else if (result == "false_auth") {
+                            toastr.error("@localizer["AuthEmplpoyee_No_auth"]");
+                            resolve(false);
+                        } else if (result == "udelete") {
+                            toastr.error("@localizer["SureTo_Cannot_delete"]");
+                            resolve(false);
+                        } else {
+                            toastr.error("@localizer["ToastFailed"]");
+                            resolve(false);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("@localizer["ToastFailed"]");
+                        resolve(false);
+                    }
+                });
+            });
+        }
+    </script>
+    <script>
+        let isDeleted = false;
+        let isStoped = false
+        if (statusInput.val() == '@Status.Hold') {
+            isDeleted = false;
+            isStoped = true
+        }
+        else if (statusInput.val() == '@Status.Deleted') {
+            isDeleted = true;
+            isStoped = false
+        }
+
+        window.onload = () => {
+            DeleteState(isDeleted);
+            StopState(isStoped);
+        };
+
+        function DeleteState(deleted) {
+            isDeleted = deleted;
+
+            document.getElementById("modalContent").style.display = "block";
+            document.getElementById("modalIcon").src = isDeleted
+                ? "/MasSystem/images/Property 1=recycle.svg"
+                : "/MasSystem/images/delete.svg";
+
+            document.getElementById("modalContent").innerHTML = isDeleted
+                ? `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/Green-recycle.svg" /> @localizer["SureToRetriveDelete"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_LessorMarketing_UnDelete"]</p>
+                                                                <p>@localizer["ModalSecondMessage_LessorMarketing_UnDelete"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`
+                : `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/delete (2).svg" /> @localizer["SureTodelete"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_LessorMarketing_Delete"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_LessorMarketing_Delete"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="DeleteBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`;
+        }
+        function DeleteLoad() {
+            const modalContent = document.getElementById("modalContent");
+            const spinner = document.getElementById("spinner");
+            const deleteModal = document.getElementById("Delete-Modal");
+            const modalIcon = document.getElementById("modalIcon");
+
+            modalContent.style.display = "none";
+            spinner.style.display = "flex";
+
+            setTimeout(async () => {
+                spinner.style.display = "none";
+                const modal = bootstrap.Modal.getInstance(deleteModal);
+                modal.hide();
+
+                const newStatus = isDeleted ? '@Status.UnDeleted' : '@Status.Deleted';
+                const success = await updateLessorMarketingStatus(newStatus);
+                if (success) {
+                    statusInput.val(isDeleted ? '@Status.Active' : '@Status.Deleted');
+                    isDeleted = !isDeleted;
+
+                    modalIcon.src = isDeleted
+                        ? "/MasSystem/images/Property 1=recycle.svg"
+                        : "/MasSystem/images/delete.svg";
+
+                    DeleteState(isDeleted);
+                    setTimeout(function () {
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "LessorMarketing")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
+                }
+                else {
+                    modalIcon.src = isDeleted
+                        ? "/MasSystem/images/Property 1=recycle.svg"
+                        : "/MasSystem/images/delete.svg";
+
+                    DeleteState(isDeleted);
+                }
+            }, 500);
+        }
+
+        function StopState(Stoped) {
+            isStoped = Stoped;
+
+            document.getElementById("Stop-modal-Content").style.display = "block";
+            document.getElementById("StopModalIcon").src = isStoped
+                ? "/MasSystem/images/Property 1=active.svg"
+                : "/MasSystem/images/stop.svg";
+
+            document.getElementById("Stop-modal-Content").innerHTML = isStoped
+                ? `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/GreenStop.svg" /> @localizer["SureToRetriveHold"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_LessorMarketing_UnHold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_LessorMarketing_UnHold"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`
+                : `
+                                                            <div class="modal-header border-0">
+                                                              <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                <img src="/MasSystem/images/RedStop.svg" /> @localizer["SureToHold"]
+                                                              </h1>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>@localizer["ModalFirstMessage_LessorMarketing_Hold"]</p>
+                                                                <p>@localizer["ModalSecondMessage_LessorMarketing_Hold"]</p>
+                                                            </div>
+                                                            <div class="modal-footer border-0">
+                                                              <div class="container">
+                                                                <div class="row">
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-modal-Save" id="HoldBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                  </div>
+                                                                  <div class="col-md-6 text-center">
+                                                                    <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>`;
+        }
+        function StopLoad() {
+            const stopModalContent = document.getElementById("Stop-modal-Content");
+            const spinner = document.getElementById("spinner2");
+            const modalElement = document.getElementById("Stop-Modal");
+            const stopModalIcon = document.getElementById("StopModalIcon");
+
+            stopModalContent.style.display = "none";
+            spinner.style.display = "flex";
+
+            setTimeout(async () => {
+                spinner.style.display = "none";
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+
+                const newStatus = isStoped ? '@Status.UnHold' : '@Status.Hold';
+                const success = await updateLessorMarketingStatus(newStatus);
+                if (success) {
+                    statusInput.val(isStoped ? '@Status.Active' : '@Status.Hold');
+                    isStoped = !isStoped;
+
+                    stopModalIcon.src = isStoped
+                        ? "/MasSystem/images/Property 1=active.svg"
+                        : "/MasSystem/images/stop.svg";
+
+                    StopState(isStoped);
+                    setTimeout(function () {
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "LessorMarketing")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
+                }
+            }, 500);
+        }
+
+    </script>
+}

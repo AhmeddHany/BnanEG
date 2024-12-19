@@ -76,7 +76,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             var RenterContract_Basic_All = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicStatus == Status.Closed && x.CrCasRenterContractBasicLessor == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterContractBasic1" }).OrderByDescending(x => x.CrCasRenterContractBasicActualCloseDateTime);
 
-            ReportActiveContractVM reportActiveContractVM = new ReportActiveContractVM();
+            ReportActiveContractVM2 reportActiveContractVM = new ReportActiveContractVM2();
 
             //--------------------------------
 
@@ -153,7 +153,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 x.CrCasAccountInvoiceEnPdfFile,
                 x.CrCasAccountInvoiceNo)).ToList();
 
-                ReportActiveContractVM reportActiveContractVM = new ReportActiveContractVM();
+                ReportActiveContractVM2 reportActiveContractVM = new ReportActiveContractVM2();
                 reportActiveContractVM.crCasRenterContractBasic = RenterContract_Basic_All1;
                 //reportActiveContractVM.All_users = users;
                 reportActiveContractVM.All_Invoices = invoices;

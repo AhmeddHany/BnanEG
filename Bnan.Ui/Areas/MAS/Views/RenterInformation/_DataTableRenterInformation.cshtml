@@ -1,10 +1,85 @@
 ﻿
 
 @using Bnan.Core.Extensions
-@model IEnumerable<CrMasRenterInformation>
+@model RenterInformationVM
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th class="DifferAlign">@localizer["LessorAddress"]</th>
+            <th>@localizer["MobilePhone"]</th>
+            <th class="DifferAlign">@localizer["RenterProfessionName_view"]</th>
+            <th class="DifferAlign">@localizer["RenterNationalitiesName_view"]</th>
+            <th class="DifferAlign">@localizer["the_Renter"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.all_Renters)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "RenterInformation", new { id = item.CrMasRenterInformationId })'">
+
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+                    <td class="DifferAlign">
+                        <p class="FirstLineP">@Model.all_post?.Find(x=>x.CrMasRenterPostCode == item.CrMasRenterInformationId)?.CrMasRenterPostEnShortConcatenate</p>
+                        <p class="secondLineP"> @item.CrMasRenterInformationEmail </p>
+                    </td>
+                    <td>
+                        <p> @item.CrMasRenterInformationCountreyKey@item.CrMasRenterInformationMobile </p>
+                    </td>
+                    <td class="DifferAlign"><p>@Model.all_Professions?.Find(x=>x.CrMasSupRenterProfessionsCode == item.CrMasRenterInformationProfession)?.CrMasSupRenterProfessionsEnName</p></td>
+
+                    <td class="DifferAlign"><p>@Model.all_Nationalities?.Find(x=>x.CrMasSupRenterNationalitiesCode == item.CrMasRenterInformationNationality)?.CrMasSupRenterNationalitiesEnName</p></td>
+
+                }
+                else
+                {
+                <td class="DifferAlign">
+                        <p class="FirstLineP">@Model.all_post?.Find(x=>x.CrMasRenterPostCode == item.CrMasRenterInformationId)?.CrMasRenterPostArShortConcatenate</p>
+                        <p class="secondLineP"> @item.CrMasRenterInformationEmail </p>
+                </td>
+                <td>
+                    <p> @item.CrMasRenterInformationCountreyKey@item.CrMasRenterInformationMobile </p>
+                </td>
+                <td class="DifferAlign"><p>@Model.all_Professions?.Find(x=>x.CrMasSupRenterProfessionsCode == item.CrMasRenterInformationProfession)?.CrMasSupRenterProfessionsArName</p></td>
+
+                <td class="DifferAlign"><p>@Model.all_Nationalities?.Find(x=>x.CrMasSupRenterNationalitiesCode == item.CrMasRenterInformationNationality)?.CrMasSupRenterNationalitiesArName</p></td>
+
+                }
+
+                <td class="DifferAlign">
+                    <p class="FirstLineP">@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasRenterInformationEnName : item.CrMasRenterInformationArName)</p>
+                    <p class="secondLineP"> @item.CrMasRenterInformationId </p>
+                </td>
+                <td><p>@no</p></td>
+                
+                @*<td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasRenterInformationStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasRenterInformationStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasRenterInformationStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>*@
+            </tr>
+            no++;
+        }
+
+    </tbody>
+
+</table>

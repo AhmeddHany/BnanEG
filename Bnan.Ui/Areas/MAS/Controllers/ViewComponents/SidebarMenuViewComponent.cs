@@ -97,7 +97,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
 
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1102002" && l.CrMasUserSubValidationAuthorization == true))
                 {
-                    bnanMenu.SubItems.Add(new SidebarMenuItem { Authorization = true, Title = _localizer["MarketingCompanies"], Url = "#" });
+                    bnanMenu.SubItems.Add(new SidebarMenuItem { Authorization = true, Title = _localizer["MarketingCompanies"],
+                        Url = Url.Action("Index", "LessorMarketing", new { area = "MAS" })                      
+                    });
                 }
 
                 sidebarMenu.Add(bnanMenu);
@@ -159,7 +161,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Existing Contracts"],
-                        Url = Url.Action("Index", "ReportContract", new { area = "MAS" })
+                        Url = Url.Action("Index", "ReportActiveContract", new { area = "MAS" })
                     });
                 }
 
@@ -169,7 +171,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Closed Contracts"],
-                        Url = Url.Action("FailedMessageReport_NoData", "ReportFClosedContract", new { area = "MAS" })
+                        Url = Url.Action("Index", "ReportClosedContract", new { area = "MAS" })
                     });
                 }
 
@@ -179,7 +181,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Canceled Contracts"],
-                        Url = Url.Action("FailedMessageReport_NoData", "ReportCanceledContract", new { area = "MAS" })
+                        Url = Url.Action("Index", "ReportSaved_CanceledContract", new { area = "MAS" })
                     });
                 }
 
