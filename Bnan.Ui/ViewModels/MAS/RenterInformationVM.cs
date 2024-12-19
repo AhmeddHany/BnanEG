@@ -44,14 +44,32 @@ namespace Bnan.Ui.ViewModels.MAS
         public string? CrMasRenterInformationStatus { get; set; }
         public string? CrMasRenterInformationReasons { get; set; }
 
-        public virtual CrMasSupAccountBank? CrMasRenterInformationBankNavigation { get; set; }
-        public virtual CrMasSupRenterDrivingLicense? CrMasRenterInformationDrivingLicenseTypeNavigation { get; set; }
-        public virtual CrMasSupRenterEmployer? CrMasRenterInformationEmployerNavigation { get; set; }
-        public virtual CrMasSupRenterGender? CrMasRenterInformationGenderNavigation { get; set; }
-        public virtual CrMasSupRenterIdtype? CrMasRenterInformationIdtypeNavigation { get; set; }
-        public virtual CrMasSupRenterNationality? CrMasRenterInformationNationalityNavigation { get; set; }
-        public virtual CrMasSupRenterProfession? CrMasRenterInformationProfessionNavigation { get; set; }
-        public virtual CrMasSupRenterSector? CrMasRenterInformationSectorNavigation { get; set; }
-        public virtual CrMasRenterPost CrMasRenterPost { get; set; } = null!;
+        ////////////////
+        public string? IDtypeArName { get; set; }
+        public string? IDtypeEnName { get; set; }
+        public string? NationalityArName { get; set; }
+        public string? NationalityEnName { get; set; }
+        public string? GenderArName { get; set; }
+        public string? GenderEnName { get; set; }
+        public string? ProffessionArName { get; set; }
+        public string? ProffessionEnName { get; set; }
+        public string? WorkPlaceArName { get; set; }
+        public string? WorkPlaceEnName { get; set; }
+        public string? DrivingLicesnseArName { get; set; }
+        public string? DrivingLicesnseEnName { get; set; }
+        public string? BankArName { get; set; }
+        public string? BankEnName { get; set; }
+        public string? IbanArName { get; set; }
+        public string? IbanEnName { get; set; }
+        public string? addressArName { get; set; }
+        public string? addressEnName { get; set; }
+        /// <summary>
+        /// ////////////
+        /// </summary>
+
+        public List<CrMasRenterInformation> all_Renters = new List<CrMasRenterInformation>();
+        public List<CrMasRenterPost> all_post = new List<CrMasRenterPost>();
+        public List<CrMasSupRenterNationality> all_Nationalities = new List<CrMasSupRenterNationality>();
+        public List<CrMasSupRenterProfession> all_Professions = new List<CrMasSupRenterProfession>();
     }
 }

@@ -101,7 +101,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             x.CrCasAccountInvoiceEnPdfFile,
             x.CrCasAccountInvoiceNo)).ToList();
 
-            ReportActiveContractVM reportActiveContractVM = new ReportActiveContractVM();
+            ReportActiveContractVM2 reportActiveContractVM = new ReportActiveContractVM2();
             reportActiveContractVM.crCasRenterContractBasic = RenterContract_Basic_All;
             reportActiveContractVM.crCasRenterContractAlert = query_Alert_All;
             //reportActiveContractVM.All_users = users;
@@ -150,7 +150,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 {
                     var RenterContract_Basic_All1 = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicIssuedDate < DateTime.Parse(_max).Date && x.CrCasRenterContractBasicIssuedDate >= DateTime.Parse(_mini).Date && (x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire) && x.CrCasRenterContractBasicLessor == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterContractBasic1" }).OrderBy(x => x.CrCasRenterContractBasicIssuedDate).ToList();
 
-                    ReportActiveContractVM reportActiveContractVM = new ReportActiveContractVM();
+                    ReportActiveContractVM2 reportActiveContractVM = new ReportActiveContractVM2();
                     reportActiveContractVM.crCasRenterContractBasic = RenterContract_Basic_All1;
                     reportActiveContractVM.crCasRenterContractAlert = query_Alert_All;
                     //reportActiveContractVM.All_users = users;
@@ -188,7 +188,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                         RenterContract_Basic_All = RenterContract_Basic_All.Where(x => query_Alert4.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo)).OrderBy(x => x.CrCasRenterContractBasicIssuedDate).ToList();
                     }
 
-                    ReportActiveContractVM reportActiveContractVM = new ReportActiveContractVM();
+                    ReportActiveContractVM2 reportActiveContractVM = new ReportActiveContractVM2();
                     reportActiveContractVM.crCasRenterContractBasic = RenterContract_Basic_All;
                     reportActiveContractVM.crCasRenterContractAlert = query_Alert_All;
                     //reportActiveContractVM.All_users = users;

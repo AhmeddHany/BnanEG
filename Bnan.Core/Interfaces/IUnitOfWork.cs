@@ -94,8 +94,10 @@ namespace Bnan.Core.Interfaces
         public IGenric<CrMasSysConvertNoToText> CrMasSysConvertNoToText { get; }
         public IGenric<CrMasSupCarYear> CrMasSupCarYear { get; }
         public IGenric<CrMasSupCountryClassification> CrMasSupCountryClassification { get; }
-        
+
         public IGenric<CrCasRenterContractEvaluation> CrCasRenterContractEvaluation { get; }
+        public IGenric<CrMasSupContractSource> CrMasSupContractSource { get; }
+        
         int Complete();
         Task<int> CompleteAsync();
     }

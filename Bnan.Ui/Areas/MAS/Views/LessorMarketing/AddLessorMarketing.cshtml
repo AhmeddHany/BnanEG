@@ -1,0 +1,219 @@
+﻿@using Bnan.Ui.ViewModels.MAS
+@model MASContractSourceVM
+
+@inject IViewLocalizer localizer
+
+@{
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="MAS" asp-controller="LessorMarketing" asp-action="AddLessorMarketing" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasSupContractSourceCode" />
+            <div class="row  mt-3 g-3">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3>@localizer["Add_LessorMarketing_PageTitle"]</h3>
+                            </div>
+                            <div class="col-md-auto save-col">
+                                <button type="submit" class="custom-img-btn"> <img src="~/MasSystem/images/save.svg" /> </button>
+                                <button type="button" class="custom-img-btn"> <a href="/MAS/LessorMarketing/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="row  mt-3 g-3 ">
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p class="DataTitle">@localizer["the_Code"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrMasSupContractSourceCode</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <label for="AR-Licence" class="form-label">
+                                                @localizer["LessorMarketingNameAr_add"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" asp-for="CrMasSupContractSourceArName" id="CrMasSupContractSourceArName" maxlength="30" class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupContractSourceArName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupContractSourceArName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="EN-Licence" class="form-label">
+                                                @localizer["LessorMarketingNameEn_add"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" class="form-control inputs english-input" asp-for="CrMasSupContractSourceEnName" maxlength="30" id="CrMasSupContractSourceEnName" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupContractSourceEnName" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrMasSupContractSourceEnName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="phone2" class="form-label">
+                                                @localizer["LessorMarketingMobile"] <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <div class="input-group ">
+                                                <input type="tel" class="form-control inputs tel-input" id="thismobile" asp-for="CrMasSupContractSourceMobile" hidden maxlength="20" required>
+                                                <input type="text" class="form-control inputs tel-input" id="text_mob" asp-for="mob" onchange="edit_mob()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="13" required>
+                                                <select class="input-group-text select-style counterCode" id="key_country" asp-for="key" onchange="changed_key()">
+                                                    <option value=""></option>
+                                                    @foreach(var single in Model.keys){
+                                                        <option value="@single.CrMasSysCallingKeysNo">+@single.CrMasSysCallingKeysNo</option>
+                                                        }
+                                                </select>
+                                                <div class="invaild">
+                                                    <div class="invalid-feedback">
+                                                        <span class="text-danger" asp-validation-for="CrMasSupContractSourceMobile"></span>
+                                                        <span class="text-danger" id="CrMasSupContractSourceMobile-Error"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="email"
+                                                   class="form-label">@localizer["LessorMarketingEmail"]</label>
+                                            <input type="email" id="CrMasSupContractSourceEmail" class="form-control inputs english-input" asp-for="CrMasSupContractSourceEmail" maxlength="100">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger" asp-validation-for="CrMasSupContractSourceEmail"></span>
+                                                    <span class="text-danger" id="CrMasSupContractSourceEmail-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row ">
+                                        <div class="col-lg-12">
+                                            <label>@localizer["Reason_s"]</label>
+                                            <textarea class="form-control textarea-inputs" asp-for="CrMasSupContractSourceReasons" rows="1" maxlength="100" type="text"></textarea>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrMasSupContractSourceReasons" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
+    <script>
+        function changed_key() {
+            $("#text_mob").val("");
+            edit_mob();
+        }
+        function edit_mob() {
+            var key2 = $("#key_country").val();
+            var text_mob2 = $("#text_mob").val();
+            var key = key2.replace(/\s+/g, '');
+            var text_mob = text_mob2.replace(/\s+/g, '');
+            //$("#thismobile").val(key +"-"+ text_mob);
+            $("#thismobile").val(key + text_mob);
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            // This To Focus On input when page load
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                $("#CrMasSupContractSourceEnName").focus();
+            }
+            else {
+                $("#CrMasSupContractSourceArName").focus();
+            }
+            //////////////////////////////////////////
+
+
+            function Check_onChange_input(existName, dataField) {
+                $.ajax({
+                    type: "GET",
+                    url: "/MAS/LessorMarketing/CheckChangedField",
+                    data: { existName: existName, dataField: dataField },
+                    success: function (result) {
+                        console.log("feedback", result);
+                        // Hide all previous error messages
+                        $('.invalid-feedback').show();
+
+                        // Show new error messages if they exist
+                        if (result.errors && result.errors.length > 0) {
+                            result.errors.forEach(function (error) {
+                                // Use the ID from the error object to find the correct element
+                                $(`#${error.field}-Error`).text(error.message).show();
+                            });
+                        } else {
+                            // Hide the error message if no errors
+                            $(`#${existName}-Error`).text("");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+
+            $('#CrMasSupContractSourceArName').on('change', function () {
+                var newValue = $(this).val();
+                console.log("newValue", newValue)
+                Check_onChange_input('CrMasSupContractSourceArName', newValue);
+            });
+
+            $('#CrMasSupContractSourceEnName').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupContractSourceEnName', newValue);
+            });
+            $('#CrMasSupContractSourceEmail').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupContractSourceEmail', newValue);
+            });
+            $('#CrMasSupContractSourceMobile').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasSupContractSourceMobile', newValue);
+            });
+        });
+
+    </script>
+}

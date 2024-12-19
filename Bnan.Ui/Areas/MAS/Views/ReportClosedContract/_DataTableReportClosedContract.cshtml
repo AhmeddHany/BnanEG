@@ -1,0 +1,109 @@
+﻿
+
+@using Bnan.Core.Extensions
+@model listReportClosedContractVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["the_Contract_n"]</th>
+            @*<th>@localizer["the_Invoice_n"]</th>*@
+            <th class="DifferAlign"> @localizer["the_Car_n"]</th>
+            <th class="DifferAlign"> @localizer["the_Renter"]</th>
+            <th class="DifferAlign"> @localizer["the_Lessor_n"]  </th>
+            <th class="DifferAlign">@localizer["the_Contract_n"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var no = 1;
+        }
+        @foreach (var item in Model.all_contractBasic)
+        {
+
+            var endDate = item.CrCasRenterContractBasicActualCloseDateTime;
+            var image_pdf = "#";
+            var image_pdf_blank = "";
+            if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+            {
+                if (item.CrCasRenterContractBasicEnPdfFile != null && item.CrCasRenterContractBasicEnPdfFile != "") { image_pdf = item.CrCasRenterContractBasicEnPdfFile?.ToString().Replace("~", ""); image_pdf_blank = "_blank"; }
+            }
+            else
+            {
+                if (item.CrCasRenterContractBasicArPdfFile != null && item.CrCasRenterContractBasicArPdfFile != "") { image_pdf = item.CrCasRenterContractBasicArPdfFile?.ToString().Replace("~", ""); image_pdf_blank = "_blank"; }
+            }
+@*            @if (item.CrCasRenterContractBasicStatus == Status.Closed)
+            {
+                endDate = item.CrCasRenterContractBasicActualCloseDateTime;
+            }*@
+
+            <tr>
+                <td><a href="@image_pdf" target="@image_pdf_blank"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
+                @*<td><a href="#"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>*@
+
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+                    <td class="DifferAlign">
+                    <div class="car-name-color">
+                        <p class="FirstLineP">@item.CarEnName</p>
+                        <div class="CarColor" style="background: #636C14;"></div>
+                        </div>
+                    </td>
+                    <td class="DifferAlign">
+                        <p>@Model.all_RentersMas?.Find(x=>x.CrMasRenterInformationId == item.CrCasRenterContractBasicRenterId)?.CrMasRenterInformationEnName</p>
+                    </td>
+                    <td class="DifferAlign"><p> @Model.all_lessors?.Find(x=>x.CrMasLessorInformationCode == item.CrCasRenterContractBasicLessor)?.CrMasLessorInformationEnShortName </p></td>
+                    <td class="DifferAlign">
+                        <p class="FirstLineP"> @item.CrCasRenterContractBasicNo </p>
+                        <div class="d-flex justify-content-end gap-2">
+                            <p class="secondLineP-extra-small"> <span class="time">  @endDate?.ToString("HH:mm - ",CultureInfo.InvariantCulture) </span> @endDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture) </p>
+                            <p class="secondLineP-extra-small"> <span class="time">  @item.CrCasRenterContractBasicExpectedStartDate?.ToString("HH:mm - ",CultureInfo.InvariantCulture) </span> @item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture)</p>
+                        </div>
+                    </td>
+                }
+                else
+                {
+                    <td class="DifferAlign">
+                        <div class="car-name-color">
+                            <p class="FirstLineP">@item.CarArName</p>
+                            <div class="CarColor" style="background: #636C14;"></div>
+                        </div>
+                    </td>
+                    <td class="DifferAlign">
+                        <p>@Model.all_RentersMas?.Find(x=>x.CrMasRenterInformationId == item.CrCasRenterContractBasicRenterId)?.CrMasRenterInformationArName</p>
+                    </td>
+                    <td class="DifferAlign"><p> @Model.all_lessors?.Find(x=>x.CrMasLessorInformationCode == item.CrCasRenterContractBasicLessor)?.CrMasLessorInformationArShortName </p></td>
+                    <td class="DifferAlign">
+                        <p class="FirstLineP"> @item.CrCasRenterContractBasicNo </p>
+                        <div class="d-flex justify-content-end gap-2">
+                            <p class="secondLineP-extra-small">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture) <span class="time">  @item.CrCasRenterContractBasicExpectedStartDate?.ToString(" - HH:mm",CultureInfo.InvariantCulture) </span></p>
+                            <p class="secondLineP-extra-small">@endDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture) <span class="time"> @endDate?.ToString(" - HH:mm",CultureInfo.InvariantCulture) </span></p>
+                        </div>
+                    </td>
+                }
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            var filterStyleColor = "";
+                            if (item.CrCasRenterContractBasicStatus == Status.Closed) filterColor = "filter2-div";
+                        }
+                        <div class="filters @filterColor" style="@filterStyleColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+
+</table>

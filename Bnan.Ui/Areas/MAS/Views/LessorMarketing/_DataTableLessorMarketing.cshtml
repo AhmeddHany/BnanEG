@@ -1,0 +1,60 @@
+﻿@using Bnan.Ui.ViewModels.MAS
+@using Bnan.Core.Extensions
+@model MASContractSourceVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            @*<th>@localizer["LessorMarketingCount"]</th>*@
+            <th class="DifferAlign"> @localizer["LessorMarketingEmail"]</th>
+            <th class="DifferAlign"> @localizer["LessorMarketingMobile"]</th>
+            <th class="DifferAlign"> @localizer["LessorMarketingName_view"]</th>
+            <th class="DifferAlign"> @localizer["the_Code"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.crMasSupContractSource)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "LessorMarketing", new { id = item.CrMasSupContractSourceCode })'">
+                @*<td><p>@(Model.LessorMarketings_count?.Find(x => x.Column.ToString() == item.CrMasSupContractSourceCode)?.RowCount.ToString("N0") ?? "0")</p></td>*@
+                <td class="DifferAlign">
+                    <p>@item.CrMasSupContractSourceEmail</p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@item.CrMasSupContractSourceMobile</p>
+                </td>
+                <td class="DifferAlign">
+                    <p>
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupContractSourceEnName : item.CrMasSupContractSourceArName)
+                    </p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@item.CrMasSupContractSourceCode</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasSupContractSourceStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasSupContractSourceStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasSupContractSourceStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>

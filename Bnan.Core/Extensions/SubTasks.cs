@@ -66,9 +66,27 @@
 
         ////////////
         //MAS  Renters
-        public static string CrMasRenterInformation { get; set; } = "2203001";
-        public static string CrCasRenterContractBasic { get; set; } = "2203002";
-        public static string CrCasAccountContractCompanyOwed { get; set; } = "2203003";
+        public static string CrMasRenterInformation { get; set; } = "1103001";
+        public static string CrCasRenterContractBasic { get; set; } = "1103002";
+
+        /////////
+        // Mas bnan
+        public static string lessorKSA { get; set; } = "1102001";
+        public static string lessor_Marketing { get; set; } = "1102002";
+
+        /////////
+        // Mas Reports 
+        public static string MasReport1 { get; set; } = "1104001";
+        public static string MasReport2 { get; set; } = "1104002";
+        public static string MasReport3 { get; set; } = "1104003";
+        public static string MasReport4 { get; set; } = "1104004";
+        public static string MasReport5 { get; set; } = "1104005";
+        public static string MasReport6 { get; set; } = "1104006";
+        public static string MasReport7 { get; set; } = "1104007";
+        public static string MasReport8 { get; set; } = "1104008";
+        public static string MasReport9 { get; set; } = "1104009";
+
+
 
     }
 }

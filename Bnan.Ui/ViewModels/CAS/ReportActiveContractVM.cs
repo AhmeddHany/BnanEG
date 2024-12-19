@@ -2,7 +2,7 @@
 
 namespace Bnan.Ui.ViewModels.CAS
 {
-    public class ReportActiveContractVM
+    public class ReportActiveContractVM2
     {
         public List<CrCasRenterContractBasic>? crCasRenterContractBasic = new List<CrCasRenterContractBasic>();
 

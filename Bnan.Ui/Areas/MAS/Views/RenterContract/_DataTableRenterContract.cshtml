@@ -1,0 +1,83 @@
+﻿
+
+@using Bnan.Core.Extensions
+@model RenterContractVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["KilometersCut_s"]</th>
+            <th>@localizer["RentalDay_s"]</th>
+            <th>@localizer["ContractCount_s"]</th>
+            <th >@localizer["LastVisit_s"]</th>
+            <th >@localizer["FirstVisit_s"]</th>
+            <th class="DifferAlign">@localizer["the_Renter"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.allCasRenterIds)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "RenterContract", new { id = item.CrCasRenterLessorId })'">
+
+
+                <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Sum(x => x.CrCasRenterLessorContractKm)?.ToString("N2") ?? "0")</p></td>
+                <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Sum(x => x.CrCasRenterLessorContractDays)?.ToString("0") ?? "0")</p></td>
+                <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Sum(x => x.CrCasRenterLessorContractCount)?.ToString("0") ?? "0")</p></td>
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+                    <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Max(x => x.CrCasRenterLessorDateLastContractual)?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) ?? " ")</p></td>
+                    <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Min(x => x.CrCasRenterLessorDateFirstInteraction)?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) ?? " ")</p></td>
+                }
+                else
+                {
+                    <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Max(x => x.CrCasRenterLessorDateLastContractual)?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture) ?? " ")</p></td>
+                    <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Min(x => x.CrCasRenterLessorDateFirstInteraction)?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture) ?? " ")</p></td>
+                }
+
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+                    <td class="DifferAlign">
+                        <p class="FirstLineP">@(Model.all_Renters?.Find(x => x.CrMasRenterInformationId == item.CrCasRenterLessorId)?.CrMasRenterInformationEnName ??" ")</p>
+                        <p class="secondLineP"> @item.CrCasRenterLessorId </p>
+                    </td>
+                }
+                else
+                {
+                    <td class="DifferAlign">
+                        <p class="FirstLineP">@(Model.all_Renters?.Find(x => x.CrMasRenterInformationId == item.CrCasRenterLessorId)?.CrMasRenterInformationArName ?? " ")</p>
+                        <p class="secondLineP"> @item.CrCasRenterLessorId </p>
+                    </td>
+                }
+
+                <td><p>@no</p></td>
+                
+                @*<td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasRenterInformationStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasRenterInformationStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasRenterInformationStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>*@
+            </tr>
+            no++;
+        }
+
+    </tbody>
+
+</table>

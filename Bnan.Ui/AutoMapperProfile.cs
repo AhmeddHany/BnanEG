@@ -129,6 +129,8 @@ namespace Bnan.Inferastructure
             CreateMap<QuestionsAnswerVM, CrMasSysQuestionsAnswer>().ReverseMap();
             CreateMap <CountryClassificationVM, CrMasSupCountryClassification>().ReverseMap();
             CreateMap<CompanyUserVM, CrMasUserInformation>().ReverseMap();
+            CreateMap<MASContractSourceVM, CrMasSupContractSource>().ReverseMap();
+            
 
         }
 
