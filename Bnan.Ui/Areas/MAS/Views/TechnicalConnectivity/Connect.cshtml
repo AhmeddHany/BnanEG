@@ -1,5 +1,5 @@
 ﻿@using Bnan.Core.Extensions
-@model List<CrMasLessorInformation>
+@model CrCasLessorWhatsupConnect
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
@@ -269,10 +269,10 @@
                                                                        class="form-control inputs"
                                                                        name="DeviceName-whatsapp"
                                                                        maxlength="100" required disabled>
-                                                               @*  <div class="invaild ">
-                                                                    <div class="invalid-feedback">
-                                                                        الحقل مطلوب
-                                                                    </div>
+                                                                @*  <div class="invaild ">
+                                                                <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                                </div>
                                                                 </div> *@
                                                             </div>
                                                         </div>
@@ -287,10 +287,10 @@
                                                                        class="form-control inputs"
                                                                        name="DeviceNameType-whatsapp"
                                                                        maxlength="100" required disabled>
-                                                               @*  <div class="invaild ">
-                                                                    <div class="invalid-feedback">
-                                                                        الحقل مطلوب
-                                                                    </div>
+                                                                @*  <div class="invaild ">
+                                                                <div class="invalid-feedback">
+                                                                الحقل مطلوب
+                                                                </div>
                                                                 </div> *@
                                                             </div>
                                                         </div>
@@ -301,16 +301,16 @@
                                                                 </label>
                                                                 <div class="input-group ">
                                                                     <input type="tel" class="form-control inputs" id="phone2" name="phone2" maxlength="20" required disabled>
-                                                                   @*  <select class="input-group-text select-style counterCode"
-                                                                            name="counterCode-phone2">
-                                                                        <option value="+966">+966</option>
-                                                                        <option value="+962">+962</option>
-                                                                        <option value="+20">+20</option>
+                                                                    @*  <select class="input-group-text select-style counterCode"
+                                                                    name="counterCode-phone2">
+                                                                    <option value="+966">+966</option>
+                                                                    <option value="+962">+962</option>
+                                                                    <option value="+20">+20</option>
                                                                     </select> *@
                                                                     @* <div class="invaild">
-                                                                        <div class="invalid-feedback">
-                                                                            الحقل مطلوب
-                                                                        </div>
+                                                                    <div class="invalid-feedback">
+                                                                    الحقل مطلوب
+                                                                    </div>
                                                                     </div> *@
                                                                 </div>
                                                             </div>
@@ -340,36 +340,36 @@
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-md-10">
-                                                                
+
                                                                 <div class="input-group ">
                                                                     <p id="statusMessage"></p>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                       @*  <div class="row">
-                                                            <div class="col-md-10">
-                                                                <label for="API-Token-whatsapp"
-                                                                       class="form-label">
-                                                                    رمز واجهة برمجة التطبيقات
-                                                                </label>
-                                                                <input type="text"
-                                                                       id="API-Token-whatsapp"
-                                                                       class="form-control inputs"
-                                                                       name="API-Token-whatsapp"
-                                                                       maxlength="100" required>
-                                                                <div class="invaild">
-                                                                    <div class="invalid-feedback">
-                                                                        الحقل مطلوب
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                        @*  <div class="row">
+                                                        <div class="col-md-10">
+                                                        <label for="API-Token-whatsapp"
+                                                        class="form-label">
+                                                        رمز واجهة برمجة التطبيقات
+                                                        </label>
+                                                        <input type="text"
+                                                        id="API-Token-whatsapp"
+                                                        class="form-control inputs"
+                                                        name="API-Token-whatsapp"
+                                                        maxlength="100" required>
+                                                        <div class="invaild">
+                                                        <div class="invalid-feedback">
+                                                        الحقل مطلوب
+                                                        </div>
+                                                        </div>
+                                                        </div>
                                                         </div> *@
                                                     </div>
                                                     <div class="col-lg-5 d-flex flex-column text-center" style="min-height: 190px;">
                                                         <!-- منطقة QR Code -->
                                                         <div class="d-flex align-items-center justify-content-center h-100" id="QRArea">
                                                             @* <button class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                                                                <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                            <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
                                                             </button> *@
                                                             <!-- رسالة انتهاء الصلاحية -->
                                                         </div>
@@ -388,9 +388,9 @@
                                                         <div></div>
                                                         </div> *@
                                                         @* <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
-                                                            <img src="/MasSystem/images/done.svg" style="width: 50px;">
-                                                            <p>أنت متصل بالواتساب </p>
-                                                            <button class="btn cut-connect-btn" type="button">قطع الاتصال </button>
+                                                        <img src="/MasSystem/images/done.svg" style="width: 50px;">
+                                                        <p>أنت متصل بالواتساب </p>
+                                                        <button class="btn cut-connect-btn" type="button">قطع الاتصال </button>
                                                         </div> *@
                                                     </div>
                                                 </div>
@@ -417,6 +417,7 @@
         $(document).ready(async () => {
             // استدعاء دالة التحقق عند تحميل الصفحة
             await checkClientConnectionWithUI();
+            await setIntervalForChecklessorDisconnect();
         });
         const companyId = "0000"; // معرف الشركة
         const qrCodeTimeout = 30000; // صلاحية QR Code (30 ثانية)
@@ -569,12 +570,12 @@
             $('#QRArea').empty();
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').append(`
-                <div class="col-auto d-flex flex-column justify-content-center align-items-center">
-                    <div id="QRCode"></div>
-                    <br>
-                    <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
-                </div>
-            `);
+                                                                <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+                                                                    <div id="QRCode"></div>
+                                                                    <br>
+                                                                    <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
+                                                                </div>
+                                                            `);
             $('#QRCode').qrcode(qr);
         }
 
@@ -582,33 +583,33 @@
             $('#QRArea').empty();
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').append(`
-                <div class="col-auto d-flex gap-4 flex-column justify-content-center align-items-center"
-                     style="cursor:pointer;" id="ExpiredQRMessage" onclick="fetchQrCode()">
-                    <img src="/MasSystem/images/NotScannedQR.svg" alt="Expired QR">
-                    <p>انتهت صلاحية الرمز اضغط لإعادة التحميل</p>
-                </div>
-            `);
+                                                                <div class="col-auto d-flex gap-4 flex-column justify-content-center align-items-center"
+                                                                     style="cursor:pointer;" id="ExpiredQRMessage" onclick="fetchQrCode()">
+                                                                    <img src="/MasSystem/images/NotScannedQR.svg" alt="Expired QR">
+                                                                    <p>انتهت صلاحية الرمز اضغط لإعادة التحميل</p>
+                                                                </div>
+                                                            `);
         }
 
         function showQrButton() {
             $('#QRArea').empty();
             $('#QRArea').append(`
-                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                </button>
-            `);
+                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                </button>
+                                                            `);
         }
 
         function showClientConnected(name, mobile, deviceType) {
             $("#data-check-whatsup").css("background-color", "green");
             $('#QRArea').empty();
             $('#QRArea').append(`
-                <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
-                    <img src="/MasSystem/images/done.svg" style="width: 50px;">
-                    <p>أنت متصل بالواتساب</p>
-                    <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
-                </div>
-            `);
+                                                                <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
+                                                                    <img src="/MasSystem/images/done.svg" style="width: 50px;">
+                                                                    <p>أنت متصل بالواتساب</p>
+                                                                    <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
+                                                                </div>
+                                                            `);
             $("#DeviceName-whatsapp").val(name);
             $("#DeviceNameType-whatsapp").val(deviceType);
             $("#phone2").val(mobile);
@@ -624,11 +625,11 @@
         function showFailureMessage(message) {
             $('#QRArea').empty();
             $('#QRArea').append(`
-                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                </button>
-                <p>${message}</p>
-            `);
+                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                </button>
+                                                                <p>${message}</p>
+                                                            `);
         }
 
         function clearClientInfo() {
@@ -640,11 +641,11 @@
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').empty();
             $('#QRArea').append(`
-                        <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                </button>
-                <p>${message}</p>
-            `);
+                                                                        <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                </button>
+                                                                <p>${message}</p>
+                                                            `);
         }
 
 
@@ -677,5 +678,33 @@
                 });
             });
         });
+
+
+        async function CheckLessorIsConnect() {
+            const url = "/MAS/TechnicalConnectivity/CheckLessorIsConnected";
+            try {
+                const response = await fetch(url); // استدعاء API
+                const result = await response.json(); // قراءة محتوى الرد
+                console.log("Response result:", result); // طباعة حالة HTTP
+                return result;
+            } catch (error) {
+                console.log("حدث خطأ أثناء التحقق من الاتصال: " + error.message);
+            }
+        }
+
+        async function setIntervalForChecklessorDisconnect() {
+            // نفذ الدالة لأول مرة
+            var result = await CheckLessorIsConnect();
+            if (result.status && result.message == "3") {
+                await checkClientConnectionWithUI();
+                clearClientInfo();
+                showSuccessMessage("تم قطع الاتصال من خلال الواتساب");
+            }
+            // بعد الانتهاء من تنفيذ الدالة، استدعيها مرة أخرى
+            setTimeout(() => {
+                setIntervalForChecklessorDisconnect(); // استدعاء الدالة مرة أخرى
+            }, 10000); // فاصل زمني 0 يعني مباشرة بعد الانتهاء
+        }
+
     </script>
 }
