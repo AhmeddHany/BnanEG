@@ -8,6 +8,10 @@ namespace Bnan.Ui.ViewModels.MAS
         public List<RenterContractVM> all_contractBasic = new List<RenterContractVM>();
         public List<CrMasLessorInformation> all_lessors = new List<CrMasLessorInformation>();
         public CrMasRenterInformation thisRenterData = new CrMasRenterInformation();
+        public List<CrMasRenterInformation> all_Renters = new List<CrMasRenterInformation>();
+        public List<CrCasAccountInvoice> all_Invoices = new List<CrCasAccountInvoice>();
+        public string start_Date { get; set; }
+        public string end_Date { get; set; }
         public string CrMasRenterInformationId { get; set; }
     }
 

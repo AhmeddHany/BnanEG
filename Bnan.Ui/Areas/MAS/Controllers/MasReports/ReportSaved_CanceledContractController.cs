@@ -114,8 +114,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 , includes: new string[] { "CrCasRenterContractBasicCarSerailNoNavigation" }
                 );
             var allRenters = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
-                //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: null,
+                predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
                 selectProjection: query => query.Select(x => new CrMasRenterInformation
                 {
                     CrMasRenterInformationId = x.CrMasRenterInformationId,
@@ -127,7 +126,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 );
 
             var allLessors = await _unitOfWork.CrMasLessorInformation.FindAllWithSelectAsNoTrackingAsync(
-                predicate: null,
+                predicate: x => x.CrMasLessorInformationStatus != Status.Deleted,
                 selectProjection: query => query.Select(x => new CrMasLessorInformation
                 {
                     CrMasLessorInformationCode = x.CrMasLessorInformationCode,
@@ -135,11 +134,25 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     CrMasLessorInformationEnShortName = x.CrMasLessorInformationEnShortName,
                 })
                 );
-           
+
+            var all_Invoices = await _unitOfWork.CrCasAccountInvoice.FindAllWithSelectAsNoTrackingAsync(
+                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                 predicate: null,
+                 selectProjection: query => query.Select(x => new list_String_4
+                 {
+                     id_key = x.CrCasAccountInvoiceReferenceContract,
+                     nameAr = x.CrCasAccountInvoiceArPdfFile,
+                     nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                     str4 = x.CrCasAccountInvoiceUserCode,
+                 })
+                 //,includes: new string[] { "" } 
+                 );
+
             listReportSaved_CanceledContractVM VM = new listReportSaved_CanceledContractVM();
             VM.all_RentersMas = allRenters;
             VM.all_lessors = allLessors;
             VM.all_contractBasic = all_RenterBasicContract;
+            VM.all_Invoices = all_Invoices;
             VM.start_Date = start.AddDays(1).ToString("yyyy-MM-dd");
             VM.end_Date = end.ToString("yyyy-MM-dd");
 
@@ -148,24 +161,15 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
 
         [HttpGet]
         //[Route("/MAS/ReportSaved_CanceledContract/GetContractsByStatus")]
-        public async Task<PartialViewResult> GetContractsByStatus(string start, string end)
+        public async Task<PartialViewResult> GetContractsByStatus(string status)
         {
-            //sidebar Saved_Canceled
-            if (start == "undefined-undefined-") start = "";
-            if (end == "undefined-undefined-") end = "";
-            if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
+            
+            if (!string.IsNullOrEmpty(status))
             {
-                start = DateTime.Now.AddMonths(-1).ToString("dd-MM-yyyy");
-                end = DateTime.Now.ToString("dd-MM-yyyy");
-            }
-            if (!string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
-            {
-                var start_Date = DateTime.Parse(start).AddDays(-1);
-                var end_Date = DateTime.Parse(end);
+
                 var AllContracts = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                     //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                    predicate: x => (x.CrCasRenterContractBasicStatus == Status.Update || x.CrCasRenterContractBasicStatus == Status.Cancel)
-                        && x.CrCasRenterContractBasicExpectedStartDate > start_Date && x.CrCasRenterContractBasicExpectedStartDate <= end_Date,
+                    predicate: x => (x.CrCasRenterContractBasicStatus == Status.Update || x.CrCasRenterContractBasicStatus == Status.Cancel),
                     selectProjection: query => query.Select(x => new ReportSaved_CanceledContractVM
                     {
                         CrCasRenterContractBasicNo = x.CrCasRenterContractBasicNo,
@@ -190,8 +194,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     , includes: new string[] { "CrCasRenterContractBasicCarSerailNoNavigation" }
                     );
                 var allRenters = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
-                    //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                    predicate: null,
+                    predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
                     selectProjection: query => query.Select(x => new CrMasRenterInformation
                     {
                         CrMasRenterInformationId = x.CrMasRenterInformationId,
@@ -203,7 +206,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     );
 
                 var allLessors = await _unitOfWork.CrMasLessorInformation.FindAllWithSelectAsNoTrackingAsync(
-                    predicate: null,
+                    predicate: x => x.CrMasLessorInformationStatus != Status.Deleted,
                     selectProjection: query => query.Select(x => new CrMasLessorInformation
                     {
                         CrMasLessorInformationCode = x.CrMasLessorInformationCode,
@@ -211,12 +214,33 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                         CrMasLessorInformationEnShortName = x.CrMasLessorInformationEnShortName,
                     })
                     );
+                var all_Invoices = await _unitOfWork.CrCasAccountInvoice.FindAllWithSelectAsNoTrackingAsync(
+                    //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                    predicate: null,
+                    selectProjection: query => query.Select(x => new list_String_4
+                    {
+                        id_key = x.CrCasAccountInvoiceReferenceContract,
+                        nameAr = x.CrCasAccountInvoiceArPdfFile,
+                        nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                        str4 = x.CrCasAccountInvoiceUserCode,
+                    })
+                    //,includes: new string[] { "" } 
+                    );
+
                 listReportSaved_CanceledContractVM VM = new listReportSaved_CanceledContractVM();
                 VM.all_RentersMas = allRenters;
                 VM.all_lessors = allLessors;
+                VM.all_Invoices = all_Invoices;
 
+                if (status == Status.All)
+                {
+                    var FilterAll = AllContracts;
+                    VM.all_contractBasic = FilterAll;
+                    return PartialView("_DataTableReportSaved_CanceledContract", VM);
+                }
+                var FilterByStatus = AllContracts.FindAll(x => x.CrCasRenterContractBasicStatus == status);
 
-                VM.all_contractBasic = AllContracts;
+                VM.all_contractBasic = FilterByStatus;
                 return PartialView("_DataTableReportSaved_CanceledContract", VM);
             }
             listReportSaved_CanceledContractVM VM2 = new listReportSaved_CanceledContractVM();

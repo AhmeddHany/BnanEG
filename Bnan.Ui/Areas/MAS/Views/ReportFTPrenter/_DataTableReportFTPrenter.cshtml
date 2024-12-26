@@ -1,0 +1,85 @@
+﻿
+
+@using Bnan.Core.Extensions
+@model listReportFTPrenterVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["FTR_Count_Receipt_Exchanges"]</th>
+            <th>@localizer["FTR_Count_Receipt_Bonds"]</th>
+            <th>@localizer["FTR_All_Total_Money_Transaction"]</th>
+            <th>@localizer["FTR_Reserved_Balance"]</th>
+            <th>@localizer["FTR_Avilable_Balance"]</th>
+            <th>@localizer["FTR_Balance"]</th>
+            <th class="DifferAlign"> @localizer["the_Renter"]  </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var no = 1;
+        }
+        @foreach (var item in Model.all_Rentersinfo)
+        {
+
+            //var LastDate = item.CrCasRenterLessorDateLastContractual;
+
+            <tr onclick="location.href='@Url.Action("Edit", "ReportFTPrenter", new { id = item.CrCasRenterLessorId})'">
+
+                <td>
+                    <div class="row">
+                        <div class="col-12">@(Model.all_exchanges?.Find(x => x.Column?.ToString().Trim() == item.CrCasRenterLessorId.Trim())?.RowCount.ToString("N0") ?? "0")</div>
+                    </div>
+                </td>
+                <td>
+                    @(Model.all_bonds?.Find(x => x.Column?.ToString().Trim() == item.CrCasRenterLessorId.Trim())?.RowCount.ToString("N0") ?? "0")
+                </td>
+
+                <td>
+                    <p>@item.CrCasRenterLessorContractTradedAmount?.ToString("N2")</p>
+                </td>
+                <td>
+                    <p>@item.CrCasRenterLessorReservedBalance?.ToString("N2")</p>
+                </td>
+                <td>
+                    <p>@item.CrCasRenterLessorAvailableBalance?.ToString("N2")</p>
+                </td>
+                <td>
+                    <p>@item.CrCasRenterLessorBalance?.ToString("N2")</p>
+                </td>
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+                    <td class="DifferAlign">
+                        <p class="FirstLineP">@item.Renter_En</p>
+                        <p class="secondLineP">@item.CrCasRenterLessorId</p>
+                    </td>
+                }
+                else
+                {
+                    <td class="DifferAlign">
+                        <p class="FirstLineP">@item.Renter_Ar</p>
+                        <p class="secondLineP">@item.CrCasRenterLessorId</p>
+                    </td>
+                }
+                
+                <td>
+                    @no
+                </td>
+
+                
+                
+            </tr>
+            no++;
+        }
+
+    </tbody>
+
+</table>

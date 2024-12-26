@@ -12,6 +12,8 @@ namespace Bnan.Ui.ViewModels.MAS
         public List<ReportClosedContractVM> all_contractBasic = new List<ReportClosedContractVM>();
         public List<CrMasLessorInformation> all_lessors = new List<CrMasLessorInformation>();
         public List<CrMasRenterInformation> all_RentersMas = new List<CrMasRenterInformation>();
+        public List<list_String_4> all_Invoices = new List<list_String_4>();
+        
         public string? start_Date { get; set; }
         public string? end_Date { get; set; }
 

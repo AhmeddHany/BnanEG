@@ -9,7 +9,7 @@
 @using Microsoft.EntityFrameworkCore;
 @using Microsoft.Extensions.Options;
 @using System.Globalization;
-@model CasStatisticLayoutMAS_VM
+@model MasStatistics_RentersVM
 @inject UserManager<CrMasUserInformation> userManager
 @inject SignInManager<CrMasUserInformation> signinManager
 @inject IViewLocalizer localizer
@@ -21,278 +21,556 @@
     ViewData["Page-Hint"] = @localizer["RenterStatistics Hint"];
 }
     
-
-    <style>
-        .noti-icon-badge {
-            display: inline-block;
-            position: absolute;
-            top: 22px;
-            right: 6px;
-            border-radius: 50%;
-            height: 7px;
-            width: 7px;
-            background-color: #fa5c7c;
-        }
-
-        .alert {
-            color: #fff;
-            background-color: #FF992E;
-            flex-direction: row-reverse;
-            font-size: .7rem;
-            font-weight: 600;
-            margin-bottom: 0;
-            border: 1px solid #4e73df;
-            padding: 0.5rem 0.6rem;
-        }
-
-        .dropdown-item-custom {
-            display: flex;
-            flex-direction: row-reverse;
-            /*padding-bottom: 0.5rem;*/
-            border-bottom: 1px solid #e3e6f0;
-            border-color:#74D9EB;
-            font-size: .9rem;
-            flex-direction: row-reverse;
-        }
-        
-        .ended-Docs-Num {
-            color: red;
-        }
-
-        .Not-ended-Docs-Num {
-            color: #FF992E;
-        }
-    </style>
-
-
-    @*/////////////////////////////*@
-<style>
-    body {
-        overflow: hidden
-    }
-
-    @@media (max-width: 600px) {
-        #basic-datatable1_wrapper .row:first-child > div {
-            text-align: left;
-            overflow: scroll;
-            text-overflow: ellipsis;
-        }
-
-            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
-                text-align: right;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-    }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f9f9f9;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-
-    #_Nc {
-        text-align: center;
-    }
-
-</style>
-
-
-
-<style>
-    .wrapper {
-        margin-bottom: 60px;
-        overflow: hidden;
-        background-image: url("~/Pictures/bg.jpg") !important;
-    }
-
-    .table-bordered td,
-    .table-bordered th {
-        border: none;
-    }
-</style>
-
-@if (requestCulture.RequestCulture.UICulture.Name == "en-US")
-{
-    <style>
-            .arrow {
-            background: linear-gradient( -125deg, transparent 22px, #0488C7 22px) top left, linear-gradient( -55deg, transparent 22px, #0488C7 22px ) bottom left;
-            background-size: 100% 50%;
-                background-repeat: no-repeat;
-            }
-
-        .btn1 {
-            margin: 8px auto;
-            flex-shrink: 0;
-            width: 660px;
-            height: 64px;
-            text-align: left;
-            padding-left: 100px;
-        }
-    </style>
-    <style>
-        .arrow:hover {
-            background: linear-gradient( -125deg, transparent 22px, #04AA6D 22px ) top left, linear-gradient( -55deg, transparent 22px, #04AA6D 22px) bottom left;
-            background-size: 100% 50%;
-            background-repeat: no-repeat;
-        }
-
-        .arrow:focus {
-            background: linear-gradient( -125deg, transparent 22px, #04AA6D 22px ) top left, linear-gradient( -55deg, transparent 22px, #04AA6D 22px) bottom left;
-            background-size: 100% 50%;
-            background-repeat: no-repeat;
-        }
-    </style>
-
-    }
-    else
-    {
-    <style>
-        .arrow {
-            background: linear-gradient( 125deg, transparent 22px, #0488C7 22px ) top left, linear-gradient( 55deg, transparent 22px, #0488C7 22px) bottom left;
-            background-size: 100% 50%;
-            background-repeat: no-repeat;  
-        }
-
-        .btn1 {
-            margin: 8px auto;
-            flex-shrink: 0;
-            width: 660px;
-            height: 64px;
-            text-align: right;
-            padding-right: 100px;
-        }
-    </style>
-    <style>
-        .arrow:hover {
-            background: linear-gradient( 125deg, transparent 22px, #04AA6D 22px ) top left, linear-gradient( 55deg, transparent 22px, #04AA6D 22px) bottom left;
-            background-size: 100% 50%;
-            background-repeat: no-repeat;
-        }
-
-        .arrow:focus {
-            background: linear-gradient( 125deg, transparent 22px, #04AA6D 22px ) top left, linear-gradient( 55deg, transparent 22px, #04AA6D 22px) bottom left;
-            background-size: 100% 50%;
-            background-repeat: no-repeat;
-        }
-    </style>
-    }
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-@*<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>*@
-@*<script type="text/javascript" src="jscript/graph.js"></script>*@
-
-<style>
-    .legend-item {
-        font-size: .7rem;
-        color: #000000;
-    }
-</style>
-
-
-<div class="sub-container" style="margin-top:-20px;">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div >
-                <div >
-                    <a type="button" class="btn btn-danger" title="@localizer["Back"]" asp-area="MAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
-
-
-
-                <div class="row" id="second-row-of-charts" style="display:flex;justify-content:0;justify-content: space-between;">
-
-
-                    <div class="" style="width:480px;">
-
-            <div style="margin-top:20px;">
-                <p class="form-label">@localizer["RenterStatistics_count_Renters"] <span style="margin-inline-start:15px;">@ViewBag.count_Renters</span></p>
-            </div>
-
-                <div style="display:flex;justify-content:start;gap:20px;">
-                    <div class="Branch" style="display:flex;gap:10px;margin-top:10px;height:40px">
-                        @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
-                        {
-                            <label for="brunch_name" style="padding-top:8px;width:75px;">@localizer["Company"]</label>
-                            @*<select class="text-right form-select" id="SelectedType" onchange="getSelectedType(this)"  style="width:150px;border-color:#74D9EB;border-radius:5px;">*@
-                            <select class="text-right form-select" id="SelectedCompany" onchange="getSelectedType('Companychanged')" style="width:135px;">
-                                @foreach (var single in Model.All_Lessors)
-                                {
-                                    <option id="@single.CrMasLessorInformationCode" value="@single.CrMasLessorInformationCode">@single.CrMasLessorInformationEnShortName</option>
-
-                                }
-                            </select>
-                        }
-                        else
-                        {
-                            <label for="brunch_name" style="padding-top:8px;width:55px;">@localizer["Company"]</label>
-                            @*<select class="text-right form-select" id="SelectedType" onchange="getSelectedType(this)"  style="width:150px;border-color:#74D9EB;border-radius:5px;">*@
-                            <select class="text-right form-select" id="SelectedCompany" onchange="getSelectedType('Companychanged')" style="width:135px;">
-                                @foreach (var single in Model.All_Lessors)
-                                {
-                                    <option id="@single.CrMasLessorInformationCode" value="@single.CrMasLessorInformationCode">@single.CrMasLessorInformationArShortName</option>
-
-                                }
-                            </select>
-                        }
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <div class="row g-3 my-3">
+                    <div class="col-md-12">
+                        <h3> إحصائيات المستأجرين </h3>
+                    </div>
+                    <div class="col-md-12 ">
+                        <p class="d-inline-block headLines">عدد المستأجرين : </p>
+                        <p class="d-inline-block Saved-data headLines">@(Model.Renters_Count?.ToString("0")??"0") مستأجر</p>
 
                     </div>
+                    <div class="col-md-12">
+                        <div class="row mt-3 g-2 justify-content-between">
+                            <div class="col-lg-3">
+                                <p class="headLines">بند المؤشر الإحصائي</p>
+                                <div class="row">
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn active-stat-btn"
+                                                onclick="handleButtonClick(this, NationalityChart)">
+                                            الجنسية
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, ProfessionChart)">
+                                            المهنة
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, AreaChart)">
+                                            المنطقة
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, CityChart)">
+                                            المدينة
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, AgeChart)">
+                                            العمر
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-9 text-center charts-border">
+                                <canvas id="myChart"></canvas>
 
-                    <div class="Branch" style="display:flex;gap:10px;margin-top:10px;height:40px">
-                        @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
-                        {
-                             <label for="brunch_name" style="padding-top:8px;width:95px;">@localizer["CarStatistics_Type"]</label>
-                        }
-                        else
-                        {
-                             <label for="brunch_name" style="padding-top:8px;width:140px;">@localizer["CarStatistics_Type"]</label>
-                        }
-                        <select class="text-right form-select" id="SelectedType" onchange="getSelectedType(this)"  style="width:135px;">
-                            <option id="0" value="0">@localizer["RenterStatistics_Nationality"]</option>
-                            <option id="1" value="1">@localizer["RenterStatistics_MemperShip"]</option>
-                            <option id="2" value="2">@localizer["RenterStatistics_profession"]</option>
-                            <option id="3" value="3">@localizer["RenterStatistics_Rigon"]</option>
-                            <option id="4" value="4">@localizer["RenterStatistics_City"]</option>
-                            <option id="5" value="5">@localizer["RenterStatistics_Age"]</option>
-                            <option id="6" value="6">@localizer["RenterStatistics_Traded"]</option>
-                            <option id="7" value="7">@localizer["RenterStatistics_Dealing_Mechanism"]</option>
-                            @*<option id="8" value="8">@localizer["RenterStatistics_Status"]</option>*@
-                        </select>                                
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
-
-                    @*<div class="partial" style="width:460px;margin-top:10px;">
-                        <partial name="_PartialDatatable" />
-                    </div>*@
-
-                </div>
-
-
-
-                <div class="partial row" style="width:1070px;margin-top:75px">
-                    <partial name="_PartialChartData" />
-                </div>
-
-
-        </div>
             </div>
         </div>
+        <a href="~/MasSystem/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="العودة الي الرئيسية"
+           class="new-Page-icon"><img src="~/MasSystem/images/back to main.svg" alt="man"></a>
     </div>
 </div>
 
 
 
 
-
 @section Scripts {
+
+
+    <!--- @*<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>*@ --->
+    <script src="~/MasSystem/js/chart.js"></script>
+            
+<!---@*    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="~/MasSystem/scripts/Scripts.js"></script>>*@--->
+    <script>
+        window.addEventListener('load', function () {
+            NationalityChart()
+        })
+    </script>
+
+    <script>
+        let chartInstance = null;
+
+        //function handleButtonClick(button, chartFunction) {
+        //    document.querySelectorAll('.stat-btn').forEach(btn => btn.classList.remove('active-stat-btn'));
+
+        //    button.classList.add('active-stat-btn');
+
+        //    chartFunction();
+        //}
+        function createChart(chartType, chartData, chartOptions) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: chartType,
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+        function NationalityChart() {
+            var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));
+            //console.log(paymentMethodsBranchData);
+            var labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+
+            var dataValues = paymentMethodsBranchData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('polarArea', {
+                //labels: ['سعودي', 'مصري', 'أخرى'],
+                labels: labelsBranch,
+                datasets: [{
+                    //data: [345, 71, 169],
+                    data: dataValues,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+
+                    ],
+                    borderColor: [
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                scales: {
+                    r: {
+                        pointLabels: {
+                            display: true,
+                            centerPointLabels: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'left',
+                        labels: {
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'المؤشر الإحصائي لجنسيات المستأجرين',
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                }
+            });
+        }
+
+        function ProfessionChart() {
+            createChart('scatter', {
+                datasets: [
+                    {
+                        data: [{ x: 'إداري', y: 5 }],
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: 'ممرض', y: 10 }],
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: 'فني', y: 5 }],
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: 'محاضر', y: 12 }],
+                        backgroundColor: 'rgba(255, 206, 86, 0.6)',
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: 'مهندس', y: 7 }],
+                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: 'طبيب', y: 7 }],
+                        backgroundColor: '#F1F2F3',
+                        borderColor: '#C9CBCF',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: 'مدرس', y: 7 }],
+                        backgroundColor: '#FFCC99',
+                        borderColor: '#FF9F40',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: 'أعمال حرة', y: 8 }],
+                        backgroundColor: '#B3C2E5',
+                        borderColor: '#4B6EC0',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: 'عسكري', y: 10 }],
+                        backgroundColor: '#B4E4C8',
+                        borderColor: '#62C88C',
+                        pointRadius: 5
+                    }
+                    ,
+                    {
+                        data: [{ x: 'طالب', y: 5 }],
+                        backgroundColor: '#FF999B',
+                        borderColor: '#FF1515',
+                        pointRadius: 5
+                    }
+                    ,
+                    {
+                        data: [{ x: 'متقاعد', y: 4 }],
+                        backgroundColor: '#CCCCCC',
+                        borderColor: '#8C8C8C',
+                        pointRadius: 5
+                    }
+                    ,
+                    {
+                        data: [{ x: 'أخرى', y: 2 }],
+                        backgroundColor: '#DAA1F7',
+                        borderColor: '#A413EC',
+                        pointRadius: 5
+                    }
+                ]
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                    x: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    },
+                    y: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'المؤشر الإحصائي لمهن المستأجرين',
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        labels: ['إداري', 'ممرض', 'فني', 'محاضر', 'مهندس', 'طبيب', 'مدرس', 'أعمال حرة', 'عسكري', 'طالب', 'متقاعد', 'أخرى'],
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+        function AreaChart() {
+            createChart('bar', {
+                labels: ['الشرقية', 'الرياض ', 'مكة المكرمة', 'القصيم ', 'المدينة المنورة', 'غير متوفرة', 'أخرى'],
+                datasets: [{
+                    barThickness: 40,
+                    minBarLength: 2,
+                    data: [15, 20, 30, 60, 90, 10, 4],
+                    backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99', '#F1F2F3'],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+                        '#C9CBCF',
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'المؤشر الإحصائي لمناطق المستأجرين',
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        function CityChart() {
+            createChart('bar', {
+                labels: ['الدمام', 'الرياض', 'مكة المكرمة', 'بريدة', 'المدينة المنورة', 'أخرى'],
+                datasets: [{
+                    barThickness: 40,
+                    minBarLength: 2,
+                    data: [15, 20, 30, 60, 90, 10],
+                    backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99'],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'المؤشر الإحصائي لمدن المستأجرين',
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        function AgeChart() {
+            createChart('scatter', {
+                datasets: [
+                    {
+                        data: [{ x: 'أقل من 20', y: 5 }],
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: '25 - 21', y: 10 }],
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: '30 - 26', y: 5 }],
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: '35 - 31', y: 12 }],
+                        backgroundColor: 'rgba(255, 206, 86, 0.6)',
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: '40 - 36', y: 7 }],
+                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: '50 - 41', y: 7 }],
+                        backgroundColor: '#F1F2F3',
+                        borderColor: '#C9CBCF',
+                        pointRadius: 5
+                    },
+                    {
+                        data: [{ x: '60 - 51', y: 7 }],
+                        backgroundColor: '#FFCC99',
+                        borderColor: '#FF9F40',
+                        pointRadius: 5
+                    },
+
+                    {
+                        data: [{ x: 'أعلى من 60', y: 10 }],
+                        backgroundColor: '#B4E4C8',
+                        borderColor: '#62C88C',
+                        pointRadius: 5
+                    }
+
+                ]
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'المؤشر الإحصائي لأعمار المستأجرين',
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        labels: ['أقل من 20', '25 - 21', '30 - 26', '35 - 31', '40 - 36', '50 - 41', '60 - 51', 'أعلى من 60'],
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+
+    </script>
+
+    <!--Charts-->
+    <!--Charts-->
+    <!--Charts-->
+    <!--Charts-->
     <!--Charts-->
 
     <script>
@@ -394,7 +672,7 @@
         });
 
     </script>*@
-
+@*
     <script>
         //onchange="getSelectedType(this)"
         function getSelectedType(selectObject) {
@@ -480,6 +758,6 @@
                 console.log(usingArrayFrom.indexOf(single));
         });
     </script>
-    
+    *@
 }
 

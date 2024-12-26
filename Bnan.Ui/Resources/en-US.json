@@ -32,6 +32,7 @@
     "Expiered_status_n": "Expiered",
     "Closed_status_n": "Closed",
     "Canceled_status_n": "Canceled",
+    "Saved_status_n": "Saved",
     "Country_s": "classification",
     "Classification_s": "classification",
     "img_drop_orChoose": "Drag and drop an image or choose",
@@ -427,12 +428,17 @@
     "LastContract_s": "Last Contract",
     "ContractCount_s": "Contract Count",
     "RentalDay_s": "Rental Days",
+    "RentalDay_sss": "Days Count",
     "KilometersCut_s": "Kilometers Count",
+    "Currentmeeters_s": "Current Meters",
     "expectedValue_n": "Expected Value",
     "Paid_Value_n": "Paid Value",
     "the_Car_and_Renter": "Renter & Car",
     "RenterContract_Data": "Renter's Contracts",
+    "CarContract_Data": "Car's Contracts",
     "RenterContract_one_Data": "Renter's Contracts Data",
+    "ReportCarContract_one_Data": "Details Data of Car's Contracts",
+
 
     // Mas Renter Contract
     "ReportActiveContract_Data": "Existing Contracts",
@@ -440,6 +446,7 @@
     "ReportSaved_CanceledContract_Data": "Saved & Canceled Contracts",
     "the_Contract_n": "Contract",
     "the_Invoice_n": "Invoice",
+    "the_TGA_n": "Unified Contract",
     "the_KM_Cut_n": "Kilo Meters Cut",
     "the_DaysCount_n": "Rental Days",
     "the_Rental_Value_n": "Rental Value",
@@ -496,6 +503,141 @@
     "Add RenterInformation Data": "Add Renter Information",
     "Edit RenterInformation Hint": "The page allows you to modify Renter Information data.",
     "Edit RenterInformation Data": "modify Renter Information",
+
+
+    //FinancialTransactionOfRenter --------
+    "FinancialTransactionOfRenter Data": "Financial Transaction Of The Renter",
+    "Edit FinancialTransactionOfRenter Data": "Details of Financial Transaction Of The Renter",
+
+    //FinancialTransactionOfSalesPoint --------
+    "FinancialTransactionOfSalesPoint Data": "Financial Transaction Of The Sales Point",
+    "Edit FinancialTransactionOfSalesPoint Data": "Details of Financial Transaction Of The Sales Point",
+
+    //FinancialTransactionOfEmployee --------
+    "FinancialTransactionOfEmployee Data": "Financial Transaction Of The Employee",
+    "Edit FinancialTransactionOfEmployee Data": "Details of Financial Transaction Of The Employee",
+
+
+    //CarStatistics --------
+    "CarStatistics Hint": "This page allows you to display Statistics of Cars",
+    "CarStatistics Data": "Statistics of Cars",
+    "Edit CarStatistics Data": "Details of Statistics of Cars",
+    "Edit CarStatistics Hint": "this page allows you to Display Details of Statistics of Cars",
+
+    "CarStatistics_Status": "Status",
+    "CarStatistics_Branches": "Branches",
+    "CarStatistics_Brand": "Brand",
+    "CarStatistics_year": "Made year",
+    "CarStatistics_Category": "Category",
+    "CarStatistics_count_Cars": "Cars Count",
+    "CarStatistics_Model": "Model",
+    "CarStatistics_City": "City",
+    "CarStatistics_Rigon": "Rigon",
+
+    "CarStatistics_Type": "Statistics By",
+    "CarStatistics_ID": "ID",
+    "CarStatistics_Name": "Name",
+    "CarStatistics_Count": "Count",
+    "CarStatistics_Percentage": "Percentage",
+
+    "CarContractStatistics_ContractCount": "Count of Car Contracts",
+
+    "RenterContractStatistics_ContractCount": "Count of Renter Contracts",
+
+    "ContractStatistics_ContractCount": "Contracts Count",
+    "Owner_one_New": "Owner",
+    "Rate_New_N": "Rate",
+    "AllDaysCount_New": "All Days Count",
+    "AllKM_Count_New": "All KMs Count",
+    "KM_Count_New": "KM Traveled",
+    "Days_Count_New": "Days Count",
+    "KM_New": "KM",
+    "Days_New": "Days",
+    "proforma_Invoice_New": "proforma",
+    "taxation_Invoice_New": "taxation",
+    "Contract_pdf_New": "The Contract",
+
+
+
+    "Exist_contract_Branch": "Branch",
+    "Exist_contract_StartDate": "Start",
+    "Exist_contract_EndDate_expected": "Expected End",
+    "Exist_contract_DayCount": "Days",
+    "Exist_contract_Expected_Value": "Expected Value",
+    "Exist_contract_Paid_value": "Paid value",
+    "Exist_contract_User_proceduer": "Contract proceduer",
+    "Exist_contract_Invoice": "The Invoice",
+    /////////
+    "Closed_contract_Branch": "Branch",
+    "Closed_contract_StartDate": "Start",
+    "Closed_contract_EndDate_actuly": "End",
+    "Closed_contract_EndDate_actuly_new": "Close Date",
+
+    "Closed_contract_DayCount": "Days Count",
+    "Closed_contract_Actuly_Value": "Actuly Value",
+    "Closed_contract_Paid_value": "Paid",
+    "Closed_contract_expenses": "expenses",
+    "Closed_contract_compensation": "compensation",
+    "Closed_contract_Remain_value": "Remain",
+    "Closed_contract_User_proceduer": "Contract Closer",
+    "Closed_contract_Invoice": "The Invoice",
+
+    //CarContractStatistics --------
+    "CarContractStatistics Hint": "This page allows you to display Statistics of Car Contracts",
+    "CarContractStatistics Data": "Statistics of ٌCar Contracts",
+
+    //RenterContractStatistics --------
+    "RenterContractStatistics Hint": "This page allows you to display Statistics of Renter Contracts",
+    "RenterContractStatistics Data": "Statistics of ٌRenter Contracts",
+
+    "RenterStatistics_Nationality": "Nationality",
+    "RenterStatistics_MemperShip": "MemperShip",
+    "RenterStatistics_profession": "profession",
+    "RenterStatistics_Rigon": "Rigon",
+    "RenterStatistics_City": "City",
+    "RenterStatistics_Age": "Age",
+    "RenterStatistics_Traded": "group of traded amounts",
+    "RenterStatistics_Dealing_Mechanism": "Rate",
+    "RenterStatistics_Status": "Renter Status",
+
+    "RenterStatistics_count_Renters": "Renters Count",
+    "RenterStatistics_Type": "Statistics By",
+
+    "ContractStatistics_Branch": "Branches",
+    "ContractStatistics_Day_Create": "Days",
+    "ContractStatistics_Time_Create": "Time",
+    "ContractStatistics_Day_Count": "contract period",
+    "ContractStatistics_Value_No": "Value",
+    "ContractStatistics_KM": "Kilo Meters",
+    "ContractStatistics_Days": "Days",
+    "ContractStatistics_Hmonth_Create": "Hijri Months",
+    "ContractStatistics_Gmonth_Create": "Gregorian Months",
+
+    "FTR_CurrentBalance": "Current Balance",
+    "FTR_TotalCreditor": "Total Creditor",
+    "FTR_TotalDebitor": "Total Debitor",
+    "FTR_Serial_No": "Serial No",
+    "FTR_Serial_No_n": "Serial",
+    "FTR_bond_pdf_n": "bond",
+    "FTR_lessor_n": "Lessor",
+    "FTR_Date_Issue": "Issue Date",
+    "FTR_Reference_Type": "Reference",
+    "FTR_PaymentMethod": "Payment Method",
+
+    "FTR_Creditor": "Creditor",
+    "FTR_Debtor": "Debtor",
+    "FTR_previuos_Balance": "previuos Balance",
+    "FTR_User_Transector": "User Transector",
+    "FTR_User_Transector_new": "User Transector",
+
+    "FTR_Reasons": "Reasons",
+    "FTR_Id": "ID",
+    "FTR_Balance": "Balance",
+    "FTR_Avilable_Balance": "Avilable Balance",
+    "FTR_Reserved_Balance": "Reserved Balance",
+    "FTR_All_Total_Money_Transaction": "Money Transaction",
+    "FTR_Count_Receipt_Bonds": "Receipt Bonds",
+    "FTR_Count_Receipt_Exchanges": "Receipt Exchanges",
 
     // MAS Users
     "Add_User_PageTitle": "Add Employee",
@@ -896,6 +1038,8 @@
   "FinancialTransactionOfRenter": "Financial Transaction Of Renter",
   "FinancialTransactionOfSalesPoint": "Financial Transaction Of SalesPoint",
   "FinancialTransactionOfEmployees": "Financial Transaction Of Employees",
+  "Financial TransactionOfEmployee": "Financial Transaction Of Employees",
+  "Financial TransactionOfRenters": "Financial Transaction Of Renters",
   "Contracts Report": "Contracts",
   "Financial Transaction Of Renter": "Financial Transaction Of Renter",
   "Financial Transaction Of Sales Point": "Financial Transaction Of Sales Point",
@@ -1576,89 +1720,6 @@
   "Edit RenterBalances Hint": "this page allows you to Display Details of Renter Debts",
 
 
-  //FinancialTransactionOfRenter --------
-  "FinancialTransactionOfRenter Hint": "This page allows you to search, display The Renters assets ,and enter The Detailed Report of The Renter",
-  "FinancialTransactionOfRenter Data": "Financial Transaction Of The Renter",
-  "Edit FinancialTransactionOfRenter Data": "Details of Financial Transaction Of The Renter",
-  "Edit FinancialTransactionOfRenter Hint": "this page allows you to Display Details of Financial Transaction Of The Renter",
-
-  //FinancialTransactionOfSalesPoint --------
-  "FinancialTransactionOfSalesPoint Hint": "This page allows you to search, display The Sales Points assets ,and enter The Detailed Report of The Sales Point",
-  "FinancialTransactionOfSalesPoint Data": "Financial Transaction Of The Sales Point",
-  "Edit FinancialTransactionOfSalesPoint Data": "Details of Financial Transaction Of The Sales Point",
-  "Edit FinancialTransactionOfSalesPoint Hint": "this page allows you to Display Details of Financial Transaction Of The Sales Point",
-
-  //FinancialTransactionOfEmployee --------
-  "FinancialTransactionOfEmployee Hint": "This page allows you to search, display The Employees assets ,and enter The Detailed Report of The Employee",
-  "FinancialTransactionOfEmployee Data": "Financial Transaction Of The Employee",
-  "Edit FinancialTransactionOfEmployee Data": "Details of Financial Transaction Of The Employee",
-  "Edit FinancialTransactionOfEmployee Hint": "this page allows you to Display Details of Financial Transaction Of The Employee",
-
-
-  //CarStatistics --------
-  "CarStatistics Hint": "This page allows you to display Statistics of Cars",
-  "CarStatistics Data": "Statistics of Cars",
-  "Edit CarStatistics Data": "Details of Statistics of Cars",
-  "Edit CarStatistics Hint": "this page allows you to Display Details of Statistics of Cars",
-
-  "CarStatistics_Status": "Status",
-  "CarStatistics_Branches": "Branches",
-  "CarStatistics_Brand": "Brand",
-  "CarStatistics_year": "Made year",
-  "CarStatistics_Category": "Category",
-  "CarStatistics_count_Cars": "Cars Count",
-  "CarStatistics_Model": "Model",
-  "CarStatistics_City": "City",
-  "CarStatistics_Rigon": "Rigon",
-
-  "CarStatistics_Type": "Statistics By",
-  "CarStatistics_ID": "ID",
-  "CarStatistics_Name": "Name",
-  "CarStatistics_Count": "Count",
-  "CarStatistics_Percentage": "Percentage",
-
-  "CarContractStatistics_ContractCount": "Count of Car Contracts",
-
-  "RenterContractStatistics_ContractCount": "Count of Renter Contracts",
-
-  "ContractStatistics_ContractCount": "Contracts Count",
-  "Owner_one_New": "Owner",
-  "Rate_New_N": "Rate",
-  "AllDaysCount_New": "All Days Count",
-  "AllKM_Count_New": "All KMs Count",
-  "KM_Count_New": "KM Traveled",
-  "Days_Count_New": "Days Count",
-  "KM_New": "KM",
-  "Days_New": "Days",
-  "proforma_Invoice_New": "proforma",
-  "taxation_Invoice_New": "taxation",
-  "Contract_pdf_New": "The Contract",
-
-
-
-  "Exist_contract_Branch": "Branch",
-  "Exist_contract_StartDate": "Start",
-  "Exist_contract_EndDate_expected": "Expected End",
-  "Exist_contract_DayCount": "Days",
-  "Exist_contract_Expected_Value": "Expected Value",
-  "Exist_contract_Paid_value": "Paid value",
-  "Exist_contract_User_proceduer": "Contract proceduer",
-  "Exist_contract_Invoice": "The Invoice",
-  /////////
-  "Closed_contract_Branch": "Branch",
-  "Closed_contract_StartDate": "Start",
-  "Closed_contract_EndDate_actuly": "End",
-  "Closed_contract_EndDate_actuly_new": "Close Date",
-
-  "Closed_contract_DayCount": "Days Count",
-  "Closed_contract_Actuly_Value": "Actuly Value",
-  "Closed_contract_Paid_value": "Paid",
-  "Closed_contract_expenses": "expenses",
-  "Closed_contract_compensation": "compensation",
-  "Closed_contract_Remain_value": "Remain",
-  "Closed_contract_User_proceduer": "Contract Closer",
-  "Closed_contract_Invoice": "The Invoice",
-
   //RenterStatistics --------
   "RenterStatistics Hint": "This page allows you to display Statistics of Renters",
   "RenterStatistics Data": "Statistics of ٌRenters",
@@ -1667,59 +1728,7 @@
   "ContractStatistics Hint": "This page allows you to display Statistics of The Contracts",
   "ContractStatistics Data": "Statistics of ٌThe Contracts",
 
-  //CarContractStatistics --------
-  "CarContractStatistics Hint": "This page allows you to display Statistics of Car Contracts",
-  "CarContractStatistics Data": "Statistics of ٌCar Contracts",
-
-  //RenterContractStatistics --------
-  "RenterContractStatistics Hint": "This page allows you to display Statistics of Renter Contracts",
-  "RenterContractStatistics Data": "Statistics of ٌRenter Contracts",
-
-  "RenterStatistics_Nationality": "Nationality",
-  "RenterStatistics_MemperShip": "MemperShip",
-  "RenterStatistics_profession": "profession",
-  "RenterStatistics_Rigon": "Rigon",
-  "RenterStatistics_City": "City",
-  "RenterStatistics_Age": "Age",
-  "RenterStatistics_Traded": "group of traded amounts",
-  "RenterStatistics_Dealing_Mechanism": "Rate",
-  "RenterStatistics_Status": "Renter Status",
-
-  "RenterStatistics_count_Renters": "Renters Count",
-  "RenterStatistics_Type": "Statistics By",
-
-  "ContractStatistics_Branch": "Branches",
-  "ContractStatistics_Day_Create": "Days",
-  "ContractStatistics_Time_Create": "Time",
-  "ContractStatistics_Day_Count": "contract period",
-  "ContractStatistics_Value_No": "Value",
-  "ContractStatistics_KM": "Kilo Meters",
-  "ContractStatistics_Days": "Days",
-  "ContractStatistics_Hmonth_Create": "Hijri Months",
-  "ContractStatistics_Gmonth_Create": "Gregorian Months",
-
-  "FTR_CurrentBalance": "Current Balance",
-  "FTR_TotalCreditor": "Total Creditor",
-  "FTR_TotalDebitor": "Total Debitor",
-  "FTR_Serial_No": "Serial No",
-  "FTR_Date_Issue": "Issue Date",
-  "FTR_Reference_Type": "Reference",
-  "FTR_PaymentMethod": "Payment Method",
-
-  "FTR_Creditor": "Creditor",
-  "FTR_Debtor": "Debtor",
-  "FTR_previuos_Balance": "previuos Balance",
-  "FTR_User_Transector": "User Transector",
-  "FTR_User_Transector_new": "User Transector",
-
-  "FTR_Reasons": "Reasons",
-  "FTR_Id": "ID",
-  "FTR_Balance": "Balance",
-  "FTR_Avilable_Balance": "Avilable Balance",
-  "FTR_Reserved_Balance": "Reserved Balance",
-  "FTR_All_Total_Money_Transaction": "Money Transaction",
-  "FTR_Count_Receipt_Bonds": "Receipt Bonds",
-  "FTR_Count_Receipt_Exchanges": "Receipt Exchanges",
+ 
 
 
   "DriverContractId": "Driver No",
@@ -2990,7 +2999,7 @@
     "AddDriverValue": "AddDriver Value",
     "PrivateDriverValue": "Private Driver Value",
     "DelegationValue": "Delegation Value",
-    "Unifiedcontract": "Unified contract",
+    "Unifiedcontract": "Rental contract",
     "Shemos": "Shemos",
     "UploadRenterSignture": "Upload Renter Signture",
     "AcceptSignture": "Accept",

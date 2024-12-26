@@ -191,17 +191,18 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     {
                         Authorization = true,
                         Title = _localizer["Leased Car Contracts"],
-                        Url = Url.Action("FailedMessageReport_NoData", "CarContract", new { area = "MAS" })
+                        Url = Url.Action("Index", "ReportCarContract", new { area = "MAS" })
                     });
                 }
+                
 
                 if (userInfo.CrMasUserSubValidations.Any(l => l.CrMasUserSubValidationSubTasks == "1104006" && l.CrMasUserSubValidationAuthorization == true))
                 {
                     reportsMenu.SubItems.Add(new SidebarMenuItem
                     {
                         Authorization = true,
-                        Title = _localizer["Shomos System Contracts"],
-                        Url = "#"
+                        Title = _localizer["Financial TransactionOfEmployee"],
+                        Url = Url.Action("Index", "ReportFTPemployee", new { area = "MAS" })
                     });
                 }
 
@@ -210,11 +211,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers.ViewComponents
                     reportsMenu.SubItems.Add(new SidebarMenuItem
                     {
                         Authorization = true,
-                        Title = _localizer["Rental System Contracts"],
-                        Url = "#"
+                        Title = _localizer["Financial TransactionOfRenters"],
+                        Url = Url.Action("Index", "ReportFTPrenter", new { area = "MAS" })
                     });
                 }
-
+                
                 sidebarMenu.Add(reportsMenu);
             }
 

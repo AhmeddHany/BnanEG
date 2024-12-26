@@ -1,122 +1,117 @@
 ﻿
 
+@using Bnan.Ui.ViewModels.MAS
 @using Bnan.Core.Extensions
-@* @model IEnumerable<CrMasRenterInformation>
-*@
-@model listReportActiveContractVM
+@model listReportCarContractVM
 @inject IViewLocalizer localizer
-@inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
-    ViewData["Page-title"] = @localizer["RenterInformations Data"];
-    ViewData["Page-Hint"] = @localizer["RenterInformations Hint"];
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
-<style>
 
-    /* العنصر الذي سيتم محاذاته */
-    .LoaderRun_Center_div {
-        width: 1900px;
-        height: 850px;
-        /*background-color: #3498db;*/
-        text-align: center;
-        /*color: white;*/
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position:fixed;
-        z-index: 4;
-    }
-</style>
-
-@*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
-
-<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
-    <div class="content LoaderRun_Center_div">
-        <div class="loader"></div>
-    </div>
-<div class="col d-flex align-items-center justify-content-center" style=" z-index:2;">
-    <div class="container main-container">
-        <form action="">
-            <div class="row g-3 mb-3">
-                <div class="col">
-                        <h3> @localizer["ReportActiveContract_Data"]  </h3>
-                </div>
-                <div class="row g-2">
+@{
+    ViewData["Page-title"] = localizer["Edit RenterInformations Data"];
+    ViewData["Page-Hint"] = localizer["Edit RenterInformations Hint"];
+}
 
 
-                    <div class="col-lg-8">
-                        <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
-                            <div class="col-xl-4 d-flex  gap-3 align-items-center">
-                                <label for="start_date">@localizer["From_n"]</label>
-                                <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required>
-                            </div>
-                            <div class="col-xl-4 d-flex  gap-3 align-items-center">
-                                <label for="end_date">@localizer["To_n"]</label>
-                                    <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required>
-                                @*<input type="text" class="form-control inputs custom-date-input" id="end_date" name="end_date" required="" autocomplete="off">*@
-
-                            </div>
-
-                                <button type="button" id="btn_view" name="btn_view" class="btn btn-standard">@localizer["View_n"]</button>
-                        </div>
-                    </div>
-                    <div class="col-md-8 col-lg-4 search-input-col">
-                        <div class="form-outline w-100" data-mdb-input-init>
-                            <span class="fa fa-search"></span>
-                            <input type="search" id="search2" class="form-control inputs search-input"  aria-label="Search" autofocus autocomplete="off" />
-                        </div>
-                    </div>
-                    <div class="col-12 filters-col">
-                        <div class="filters-custom-order">
-
-                                <label class="form-check-label" for="All">@localizer["All_n"]</label>
-                            <input class="form-check-input custom" type="radio" name="customRadio" id="All"
-                                   value="All" checked />
-                        </div>
-                        <div class="filters-custom-order">
-
-                                <label class="form-check-label filter2" for="@Status.Active" style="color:green">@localizer["Existing_status_n"]</label>
-                            <input class="form-check-input custom" type="radio" name="customRadio" id="@Status.Active"
-                                   value="@Status.Active" />
-                        </div>
-
-                        <div class="filters-custom-order">
-
-                            <label class="form-check-label  filter3" for="@Status.Expire">@localizer["Expiered_status_n"]</label>
-                            <input class="form-check-input custom" type="radio" name="customRadio" id="@Status.Expire"
-                                       value="@Status.Expire" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="col d-flex align-items-center justify-content-center">
+    <input hidden asp-for="CrCasRenterContractBasicCarSerailNo" id="CrCasRenterContractBasicCarSerailNo00" />
+                    <div class="container main-container">
+                    <form action="" >
+                            <div class="row g-3 ">
+                                <div class="col">
+                                    <div class="row g-3 my-2">  
+                                        <div class="col-md-6">
+                                        <h3>@localizer["ReportCarContract_one_Data"]</h3>
+                                    </div>
+                                    <div class="col-md-6 save-col">
+                            <a href="/MAS/ReportCarContract/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a>
+                                    </div>
+                                  </div>
+                                </div>
+                              <div class="row gap-lg-3 g-2">
+                                 
+                                    <h5 class="subtitle">@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.all_contractBasic?.FirstOrDefault()?.CarEnName : Model.all_contractBasic?.FirstOrDefault()?.CarArName)   <div class="CarColor" style="background: #636C14;"></div>                                   
+                                    </h5> 
+                                    <div class="col-lg-12 col-xl-8">
+                                        <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
+                                            <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                                <label for="start-date">@localizer["From_n"]</label>
+                                                <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required>
+                                            </div>
+                                          <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                           <label for="end-date">@localizer["To_n"]</label>
+                                           <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required>
+                                          </div>
+                                           
+                                            <button type="button" id="btn_view" name="btn_view" class="btn btn-standard">@localizer["View_n"]</button>
+                                        </div>
+                                    </div>
+                    
 
             <div class="row table-row px-3">
-                <div class="col  scroll-table-div filter-search-reportTable table-responsive-sm w-100 dataTable">
-                    <partial name="_DataTableReportActiveContract" />
+                <div class="dataTable22">
+                    <partial name="_EditpartDataTableReportCarContract" />
                 </div>
             </div>
         </form>
-        <a href="~/MasSystem/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
-           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="new-Page-icon">
-            <img src="~/MasSystem/images/back to main.svg" alt="man">
-        </a>
-    </div>
+
     </div>
 </div>
-@*////////////////////////////*@@*////////////////////////////*@@*////////////////////////////*@
-@*////////////////////////////*@@*////////////////////////////*@@*////////////////////////////*@
 
 
+<!-- signature modal -->
+<div class="modal fade" id="signature-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered d-flex justify-content-center">
+        <div class="modal-content signature-modal-content p-3">
+            <div class="modal-body Signature-modal-body">
+                <div class="SignatureCard">
+                    <div class="image-main-container" id="removeSignatureImg"></div>
+                    <div class="upload-container">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/MasSystem/images/signature/save.svg" class="w-100" id="save">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/MasSystem/images/signature/Frame.svg" class="w-100" id="clear">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/MasSystem/images/signature/file-signature_9795523 1.svg"
+                                 class="w-100" id="WriteSignature">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/MasSystem/images/signature/Pic.svg" class="w-100"
+                                 id="UploadSigntaurePic">
+                            <input type="file" id="imageUpload" accept="image/*"
+                                   style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-    @section Scripts{
+
+
+@section Scripts{
     <!-- تحميل مكتبة jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- تحميل مكتبة DataTables -->
     <script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 
-@*    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    @*    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
     // تهيئة flatpickr مع التنسيق المطلوب
     flatpickr("#start_date", {
@@ -128,15 +123,15 @@
     });
 </script>*@
 
-<script>
+    <script>
         $(document).ready(function () {
             $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
             $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
 
             // لجعل الحالة حسب ما هي جاية من index نشط او الكل
-            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+            //$("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
             $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
-                        
+
             //var today = new Date();
             //$("#start_date").datepicker({
             //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
@@ -147,7 +142,7 @@
             //    maxDate: today,
             //});
 
- 
+
             ///////
             // تهيئة DataTable
             var table2 = $('#Table').DataTable({
@@ -157,7 +152,7 @@
             end_init_ShowDatatable();
         });
 
-        function end_init_ShowDatatable(){
+        function end_init_ShowDatatable() {
             $(".LoaderRun_Center_div").css("display", "none");
             $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
             //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
@@ -208,25 +203,26 @@
             searchRows();
         });
 
-</script>
+    </script>
     <script>
-        //get ReportActiveContract By Status function
-        function GetContractsByStatusFitler(status, start, end) {
+        //get ReportCarContract By Status function
+        function GetContractsByStatusFitler(start, end) {
+            var id = $("#CrCasRenterContractBasicCarSerailNo00").val();
             $.ajax({
                 type: "GET",
                 data: {
-                    status: status, start: start, end: end
+                    id:id, start: start, end: end
                 },
-                url: "@Url.Action("GetContractsByStatus", "ReportActiveContract", new { Area = "MAS" })",
+                url: "@Url.Action("GetContractsByStatus", "ReportCarContract", new { Area = "MAS" })",
                 success: function (response) {
                     $(".LoaderRun_Center_div").css("display", "none");
-                    $(".dataTable").html(response);
+                    $(".dataTable22").html(response);
                 },
             })
         }
 
         $("input[name='customRadio']").on("click", function () {
-            const status = $(this).val();
+            //const status = $(this).val();
             const start = $("#start_date").val(); // الحصول على قيمة البداية
             const end = $("#end_date").val(); // الحصول على قيمة النهاية
 
@@ -238,15 +234,15 @@
             //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
             //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
             //var end = formattedDate2;// الحصول على قيمة النهاية
-            
+
             $(".LoaderRun_Center_div").css("display", "flex");
-            $("#search2").val("");
-            GetContractsByStatusFitler(status, start, end);
+            //$("#search2").val("");
+            GetContractsByStatusFitler(start, end);
         });
 
         // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
         $("#btn_view").on("click", function () {
-            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+            //const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
             const start = $("#start_date").val(); // الحصول على قيمة البداية
             const end = $("#end_date").val(); // الحصول على قيمة النهاية
 
@@ -258,10 +254,10 @@
             //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
             //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
             //var end = formattedDate2;// الحصول على قيمة النهاية
-            
+
             $(".LoaderRun_Center_div").css("display", "flex");
-            $("#search2").val("");
-            GetContractsByStatusFitler(status, start, end);
+            //$("#search2").val("");
+            GetContractsByStatusFitler(start, end);
         });
     </script>
 }
