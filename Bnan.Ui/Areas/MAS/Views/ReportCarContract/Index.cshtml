@@ -3,7 +3,7 @@
 @using Bnan.Core.Extensions
 @* @model IEnumerable<CrMasRenterInformation>
 *@
-@model listReportActiveContractVM
+@model listReportCarContractVM
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
@@ -40,60 +40,23 @@
         <form action="">
             <div class="row g-3 mb-3">
                 <div class="col">
-                        <h3> @localizer["ReportActiveContract_Data"]  </h3>
+                        <h3> @localizer["CarContract_Data"]  </h3>
                 </div>
                 <div class="row g-2">
 
-
-                    <div class="col-lg-8">
-                        <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
-                            <div class="col-xl-4 d-flex  gap-3 align-items-center">
-                                <label for="start_date">@localizer["From_n"]</label>
-                                <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required>
-                            </div>
-                            <div class="col-xl-4 d-flex  gap-3 align-items-center">
-                                <label for="end_date">@localizer["To_n"]</label>
-                                    <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required>
-                                @*<input type="text" class="form-control inputs custom-date-input" id="end_date" name="end_date" required="" autocomplete="off">*@
-
-                            </div>
-
-                                <button type="button" id="btn_view" name="btn_view" class="btn btn-standard">@localizer["View_n"]</button>
-                        </div>
-                    </div>
                     <div class="col-md-8 col-lg-4 search-input-col">
                         <div class="form-outline w-100" data-mdb-input-init>
                             <span class="fa fa-search"></span>
                             <input type="search" id="search2" class="form-control inputs search-input"  aria-label="Search" autofocus autocomplete="off" />
                         </div>
                     </div>
-                    <div class="col-12 filters-col">
-                        <div class="filters-custom-order">
 
-                                <label class="form-check-label" for="All">@localizer["All_n"]</label>
-                            <input class="form-check-input custom" type="radio" name="customRadio" id="All"
-                                   value="All" checked />
-                        </div>
-                        <div class="filters-custom-order">
-
-                                <label class="form-check-label filter2" for="@Status.Active" style="color:green">@localizer["Existing_status_n"]</label>
-                            <input class="form-check-input custom" type="radio" name="customRadio" id="@Status.Active"
-                                   value="@Status.Active" />
-                        </div>
-
-                        <div class="filters-custom-order">
-
-                            <label class="form-check-label  filter3" for="@Status.Expire">@localizer["Expiered_status_n"]</label>
-                            <input class="form-check-input custom" type="radio" name="customRadio" id="@Status.Expire"
-                                       value="@Status.Expire" />
-                        </div>
-                    </div>
                 </div>
             </div>
 
             <div class="row table-row px-3">
                 <div class="col  scroll-table-div filter-search-reportTable table-responsive-sm w-100 dataTable">
-                    <partial name="_DataTableReportActiveContract" />
+                    <partial name="_DataTableReportCarContract" />
                 </div>
             </div>
         </form>
@@ -130,11 +93,11 @@
 
 <script>
         $(document).ready(function () {
-            $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
-            $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
+            //$("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
+            //$("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
 
             // لجعل الحالة حسب ما هي جاية من index نشط او الكل
-            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+            //$("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
             $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
                         
             //var today = new Date();
@@ -210,14 +173,14 @@
 
 </script>
     <script>
-        //get ReportActiveContract By Status function
+        //get ReportCarContract By Status function
         function GetContractsByStatusFitler(status, start, end) {
             $.ajax({
                 type: "GET",
                 data: {
                     status: status, start: start, end: end
                 },
-                url: "@Url.Action("GetContractsByStatus", "ReportActiveContract", new { Area = "MAS" })",
+                url: "@Url.Action("GetContractsByStatus", "ReportCarContract", new { Area = "MAS" })",
                 success: function (response) {
                     $(".LoaderRun_Center_div").css("display", "none");
                     $(".dataTable").html(response);

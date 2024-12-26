@@ -32,6 +32,7 @@
     "Expiered_status_n": "منتهي",
     "Closed_status_n": "مغلق",
     "Canceled_status_n": "ملغي",
+    "Saved_status_n": "محفوظ",
     "Classification_s": "التصنيف",
     "img_drop_orChoose": "قم بسحب وإسقاط صورة أو اختر صورة",
     "Count_renters": "عدد المستأجرين",
@@ -466,25 +467,135 @@
     "LastContract_s": "اخر عقد",
     "ContractCount_s": "عدد العقود",
     "RentalDay_s": "ايام التأجير",
+    "RentalDay_sss": "عدد الأيام",
     "KilometersCut_s": "عدد الكيلوات",
+    "Currentmeeters_s": "القراءة الحالية",
     "expectedValue_n": "القيمة المتوقعة",
     "Paid_Value_n": "المبلغ المدفوع",
     "the_Car_and_Renter": "المستأجر والسيارة",
     "RenterContract_Data": "عقود المستأجرين",
+    "CarContract_Data": "عقود السيارات",
     "RenterContract_one_Data": "بيانات عقود المستأجرين",
-
+    "ReportCarContract_one_Data": "البيانات التفصيلية لعقود السيارات",
     // Mas Renter Contract
     "ReportActiveContract_Data": "العقود القائمة",
     "ReportClosedContract_Data": "العقود المغلقة",
     "ReportSaved_CanceledContract_Data": "العقود المحفوظة والملغاه",
     "the_Contract_n": "العقد",
     "the_Invoice_n": "الفاتورة",
+    "the_TGA_n": "عقد تأجير",
     "the_KM_Cut_n": "الكيلوات المقطوعة",
     "the_DaysCount_n": "أيام التأجير",
     "the_Rental_Value_n": "قيمة العقد",
     "the_Car_n": "السيارة",
     "the_Lessor_n": "الشركة",
 
+
+
+    //FinancialTransactionOfRenter --------
+    "FinancialTransactionOfRenter Data": "الحركة المالية للمستأجرين",
+    "Edit FinancialTransactionOfRenter Data": "البيانات التفصيلية للحركة المالية لمستأجر",
+
+    //FinancialTransactionOfSalesPoint --------
+    "FinancialTransactionOfSalesPoint Data": "الحركة المالية لنقاط البيع",
+    "Edit FinancialTransactionOfSalesPoint Data": "البيانات التفصيلية للحركة المالية لنقطة البيع",
+
+    //FinancialTransactionOfEmployee --------
+    "FinancialTransactionOfEmployee Data": "الحركة المالية للموظفين",
+    "Edit FinancialTransactionOfEmployee Data": "البيانات التفصيلية للحركة المالية للموظف",
+
+
+    //CarStatistics --------
+    "CarStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية للسيارات",
+    "CarStatistics Data": "مؤشر إحصائيات السيارات",
+    "Edit CarStatistics Data": "البيانات التفصيلية للمؤشرات الإحصائية للسيارات",
+    "Edit CarStatistics Hint": "تمكنك الصفحة من الإطلاع على تفاصيل المؤشرات الإحصائية للسيارات",
+
+    "CarStatistics_Status": "الحالة",
+    "CarStatistics_Branches": "الفروع",
+    "CarStatistics_Brand": "الماركة",
+    "CarStatistics_year": "سنة الصنع",
+    "CarStatistics_Category": "الفئة",
+    "CarStatistics_count_Cars": "عدد السيارات",
+    "CarStatistics_Model": "الطراز",
+    "CarStatistics_City": "المدينة",
+    "CarStatistics_Rigon": "المنطقة",
+
+    //"CarStatistics_Type": "توزيع السيارات حسب",
+    "CarStatistics_Type": "المؤشر الإحصائي حسب",
+    "CarStatistics_ID": "المعرف",
+    "CarStatistics_Name": "الأسم",
+    "CarStatistics_Count": "العدد",
+    "CarStatistics_Percentage": "النسبة",
+
+    "CarContractStatistics_ContractCount": "عدد عقود السيارات",
+
+    "RenterContractStatistics_ContractCount": "عدد عقود المستأجرين",
+    "Owner_one_New": "المالك",
+    "ContractStatistics_ContractCount": "عدد العقود",
+    //RenterStatistics --------
+    "RenterStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية للمستأجرين",
+    "RenterStatistics Data": "مؤشر إحصائيات المستأجرين",
+
+    //ContractStatistics --------
+    "ContractStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية للعقود",
+    "ContractStatistics Data": "مؤشر إحصائيات العقود",
+
+    //CarContractStatistics --------
+    "CarContractStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية لعقود السيارات",
+    "CarContractStatistics Data": "مؤشر إحصائيات عقود السيارات",
+
+    //RenterContractStatistics --------
+    "RenterContractStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية لعقود المستأجرين",
+    "RenterContractStatistics Data": "مؤشر إحصائيات عقود المستأجرين",
+
+    "RenterStatistics_Nationality": "الجنسية",
+    "RenterStatistics_MemperShip": "العضوية",
+    "RenterStatistics_profession": "المهنة",
+    "RenterStatistics_Rigon": "المنطقة",
+    "RenterStatistics_City": "المدينة",
+    "RenterStatistics_Age": "العمر",
+    "RenterStatistics_Traded": "فئة المبالغ المتداولة",
+    "RenterStatistics_Dealing_Mechanism": "التقييم",
+    "RenterStatistics_Status": "حالة المستأجر",
+
+    "RenterStatistics_count_Renters": "عدد المستأجرين",
+    //"RenterStatistics_Type": "توزيع المستأجرين حسب",
+    "RenterStatistics_Type": "المؤشر الإحصائي حسب",
+
+    "ContractStatistics_Branch": "الفروع",
+    "ContractStatistics_Day_Create": "الأيام",
+    "ContractStatistics_Time_Create": "الوقت",
+    "ContractStatistics_Day_Count": "مدة العقد",
+    "ContractStatistics_Value_No": "القيمة",
+    "ContractStatistics_KM": "المسافة المقطوعة",
+    "ContractStatistics_Days": "الأيام",
+    "ContractStatistics_Hmonth_Create": "الأشهر الهجرية",
+    "ContractStatistics_Gmonth_Create": "الأشهر الميلادية",
+
+    "FTR_CurrentBalance": "الرصيد الحالي",
+    "FTR_TotalCreditor": "مجموع الدائن",
+    "FTR_TotalDebitor": "مجموع المدين",
+    "FTR_Serial_No": "رقم القيد",
+    "FTR_Serial_No_n": "القيد",
+    "FTR_bond_pdf_n": "السند",
+    "FTR_Date_Issue": "تاريخ القيد",
+    "FTR_Reference_Type": "المرجع",
+    "FTR_lessor_n": "الشركة",
+    "FTR_PaymentMethod": "طريقة الدفع",
+    "FTR_Creditor": "دائن",
+    "FTR_Debtor": "مدين",
+    "FTR_previuos_Balance": "الرصيد السابق",
+    "FTR_User_Transector": "الموظف",
+    "FTR_User_Transector_new": "منفذ العملية",
+    "FTR_Reasons": "الملاحظات",
+    "FTR_Id": "الهوية",
+    "FTR_Balance": "الرصيد",
+    "FTR_Avilable_Balance": "الرصيد المتاح",
+    "FTR_Reserved_Balance": "الرصيد المحجوز",
+    "FTR_All_Total_Money_Transaction": "المبالغ المتداولة",
+    "FTR_Count_Receipt_Bonds": "سندات القبض",
+    "FTR_Count_Receipt_Exchanges": "سندات الصرف",
 
     //RenterInformations------
     "RenterInformations Hint": "تمكنك هذه الصفحة من عرض والبحث عن بيانات المستأجرين والدخول الى البيانات التفصيلية للمستأجر",
@@ -1027,6 +1138,8 @@
   "Leased Car Contracts": "عقود السيارات المؤجرة",
   "Shomos System Contracts": "عقود نظام شموس",
   "Rental System Contracts": "عقود نظام تأجير",
+  "Financial TransactionOfEmployee": "الحركة المالية للموظفين",
+  "Financial TransactionOfRenters": "الحركة المالية للمستأجرين",
   "Tenant Statistics": "إحصائيات المستأجرين",
   "Car Statistics": "إحصائيات السيارات",
   "Contract Statisticss": "إحصائيات العقود",
@@ -1617,115 +1730,6 @@
   "Edit RenterBalances Hint": "تمكنك هذه الصفحة من البحث والإطلاع على تفاصيل مديونات المستأجرين",
 
 
-
-  //FinancialTransactionOfRenter --------
-  "FinancialTransactionOfRenter Hint": "تمكنك الصفحة من البحث وعرض ارصدة المستأجرين والدخول على التقرير التفصيلي للمستأجر",
-  "FinancialTransactionOfRenter Data": "الحركة المالية للمستأجرين",
-
-  "Edit FinancialTransactionOfRenter Data": "البيانات التفصيلية للحركة المالية لمستأجر",
-  "Edit FinancialTransactionOfRenter Hint": "تمكنك هذه الصفحة من البحث والإطلاع على تفاصيل القيود لمستأجر",
-
-  //FinancialTransactionOfSalesPoint --------
-  "FinancialTransactionOfSalesPoint Hint": "تمكنك الصفحة من البحث وعرض ارصدة نقاط البيع والدخول على التقرير التفصيلي لنقطة البيع",
-  "FinancialTransactionOfSalesPoint Data": "الحركة المالية لنقاط البيع",
-  "Edit FinancialTransactionOfSalesPoint Data": "البيانات التفصيلية للحركة المالية لنقطة البيع",
-  "Edit FinancialTransactionOfSalesPoint Hint": "تمكنك هذه الصفحة من البحث والإطلاع على تفاصيل القيود لنقطة البيع",
-
-  //FinancialTransactionOfEmployee --------
-  "FinancialTransactionOfEmployee Hint": "تمكنك الصفحة من البحث وعرض ارصدة الموظفين والدخول على التقرير التفصيلي للموظف",
-  "FinancialTransactionOfEmployee Data": "الحركة المالية للموظفين",
-  "Edit FinancialTransactionOfEmployee Data": "البيانات التفصيلية للحركة المالية للموظف",
-  "Edit FinancialTransactionOfEmployee Hint": "تمكنك هذه الصفحة من البحث والإطلاع على تفاصيل القيود للموظف",
-
-
-  //CarStatistics --------
-  "CarStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية للسيارات",
-  "CarStatistics Data": "مؤشر إحصائيات السيارات",
-  "Edit CarStatistics Data": "البيانات التفصيلية للمؤشرات الإحصائية للسيارات",
-  "Edit CarStatistics Hint": "تمكنك الصفحة من الإطلاع على تفاصيل المؤشرات الإحصائية للسيارات",
-
-  "CarStatistics_Status": "الحالة",
-  "CarStatistics_Branches": "الفروع",
-  "CarStatistics_Brand": "الماركة",
-  "CarStatistics_year": "سنة الصنع",
-  "CarStatistics_Category": "الفئة",
-  "CarStatistics_count_Cars": "عدد السيارات",
-  "CarStatistics_Model": "الطراز",
-  "CarStatistics_City": "المدينة",
-  "CarStatistics_Rigon": "المنطقة",
-
-  //"CarStatistics_Type": "توزيع السيارات حسب",
-  "CarStatistics_Type": "المؤشر الإحصائي حسب",
-  "CarStatistics_ID": "المعرف",
-  "CarStatistics_Name": "الأسم",
-  "CarStatistics_Count": "العدد",
-  "CarStatistics_Percentage": "النسبة",
-
-  "CarContractStatistics_ContractCount": "عدد عقود السيارات",
-
-  "RenterContractStatistics_ContractCount": "عدد عقود المستأجرين",
-  "Owner_one_New": "المالك",
-  "ContractStatistics_ContractCount": "عدد العقود",
-  //RenterStatistics --------
-  "RenterStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية للمستأجرين",
-  "RenterStatistics Data": "مؤشر إحصائيات المستأجرين",
-
-  //ContractStatistics --------
-  "ContractStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية للعقود",
-  "ContractStatistics Data": "مؤشر إحصائيات العقود",
-
-  //CarContractStatistics --------
-  "CarContractStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية لعقود السيارات",
-  "CarContractStatistics Data": "مؤشر إحصائيات عقود السيارات",
-
-  //RenterContractStatistics --------
-  "RenterContractStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية لعقود المستأجرين",
-  "RenterContractStatistics Data": "مؤشر إحصائيات عقود المستأجرين",
-
-  "RenterStatistics_Nationality": "الجنسية",
-  "RenterStatistics_MemperShip": "العضوية",
-  "RenterStatistics_profession": "المهنة",
-  "RenterStatistics_Rigon": "المنطقة",
-  "RenterStatistics_City": "المدينة",
-  "RenterStatistics_Age": "العمر",
-  "RenterStatistics_Traded": "فئة المبالغ المتداولة",
-  "RenterStatistics_Dealing_Mechanism": "التقييم",
-  "RenterStatistics_Status": "حالة المستأجر",
-
-  "RenterStatistics_count_Renters": "عدد المستأجرين",
-  //"RenterStatistics_Type": "توزيع المستأجرين حسب",
-  "RenterStatistics_Type": "المؤشر الإحصائي حسب",
-
-  "ContractStatistics_Branch": "الفروع",
-  "ContractStatistics_Day_Create": "الأيام",
-  "ContractStatistics_Time_Create": "الوقت",
-  "ContractStatistics_Day_Count": "مدة العقد",
-  "ContractStatistics_Value_No": "القيمة",
-  "ContractStatistics_KM": "المسافة المقطوعة",
-  "ContractStatistics_Days": "الأيام",
-  "ContractStatistics_Hmonth_Create": "الأشهر الهجرية",
-  "ContractStatistics_Gmonth_Create": "الأشهر الميلادية",
-
-  "FTR_CurrentBalance": "الرصيد الحالي",
-  "FTR_TotalCreditor": "مجموع الدائن",
-  "FTR_TotalDebitor": "مجموع المدين",
-  "FTR_Serial_No": "رقم القيد",
-  "FTR_Date_Issue": "تاريخ القيد",
-  "FTR_Reference_Type": "المرجع",
-  "FTR_PaymentMethod": "طريقة الدفع",
-  "FTR_Creditor": "دائن",
-  "FTR_Debtor": "مدين",
-  "FTR_previuos_Balance": "الرصيد السابق",
-  "FTR_User_Transector": "الموظف",
-  "FTR_User_Transector_new": "منفذ العملية",
-  "FTR_Reasons": "الملاحظات",
-  "FTR_Id": "الهوية",
-  "FTR_Balance": "الرصيد",
-  "FTR_Avilable_Balance": "الرصيد المتاح",
-  "FTR_Reserved_Balance": "الرصيد المحجوز",
-  "FTR_All_Total_Money_Transaction": "المبالغ المتداولة",
-  "FTR_Count_Receipt_Bonds": "سندات القبض",
-  "FTR_Count_Receipt_Exchanges": "سندات الصرف",
 
 
   "DriverContractId": "رقم السائق",
@@ -2969,7 +2973,7 @@
     "AddDriverValue": "قيمة السائق الاضافي",
     "PrivateDriverValue": "قيمة السائق الخاص",
     "DelegationValue": "قيمة التفويض",
-    "Unifiedcontract": "العقد الموحد",
+    "Unifiedcontract": "عقد تأجير",
     "Shemos": "شموس",
     "UploadRenterSignture": "ارفق صورة التوقيع",
     "AcceptSignture": "قبول التوقيع",

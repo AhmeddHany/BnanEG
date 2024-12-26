@@ -87,6 +87,15 @@
         public static string MasReport9 { get; set; } = "1104009";
 
 
+        /////////
+        // Mas Statistics
+        public static string MasStatistics_Renters { get; set; } = "1105001";
+        public static string MasStatistics_Cars { get; set; } = "1105002";
+        public static string MasStatistics_Contracts { get; set; } = "1105003";
+        public static string MasStatistics_RenterContracts { get; set; } = "1105004";
+        public static string MasStatistics_CarContracts { get; set; } = "1105005";
+
+
 
     }
 }

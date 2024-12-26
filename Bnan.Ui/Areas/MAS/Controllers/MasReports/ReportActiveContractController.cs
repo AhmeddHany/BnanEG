@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
+using System;
 using System.Numerics;
 namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
 {
@@ -112,7 +113,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 );
             var allRenters = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: null,
+                predicate: x=>x.CrMasRenterInformationStatus != Status.Deleted,
                 selectProjection: query => query.Select(x => new CrMasRenterInformation
                 {
                     CrMasRenterInformationId = x.CrMasRenterInformationId,
@@ -124,13 +125,25 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 );
 
             var allLessors = await _unitOfWork.CrMasLessorInformation.FindAllWithSelectAsNoTrackingAsync(
-                predicate: null,
+                predicate: x => x.CrMasLessorInformationStatus != Status.Deleted,
                 selectProjection: query => query.Select(x => new CrMasLessorInformation
                 {
                     CrMasLessorInformationCode = x.CrMasLessorInformationCode,
                     CrMasLessorInformationArShortName = x.CrMasLessorInformationArShortName,
                     CrMasLessorInformationEnShortName = x.CrMasLessorInformationEnShortName,
                 })
+                );
+            var all_Invoices = await _unitOfWork.CrCasAccountInvoice.FindAllWithSelectAsNoTrackingAsync(
+            //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                predicate: null,
+                selectProjection: query => query.Select(x => new list_String_4
+                {
+                    id_key = x.CrCasAccountInvoiceReferenceContract,
+                    nameAr = x.CrCasAccountInvoiceArPdfFile,
+                    nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                    str4 = x.CrCasAccountInvoiceUserCode,
+                })
+                //,includes: new string[] { "" } 
                 );
 
             // If no active licenses, retrieve all licenses
@@ -169,6 +182,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             VM.all_RentersMas = allRenters;
             VM.all_lessors = allLessors;
             VM.all_contractBasic = all_RenterBasicContract;
+            VM.all_Invoices = all_Invoices;
             VM.start_Date = start.AddDays(1).ToString("yyyy-MM-dd");
             VM.end_Date = end.ToString("yyyy-MM-dd");
 
@@ -193,7 +207,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 var end_Date = DateTime.Parse(end);
                 var AllContracts = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                     //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                    predicate: x => x.CrCasRenterContractBasicExpectedStartDate > start_Date && x.CrCasRenterContractBasicExpectedStartDate <= end_Date,
+                    predicate: x => x.CrCasRenterContractBasicStatus !=Status.Deleted
+                    && x.CrCasRenterContractBasicExpectedStartDate > start_Date && x.CrCasRenterContractBasicExpectedStartDate <= end_Date,
                     selectProjection: query => query.Select(x => new ReportActiveContractVM
                     {
                         CrCasRenterContractBasicNo = x.CrCasRenterContractBasicNo,
@@ -215,8 +230,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     , includes: new string[] { "CrCasRenterContractBasicCarSerailNoNavigation" }
                     );
                 var allRenters = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
-                    //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                    predicate: null,
+                    predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
                     selectProjection: query => query.Select(x => new CrMasRenterInformation
                     {
                         CrMasRenterInformationId = x.CrMasRenterInformationId,
@@ -228,7 +242,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     );
 
                 var allLessors = await _unitOfWork.CrMasLessorInformation.FindAllWithSelectAsNoTrackingAsync(
-                    predicate: null,
+                    predicate: x => x.CrMasLessorInformationStatus != Status.Deleted,
                     selectProjection: query => query.Select(x => new CrMasLessorInformation
                     {
                         CrMasLessorInformationCode = x.CrMasLessorInformationCode,
@@ -236,9 +250,22 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                         CrMasLessorInformationEnShortName = x.CrMasLessorInformationEnShortName,
                     })
                     );
+                var all_Invoices = await _unitOfWork.CrCasAccountInvoice.FindAllWithSelectAsNoTrackingAsync(
+                    predicate: null,
+                    selectProjection: query => query.Select(x => new list_String_4
+                    {
+                        id_key = x.CrCasAccountInvoiceReferenceContract,
+                        nameAr = x.CrCasAccountInvoiceArPdfFile,
+                        nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                        str4 = x.CrCasAccountInvoiceUserCode,
+                    })
+                    //,includes: new string[] { "" } 
+                    );
+
                 listReportActiveContractVM VM = new listReportActiveContractVM();
                 VM.all_RentersMas = allRenters;
                 VM.all_lessors = allLessors;
+                VM.all_Invoices = all_Invoices;
 
                 if (status == Status.All)
                 {

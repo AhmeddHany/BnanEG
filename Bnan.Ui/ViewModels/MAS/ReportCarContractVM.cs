@@ -3,23 +3,80 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Bnan.Ui.ViewModels.MAS
 {
-    public class Date_ReportActiveContractVM
+    public class Date_ReportCarContractVM
     {
         public DateTime? dates { get; set; }
     }
-    public class listReportActiveContractVM
+    public class listReportCarContractVM
     {
-        public List<ReportActiveContractVM> all_contractBasic = new List<ReportActiveContractVM>();
+        public List<ReportCarContractVM> all_contractBasic = new List<ReportCarContractVM>();
+        public List<CarContractVM> all_CarContracts = new List<CarContractVM>();
         public List<CrMasLessorInformation> all_lessors = new List<CrMasLessorInformation>();
-        public List<CrMasRenterInformation> all_RentersMas = new List<CrMasRenterInformation>();
-        public List<list_String_4> all_Invoices = new List<list_String_4>();
-        
-        public string? start_Date { get; set; }
-        public string? end_Date { get; set; }
-
+        public List<CrMasRenterInformation> all_Renters = new List<CrMasRenterInformation>();
+        public List<CrCasAccountInvoice> all_Invoices = new List<CrCasAccountInvoice>();
+        public sumitionofClass_up_VM summition = new sumitionofClass_up_VM();
+        public string start_Date { get; set; }
+        public string end_Date { get; set; }
+        public string CrCasRenterContractBasicCarSerailNo { get; set; }
+    }
+    public class sumitionofClass_up_VM
+    {
+        public int? Days_Count { get; set; } = 0;
+        public decimal? km_Count { get; set; } = 0;
+        public int? Contracts_Count { get; set; } = 0;
+        public decimal? contract_Values_Total { get; set; } = 0;
     }
 
-    public class ReportActiveContractVM
+    public class CarContractVM
+    {
+        public string CrCasCarInformationSerailNo { get; set; } = null!;
+        public string? CrCasCarInformationLessor { get; set; }
+        //public string? CrCasCarInformationBranch { get; set; }
+        //public string? CrCasCarInformationLocation { get; set; }
+        //public string? CrCasCarInformationRegion { get; set; }
+        //public string? CrCasCarInformationCity { get; set; }
+        //public string? CrCasCarInformationOwner { get; set; }
+        //public string? CrCasCarInformationBeneficiary { get; set; }
+        //public string? CrCasCarInformationRegistration { get; set; }
+        //public string? CrCasCarInformationBrand { get; set; }
+        //public string? CrCasCarInformationModel { get; set; }
+        //public string? CrCasCarInformationCategory { get; set; }
+        //public string? CrCasCarInformationDistribution { get; set; }
+        //public string? CrCasCarInformationYear { get; set; }
+        //public string? CrCasCarInformationCustomsNo { get; set; }
+        //public string? CrCasCarInformationStructureNo { get; set; }
+        //public string? CrCasCarInformationMainColor { get; set; }
+        //public string? CrCasCarInformationSecondaryColor { get; set; }
+        //public string? CrCasCarInformationSeatColor { get; set; }
+        //public string? CrCasCarInformationFloorColor { get; set; }
+        //public string? CrCasCarInformationFuel { get; set; }
+        //public decimal? CrCasCarInformationFuelValue { get; set; }
+        //public string? CrCasCarInformationOil { get; set; }
+        //public string? CrCasCarInformationCvt { get; set; }
+        //public string? CrCasCarInformationPlateArNo { get; set; }
+        //public string? CrCasCarInformationPlateEnNo { get; set; }
+        public string? CrCasCarInformationConcatenateArName { get; set; }
+        public string? CrCasCarInformationConcatenateEnName { get; set; }
+        //public DateTime? CrCasCarInformationJoinedFleetDate { get; set; }
+        public int? CrCasCarInformationCurrentMeter { get; set; }
+        public DateTime? CrCasCarInformationLastContractDate { get; set; }
+        public int? CrCasCarInformationConractCount { get; set; }
+        public int? CrCasCarInformationConractDaysNo { get; set; }
+        //public DateTime? CrCasCarInformationOfferedSaleDate { get; set; }
+        //public decimal? CrCasCarInformationOfferValueSale { get; set; }
+        //public string? CrCasCarInformationLastPictures { get; set; }
+        //public DateTime? CrCasCarInformationSoldDate { get; set; }
+        //public string? CrCasCarInformationPriceNo { get; set; }
+        //public bool? CrCasCarInformationDocumentationStatus { get; set; }
+        public bool? CrCasCarInformationMaintenanceStatus { get; set; }
+        //public bool? CrCasCarInformationPriceStatus { get; set; }
+        //public string? CrCasCarInformationBranchStatus { get; set; }
+        //public string? CrCasCarInformationOwnerStatus { get; set; }
+        public string? CrCasCarInformationForSaleStatus { get; set; }
+        public string? CrCasCarInformationStatus { get; set; }
+        //public string? CrCasCarInformationReasons { get; set; }
+    }
+    public class ReportCarContractVM
     {
 
         public string CrMasRenterInformationId { get; set; } = null!;

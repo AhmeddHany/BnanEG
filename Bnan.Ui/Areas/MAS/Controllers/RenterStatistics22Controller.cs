@@ -23,7 +23,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
-    public class RenterStatisticsController : BaseController
+    public class RenterStatistics22Controller : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
         private readonly UserManager<CrMasUserInformation> userManager;
@@ -33,12 +33,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IFinancialTransactionOfRenter _CarContract;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IStringLocalizer<RenterStatisticsController> _localizer;
+        private readonly IStringLocalizer<RenterStatistics22Controller> _localizer;
 
 
-        public RenterStatisticsController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
+        public RenterStatistics22Controller(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IFinancialTransactionOfRenter CarContract,
-            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterStatisticsController> localizer) : base(userManager, unitOfWork, mapper)
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterStatistics22Controller> localizer) : base(userManager, unitOfWork, mapper)
         {
             this.userManager = userManager;
             this.unitOfWork = unitOfWork;
