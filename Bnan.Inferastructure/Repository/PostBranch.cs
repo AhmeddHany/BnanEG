@@ -93,10 +93,33 @@ namespace Bnan.Inferastructure.Repository
                 CrCasBranchPostUnitNo = crCasBranchPost.CrCasBranchPostUnitNo,
                 CrCasBranchPostZipCode = crCasBranchPost.CrCasBranchPostZipCode,
                 CrCasBranchPostAdditionalNumbers = crCasBranchPost.CrCasBranchPostAdditionalNumbers,
-                CrCasBranchPostArConcatenate = $"{City.CrMasSupPostCityConcatenateArName} - {crCasBranchPost.CrCasBranchPostArDistrict} - {crCasBranchPost.CrCasBranchPostArStreet} - {crCasBranchPost.CrCasBranchPostBuilding} - {crCasBranchPost.CrCasBranchPostUnitNo} - {crCasBranchPost.CrCasBranchPostZipCode} - {crCasBranchPost.CrCasBranchPostAdditionalNumbers}",
-                CrCasBranchPostEnConcatenate = $"{City.CrMasSupPostCityConcatenateEnName} - {crCasBranchPost.CrCasBranchPostEnDistrict} - {crCasBranchPost.CrCasBranchPostEnStreet} - {crCasBranchPost.CrCasBranchPostBuilding} - {crCasBranchPost.CrCasBranchPostUnitNo} - {crCasBranchPost.CrCasBranchPostZipCode} - {crCasBranchPost.CrCasBranchPostAdditionalNumbers}",
-                CrCasBranchPostArShortConcatenate = $"{City.CrMasSupPostCityConcatenateArName} - {crCasBranchPost.CrCasBranchPostArDistrict} - {crCasBranchPost.CrCasBranchPostArStreet}",
-                CrCasBranchPostEnShortConcatenate = $"{City.CrMasSupPostCityConcatenateEnName} - {crCasBranchPost.CrCasBranchPostEnDistrict} - {crCasBranchPost.CrCasBranchPostEnStreet}",
+                CrCasBranchPostArConcatenate =
+                                                $"{(string.IsNullOrEmpty(City.CrMasSupPostCityConcatenateArName) ? "" : City.CrMasSupPostCityConcatenateArName + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostArDistrict) ? "" : crCasBranchPost.CrCasBranchPostArDistrict + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostArStreet) ? "" : crCasBranchPost.CrCasBranchPostArStreet + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostBuilding) ? "" : crCasBranchPost.CrCasBranchPostBuilding + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostUnitNo) ? "" : crCasBranchPost.CrCasBranchPostUnitNo + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostZipCode) ? "" : crCasBranchPost.CrCasBranchPostZipCode + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostAdditionalNumbers) ? "" : crCasBranchPost.CrCasBranchPostAdditionalNumbers)}",
+
+                CrCasBranchPostEnConcatenate =
+                                                $"{(string.IsNullOrEmpty(City.CrMasSupPostCityConcatenateEnName) ? "" : City.CrMasSupPostCityConcatenateEnName + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostEnDistrict) ? "" : crCasBranchPost.CrCasBranchPostEnDistrict + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostEnStreet) ? "" : crCasBranchPost.CrCasBranchPostEnStreet + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostBuilding) ? "" : crCasBranchPost.CrCasBranchPostBuilding + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostUnitNo) ? "" : crCasBranchPost.CrCasBranchPostUnitNo + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostZipCode) ? "" : crCasBranchPost.CrCasBranchPostZipCode + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostAdditionalNumbers) ? "" : crCasBranchPost.CrCasBranchPostAdditionalNumbers)}",
+
+                CrCasBranchPostArShortConcatenate =
+                                                $"{(string.IsNullOrEmpty(City.CrMasSupPostCityConcatenateArName) ? "" : City.CrMasSupPostCityConcatenateArName + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostArDistrict) ? "" : crCasBranchPost.CrCasBranchPostArDistrict + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostArStreet) ? "" : crCasBranchPost.CrCasBranchPostArStreet)}",
+
+                CrCasBranchPostEnShortConcatenate =
+                                                $"{(string.IsNullOrEmpty(City.CrMasSupPostCityConcatenateEnName) ? "" : City.CrMasSupPostCityConcatenateEnName + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostEnDistrict) ? "" : crCasBranchPost.CrCasBranchPostEnDistrict + " - ")}" +
+                                                $"{(string.IsNullOrEmpty(crCasBranchPost.CrCasBranchPostEnStreet) ? "" : crCasBranchPost.CrCasBranchPostEnStreet)}",
                 CrCasBranchPostUpDateMail = DateTime.Now,
                 CrCasBranchPostStatus = "A"
 
