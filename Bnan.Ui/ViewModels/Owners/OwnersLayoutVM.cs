@@ -20,7 +20,7 @@ namespace Bnan.Ui.ViewModels.Owners
         public decimal? ReservedBalance;
         // Charts 
         public List<OwnPaymentMethodLessorVM>? OwnPaymentMethods;
-        public List<CrCasRenterContractAlert>? AlertContracts;
+        public List<OwnAlertContractsVM>? AlertContracts;
         // Documents And Maintaince And Price And Document Of Lessor
         public List<CrCasBranchDocument>? BranchDocuments;
         //public List<CrCasCarDocumentsMaintenance>? CarMaintainces;

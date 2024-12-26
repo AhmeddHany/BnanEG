@@ -181,9 +181,18 @@
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="~/MasSystem/js/Scripts.js"></script>
+    <script src="~/BranchSys/js/javascript/idleTimeoutHandler.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
     @await Component.InvokeAsync("NToastNotify")
+    @*Auto Logout*@
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var exitUser = "@user.CrMasUserInformationExitTimer"; // Get the dynamic value
+            // Call the idle timeout handler function
+            initializeIdleTimeoutHandler(exitUser);
+        });
+    </script>
     <script>
         function CheckValidation(subTaskCodeProcdure, status, url) {
             return $.ajax({

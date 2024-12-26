@@ -1,11 +1,6 @@
 ﻿using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -21,18 +16,18 @@ namespace Bnan.Inferastructure.Repository
         public async Task<bool> AddBranchDocument(string lessorCode, string branchCode)
         {
             var lessor = await _unitOfWork.CrMasLessorInformation.GetByIdAsync(lessorCode);
-            var lessorMechanisms = _unitOfWork.CrCasLessorMechanism.FindAll(l => l.CrCasLessorMechanismCode == lessor.CrMasLessorInformationCode && l.CrCasLessorMechanismProceduresClassification == "10");
+            var sysProcedures = _unitOfWork.CrMasSysProcedure.FindAll(l => l.CrMasSysProceduresClassification == "10" && l.CrMasSysProceduresStatus == "A");
             if (lessor != null)
             {
-                foreach (var item in lessorMechanisms)
+                foreach (var item in sysProcedures)
                 {
                     CrCasBranchDocument BranchDocument = new CrCasBranchDocument
                     {
                         CrCasBranchDocumentsLessor = lessor.CrMasLessorInformationCode,
                         CrCasBranchDocumentsBranch = branchCode,
-                        CrCasBranchDocumentsProcedures = item.CrCasLessorMechanismProcedures,
-                        CrCasBranchDocumentsProceduresClassification = item.CrCasLessorMechanismProceduresClassification,
-                        CrCasBranchDocumentsActivation = item.CrCasLessorMechanismActivate,
+                        CrCasBranchDocumentsProcedures = item.CrMasSysProceduresCode,
+                        CrCasBranchDocumentsProceduresClassification = item.CrMasSysProceduresClassification,
+                        CrCasBranchDocumentsActivation = true,
                         CrCasBranchDocumentsBranchStatus = lessor.CrMasLessorInformationStatus,
                         CrCasBranchDocumentsStatus = "N",
 
@@ -45,11 +40,11 @@ namespace Bnan.Inferastructure.Repository
             return true;
         }
 
-            
+
 
         public async Task<bool> AddBranchDocumentDefault(string lessorCode)
         {
-            var sysProcedures = _unitOfWork.CrMasSysProcedure.FindAll(l => l.CrMasSysProceduresStatus == "A" && l.CrMasSysProceduresClassification == "10");
+            var sysProcedures = _unitOfWork.CrMasSysProcedure.FindAll(l => l.CrMasSysProceduresClassification == "10" && (l.CrMasSysProceduresStatus == "A" || l.CrMasSysProceduresStatus == "1"));
             var lessor = await _unitOfWork.CrMasLessorInformation.GetByIdAsync(lessorCode);
             if (lessor != null)
             {
@@ -83,14 +78,14 @@ namespace Bnan.Inferastructure.Repository
         {
             if (CrCasBranchDocument != null)
             {
-                var document = await _unitOfWork.CrCasBranchDocument.FindAsync(l=>l.CrCasBranchDocumentsBranch == CrCasBranchDocument.CrCasBranchDocumentsBranch
+                var document = await _unitOfWork.CrCasBranchDocument.FindAsync(l => l.CrCasBranchDocumentsBranch == CrCasBranchDocument.CrCasBranchDocumentsBranch
                                                                                && l.CrCasBranchDocumentsLessor == CrCasBranchDocument.CrCasBranchDocumentsLessor
                                                                                && l.CrCasBranchDocumentsProcedures == CrCasBranchDocument.CrCasBranchDocumentsProcedures);
 
-                var AboutToExpire =  _unitOfWork.CrCasLessorMechanism.FindAsync(l=>l.CrCasLessorMechanismCode == document.CrCasBranchDocumentsLessor 
-                                                                                 && l.CrCasLessorMechanismProcedures == document.CrCasBranchDocumentsProcedures 
+                var AboutToExpire = _unitOfWork.CrCasLessorMechanism.FindAsync(l => l.CrCasLessorMechanismCode == document.CrCasBranchDocumentsLessor
+                                                                                 && l.CrCasLessorMechanismProcedures == document.CrCasBranchDocumentsProcedures
                                                                                  && l.CrCasLessorMechanismProceduresClassification == document.CrCasBranchDocumentsProceduresClassification).Result.CrCasLessorMechanismDaysAlertAboutExpire;
-                if (CrCasBranchDocument.CrCasBranchDocumentsStatus==Status.Renewed || CrCasBranchDocument.CrCasBranchDocumentsStatus == Status.Expire)
+                if (CrCasBranchDocument.CrCasBranchDocumentsStatus == Status.Renewed || CrCasBranchDocument.CrCasBranchDocumentsStatus == Status.Expire)
                 {
                     document.CrCasBranchDocumentsStartDate = CrCasBranchDocument.CrCasBranchDocumentsStartDate;
                     document.CrCasBranchDocumentsEndDate = CrCasBranchDocument.CrCasBranchDocumentsEndDate;

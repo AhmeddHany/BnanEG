@@ -37,14 +37,31 @@ namespace Bnan.Ui.Areas.Owners.Controllers
             if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Owners", "Dashboard", "", "", "", userLogin.CrMasUserInformationEnName);
             else await ViewData.SetPageTitleAsync("الملاك", "لوحة التحكم", "", "", "", userLogin.CrMasUserInformationArName);
             var ownersLayoutVM = await OwnersDashboadInfo(lessorCode);
-            ownersLayoutVM.OwnPaymentMethods = await ChartsPaymentMethod(lessorCode);
-            ownersLayoutVM.AlertContracts = await _unitOfWork.CrCasRenterContractAlert.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractAlertLessor == lessorCode);
 
-            ownersLayoutVM.CarPrices = await _unitOfWork.CrCasPriceCarBasic.FindAllAsNoTrackingAsync(x => x.CrCasPriceCarBasicLessorCode == lessorCode);
-            var Renters = await _unitOfWork.CrCasRenterLessor.FindAllAsNoTrackingAsync(x => x.CrCasRenterLessorStatus == Status.Active && x.CrCasRenterLessorCode == lessorCode);
+
+            var allContractAlerts = await _unitOfWork.CrCasRenterContractAlert
+                    .FindAllWithSelectAsNoTrackingAsync(x => x.CrCasRenterContractAlertLessor == lessorCode, query => query
+                        .Select(x => new OwnAlertContractsVM
+                        {
+                            CrCasRenterContractAlertContractActiviteStatus = x.CrCasRenterContractAlertContractActiviteStatus,
+                            CrCasRenterContractAlertContractStatus = x.CrCasRenterContractAlertContractStatus
+                        }));
+            ownersLayoutVM.AlertContracts = allContractAlerts;
+
+            var Renters = await _unitOfWork.CrCasRenterLessor
+                    .FindAllWithSelectAsNoTrackingAsync(
+                        x => x.CrCasRenterLessorStatus == Status.Active && x.CrCasRenterLessorCode == lessorCode,
+                        query => query.Select(x => new
+                        {
+                            x.CrCasRenterLessorAvailableBalance
+                        })
+                    );
             ownersLayoutVM.Debtors = Renters.Where(x => x.CrCasRenterLessorAvailableBalance < 0).Sum(x => x.CrCasRenterLessorAvailableBalance);
             ownersLayoutVM.Creditors = Renters.Where(x => x.CrCasRenterLessorAvailableBalance > 0).Sum(x => x.CrCasRenterLessorAvailableBalance);
 
+
+
+            ownersLayoutVM.OwnPaymentMethods = await ChartsPaymentMethod(lessorCode);
             ownersLayoutVM.BranchsInformations = await GetInfoForBranches(lessorCode);
             ownersLayoutVM.Employees = await GetInfoForEmployees(lessorCode);
             return View(ownersLayoutVM);
@@ -53,61 +70,87 @@ namespace Bnan.Ui.Areas.Owners.Controllers
         {
             List<OwnBranchVM> OwnBranches = new List<OwnBranchVM>();
 
-            var branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(
-                x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted,
-                new[] { "CrCasCarInformations", "CrCasRenterContractBasics", "CrCasBranchPost.CrCasBranchPostCityNavigation", "CrCasRenterContractAlerts" }
-            );
+            var branches = await _unitOfWork.CrCasBranchInformation.FindAllWithSelectAsNoTrackingAsync(
+                     x => x.CrCasBranchInformationLessor == lessorCode && x.CrCasBranchInformationStatus != Status.Deleted,
+                     query => query.Select(x => new OwnBranchVM
+                     {
+                         CrCasBranchInformationLessor = x.CrCasBranchInformationLessor,
+                         CrCasBranchInformationCode = x.CrCasBranchInformationCode,
+                         CrCasBranchInformationArName = x.CrCasBranchInformationArName,
+                         CrCasBranchInformationArShortName = x.CrCasBranchInformationArShortName,
+                         CrCasBranchInformationEnName = x.CrCasBranchInformationEnName,
+                         CrCasBranchInformationEnShortName = x.CrCasBranchInformationEnShortName,
+                         CrCasBranchInformationDirectorArName = x.CrCasBranchInformationDirectorArName,
+                         CrCasBranchInformationDirectorEnName = x.CrCasBranchInformationDirectorEnName,
+                         CrCasBranchInformationTotalBalance = x.CrCasBranchInformationTotalBalance,
+                         CrCasBranchInformationReservedBalance = x.CrCasBranchInformationReservedBalance,
+                         CrCasBranchInformationAvailableBalance = x.CrCasBranchInformationAvailableBalance,
+                         CrCasBranchInformationStatus = x.CrCasBranchInformationStatus
+                     })
+                 );
+
+            // Use a temporary list to accumulate the branches
+            List<OwnBranchVM> tempBranches = new List<OwnBranchVM>();
 
             foreach (var branch in branches)
             {
-                var OwnBranch = _mapper.Map<OwnBranchVM>(branch);
+                var CrCasBranchPost = await _unitOfWork.CrCasBranchPost.FindAsync(x => x.CrCasBranchPostLessor == branch.CrCasBranchInformationLessor && x.CrCasBranchPostBranch == branch.CrCasBranchInformationCode,
+                                                                                                         new[] { "CrCasBranchPostCityNavigation" });
+                branch.BranchPostEn = CrCasBranchPost?.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateEnName;
+                branch.BranchPostAr = CrCasBranchPost?.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateArName;
 
-                OwnBranch.BranchPostAr = branch.CrCasBranchPost?.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateArName;
-                OwnBranch.BranchPostEn = branch.CrCasBranchPost?.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateEnName;
-
-                OwnBranch.ContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus != Status.Extension).Count() ?? 0;
-                OwnBranch.ActiveContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus == Status.Active).Count() ?? 0;
-                OwnBranch.ClosedContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus == Status.Closed).Count() ?? 0;
-                OwnBranch.SavedContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus == Status.Saved).Count() ?? 0;
-                OwnBranch.SuspendedContractsCount = branch.CrCasRenterContractBasics?.Where(x => x.CrCasRenterContractBasicStatus == Status.Suspend).Count() ?? 0;
-                OwnBranch.ExpiredContractsCount = branch.CrCasRenterContractAlerts?.Where(x => x.CrCasRenterContractAlertContractStatus == Status.Expire).Count() ?? 0;
+                var ContractBasics = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicLessor == branch.CrCasBranchInformationLessor &&
+                                                                                                             x.CrCasRenterContractBasicBranch == branch.CrCasBranchInformationCode);
+                branch.ContractsCount = ContractBasics.Count(x => x.CrCasRenterContractBasicStatus != Status.Extension);
+                branch.ActiveContractsCount = ContractBasics.Count(x => x.CrCasRenterContractBasicStatus == Status.Active);
+                branch.ClosedContractsCount = ContractBasics.Count(x => x.CrCasRenterContractBasicStatus == Status.Closed);
+                branch.SavedContractsCount = ContractBasics.Count(x => x.CrCasRenterContractBasicStatus == Status.Saved);
+                branch.SuspendedContractsCount = ContractBasics.Count(x => x.CrCasRenterContractBasicStatus == Status.Suspend);
+                branch.ExpiredContractsCount = await _unitOfWork.CrCasRenterContractAlert.CountAsync(x => x.CrCasRenterContractAlertContractStatus == Status.Expire);
 
                 var docsCompany = await _unitOfWork.CrCasBranchDocument.FindAllAsNoTrackingAsync(x => x.CrCasBranchDocumentsLessor == lessorCode && x.CrCasBranchDocumentsBranch == branch.CrCasBranchInformationCode);
-                OwnBranch.DocsForCompanyExpireCount = docsCompany.Where(x => x.CrCasBranchDocumentsStatus == Status.Expire).Count();
-                OwnBranch.DocsForCompanyAboutExpireCount = docsCompany.Where(x => x.CrCasBranchDocumentsStatus == Status.AboutToExpire).Count();
+                branch.DocsForCompanyExpireCount = docsCompany.Where(x => x.CrCasBranchDocumentsStatus == Status.Expire).Count();
+                branch.DocsForCompanyAboutExpireCount = docsCompany.Where(x => x.CrCasBranchDocumentsStatus == Status.AboutToExpire).Count();
 
                 var docsCar = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsNoTrackingAsync(x => x.CrCasCarDocumentsMaintenanceLessor == lessorCode &&
-                                                                                                            x.CrCasCarDocumentsMaintenanceBranch == branch.CrCasBranchInformationCode);
-                OwnBranch.DocsForCarExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.Expire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12").Count();
-                OwnBranch.DocsForCarAboutExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12").Count();
-                OwnBranch.MainForCarExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.Expire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").Count();
-                OwnBranch.MainForCarAboutExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").Count();
+                                                                                                             x.CrCasCarDocumentsMaintenanceBranch == branch.CrCasBranchInformationCode);
+                branch.DocsForCarExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.Expire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12").Count();
+                branch.DocsForCarAboutExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12").Count();
+                branch.MainForCarExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.Expire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").Count();
+                branch.MainForCarAboutExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").Count();
+                branch.CarsCount = await _unitOfWork.CrCasCarInformation.CountAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == branch.CrCasBranchInformationCode &&
+                                                                                                           x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationStatus != Status.Deleted);
+                branch.RentedCarsCount = await _unitOfWork.CrCasCarInformation.CountAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == branch.CrCasBranchInformationCode &&
+                                                                                                           x.CrCasCarInformationStatus == Status.Rented);
+                branch.ActiveCarsCount = await _unitOfWork.CrCasCarInformation.CountAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == branch.CrCasBranchInformationCode &&
+                                                                                                           x.CrCasCarInformationStatus == Status.Active &&
+                                                                                                          x.CrCasCarInformationPriceStatus == true &&
+                                                                                                          x.CrCasCarInformationBranchStatus == Status.Active &&
+                                                                                                          x.CrCasCarInformationOwnerStatus == Status.Active &&
+                                                                                                          (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale));
 
-                OwnBranch.CarsCount = branch.CrCasCarInformations?.Count(x => x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationStatus != Status.Deleted) ?? 0;
-                OwnBranch.RentedCarsCount = branch.CrCasCarInformations?.Count(x => x.CrCasCarInformationStatus == Status.Rented) ?? 0;
-                OwnBranch.ActiveCarsCount = branch.CrCasCarInformations?.Count(x => x.CrCasCarInformationStatus == Status.Active &&
-                                                     x.CrCasCarInformationPriceStatus == true &&
-                                                     x.CrCasCarInformationBranchStatus == Status.Active &&
-                                                     x.CrCasCarInformationOwnerStatus == Status.Active &&
-                                                     (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale)) ?? 0;
-                OwnBranch.UnActiveCarsCount = OwnBranch.CarsCount - OwnBranch.RentedCarsCount - OwnBranch.ActiveCarsCount;
+                branch.UnActiveCarsCount = branch.CarsCount - branch.RentedCarsCount - branch.ActiveCarsCount;
                 var checkIfThereCustody = await _unitOfWork.CrCasSysAdministrativeProcedure.FindAllAsNoTrackingAsync(x => x.CrCasSysAdministrativeProceduresLessor == lessorCode &&
-                                                                                                                        x.CrCasSysAdministrativeProceduresBranch == branch.CrCasBranchInformationCode &&
-                                                                                                                        x.CrCasSysAdministrativeProceduresCode == "304" &&
-                                                                                                                        x.CrCasSysAdministrativeProceduresStatus == Status.Insert);
-                OwnBranch.HaveCustodyNotAccepted = OwnBranch.CrCasBranchInformationReservedBalance > 0;
-                if (OwnBranch.CrCasBranchInformationReservedBalance > 0 ||
-                    OwnBranch.DocsForCompanyAboutExpireCount > 0 ||
-                    OwnBranch.DocsForCompanyExpireCount > 0 ||
-                    OwnBranch.MainForCarExpireCount > 0 ||
-                    OwnBranch.UnActiveCarsCount > 0 ||
-                    OwnBranch.ExpiredContractsCount > 0) OwnBranch.RedPointInBranch = false;
-                else OwnBranch.RedPointInBranch = true;
-                // Add the mapped OwnBranchVM to the list
-                OwnBranches.Add(OwnBranch);
+                                                                                                                         x.CrCasSysAdministrativeProceduresBranch == branch.CrCasBranchInformationCode &&
+                                                                                                                         x.CrCasSysAdministrativeProceduresCode == "304" &&
+                                                                                                                         x.CrCasSysAdministrativeProceduresStatus == Status.Insert);
+                branch.HaveCustodyNotAccepted = branch.CrCasBranchInformationReservedBalance > 0;
+                if (branch.CrCasBranchInformationReservedBalance > 0 ||
+                     branch.DocsForCompanyAboutExpireCount > 0 ||
+                     branch.DocsForCompanyExpireCount > 0 ||
+                     branch.MainForCarExpireCount > 0 ||
+                     branch.UnActiveCarsCount > 0 ||
+                     branch.ExpiredContractsCount > 0) branch.RedPointInBranch = false;
+                else branch.RedPointInBranch = true;
+
+                // Add the processed branchVM to the temporary list
+                tempBranches.Add(branch);
             }
 
-            // Return the list of OwnBranchVM
+            // Assign the accumulated list to the original variable
+            OwnBranches = tempBranches;
+
+            // Return the list of branchVM
             return OwnBranches;
         }
         public async Task<List<OwnEmployeesVM>> GetInfoForEmployees(string lessorCode)
@@ -146,171 +189,57 @@ namespace Bnan.Ui.Areas.Owners.Controllers
             }
             return OwnEmployees;
         }
-        // Branches
-        public async Task<IActionResult> Branches()
-        {
-            ViewBag.Branches = true;
-            ViewBag.Dashboard = false;
-            ViewBag.Employees = false;
-            ViewBag.Indicators = false;
-            ViewBag.Cars = false;
-            ViewBag.Contracts = false;
-            ViewBag.Tenants = false;
-
-            //To Set Title 
-            var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
-            if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Owners", "Branches", "", "", "", userLogin.CrMasUserInformationEnName);
-            else await ViewData.SetPageTitleAsync("الملاك", "الفروع", "", "", "", userLogin.CrMasUserInformationArName);
-            var ownersLayoutVM = await OwnersDashboadInfo(lessorCode);
-            var branchs = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == lessorCode, new[] { "CrCasCarInformations", "CrCasRenterContractBasics", "CrCasBranchPost.CrCasBranchPostCityNavigation" });
-            var BranchsInforamtions = _mapper.Map<List<OwnBranchVM>>(branchs);
-            ownersLayoutVM.BranchsInformations = BranchsInforamtions;
-            return View(ownersLayoutVM);
-        }
-        //Employees
-        public async Task<IActionResult> Employees()
-        {
-            ViewBag.Branches = false;
-            ViewBag.Dashboard = false;
-            ViewBag.Employees = true;
-            ViewBag.Indicators = false;
-            ViewBag.Cars = false;
-            ViewBag.Contracts = false;
-            ViewBag.Tenants = false;
-
-            //To Set Title 
-            var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
-            if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Owners", "Employees", "", "", "", userLogin.CrMasUserInformationEnName);
-            else await ViewData.SetPageTitleAsync("الملاك", "الموظفين", "", "", "", userLogin.CrMasUserInformationArName);
-            var ownersLayoutVM = await OwnersDashboadInfo(lessorCode);
-            List<OwnEmployeesVM> employeesVM = new List<OwnEmployeesVM>();
-            var Employees = await _unitOfWork.CrMasUserInformation.FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && x.CrMasUserInformationStatus != Status.Deleted);
-            foreach (var employee in Employees)
-            {
-                var contracts = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicUserInsert == employee.CrMasUserInformationCode && x.CrCasRenterContractBasicLessor == lessorCode);
-                var EmployeeMapper = _mapper.Map<OwnEmployeesVM>(employee);
-                EmployeeMapper.ActiveContract = contracts.Count(x => x.CrCasRenterContractBasicStatus != Status.Closed && x.CrCasRenterContractBasicStatus != Status.Extension);
-                EmployeeMapper.ClosedContract = contracts.Count(x => x.CrCasRenterContractBasicStatus == Status.Closed);
-                EmployeeMapper.OwnUsersPaymentMethods = await ChartsPaymentMethod(lessorCode, employee.CrMasUserInformationCode);
-                var contractPrimaryKeys = contracts.Select(c => c.CrCasRenterContractBasicNo).ToList();
-                var AlertsContracts = await _unitOfWork.CrCasRenterContractAlert.FindAllAsNoTrackingAsync(x => contractPrimaryKeys.Contains(x.CrCasRenterContractAlertNo) && x.CrCasRenterContractAlertContractStatus != Status.Closed);
-                EmployeeMapper.AlertContracts = AlertsContracts.Distinct().ToList();
-                employeesVM.Add(EmployeeMapper);
-            }
-            ownersLayoutVM.Employees = employeesVM;
-
-            return View(ownersLayoutVM);
-        }
         private async Task<List<OwnPaymentMethodLessorVM>> ChartsPaymentMethod(string lessorCode)
         {
             List<OwnPaymentMethodLessorVM> paymentMethodLessor = new List<OwnPaymentMethodLessorVM>();
-            var AccountReceipt = await _unitOfWork.CrCasAccountReceipt.FindAllAsNoTrackingAsync(x => x.CrCasAccountReceiptLessorCode == lessorCode && x.CrCasAccountReceiptIsPassing == "1" && x.CrCasAccountReceiptPaymentMethod != "30");
-            if (AccountReceipt == null) return paymentMethodLessor;
-            var PaymentMethods = await _unitOfWork.CrMasSupAccountPaymentMethod.FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active && (x.CrMasSupAccountPaymentMethodClassification == "1" || x.CrMasSupAccountPaymentMethodClassification == "2"));
+
+            // استعلام لتحميل بيانات الحسابات فقط بالمعلومات المطلوبة
+            var AccountReceipt = await _unitOfWork.CrCasAccountReceipt
+                .FindAllWithSelectAsNoTrackingAsync(
+                    x => x.CrCasAccountReceiptLessorCode == lessorCode && x.CrCasAccountReceiptIsPassing == "1" && x.CrCasAccountReceiptPaymentMethod != "30",
+                    query => query.Select(x => new
+                    {
+                        x.CrCasAccountReceiptPaymentMethod,
+                        x.CrCasAccountReceiptPayment,
+                        x.CrCasAccountReceiptReceipt
+                    })
+                );
+
+            // في حالة عدم وجود أي سجلات
+            if (AccountReceipt == null || !AccountReceipt.Any()) return paymentMethodLessor;
+
+            // استعلام لتحميل بيانات طرق الدفع فقط بالمعلومات المطلوبة
+            var PaymentMethods = await _unitOfWork.CrMasSupAccountPaymentMethod
+                .FindAllWithSelectAsNoTrackingAsync(
+                    x => x.CrMasSupAccountPaymentMethodStatus == Status.Active && (x.CrMasSupAccountPaymentMethodClassification == "1" || x.CrMasSupAccountPaymentMethodClassification == "2"),
+                    query => query.Select(x => new
+                    {
+                        x.CrMasSupAccountPaymentMethodCode,
+                        x.CrMasSupAccountPaymentMethodArName,
+                        x.CrMasSupAccountPaymentMethodEnName
+                    })
+                );
+
+            // بناء بيانات طرق الدفع
             foreach (var paymentMethod in PaymentMethods)
             {
-                // Assuming you have properties for Arabic and English names in your CrMasSupAccountPaymentMethod model
-                string code = paymentMethod.CrMasSupAccountPaymentMethodCode; // Replace with the actual property name
-                string arabicName = paymentMethod.CrMasSupAccountPaymentMethodArName; // Replace with the actual property name
-                string englishName = paymentMethod.CrMasSupAccountPaymentMethodEnName; // Replace with the actual property name
+                decimal balance = AccountReceipt
+                    .Where(x => x.CrCasAccountReceiptPaymentMethod == paymentMethod.CrMasSupAccountPaymentMethodCode)
+                    .Sum(x => (decimal)x.CrCasAccountReceiptPayment - (decimal)x.CrCasAccountReceiptReceipt);
 
-                // Get the corresponding balance based on payment method
-                decimal balance = 0;
-
-                switch (paymentMethod.CrMasSupAccountPaymentMethodCode)
-                {
-                    case "10":
-                        var Cash = AccountReceipt.Where(x => x.CrCasAccountReceiptPaymentMethod == "10");
-                        balance = (decimal)Cash.Sum(x => x.CrCasAccountReceiptPayment) - (decimal)Cash.Sum(x => x.CrCasAccountReceiptReceipt);
-                        break;
-                    case "20":
-                        var Madda = AccountReceipt.Where(x => x.CrCasAccountReceiptPaymentMethod == "20");
-                        balance = (decimal)Madda.Sum(x => x.CrCasAccountReceiptPayment) - (decimal)Madda.Sum(x => x.CrCasAccountReceiptReceipt);
-                        break;
-                    case "21":
-                        var Visa = AccountReceipt.Where(x => x.CrCasAccountReceiptPaymentMethod == "21");
-                        balance = (decimal)Visa.Sum(x => x.CrCasAccountReceiptPayment) - (decimal)Visa.Sum(x => x.CrCasAccountReceiptReceipt);
-                        break;
-                    case "22":
-                        var Master = AccountReceipt.Where(x => x.CrCasAccountReceiptPaymentMethod == "22");
-                        balance = (decimal)Master.Sum(x => x.CrCasAccountReceiptPayment) - (decimal)Master.Sum(x => x.CrCasAccountReceiptReceipt);
-                        break;
-                    case "23":
-                        var Amercian = AccountReceipt.Where(x => x.CrCasAccountReceiptPaymentMethod == "23");
-                        balance = (decimal)Amercian.Sum(x => x.CrCasAccountReceiptPayment) - (decimal)Amercian.Sum(x => x.CrCasAccountReceiptReceipt);
-                        break;
-                        // Add more cases for other payment methods if needed
-                }
-
-                // Create PaymentMethodData object and add it to the list
+                // إضافة البيانات إلى القائمة النهائية
                 paymentMethodLessor.Add(new OwnPaymentMethodLessorVM
                 {
-                    Code = code,
-                    ArName = arabicName,
-                    EnName = englishName,
+                    Code = paymentMethod.CrMasSupAccountPaymentMethodCode,
+                    ArName = paymentMethod.CrMasSupAccountPaymentMethodArName,
+                    EnName = paymentMethod.CrMasSupAccountPaymentMethodEnName,
                     Value = balance
                 });
             }
 
             return paymentMethodLessor;
         }
-        private async Task<List<OwnPaymentMethodLessorVM>> ChartsPaymentMethod(string lessorCode, string UserCode)
-        {
-            List<OwnPaymentMethodLessorVM> paymentMethodLessor = new List<OwnPaymentMethodLessorVM>();
-            var AccountReceipt = await _unitOfWork.CrCasAccountReceipt.FindAllAsNoTrackingAsync(x => x.CrCasAccountReceiptLessorCode == lessorCode && x.CrCasAccountReceiptIsPassing == "1" && x.CrCasAccountReceiptPaymentMethod != "30" && x.CrCasAccountReceiptUser == UserCode);
-            if (AccountReceipt == null) return paymentMethodLessor;
-            var PaymentMethods = await _unitOfWork.CrMasSupAccountPaymentMethod.FindAllAsNoTrackingAsync(x => x.CrMasSupAccountPaymentMethodStatus == Status.Active && (x.CrMasSupAccountPaymentMethodClassification == "1" || x.CrMasSupAccountPaymentMethodClassification == "2"));
-            foreach (var paymentMethod in PaymentMethods)
-            {
-                // Assuming you have properties for Arabic and English names in your CrMasSupAccountPaymentMethod model
-                string code = paymentMethod.CrMasSupAccountPaymentMethodCode; // Replace with the actual property name
-                string arabicName = paymentMethod.CrMasSupAccountPaymentMethodArName; // Replace with the actual property name
-                string englishName = paymentMethod.CrMasSupAccountPaymentMethodEnName; // Replace with the actual property name
 
-                // Get the corresponding balance based on payment method
-                var accountReceiptForUser = AccountReceipt.Where(x => x.CrCasAccountReceiptUser == UserCode);
-
-                decimal balance = 0;
-
-                switch (paymentMethod.CrMasSupAccountPaymentMethodCode)
-                {
-                    case "10":
-                        var Cash = accountReceiptForUser.Where(x => x.CrCasAccountReceiptPaymentMethod == "10");
-                        balance = (decimal)Cash.Sum(x => x.CrCasAccountReceiptPayment) - (decimal)Cash.Sum(x => x.CrCasAccountReceiptReceipt);
-                        break;
-                    case "20":
-                        var Madda = accountReceiptForUser.Where(x => x.CrCasAccountReceiptPaymentMethod == "20");
-                        balance = (decimal)Madda.Sum(x => x.CrCasAccountReceiptPayment) - (decimal)Madda.Sum(x => x.CrCasAccountReceiptReceipt);
-                        break;
-                    case "21":
-                        var Visa = accountReceiptForUser.Where(x => x.CrCasAccountReceiptPaymentMethod == "21");
-                        balance = (decimal)Visa.Sum(x => x.CrCasAccountReceiptPayment) - (decimal)Visa.Sum(x => x.CrCasAccountReceiptReceipt);
-                        break;
-                    case "22":
-                        var Master = accountReceiptForUser.Where(x => x.CrCasAccountReceiptPaymentMethod == "22");
-                        balance = (decimal)Master.Sum(x => x.CrCasAccountReceiptPayment) - (decimal)Master.Sum(x => x.CrCasAccountReceiptReceipt);
-                        break;
-                    case "23":
-                        var Amercian = accountReceiptForUser.Where(x => x.CrCasAccountReceiptPaymentMethod == "23");
-                        balance = (decimal)Amercian.Sum(x => x.CrCasAccountReceiptPayment) - (decimal)Amercian.Sum(x => x.CrCasAccountReceiptReceipt);
-                        break;
-                        // Add more cases for other payment methods if needed
-                }
-
-                // Create PaymentMethodData object and add it to the list
-                paymentMethodLessor.Add(new OwnPaymentMethodLessorVM
-                {
-                    Code = code,
-                    ArName = arabicName,
-                    EnName = englishName,
-                    Value = balance
-                });
-            }
-
-            return paymentMethodLessor;
-        }
         [HttpGet]
         public IActionResult SetLanguage(string returnUrl, string culture)
         {

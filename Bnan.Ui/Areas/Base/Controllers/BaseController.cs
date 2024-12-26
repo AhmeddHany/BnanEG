@@ -268,27 +268,63 @@ namespace Bnan.Ui.Areas.Base.Controllers
         public async Task<OwnersLayoutVM> OwnersDashboadInfo(string lessorCode)
         {
             OwnersLayoutVM ownersLayoutVM = new OwnersLayoutVM();
-            var contracts = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicStatus != Status.Extension);
-            ownersLayoutVM.OwnContracts = _mapper.Map<List<OwnContractsVM>>(contracts);
+
+            // استخدام FindAllWithSelectAsNoTrackingAsync مع تحديد الأعمدة فقط
+            var contracts = await _unitOfWork.CrCasRenterContractBasic
+                .FindAllWithSelectAsNoTrackingAsync<OwnContractsVM>(
+                    x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicStatus != Status.Extension,
+                    query => query.Select(x => new OwnContractsVM
+                    {
+                        CrCasRenterContractBasicNo = x.CrCasRenterContractBasicNo,
+                        CrCasRenterContractBasicCopy = x.CrCasRenterContractBasicCopy,
+                        CrCasRenterContractBasicYear = x.CrCasRenterContractBasicYear,
+                        CrCasRenterContractBasicSector = x.CrCasRenterContractBasicSector,
+                        CrCasRenterContractBasicProcedures = x.CrCasRenterContractBasicProcedures,
+                        CrCasRenterContractBasicLessor = x.CrCasRenterContractBasicLessor,
+                        CrCasRenterContractBasicBranch = x.CrCasRenterContractBasicBranch,
+                        CrCasRenterContractBasicOwner = x.CrCasRenterContractBasicOwner,
+                        CrCasRenterContractBasicIssuedDate = x.CrCasRenterContractBasicIssuedDate,
+                        CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
+                        CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
+                        CrCasRenterContractBasicExpectedRentalDays = x.CrCasRenterContractBasicExpectedRentalDays,
+                        CrCasRenterContractBasicActualDays = x.CrCasRenterContractBasicActualDays,
+                        CrCasRenterContractUserReference = x.CrCasRenterContractUserReference,
+                        CrCasRenterContractBasicUserInsert = x.CrCasRenterContractBasicUserInsert,
+                        CrCasRenterContractBasicStatus = x.CrCasRenterContractBasicStatus,
+                        CrCasRenterContractBasicActualTotal = x.CrCasRenterContractBasicActualTotal,
+                        CrCasRenterContractBasicCompensationValue = x.CrCasRenterContractBasicCompensationValue
+                    })
+                );
+            ownersLayoutVM.OwnContracts = contracts;
             ownersLayoutVM.RateContractsMonthBefore = UpRateBeforeMonthForContracts(ownersLayoutVM.OwnContracts);
-
-            var cars = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationStatus != Status.Sold);
-            ownersLayoutVM.OwnCars = _mapper.Map<List<OwnCarsInfoVM>>(cars);
+            // استرجاع السيارات مع تحديد الأعمدة المطلوبة فقط
+            var cars = await _unitOfWork.CrCasCarInformation
+                .FindAllWithSelectAsNoTrackingAsync<OwnCarsInfoVM>(
+                    x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationStatus != Status.Sold,
+                    query => query.Select(x => new OwnCarsInfoVM
+                    {
+                        CrCasCarInformationJoinedFleetDate = x.CrCasCarInformationJoinedFleetDate,
+                        CrCasCarInformationPriceStatus = x.CrCasCarInformationPriceStatus,
+                        CrCasCarInformationBranchStatus = x.CrCasCarInformationBranchStatus,
+                        CrCasCarInformationOwnerStatus = x.CrCasCarInformationOwnerStatus,
+                        CrCasCarInformationForSaleStatus = x.CrCasCarInformationForSaleStatus,
+                        CrCasCarInformationStatus = x.CrCasCarInformationStatus
+                    })
+                );
+            ownersLayoutVM.OwnCars = cars;
             ownersLayoutVM.RateCarsMonthBefore = UpRateBeforeMonthForCars(ownersLayoutVM.OwnCars);
-
-            var renters = await _unitOfWork.CrCasRenterLessor.FindAllAsNoTrackingAsync(x => x.CrCasRenterLessorCode == lessorCode, new[] { "CrCasRenterContractBasicCrCasRenterContractBasic5s" });
-            ownersLayoutVM.OwnRenters = _mapper.Map<List<OwnRentersVM>>(renters);
+            // استرجاع المستأجرين مع تحديد الأعمدة المطلوبة فقط
+            var renters = await _unitOfWork.CrCasRenterLessor
+                .FindAllWithSelectAsNoTrackingAsync<OwnRentersVM>(
+                    x => x.CrCasRenterLessorCode == lessorCode,
+                    query => query.Select(x => new OwnRentersVM
+                    {
+                        CrCasRenterLessorDateFirstInteraction = x.CrCasRenterLessorDateFirstInteraction,
+                        CrCasRenterLessorStatus = x.CrCasRenterLessorStatus
+                    })
+                );
+            ownersLayoutVM.OwnRenters = renters;
             ownersLayoutVM.RateRentersMonthBefore = UpRateBeforeMonthForRenters(ownersLayoutVM.OwnRenters);
-
-            var balance = await _unitOfWork.CrMasUserBranchValidity.FindAllAsNoTrackingAsync(x => x.CrMasUserBranchValidityLessor == lessorCode);
-            var balanceTotal = balance.Sum(x => x.CrMasUserBranchValidityBranchCashBalance) + balance.Sum(x => x.CrMasUserBranchValidityBranchSalesPointBalance) + balance.Sum(x => x.CrMasUserBranchValidityBranchTransferBalance);
-            var avaliableBalance = balance.Sum(x => x.CrMasUserBranchValidityBranchCashAvailable) + balance.Sum(x => x.CrMasUserBranchValidityBranchSalesPointAvailable) + balance.Sum(x => x.CrMasUserBranchValidityBranchTransferAvailable);
-            var resevedBalance = balance.Sum(x => x.CrMasUserBranchValidityBranchCashReserved) + balance.Sum(x => x.CrMasUserBranchValidityBranchSalesPointReserved) + balance.Sum(x => x.CrMasUserBranchValidityBranchTransferReserved);
-            ownersLayoutVM.TotalBalance = balanceTotal;
-            ownersLayoutVM.AvaliableBalance = avaliableBalance;
-            ownersLayoutVM.ReservedBalance = resevedBalance;
-            ownersLayoutVM.BranchDocuments = await _unitOfWork.CrCasBranchDocument.FindAllAsNoTrackingAsync(x => x.CrCasBranchDocumentsLessor == lessorCode);
-            ownersLayoutVM.CarDocumentsAndMaintainces = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsNoTrackingAsync(x => x.CrCasCarDocumentsMaintenanceLessor == lessorCode);
             return ownersLayoutVM;
         }
         private double UpRateBeforeMonthForContracts(List<OwnContractsVM> contracts)

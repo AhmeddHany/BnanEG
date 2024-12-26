@@ -25,7 +25,10 @@
                                 var currentPath = Context.Items["CurrentPath"]?.ToString() ?? "/";
                                 var subItemUrl = subItem.Url;
                                 var subItemActive = currentPath.Contains(subItemUrl) ? "active" : "";
-                                <a class="collapse-item @subItemActive" href="@subItem.Url">@subItem.Title<i class="fa-solid fa-arrow-left inner-collapse-arrow"></i></a>
+                                <a class="collapse-item @subItemActive" href="@subItem.Url">
+                                    @subItem.Title
+                                    <i class="fa-solid fa-arrow-left inner-collapse-arrow"></i>
+                                </a>
                             }
                         }
                     </div>

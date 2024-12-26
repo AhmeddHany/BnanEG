@@ -83,45 +83,48 @@
                         @{
                             var noAuto = 1;
                         }
-                        @foreach (var item in Model.BranchsInformations)
-                        {
-                            <tr data-content="@item.CrCasBranchInformationCode">
-                                <td>
-                                    <p class="FirstLineP">
-                                        @if (@requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                        {
-                                            @item.CrCasBranchInformationEnShortName
-                                        }
-                                        else
-                                        {
-                                            @item.CrCasBranchInformationArShortName
-                                        }
-                                        @if (item.CrCasBranchInformationStatus == Status.Hold) // Check if the status is "H"
-                                        {
-                                            <span style="color: red;font-size: .75rem"> (@localizer["Holded"]) </span>
-                                            // Add the label in red
-                                        }
-                                    </p>
-                                    <p class="secondLineP">
-                                        @if (@requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                        {
-                                            @item.CrCasBranchInformationDirectorEnName
-                                        }
-                                        else
-                                        {
-                                            @item.CrCasBranchInformationDirectorArName
-                                        }
-                                    </p>
-                                </td>
-                                <td class="notify-td">
-                                    <div class="filter-number-td">
-                                        <div class="filters @((bool)item.RedPointInBranch ? "" : "filter2-div")"></div>
-                                        <div>@noAuto</div>
-                                    </div>
-                                </td>
-                            </tr>
-                            noAuto++;
+                        @if(Model.BranchsInformations!=null){
+                            @foreach (var item in Model.BranchsInformations)
+                            {
+                                <tr data-content="@item.CrCasBranchInformationCode">
+                                    <td>
+                                        <p class="FirstLineP">
+                                            @if (@requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                            {
+                                                @item.CrCasBranchInformationEnShortName
+                                            }
+                                            else
+                                            {
+                                                @item.CrCasBranchInformationArShortName
+                                            }
+                                            @if (item.CrCasBranchInformationStatus == Status.Hold) // Check if the status is "H"
+                                            {
+                                                <span style="color: red;font-size: .75rem"> (@localizer["Holded"]) </span>
+                                                // Add the label in red
+                                            }
+                                        </p>
+                                        <p class="secondLineP">
+                                            @if (@requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                            {
+                                                @item.CrCasBranchInformationDirectorEnName
+                                            }
+                                            else
+                                            {
+                                                @item.CrCasBranchInformationDirectorArName
+                                            }
+                                        </p>
+                                    </td>
+                                    <td class="notify-td">
+                                        <div class="filter-number-td">
+                                            <div class="filters @((bool)item.RedPointInBranch ? "" : "filter2-div")"></div>
+                                            <div>@noAuto</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                noAuto++;
+                            }
                         }
+                        
                     </tbody>
                 </table>
                 <div id="contentContainer" style="display:none;"></div>
