@@ -935,8 +935,25 @@
     "ModalFirstMessage_CarDistribution_Hold": "ايقاف بيانات ونتائج1",
     "ModalSecondMessage_CarDistribution_Hold": "ايقاف بيانات ونتائج2",
     "ModalFirstMessage_CarDistribution_UnHold": "ارجاع بيانات ونتائج1",
-    "ModalSecondMessage_CarDistribution_UnHold": "ارجاع بيانات ونتائج2"
-
+    "ModalSecondMessage_CarDistribution_UnHold": "ارجاع بيانات ونتائج2",
+    // My Account
+    "MyAccount": "حسابي",
+    "Information": "بيانات",
+    "MasEmployeeNo": "رقم الموظف",
+    "MasEmployement": "المسمى الوظيفي",
+    "MasEmployeeMobileNo": "الجوال",
+    "AutoLogoutTime": "وقت الخروج الآلي",
+    "DefaultLanguage": "اللغة الافتراضية",
+    "Settings": "إعدادات",
+    // Change Password
+    "MasChangePassword": "تغيير كلمة السر",
+    "MasCurrentPassword": "كلمة السر الحالية",
+    "MasNewPassword": "كلمة السر الجديدة",
+    "MasConfirmNewPassword": "تأكيد كلمة السر",
+    "MasPassword": "كلمة السر",
+    "CurrentPassInCorrect": "كلمة السر الحالية غير صحيحة, يرجي اعادة المحاولة",
+    "NewAndConfirmPassInCorrect": "كلمة السر وتأكيد كلمة السر غير مطابقان, يرجي اعادة المحاولة",
+    "CannotUserCurrentPassword": "لا يمكن استخدام كلمة السر الحالية"
   },
 
 
@@ -1988,6 +2005,7 @@
   "requiredFiledEmail": "من فضلك ادخل البريد الالكتروني بشكل صحيح",
   "PleaseEnterCorrectFormatDate": "الرجاء إدخال التاريخ بالتنسيق yyyy/MM/dd",
   "requiredFiledMaxLength7": "الحد الأقصى للطول هو 7",
+  "requiredFiledMaxLength10Passowrd": "الحد الأقصى للطول هو 10",
 
   // buttons
   "Hold": "ايقاف",

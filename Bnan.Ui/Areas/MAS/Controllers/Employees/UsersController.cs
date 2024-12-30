@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Data;
-using System.Globalization;
 
 namespace Bnan.Ui.Areas.MAS.Controllers.Employees
 {
@@ -37,6 +36,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
         private readonly IToastNotification _toastNotification;
         private readonly IBaseRepo _baseRepo;
         private readonly IMasUser _masUser;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
         private readonly string pageNumber = SubTasks.CrMasUserSystemValiditionsMAS;
         public UsersController(IUserService userService,
                                IAuthService authService,
@@ -46,7 +47,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
                                IMapper mapper, IUserMainValidtion userMainValidtion,
                                IUserSubValidition userSubValidition,
                                IStringLocalizer<UsersController> localizer,
-                               IUserProcedureValidition userProcedureValidition, IToastNotification toastNotification, IBaseRepo baseRepo, IMasUser masUser) : base(userManager, unitOfWork, mapper)
+                               IUserProcedureValidition userProcedureValidition, IToastNotification toastNotification, IBaseRepo baseRepo, IMasUser masUser, IWebHostEnvironment hostingEnvironment) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
             _authService = authService;
@@ -59,6 +60,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             _toastNotification = toastNotification;
             _baseRepo = baseRepo;
             _masUser = masUser;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [HttpGet]
@@ -368,29 +370,30 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
         [HttpGet]
         public async Task<IActionResult> MyAccount()
         {
-            //save Tracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("105", "1105003", "1");
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Update, "1106004");
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Login", "Account");
+            }
 
-            // Set Title
-            var titles = await setTitle("105", "1105001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "تعديل", "Edit", titles[3]);
-            var user = await _userService.GetUserByUserNameAsync(User.Identity.Name);
             var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active);
             var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo }).ToList();
             ViewData["CallingKeys"] = callingKeyList; // Pass the callingKeys to the view
             var crMasUserInformation = _mapper.Map<RegisterViewModel>(user);
-            if (user == null) return RedirectToAction("Login", "Account");
             return View(crMasUserInformation);
         }
         [HttpPost]
-        public async Task<IActionResult> MyAccount(RegisterViewModel model, IFormFile UserSignatureFile, IFormFile UserImgFile, string countryCode)
+        public async Task<IActionResult> MyAccount(RegisterViewModel model, string UserSignatureFile, IFormFile UserImgFile)
         {
-            var user = await _userService.GetUserByUserNameAsync(User.Identity.Name);
-            if (user == null) return RedirectToAction("Login", "Account");
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Login", "Account");
+            }
 
             string foldername = $"{"images\\Bnan\\Users"}\\{model.CrMasUserInformationCode}";
             string filePathImage;
@@ -414,10 +417,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
 
             }
 
-            if (UserSignatureFile != null)
+            if (!string.IsNullOrEmpty(UserSignatureFile))
             {
                 string fileNameSignture = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقتs
-                filePathSignture = await UserSignatureFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameSignture, ".png", user.CrMasUserInformationSignature);
+                filePathSignture = await FileExtensions.SaveSigntureImage(_hostingEnvironment, UserSignatureFile, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, "Users");
             }
             else if (string.IsNullOrEmpty(oldPathSignture))
             {
@@ -434,74 +437,70 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             user.CrMasUserInformationSignature = filePathSignture;
             user.CrMasUserInformationPicture = filePathImage;
             await _userManager.UpdateAsync(user);
-
-            // SaveTracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("105", "1105003", "1");
-            var RecordAr = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.CrMasUserInformationCode).CrMasUserInformationArName} - {_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.CrMasUserInformationCode).CrMasUserInformationTasksArName}";
-            var RecordEn = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.CrMasUserInformationCode).CrMasUserInformationEnName} - {_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.CrMasUserInformationCode).CrMasUserInformationTasksEnName}";
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            await SaveTracingForUserChange(user, Status.Update);
             _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             return RedirectToAction("Index", "Home");
         }
         [HttpGet]
         public async Task<IActionResult> ChangePassword()
         {
-            var user = await _userService.GetUserByUserNameAsync(User.Identity.Name);
-            if (user == null) return RedirectToAction("Login", "Account");
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Update, "1106005");
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Login", "Account");
+            }
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordVM model)
         {
-            string currentCulture = CultureInfo.CurrentCulture.Name;
-
-            if (model != null)
+            // تحقق من صحة النموذج
+            if (!ModelState.IsValid)
             {
-                var user = await _userService.GetUserByUserNameAsync(User.Identity.Name);
-                if (user == null) return RedirectToAction("Login", "Account");
-
-                // Check current password 
-                if (!await _userManager.CheckPasswordAsync(user, model.CurrentPassword))
-                {
-                    if (currentCulture == "en-US") ModelState.AddModelError("NotExist", "Current password is incorrect. Please try again.");
-                    else ModelState.AddModelError("NotExist", "كلمة السر الحالية غير صحيحة, يرجي اعادة المحاولة");
-                    return View(model);
-                }
-                if (model.NewPassword != model.ConfirmPassword)
-                {
-                    if (currentCulture == "en-US") ModelState.AddModelError("Exist", "New password does not match. Enter new password again here.");
-                    else ModelState.AddModelError("Exist", "كلمة السر وتأكيد كلمة السر غير مطابقان, يرجي اعادة المحاولة");
-
-                    return View(model);
-                }
-                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword.Trim(), model.NewPassword);
-                if (result.Succeeded)
-                {
-                    //user.CrMasUserInformationPassWord = model.NewPassword;
-                    user.CrMasUserInformationChangePassWordLastDate = DateTime.Now.Date;
-                    _unitOfWork.Complete();
-
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("105", "1105003", "1");
-                    var RecordAr = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == user.CrMasUserInformationCode).CrMasUserInformationArName} - {_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == user.CrMasUserInformationCode).CrMasUserInformationTasksArName}";
-                    var RecordEn = $"{_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == user.CrMasUserInformationCode).CrMasUserInformationEnName} - {_unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == user.CrMasUserInformationCode).CrMasUserInformationTasksEnName}";
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تغيير الباسورد", "password Changed", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("Exist", "Something wrong happed , please try again");
                 return View(model);
             }
 
+            // الحصول على المستخدم الحالي
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
+            // تحقق من كلمة المرور الحالية
+            if (!await _userManager.CheckPasswordAsync(user, model.CurrentPassword))
+            {
+                ModelState.AddModelError("CurrentPassInCorrect", _localizer["CurrentPassInCorrect"]);
+                return View(model);
+            }
 
-            return RedirectToAction("Index", "Home");
+            // منع استخدام نفس كلمة المرور الحالية
+            if (model.NewPassword == model.CurrentPassword)
+            {
+                ModelState.AddModelError("CannotUseCurrentPassword", _localizer["CannotUserCurrentPassword"]);
+                return View(model);
+            }
+
+            // تغيير كلمة المرور
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword?.Trim(), model.NewPassword?.Trim());
+            if (result.Succeeded)
+            {
+                user.CrMasUserInformationChangePassWordLastDate = DateTime.Now.Date;
+                _unitOfWork.Complete();
+                await SaveTracingForUserChange(user, Status.ChangePassword);
+                _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Home");
+            }
+
+            // التعامل مع الأخطاء أثناء تغيير كلمة المرور
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(model);
         }
 
 

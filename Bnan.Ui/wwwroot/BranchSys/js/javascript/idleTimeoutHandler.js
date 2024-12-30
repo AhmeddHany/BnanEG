@@ -1,10 +1,11 @@
 ﻿function initializeIdleTimeoutHandler(exitUser) {
     let timeout = parseInt(exitUser) * 60 * 1000;
+    //let timeout = .1 * 60 * 1000;
     let countdownDuration = 60; // Countdown duration in seconds
     let idleTimeout = null;
     let countdownTimer = null;
     let countdownStartTime;
-
+    console.log("timeout", timeout)
     // Static URLs
     const updateLastActionUrl = "/Identity/Account/UpdateLastActionDate";
     const logoutUrl = "/Identity/Account/Logout";

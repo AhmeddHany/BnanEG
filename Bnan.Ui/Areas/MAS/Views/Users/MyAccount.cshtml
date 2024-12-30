@@ -6,156 +6,242 @@
        ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
 }
 
-@{
-    ViewData["Page-title"] = localizer["MyAccount Data"];
-    ViewData["Page-Hint"] = localizer["MyAccount Hint"];
-}
-<style>
-    .row {
-        align-items: baseline;
-    }
+<div class="col my-3 d-flex align-items-center justify-content-center ">
+    <div class="container changePasword-container">
+        <form class="needs-validation" asp-area="MAS" asp-controller="Users" asp-action="MyAccount" method="post" enctype="multipart/form-data" novalidate>
+            <input hidden asp-for="CrMasUserInformationPicture" />
+            <input hidden asp-for="CrMasUserInformationSignature" />
+            <div class="row mt-3 g-3 justify-content-center">
 
-    #signaturePreview, #imagePreview {
-        display: block;
-        margin-top: -5px;
-        float: right;
-        margin-right: 20px;
-        height: 100px;
-        width: auto;
-        object-fit: cover;
-        border: .5px solid rgb(231, 231, 231);
-        position: relative;
-    }
 
-    #spanInput {
-        height: 35px;
-    }
+                <div class="col-lg-12">
+                    <div class="container-fluid">
 
-    .sub-container form .row > div:nth-child(odd):nth-child(-n+5), .sub-container-form form .row > div:nth-child(odd):nth-child(-n+5) {
-        margin: 0;
-    }
+                        <div class="row g-3 my-2 px-md-4">
+                            <div class="col-md-6">
+                                <h3>@localizer["MyAccount"]</h3>
+                            </div>
+                            <div class="col-md-6 save-col">
+                                <button type="submit" class="custom-img-btn">
+                                    <img src="~/MasSystem/images/save.svg" />
+                                </button>
+                            </div>
+                        </div>
 
-    .file-upload {
-        background-color: #ffffff;
-        width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-    }
 
-    .file-upload-btn {
-        width: 200px;
-        max-height: 200px;
-        max-width: 200px;
-        margin: 0;
-        color: #fff;
-        background: #727cf5;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        border-bottom: 4px solid #727cf5;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-    }
+                        <div class="row g-3 mt-3 justify-content-around acoount-cards-row">
 
-        .file-upload-btn:hover {
-            background: #5661e3;
-            color: #ffffff;
-            transition: all .2s ease;
-            cursor: pointer;
-        }
+                            <div class="col-lg-8">
+                                <div class="info-card mb-3">
+                                    <div class="header-card text-center py-2">
+                                        @localizer["Information"]
+                                    </div>
+                                    <div class="data-card">
+                                        <div class="container-fluid">
+                                            <div class="row g-3 py-3">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-auto">
+                                                            <p>@localizer["EmployeeNo"]</p>
+                                                        </div>
+                                                        <div class=" col-md-auto Saved-data">
+                                                            <p>@Model.CrMasUserInformationCode</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                               @*  <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-auto">
+                                                            <p> @localizer["MasEmployeeNo"] </p>
+                                                        </div>
+                                                        <div class=" col-md-auto Saved-data">
+                                                            <p>
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.CrMasUserInformationTasksEnName : Model.CrMasUserInformationTasksArName)
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div> *@
+                                                <div class="col-md-12">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-auto">
+                                                            <label for="phone" class="form-label"> @localizer["MasEmployeeMobileNo"] </label>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="input-group">
+                                                                <input type="tel" class="form-control inputs tel-input" id="phone" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                                                <select class="input-group-text select-style counterCode" asp-for="CrMasUserInformationCallingKey">
+                                                                    @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
+                                                                    {
+                                                                        <option value="@callingKey.Text" selected="@(callingKey.Text.Trim() == Model.CrMasUserInformationCallingKey ? "selected" : null)">@callingKey.Text</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-auto">
+                                                            <label for="email" class="form-label"> @localizer["Email"] </label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="email" id="email" class="form-control inputs english-input" asp-for="CrMasUserInformationEmail">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="header-card text-center py-2">
+                                        @localizer["Settings"]
+                                    </div>
+                                    <div class="data-card ">
+                                        <div class="container-fluid">
+                                            <div class="row py-3 g-3">
+                                                <div class="col-md-10">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-auto">
+                                                            <label for="automatic-logout" class="form-label"> @localizer["AutoLogoutTime"]  </label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="number-input-container  ">
+                                                                <div class="col">
+                                                                    <input type="number" min="5" max="15" class="alert-input" asp-for="CrMasUserInformationExitTimer" oninput="this.value=this.value.replace(/[^0-9]/g,'')" id="automatic-logout" autocomplete="off"/>
+                                                                </div>
+                                                                <div class="col d-flex flex-column-reverse">
+                                                                    <button type="button" class="deincrement">
+                                                                    </button>
+                                                                    <button type="button" class="increment"></button>
+                                                                </div>
+                                                            </div>
 
-    /* .file-upload-btn:active {
-                border: 0;
-                transition: all .2s ease;
-            }*/
+                                                        </div>
+                                                    </div>
 
-    .file-upload-content {
-    }
+                                                </div>
 
-    .file-upload-input-picture, .file-upload-input-signature {
-        position: absolute;
-        margin: 0;
-        padding: 0;
-        width: 200px%;
-        height: 200px;
-        max-height: 200px;
-        max-width: 200px;
-        outline: none;
-        opacity: 0;
-        cursor: pointer;
-    }
+                                                <div class="col-xl-7">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-auto">
+                                                            <label for="lang">@localizer["DefaultLanguage"]</label>
+                                                        </div>
+                                                        <div class="col-md-6  ">
+                                                            <select class="form-select select-style text-center" asp-for="CrMasUserInformationDefaultLanguage" id="lang">
+                                                                <option value="Ar">
+                                                                    @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? "Arabic" : "عربي")
+                                                                </option>
+                                                                <option value="En">
+                                                                    @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? "English" : "انجليزي")
+                                                                </option>
+                                                            </select>
 
-    .image-upload-wrap {
-        max-height: 200px;
-        max-width: 200px;
-        margin-top: 5px;
-        border: 4px dashed rgb(231, 231, 231);
-        position: relative;
-        display: none;
-    }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 profile-section">
+                                <div class="row gap-3">
+                                    <div class="col-md-12 d-flex justify-content-center">
+                                        <div class="profile-photo">
+                                            <img src="@Url.Content(Model.CrMasUserInformationPicture?.ToString())" class="w-100" id="Profile-photo">
+                                            <img src="~/MasSystem/images/change pic.svg" class="change-profile-btn" id="change-profile-btn">
+                                            <input type="file" id="Profile-photo-input" name="UserImgFile" class="hide" onchange="loadFile(event)" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 d-flex justify-content-center">
+                                        <div class="row align-items-center ">
+                                            <div class="col-auto">
+                                                <button type="button" class="custom-img-btn"><img src="~/MasSystem/images/icon.svg" data-bs-toggle="modal" href="#signature-modal" /></button>
+                                            </div>
+                                            <div class="col-auto">
+                                                <img src="@Url.Content(Model.CrMasUserInformationSignature?.ToString())"
+                                                     id="previewSignature">
+                                                <input type="hidden" id="UserSignatureFile" name="UserSignatureFile" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 d-flex justify-content-center  align-items-center flex-column">
+                                        <p class="user-name">
+                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.CrMasUserInformationEnName : Model.CrMasUserInformationArName)
+                                        </p>
+                                        <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.CrMasUserInformationTasksEnName : Model.CrMasUserInformationTasksArName)</p>
+                                    </div>
+                                </div>
+                            </div>
 
-        .image-dropping,
-        .image-upload-wrap:hover {
-            background-color: rgb(231, 231, 231);
-            border: 4px dashed #ffffff;
-        }
+                        </div>
+                    </div>
+                </div>
 
-    .image-title-wrap {
-        color: #222;
-    }
+            </div>
+        </form>
+        <a href="~/MasSystem/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
+           class="new-Page-icon"><img src="~/MasSystem/images/back to main.svg" alt="man"></a>
+    </div>
+</div>
 
-    .drag-text {
-        text-align: center;
-    }
+<!-- signature modal -->
+<div class="modal fade" id="signature-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered d-flex justify-content-center">
+        <div class="modal-content signature-modal-content p-3">
+            <div class="modal-body Signature-modal-body">
+                <div class="SignatureCard">
+                    <div class="image-main-container" id="removeSignatureImg"></div>
+                    <div class="upload-container">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/MasSystem/images/signature/save.svg" class="w-100" id="save">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/MasSystem/images/signature/Frame.svg" class="w-100" id="clear">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/MasSystem/images/signature/file-signature_9795523 1.svg"
+                                 class="w-100" id="WriteSignature">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/MasSystem/images/signature/Pic.svg" class="w-100"
+                                 id="UploadSigntaurePic">
+                            <input type="file" id="imageUpload" accept="image/*"
+                                   style="display: none;">
+@*                             <input id="UserSignatureFile" hidden />
+ *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        .drag-text h3 {
-            font-weight: 100;
-            text-transform: uppercase;
-            padding: 60px 0;
-        }
 
-    .file-upload-image {
-        height: 200px;
-        max-width: 200px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        padding: 20px;
-        border: .5px solid rgb(231, 231, 231);
-    }
 
-    .remove-image {
-        margin: 0;
-        max-height: 200px;
-        max-width: 200px;
-        width: 100%;
-        color: #fff;
-        background: #fa5c7c;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        border-bottom: 4px solid #fa5c7c;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-    }
 
-        .remove-image:hover {
-            background: #f35474;
-            color: #ffffff;
-            transition: all .2s ease;
-            cursor: pointer;
-        }
 
-    /*.remove-image:active {
-                border: 0;
-                transition: all .2s ease;
-            }*/
-</style>
-<title>@ViewData["Title"]</title>
-<div class="sub-container-form">
+
+
+
+
+
+
+@* <div class="sub-container-form">
     <form class="needs-validation" novalidate asp-area="MAS" asp-controller="Users" asp-action="MyAccount" method="post" enctype="multipart/form-data">
         <input hidden asp-for="CrMasUserInformationPicture" />
         <input hidden asp-for="CrMasUserInformationSignature" />
@@ -324,11 +410,74 @@
             </a>
         </div>
             </form>
-</div>
+</div> *@
         
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/MasSystem/js/signature.js"></script>
     <script>
+        const changeProfileBtn = document.getElementById('change-profile-btn');
+        const ProfilePhotoInput = document.getElementById('Profile-photo-input');
+        const ProfilePhoto = document.getElementById('Profile-photo');
+
+        changeProfileBtn.addEventListener('click', function () {
+            ProfilePhotoInput.click();
+
+        })
+        var loadFile = function (event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('Profile-photo');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        };
+    </script>
+    <script>
+        let deincrement = document.querySelector(".deincrement");
+        let increment = document.querySelector(".increment");
+        let number = document.querySelector(".alert-input");
+
+        let step = 5;
+        let max = 15;
+        let min = 5;
+
+        number.addEventListener('blur', () => {
+            let currentValue = parseInt(number.value);
+            if (isNaN(currentValue)) {
+                number.value = min;
+            } else if (currentValue > max) {
+                number.value = max;
+            } else if (currentValue < min) {
+                number.value = min;
+            }
+        });
+
+        increment.addEventListener("click", () => {
+            if (parseInt(number.value) + step >= max) {
+                number.value = max;
+                increment.style.backgroundImage = "url('/MasSystem/images/up1.svg')";
+                deincrement.style.backgroundImage = "url('/MasSystem/images/down.svg')";
+                return;
+            }
+            increment.style.backgroundImage = "url('/MasSystem/images/up.svg')";
+            deincrement.style.backgroundImage = "url('/MasSystem/images/down.svg')";
+            number.value = parseInt(number.value) + step;
+        });
+
+        deincrement.addEventListener("click", () => {
+            if (parseInt(number.value) - step <= min) {
+                number.value = min;
+                deincrement.style.backgroundImage = "url('/MasSystem/images/down1.svg')";
+                increment.style.backgroundImage = "url('/MasSystem/images/up.svg')";
+                return;
+            }
+            deincrement.style.backgroundImage = "url('/MasSystem/images/down.svg')";
+            increment.style.backgroundImage = "url('/MasSystem/images/up.svg')";
+            number.value = parseInt(number.value) - step;
+        });
+    </script>
+  @*   <script>
         function readURL(input, type) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -366,5 +515,5 @@
         $('.image-upload-wrap').bind('dragleave', function () {
             $(this).removeClass('image-dropping');
         });
-    </script>
+    </script> *@
 }

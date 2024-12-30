@@ -10,6 +10,7 @@
         public string? CrCasRenterContractBasicLessor { get; set; }
         public string? CrCasRenterContractBasicBranch { get; set; }
         public string? CrCasRenterContractBasicOwner { get; set; }
+        public string? CrCasRenterContractBasicRenterId { get; set; }
         public DateTime? CrCasRenterContractBasicIssuedDate { get; set; }
         public DateTime? CrCasRenterContractBasicExpectedStartDate { get; set; }
         public DateTime? CrCasRenterContractBasicExpectedEndDate { get; set; }

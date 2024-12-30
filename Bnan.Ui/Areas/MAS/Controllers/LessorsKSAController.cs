@@ -220,7 +220,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddLessorKSA(CrMasLessorInformationVM lessorVM)
+        public async Task<IActionResult> AddLessorKSA(CrMasLessorInformationVM lessorVM, string WelcomeImg)
 
         {
             var user = await _userManager.GetUserAsync(User);
@@ -265,45 +265,46 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                         int code = 4000 + int.Parse(lessorVM.CrMasLessorInformationCode);
                         LessorVMTlessor.CrMasLessorInformationCode = code.ToString();
                     }
-                    await _unitOfWork.CrMasLessorInformation.AddAsync(LessorVMTlessor);
+                    //await _unitOfWork.CrMasLessorInformation.AddAsync(LessorVMTlessor);
 
-                    await _LessorImage.AddLessorImage(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await _LessorImage.AddLessorImage(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _Owner.AddOwner(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await _Owner.AddOwner(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _Beneficiary.AddBeneficiary(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await _Beneficiary.AddBeneficiary(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _LessorMembership.AddLessorMemberShip(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await _LessorMembership.AddLessorMemberShip(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _LessorMechanism.AddLessorMechanism(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await _LessorMechanism.AddLessorMechanism(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _CompnayContract.AddCompanyContract(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await _CompnayContract.AddCompanyContract(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _BranchInformation.AddBranchInformationDefault(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await _BranchInformation.AddBranchInformationDefault(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _AccountBank.AddAcountBankDefalut(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await _AccountBank.AddAcountBankDefalut(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _PostBranch.AddPostBranchDefault(LessorVMTlessor.CrMasLessorInformationCode, BranchPostVMToBranchPost, IsValidCity);
+                    //await _PostBranch.AddPostBranchDefault(LessorVMTlessor.CrMasLessorInformationCode, BranchPostVMToBranchPost, IsValidCity);
 
-                    await _SalesPoint.AddSalesPointDefault(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await _SalesPoint.AddSalesPointDefault(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _BranchDocument.AddBranchDocumentDefault(LessorVMTlessor.CrMasLessorInformationCode);
-                    // add whatsup record
-                    // add TGA And shomos record
-                    //await _authService.AddUserDefault(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await _BranchDocument.AddBranchDocumentDefault(LessorVMTlessor.CrMasLessorInformationCode);
+                    //// add whatsup record
+                    //// add TGA And shomos record
+                    ////await _authService.AddUserDefault(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _masTechnicalConnect.AddDefaultWhatsupConnect(LessorVMTlessor.CrMasLessorInformationCode);
-                    _unitOfWork.Complete();
+                    //await _masTechnicalConnect.AddDefaultWhatsupConnect(LessorVMTlessor.CrMasLessorInformationCode);
+                    //_unitOfWork.Complete();
 
-                    await SaveTracingForLessorChange(user, LessorVMTlessor, Status.Insert);
+                    //await SaveTracingForLessorChange(user, LessorVMTlessor, Status.Insert);
+
                     #region Whatsup
-                    await WhatsAppServicesExtension.ConnectLessor(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await WhatsAppServicesExtension.ConnectLessor(LessorVMTlessor.CrMasLessorInformationCode);
                     string fullPhoneNumber = $"{LessorVMTlessor.CrMasLessorInformationCommunicationMobileKey}{LessorVMTlessor.CrMasLessorInformationCommunicationMobile}";
-                    await WhatsAppServicesExtension.SendMessageAsync(
-                        fullPhoneNumber,
-                        $"تم انشاء الشركة الخاصة بك باسم / {LessorVMTlessor.CrMasLessorInformationArLongName}",
-                        "0000" //mas lessor 0000
-                    );
+
+                    if (!string.IsNullOrEmpty(WelcomeImg)) await WhatsAppServicesExtension.SendMediaAsync(fullPhoneNumber, " ", "0000", WelcomeImg, $"WelcomeImg_{LessorVMTlessor.CrMasLessorInformationCode}.png");
+                    else await WhatsAppServicesExtension.SendMessageAsync(fullPhoneNumber, $"تم انشاء الشركة الخاصة بك باسم / {LessorVMTlessor.CrMasLessorInformationArLongName}", "0000");
+
+
                     #endregion
                     await FileExtensions.CreateFolderLessor(_webHostEnvironment, LessorVMTlessor.CrMasLessorInformationCode);
                     _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });

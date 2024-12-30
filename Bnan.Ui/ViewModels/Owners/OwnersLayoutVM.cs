@@ -13,6 +13,8 @@ namespace Bnan.Ui.ViewModels.Owners
         public double? RateCarsMonthBefore;
         // renters
         public List<OwnRentersVM>? OwnRenters;
+        public int RentersWithContracts;
+        public int RentersWithountContracts;
         public double? RateRentersMonthBefore;
         // Balances
         public decimal? TotalBalance;

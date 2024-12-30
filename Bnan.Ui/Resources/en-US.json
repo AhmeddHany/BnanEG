@@ -979,8 +979,25 @@
     "ModalFirstMessage_CarDistribution_Hold": "Hold Data And Results1",
     "ModalSecondMessage_CarDistribution_Hold": "Hold Data And Results2",
     "ModalFirstMessage_CarDistribution_UnHold": "UnHold Data And Results1",
-    "ModalSecondMessage_CarDistribution_UnHold": "UnHold Data And Results2"
-
+    "ModalSecondMessage_CarDistribution_UnHold": "UnHold Data And Results2",
+    // My Account
+    "MyAccount": "My Account",
+    "Information": "Information",
+    "MasEmployeeNo": "Employee Code",
+    "MasEmployement": "Employement",
+    "MasEmployeeMobileNo": "Mobile",
+    "AutoLogoutTime": "Auto Logout Time",
+    "DefaultLanguage": "Default Language",
+    "Settings": "Settings",
+    // Change Password
+    "MasChangePassword": "Change Password",
+    "MasCurrentPassword": "Current Password",
+    "MasNewPassword": "New Password",
+    "MasConfirmNewPassword": "Confirm New Password",
+    "MasPassword": "Password",
+    "CurrentPassInCorrect": "The current password is incorrect, please try again",
+    "NewAndConfirmPassInCorrect": "Password and password confirmation do not match, please try again",
+    "CannotUserCurrentPassword": "Current password cannot be used"
   },
   "Arabic": "Arabic",
   "English": "English",

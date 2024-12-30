@@ -10,9 +10,9 @@
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
-        <form asp-area="MAS" asp-controller="LessorsKSA" asp-action="AddLessorKSA" class="needs-validation" novalidate>
-
+        <form id="myForm" asp-area="MAS" asp-controller="LessorsKSA" asp-action="AddLessorKSA" class="needs-validation" novalidate>
             <input asp-for="CrMasLessorInformationCode" value="@ViewBag.LessorCode" hidden />
+            <input name="WelcomeImg" id="WelcomeImg" hidden />
             <div class="row mt-3 g-3">
 
                 <div class="row justify-content-center">
@@ -22,7 +22,7 @@
                                 <h3>@localizer["AddLessor"]</h3>
                             </div>
                             <div class="col-md-auto save-col">
-                                <button type="submit" class="custom-img-btn">
+                                <button id="submitBtn" class="custom-img-btn">
                                     <img src="~/MasSystem/images/save.svg" />
                                 </button>
                                 <button type="button" class="custom-img-btn"> <a asp-area="MAS" asp-controller="LessorsKSA" asp-action="Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
@@ -83,7 +83,7 @@
                                                         <input type="text" asp-for="CrMasLessorInformationEnLongName" id="company-name-en" class="form-control inputs english-input" maxlength="100" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" required>
                                                         <div class="invaild">
                                                             <div class="invalid-feedback">
-                                                                <span asp-validation-for="@Model.CrMasLessorInformationEnLongName" class="text-danger"></span>    
+                                                                <span asp-validation-for="@Model.CrMasLessorInformationEnLongName" class="text-danger"></span>
                                                                 <span class="text-danger" id="CrMasLessorInformationEnLongName-Error"></span>
 
                                                             </div>
@@ -149,7 +149,7 @@
                                                             @localizer["governmentNo"]
                                                             <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                                         </label>
-                                                        <input type="text" id="government-number" class="form-control inputs" asp-for="CrMasLessorInformationGovernmentNo" maxlength="10"  required>
+                                                        <input type="text" id="government-number" class="form-control inputs" asp-for="CrMasLessorInformationGovernmentNo" maxlength="10" required>
                                                         <div class="invaild">
                                                             <div class="invalid-feedback">
                                                                 <span asp-validation-for="@Model.CrMasLessorInformationGovernmentNo" data-error="@localizer["requiredNoStartWithFiled7"]" class="text-danger" id="gov-error" style="white-space: initial;"></span>
@@ -447,12 +447,136 @@
             </div>
         </form>
     </div>
+    <canvas hidden id="myCanvas"></canvas>
 </div>
 @section Scripts {
-    @* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>*@
+    @* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        const loadImageOnCanvasAndThenWriteText = (canvas, imageUrl, textStyleOptions, lessorAr, lessorEn) => {
+            let ctx = canvas.getContext("2d");
+            let img = new Image();
+
+            img.onload = () => {
+                let loadedImageWidth = img.width;
+                let loadedImageHeight = img.height;
+
+                // ضبط أبعاد الـ canvas بناءً على الصورة
+                canvas.width = loadedImageWidth;
+                canvas.height = loadedImageHeight;
+                console.log("Image Width:", loadedImageWidth); // عرض الصورة
+                console.log("Image Height:", loadedImageHeight); // ارتفاع الصورة
+                ctx.drawImage(img, 0, 0);
+
+                let canvas_width = loadedImageWidth;
+
+                let texts = [
+                    { content: lessorAr, x: canvas_width - 270, y: 1151, align: "right" },
+                    { content: lessorEn, x: canvas_width - 1150, y: 1557, align: "left" },
+                ];
+                console.log("x:ar right canvas_width - 270", canvas_width - 270); // عرض الصورة
+                console.log("x:en left canvas_width - 1150:", canvas_width - 1150); // ارتفاع الصورة
+                let qrImg = new Image();
+                qrImg.src = "/MasSystem/images/WelcomeImg/QR.png";
+
+                qrImg.onload = () => {
+                    let Images = [
+                        { content: qrImg, x: canvas_width - 945, y: 635, width: 395, height: 400 },
+                    ];
+
+                    // رسم النصوص
+                    texts.forEach(text => {
+                        ctx.textAlign = "start";
+                        ctx.direction = "ltr";
+                        ctx.font = `${textStyleOptions.fontWeight} ${textStyleOptions.fontSize}px ${textStyleOptions.fontFamily}`;
+                        ctx.fillStyle = textStyleOptions.textColor;
+
+                        let textWidth = ctx.measureText(text.content).width;
+                        let x = text.x;
+
+                        const align = text.align || textStyleOptions.textAlign;
+
+                        if (align == "right") {
+                            x -= textWidth;
+                        } else if (align == "center") {
+                            x -= textWidth / 2;
+                        }
+
+                        ctx.fillText(text.content, x, text.y);
+                        console.log("X:", x);
+                    });
+
+                    // رسم الصور
+                    Images.forEach(img => {
+                        let imgWidth = ctx.measureText(img.content).width;
+
+                        let x = img.x;
+
+                        if (textStyleOptions.textAlign === "right") {
+                            x -= imgWidth;
+                        } else if (textStyleOptions.textAlign === "center") {
+                            x -= imgWidth / 2;
+                        }
+
+                        ctx.drawImage(img.content, x, img.y, img.width, img.height);
+                        console.log(img);
+                    });
+
+                    // إنشاء رابط Base64 للصورة
+                    let base64Link = canvas.toDataURL("image/png");
+                    console.log(base64Link);
+
+                    // تحديث حقل الإدخال المخفي بالقيمة
+                    let welcomeImgInput = document.getElementById("WelcomeImg");
+                    welcomeImgInput.value = base64Link; // تحديث قيمة الإدخال
+                    console.log("welcomeImgInput", base64Link);
+
+                    // إرسال النموذج بعد الانتهاء
+                    let form = document.getElementById("myForm");
+                    form.submit(); // تنفيذ الإرسال
+                };
+
+                qrImg.onerror = () => {
+                    console.error("Failed to load the QR image. Please check the image path.");
+                };
+            };
+
+            img.onerror = () => {
+                console.error("Failed to load the main image. Please check the image path.");
+            };
+
+            img.src = imageUrl;
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("submitBtn").addEventListener("click", (event) => {
+                event.preventDefault(); // منع الإرسال الافتراضي للفورم حتى انتهاء العملية
+                // تحقق من صحة النموذج أولاً
+                if ($("#myForm").valid()) {
+
+
+                    let theCanvas = document.getElementById("myCanvas");
+                    let imageUrl = "/MasSystem/images/WelcomeImg/Welcome Messege.png";
+                    let textStyleOptions = {
+                        fontWeight: "bold",
+                        fontSize: 50,
+                        fontFamily: "Sakkal Majalla Bold",
+                        textColor: "#4c3715",
+                    };
+                    // قراءة النصوص من الإدخالات
+                    let lessorAr = document.getElementById("company-name-ar").value;
+                    let lessorEn = document.getElementById("company-name-en").value;
+                    // تحميل الخطوط وضبط العملية
+                    document.fonts.load(`bold 50px "${textStyleOptions.fontFamily}"`).then(() => {
+                        loadImageOnCanvasAndThenWriteText(theCanvas, imageUrl, textStyleOptions, lessorAr, lessorEn);
+                    });
+                }
+            });
+        });
+    </script>
+
     <script>
         function validateInput(event, inId, InEr, No) {
             event.target.value = event.target.value.replace(/[^0-9]/g, '');
@@ -539,7 +663,6 @@
                 });
 
         });
-
     </script>
 
 }
