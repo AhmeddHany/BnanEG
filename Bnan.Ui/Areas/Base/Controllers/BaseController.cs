@@ -77,6 +77,7 @@ namespace Bnan.Ui.Areas.Base.Controllers
             else if (status == Status.UnHold) return ("استرجاع الايقاف", "Retrieve Hold");
             else if (status == Status.UnDeleted) return ("استرجاع الحذف", "Retrieve Delete");
             else if (status == Status.ResetPassword) return ("استرجاع كلمة السر", "Retrieve Password");
+            else if (status == Status.ChangePassword) return ("تغيير كلمة السر", "Change Password");
             else return ("", "");
         }
 
@@ -283,6 +284,7 @@ namespace Bnan.Ui.Areas.Base.Controllers
                         CrCasRenterContractBasicLessor = x.CrCasRenterContractBasicLessor,
                         CrCasRenterContractBasicBranch = x.CrCasRenterContractBasicBranch,
                         CrCasRenterContractBasicOwner = x.CrCasRenterContractBasicOwner,
+                        CrCasRenterContractBasicRenterId = x.CrCasRenterContractBasicRenterId,
                         CrCasRenterContractBasicIssuedDate = x.CrCasRenterContractBasicIssuedDate,
                         CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
                         CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -325,6 +327,21 @@ namespace Bnan.Ui.Areas.Base.Controllers
                 );
             ownersLayoutVM.OwnRenters = renters;
             ownersLayoutVM.RateRentersMonthBefore = UpRateBeforeMonthForRenters(ownersLayoutVM.OwnRenters);
+
+            var activeContractNumbers = contracts.Where(x => x.CrCasRenterContractBasicStatus == Status.Active).Select(c => c.CrCasRenterContractBasicRenterId).ToList();
+            // استرجاع المستأجرين بحالة R فقط
+            //var rentersWithActiveContracts = await _unitOfWork.CrCasRenterLessor
+            //    .FindAllWithSelectAsNoTrackingAsync<OwnRentersVM>(
+            //        x => activeContractNumbers.Contains(x.CrCasRenterLessorId) // المستأجرين المرتبطين بالعقود النشطة
+            //             && x.CrCasRenterLessorStatus == Status.Rented,    // المستأجرين بحالة R
+            //        query => query.Select(x => new OwnRentersVM
+            //        {
+            //            CrCasRenterLessorDateFirstInteraction = x.CrCasRenterLessorDateFirstInteraction,
+            //            CrCasRenterLessorStatus = x.CrCasRenterLessorStatus
+            //        })
+            //    );
+            //ownersLayoutVM.RentersWithContracts = rentersWithActiveContracts.Count();
+            //ownersLayoutVM.RentersWithountContracts = renters.Count() - rentersWithActiveContracts.Count();
             return ownersLayoutVM;
         }
         private double UpRateBeforeMonthForContracts(List<OwnContractsVM> contracts)

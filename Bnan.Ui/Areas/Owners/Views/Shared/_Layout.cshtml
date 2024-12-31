@@ -184,8 +184,8 @@
             <div>
                 <div class="row flex-column align-items-center justify-content-center mb-lg-5">
                     <div class="col-12 d-flex align-items-center justify-content-center ">
-                        <div class="Profile company-logo">
-                            <img src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" alt="company logo" class="mb-3 w-100">
+                        <div class="Profile company-logo" style="width: auto;">
+                            <img src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" alt="company logo" class="mb-3 w-100" style="height: 80px;">
                         </div>
                     </div>
                     <div class="sidebar-brand-text col-12 text-center">
@@ -257,13 +257,23 @@
                                 </div>
                             </div>
                         </div>
+                        @{
+                            
+                            var carCount = Model.OwnCars?.Count();
+                            var rentedCarCount = Model.OwnCars?.FindAll(x => x.CrCasCarInformationStatus == Status.Rented).Count();
+                            var avaliableCar = Model.OwnCars?.FindAll(x => x.CrCasCarInformationStatus == Status.Active &&
+                            x.CrCasCarInformationPriceStatus == true && x.CrCasCarInformationBranchStatus == Status.Active &&
+                            x.CrCasCarInformationOwnerStatus == Status.Active &&
+                            (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale)).Count();
+                            var unAvaliableCarCount = carCount - avaliableCar - rentedCarCount;
+                        }
                         <div class=" col-sm-6 col-lg-3">
                             <div class="card border-left-success h-100 py-2 ">
                                 <div class="card-body ">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col-sm-8 data-card">
                                             <span>@localizer["Cars"]</span>
-                                            <span> @Model.OwnCars?.Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                                            <span> @carCount?.ToString("N0", CultureInfo.InvariantCulture)</span>
                                         </div>
                                         <div class="col-sm-4 data-icon">
                                             <div class="rate-card_icon">
@@ -273,18 +283,15 @@
                                     </div>
                                     <hr class="card-hr">
                                     <div class="row">
-                                        <div class="col data-card2">
-                                            <span>@localizer["Rented"]</span> <span>@Model.OwnCars?.FindAll(x => x.CrCasCarInformationStatus == Status.Rented).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
-                                        </div>
+                                        <div class="col-md-6 data-card2"> <span>@localizer["Rented"]</span> <span>@rentedCarCount?.ToString("N0", CultureInfo.InvariantCulture)</span></div>
+                                        <div class="col-md-auto data-card2"><span>@localizer["UnAvailable"]</span> <span>@unAvaliableCarCount?.ToString("N0", CultureInfo.InvariantCulture)</span></div>
+
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col data-card2">
                                             <span>@localizer["Available"]</span>
                                             <span>
-                                                @Model.OwnCars?.FindAll(x => x.CrCasCarInformationStatus == Status.Active &&
-                                                         x.CrCasCarInformationPriceStatus == true && x.CrCasCarInformationBranchStatus == Status.Active &&
-                                                         x.CrCasCarInformationOwnerStatus == Status.Active &&
-                                                         (x.CrCasCarInformationForSaleStatus == Status.Active || x.CrCasCarInformationForSaleStatus == Status.RendAndForSale)).Count().ToString("N0", CultureInfo.InvariantCulture)
+                                                @avaliableCar?.ToString("N0", CultureInfo.InvariantCulture)
                                             </span>
                                         </div>
                                     </div>
@@ -311,12 +318,12 @@
                                     <hr class="card-hr">
                                     <div class="row">
                                         <div class="col data-card2">
-                                            <span>@localizer["With_contracts"]</span> <span>@Model.OwnRenters?.FindAll(x => x.CrCasRenterLessorStatus == Status.Rented).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                                            <span>@localizer["With_contracts"]</span> <span>@Model.OwnRenters?.Count(x=>x.CrCasRenterLessorStatus==Status.Rented).ToString("N0", CultureInfo.InvariantCulture)</span>
                                         </div>
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col data-card2">
-                                            <span>@localizer["Without_contracts"]</span> <span>@Model.OwnRenters?.FindAll(x => x.CrCasRenterLessorStatus == Status.Active).Count().ToString("N0", CultureInfo.InvariantCulture)</span>
+                                            <span>@localizer["Without_contracts"]</span> <span>@Model.OwnRenters?.Count(x => x.CrCasRenterLessorStatus == Status.Active).ToString("N0", CultureInfo.InvariantCulture)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -426,7 +433,7 @@
     @*Auto Logout*@
     <script type="text/javascript">
         $(document).ready(function () {
-            var exitUser = "@user.CrMasUserInformationExitTimer"; // Get the dynamic value
+            var exitUser = parseInt("@user.CrMasUserInformationExitTimer"); // Get the dynamic value
             // Call the idle timeout handler function
             initializeIdleTimeoutHandler(exitUser);
         });

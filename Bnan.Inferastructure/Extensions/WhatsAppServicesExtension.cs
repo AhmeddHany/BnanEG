@@ -111,6 +111,54 @@ namespace Bnan.Inferastructure.Extensions
                 return ApiResponseStatus.ServerError;
             }
         }
+        public static async Task<string> SendMediaAsync(string phone, string message, string companyId, string fileBase64, string filename)
+        {
+            var url = $"{api}/api/sendMedia_by_file"; // تأكد من الـ API URL الصحيح
+            var cleanBase64 = FileExtensions.CleanAndCheckBase64StringPdf(fileBase64);
+
+            try
+            {
+                // إعداد البيانات بتنسيق x-www-form-urlencoded
+                var formData = new Dictionary<string, string>
+        {
+            { "phone", phone },
+            { "message", message },
+            { "apiToken", "Bnan_fgfghgfhnbbbmhhjhgmghhgghhgj" },
+            { "id", companyId },
+            { "filename", filename },
+            { "mediaFile", cleanBase64 },
+        };
+
+                var data = new FormUrlEncodedContent(formData);
+
+                // إرسال الطلب
+                var response = await _httpClient.PostAsync(url, data);
+                if (!response.IsSuccessStatusCode)
+                    return ApiResponseStatus.Failure;
+
+                var content = await response.Content.ReadAsStringAsync();
+                var jsonResult = JsonConvert.DeserializeObject<dynamic>(content);
+
+                if (jsonResult != null && (jsonResult.status == true || jsonResult.status.ToString().ToLower() == "true"))
+                    return ApiResponseStatus.Success;
+
+                return ApiResponseStatus.Failure;
+
+            }
+            catch (HttpRequestException ex)
+            {
+                // خطأ أثناء طلب الـ HTTP
+                Console.WriteLine("HttpRequestException: " + ex.Message);
+                return ApiResponseStatus.ServerError;
+            }
+            catch (Exception ex)
+            {
+                // خطأ عام
+                Console.WriteLine("Exception: " + ex.Message);
+                return ApiResponseStatus.ServerError;
+            }
+
+        }
 
         /// <summary>
         /// Connects a lessor by adding a new device with the provided company ID and name.

@@ -1147,9 +1147,9 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Cas_Branch_Post_Longitude");
 
                 entity.Property(e => e.CrCasBranchPostReasons)
-                    .HasMaxLength(10)
-                    .HasColumnName("CR_Cas_Branch_Post_Reasons")
-                    .IsFixedLength();
+                    .HasMaxLength(100)
+                    .HasColumnName("CR_Cas_Branch_Post_Reasons");
+
 
                 entity.Property(e => e.CrCasBranchPostRegions)
                     .HasMaxLength(2)
@@ -1163,9 +1163,11 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Cas_Branch_Post_Short_Code");
 
                 entity.Property(e => e.CrCasBranchPostStatus)
-                    .HasMaxLength(10)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
                     .HasColumnName("CR_Cas_Branch_Post_Status")
                     .IsFixedLength();
+
 
                 entity.Property(e => e.CrCasBranchPostUnitNo)
                     .HasMaxLength(20)
@@ -6963,7 +6965,7 @@ namespace Bnan.Core.Models
 
             modelBuilder.Entity<CrMasSysQuestionsAnswer>(entity =>
             {
-                entity.HasKey(x=>x.CrMasSysQuestionsAnswerNo);
+                entity.HasKey(x => x.CrMasSysQuestionsAnswerNo);
 
                 entity.ToTable("CR_Mas_Sys_Questions_Answer");
 

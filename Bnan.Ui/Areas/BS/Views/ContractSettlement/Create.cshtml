@@ -1191,30 +1191,6 @@
                                                     <div class="col">@localizer["SignatureTenant"]</div>
                                                 </div>
                                             </button>
-                                            <button type="button" class="btn check-btn payment-button">
-                                                <div class="row align-items-center">
-                                                    <div class="col-auto">
-                                                        <div class="systems-check">
-                                                            <i class="fa-solid fa-check text-white"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col">
-                                                        @localizer["Unifiedcontract"]
-                                                    </div>
-                                                </div>
-                                            </button>
-                                            <button type="button" class="btn check-btn payment-button">
-                                                <div class="row align-items-center">
-                                                    <div class="col-auto">
-                                                        <div class="systems-check">
-                                                            <i class="fa-solid fa-check text-white"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col">
-                                                        @localizer["Shemos"]
-                                                    </div>
-                                                </div>
-                                            </button>
                                         </div>
                                         <div class="button-card">
                                             <input type="button" name="previous"
@@ -1709,16 +1685,35 @@
 
                 const timeDiff = Math.abs(settlementDateTime.getTime() - startContractDate.getTime());
                 let diffDays = Math.floor(timeDiff / (1000 * 3600 * 24)); // Difference in days
-                if (diffDays === 0) {
-                    diffDays = 1;
+                const remainingTime = timeDiff % (1000 * 3600 * 24);
+                let diffHours = Math.ceil(remainingTime / (1000 * 3600)); // احتساب الساعات مع أي ثانية كساعة كاملة
+
+                if (settlementDateTime > endContractDate) {
+                    // إذا تجاوزت تاريخ النهاية المتوقع
+                    console.log("Settlement date is after the expected end date.");
+                    const overtime = settlementDateTime.getTime() - endContractDate.getTime(); // الوقت بعد نهاية العقد
+                    const overtimeHours = Math.ceil(overtime / (1000 * 3600)); // الساعات الإضافية مع احتساب أول ثانية كساعة
+                    console.log("overtimeHours.", overtimeHours);
+
+                    // إذا تجاوزت ساعات التأخير 24 ساعة
+                    if (overtimeHours >= 24) {
+                        // diffDays += Math.floor(overtimeHours / 24); // إضافة يوم/أيام بناءً على عدد الساعات
+                        diffHours = overtimeHours % 24; // إعادة حساب الساعات المتبقية بعد الـ 24 ساعة
+                    } else {
+                        diffHours = overtimeHours; // الساعات الإضافية فقط إذا لم تتجاوز 24 ساعة
+                    }
+                } else if (settlementDateTime <= endContractDate) {
+                    // إذا لم نتجاوز نهاية العقد
+                    console.log("Settlement date is within or exactly at the expected end date.");
+                    if (remainingTime > 0) {
+                        // إذا دخل اليوم الجديد، نضيف يومًا كاملًا
+                        diffDays += 1;
+                    }
                 }
-                diffHours = Math.floor((timeDiff % (1000 * 3600 * 24)) / (1000 * 3600)); // Remaining difference in hours
-                diffMinutes = Math.floor((timeDiff % (1000 * 3600)) / (1000 * 60)); // Remaining difference in minutes
                 console.log("settlementDateTime", settlementDateTime)
                 console.log("timeDiff", timeDiff)
                 console.log("diffDays", diffDays)
                 console.log("diffHours", diffHours)
-                console.log("diffMinutes", diffMinutes)
                 // diff = parseInt(diffHours) - parseInt(TotalFreeHours);
                 $("#daysNo").text(diffDays);
                 totalDaysNo = diffDays;
@@ -2229,12 +2224,12 @@
                 document.getElementById('AmountPayed').disabled = true;
             }
 
-            const formattedAmount = Math.abs(AmountRequired).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const formattedAmount = Math.abs(AmountRequired).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             // تحويل القيمة إلى رقم عند الإرسال
             const numericAmount = parseFloat(formattedAmount.replace(/,/g, ''));
             $("#ContractSettlement_AmountRequired").val(numericAmount);
             document.getElementById('AmountRequired').textContent = formattedAmount;
-           
+
         }
         function getAdditionalHoursValue() {
             // استرجاع القيم المطلوبة

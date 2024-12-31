@@ -220,7 +220,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddLessorKSA(CrMasLessorInformationVM lessorVM)
+        public async Task<IActionResult> AddLessorKSA(CrMasLessorInformationVM lessorVM, string WelcomeImg)
 
         {
             var user = await _userManager.GetUserAsync(User);
@@ -296,14 +296,15 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     _unitOfWork.Complete();
 
                     await SaveTracingForLessorChange(user, LessorVMTlessor, Status.Insert);
+
                     #region Whatsup
                     await WhatsAppServicesExtension.ConnectLessor(LessorVMTlessor.CrMasLessorInformationCode);
                     string fullPhoneNumber = $"{LessorVMTlessor.CrMasLessorInformationCommunicationMobileKey}{LessorVMTlessor.CrMasLessorInformationCommunicationMobile}";
-                    await WhatsAppServicesExtension.SendMessageAsync(
-                        fullPhoneNumber,
-                        $"تم انشاء الشركة الخاصة بك باسم / {LessorVMTlessor.CrMasLessorInformationArLongName}",
-                        "0000" //mas lessor 0000
-                    );
+
+                    if (!string.IsNullOrEmpty(WelcomeImg)) await WhatsAppServicesExtension.SendMediaAsync(fullPhoneNumber, " ", "0000", WelcomeImg, $"WelcomeImg_{LessorVMTlessor.CrMasLessorInformationCode}.png");
+                    else await WhatsAppServicesExtension.SendMessageAsync(fullPhoneNumber, $"تم انشاء الشركة الخاصة بك باسم / {LessorVMTlessor.CrMasLessorInformationArLongName}", "0000");
+
+
                     #endregion
                     await FileExtensions.CreateFolderLessor(_webHostEnvironment, LessorVMTlessor.CrMasLessorInformationCode);
                     _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });

@@ -1,23 +1,20 @@
 // // //////////////////////////////////////////////// رفع صورة التوقيع ////////////////////////////////////////////////////////////////////////
 
 let saveSignatureBtn = null;
-
+var signtureImg;
 document
     .getElementById("UploadSigntaurePic")
     .addEventListener("click", function () {
         saveSignatureBtn = "UploadSigntaurePic";
     });
 
-document
-    .getElementById("WriteSignature")
-    .addEventListener("click", function () {
-        saveSignatureBtn = "WriteSignature";
-    });
+document.getElementById("WriteSignature").addEventListener("click", function () {
+    saveSignatureBtn = "WriteSignature";
+});
 const uploadContainer = document.querySelector(".upload-container");
 const mainContainer = document.querySelector(".image-main-container");
 const UploadSigntaurePic = document.getElementById("UploadSigntaurePic");
 const imageUpload = document.getElementById("imageUpload");
-var imgeURL;
 const uploadedImg = null;
 //
 
@@ -146,6 +143,7 @@ function SaveWrittenSignature() {
     console.log(link.href);
     document.getElementById('previewSignature').src = link.href;
     $("#signature-modal").modal("hide");
+    return dataURL;
 }
 // Save the uploded signature image
 function SaveUplodedSignature() {
@@ -164,16 +162,19 @@ function SaveUplodedSignature() {
     const base64 = canvas.toDataURL("image/png");
     console.log(base64);
     document.getElementById('previewSignature').src = base64;
-
     $("#signature-modal").modal("hide");
+    return base64;
 }
 
 document.getElementById("save").addEventListener("click", function () {
+    var signtureInput = document.getElementById('UserSignatureFile');
+
     if (saveSignatureBtn === "UploadSigntaurePic") {
-        SaveUplodedSignature();
+        signtureInput.value = SaveUplodedSignature();
     } else if (saveSignatureBtn === "WriteSignature") {
-        SaveWrittenSignature();
+        signtureInput.value = SaveWrittenSignature();
     } else {
         console.log("No button has been clicked yet");
+        signtureInput.value = null;
     }
 });
