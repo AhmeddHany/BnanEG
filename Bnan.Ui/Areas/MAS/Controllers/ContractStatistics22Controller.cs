@@ -24,7 +24,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
 
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
-    public class ContractStatisticsController : BaseController
+    public class ContractStatistics22Controller : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
         private readonly UserManager<CrMasUserInformation> userManager;
@@ -34,12 +34,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IFinancialTransactionOfRenter _CarContract;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IStringLocalizer<ContractStatisticsController> _localizer;
+        private readonly IStringLocalizer<ContractStatistics22Controller> _localizer;
 
 
-        public ContractStatisticsController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
+        public ContractStatistics22Controller(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IFinancialTransactionOfRenter CarContract,
-            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<ContractStatisticsController> localizer) : base(userManager, unitOfWork, mapper)
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<ContractStatistics22Controller> localizer) : base(userManager, unitOfWork, mapper)
         {
             this.userManager = userManager;
             this.unitOfWork = unitOfWork;

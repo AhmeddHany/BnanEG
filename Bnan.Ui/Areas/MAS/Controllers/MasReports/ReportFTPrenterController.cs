@@ -84,6 +84,33 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 })
                 , includes: new string[] { "CrCasRenterLessorNavigation" }
                 );
+            var all_RenterInfo2 = all_RenterInfo.DistinctBy(x=>x.CrCasRenterLessorId);
+            foreach(var r in all_RenterInfo2)
+            {
+                var theseSingles = all_RenterInfo.Where(x => x.CrCasRenterLessorId == r.CrCasRenterLessorId);
+                r.CrCasRenterLessorReservedBalance = theseSingles.Sum(x => x.CrCasRenterLessorReservedBalance);
+                r.CrCasRenterLessorBalance = theseSingles.Sum(x => x.CrCasRenterLessorBalance);
+                r.CrCasRenterLessorAvailableBalance = theseSingles.Sum(x => x.CrCasRenterLessorAvailableBalance);
+                r.CrCasRenterLessorContractTradedAmount = theseSingles.Sum(x => x.CrCasRenterLessorContractTradedAmount);
+            }
+            var all_RenterInfo3 = all_RenterInfo2?.ToList();
+
+
+
+            ////var all_RenterIds = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
+            ////    predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
+            ////    //x.CrCasCarInformationLastContractDate > start && x.CrCasCarInformationLastContractDate <= end,
+            ////    selectProjection: query => query.Select(x => new list_String_4
+            ////    {
+            ////        id_key = x.CrMasRenterInformationId,
+            ////        nameAr = x.CrMasRenterInformationArName,
+            ////        nameEn = x.CrMasRenterInformationEnName,
+            ////        str4 = x.CrMasRenterInformationStatus,
+            ////    })
+            ////    //, includes: new string[] { "CrCasRenterLessorNavigation" }
+            ////    );
+
+             
             //var all_RentersIds_recipt = await _unitOfWork.CrCasAccountReceipt.FindAllWithSelectAsNoTrackingAsync(
             //    predicate: x=>x.CrCasAccountReceiptType =="301" || x.CrCasAccountReceiptType == "302",
             //    selectProjection: query => query.Select(x => new list_String_2
@@ -92,6 +119,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             //    })
             //    );
             // //all_RentersIds_recipt.DistinctBy(x => x.id_key).ToList();
+
             var all_bonds = await _unitOfWork.CrCasAccountReceipt.FindCountByColumnAsync<CrCasAccountReceipt>(
                    predicate: x => x.CrCasAccountReceiptType == "301",
                    columnSelector: x => x.CrCasAccountReceiptRenterId  // تحديد العمود الذي نريد التجميع بناءً عليه
@@ -125,7 +153,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 all_exchanges.Add(objSanad);
                 all_exchanges.Add(objSanad);
             }
-            if (all_RenterInfo?.Count == 0 || all_bonds?.Count == 0)
+            if (all_RenterInfo3?.Count == 0 || all_bonds?.Count == 0)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["NoDataToShow"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
@@ -134,7 +162,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
 
 
             listReportFTPrenterVM VM = new listReportFTPrenterVM();
-            VM.all_Rentersinfo = all_RenterInfo;
+            VM.all_Rentersinfo = all_RenterInfo3;
             VM.all_bonds = all_bonds;
             VM.all_exchanges = all_exchanges;
             //VM.all_RentersIds_recipt = all_RentersIds_recipt;

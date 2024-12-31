@@ -27,54 +27,55 @@
             <div class="col-lg-11">
                 <div class="row g-3 my-3">
                     <div class="col-md-12">
-                        <h3> إحصائيات المستأجرين </h3>
+                        <h3>@localizer["RenterStatistics_Statistics_Renters_n"]</h3>
                     </div>
                     <div class="col-md-12 ">
-                        <p class="d-inline-block headLines">عدد المستأجرين : </p>
-                        <p class="d-inline-block Saved-data headLines">@(Model.Renters_Count?.ToString("0")??"0") مستأجر</p>
+                        <p class="d-inline-block headLines">@localizer["RenterStatistics_count_Renters"] : </p>
+                        <p class="d-inline-block Saved-data headLines">@(Model.Renters_Count?.ToString("0") ?? "0") @localizer["RenterStatistics_Renter"]</p>
 
                     </div>
                     <div class="col-md-12">
                         <div class="row mt-3 g-2 justify-content-between">
                             <div class="col-lg-3">
-                                <p class="headLines">بند المؤشر الإحصائي</p>
+                                <p class="headLines">@localizer["RenterStatistics_Type_n"]</p>
                                 <div class="row">
                                     <div class="col-4 col-lg-9">
-                                        <button class="btn stat-btn active-stat-btn"
+                                        <button class="btn stat-btn active-stat-btn" 
                                                 onclick="handleButtonClick(this, NationalityChart)">
-                                            الجنسية
+                                            @localizer["RenterStatistics_Nationality"]
                                         </button>
                                     </div>
                                     <div class="col-4 col-lg-9">
                                         <button class="btn stat-btn"
                                                 onclick="handleButtonClick(this, ProfessionChart)">
-                                            المهنة
+                                            @localizer["RenterStatistics_profession"]
                                         </button>
                                     </div>
                                     <div class="col-4 col-lg-9">
                                         <button class="btn stat-btn"
                                                 onclick="handleButtonClick(this, AreaChart)">
-                                            المنطقة
+                                            @localizer["RenterStatistics_Rigon"]
                                         </button>
                                     </div>
                                     <div class="col-4 col-lg-9">
                                         <button class="btn stat-btn"
                                                 onclick="handleButtonClick(this, CityChart)">
-                                            المدينة
+                                            @localizer["RenterStatistics_City"]
                                         </button>
                                     </div>
                                     <div class="col-4 col-lg-9">
                                         <button class="btn stat-btn"
                                                 onclick="handleButtonClick(this, AgeChart)">
-                                            العمر
+                                            @localizer["RenterStatistics_Age"]
                                         </button>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="col-lg-9 text-center charts-border">
                                 <canvas id="myChart"></canvas>
-
                             </div>
+
                         </div>
 
                     </div>
@@ -83,7 +84,7 @@
             </div>
         </div>
         <a href="~/MasSystem/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
-           data-bs-custom-class="custom-tooltip" data-bs-title="العودة الي الرئيسية"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
            class="new-Page-icon"><img src="~/MasSystem/images/back to main.svg" alt="man"></a>
     </div>
 </div>
@@ -111,13 +112,13 @@
     <script>
         let chartInstance = null;
 
-        //function handleButtonClick(button, chartFunction) {
-        //    document.querySelectorAll('.stat-btn').forEach(btn => btn.classList.remove('active-stat-btn'));
+        function handleButtonClick(button, chartFunction) {
+            document.querySelectorAll('.stat-btn').forEach(btn => btn.classList.remove('active-stat-btn'));
 
-        //    button.classList.add('active-stat-btn');
+            button.classList.add('active-stat-btn');
 
-        //    chartFunction();
-        //}
+            chartFunction();
+        }
         function createChart(chartType, chartData, chartOptions) {
             const ctx = document.getElementById('myChart').getContext('2d');
 
@@ -132,10 +133,87 @@
             });
         }
 
+        async function GetAllBy_Profession() {
+            return new Promise((resolve, reject) => {
+
+            $.ajax({
+                type: "GET",
+                //data: {
+                //    start: start, end: end
+                //},
+                url: "@Url.Action("GetAllBy_Profession", "RenterStatistics", new { Area = "MAS" })",
+                success: function (response) {
+                    //$(".LoaderRun_Center_div").css("display", "none");
+                    //$(".chart22").html(response);
+                    console.log(response);
+                    resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                },
+                error: function (error) {
+                    reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                }
+            });
+            });
+        }
+
+        async function GetAllBy_City() {
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetAllBy_City", "RenterStatistics", new { Area = "MAS" })",
+                    success: function (response) {
+                        //$(".LoaderRun_Center_div").css("display", "none");
+                        console.log(response);
+                        resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Region() {
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetAllBy_Region", "RenterStatistics", new { Area = "MAS" })",
+                    success: function (response) {
+                        //$(".LoaderRun_Center_div").css("display", "none");
+                        console.log(response);
+                        resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Age() {
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetAllBy_Age", "RenterStatistics", new { Area = "MAS" })",
+                    success: function (response) {
+                        //$(".LoaderRun_Center_div").css("display", "none");
+                        console.log(response);
+                        resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+        
+
         function NationalityChart() {
-            var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));
+            let paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));
             //console.log(paymentMethodsBranchData);
-            var labelsBranch;
+            let labelsBranch;
             if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
 
                 labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
@@ -148,8 +226,7 @@
                 });
             }
 
-
-            var dataValues = paymentMethodsBranchData.map(function (paymentMethod) {
+            let dataValues = paymentMethodsBranchData.map(function (paymentMethod) {
                 return paymentMethod.value;
             });
             createChart('polarArea', {
@@ -178,7 +255,8 @@
                 scales: {
                     r: {
                         pointLabels: {
-                            display: true,
+                            display: false, // إخفاء النقاط التي تُعرض عليها التسميات داخل المحاور القطبية
+                            //display: true,
                             centerPointLabels: true,
                             font: {
                                 family: "'Cairo', sans-serif",
@@ -189,6 +267,7 @@
                 },
                 plugins: {
                     legend: {
+                        //display: false,  // إخفاء التسمية الخاصة بالصورة داخلياً
                         position: 'left',
                         labels: {
                             font: {
@@ -199,7 +278,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'المؤشر الإحصائي لجنسيات المستأجرين',
+                        text: "@localizer["Renter_inChart_Nationality"]",
                         font: {
                             family: "'Cairo', sans-serif",
                             size: 15,
@@ -214,85 +293,47 @@
             });
         }
 
-        function ProfessionChart() {
+        async function ProfessionChart() {
+            let paymentMethodsBranchData = await GetAllBy_Profession();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(paymentMethodsBranchData);
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = paymentMethodsBranchData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = paymentMethodsBranchData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            
+
             createChart('scatter', {
-                datasets: [
-                    {
-                        data: [{ x: 'إداري', y: 5 }],
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: 'ممرض', y: 10 }],
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: 'فني', y: 5 }],
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: 'محاضر', y: 12 }],
-                        backgroundColor: 'rgba(255, 206, 86, 0.6)',
-                        borderColor: 'rgba(255, 206, 86, 1)',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: 'مهندس', y: 7 }],
-                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: 'طبيب', y: 7 }],
-                        backgroundColor: '#F1F2F3',
-                        borderColor: '#C9CBCF',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: 'مدرس', y: 7 }],
-                        backgroundColor: '#FFCC99',
-                        borderColor: '#FF9F40',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: 'أعمال حرة', y: 8 }],
-                        backgroundColor: '#B3C2E5',
-                        borderColor: '#4B6EC0',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: 'عسكري', y: 10 }],
-                        backgroundColor: '#B4E4C8',
-                        borderColor: '#62C88C',
-                        pointRadius: 5
-                    }
-                    ,
-                    {
-                        data: [{ x: 'طالب', y: 5 }],
-                        backgroundColor: '#FF999B',
-                        borderColor: '#FF1515',
-                        pointRadius: 5
-                    }
-                    ,
-                    {
-                        data: [{ x: 'متقاعد', y: 4 }],
-                        backgroundColor: '#CCCCCC',
-                        borderColor: '#8C8C8C',
-                        pointRadius: 5
-                    }
-                    ,
-                    {
-                        data: [{ x: 'أخرى', y: 2 }],
-                        backgroundColor: '#DAA1F7',
-                        borderColor: '#A413EC',
-                        pointRadius: 5
-                    }
-                ]
+                datasets: labelsBranch2,
             }, {
                 responsive: true,
                 animations: {
@@ -303,16 +344,6 @@
                         from: 5,
                         to: 8
                     },
-                    x: {
-                        type: 'number',
-                        duration: 1000,
-                        easing: 'easeInOutQuad'
-                    },
-                    y: {
-                        type: 'number',
-                        duration: 1000,
-                        easing: 'easeInOutQuad'
-                    }
                 },
                 plugins: {
                     legend: {
@@ -320,7 +351,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'المؤشر الإحصائي لمهن المستأجرين',
+                        text: "@localizer["Renter_inChart_Profession"]",
                         font: {
                             family: "'Cairo', sans-serif",
                             size: 15,
@@ -335,7 +366,8 @@
                 scales: {
                     x: {
                         type: 'category',
-                        labels: ['إداري', 'ممرض', 'فني', 'محاضر', 'مهندس', 'طبيب', 'مدرس', 'أعمال حرة', 'عسكري', 'طالب', 'متقاعد', 'أخرى'],
+                        //labels: ['أقل من 20', '25 - 21', '30 - 26', '35 - 31', '40 - 36', '50 - 41', '60 - 51', 'أعلى من 60'],
+                        labels: labelsBranch,                       
                         ticks: {
                             display: true,
                             font: {
@@ -352,14 +384,37 @@
                     }
                 }
             });
+
+   
         }
-        function AreaChart() {
+        async function AreaChart() {
+            let paymentMethodsBranchData = await GetAllBy_Region();
+            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(paymentMethodsBranchData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = paymentMethodsBranchData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
             createChart('bar', {
-                labels: ['الشرقية', 'الرياض ', 'مكة المكرمة', 'القصيم ', 'المدينة المنورة', 'غير متوفرة', 'أخرى'],
+                //labels: ['الشرقية', 'الرياض ', 'مكة المكرمة', 'القصيم ', 'المدينة المنورة', 'غير متوفرة', 'أخرى'],
+                labels: labelsBranch,
                 datasets: [{
                     barThickness: 40,
                     minBarLength: 2,
-                    data: [15, 20, 30, 60, 90, 10, 4],
+                    //data: [15, 20, 30, 60, 90, 10, 4],
+                    data: dataValues,
                     backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99', '#F1F2F3'],
                     borderColor: [
                         'rgb(255, 99, 132)',
@@ -381,7 +436,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'المؤشر الإحصائي لمناطق المستأجرين',
+                        text: "@localizer["Renter_inChart_Region"]",
                         font: {
                             family: "'Cairo', sans-serif",
                             size: 15,
@@ -407,13 +462,34 @@
                 }
             });
         }
-        function CityChart() {
+        async function CityChart() {
+            let paymentMethodsBranchData = await GetAllBy_City();
+            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(paymentMethodsBranchData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = paymentMethodsBranchData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
             createChart('bar', {
-                labels: ['الدمام', 'الرياض', 'مكة المكرمة', 'بريدة', 'المدينة المنورة', 'أخرى'],
+                //labels: ['الدمام', 'الرياض', 'مكة المكرمة', 'بريدة', 'المدينة المنورة', 'أخرى'],
+                labels: labelsBranch,
                 datasets: [{
                     barThickness: 40,
                     minBarLength: 2,
-                    data: [15, 20, 30, 60, 90, 10],
+                    //data: [15, 20, 30, 60, 90, 10],
+                    data: dataValues,
                     backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99'],
                     borderColor: [
                         'rgb(255, 99, 132)',
@@ -434,7 +510,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'المؤشر الإحصائي لمدن المستأجرين',
+                        text: "@localizer["Renter_inChart_City"]",
                         font: {
                             family: "'Cairo', sans-serif",
                             size: 15,
@@ -460,60 +536,45 @@
                 }
             });
         }
-        function AgeChart() {
+        async function AgeChart() {
+            let paymentMethodsBranchData = await GetAllBy_Age();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(paymentMethodsBranchData);
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = paymentMethodsBranchData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = paymentMethodsBranchData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
             createChart('scatter', {
-                datasets: [
-                    {
-                        data: [{ x: 'أقل من 20', y: 5 }],
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: '25 - 21', y: 10 }],
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: '30 - 26', y: 5 }],
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: '35 - 31', y: 12 }],
-                        backgroundColor: 'rgba(255, 206, 86, 0.6)',
-                        borderColor: 'rgba(255, 206, 86, 1)',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: '40 - 36', y: 7 }],
-                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: '50 - 41', y: 7 }],
-                        backgroundColor: '#F1F2F3',
-                        borderColor: '#C9CBCF',
-                        pointRadius: 5
-                    },
-                    {
-                        data: [{ x: '60 - 51', y: 7 }],
-                        backgroundColor: '#FFCC99',
-                        borderColor: '#FF9F40',
-                        pointRadius: 5
-                    },
-
-                    {
-                        data: [{ x: 'أعلى من 60', y: 10 }],
-                        backgroundColor: '#B4E4C8',
-                        borderColor: '#62C88C',
-                        pointRadius: 5
-                    }
-
-                ]
+                datasets: labelsBranch2
             }, {
                 responsive: true,
                 animations: {
@@ -531,7 +592,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'المؤشر الإحصائي لأعمار المستأجرين',
+                        text: "@localizer["Renter_inChart_Age"]",
                         font: {
                             family: "'Cairo', sans-serif",
                             size: 15,
@@ -546,7 +607,8 @@
                 scales: {
                     x: {
                         type: 'category',
-                        labels: ['أقل من 20', '25 - 21', '30 - 26', '35 - 31', '40 - 36', '50 - 41', '60 - 51', 'أعلى من 60'],
+                        //labels: ['أقل من 20', '25 - 21', '30 - 26', '35 - 31', '40 - 36', '50 - 41', '60 - 51', 'أعلى من 60'],
+                        labels: labelsBranch,
                         ticks: {
                             display: true,
                             font: {
@@ -573,7 +635,7 @@
     <!--Charts-->
     <!--Charts-->
 
-    <script>
+   @* <script>
             function GetAllByType(Type, listDrop, singleNo, company) {
                 //console.log("Mazzen1")
             if (Type != null && Type != "" & Type != undefined) {
@@ -581,7 +643,7 @@
                     location.href = '@Url.Action("GetAllByType", "RenterStatistics")?Type=' + Type + '&listDrop=' + listDrop + '&singleNo=' + singleNo + '&company_now=' + company;
                 }
         }
-    </script>
+    </script>*@
     
 
     @*<script>

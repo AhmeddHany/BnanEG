@@ -27,6 +27,9 @@ namespace Bnan.Ui.ViewModels.MAS
         public decimal Value { get; set; }
         public bool IsTrue { get; set; }
 
+        public string? backgroundColor { get; set; }
+        public string? borderColor { get; set; }
+
         public string? ArName_for_table_Model { get; set; } = "";
         public string? EnName_for_table_Model { get; set; } = "";
     }

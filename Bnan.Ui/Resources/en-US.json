@@ -519,6 +519,25 @@
 
 
     //CarStatistics --------
+    "RenterStatistics_count_Renters": "Renters Count",
+    "RenterStatistics_Statistics_Renters_n": "Renter Statistics",
+    "CarStatistics_Car": "Car",
+    "CarStatistics_count_Cars": "Cars Count",
+    "CarStatistics_Statistics_Cars_n": "Car Statistics",
+
+    "Renter_inChart_Nationality": "Statistical indicator of Renters' Nationalities",
+    "Renter_inChart_Profession": "Statistical indicator of Renters' Proffessions",
+    "Renter_inChart_Region": "Statistical indicator of Renters' Regions",
+    "Renter_inChart_City": "Statistical indicator of Renters' Cities",
+    "Renter_inChart_Age": "Statistical indicator of Renters' Ages",
+
+    "Car_inChart_Region": "Statistical indicator of Car distribution in Regions",
+    "Car_inChart_City": "Statistical indicator of Car distribution in Cities",
+    "Car_inChart_Brand": "Statistical indicator of Car Brands",
+    "Car_inChart_Model": "Statistical indicator of Car Models",
+    "Car_inChart_Category": "Statistical indicator of Car Categories",
+    "Car_inChart_Year": "Statistical indicator of Car Made Years",
+
     "CarStatistics Hint": "This page allows you to display Statistics of Cars",
     "CarStatistics Data": "Statistics of Cars",
     "Edit CarStatistics Data": "Details of Statistics of Cars",
@@ -601,7 +620,10 @@
     "RenterStatistics_Status": "Renter Status",
 
     "RenterStatistics_count_Renters": "Renters Count",
+    "RenterStatistics_Statistics_Renters_n": "Renter Statistics",
+    "RenterStatistics_Renter": "Renter",
     "RenterStatistics_Type": "Statistics By",
+    "RenterStatistics_Type_n": "Statistical indicator",
 
     "ContractStatistics_Branch": "Branches",
     "ContractStatistics_Day_Create": "Days",
