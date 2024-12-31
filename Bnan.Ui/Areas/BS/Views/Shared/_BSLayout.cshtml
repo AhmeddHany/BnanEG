@@ -419,7 +419,7 @@
                             }
                         </p>
                     </div>
-                    <img class="extra-small-mobile " src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" style="height: 60px;width: 140px;">
+                    <img class="extra-small-mobile " src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" style="height: 60px;">
                 </div>
             </nav>
         </div>
@@ -525,8 +525,8 @@
 
     <script type="text/javascript">
             $(document).ready(function () {
-                var exitUser = "@user.CrMasUserInformationExitTimer"; // Get the dynamic value
-                // Call the idle timeout handler function
+            var exitUser = parseInt("@user.CrMasUserInformationExitTimer"); // Get the dynamic value
+            // Call the idle timeout handler function
                 initializeIdleTimeoutHandler(exitUser);
             });
     </script>

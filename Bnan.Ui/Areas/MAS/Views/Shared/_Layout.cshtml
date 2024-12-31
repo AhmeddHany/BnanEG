@@ -191,7 +191,7 @@
     @*Auto Logout*@
     <script type="text/javascript">
         $(document).ready(function () {
-            var exitUser = "@user.CrMasUserInformationExitTimer"; // Get the dynamic value
+            var exitUser =parseInt("@user.CrMasUserInformationExitTimer"); // Get the dynamic value
             console.log("exitUser", exitUser);
             // Call the idle timeout handler function
             initializeIdleTimeoutHandler(exitUser);

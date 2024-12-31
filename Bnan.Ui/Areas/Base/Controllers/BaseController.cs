@@ -330,18 +330,18 @@ namespace Bnan.Ui.Areas.Base.Controllers
 
             var activeContractNumbers = contracts.Where(x => x.CrCasRenterContractBasicStatus == Status.Active).Select(c => c.CrCasRenterContractBasicRenterId).ToList();
             // استرجاع المستأجرين بحالة R فقط
-            var rentersWithActiveContracts = await _unitOfWork.CrCasRenterLessor
-                .FindAllWithSelectAsNoTrackingAsync<OwnRentersVM>(
-                    x => activeContractNumbers.Contains(x.CrCasRenterLessorId) // المستأجرين المرتبطين بالعقود النشطة
-                         && x.CrCasRenterLessorStatus == Status.Rented,    // المستأجرين بحالة R
-                    query => query.Select(x => new OwnRentersVM
-                    {
-                        CrCasRenterLessorDateFirstInteraction = x.CrCasRenterLessorDateFirstInteraction,
-                        CrCasRenterLessorStatus = x.CrCasRenterLessorStatus
-                    })
-                );
-            ownersLayoutVM.RentersWithContracts = rentersWithActiveContracts.Count();
-            ownersLayoutVM.RentersWithountContracts = renters.Count() - rentersWithActiveContracts.Count();
+            //var rentersWithActiveContracts = await _unitOfWork.CrCasRenterLessor
+            //    .FindAllWithSelectAsNoTrackingAsync<OwnRentersVM>(
+            //        x => activeContractNumbers.Contains(x.CrCasRenterLessorId) // المستأجرين المرتبطين بالعقود النشطة
+            //             && x.CrCasRenterLessorStatus == Status.Rented,    // المستأجرين بحالة R
+            //        query => query.Select(x => new OwnRentersVM
+            //        {
+            //            CrCasRenterLessorDateFirstInteraction = x.CrCasRenterLessorDateFirstInteraction,
+            //            CrCasRenterLessorStatus = x.CrCasRenterLessorStatus
+            //        })
+            //    );
+            //ownersLayoutVM.RentersWithContracts = rentersWithActiveContracts.Count();
+            //ownersLayoutVM.RentersWithountContracts = renters.Count() - rentersWithActiveContracts.Count();
             return ownersLayoutVM;
         }
         private double UpRateBeforeMonthForContracts(List<OwnContractsVM> contracts)

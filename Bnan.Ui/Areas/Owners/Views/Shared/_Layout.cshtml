@@ -184,8 +184,8 @@
             <div>
                 <div class="row flex-column align-items-center justify-content-center mb-lg-5">
                     <div class="col-12 d-flex align-items-center justify-content-center ">
-                        <div class="Profile company-logo">
-                            <img src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" alt="company logo" class="mb-3 w-100">
+                        <div class="Profile company-logo" style="width: auto;">
+                            <img src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" alt="company logo" class="mb-3 w-100" style="height: 80px;">
                         </div>
                     </div>
                     <div class="sidebar-brand-text col-12 text-center">
@@ -318,12 +318,12 @@
                                     <hr class="card-hr">
                                     <div class="row">
                                         <div class="col data-card2">
-                                            <span>@localizer["With_contracts"]</span> <span>@Model.RentersWithContracts</span>
+                                            <span>@localizer["With_contracts"]</span> <span>@Model.OwnRenters?.Count(x=>x.CrCasRenterLessorStatus==Status.Rented).ToString("N0", CultureInfo.InvariantCulture)</span>
                                         </div>
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col data-card2">
-                                            <span>@localizer["Without_contracts"]</span> <span>@Model.RentersWithountContracts</span>
+                                            <span>@localizer["Without_contracts"]</span> <span>@Model.OwnRenters?.Count(x => x.CrCasRenterLessorStatus == Status.Active).ToString("N0", CultureInfo.InvariantCulture)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -433,7 +433,7 @@
     @*Auto Logout*@
     <script type="text/javascript">
         $(document).ready(function () {
-            var exitUser = "@user.CrMasUserInformationExitTimer"; // Get the dynamic value
+            var exitUser = parseInt("@user.CrMasUserInformationExitTimer"); // Get the dynamic value
             // Call the idle timeout handler function
             initializeIdleTimeoutHandler(exitUser);
         });

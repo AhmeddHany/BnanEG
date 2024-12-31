@@ -999,6 +999,8 @@
     "NewAndConfirmPassInCorrect": "Password and password confirmation do not match, please try again",
     "CannotUserCurrentPassword": "Current password cannot be used"
   },
+  "ModalAutoLogout": "Your session is about to end!",
+
   "Arabic": "Arabic",
   "English": "English",
   // CAS System SideBar
@@ -1745,7 +1747,7 @@
   "ContractStatistics Hint": "This page allows you to display Statistics of The Contracts",
   "ContractStatistics Data": "Statistics of ٌThe Contracts",
 
- 
+
 
 
   "DriverContractId": "Driver No",

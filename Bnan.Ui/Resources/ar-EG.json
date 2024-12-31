@@ -955,7 +955,7 @@
     "NewAndConfirmPassInCorrect": "كلمة السر وتأكيد كلمة السر غير مطابقان, يرجي اعادة المحاولة",
     "CannotUserCurrentPassword": "لا يمكن استخدام كلمة السر الحالية"
   },
-
+  "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 
   "Arabic": "العربية",
   "English": "الانجليزية",
