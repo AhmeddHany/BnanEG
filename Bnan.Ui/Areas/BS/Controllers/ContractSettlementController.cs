@@ -345,20 +345,20 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 return await _contractSettlement.UpdatePrivateDriverStatus(contractInfo.CrCasRenterContractBasicPrivateDriverId, contractInfo.CrCasRenterContractBasicLessor);
             }
 
-            if (!string.IsNullOrEmpty(contractInfo.CrCasRenterContractBasicDriverId) && contractInfo.CrCasRenterContractBasicDriverId.Trim() != contractInfo.CrCasRenterContractBasicRenterId)
-            {
-                if (!await _contractSettlement.UpdateDriverStatus(contractInfo.CrCasRenterContractBasicDriverId, contractInfo.CrCasRenterContractBasicLessor))
-                {
-                    return false;
-                }
-            }
-            if (!string.IsNullOrEmpty(contractInfo.CrCasRenterContractBasicAdditionalDriverId))
-            {
-                if (!await _contractSettlement.UpdateDriverStatus(contractInfo.CrCasRenterContractBasicAdditionalDriverId, contractInfo.CrCasRenterContractBasicLessor))
-                {
-                    return false;
-                }
-            }
+            //if (!string.IsNullOrEmpty(contractInfo.CrCasRenterContractBasicDriverId) && contractInfo.CrCasRenterContractBasicDriverId.Trim() != contractInfo.CrCasRenterContractBasicRenterId)
+            //{
+            //    if (!await _contractSettlement.UpdateDriverStatus(contractInfo.CrCasRenterContractBasicDriverId, contractInfo.CrCasRenterContractBasicLessor))
+            //    {
+            //        return false;
+            //    }
+            //}
+            //if (!string.IsNullOrEmpty(contractInfo.CrCasRenterContractBasicAdditionalDriverId))
+            //{
+            //    if (!await _contractSettlement.UpdateDriverStatus(contractInfo.CrCasRenterContractBasicAdditionalDriverId, contractInfo.CrCasRenterContractBasicLessor))
+            //    {
+            //        return false;
+            //    }
+            //}
             return true;
         }
         private async Task<bool> SendPdfsToWhatsAppAsync(Dictionary<string, string> pdfDictionary, string toNumber, CrMasRenterInformation renter)

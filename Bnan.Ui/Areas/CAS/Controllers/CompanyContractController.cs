@@ -5,6 +5,7 @@ using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
+using Bnan.Ui.Areas.CAS.Controllers.Employees;
 using Bnan.Ui.ViewModels.CAS;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;

@@ -105,9 +105,11 @@ namespace Bnan.Inferastructure
 
             builder.Services.AddControllersWithViews(options =>
             {
-                options.Filters.Add<SetCurrentPathMASFilter>(); // إضافة الفلتر للمناطق المطلوبة فقط//////////////////////
+                options.Filters.Add<SetCurrentPathMASFilter>();
+                options.Filters.Add<SetCurrentPathCASFilter>();
             });
-            builder.Services.AddScoped<SetCurrentPathMASFilter>(); // تسجيل الفلتر كمخدم////////////////////////////
+            builder.Services.AddScoped<SetCurrentPathMASFilter>();
+            builder.Services.AddScoped<SetCurrentPathCASFilter>();
 
             builder.Services.AddHttpClient();
             builder.Services.AddHttpContextAccessor();
@@ -217,7 +219,7 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasRenterInformation, MasRenterInformation>();
             builder.Services.AddScoped<IMasLessorMarketing, MasLessorMarketing>();
             builder.Services.AddScoped<IMasCompanyUsers, MasCompanyUsers>();
-            
+
 
 
 

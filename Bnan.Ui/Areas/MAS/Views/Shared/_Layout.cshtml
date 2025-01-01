@@ -164,7 +164,7 @@
 
                         <div class="menu-bar">
                             <div class="menu">
-                                @await Component.InvokeAsync("SidebarMenu")
+                                @await Component.InvokeAsync("SidebarMenu", new { systemType = "MAS" })
                             </div>
                         </div>
 
@@ -197,28 +197,6 @@
             initializeIdleTimeoutHandler(exitUser);
         });
     </script>
-    <script>
-        function CheckValidation(subTaskCodeProcdure, status, url) {
-            return $.ajax({
-                type: "GET",
-                data: {
-                    subTaskCodeProcdure: subTaskCodeProcdure,
-                    status: status
-                },
-                url: "/MAS/RenterDrivingLicense/CheckUserSubValidationProcdures",
-                success: function (response) {
-                    if (response == true) {
-                        if (url != null) {
-                            window.location.href = url;
-                        }
-                    } else {
-                        toastr.options = { "positionClass": '@localizer["toastPostion"]', };
-                        toastr.error('@localizer["toastMessage"]');
-
-                    }
-                },
-            })
-        }
-    </script>
+   
 </body>
 </html>

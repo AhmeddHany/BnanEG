@@ -35,9 +35,9 @@ namespace Bnan.Ui.Areas.BS.Controllers
             await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bSLayoutVM = await GetBranchesAndLayout();
-            var RenterAll = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == userLogin.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation" }).OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();
+            var RenterAll =await _unitOfWork.CrCasRenterLessor.FindAllAsNoTrackingAsync(x => x.CrCasRenterLessorCode == userLogin.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation" });
             var mecahnizmEvaluations = _unitOfWork.CrMasSysEvaluation.FindAll(x => x.CrMasSysEvaluationsStatus == Status.Active).ToList();
-            bSLayoutVM.RentersLessor = RenterAll;
+            bSLayoutVM.RentersLessor = RenterAll.OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();
             bSLayoutVM.Evaluations = mecahnizmEvaluations;
             return View(bSLayoutVM);
         }
@@ -49,24 +49,23 @@ namespace Bnan.Ui.Areas.BS.Controllers
             BSLayoutVM bSLayoutVM = new BSLayoutVM();
             if (!string.IsNullOrEmpty(status))
             {
-                var RenterAll = _unitOfWork.CrCasRenterLessor.FindAll(
+                var RenterAll = await _unitOfWork.CrCasRenterLessor.FindAllAsNoTrackingAsync(
                     x => x.CrCasRenterLessorCode == userLogin.CrMasUserInformationLessor,
-                    new[] { "CrCasRenterLessorNavigation" }
-                ).OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();
+                    new[] { "CrCasRenterLessorNavigation" });
 
                 var mecahnizmEvaluations = _unitOfWork.CrMasSysEvaluation.FindAll(x => x.CrMasSysEvaluationsStatus == Status.Active).ToList();
                 bSLayoutVM.Evaluations = mecahnizmEvaluations;
 
                 if (status == Status.All)
                 {
-                    bSLayoutVM.RentersLessor = RenterAll.FindAll(x =>
+                    bSLayoutVM.RentersLessor = RenterAll.Where(x =>
                         x.CrCasRenterLessorId.Contains(search) ||
                         x.CrCasRenterLessorNavigation.CrMasRenterInformationArName.Contains(search) ||
                         x.CrCasRenterLessorNavigation.CrMasRenterInformationEnName.ToLower().Contains(search.ToLower()) ||
                         mecahnizmEvaluations.Any(e => e.CrMasSysEvaluationsCode == x.CrCasRenterLessorDealingMechanism &&
                                                       (e.CrMasSysEvaluationsArDescription.Contains(search) ||
                                                        e.CrMasSysEvaluationsEnDescription.ToLower().Contains(search.ToLower())))
-                    ).ToList();
+                    ).OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();
 
                     return PartialView("_RentersDataTable", bSLayoutVM);
                 }
@@ -80,7 +79,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                                                    (e.CrMasSysEvaluationsArDescription.Contains(search) ||
                                                     e.CrMasSysEvaluationsEnDescription.ToLower().Contains(search.ToLower())))
                     )
-                ).ToList();
+                ).OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();
 
                 return PartialView("_RentersDataTable", bSLayoutVM);
             }

@@ -1,0 +1,39 @@
+﻿@using Bnan.Ui.ViewModels.MAS;
+@model List<SidebarMenuItem>
+
+<ul class="menu-links">
+
+
+    @foreach (var item in Model)
+    {
+        if (item.Authorization)
+        {
+            <li class="nav-link">
+                <a>
+                    <img src="@item.IconPath" data-bs-toggle="collapse" href="#@item.ItemName" aria-expanded="false" aria-controls="#@item.ItemName" class="icon" />
+                    <span class="text nav-text collapsed" data-bs-toggle="collapse" href="#@item.ItemName" aria-expanded="false" aria-controls="#@item.ItemName">@item.Title</span>
+                </a>
+            </li>
+            @if (item.SubItems?.Any(sub => sub.Authorization) == true)
+            {
+                <div id="@item.ItemName" class="collapse">
+                    <div class="bg-white gap-3 collapse-inner rounded">
+                        @foreach (var subItem in item.SubItems)
+                        {
+                            if (subItem.Authorization)
+                            {
+                                var currentPath = Context.Items["CurrentPath"]?.ToString() ?? "/";
+                                var subItemUrl = subItem.Url;
+                                var subItemActive = currentPath.Contains(subItemUrl) ? "active" : "";
+                                <a class="collapse-item @subItemActive" href="@subItem.Url">
+                                    @subItem.Title
+                                    <i class="fa-solid fa-arrow-left inner-collapse-arrow"></i>
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        }
+    }
+</ul>

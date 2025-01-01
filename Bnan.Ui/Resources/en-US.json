@@ -1021,6 +1021,20 @@
     "NewAndConfirmPassInCorrect": "Password and password confirmation do not match, please try again",
     "CannotUserCurrentPassword": "Current password cannot be used"
   },
+
+  "CASSystem": {
+    "Notification": "Notification",
+    "CASDocsForCompany": "Company Documents",
+
+    //MyAccount
+    "EmployeeId": "Id",
+    "LimitCredit": "Limit Credit",
+    "PasswordHint": "Password Hint",
+    "LastActive": "Last Active",
+    "LastUpdate": "Last Update"
+
+
+  },
   "ModalAutoLogout": "Your session is about to end!",
 
   "Arabic": "Arabic",

@@ -94,9 +94,17 @@
         public static string MasStatistics_Contracts { get; set; } = "1105003";
         public static string MasStatistics_RenterContracts { get; set; } = "1105004";
         public static string MasStatistics_CarContracts { get; set; } = "1105005";
+        /////////
+        // CAS Employees
 
-
-
+        ////////////
+        //MAS  Users
+        public static string CrMasUserInformationForCAS { get; set; } = "2207001";
+        public static string CrMasUserSystemValiditionsCAS { get; set; } = "2207002";
+        public static string CrMasUserContractValiditionsCAS { get; set; } = "2207003";
+        public static string MyAccountCAS { get; set; } = "2207004";
+        public static string ChangePasswordCAS { get; set; } = "2207005";
+        //public static string CrMasUserInformationFromMASToCAS { get; set; } = "1106003";
     }
 }
 
