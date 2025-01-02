@@ -512,7 +512,13 @@
 
     "CarStatistics_count_Cars": "عدد السيارات",
     "CarStatistics_Statistics_Cars_n": "إحصائيات السيارات",
+    "CarContractStatistics_Statistics_Contracts_n": "إحصائيات عقود السيارات",
+    "RenterContractStatistics_Statistics_Contracts_n": "إحصائيات عقود المستأجرين",
     "CarStatistics_Car": "سيارة",
+
+    "ContractStatistics_count_Contracts": "عدد العقود",
+    "ContractStatistics_Statistics_Contracts_n": "إحصائيات العقود",
+    "ContractStatistics_Contract": "عقد",
 
     "Renter_inChart_Nationality": "المؤشر الإحصائي لجنسيات المستأجرين",
     "Renter_inChart_Profession": "المؤشر الإحصائي لمهن المستأجرين",
@@ -527,8 +533,19 @@
     "Car_inChart_Category": "المؤشر الإحصائي لفئات السيارات",
     "Car_inChart_Year": "المؤشر الإحصائي لسنوات صنع السيارات",
 
+    "Contract_inChart_Days": "المؤشر الإحصائي لأيام العقود",
+    "Contract_inChart_Time": "المؤشر الإحصائي لأوقات العقود",
+    "Contract_inChart_Limits": "المؤشر الإحصائي لمدة العقود",
+    "Contract_inChart_HigiritsMonths": "المؤشر الإحصائي للعقود في الأشهر الهجرية",
+    "Contract_inChart_GeneralMonths": "المؤشر الإحصائي للعقود في الأشهر الميلادية",
+    "Contract_inChart_Value": "المؤشر الإحصائي لقيم العقود",
+    "Contract_inChart_KM": "المؤشر الإحصائي للكيلوات المقطوعة في العقود",
 
 
+    "CarContract_inChart_Brand": "المؤشر الإحصائي لماركات عقود السيارات",
+    "CarContract_inChart_Model": "المؤشر الإحصائي لطراز السيارات",
+    "CarContract_inChart_Category": "المؤشر الإحصائي لفئات عقود السيارات",
+    "CarContract_inChart_Year": "المؤشر الإحصائي لسنوات صنع السيارات",
 
     "CarStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية للسيارات",
     "CarStatistics Data": "مؤشر إحصائيات السيارات",
@@ -539,13 +556,13 @@
 
     "CarStatistics_Status": "الحالة",
     "CarStatistics_Branches": "الفروع",
-    "CarStatistics_Brand": "الماركة",
-    "CarStatistics_year": "سنة الصنع",
-    "CarStatistics_Category": "الفئة",
+    "CarStatistics_Brand": "الماركات",
+    "CarStatistics_year": "سنوات الصنع",
+    "CarStatistics_Category": "الفئات",
     "CarStatistics_count_Cars": "عدد السيارات",
     "CarStatistics_Model": "الطراز",
-    "CarStatistics_City": "المدينة",
-    "CarStatistics_Rigon": "المنطقة",
+    "CarStatistics_City": "المدن",
+    "CarStatistics_Rigon": "المناطق",
 
     //"CarStatistics_Type": "توزيع السيارات حسب",
     "CarStatistics_Type": "المؤشر الإحصائي حسب",
@@ -575,11 +592,11 @@
     "RenterContractStatistics Hint": "تمكنك الصفحة من الإطلاع على المؤشرات الإحصائية لعقود المستأجرين",
     "RenterContractStatistics Data": "مؤشر إحصائيات عقود المستأجرين",
 
-    "RenterStatistics_Nationality": "الجنسية",
-    "RenterStatistics_MemperShip": "العضوية",
-    "RenterStatistics_profession": "المهنة",
-    "RenterStatistics_Rigon": "المنطقة",
-    "RenterStatistics_City": "المدينة",
+    "RenterStatistics_Nationality": "الجنسيات",
+    "RenterStatistics_MemperShip": "العضويات",
+    "RenterStatistics_profession": "المهن",
+    "RenterStatistics_Rigon": "المناطق",
+    "RenterStatistics_City": "المدن",
     "RenterStatistics_Age": "العمر",
     "RenterStatistics_Traded": "فئة المبالغ المتداولة",
     "RenterStatistics_Dealing_Mechanism": "التقييم",
@@ -597,7 +614,7 @@
     "ContractStatistics_Time_Create": "الوقت",
     "ContractStatistics_Day_Count": "مدة العقد",
     "ContractStatistics_Value_No": "القيمة",
-    "ContractStatistics_KM": "المسافة المقطوعة",
+    "ContractStatistics_KM": "الكيلوات المقطوعة",
     "ContractStatistics_Days": "الأيام",
     "ContractStatistics_Hmonth_Create": "الأشهر الهجرية",
     "ContractStatistics_Gmonth_Create": "الأشهر الميلادية",

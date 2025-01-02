@@ -71,778 +71,810 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
+            MasStatistics_ContractsVM MasStatistics_ContractsVM = new MasStatistics_ContractsVM();
 
-
-            //var Most_Frequance_Company_list = _unitOfWork.CrCasCarInformation.GetAll()
-            //                        .GroupBy(q => q.CrCasCarInformationCode)
+            //var Most_Frequance_Company_list = _unitOfWork.CrCasRenterContractStatistic.GetAll()
+            //                        .GroupBy(q => q.CrCasRenterContractStatisticCode)
             //                        .OrderByDescending(gp => gp.Count());
 
-            var all_Car_Region = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
+            var listmaxDate = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
+            predicate: null,
+            selectProjection: query => query.Select(x => new Date_ReportClosedContractVM
+            {
+                dates = x.CrCasRenterContractStatisticsDate,
+            }));
+
+            if (listmaxDate?.Count == 0)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["NoDataToShow"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
+
+            var maxDate = listmaxDate.Max(x => x.dates)?.ToString("yyyy-MM-dd");
+
+            var end_Date = DateTime.Now;
+            var start_Date = DateTime.Now.AddMonths(-1).AddDays(-1);
+            if (maxDate != null)
+            {
+                end_Date = DateTime.Parse(maxDate);
+                start_Date = DateTime.Parse(maxDate).AddMonths(-1).AddDays(-1);
+            }
+
+            MasStatistics_ContractsVM.start_Date = start_Date.AddDays(1).ToString("yyyy-MM-dd");
+            MasStatistics_ContractsVM.end_Date = end_Date.ToString("yyyy-MM-dd");
+
+              var all_Contract_Days = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
+              selectProjection: query => query.Select(x => new Contract_TypeVM
               {
-                  Car_Code = x.CrCasCarInformationSerailNo,
-                  Type_Id = x.CrCasCarInformationRegion,
+                  Contract_Code = x.CrCasRenterContractStatisticsNo,
               }));
-            all_Car_Region = all_Car_Region.DistinctBy(x => x.Car_Code).ToList();
-            var all_Type = all_Car_Region.DistinctBy(y => y.Type_Id).ToList();
+            all_Contract_Days = all_Contract_Days.DistinctBy(x => x.Contract_Code).ToList();
+            var count_Contracts = all_Contract_Days.Count;
 
-            var all_names_Region = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasSupPostRegionsStatus != Status.Deleted,
-              selectProjection: query => query.Select(x => new list_String_4
-              {
-                  id_key = x.CrMasSupPostRegionsCode,
-                  nameAr = x.CrMasSupPostRegionsArName,
-                  nameEn = x.CrMasSupPostRegionsEnName,
-              }));
+            MasStatistics_ContractsVM.Contracts_Count = count_Contracts;
+            MasStatistics_ContractsVM.thisFunctionRunned = "DaysChart";
 
 
-            List<MASChartBranchDataVM> listMaschartBranchDataVM = new List<MASChartBranchDataVM>();
-            var count_Cars = 0;
-
-            foreach (var single in all_Type)
-            {
-                var CategoryCount = 0;
-                CategoryCount = all_Car_Region.Count(x => x.Type_Id == single.Type_Id);
-                var thisRegion = all_names_Region.Find(x => x.id_key == single.Type_Id);
-                MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
-
-                chartBranchDataVM.ArName = thisRegion?.nameAr;
-                chartBranchDataVM.EnName = thisRegion?.nameEn;
-                chartBranchDataVM.Code = thisRegion?.id_key;
-                chartBranchDataVM.Value = CategoryCount;
-                chartBranchDataVM.IsTrue = true;
-                listMaschartBranchDataVM.Add(chartBranchDataVM);
-                count_Cars = CategoryCount + count_Cars;
-            }
-            listMaschartBranchDataVM = listMaschartBranchDataVM.OrderByDescending(x => x.Value).ToList();
-            ViewBag.count_Cars = count_Cars;
-
-
-            // pass --> 1  if no Other --> 2 if were other
-            // // // for make other colomn based on average percentage
-
-            MASChartBranchDataVM other = new MASChartBranchDataVM();
-            other.Value = 0;
-            other.ArName = "أخرى  ";
-            other.EnName = "  Others";
-            other.Code = "Aa";
-
-            var Type_Avarage = listMaschartBranchDataVM.Average(x => x.Value);
-            var Type_Sum = listMaschartBranchDataVM.Sum(x => x.Value);
-            var Type_Count = listMaschartBranchDataVM.Count();
-            var Type_Avarage_percentage = Type_Avarage / Type_Sum;
-            var Static_Percentage_rate = 0.10;
-
-            var max = listMaschartBranchDataVM.Max(x => x.Value);
-            var max1 = (int)max;
-
-            List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
-            var x = true;
-            for (var i = 0; x == true; i++)
-            {
-
-                if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
-                {
-                    listMaschartBranchDataVM[i].IsTrue = false;
-                    x = false;
-                    listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(i).ToList();
-                    other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                    listMaschartBranchDataVM2.Add(other);
-                    break;
-                }
-            }
-            if (listMaschartBranchDataVM2.Count > 14)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(14).ToList();
-                other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                listMaschartBranchDataVM2.Add(other);
-            }
-            if (listMaschartBranchDataVM2.Count == 0)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM;
-            }
-            // till here //  //  //  //
-
-
-            //ViewBag.singleType = "0";
-            //ViewBag.singleType = concate_DropDown[0].ToString();
-            MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
-            // pass --> 1  if no Other --> 2 if were other
-            MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
-            MasStatistics_CarsVM.Cars_Count = count_Cars;
-
-
-
-            return View(MasStatistics_CarsVM);
+            return View(MasStatistics_ContractsVM);
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBy_Region()
+        public async Task<IActionResult> GetAllBy_Days(string start, string end)
         {
             //// Set page titles
             //var user = await _userManager.GetUserAsync(User);
             //await SetPageTitleAsync(string.Empty, pageNumber);
             //// Check Validition
 
-            var all_Car_Region = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
-              {
-                  Car_Code = x.CrCasCarInformationSerailNo,
-                  Type_Id = x.CrCasCarInformationRegion,
-              }));
-            all_Car_Region = all_Car_Region.DistinctBy(x => x.Car_Code).ToList();
-            var all_Type = all_Car_Region.DistinctBy(y => y.Type_Id).ToList();
-
-            var all_names_Region = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasSupPostRegionsStatus != Status.Deleted,
-              selectProjection: query => query.Select(x => new list_String_4
-              {
-                  id_key = x.CrMasSupPostRegionsCode,
-                  nameAr = x.CrMasSupPostRegionsArName,
-                  nameEn = x.CrMasSupPostRegionsEnName,
-              }));
-
-
-            List<MASChartBranchDataVM> listMaschartBranchDataVM = new List<MASChartBranchDataVM>();
-            var count_Cars = 0;
-
-            foreach (var single in all_Type)
+            if (start == "undefined-undefined-") start = "";
+            if (end == "undefined-undefined-") end = "";
+            if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
             {
-                var CategoryCount = 0;
-                CategoryCount = all_Car_Region.Count(x => x.Type_Id == single.Type_Id);
-                var thisRegion = all_names_Region.Find(x => x.id_key == single.Type_Id);
-                MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
-
-                chartBranchDataVM.ArName = thisRegion?.nameAr;
-                chartBranchDataVM.EnName = thisRegion?.nameEn;
-                chartBranchDataVM.Code = thisRegion?.id_key;
-                chartBranchDataVM.Value = CategoryCount;
-                chartBranchDataVM.IsTrue = true;
-                listMaschartBranchDataVM.Add(chartBranchDataVM);
-                count_Cars = CategoryCount + count_Cars;
+                start = DateTime.Now.AddMonths(-1).ToString("dd-MM-yyyy");
+                end = DateTime.Now.ToString("dd-MM-yyyy");
             }
-            listMaschartBranchDataVM = listMaschartBranchDataVM.OrderByDescending(x => x.Value).ToList();
-            ViewBag.count_Cars = count_Cars;
-
-
-            // pass --> 1  if no Other --> 2 if were other
-            // // // for make other colomn based on average percentage
-
-            MASChartBranchDataVM other = new MASChartBranchDataVM();
-            other.Value = 0;
-            other.ArName = "أخرى  ";
-            other.EnName = "  Others";
-            other.Code = "Aa";
-
-            var Type_Avarage = listMaschartBranchDataVM.Average(x => x.Value);
-            var Type_Sum = listMaschartBranchDataVM.Sum(x => x.Value);
-            var Type_Count = listMaschartBranchDataVM.Count();
-            var Type_Avarage_percentage = Type_Avarage / Type_Sum;
-            var Static_Percentage_rate = 0.10;
-
-            var max = listMaschartBranchDataVM.Max(x => x.Value);
-            var max1 = (int)max;
-
-            List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
-            var x = true;
-            for (var i = 0; x == true; i++)
+            if (!string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
             {
+                var start_Date = DateTime.Parse(start).AddDays(-1);
+                var end_Date = DateTime.Parse(end);
 
-                if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
+                var all_Contract_Days = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
+              selectProjection: query => query.Select(x => new Contract_TypeVM
+              {
+                  Contract_Code = x.CrCasRenterContractStatisticsNo,
+                  Type_Id = x.CrCasRenterContractStatisticsDayCreate,
+              }));
+
+                all_Contract_Days = all_Contract_Days.DistinctBy(x => x.Contract_Code).ToList();
+                var all_Type = all_Contract_Days.DistinctBy(y => y.Type_Id).ToList();
+                var count_Contracts = all_Contract_Days.Count;
+
+
+                List<MASChartBranchDataVM> list_chartBranchDataVM = new List<MASChartBranchDataVM>();
+                var maxStatusSwitch = 7;
+                for (var i = 1; i < maxStatusSwitch + 1; i++)
                 {
-                    listMaschartBranchDataVM[i].IsTrue = false;
-                    x = false;
-                    listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(i).ToList();
-                    other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                    listMaschartBranchDataVM2.Add(other);
-                    break;
+                    var CategoryCount = all_Contract_Days.Count(x => x.Type_Id == i.ToString());
+
+                    MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
+                    switch (i.ToString())
+                    {
+                        case "1":
+                            chartBranchDataVM.ArName = "السبت";
+                            chartBranchDataVM.EnName = "Saturday";
+                            break;
+                        case "2":
+                            chartBranchDataVM.ArName = "الأحد";
+                            chartBranchDataVM.EnName = "Sunday";
+                            break;
+                        case "3":
+                            chartBranchDataVM.ArName = "الإثنين";
+                            chartBranchDataVM.EnName = "Monday";
+                            break;
+                        case "4":
+                            chartBranchDataVM.ArName = "الثلاثاء";
+                            chartBranchDataVM.EnName = "Tuesday";
+                            break;
+                        case "5":
+                            chartBranchDataVM.ArName = "الأربعاء";
+                            chartBranchDataVM.EnName = "Wednesday";
+                            break;
+                        case "6":
+                            chartBranchDataVM.ArName = "الخميس";
+                            chartBranchDataVM.EnName = "Thursday";
+                            break;
+                        case "7":
+                            chartBranchDataVM.ArName = "الجمعة";
+                            chartBranchDataVM.EnName = "Friday";
+                            break;
+                    }
+
+                    chartBranchDataVM.Code = i.ToString();
+                    chartBranchDataVM.Value = CategoryCount;
+                    list_chartBranchDataVM.Add(chartBranchDataVM);
                 }
-            }
-            if (listMaschartBranchDataVM2.Count > 14)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(14).ToList();
-                other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                listMaschartBranchDataVM2.Add(other);
-            }
-            if (listMaschartBranchDataVM2.Count == 0)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM;
-            }
-            // till here //  //  //  //
+                if (CultureInfo.CurrentUICulture.Name == "en-US") { list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList(); }
+                else { list_chartBranchDataVM = list_chartBranchDataVM.OrderByDescending(x => x.Code).ToList(); }
 
-
-            //ViewBag.singleType = "0";
-            //ViewBag.singleType = concate_DropDown[0].ToString();
-            MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
-            // pass --> 1  if no Other --> 2 if were other
-            MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
-            MasStatistics_CarsVM.Cars_Count = count_Cars;
-
-            return Json(MasStatistics_CarsVM.listMasChartdataVM);
-
-            //return PartialView("_PartialMASChartData", MasStatistics_CarsVM);
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllBy_City()
-        {
-            //// Set page titles
-            //var user = await _userManager.GetUserAsync(User);
-            //await SetPageTitleAsync(string.Empty, pageNumber);
-            //// Check Validition
-
-            var all_Car_City = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
-              {
-                  Car_Code = x.CrCasCarInformationSerailNo,
-                  Type_Id = x.CrCasCarInformationCity,
-              }));
-            all_Car_City = all_Car_City.DistinctBy(x => x.Car_Code).ToList();
-            var all_Type = all_Car_City.DistinctBy(y => y.Type_Id).ToList();
-
-            var all_names_City = await _unitOfWork.CrMasSupPostCity.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasSupPostCityStatus != Status.Deleted,
-              selectProjection: query => query.Select(x => new list_String_4
-              {
-                  id_key = x.CrMasSupPostCityCode,
-                  nameAr = x.CrMasSupPostCityArName,
-                  nameEn = x.CrMasSupPostCityEnName,
-              }));
-
-
-            List<MASChartBranchDataVM> listMaschartBranchDataVM = new List<MASChartBranchDataVM>();
-            var count_Cars = 0;
-
-            foreach (var single in all_Type)
-            {
-                var CategoryCount = 0;
-                CategoryCount = all_Car_City.Count(x => x.Type_Id == single.Type_Id);
-                var thisCity = all_names_City.Find(x => x.id_key == single.Type_Id);
-                MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
-
-                chartBranchDataVM.ArName = thisCity?.nameAr;
-                chartBranchDataVM.EnName = thisCity?.nameEn;
-                chartBranchDataVM.Code = thisCity?.id_key;
-                chartBranchDataVM.Value = CategoryCount;
-                chartBranchDataVM.IsTrue = true;
-                listMaschartBranchDataVM.Add(chartBranchDataVM);
-                count_Cars = CategoryCount + count_Cars;
-            }
-            listMaschartBranchDataVM = listMaschartBranchDataVM.OrderByDescending(x => x.Value).ToList();
-            ViewBag.count_Cars = count_Cars;
-
-
-            // pass --> 1  if no Other --> 2 if were other
-            // // // for make other colomn based on average percentage
-
-            MASChartBranchDataVM other = new MASChartBranchDataVM();
-            other.Value = 0;
-            other.ArName = "أخرى  ";
-            other.EnName = "  Others";
-            other.Code = "Aa";
-
-            var Type_Avarage = listMaschartBranchDataVM.Average(x => x.Value);
-            var Type_Sum = listMaschartBranchDataVM.Sum(x => x.Value);
-            var Type_Count = listMaschartBranchDataVM.Count();
-            var Type_Avarage_percentage = Type_Avarage / Type_Sum;
-            var Static_Percentage_rate = 0.10;
-
-            var max = listMaschartBranchDataVM.Max(x => x.Value);
-            var max1 = (int)max;
-
-            List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
-            var x = true;
-            for (var i = 0; x == true; i++)
-            {
-
-                if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
+                var response = new
                 {
-                    listMaschartBranchDataVM[i].IsTrue = false;
-                    x = false;
-                    listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(i).ToList();
-                    other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                    listMaschartBranchDataVM2.Add(other);
-                    break;
-                }
+                    list_chartBranchDataVM = list_chartBranchDataVM,
+                    count = count_Contracts,
+                };
+
+
+                return Json(response);
             }
-            if (listMaschartBranchDataVM2.Count > 14)
+
+            MasStatistics_ContractsVM MasStatistics_ContractsVM2 = new MasStatistics_ContractsVM();
+            var response2 = new
             {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(14).ToList();
-                other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                listMaschartBranchDataVM2.Add(other);
-            }
-            if (listMaschartBranchDataVM2.Count == 0)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM;
-            }
-            // till here //  //  //  //
-
-
-            //ViewBag.singleType = "0";
-            //ViewBag.singleType = concate_DropDown[0].ToString();
-            MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
-            // pass --> 1  if no Other --> 2 if were other
-            MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
-            MasStatistics_CarsVM.Cars_Count = count_Cars;
-
-            return Json(MasStatistics_CarsVM.listMasChartdataVM);
-
-            //return PartialView("_PartialMASChartData", MasStatistics_CarsVM);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllBy_Brand()
-        {
-            //// Set page titles
-            //var user = await _userManager.GetUserAsync(User);
-            //await SetPageTitleAsync(string.Empty, pageNumber);
-            //// Check Validition
-
-            var all_Car_Brand = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
-              {
-                  Car_Code = x.CrCasCarInformationSerailNo,
-                  Type_Id = x.CrCasCarInformationBrand,
-              }));
-            all_Car_Brand = all_Car_Brand.DistinctBy(x => x.Car_Code).ToList();
-            var all_Type = all_Car_Brand.DistinctBy(y => y.Type_Id).ToList();
-
-            var all_names_Brand = await _unitOfWork.CrMasSupCarBrand.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasSupCarBrandStatus != Status.Deleted,
-              selectProjection: query => query.Select(x => new list_String_4
-              {
-                  id_key = x.CrMasSupCarBrandCode,
-                  nameAr = x.CrMasSupCarBrandArName,
-                  nameEn = x.CrMasSupCarBrandEnName,
-              }));
-
-
-            List<MASChartBranchDataVM> listMaschartBranchDataVM = new List<MASChartBranchDataVM>();
-            var count_Cars = 0;
-
-            foreach (var single in all_Type)
-            {
-                var CategoryCount = 0;
-                CategoryCount = all_Car_Brand.Count(x => x.Type_Id == single.Type_Id);
-                var thisBrand = all_names_Brand.Find(x => x.id_key == single.Type_Id);
-                MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
-
-                chartBranchDataVM.ArName = thisBrand?.nameAr;
-                chartBranchDataVM.EnName = thisBrand?.nameEn;
-                chartBranchDataVM.Code = thisBrand?.id_key;
-                chartBranchDataVM.Value = CategoryCount;
-                chartBranchDataVM.IsTrue = true;
-                listMaschartBranchDataVM.Add(chartBranchDataVM);
-                count_Cars = CategoryCount + count_Cars;
-            }
-            listMaschartBranchDataVM = listMaschartBranchDataVM.OrderByDescending(x => x.Value).ToList();
-            ViewBag.count_Cars = count_Cars;
-
-
-            // pass --> 1  if no Other --> 2 if were other
-            // // // for make other colomn based on average percentage
-
-            MASChartBranchDataVM other = new MASChartBranchDataVM();
-            other.Value = 0;
-            other.ArName = "أخرى  ";
-            other.EnName = "  Others";
-            other.Code = "Aa";
-
-            var Type_Avarage = listMaschartBranchDataVM.Average(x => x.Value);
-            var Type_Sum = listMaschartBranchDataVM.Sum(x => x.Value);
-            var Type_Count = listMaschartBranchDataVM.Count();
-            var Type_Avarage_percentage = Type_Avarage / Type_Sum;
-            var Static_Percentage_rate = 0.10;
-
-            var max = listMaschartBranchDataVM.Max(x => x.Value);
-            var max1 = (int)max;
-
-            List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
-            var x = true;
-            for (var i = 0; x == true; i++)
-            {
-
-                if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
-                {
-                    listMaschartBranchDataVM[i].IsTrue = false;
-                    x = false;
-                    listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(i).ToList();
-                    other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                    listMaschartBranchDataVM2.Add(other);
-                    break;
-                }
-            }
-            if (listMaschartBranchDataVM2.Count > 14)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(14).ToList();
-                other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                listMaschartBranchDataVM2.Add(other);
-            }
-            if (listMaschartBranchDataVM2.Count == 0)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM;
-            }
-            // till here //  //  //  //
-
-            List<string> colorBackGround = new List<string>()
-            {
-                "rgba(255, 99, 132, 0.6)","rgba(54, 162, 235, 0.6)","rgba(75, 192, 192, 0.6)","rgba(255, 206, 86, 0.6)",
-                "rgba(153, 102, 255, 0.6)","#F1F2F3","#FFCC99","#B3C2E5","#B4E4C8","#FF999B","#CCCCCC","#DAA1F7",
-                "rgba(255, 99, 132, 0.6)","rgba(54, 162, 235, 0.6)","rgba(75, 192, 192, 0.6)","rgba(255, 206, 86, 0.6)",
+                list_chartBranchDataVM = MasStatistics_ContractsVM2.listMasChartdataVM,
+                count = 0,
             };
-            List<string> colorBorder = new List<string>()
-            {
-                "rgba(255, 99, 132, 1)","rgba(54, 162, 235, 1)","rgba(75, 192, 192, 1)","rgba(255, 206, 86, 1)",
-                "rgba(153, 102, 255, 1)","#C9CBCF","#FF9F40","#4B6EC0","#62C88C","#FF1515","#8C8C8C","#A413EC",
-                "rgba(255, 99, 132, 1)","rgba(54, 162, 235, 1)","rgba(75, 192, 192, 1)","rgba(255, 206, 86, 1)",
-            };
-            for(var v =0; v < listMaschartBranchDataVM2.Count; v++)
-            {
-                listMaschartBranchDataVM2[v].backgroundColor = colorBackGround[v];
-                listMaschartBranchDataVM2[v].borderColor = colorBorder[v];
-            }
 
-            //ViewBag.singleType = "0";
-            //ViewBag.singleType = concate_DropDown[0].ToString();
-            MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
-            // pass --> 1  if no Other --> 2 if were other
-            MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
-            MasStatistics_CarsVM.Cars_Count = count_Cars;
 
-            return Json(MasStatistics_CarsVM.listMasChartdataVM);
-
-            //return PartialView("_PartialMASChartData", MasStatistics_CarsVM);
+            return Json(response2);
+            //return PartialView("_PartialMASChartData", MasStatistics_ContractsVM);
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> GetAllBy_Model()
+        public async Task<IActionResult> GetAllBy_Time(string start, string end)
         {
             //// Set page titles
             //var user = await _userManager.GetUserAsync(User);
             //await SetPageTitleAsync(string.Empty, pageNumber);
             //// Check Validition
 
-            var all_Car_Model = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
-              {
-                  Car_Code = x.CrCasCarInformationSerailNo,
-                  Type_Id = x.CrCasCarInformationModel,
-              }));
-            all_Car_Model = all_Car_Model.DistinctBy(x => x.Car_Code).ToList();
-            var all_Type = all_Car_Model.DistinctBy(y => y.Type_Id).ToList();
-
-            var all_names_Model = await _unitOfWork.CrMasSupCarModel.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasSupCarModelStatus != Status.Deleted,
-              selectProjection: query => query.Select(x => new list_String_4
-              {
-                  id_key = x.CrMasSupCarModelCode,
-                  nameAr = x.CrMasSupCarModelArConcatenateName,
-                  nameEn = x.CrMasSupCarModelConcatenateEnName,
-              }));
-
-
-            List<MASChartBranchDataVM> listMaschartBranchDataVM = new List<MASChartBranchDataVM>();
-            var count_Cars = 0;
-
-            foreach (var single in all_Type)
+            if (start == "undefined-undefined-") start = "";
+            if (end == "undefined-undefined-") end = "";
+            if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
             {
-                var CategoryCount = 0;
-                CategoryCount = all_Car_Model.Count(x => x.Type_Id == single.Type_Id);
-                var thisModel = all_names_Model.Find(x => x.id_key == single.Type_Id);
-                MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
-
-                chartBranchDataVM.ArName = thisModel?.nameAr;
-                chartBranchDataVM.EnName = thisModel?.nameEn;
-                chartBranchDataVM.Code = thisModel?.id_key;
-                chartBranchDataVM.Value = CategoryCount;
-                chartBranchDataVM.IsTrue = true;
-                listMaschartBranchDataVM.Add(chartBranchDataVM);
-                count_Cars = CategoryCount + count_Cars;
+                start = DateTime.Now.AddMonths(-1).ToString("dd-MM-yyyy");
+                end = DateTime.Now.ToString("dd-MM-yyyy");
             }
-            listMaschartBranchDataVM = listMaschartBranchDataVM.OrderByDescending(x => x.Value).ToList();
-            ViewBag.count_Cars = count_Cars;
-
-
-            // pass --> 1  if no Other --> 2 if were other
-            // // // for make other colomn based on average percentage
-
-            MASChartBranchDataVM other = new MASChartBranchDataVM();
-            other.Value = 0;
-            other.ArName = "أخرى  ";
-            other.EnName = "  Others";
-            other.Code = "Aa";
-
-            var Type_Avarage = listMaschartBranchDataVM.Average(x => x.Value);
-            var Type_Sum = listMaschartBranchDataVM.Sum(x => x.Value);
-            var Type_Count = listMaschartBranchDataVM.Count();
-            var Type_Avarage_percentage = Type_Avarage / Type_Sum;
-            var Static_Percentage_rate = 0.10;
-
-            var max = listMaschartBranchDataVM.Max(x => x.Value);
-            var max1 = (int)max;
-
-            List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
-            var x = true;
-            for (var i = 0; x == true; i++)
+            if (!string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
             {
+                var start_Date = DateTime.Parse(start).AddDays(-1);
+                var end_Date = DateTime.Parse(end);
 
-                if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
+                var all_Contract_Time = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
+              selectProjection: query => query.Select(x => new Contract_TypeVM
+              {
+                  Contract_Code = x.CrCasRenterContractStatisticsNo,
+                  Type_Id = x.CrCasRenterContractStatisticsTimeCreate,
+              }));
+
+                all_Contract_Time = all_Contract_Time.DistinctBy(x => x.Contract_Code).ToList();
+                var all_Type = all_Contract_Time.DistinctBy(y => y.Type_Id).ToList();
+                var count_Contracts = all_Contract_Time.Count;
+
+
+                List<MASChartBranchDataVM> list_chartBranchDataVM = new List<MASChartBranchDataVM>();
+                var maxStatusSwitch = 8;
+                for (var i = 1; i < maxStatusSwitch + 1; i++)
                 {
-                    listMaschartBranchDataVM[i].IsTrue = false;
-                    x = false;
-                    listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(i).ToList();
-                    other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                    listMaschartBranchDataVM2.Add(other);
-                    break;
+                    var CategoryCount = all_Contract_Time.Count(x => x.Type_Id == i.ToString());
+
+                    MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
+                    switch (i.ToString())
+                    {
+                        case "1":
+                            chartBranchDataVM.ArName = "02:59 - 00:00";
+                            chartBranchDataVM.EnName = "00:00 - 02:59";
+                            break;
+                        case "2":
+                            chartBranchDataVM.ArName = "05:59 - 03:00";
+                            chartBranchDataVM.EnName = "03:00 - 05:59";
+                            break;
+                        case "3":
+                            chartBranchDataVM.ArName = "08:59 - 06:00";
+                            chartBranchDataVM.EnName = "06:00 - 08:59";
+                            break;
+                        case "4":
+                            chartBranchDataVM.ArName = "11:59 - 09:00";
+                            chartBranchDataVM.EnName = "09:00 - 11:59";
+                            break;
+                        case "5":
+                            chartBranchDataVM.ArName = "14:59 - 12:00";
+                            chartBranchDataVM.EnName = "12:00 - 14:59";
+                            break;
+                        case "6":
+                            chartBranchDataVM.ArName = "17:59 - 15:00";
+                            chartBranchDataVM.EnName = "15:00 - 17:59";
+                            break;
+                        case "7":
+                            chartBranchDataVM.ArName = "20:59 - 18:00";
+                            chartBranchDataVM.EnName = "18:00 - 20:59";
+                            break;
+                        case "8":
+                            chartBranchDataVM.ArName = "23:59 - 21:00";
+                            chartBranchDataVM.EnName = "21:00 - 23:59";
+                            break;
+                    }
+
+                    chartBranchDataVM.Code = i.ToString();
+                    chartBranchDataVM.Value = CategoryCount;
+                    list_chartBranchDataVM.Add(chartBranchDataVM);
                 }
-            }
-            if (listMaschartBranchDataVM2.Count > 14)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(14).ToList();
-                other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                listMaschartBranchDataVM2.Add(other);
-            }
-            if (listMaschartBranchDataVM2.Count == 0)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM;
-            }
-            // till here //  //  //  //
 
-            List<string> colorBackGround = new List<string>()
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+                //if (CultureInfo.CurrentUICulture.Name == "en-US") { list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList(); }
+                //else { list_chartBranchDataVM = list_chartBranchDataVM.OrderByDescending(x => x.Code).ToList(); }
+
+                var response = new
+                {
+                    list_chartBranchDataVM = list_chartBranchDataVM,
+                    count = count_Contracts,
+                };
+
+
+                return Json(response);
+            }
+
+            MasStatistics_ContractsVM MasStatistics_ContractsVM2 = new MasStatistics_ContractsVM();
+            var response2 = new
             {
-                "rgba(255, 99, 132, 0.6)","rgba(54, 162, 235, 0.6)","rgba(75, 192, 192, 0.6)","rgba(255, 206, 86, 0.6)",
-                "rgba(153, 102, 255, 0.6)","#F1F2F3","#FFCC99","#B3C2E5","#B4E4C8","#FF999B","#CCCCCC","#DAA1F7",
-                "rgba(255, 99, 132, 0.6)","rgba(54, 162, 235, 0.6)","rgba(75, 192, 192, 0.6)","rgba(255, 206, 86, 0.6)",
+                list_chartBranchDataVM = MasStatistics_ContractsVM2.listMasChartdataVM,
+                count = 0,
             };
-            List<string> colorBorder = new List<string>()
-            {
-                "rgba(255, 99, 132, 1)","rgba(54, 162, 235, 1)","rgba(75, 192, 192, 1)","rgba(255, 206, 86, 1)",
-                "rgba(153, 102, 255, 1)","#C9CBCF","#FF9F40","#4B6EC0","#62C88C","#FF1515","#8C8C8C","#A413EC",
-                "rgba(255, 99, 132, 1)","rgba(54, 162, 235, 1)","rgba(75, 192, 192, 1)","rgba(255, 206, 86, 1)",
-            };
-            for (var v = 0; v < listMaschartBranchDataVM2.Count; v++)
-            {
-                listMaschartBranchDataVM2[v].backgroundColor = colorBackGround[v];
-                listMaschartBranchDataVM2[v].borderColor = colorBorder[v];
-            }
 
-            MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
-            // pass --> 1  if no Other --> 2 if were other
-            MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
-            MasStatistics_CarsVM.Cars_Count = count_Cars;
 
-            return Json(MasStatistics_CarsVM.listMasChartdataVM);
+            return Json(response2);
+            //return PartialView("_PartialMASChartData", MasStatistics_ContractsVM);
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> GetAllBy_Category()
+        public async Task<IActionResult> GetAllBy_ContractLimit(string start, string end)
         {
             //// Set page titles
             //var user = await _userManager.GetUserAsync(User);
             //await SetPageTitleAsync(string.Empty, pageNumber);
             //// Check Validition
 
-            var all_Car_Category = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
-              {
-                  Car_Code = x.CrCasCarInformationSerailNo,
-                  Type_Id = x.CrCasCarInformationCategory,
-              }));
-            all_Car_Category = all_Car_Category.DistinctBy(x => x.Car_Code).ToList();
-            var all_Type = all_Car_Category.DistinctBy(y => y.Type_Id).ToList();
-
-            var all_names_Category = await _unitOfWork.CrMasSupCarCategory.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasSupCarCategoryStatus != Status.Deleted,
-              selectProjection: query => query.Select(x => new list_String_4
-              {
-                  id_key = x.CrMasSupCarCategoryCode,
-                  nameAr = x.CrMasSupCarCategoryArName,
-                  nameEn = x.CrMasSupCarCategoryEnName,
-              }));
-
-
-            List<MASChartBranchDataVM> listMaschartBranchDataVM = new List<MASChartBranchDataVM>();
-            var count_Cars = 0;
-
-            foreach (var single in all_Type)
+            if (start == "undefined-undefined-") start = "";
+            if (end == "undefined-undefined-") end = "";
+            if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
             {
-                var CategoryCount = 0;
-                CategoryCount = all_Car_Category.Count(x => x.Type_Id == single.Type_Id);
-                var thisCategory = all_names_Category.Find(x => x.id_key == single.Type_Id);
-                MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
-
-                chartBranchDataVM.ArName = thisCategory?.nameAr;
-                chartBranchDataVM.EnName = thisCategory?.nameEn;
-                chartBranchDataVM.Code = thisCategory?.id_key;
-                chartBranchDataVM.Value = CategoryCount;
-                chartBranchDataVM.IsTrue = true;
-                listMaschartBranchDataVM.Add(chartBranchDataVM);
-                count_Cars = CategoryCount + count_Cars;
+                start = DateTime.Now.AddMonths(-1).ToString("dd-MM-yyyy");
+                end = DateTime.Now.ToString("dd-MM-yyyy");
             }
-            listMaschartBranchDataVM = listMaschartBranchDataVM.OrderByDescending(x => x.Value).ToList();
-            ViewBag.count_Cars = count_Cars;
-
-            // pass --> 1  if no Other --> 2 if were other
-            // // // for make other colomn based on average percentage
-
-            MASChartBranchDataVM other = new MASChartBranchDataVM();
-            other.Value = 0;
-            other.ArName = "أخرى  ";
-            other.EnName = "  Others";
-            other.Code = "Aa";
-
-            var Type_Avarage = listMaschartBranchDataVM.Average(x => x.Value);
-            var Type_Sum = listMaschartBranchDataVM.Sum(x => x.Value);
-            var Type_Count = listMaschartBranchDataVM.Count();
-            var Type_Avarage_percentage = Type_Avarage / Type_Sum;
-            var Static_Percentage_rate = 0.10;
-
-            var max = listMaschartBranchDataVM.Max(x => x.Value);
-            var max1 = (int)max;
-
-            List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
-            var x = true;
-            for (var i = 0; x == true; i++)
+            if (!string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
             {
+                var start_Date = DateTime.Parse(start).AddDays(-1);
+                var end_Date = DateTime.Parse(end);
 
-                if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
+                var all_Contract_DayCount = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
+              selectProjection: query => query.Select(x => new Contract_TypeVM
+              {
+                  Contract_Code = x.CrCasRenterContractStatisticsNo,
+                  Type_Id = x.CrCasRenterContractStatisticsDayCount,
+              }));
+
+                all_Contract_DayCount = all_Contract_DayCount.DistinctBy(x => x.Contract_Code).ToList();
+                var all_Type = all_Contract_DayCount.DistinctBy(y => y.Type_Id).ToList();
+                var count_Contracts = all_Contract_DayCount.Count;
+
+
+                List<MASChartBranchDataVM> list_chartBranchDataVM = new List<MASChartBranchDataVM>();
+                var maxStatusSwitch = 8;
+                for (var i = 1; i < maxStatusSwitch + 1; i++)
                 {
-                    listMaschartBranchDataVM[i].IsTrue = false;
-                    x = false;
-                    listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(i).ToList();
-                    other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                    listMaschartBranchDataVM2.Add(other);
-                    break;
+                    var CategoryCount = all_Contract_DayCount.Count(x => x.Type_Id == i.ToString());
+
+                    MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
+                    switch (i.ToString())
+                    {
+                        case "1":
+                            chartBranchDataVM.ArName = "3 - 1";
+                            chartBranchDataVM.EnName = "1 - 3";
+                            break;
+                        case "2":
+                            chartBranchDataVM.ArName = "7 - 4";
+                            chartBranchDataVM.EnName = "4 - 7";
+                            break;
+                        case "3":
+                            chartBranchDataVM.ArName = "10 - 8";
+                            chartBranchDataVM.EnName = "8 - 10";
+                            break;
+                        case "4":
+                            chartBranchDataVM.ArName = "15 - 11";
+                            chartBranchDataVM.EnName = "11 - 15";
+                            break;
+                        case "5":
+                            chartBranchDataVM.ArName = "20 - 16";
+                            chartBranchDataVM.EnName = "16 - 20";
+                            break;
+                        case "6":
+                            chartBranchDataVM.ArName = "25 - 21";
+                            chartBranchDataVM.EnName = "21 - 25";
+                            break;
+                        case "7":
+                            chartBranchDataVM.ArName = "30 - 26";
+                            chartBranchDataVM.EnName = "26 - 30";
+                            break;
+                        case "8":
+                            chartBranchDataVM.ArName = "أكثر من 30";
+                            chartBranchDataVM.EnName = "More Than 30";
+                            break;
+                    }
+
+                    chartBranchDataVM.Code = i.ToString();
+                    chartBranchDataVM.Value = CategoryCount;
+                    list_chartBranchDataVM.Add(chartBranchDataVM);
                 }
-            }
-            if (listMaschartBranchDataVM2.Count > 14)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(14).ToList();
-                other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                listMaschartBranchDataVM2.Add(other);
-            }
-            if (listMaschartBranchDataVM2.Count == 0)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM;
-            }
-            // till here //  //  //  //
 
-            MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
-            // pass --> 1  if no Other --> 2 if were other
-            MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
-            MasStatistics_CarsVM.Cars_Count = count_Cars;
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+                //if (CultureInfo.CurrentUICulture.Name == "en-US") { list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList(); }
+                //else { list_chartBranchDataVM = list_chartBranchDataVM.OrderByDescending(x => x.Code).ToList(); }
 
-            return Json(MasStatistics_CarsVM.listMasChartdataVM);
+                var response = new
+                {
+                    list_chartBranchDataVM = list_chartBranchDataVM,
+                    count = count_Contracts,
+                };
+
+                return Json(response);
+            }
+
+            MasStatistics_ContractsVM MasStatistics_ContractsVM2 = new MasStatistics_ContractsVM();
+            var response2 = new
+            {
+                list_chartBranchDataVM = MasStatistics_ContractsVM2.listMasChartdataVM,
+                count = 0,
+            };
+
+        return Json(response2);
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBy_Year()
+        public async Task<IActionResult> GetAllBy_HigritsMonths(string start, string end)
         {
             //// Set page titles
             //var user = await _userManager.GetUserAsync(User);
             //await SetPageTitleAsync(string.Empty, pageNumber);
             //// Check Validition
 
-            var all_Car_Year = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
+            if (start == "undefined-undefined-") start = "";
+            if (end == "undefined-undefined-") end = "";
+            if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
+            {
+                start = DateTime.Now.AddMonths(-1).ToString("dd-MM-yyyy");
+                end = DateTime.Now.ToString("dd-MM-yyyy");
+            }
+            if (!string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
+            {
+                var start_Date = DateTime.Parse(start).AddDays(-1);
+                var end_Date = DateTime.Parse(end);
+
+                var all_Contract_HigritsMonths = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
+              selectProjection: query => query.Select(x => new Contract_TypeVM
               {
-                  Car_Code = x.CrCasCarInformationSerailNo,
-                  Type_Id = x.CrCasCarInformationYear,
+                  Contract_Code = x.CrCasRenterContractStatisticsNo,
+                  Type_Id = x.CrCasRenterContractStatisticsHmonthCreate,
               }));
-            all_Car_Year = all_Car_Year.DistinctBy(x => x.Car_Code).ToList();
-            var all_Type = all_Car_Year.DistinctBy(y => y.Type_Id).ToList();
+
+                all_Contract_HigritsMonths = all_Contract_HigritsMonths.DistinctBy(x => x.Contract_Code).ToList();
+                var all_Type = all_Contract_HigritsMonths.DistinctBy(y => y.Type_Id?.Trim()).ToList();
+                var count_Contracts = all_Contract_HigritsMonths.Count;
 
 
-            List<MASChartBranchDataVM> listMaschartBranchDataVM = new List<MASChartBranchDataVM>();
-            var count_Cars = 0;
-
-            foreach (var single in all_Type)
-            {
-                var YearCount = 0;
-                YearCount = all_Car_Year.Count(x => x.Type_Id == single.Type_Id);
-                MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
-
-                chartBranchDataVM.ArName = single.Type_Id;
-                chartBranchDataVM.EnName = single.Type_Id;
-                chartBranchDataVM.Code = single.Type_Id;
-                chartBranchDataVM.Value = YearCount;
-                chartBranchDataVM.IsTrue = true;
-                listMaschartBranchDataVM.Add(chartBranchDataVM);
-                count_Cars = YearCount + count_Cars;
-            }
-            listMaschartBranchDataVM = listMaschartBranchDataVM.OrderByDescending(x => x.Value).ToList();
-            ViewBag.count_Cars = count_Cars;
-
-            // pass --> 1  if no Other --> 2 if were other
-            // // // for make other colomn based on average percentage
-
-            MASChartBranchDataVM other = new MASChartBranchDataVM();
-            other.Value = 0;
-            other.ArName = "أخرى  ";
-            other.EnName = "  Others";
-            other.Code = "Aa";
-
-            var Type_Avarage = listMaschartBranchDataVM.Average(x => x.Value);
-            var Type_Sum = listMaschartBranchDataVM.Sum(x => x.Value);
-            var Type_Count = listMaschartBranchDataVM.Count();
-            var Type_Avarage_percentage = Type_Avarage / Type_Sum;
-            var Static_Percentage_rate = 0.10;
-
-            var max = listMaschartBranchDataVM.Max(x => x.Value);
-            var max1 = (int)max;
-
-            List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
-            var x = true;
-            for (var i = 0; x == true; i++)
-            {
-
-                if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
+                List<MASChartBranchDataVM> list_chartBranchDataVM = new List<MASChartBranchDataVM>();
+                var maxStatusSwitch = 12;
+                for (var i = 1; i < maxStatusSwitch + 1; i++)
                 {
-                    listMaschartBranchDataVM[i].IsTrue = false;
-                    x = false;
-                    listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(i).ToList();
-                    other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                    listMaschartBranchDataVM2.Add(other);
-                    break;
+                    var CategoryCount = all_Contract_HigritsMonths.Count(x => x.Type_Id?.Trim() == i.ToString());
+
+                    MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
+                    switch (i.ToString())
+                    {
+                        case "1":
+                            chartBranchDataVM.ArName = "مُحَرَّم";
+                            chartBranchDataVM.EnName = "Muharram";
+                            break;
+                        case "2":
+                            chartBranchDataVM.ArName = "صَفَر";
+                            chartBranchDataVM.EnName = "Safar";
+                            break;
+                        case "3":
+                            chartBranchDataVM.ArName = "ربيع الأول";
+                            chartBranchDataVM.EnName = "Rabi Al-Awwal";
+                            break;
+                        case "4":
+                            chartBranchDataVM.ArName = "ربيع الآخر";
+                            chartBranchDataVM.EnName = "Rabi Al-Akhar";
+                            break;
+                        case "5":
+                            chartBranchDataVM.ArName = "جُمادى الأولى";
+                            chartBranchDataVM.EnName = "Jumada Al-Awwal";
+                            break;
+                        case "6":
+                            chartBranchDataVM.ArName = "جُمادى الآخرة";
+                            chartBranchDataVM.EnName = "Jumada Al-Akhirah";
+                            break;
+                        case "7":
+                            chartBranchDataVM.ArName = "رجب";
+                            chartBranchDataVM.EnName = "Rajab";
+                            break;
+                        case "8":
+                            chartBranchDataVM.ArName = "شعبان";
+                            chartBranchDataVM.EnName = "Shaban";
+                            break;
+                        case "9":
+                            chartBranchDataVM.ArName = "رمضان";
+                            chartBranchDataVM.EnName = "Ramadan";
+                            break;
+                        case "10":
+                            chartBranchDataVM.ArName = "شوّال";
+                            chartBranchDataVM.EnName = "Shawwal";
+                            break;
+                        case "11":
+                            chartBranchDataVM.ArName = "ذو القعدة";
+                            chartBranchDataVM.EnName = "Dhul Qadah";
+                            break;
+                        case "12":
+                            chartBranchDataVM.ArName = "ذو الحجة";
+                            chartBranchDataVM.EnName = "Dhul Hijjah";
+                            break;
+                    }
+
+                    chartBranchDataVM.Code = i.ToString();
+                    chartBranchDataVM.Value = CategoryCount;
+                    list_chartBranchDataVM.Add(chartBranchDataVM);
                 }
-            }
-            if (listMaschartBranchDataVM2.Count > 14)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(14).ToList();
-                other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                listMaschartBranchDataVM2.Add(other);
-            }
-            if (listMaschartBranchDataVM2.Count == 0)
-            {
-                listMaschartBranchDataVM2 = listMaschartBranchDataVM;
-            }
-            listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
-            // till here //  //  //  //
 
-            MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
-            // pass --> 1  if no Other --> 2 if were other
-            MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
-            MasStatistics_CarsVM.Cars_Count = count_Cars;
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+                //if (CultureInfo.CurrentUICulture.Name == "en-US") { list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList(); }
+                //else { list_chartBranchDataVM = list_chartBranchDataVM.OrderByDescending(x => x.Code).ToList(); }
 
-            return Json(MasStatistics_CarsVM.listMasChartdataVM);
+                var response = new
+                {
+                    list_chartBranchDataVM = list_chartBranchDataVM,
+                    count = count_Contracts,
+                };
+
+                return Json(response);
+            }
+
+            MasStatistics_ContractsVM MasStatistics_ContractsVM2 = new MasStatistics_ContractsVM();
+            var response2 = new
+            {
+                list_chartBranchDataVM = MasStatistics_ContractsVM2.listMasChartdataVM,
+                count = 0,
+            };
+
+            return Json(response2);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllBy_GregorianMonths(string start, string end)
+        {
+            //// Set page titles
+            //var user = await _userManager.GetUserAsync(User);
+            //await SetPageTitleAsync(string.Empty, pageNumber);
+            //// Check Validition
+
+            if (start == "undefined-undefined-") start = "";
+            if (end == "undefined-undefined-") end = "";
+            if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
+            {
+                start = DateTime.Now.AddMonths(-1).ToString("dd-MM-yyyy");
+                end = DateTime.Now.ToString("dd-MM-yyyy");
+            }
+            if (!string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
+            {
+                var start_Date = DateTime.Parse(start).AddDays(-1);
+                var end_Date = DateTime.Parse(end);
+
+                var all_Contract_GregorianMonths = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
+              selectProjection: query => query.Select(x => new Contract_TypeVM
+              {
+                  Contract_Code = x.CrCasRenterContractStatisticsNo,
+                  Type_Id = x.CrCasRenterContractStatisticsGmonthCreate,
+              }));
+
+                all_Contract_GregorianMonths = all_Contract_GregorianMonths.DistinctBy(x => x.Contract_Code).ToList();
+                var all_Type = all_Contract_GregorianMonths.DistinctBy(y => y.Type_Id?.Trim()).ToList();
+                var count_Contracts = all_Contract_GregorianMonths.Count;
+
+
+                List<MASChartBranchDataVM> list_chartBranchDataVM = new List<MASChartBranchDataVM>();
+                var maxStatusSwitch = 12;
+                for (var i = 1; i < maxStatusSwitch + 1; i++)
+                {
+                    var CategoryCount = all_Contract_GregorianMonths.Count(x => x.Type_Id?.Trim() == i.ToString());
+
+                    MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
+                    switch (i.ToString())
+                    {
+                        case "1":
+                            chartBranchDataVM.ArName = "يناير";
+                            chartBranchDataVM.EnName = "January";
+                            break;
+                        case "2":
+                            chartBranchDataVM.ArName = "فبراير";
+                            chartBranchDataVM.EnName = "February";
+                            break;
+                        case "3":
+                            chartBranchDataVM.ArName = "مارس";
+                            chartBranchDataVM.EnName = "March";
+                            break;
+                        case "4":
+                            chartBranchDataVM.ArName = "أبريل";
+                            chartBranchDataVM.EnName = "April";
+                            break;
+                        case "5":
+                            chartBranchDataVM.ArName = "مايو";
+                            chartBranchDataVM.EnName = "May";
+                            break;
+                        case "6":
+                            chartBranchDataVM.ArName = "يونيو";
+                            chartBranchDataVM.EnName = "June";
+                            break;
+                        case "7":
+                            chartBranchDataVM.ArName = "يوليو";
+                            chartBranchDataVM.EnName = "July";
+                            break;
+                        case "8":
+                            chartBranchDataVM.ArName = "أغسطس";
+                            chartBranchDataVM.EnName = "August";
+                            break;
+                        case "9":
+                            chartBranchDataVM.ArName = "سبتمبر";
+                            chartBranchDataVM.EnName = "September";
+                            break;
+                        case "10":
+                            chartBranchDataVM.ArName = "أكتوبر";
+                            chartBranchDataVM.EnName = "October";
+                            break;
+                        case "11":
+                            chartBranchDataVM.ArName = "نوفمبر";
+                            chartBranchDataVM.EnName = "November";
+                            break;
+                        case "12":
+                            chartBranchDataVM.ArName = "ديسمبر";
+                            chartBranchDataVM.EnName = "December";
+                            break;
+                    }
+
+                    chartBranchDataVM.Code = i.ToString();
+                    chartBranchDataVM.Value = CategoryCount;
+                    list_chartBranchDataVM.Add(chartBranchDataVM);
+                }
+
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+                //if (CultureInfo.CurrentUICulture.Name == "en-US") { list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList(); }
+                //else { list_chartBranchDataVM = list_chartBranchDataVM.OrderByDescending(x => x.Code).ToList(); }
+
+                var response = new
+                {
+                    list_chartBranchDataVM = list_chartBranchDataVM,
+                    count = count_Contracts,
+                };
+
+                return Json(response);
+            }
+
+            MasStatistics_ContractsVM MasStatistics_ContractsVM2 = new MasStatistics_ContractsVM();
+            var response2 = new
+            {
+                list_chartBranchDataVM = MasStatistics_ContractsVM2.listMasChartdataVM,
+                count = 0,
+            };
+
+            return Json(response2);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllBy_ValueNo(string start, string end)
+        {
+            //// Set page titles
+            //var user = await _userManager.GetUserAsync(User);
+            //await SetPageTitleAsync(string.Empty, pageNumber);
+            //// Check Validition
+
+            if (start == "undefined-undefined-") start = "";
+            if (end == "undefined-undefined-") end = "";
+            if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
+            {
+                start = DateTime.Now.AddMonths(-1).ToString("dd-MM-yyyy");
+                end = DateTime.Now.ToString("dd-MM-yyyy");
+            }
+            if (!string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
+            {
+                var start_Date = DateTime.Parse(start).AddDays(-1);
+                var end_Date = DateTime.Parse(end);
+
+                var all_Contract_GregorianMonths = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
+              selectProjection: query => query.Select(x => new Contract_TypeVM
+              {
+                  Contract_Code = x.CrCasRenterContractStatisticsNo,
+                  Type_Id = x.CrCasRenterContractStatisticsValueNo,
+              }));
+
+                all_Contract_GregorianMonths = all_Contract_GregorianMonths.DistinctBy(x => x.Contract_Code).ToList();
+                var all_Type = all_Contract_GregorianMonths.DistinctBy(y => y.Type_Id?.Trim()).ToList();
+                var count_Contracts = all_Contract_GregorianMonths.Count;
+
+
+                List<MASChartBranchDataVM> list_chartBranchDataVM = new List<MASChartBranchDataVM>();
+                var maxStatusSwitch = 9;
+                for (var i = 1; i < maxStatusSwitch + 1; i++)
+                {
+                    var CategoryCount = all_Contract_GregorianMonths.Count(x => x.Type_Id?.Trim() == i.ToString());
+
+                    MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
+                    switch (i.ToString())
+                    {
+                        case "1":
+                            chartBranchDataVM.ArName = "أقل من 300";
+                            chartBranchDataVM.EnName = "Less Than 300";
+                            break;
+                        case "2":
+                            chartBranchDataVM.ArName = "500 - 301";
+                            chartBranchDataVM.EnName = "301 - 500";
+                            break;
+                        case "3":
+                            chartBranchDataVM.ArName = "1000 - 501";
+                            chartBranchDataVM.EnName = "501 - 1000";
+                            break;
+                        case "4":
+                            chartBranchDataVM.ArName = "1500 - 1001";
+                            chartBranchDataVM.EnName = "1001 - 1500";
+                            break;
+                        case "5":
+                            chartBranchDataVM.ArName = "2000 - 1501";
+                            chartBranchDataVM.EnName = "1501 - 2000";
+                            break;
+                        case "6":
+                            chartBranchDataVM.ArName = "3000 - 2001";
+                            chartBranchDataVM.EnName = "2001 - 3000";
+                            break;
+                        case "7":
+                            chartBranchDataVM.ArName = "4000 - 3001";
+                            chartBranchDataVM.EnName = "3001 - 4000";
+                            break;
+                        case "8":
+                            chartBranchDataVM.ArName = "5000 - 4001";
+                            chartBranchDataVM.EnName = "4001 - 5000";
+                            break;
+                        case "9":
+                            chartBranchDataVM.ArName = "أكثر من 5000";
+                            chartBranchDataVM.EnName = "More Than 5000";
+                            break;
+                    }
+
+                    chartBranchDataVM.Code = i.ToString();
+                    chartBranchDataVM.Value = CategoryCount;
+                    list_chartBranchDataVM.Add(chartBranchDataVM);
+                }
+
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+
+                var response = new
+                {
+                    list_chartBranchDataVM = list_chartBranchDataVM,
+                    count = count_Contracts,
+                };
+
+                return Json(response);
+            }
+
+            MasStatistics_ContractsVM MasStatistics_ContractsVM2 = new MasStatistics_ContractsVM();
+            var response2 = new
+            {
+                list_chartBranchDataVM = MasStatistics_ContractsVM2.listMasChartdataVM,
+                count = 0,
+            };
+
+            return Json(response2);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllBy_KM(string start, string end)
+        {
+            //// Set page titles
+            //var user = await _userManager.GetUserAsync(User);
+            //await SetPageTitleAsync(string.Empty, pageNumber);
+            //// Check Validition
+
+            if (start == "undefined-undefined-") start = "";
+            if (end == "undefined-undefined-") end = "";
+            if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
+            {
+                start = DateTime.Now.AddMonths(-1).ToString("dd-MM-yyyy");
+                end = DateTime.Now.ToString("dd-MM-yyyy");
+            }
+            if (!string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
+            {
+                var start_Date = DateTime.Parse(start).AddDays(-1);
+                var end_Date = DateTime.Parse(end);
+
+                var all_Contract_KM = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
+              selectProjection: query => query.Select(x => new Contract_TypeVM
+              {
+                  Contract_Code = x.CrCasRenterContractStatisticsNo,
+                  Type_Id = x.CrCasRenterContractStatisticsKm,
+              }));
+
+                all_Contract_KM = all_Contract_KM.DistinctBy(x => x.Contract_Code).ToList();
+                var all_Type = all_Contract_KM.DistinctBy(y => y.Type_Id?.Trim()).ToList();
+                var count_Contracts = all_Contract_KM.Count;
+
+
+                List<MASChartBranchDataVM> list_chartBranchDataVM = new List<MASChartBranchDataVM>();
+                var maxStatusSwitch = 5;
+                for (var i = 1; i < maxStatusSwitch + 1; i++)
+                {
+                    var CategoryCount = all_Contract_KM.Count(x => x.Type_Id?.Trim() == i.ToString());
+
+                    MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
+                    switch (i.ToString())
+                    {
+                        case "1":
+                            chartBranchDataVM.ArName = "أقل من 100";
+                            chartBranchDataVM.EnName = "Less Than 100";
+                            break;
+                        case "2":
+                            chartBranchDataVM.ArName = "200 - 101";
+                            chartBranchDataVM.EnName = "101 - 200";
+                            break;
+                        case "3":
+                            chartBranchDataVM.ArName = "300 - 201";
+                            chartBranchDataVM.EnName = "201 - 300";
+                            break;
+                        case "4":
+                            chartBranchDataVM.ArName = "400 - 301";
+                            chartBranchDataVM.EnName = "301 - 400";
+                            break;
+                        case "5":
+                            chartBranchDataVM.ArName = "أكثر من 400";
+                            chartBranchDataVM.EnName = "More Than 400";
+                            break;
+                    }
+
+                    chartBranchDataVM.Code = i.ToString();
+                    chartBranchDataVM.Value = CategoryCount;
+                    list_chartBranchDataVM.Add(chartBranchDataVM);
+                }
+
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+
+                var response = new
+                {
+                    list_chartBranchDataVM = list_chartBranchDataVM,
+                    count = count_Contracts,
+                };
+
+                return Json(response);
+            }
+
+            MasStatistics_ContractsVM MasStatistics_ContractsVM2 = new MasStatistics_ContractsVM();
+            var response2 = new
+            {
+                list_chartBranchDataVM = MasStatistics_ContractsVM2.listMasChartdataVM,
+                count = 0,
+            };
+
+            return Json(response2);
         }
 
 
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasRenterInformation licence, string status)
         {
-            //await _userLoginsService.SaveTracing(currentCar.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
+            //await _userLoginsService.SaveTracing(currentContract.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
             //subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
             //subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, "بنان", "Bnan");
 

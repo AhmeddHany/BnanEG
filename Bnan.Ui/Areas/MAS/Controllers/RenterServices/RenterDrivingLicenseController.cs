@@ -192,7 +192,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.RenterServices
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_NoUpdate"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "RenterDrivingLicense");
             }
-            var contract = await _unitOfWork.CrMasSupRenterDrivingLicense.FindAsync(x => x.CrMasSupRenterDrivingLicenseCode == id, new[] { "CrCasRenterPrivateDriverInformations", "CrMasRenterInformations" });
+            var contract = await _unitOfWork.CrMasSupRenterDrivingLicense.FindAsync(x => x.CrMasSupRenterDrivingLicenseCode == id, new[] { "CrMasRenterInformations" });
             if (contract == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -201,7 +201,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.RenterServices
             var model = _mapper.Map<RenterDrivingLicenseVM>(contract);
             model.CrMasSupRenterDrivingLicenseNaqlCode ??= 0;
             model.CrMasSupRenterDrivingLicenseNaqlId ??= 0;
-            model.RentersHave_withType_Count = contract.CrCasRenterPrivateDriverInformations.Count + contract.CrMasRenterInformations.Count;
+            model.RentersHave_withType_Count = contract.CrMasRenterInformations.Count;
             return View(model);
         }
         [HttpPost]
