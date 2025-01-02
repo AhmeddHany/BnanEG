@@ -1025,6 +1025,10 @@
   "CASSystem": {
     "Notification": "Notification",
     "CASDocsForCompany": "Company Documents",
+    "DocsForCar": "Documents",
+    "MainsForCar": "Maintianances",
+    "PricesForCar": "Prices",
+    "NoDataAvailable": "No Data Available",
 
     //MyAccount
     "EmployeeId": "Id",
@@ -3238,6 +3242,8 @@
     "EndingToday": "Ending Today",
     "EndingTomorrow": "Ending Tomorrow",
     "EndingLater": "Ending Later",
+    "Saved": "Saved",
+    "Suspend": "Suspend",
     "Active": "Active",
     "Closed": "Closed",
     "Executed": "Executed",

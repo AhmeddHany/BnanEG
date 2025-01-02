@@ -8,5 +8,6 @@
         public int ExpireTommorrowCount { get; set; }
         public int SavedCount { get; set; }
         public int SuspendCount { get; set; }
+        public bool HaveExpireOrNot { get; set; }
     }
 }

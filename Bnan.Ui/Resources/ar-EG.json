@@ -987,6 +987,10 @@
   "CASSystem": {
     "Notification": "إشعارات",
     "CASDocsForCompany": "مستندات الشركة",
+    "DocsForCar": "وثائق",
+    "MainsForCar": "صيانة",
+    "PricesForCar": "اسعار",
+    "NoDataAvailable": "لا يوجد بيانات",
     //MyAccount
     "EmployeeId": "الهوية",
     "LimitCredit": "الحد الإئتماني",
@@ -3213,6 +3217,8 @@
     "EndingToday": "تنتهي اليوم",
     "EndingTomorrow": "تنتهي غدًا",
     "EndingLater": "تنتهي لاحقًا",
+    "Saved": "محفوظة",
+    "Suspend": "معلقة",
     "Active": "قائمة",
     "Closed": "مغلقة",
     "Executed": "منفذة",
