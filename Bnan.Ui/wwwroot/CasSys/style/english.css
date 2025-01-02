@@ -1,0 +1,179 @@
+/* ================================================================================ layout style   ======================================================================================= */
+
+
+body {
+    direction: ltr;
+}
+.menu-links{
+direction: ltr;
+}
+.sidebar .menu {
+   
+    direction: rtl;
+}
+.sidebar header .toggle{
+    right: -25px;
+    left:auto;
+    transform: rotate(180deg);
+}
+.sidebar .nav-link .nav-text[data-bs-toggle=collapse].collapsed::after {
+    content: '\f104';
+    transform: rotate(180deg);
+    float: right;
+}
+.sidebar1-col {
+    border-left:none !important;
+    border-right: 2px solid #39629C;
+}
+.sidebar.close{
+    border-right: 2px solid #ffffff !important;
+    border-left: none ;
+
+}
+.sidebar.close:hover{
+    border-right: 2px solid #39629C !important;
+    border-left: none !important;
+
+}
+.sidebar {
+    border-right: 2px solid #39629C;
+    border-left: none;
+}
+.inner-collapse-arrow{
+    transform: rotate(180deg);
+}
+.sidebar .nav-link .nav-text[data-bs-toggle=collapse]::after {
+    float: right;
+}
+.sidebar2 .toggle2{
+    left: -35px;
+    right: auto;
+}
+.sidebar2.open .sidebar2-chevron {
+    transform: rotate(180deg);
+}
+.navbar-expand-lg .navbar-nav .nav-link{
+    flex-direction: row-reverse;
+    gap: .5rem;
+}
+.sidebar2{
+    left: auto;
+    right: 0;
+}
+.icons-content{
+    justify-content: flex-end;
+}
+.userDropdown-options .logout{
+    transform: rotate(180deg);
+}
+
+.stat-btn {
+    padding-left: 0;
+    padding-right:inherit;
+}
+@media (max-width: 767px) {
+    .membership-chevron {
+        transform: rotate(270deg);
+    }
+}
+@media (min-width: 768px) {
+    .membership-chevron{
+        transform: rotateY(180deg) !important;
+    }
+}
+@media (max-width: 1000px) {
+    .sidebar2.close2 {
+        left: -45px ;
+        left: auto;
+    }
+}
+@media (max-width: 1000px) {
+    .sidebar.close {
+        left: -200px;
+    }
+}
+
+/* ================================================================================ search input   ======================================================================================= */
+.search-input{
+    direction: rtl;
+}
+/* ================================================================================ table style   ======================================================================================= */
+.tables-style thead{
+    direction: rtl;
+}
+.tables-style{
+    direction: rtl;
+}
+.tables-style th:last-child{
+    border-radius: 8px 0px 0px 8px;
+}
+.tables-style th:first-child{
+    border-radius: 0px 8px 8px 0px;
+}
+/* ================================================================================  Company => Branches     ======================================================================================= */
+/* ================================================================================================================================================================================== */
+.new-Branch{
+    right : -60px;
+    left: auto;
+}
+.ExistFileData{
+    right: auto;
+    left: -280px;
+}
+.dropdown-content{
+    width: 255px;
+}
+.ExistFileData{
+    width: 230px;
+}
+.data-container{
+    text-align: right;
+}
+.Chevron{
+    transform: rotateY(180deg);
+}
+.doc-save-align{
+    text-align: end;
+}
+.custom-margin {
+    margin-right: 40px;
+    margin-left: 0;
+}
+@media (max-width: 1024px) {
+    .main-page-icon {
+        position: sticky;
+        left: -100px;
+        bottom: 10%;
+        right: 100%;
+        z-index: 9;
+    }
+}
+@media (max-width : 1600px) {
+    .new-Branch{
+      right: 0px;
+      left: auto;
+    }
+}
+
+
+/* ================================================================================  inputs   ======================================================================================= */
+.counterCode {
+    border-radius: 0px 8px 8px 0px !important;
+    border-left: none;
+   border-right:2px solid #faa64d ;
+}
+.tel-input {
+    border-radius: 8px 0px 0px 8px !important;
+}
+.number-input-container button{
+    margin: 0px 7px 0px 0px;
+}
+.profile-section {
+    border-left: 2px solid #D9D9D9;
+    border-right:none ;
+}
+/* ================================================================================  services => technical connect     ======================================================================================= */
+/* ================================================================================================================================================================================== */
+.techncal-connect-error{
+    direction:ltr;
+  }

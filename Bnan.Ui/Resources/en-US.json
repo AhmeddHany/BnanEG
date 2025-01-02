@@ -1042,6 +1042,24 @@
     "NewAndConfirmPassInCorrect": "Password and password confirmation do not match, please try again",
     "CannotUserCurrentPassword": "Current password cannot be used"
   },
+
+  "CASSystem": {
+    "Notification": "Notification",
+    "CASDocsForCompany": "Company Documents",
+    "DocsForCar": "Documents",
+    "MainsForCar": "Maintianances",
+    "PricesForCar": "Prices",
+    "NoDataAvailable": "No Data Available",
+
+    //MyAccount
+    "EmployeeId": "Id",
+    "LimitCredit": "Limit Credit",
+    "PasswordHint": "Password Hint",
+    "LastActive": "Last Active",
+    "LastUpdate": "Last Update"
+
+
+  },
   "ModalAutoLogout": "Your session is about to end!",
 
   "Arabic": "Arabic",
@@ -3245,6 +3263,8 @@
     "EndingToday": "Ending Today",
     "EndingTomorrow": "Ending Tomorrow",
     "EndingLater": "Ending Later",
+    "Saved": "Saved",
+    "Suspend": "Suspend",
     "Active": "Active",
     "Closed": "Closed",
     "Executed": "Executed",

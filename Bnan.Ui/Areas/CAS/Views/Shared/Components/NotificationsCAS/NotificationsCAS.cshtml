@@ -1,0 +1,291 @@
+﻿@using Bnan.Ui.ViewModels.CAS.Notifications
+@model NotificationsForCasVM
+@inject IViewLocalizer localizer
+
+<nav class="sidebar2 close2">
+    <div class="toggle-div toggle2">
+        <span class="notification"> @localizer["Notification"]</span>
+    </div>
+    <div class="menu-bar">
+        <div class="menu">
+            <main>
+                <div class="accordion">
+
+                    <div class="accordion-item">
+                        <div class="accordion-item-header">
+                            <span class="accordion-item-header-title">
+                                @localizer["CASDocsForCompany"]
+                                @if (Model.docsForCompany.HaveExpireOrNot)
+                                {
+                                    <div class="notify"></div>
+                                }
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down accordion-item-header-icon">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </div>
+                        <div class="accordion-item-description-wrapper">
+                            <div class="accordion-item-description">
+                                <div class="container-fluid">
+                                    @if (Model.docsForCompany?.DocsForBranches != null && Model.docsForCompany.DocsForBranches.Any())
+                                    {
+                                        @foreach (var item in Model.docsForCompany.DocsForBranches)
+                                        {
+                                            <div class="row collapse-row">
+                                                <!-- عرض الاسم دائمًا -->
+                                                <div class="col-7">
+                                                    <p>@item.Name</p>
+                                                </div>
+
+                                                <!-- عرض القيم حتى لو كانت صفر -->
+                                                <div class="col working">
+                                                    <p>@(item.AboutExpireCount ?? 0)</p>
+                                                </div>
+                                                <div class="col ended">
+                                                    <p>@(item.ExpireCount ?? 0)</p>
+                                                </div>
+                                            </div>
+                                            <hr class="collapse-hr">
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>@localizer["NoDataAvailable"]</p>
+                                    }
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-item-header">
+                            <span class="accordion-item-header-title">
+                                @localizer["Cars"]
+                                @if (Model.docsMainPriceForCar.HaveExpireOrNot)
+                                {
+                                    <div class="notify"></div>
+                                }
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down accordion-item-header-icon">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </div>
+                        <div class="accordion-item-description-wrapper">
+                            <div class="accordion-item-description">
+                                <div class="container-fluid">
+                                    <div class="row collapse-row">
+                                        <div class="col-5">
+                                            <p>@localizer["DocsForCar"]</p>
+                                        </div>
+                                        <div class="col working">
+                                            <p> @Model.docsMainPriceForCar.Documents?.AboutExpireCount </p>
+                                        </div>
+                                        <div class="col ended">
+                                            <p> @Model.docsMainPriceForCar.Documents?.ExpireCount </p>
+                                        </div>
+                                    </div>
+                                    <hr class="collapse-hr">
+                                    <div class="row collapse-row">
+                                        <div class="col-5">
+                                            <p>@localizer["MainsForCar"]</p>
+                                        </div>
+                                        <div class="col working">
+                                            <p> @Model.docsMainPriceForCar.Maintainces?.AboutExpireCount </p>
+                                        </div>
+                                        <div class="col ended">
+                                            <p> @Model.docsMainPriceForCar.Maintainces?.ExpireCount </p>
+                                        </div>
+                                    </div>
+                                    <hr class="collapse-hr">
+                                    <div class="row collapse-row">
+                                        <div class="col-5">
+                                            <p>@localizer["PricesForCar"]</p>
+                                        </div>
+                                        <div class="col working">
+                                            <p> @Model.docsMainPriceForCar.Prices?.AboutExpireCount </p>
+                                        </div>
+                                        <div class="col ended">
+                                            <p> @Model.docsMainPriceForCar.Prices?.ExpireCount </p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-item-header">
+                            <span class="accordion-item-header-title">
+                                @localizer["Contracts"]
+                                @if (Model.contractStatus.HaveExpireOrNot)
+                                {
+                                    <div class="notify"></div>
+                                }
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down accordion-item-header-icon">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </div>
+                        <div class="accordion-item-description-wrapper">
+                            <div class="accordion-item-description">
+                                <div class="container-fluid">
+                                    <div class="row collapse-row">
+                                        <div class="col ">
+                                            <p>  @localizer["Expired"] </p>
+                                        </div>
+                                        <div class="col contract-ended ">
+                                            <p> @Model.contractStatus?.ExpiredCount </p>
+                                        </div>
+
+                                    </div>
+                                    <hr class="collapse-hr">
+                                    <div class="row collapse-row">
+                                        <div class="col">
+                                            <p>  @localizer["EndingToday"] </p>
+                                        </div>
+
+                                        <div class="col ended">
+                                            <p> @Model.contractStatus?.ExpireTodayCount </p>
+                                        </div>
+                                    </div>
+                                    <hr class="collapse-hr">
+                                    <div class="row collapse-row">
+                                        <div class="col">
+                                            <p>  @localizer["EndingTomorrow"] </p>
+                                        </div>
+                                        <div class="col working">
+                                            <p> @Model.contractStatus?.ExpireTommorrowCount </p>
+                                        </div>
+                                    </div>
+                                    <hr class="collapse-hr">
+                                    <div class="row collapse-row">
+                                        <div class="col">
+                                            <p>  @localizer["EndingLater"] </p>
+                                        </div>
+                                        <div class="col later">
+                                            <p> @Model.contractStatus?.ExpireLaterCount </p>
+                                        </div>
+
+                                    </div>
+                                    <hr class="collapse-hr">
+                                    <div class="row collapse-row">
+                                        <div class="col-5">
+                                            <p>  @localizer["Saved"] </p>
+                                        </div>
+                                        <div class="col working">
+                                            <p> @Model.contractStatus?.SavedCount </p>
+                                        </div>
+
+                                    </div>  <hr class="collapse-hr">
+                                    <div class="row collapse-row">
+                                        <div class="col-5">
+                                            <p>  @localizer["Suspend"] </p>
+                                        </div>
+                                        <div class="col working">
+                                            <p> @Model.contractStatus?.SuspendCount </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-item-header">
+                            <span class="accordion-item-header-title">
+                                @localizer["Employees"]
+                                @if (Model.employeesBalances.IfHaveNotify)
+                                {
+                                    <div class="notify"></div>
+                                }
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down accordion-item-header-icon">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </div>
+                        <div class="accordion-item-description-wrapper">
+                            <div class="accordion-item-description">
+                                <div class="container-fluid">
+                                    @if (Model.employeesBalances?.employeesInfo != null && Model.employeesBalances.employeesInfo.Any())
+                                    {
+                                        @foreach (var item in Model.employeesBalances.employeesInfo)
+                                        {
+                                            <div class="row align-items-center ">
+                                                <div class="col-auto p-1">
+                                                    @if ((bool)item.HaveCustodyNotAccepted && (bool)item.CreditLimitExceeded)
+                                                    {
+                                                        <img src="~/CasSys/images/Frame 2608955.svg" />
+                                                    }
+                                                    else if ((bool)item.HaveCustodyNotAccepted)
+                                                    {
+                                                        <img src="~/CasSys/images/arrow icon (2).svg" />
+                                                    }
+                                                    else if ((bool)item.CreditLimitExceeded)
+                                                    {
+                                                        <img src="~/CasSys/images/red arrow icon (2).svg" />
+                                                    }
+
+                                                    <img src="@Url.Content(item.Picture?.ToString())" class="employee-custody-img"> @item.Name
+                                                </div>
+                                                <div class="col-auto">@item.AvaliableBalance</div>
+                                            </div>
+                                            <hr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>@localizer["NoDataAvailable"]</p>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-item-header">
+                            <span class="accordion-item-header-title">
+                                @localizer["Liabilities"]
+                                @if (Model.creditorsAndDebtors.IfHaveNotify)
+                                {
+                                    <div class="notify"></div>
+                                }
+                                </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down accordion-item-header-icon">
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </div>
+                        <div class="accordion-item-description-wrapper">
+                            <div class="accordion-item-description">
+                                <div class="container-fluid">
+                                    <div class="row collapse-row">
+                                        <div class="col">
+                                            <p>@localizer["Debtors"]</p>
+                                        </div>
+                                        <div class="col-auto ">
+                                            <p> @Model.creditorsAndDebtors?.Debtors </p>
+                                        </div>
+                                    </div>
+                                    <hr class="collapse-hr">
+                                    <div class="row collapse-row">
+                                        <div class="col">
+                                            <p>@localizer["Creditors"]</p>
+                                        </div>
+                                        <div class="col-auto ">
+                                            <p> @Model.creditorsAndDebtors?.Creditors </p>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+
+    </div>
+
+</nav>
+

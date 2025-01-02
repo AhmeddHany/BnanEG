@@ -1001,6 +1001,21 @@
     "NewAndConfirmPassInCorrect": "كلمة السر وتأكيد كلمة السر غير مطابقان, يرجي اعادة المحاولة",
     "CannotUserCurrentPassword": "لا يمكن استخدام كلمة السر الحالية"
   },
+  "CASSystem": {
+    "Notification": "إشعارات",
+    "CASDocsForCompany": "مستندات الشركة",
+    "DocsForCar": "وثائق",
+    "MainsForCar": "صيانة",
+    "PricesForCar": "اسعار",
+    "NoDataAvailable": "لا يوجد بيانات",
+    //MyAccount
+    "EmployeeId": "الهوية",
+    "LimitCredit": "الحد الإئتماني",
+    "PasswordHint": "تلميح كلمة السر",
+    "LastActive": "آخر نشاط",
+    "LastUpdate": "آخر تحديث"
+
+  },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 
   "Arabic": "العربية",
@@ -3219,6 +3234,8 @@
     "EndingToday": "تنتهي اليوم",
     "EndingTomorrow": "تنتهي غدًا",
     "EndingLater": "تنتهي لاحقًا",
+    "Saved": "محفوظة",
+    "Suspend": "معلقة",
     "Active": "قائمة",
     "Closed": "مغلقة",
     "Executed": "منفذة",

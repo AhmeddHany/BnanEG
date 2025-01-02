@@ -148,8 +148,8 @@ namespace Bnan.Inferastructure.Repository
                 masRenter.CrMasRenterInformationArName = model.CrMasRenterInformationArName;
                 masRenter.CrMasRenterInformationEnName = model.CrMasRenterInformationEnName;
                 masRenter.CrMasRenterInformationNationality = model.CrMasRenterInformationNationality;
-                masRenter.CrMasRenterInformationGender = model.CrMasRenterInformationGender;
-                masRenter.CrMasRenterInformationProfession = model.CrMasRenterInformationProfession;
+                if (string.IsNullOrEmpty(model.CrMasRenterInformationProfession)) masRenter.CrMasRenterInformationProfession = "1400000002";
+                if (string.IsNullOrEmpty(model.CrMasRenterInformationGender)) masRenter.CrMasRenterInformationGender = "1100000002";
                 masRenter.CrMasRenterInformationEmployer = employerCode;
                 masRenter.CrMasRenterInformationCountreyKey = model.CrMasRenterInformationCountreyKey;
                 masRenter.CrMasRenterInformationMobile = model.CrMasRenterInformationMobile;

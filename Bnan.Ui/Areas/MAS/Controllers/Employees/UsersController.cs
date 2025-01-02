@@ -38,7 +38,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
         private readonly IMasUser _masUser;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
-        private readonly string pageNumber = SubTasks.CrMasUserSystemValiditionsMAS;
+        private readonly string pageNumber = SubTasks.CrMasUserInformationForMAS;
         public UsersController(IUserService userService,
                                IAuthService authService,
                                IWebHostEnvironment webHostEnvironment,
@@ -436,6 +436,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             user.CrMasUserInformationExitTimer = model.CrMasUserInformationExitTimer;
             user.CrMasUserInformationSignature = filePathSignture;
             user.CrMasUserInformationPicture = filePathImage;
+            user.CrMasUserInformationDefaultLanguage = model.CrMasUserInformationDefaultLanguage;
             await _userManager.UpdateAsync(user);
             await SaveTracingForUserChange(user, Status.Update);
             _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
