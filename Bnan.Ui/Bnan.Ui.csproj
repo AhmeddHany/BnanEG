@@ -403,6 +403,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\MAS\Controllers\ViewComponents\" />
     <Folder Include="wwwroot\images\Bnan\Models\" />
     <Folder Include="wwwroot\images\Company\" />
     <Folder Include="wwwroot\images\CAS\" />
