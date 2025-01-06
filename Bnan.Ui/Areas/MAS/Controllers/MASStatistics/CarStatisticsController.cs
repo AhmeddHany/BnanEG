@@ -196,6 +196,13 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             all_Car_Region = all_Car_Region.DistinctBy(x => x.Car_Code).ToList();
             var all_Type = all_Car_Region.DistinctBy(y => y.Type_Id).ToList();
 
+            if (all_Car_Region.Count == 0)
+            {
+                List<MASChartBranchDataVM> listMaschartBranchDataVM4 = new List<MASChartBranchDataVM>();
+
+                return Json(listMaschartBranchDataVM4);
+            }
+
             var all_names_Region = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrMasSupPostRegionsStatus != Status.Deleted,
               selectProjection: query => query.Select(x => new list_String_4
@@ -305,6 +312,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             all_Car_City = all_Car_City.DistinctBy(x => x.Car_Code).ToList();
             var all_Type = all_Car_City.DistinctBy(y => y.Type_Id).ToList();
 
+
+            if (all_Car_City.Count == 0)
+            {
+                List<MASChartBranchDataVM> listMaschartBranchDataVM4 = new List<MASChartBranchDataVM>();
+
+                return Json(listMaschartBranchDataVM4);
+            }
+
             var all_names_City = await _unitOfWork.CrMasSupPostCity.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrMasSupPostCityStatus != Status.Deleted,
               selectProjection: query => query.Select(x => new list_String_4
@@ -412,6 +427,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
               }));
             all_Car_Brand = all_Car_Brand.DistinctBy(x => x.Car_Code).ToList();
             var all_Type = all_Car_Brand.DistinctBy(y => y.Type_Id).ToList();
+
+
+            if (all_Car_Brand.Count == 0)
+            {
+                List<MASChartBranchDataVM> listMaschartBranchDataVM4 = new List<MASChartBranchDataVM>();
+
+                return Json(listMaschartBranchDataVM4);
+            }
 
             var all_names_Brand = await _unitOfWork.CrMasSupCarBrand.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrMasSupCarBrandStatus != Status.Deleted,
@@ -539,6 +562,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             all_Car_Model = all_Car_Model.DistinctBy(x => x.Car_Code).ToList();
             var all_Type = all_Car_Model.DistinctBy(y => y.Type_Id).ToList();
 
+
+            if (all_Car_Model.Count == 0)
+            {
+                List<MASChartBranchDataVM> listMaschartBranchDataVM4 = new List<MASChartBranchDataVM>();
+
+                return Json(listMaschartBranchDataVM4);
+            }
+
             var all_names_Model = await _unitOfWork.CrMasSupCarModel.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrMasSupCarModelStatus != Status.Deleted,
               selectProjection: query => query.Select(x => new list_String_4
@@ -661,6 +692,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             all_Car_Category = all_Car_Category.DistinctBy(x => x.Car_Code).ToList();
             var all_Type = all_Car_Category.DistinctBy(y => y.Type_Id).ToList();
 
+
+            if (all_Car_Category.Count == 0)
+            {
+                List<MASChartBranchDataVM> listMaschartBranchDataVM4 = new List<MASChartBranchDataVM>();
+
+                return Json(listMaschartBranchDataVM4);
+            }
+
             var all_names_Category = await _unitOfWork.CrMasSupCarCategory.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrMasSupCarCategoryStatus != Status.Deleted,
               selectProjection: query => query.Select(x => new list_String_4
@@ -764,6 +803,13 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             all_Car_Year = all_Car_Year.DistinctBy(x => x.Car_Code).ToList();
             var all_Type = all_Car_Year.DistinctBy(y => y.Type_Id).ToList();
 
+
+            if (all_Car_Year.Count == 0)
+            {
+                List<MASChartBranchDataVM> listMaschartBranchDataVM4 = new List<MASChartBranchDataVM>();
+
+                return Json(listMaschartBranchDataVM4);
+            }
 
             List<MASChartBranchDataVM> listMaschartBranchDataVM = new List<MASChartBranchDataVM>();
             var count_Cars = 0;

@@ -74,16 +74,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.RenterServices
             columnSelector: x => x.CrMasRenterInformationNationality  // تحديد العمود الذي نريد التجميع بناءً عليه
                                                                       //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
             );
-            var nationality2_count = await _unitOfWork.CrCasRenterPrivateDriverInformation.FindCountByColumnAsync<CrCasRenterPrivateDriverInformation>(
-            predicate: x => x.CrCasRenterPrivateDriverInformationStatus != Status.Deleted,
-            columnSelector: x => x.CrCasRenterPrivateDriverInformationNationality  // تحديد العمود الذي نريد التجميع بناءً عليه
-            //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
-            );
-            foreach (var item in nationality2_count)
-            {
-                var sin = nationality1_count.FindIndex(x => x.Column?.ToString()?.Trim() == item.Column?.ToString()?.Trim());
-                nationality1_count[sin].RowCount = nationality1_count[sin].RowCount + item.RowCount;
-            }
+
             var all_Classifications2 = await _unitOfWork.CrMasSupCountryClassification.GetAllAsyncAsNoTrackingAsync();
             var all_Classifications = all_Classifications2.ToList();
             RenterNationalityVM VM = new RenterNationalityVM();
@@ -101,18 +92,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.RenterServices
                 columnSelector: x => x.CrMasRenterInformationNationality  // تحديد العمود الذي نريد التجميع بناءً عليه
                 //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                 );
-            var nationality2_count = await _unitOfWork.CrCasRenterPrivateDriverInformation.FindCountByColumnAsync<CrCasRenterPrivateDriverInformation>(
-                predicate: x => x.CrCasRenterPrivateDriverInformationStatus != Status.Deleted,
-                columnSelector: x => x.CrCasRenterPrivateDriverInformationNationality  // تحديد العمود الذي نريد التجميع بناءً عليه
-                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
-                );
+
             var all_Classifications2 = await _unitOfWork.CrMasSupCountryClassification.GetAllAsyncAsNoTrackingAsync();
             var all_Classifications = all_Classifications2.ToList();
-            foreach (var item in nationality2_count)
-            {
-                var sin = nationality1_count.FindIndex(x => x.Column?.ToString()?.Trim() == item.Column?.ToString()?.Trim());
-                nationality1_count[sin].RowCount = nationality1_count[sin].RowCount + item.RowCount;
-            }
+
 
             if (!string.IsNullOrEmpty(status))
             {

@@ -9,7 +9,7 @@
 @using Microsoft.EntityFrameworkCore;
 @using Microsoft.Extensions.Options;
 @using System.Globalization;
-@model MasStatistics_CarsVM
+@model MasStatistics_ContractsVM
 @inject UserManager<CrMasUserInformation> userManager
 @inject SignInManager<CrMasUserInformation> signinManager
 @inject IViewLocalizer localizer
@@ -17,8 +17,8 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["CarStatistics Data"];
-    ViewData["Page-Hint"] = @localizer["CarStatistics Hint"];
+    ViewData["Page-title"] = @localizer["ContractStatistics Data"];
+    ViewData["Page-Hint"] = @localizer["ContractStatistics Hint"];
 }
     
 <div class="col my-2 d-flex align-items-center justify-content-center">
@@ -27,52 +27,52 @@
             <div class="col-lg-11">
                 <div class="row g-3 my-3">
                     <div class="col-md-12">
-                        <h3>@localizer["CarStatistics_Statistics_Cars_n"]</h3>
+                        <h3>@localizer["ContractStatistics_Statistics_Contracts_n"]</h3>
                     </div>
                     <div class="col-md-12 ">
-                        <p class="d-inline-block headLines">@localizer["CarStatistics_count_Cars"] : </p>
-                        <p class="d-inline-block Saved-data headLines">@(Model.Cars_Count?.ToString("0") ?? "0") @localizer["CarStatistics_Car"]</p>
+                        <p class="d-inline-block headLines">@localizer["ContractStatistics_count_Contracts"] : </p>
+                        <p class="d-inline-block Saved-data headLines">@(Model.Contracts_Count?.ToString("0") ?? "0") @localizer["ContractStatistics_Contract"]</p>
 
                     </div>
                     <div class="col-md-12">
                         <div class="row mt-3 g-2 justify-content-between">
                             <div class="col-lg-3">
-                                <p class="headLines">@localizer["RenterStatistics_Type_n"]</p>
+                                <p class="headLines">@localizer["ContractStatistics_Type_n"]</p>
                                 <div class="row">
                                     <div class="col-4 col-lg-9">
                                         <button class="btn stat-btn active-stat-btn" 
                                                 onclick="handleButtonClick(this, areaChart)">
-                                            @localizer["CarStatistics_Rigon"]
+                                            @localizer["ContractStatistics_Rigon"]
                                         </button>
                                     </div>
                                     <div class="col-4 col-lg-9">
                                         <button class="btn stat-btn"
                                                 onclick="handleButtonClick(this, cityChart)">
-                                            @localizer["CarStatistics_City"]
+                                            @localizer["ContractStatistics_City"]
                                         </button>
                                     </div>
                                     <div class="col-4 col-lg-9">
                                         <button class="btn stat-btn"
                                                 onclick="handleButtonClick(this, brandChart)">
-                                            @localizer["CarStatistics_Brand"]
+                                            @localizer["ContractStatistics_Brand"]
                                         </button>
                                     </div>
                                     <div class="col-4 col-lg-9">
                                         <button class="btn stat-btn"
                                                 onclick="handleButtonClick(this, modelChart)">
-                                            @localizer["CarStatistics_Model"]
+                                            @localizer["ContractStatistics_Model"]
                                         </button>
                                     </div>
                                     <div class="col-4 col-lg-9">
                                         <button class="btn stat-btn"
                                                 onclick="handleButtonClick(this, categoryChart)">
-                                            @localizer["CarStatistics_Category"]
+                                            @localizer["ContractStatistics_Category"]
                                         </button>
                                     </div>
                                     <div class="col-4 col-lg-9">
                                         <button class="btn stat-btn"
                                                 onclick="handleButtonClick(this, yearChart)">
-                                            @localizer["CarStatistics_year"]
+                                            @localizer["ContractStatistics_year"]
                                         </button>
                                     </div>
                                 </div>
@@ -147,7 +147,7 @@
                 //data: {
                 //    start: start, end: end
                 //},
-                url: "@Url.Action("GetAllBy_Profession", "CarStatistics", new { Area = "MAS" })",
+                url: "@Url.Action("GetAllBy_Profession", "ContractStatistics", new { Area = "MAS" })",
                 success: function (response) {
                     //$(".LoaderRun_Center_div").css("display", "none");
                     //$(".chart22").html(response);
@@ -166,7 +166,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "@Url.Action("GetAllBy_City", "CarStatistics", new { Area = "MAS" })",
+                    url: "@Url.Action("GetAllBy_City", "ContractStatistics", new { Area = "MAS" })",
                     success: function (response) {
                         //$(".LoaderRun_Center_div").css("display", "none");
                         console.log(response);
@@ -184,7 +184,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "@Url.Action("GetAllBy_Region", "CarStatistics", new { Area = "MAS" })",
+                    url: "@Url.Action("GetAllBy_Region", "ContractStatistics", new { Area = "MAS" })",
                     success: function (response) {
                         //$(".LoaderRun_Center_div").css("display", "none");
                         console.log(response);
@@ -202,7 +202,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "@Url.Action("GetAllBy_Brand", "CarStatistics", new { Area = "MAS" })",
+                    url: "@Url.Action("GetAllBy_Brand", "ContractStatistics", new { Area = "MAS" })",
                     success: function (response) {
                         //$(".LoaderRun_Center_div").css("display", "none");
                         console.log(response);
@@ -220,7 +220,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "@Url.Action("GetAllBy_Model", "CarStatistics", new { Area = "MAS" })",
+                    url: "@Url.Action("GetAllBy_Model", "ContractStatistics", new { Area = "MAS" })",
                     success: function (response) {
                         //$(".LoaderRun_Center_div").css("display", "none");
                         console.log(response);
@@ -238,7 +238,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "@Url.Action("GetAllBy_Category", "CarStatistics", new { Area = "MAS" })",
+                    url: "@Url.Action("GetAllBy_Category", "ContractStatistics", new { Area = "MAS" })",
                     success: function (response) {
                         //$(".LoaderRun_Center_div").css("display", "none");
                         console.log(response);
@@ -256,7 +256,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "@Url.Action("GetAllBy_Year", "CarStatistics", new { Area = "MAS" })",
+                    url: "@Url.Action("GetAllBy_Year", "ContractStatistics", new { Area = "MAS" })",
                     success: function (response) {
                         //$(".LoaderRun_Center_div").css("display", "none");
                         console.log(response);
@@ -318,7 +318,7 @@
                     },
                     title: {
                         display: true,
-                        text: "@localizer["Car_inChart_Region"]",
+                        text: "@localizer["Contract_inChart_Region"]",
                         font: {
                             family: "'Cairo', sans-serif",
                             size: 15,
@@ -391,7 +391,7 @@
                     },
                     title: {
                         display: true,
-                        text: "@localizer["Car_inChart_City"]",
+                        text: "@localizer["Contract_inChart_City"]",
                         font: {
                             family: "'Cairo', sans-serif",
                             size: 15,
@@ -482,7 +482,7 @@
                     },
                     title: {
                         display: true,
-                        text: "@localizer["Car_inChart_Brand"]",
+                        text: "@localizer["Contract_inChart_Brand"]",
                         font: {
                             family: "'Cairo', sans-serif",
                             size: 15,
@@ -580,7 +580,7 @@
                     },
                     title: {
                         display: true,
-                        text: "@localizer["Car_inChart_Model"]",
+                        text: "@localizer["Contract_inChart_Model"]",
                         font: {
                             family: "'Cairo', sans-serif",
                             size: 15,
@@ -659,7 +659,7 @@
                     },
                     title: {
                         display: true,
-                        text: "@localizer["Car_inChart_Category"]",
+                        text: "@localizer["Contract_inChart_Category"]",
                         font: {
                             family: "'Cairo', sans-serif",
                             size: 15,
@@ -756,7 +756,7 @@
                     title: {
                         display: false, // إخفاء النقاط التي تُعرض عليها التسميات داخل المحاور القطبية
                         //display: true,
-                        text: "@localizer["Car_inChart_Year"]",
+                        text: "@localizer["Contract_inChart_Year"]",
                         font: {
                             family: "'Cairo', sans-serif",
                             size: 15,

@@ -74,16 +74,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             }
 
 
-            //var Most_Frequance_Company_list = _unitOfWork.CrCasRenterLessor.GetAll()
-            //                        .GroupBy(q => q.CrCasRenterLessorCode)
+            //var Most_Frequance_Company_list = _unitOfWork.CrMasRenterInformation.GetAll()
+            //                        .GroupBy(q => q.CrMasRenterInformationCode)
             //                        .OrderByDescending(gp => gp.Count());
 
-            var all_Renter_Nationality = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
+            var all_Renter_Nationality = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
               selectProjection: query => query.Select(x => new Renter_TypeVM
               {
-                  Renter_Code = x.CrCasRenterLessorId,
-                  Type_Id = x.CrCasRenterLessorStatisticsNationalities,
+                  Renter_Code = x.CrMasRenterInformationId,
+                  Type_Id = x.CrMasRenterInformationNationality,
               }));
             all_Renter_Nationality = all_Renter_Nationality.DistinctBy(x => x.Renter_Code).ToList();
             var all_Type = all_Renter_Nationality.DistinctBy(y => y.Type_Id).ToList();
@@ -98,15 +98,23 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
               }));
 
 
-            //var Nationality_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsNationalities).Count();
-            //var MemperShip_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorMembership).Count();
-            //var profession_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsJobs).Count();
-            //var Rigon_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsRegions).Count();
-            //var City_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsCity).Count();
-            //var Age_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsAge).Count();
-            //var Traded_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsTraded).Count();
-            //var Dealing_Mechanism_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorDealingMechanism).Count();
-            //var Status_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatus).Count();
+            if (all_Renter_Nationality.Count == 0)
+            {
+                MasStatistics_RentersVM MasStatistics_RentersVM4 = new MasStatistics_RentersVM();
+                MasStatistics_RentersVM4.Renters_Count = 0;
+
+                return View(MasStatistics_RentersVM4);
+            }
+
+            //var Nationality_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsNationalities).Count();
+            //var MemperShip_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationMembership).Count();
+            //var profession_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsJobs).Count();
+            //var Rigon_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsRegions).Count();
+            //var City_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsCity).Count();
+            //var Age_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsAge).Count();
+            //var Traded_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsTraded).Count();
+            //var Dealing_Mechanism_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationDealingMechanism).Count();
+            //var Status_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatus).Count();
 
             //if (Status_count < 2 && Nationality_count < 2 && MemperShip_count < 2 && profession_count < 2 && Rigon_count < 2 && City_count < 2 && Age_count < 2 && City_count < 2 && Traded_count < 2 && Dealing_Mechanism_count < 2 && Status_count < 2)
             //{
@@ -213,15 +221,23 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //await SetPageTitleAsync(string.Empty, pageNumber);
             //// Check Validition
 
-            var all_Renter_Profession = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
+            var all_Renter_Profession = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
               selectProjection: query => query.Select(x => new Renter_TypeVM
               {
-                  Renter_Code = x.CrCasRenterLessorId,
-                  Type_Id = x.CrCasRenterLessorStatisticsJobs,
+                  Renter_Code = x.CrMasRenterInformationId,
+                  Type_Id = x.CrMasRenterInformationProfession,
               }));
             all_Renter_Profession = all_Renter_Profession.DistinctBy(x => x.Renter_Code).ToList();
             var all_Type = all_Renter_Profession.DistinctBy(y => y.Type_Id).ToList();
+
+
+            if (all_Renter_Profession.Count == 0)
+            {
+                List<MASChartBranchDataVM> listMaschartBranchDataVM4 = new List<MASChartBranchDataVM>();
+
+                return Json(listMaschartBranchDataVM4);
+            }
 
             var all_names_Profession = await _unitOfWork.CrMasSupRenterProfession.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrMasSupRenterProfessionsStatus != Status.Deleted,
@@ -339,15 +355,23 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //await SetPageTitleAsync(string.Empty, pageNumber);
             //// Check Validition
 
-            var all_Renter_City = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
+            var all_Renter_City = await _unitOfWork.CrMasRenterPost.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrMasRenterPostStatus != Status.Deleted,
               selectProjection: query => query.Select(x => new Renter_TypeVM
               {
-                  Renter_Code = x.CrCasRenterLessorId,
-                  Type_Id = x.CrCasRenterLessorStatisticsCity,
+                  Renter_Code = x.CrMasRenterPostCode,
+                  Type_Id = x.CrMasRenterPostCity,
               }));
             all_Renter_City = all_Renter_City.DistinctBy(x => x.Renter_Code).ToList();
             var all_Type = all_Renter_City.DistinctBy(y => y.Type_Id).ToList();
+
+
+            if (all_Renter_City.Count == 0)
+            {
+                List<MASChartBranchDataVM> listMaschartBranchDataVM4 = new List<MASChartBranchDataVM>();
+
+                return Json(listMaschartBranchDataVM4);
+            }
 
             var all_names_City = await _unitOfWork.CrMasSupPostCity.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrMasSupPostCityStatus != Status.Deleted,
@@ -447,15 +471,23 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //await SetPageTitleAsync(string.Empty, pageNumber);
             //// Check Validition
 
-            var all_Renter_Region = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
+            var all_Renter_Region = await _unitOfWork.CrMasRenterPost.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrMasRenterPostStatus != Status.Deleted,
               selectProjection: query => query.Select(x => new Renter_TypeVM
               {
-                  Renter_Code = x.CrCasRenterLessorId,
-                  Type_Id = x.CrCasRenterLessorStatisticsRegions,
+                  Renter_Code = x.CrMasRenterPostCode,
+                  Type_Id = x.CrMasRenterPostRegions,
               }));
             all_Renter_Region = all_Renter_Region.DistinctBy(x => x.Renter_Code).ToList();
             var all_Type = all_Renter_Region.DistinctBy(y => y.Type_Id).ToList();
+
+
+            if (all_Renter_Region.Count == 0)
+            {
+                List<MASChartBranchDataVM> listMaschartBranchDataVM4 = new List<MASChartBranchDataVM>();
+
+                return Json(listMaschartBranchDataVM4);
+            }
 
             var all_names_Region = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrMasSupPostRegionsStatus != Status.Deleted,
@@ -563,7 +595,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             var all_Type = all_Renter_Age.DistinctBy(y => y.Type_Id).ToList();
 
             List<MASChartBranchDataVM> list_chartBranchDataVM = new List<MASChartBranchDataVM>();
-            for (var i = 1; i < 7; i++)
+            var maxStatusSwitch = 6;
+            for (var i = 1; i < maxStatusSwitch + 1; i++)
             {
                 var CategoryCount = all_Renter_Age.Count(x => x.Type_Id == i.ToString());
 
@@ -636,7 +669,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
         //    var titles = await setTitle("205", "2205014", "2");
         //    await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
 
-        //    var AllRenters = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).ToList();
+        //    var AllRenters = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).ToList();
 
 
         //    var AllLessor = _unitOfWork.CrMasLessorInformation.FindAll(x => x.CrMasLessorInformationCode != "0000").ToList();
@@ -647,15 +680,15 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
         //    string concate_DropDown = listDrop;
         //    if (company_now != null && !company_now.StartsWith("-1"))
         //    {
-        //        var Nationality_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsNationalities).Count();
-        //        var MemperShip_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorMembership).Count();
-        //        var profession_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsJobs).Count();
-        //        var Rigon_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsRegions).Count();
-        //        var City_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsCity).Count();
-        //        var Age_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsAge).Count();
-        //        var Traded_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsTraded).Count();
-        //        var Dealing_Mechanism_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorDealingMechanism).Count();
-        //        var Status_count = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatus).Count();
+        //        var Nationality_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsNationalities).Count();
+        //        var MemperShip_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationMembership).Count();
+        //        var profession_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsJobs).Count();
+        //        var Rigon_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsRegions).Count();
+        //        var City_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsCity).Count();
+        //        var Age_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsAge).Count();
+        //        var Traded_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsTraded).Count();
+        //        var Dealing_Mechanism_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationDealingMechanism).Count();
+        //        var Status_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatus).Count();
 
         //        if (Status_count < 2 && Nationality_count < 2 && MemperShip_count < 2 && profession_count < 2 && Rigon_count < 2 && City_count < 2 && Age_count < 2 && City_count < 2 && Traded_count < 2 && Dealing_Mechanism_count < 2 && Status_count < 2)
         //        {
@@ -677,16 +710,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
         //        if (Type == "Nationality")
         //    {
-        //        var AllNationality = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode, new[] { "CrCasRenterLessorStatisticsNationalitiesNavigation" }).Where(x => x.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesStatus != Status.Deleted).DistinctBy(x => x.CrCasRenterLessorStatisticsNationalities).ToList();
+        //        var AllNationality = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode, new[] { "CrMasRenterInformationStatisticsNationalitiesNavigation" }).Where(x => x.CrMasRenterInformationStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesStatus != Status.Deleted).DistinctBy(x => x.CrMasRenterInformationStatisticsNationalities).ToList();
 
         //        foreach (var single in AllNationality)
         //        {
         //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrCasRenterLessorStatisticsNationalities == single.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesCode);
+        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsNationalities == single.CrMasRenterInformationStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesCode);
         //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            chartBranchDataVM.ArName = single.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesArName;
-        //            chartBranchDataVM.EnName = single.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesEnName;
-        //            chartBranchDataVM.Code = single.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesCode;
+        //            chartBranchDataVM.ArName = single.CrMasRenterInformationStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesArName;
+        //            chartBranchDataVM.EnName = single.CrMasRenterInformationStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesEnName;
+        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesCode;
         //            chartBranchDataVM.Value = CategoryCount;
         //            chartBranchDataVMs.Add(chartBranchDataVM);
         //            count_Renters = CategoryCount + count_Renters;
@@ -695,16 +728,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
         //    }
         //    if (Type == "MemperShip")
         //    {
-        //        var AllRenters2_MemperShip = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode, new[] { "CrCasRenterLessorMembershipNavigation" }).Where(x => x.CrCasRenterLessorMembershipNavigation?.CrMasSupRenterMembershipStatus != Status.Deleted).DistinctBy(x => x.CrCasRenterLessorMembership).ToList();
+        //        var AllRenters2_MemperShip = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode, new[] { "CrMasRenterInformationMembershipNavigation" }).Where(x => x.CrMasRenterInformationMembershipNavigation?.CrMasSupRenterMembershipStatus != Status.Deleted).DistinctBy(x => x.CrMasRenterInformationMembership).ToList();
 
         //        foreach (var single in AllRenters2_MemperShip)
         //        {
         //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrCasRenterLessorMembership == single.CrCasRenterLessorMembershipNavigation?.CrMasSupRenterMembershipCode);
+        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationMembership == single.CrMasRenterInformationMembershipNavigation?.CrMasSupRenterMembershipCode);
         //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            chartBranchDataVM.ArName = single.CrCasRenterLessorMembershipNavigation?.CrMasSupRenterMembershipArName;
-        //            chartBranchDataVM.EnName = single.CrCasRenterLessorMembershipNavigation?.CrMasSupRenterMembershipEnName;
-        //            chartBranchDataVM.Code = single.CrCasRenterLessorMembershipNavigation?.CrMasSupRenterMembershipCode;
+        //            chartBranchDataVM.ArName = single.CrMasRenterInformationMembershipNavigation?.CrMasSupRenterMembershipArName;
+        //            chartBranchDataVM.EnName = single.CrMasRenterInformationMembershipNavigation?.CrMasSupRenterMembershipEnName;
+        //            chartBranchDataVM.Code = single.CrMasRenterInformationMembershipNavigation?.CrMasSupRenterMembershipCode;
         //            chartBranchDataVM.Value = CategoryCount;
         //            chartBranchDataVMs.Add(chartBranchDataVM);
         //            count_Renters = CategoryCount + count_Renters;
@@ -713,16 +746,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
         //    }
         //    if (Type == "profession")
         //    {
-        //        var AllRenters2_profession = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode, new[] { "CrCasRenterLessorStatisticsJobsNavigation" }).Where(x => x.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsStatus != Status.Deleted).DistinctBy(x => x.CrCasRenterLessorStatisticsJobs).ToList();
+        //        var AllRenters2_profession = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode, new[] { "CrMasRenterInformationStatisticsJobsNavigation" }).Where(x => x.CrMasRenterInformationStatisticsJobsNavigation?.CrMasSupRenterProfessionsStatus != Status.Deleted).DistinctBy(x => x.CrMasRenterInformationStatisticsJobs).ToList();
 
         //        foreach (var single in AllRenters2_profession)
         //        {
         //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrCasRenterLessorStatisticsJobs == single.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsCode);
+        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsJobs == single.CrMasRenterInformationStatisticsJobsNavigation?.CrMasSupRenterProfessionsCode);
         //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            chartBranchDataVM.ArName = single.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsArName;
-        //            chartBranchDataVM.EnName = single.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsEnName;
-        //            chartBranchDataVM.Code = single.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsCode;
+        //            chartBranchDataVM.ArName = single.CrMasRenterInformationStatisticsJobsNavigation?.CrMasSupRenterProfessionsArName;
+        //            chartBranchDataVM.EnName = single.CrMasRenterInformationStatisticsJobsNavigation?.CrMasSupRenterProfessionsEnName;
+        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsJobsNavigation?.CrMasSupRenterProfessionsCode;
         //            chartBranchDataVM.Value = CategoryCount;
         //            chartBranchDataVMs.Add(chartBranchDataVM);
         //            count_Renters = CategoryCount + count_Renters;
@@ -731,16 +764,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
         //    }
         //    if (Type == "Rigon")
         //    {
-        //        var AllRenters2_Rigon = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode, new[] { "CrCasRenterLessorStatisticsRegionsNavigation" }).Where(x => x.CrCasRenterLessorStatisticsRegionsNavigation?.CrMasSupPostRegionsStatus != Status.Deleted).DistinctBy(x => x.CrCasRenterLessorStatisticsRegions).ToList();
+        //        var AllRenters2_Rigon = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode, new[] { "CrMasRenterInformationStatisticsRegionsNavigation" }).Where(x => x.CrMasRenterInformationStatisticsRegionsNavigation?.CrMasSupPostRegionsStatus != Status.Deleted).DistinctBy(x => x.CrMasRenterInformationStatisticsRegions).ToList();
 
         //        foreach (var single in AllRenters2_Rigon)
         //        {
         //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrCasRenterLessorStatisticsRegions == single.CrCasRenterLessorStatisticsRegionsNavigation?.CrMasSupPostRegionsCode);
+        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsRegions == single.CrMasRenterInformationStatisticsRegionsNavigation?.CrMasSupPostRegionsCode);
         //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            chartBranchDataVM.ArName = single.CrCasRenterLessorStatisticsRegionsNavigation?.CrMasSupPostRegionsArName;
-        //            chartBranchDataVM.EnName = single.CrCasRenterLessorStatisticsRegionsNavigation?.CrMasSupPostRegionsEnName;
-        //            chartBranchDataVM.Code = single.CrCasRenterLessorStatisticsRegionsNavigation?.CrMasSupPostRegionsCode;
+        //            chartBranchDataVM.ArName = single.CrMasRenterInformationStatisticsRegionsNavigation?.CrMasSupPostRegionsArName;
+        //            chartBranchDataVM.EnName = single.CrMasRenterInformationStatisticsRegionsNavigation?.CrMasSupPostRegionsEnName;
+        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsRegionsNavigation?.CrMasSupPostRegionsCode;
         //            chartBranchDataVM.Value = CategoryCount;
         //            chartBranchDataVMs.Add(chartBranchDataVM);
         //            count_Renters = CategoryCount + count_Renters;
@@ -749,16 +782,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
         //    }
         //    if (Type == "City")
         //    {
-        //        var AllRenters2_City = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode, new[] { "CrCasRenterLessorStatisticsCityNavigation" }).Where(x => x.CrCasRenterLessorStatisticsCityNavigation?.CrMasSupPostCityStatus != Status.Deleted).DistinctBy(x => x.CrCasRenterLessorStatisticsCity).ToList();
+        //        var AllRenters2_City = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode, new[] { "CrMasRenterInformationStatisticsCityNavigation" }).Where(x => x.CrMasRenterInformationStatisticsCityNavigation?.CrMasSupPostCityStatus != Status.Deleted).DistinctBy(x => x.CrMasRenterInformationStatisticsCity).ToList();
 
         //        foreach (var single in AllRenters2_City)
         //        {
         //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrCasRenterLessorStatisticsCity == single.CrCasRenterLessorStatisticsCityNavigation?.CrMasSupPostCityCode);
+        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsCity == single.CrMasRenterInformationStatisticsCityNavigation?.CrMasSupPostCityCode);
         //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            chartBranchDataVM.ArName = single.CrCasRenterLessorStatisticsCityNavigation?.CrMasSupPostCityArName;
-        //            chartBranchDataVM.EnName = single.CrCasRenterLessorStatisticsCityNavigation?.CrMasSupPostCityEnName;
-        //            chartBranchDataVM.Code = single.CrCasRenterLessorStatisticsCityNavigation?.CrMasSupPostCityCode;
+        //            chartBranchDataVM.ArName = single.CrMasRenterInformationStatisticsCityNavigation?.CrMasSupPostCityArName;
+        //            chartBranchDataVM.EnName = single.CrMasRenterInformationStatisticsCityNavigation?.CrMasSupPostCityEnName;
+        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsCityNavigation?.CrMasSupPostCityCode;
         //            chartBranchDataVM.Value = CategoryCount;
         //            chartBranchDataVMs.Add(chartBranchDataVM);
         //            count_Renters = CategoryCount + count_Renters;
@@ -768,14 +801,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
         //    if (Type == "Age")
         //    {
-        //        var AllRenters2_Age = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsAge).ToList();
+        //        var AllRenters2_Age = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsAge).ToList();
 
         //        foreach (var single in AllRenters2_Age)
         //        {
         //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrCasRenterLessorStatisticsAge == single.CrCasRenterLessorStatisticsAge);
+        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsAge == single.CrMasRenterInformationStatisticsAge);
         //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            switch (single.CrCasRenterLessorStatisticsAge)
+        //            switch (single.CrMasRenterInformationStatisticsAge)
         //            {
         //                case "1":
         //                    chartBranchDataVM.ArName = "أقل من 20";
@@ -807,7 +840,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
         //                    break;
         //            }
 
-        //            chartBranchDataVM.Code = single.CrCasRenterLessorStatisticsAge;
+        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsAge;
         //            chartBranchDataVM.Value = CategoryCount;
         //            chartBranchDataVMs.Add(chartBranchDataVM);
         //            count_Renters = CategoryCount + count_Renters;
@@ -817,14 +850,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
         //    if (Type == "Traded")
         //    {
-        //        var AllRenters2_Traded = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatisticsTraded).ToList();
+        //        var AllRenters2_Traded = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsTraded).ToList();
 
         //        foreach (var single in AllRenters2_Traded)
         //        {
         //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrCasRenterLessorStatisticsTraded == single.CrCasRenterLessorStatisticsTraded);
+        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsTraded == single.CrMasRenterInformationStatisticsTraded);
         //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            switch (single.CrCasRenterLessorStatisticsTraded)
+        //            switch (single.CrMasRenterInformationStatisticsTraded)
         //            {
         //                case "1":
         //                    chartBranchDataVM.ArName = "أقل من 1000";
@@ -868,7 +901,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
         //                    break;
         //            }
 
-        //            chartBranchDataVM.Code = single.CrCasRenterLessorStatisticsTraded;
+        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsTraded;
         //            chartBranchDataVM.Value = CategoryCount;
         //            chartBranchDataVMs.Add(chartBranchDataVM);
         //            count_Renters = CategoryCount + count_Renters;
@@ -883,7 +916,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
         //        foreach (var single in AllDealing_Mechanism)
         //        {
         //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrCasRenterLessorDealingMechanism == single.CrMasSysEvaluationsCode);
+        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationDealingMechanism == single.CrMasSysEvaluationsCode);
         //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
         //            chartBranchDataVM.ArName = single.CrMasSysEvaluationsArDescription;
         //            chartBranchDataVM.EnName = single.CrMasSysEvaluationsEnDescription;
@@ -897,14 +930,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
         //    if (Type == "Status")
         //    {
-        //        var AllRenters2_Status = _unitOfWork.CrCasRenterLessor.FindAll(x => company == x.CrCasRenterLessorCode).DistinctBy(x => x.CrCasRenterLessorStatus).ToList();
+        //        var AllRenters2_Status = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatus).ToList();
 
         //        foreach (var single in AllRenters2_Status)
         //        {
         //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrCasRenterLessorStatus == single.CrCasRenterLessorStatus);
+        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatus == single.CrMasRenterInformationStatus);
         //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            switch (single.CrCasRenterLessorStatus)
+        //            switch (single.CrMasRenterInformationStatus)
         //            {
         //                case "A":
         //                    chartBranchDataVM.ArName = "نشط";
@@ -920,7 +953,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
         //                    break;
         //            }
 
-        //            chartBranchDataVM.Code = single.CrCasRenterLessorStatus;
+        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatus;
         //            chartBranchDataVM.Value = CategoryCount;
         //            chartBranchDataVMs.Add(chartBranchDataVM);
         //            count_Renters = CategoryCount + count_Renters;

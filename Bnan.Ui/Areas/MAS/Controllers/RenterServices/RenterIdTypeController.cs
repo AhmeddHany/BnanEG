@@ -192,7 +192,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.RenterServices
                 return RedirectToAction("Index", "RenterIdtype");
             }
             await SetPageTitleAsync(Status.Update, pageNumber);
-            var contract = await _unitOfWork.CrMasSupRenterIdtype.FindAsync(x => x.CrMasSupRenterIdtypeCode == id, new[] { "CrCasRenterPrivateDriverInformations", "CrMasRenterInformations" });
+            var contract = await _unitOfWork.CrMasSupRenterIdtype.FindAsync(x => x.CrMasSupRenterIdtypeCode == id, new[] { "CrMasRenterInformations" });
             if (contract == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -201,7 +201,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.RenterServices
             if (contract.CrMasSupRenterIdtypeNaqlCode == null) contract.CrMasSupRenterIdtypeNaqlCode = 0;
             if (contract.CrMasSupRenterIdtypeNaqlId == null) contract.CrMasSupRenterIdtypeNaqlId = 0;
             var model = _mapper.Map<RenterIdtypeVM>(contract);
-            model.RentersHave_withType_Count = contract.CrCasRenterPrivateDriverInformations.Count + contract.CrMasRenterInformations.Count;
+            model.RentersHave_withType_Count = contract.CrMasRenterInformations.Count;
             return View(model);
         }
         [HttpPost]

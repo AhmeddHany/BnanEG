@@ -521,9 +521,16 @@
     //CarStatistics --------
     "RenterStatistics_count_Renters": "Renters Count",
     "RenterStatistics_Statistics_Renters_n": "Renter Statistics",
+
     "CarStatistics_Car": "Car",
     "CarStatistics_count_Cars": "Cars Count",
     "CarStatistics_Statistics_Cars_n": "Car Statistics",
+
+    "ContractStatistics_Contract": "Contract",
+    "ContractStatistics_count_Contracts": "Contracts Count",
+    "ContractStatistics_Statistics_Contracts_n": "Contracts' Statistics",
+    "CarContractStatistics_Statistics_Contracts_n": "Cars' Contracts' Statistics",
+    "RenterContractStatistics_Statistics_Contracts_n": "Renters' Contracts' Statistics",
 
     "Renter_inChart_Nationality": "Statistical indicator of Renters' Nationalities",
     "Renter_inChart_Profession": "Statistical indicator of Renters' Proffessions",
@@ -538,6 +545,20 @@
     "Car_inChart_Category": "Statistical indicator of Car Categories",
     "Car_inChart_Year": "Statistical indicator of Car Made Years",
 
+
+    "Contract_inChart_Days": "Statistical indicator of contract days",
+    "Contract_inChart_Time": "Statistical indicator of contract Time",
+    "Contract_inChart_Limits": "Statistical indicator for duration of contracts",
+    "Contract_inChart_HigiritsMonths": "Statistical indicator of contracts in migrant months",
+    "Contract_inChart_GeneralMonths": "Statistical indicator of contracts in the Gregorian months",
+    "Contract_inChart_Value": "Statistical indicator of contract values",
+    "Contract_inChart_KM": "Statistical indicator of contract kM",
+
+    "CarContract_inChart_Brand": "Statistical indicator of Cars' Contracts' Brands",
+    "CarContract_inChart_Model": "Statistical indicator of Cars' Models",
+    "CarContract_inChart_Category": "Statistical indicator of Cars' Contracts' Categories",
+    "CarContract_inChart_Year": "Statistical indicator of Cars' Made Years",
+
     "CarStatistics Hint": "This page allows you to display Statistics of Cars",
     "CarStatistics Data": "Statistics of Cars",
     "Edit CarStatistics Data": "Details of Statistics of Cars",
@@ -545,13 +566,13 @@
 
     "CarStatistics_Status": "Status",
     "CarStatistics_Branches": "Branches",
-    "CarStatistics_Brand": "Brand",
-    "CarStatistics_year": "Made year",
-    "CarStatistics_Category": "Category",
+    "CarStatistics_Brand": "Brands",
+    "CarStatistics_year": "Made years",
+    "CarStatistics_Category": "Categories",
     "CarStatistics_count_Cars": "Cars Count",
-    "CarStatistics_Model": "Model",
-    "CarStatistics_City": "City",
-    "CarStatistics_Rigon": "Rigon",
+    "CarStatistics_Model": "Models",
+    "CarStatistics_City": "Cities",
+    "CarStatistics_Rigon": "Rigons",
 
     "CarStatistics_Type": "Statistics By",
     "CarStatistics_ID": "ID",
@@ -609,11 +630,11 @@
     "RenterContractStatistics Hint": "This page allows you to display Statistics of Renter Contracts",
     "RenterContractStatistics Data": "Statistics of ٌRenter Contracts",
 
-    "RenterStatistics_Nationality": "Nationality",
-    "RenterStatistics_MemperShip": "MemperShip",
-    "RenterStatistics_profession": "profession",
-    "RenterStatistics_Rigon": "Rigon",
-    "RenterStatistics_City": "City",
+    "RenterStatistics_Nationality": "Nationalities",
+    "RenterStatistics_MemperShip": "MemperShips",
+    "RenterStatistics_profession": "professions",
+    "RenterStatistics_Rigon": "Rigons",
+    "RenterStatistics_City": "Cities",
     "RenterStatistics_Age": "Age",
     "RenterStatistics_Traded": "group of traded amounts",
     "RenterStatistics_Dealing_Mechanism": "Rate",

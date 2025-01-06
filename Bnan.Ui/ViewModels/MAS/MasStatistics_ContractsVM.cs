@@ -26,7 +26,7 @@ namespace Bnan.Ui.ViewModels.MAS
 
         public string start_Date { get; set; }
         public string end_Date { get; set; }
-        public string UserId { get; set; }
+        public string thisFunctionRunned { get; set; }
     }
    
    

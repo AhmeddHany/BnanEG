@@ -211,22 +211,22 @@
         
 
         function NationalityChart() {
-            let paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));
-            //console.log(paymentMethodsBranchData);
+            let list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));
+            //console.log(list_ChartData);
             let labelsBranch;
             if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
 
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.enName;
                 });
             }
             else {
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.arName;
                 });
             }
 
-            let dataValues = paymentMethodsBranchData.map(function (paymentMethod) {
+            let dataValues = list_ChartData.map(function (paymentMethod) {
                 return paymentMethod.value;
             });
             createChart('polarArea', {
@@ -294,27 +294,27 @@
         }
 
         async function ProfessionChart() {
-            let paymentMethodsBranchData = await GetAllBy_Profession();
+            let list_ChartData = await GetAllBy_Profession();
 
             let labelsBranch;
             if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
 
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.enName;
                 });
             }
             else {
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.arName;
                 });
             }
-            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
-            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
-            //console.log(paymentMethodsBranchData);
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(list_ChartData);
             let labelsBranch2;
             if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
                 // تحويل البيانات إلى تنسيق مناسب
-                labelsBranch2 = paymentMethodsBranchData.map(item => ({
+                labelsBranch2 = list_ChartData.map(item => ({
                     data: [{ x: item.enName, y: item.value }],
                     backgroundColor: item.backgroundColor,
                     borderColor: item.borderColor,
@@ -323,7 +323,7 @@
             }
             else {
                 // تحويل البيانات إلى تنسيق مناسب
-                labelsBranch2 = paymentMethodsBranchData.map(item => ({
+                labelsBranch2 = list_ChartData.map(item => ({
                     data: [{ x: item.arName, y: item.value }],
                     backgroundColor: item.backgroundColor,
                     borderColor: item.borderColor,
@@ -388,23 +388,23 @@
    
         }
         async function AreaChart() {
-            let paymentMethodsBranchData = await GetAllBy_Region();
-            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
-            //console.log(paymentMethodsBranchData);
+            let list_ChartData = await GetAllBy_Region();
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(list_ChartData);
             let labelsBranch;
             if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
 
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.enName;
                 });
             }
             else {
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.arName;
                 });
             }
 
-            let dataValues = paymentMethodsBranchData.map(function (paymentMethod) {
+            let dataValues = list_ChartData.map(function (paymentMethod) {
                 return paymentMethod.value;
             });
             createChart('bar', {
@@ -463,23 +463,23 @@
             });
         }
         async function CityChart() {
-            let paymentMethodsBranchData = await GetAllBy_City();
-            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
-            //console.log(paymentMethodsBranchData);
+            let list_ChartData = await GetAllBy_City();
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(list_ChartData);
             let labelsBranch;
             if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
 
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.enName;
                 });
             }
             else {
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.arName;
                 });
             }
 
-            let dataValues = paymentMethodsBranchData.map(function (paymentMethod) {
+            let dataValues = list_ChartData.map(function (paymentMethod) {
                 return paymentMethod.value;
             });
             createChart('bar', {
@@ -537,27 +537,27 @@
             });
         }
         async function AgeChart() {
-            let paymentMethodsBranchData = await GetAllBy_Age();
+            let list_ChartData = await GetAllBy_Age();
 
             let labelsBranch;
             if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
 
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.enName;
                 });
             }
             else {
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.arName;
                 });
             }
-            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
-            ////@*var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
-            //console.log(paymentMethodsBranchData);
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(list_ChartData);
             let labelsBranch2;
             if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
                 // تحويل البيانات إلى تنسيق مناسب
-                labelsBranch2 = paymentMethodsBranchData.map(item => ({
+                labelsBranch2 = list_ChartData.map(item => ({
                     data: [{ x: item.enName, y: item.value }],
                     backgroundColor: item.backgroundColor,
                     borderColor: item.borderColor,
@@ -566,7 +566,7 @@
             }
             else {
                 // تحويل البيانات إلى تنسيق مناسب
-                labelsBranch2 = paymentMethodsBranchData.map(item => ({
+                labelsBranch2 = list_ChartData.map(item => ({
                     data: [{ x: item.arName, y: item.value }],
                     backgroundColor: item.backgroundColor,
                     borderColor: item.borderColor,
@@ -653,23 +653,23 @@
             // Bar Chart 2
             //Branch
             //DrawChart("response");
-            var paymentMethodsBranchData = @Html.Raw(Json.Serialize(Model.ChartBranchDataVM));
-            console.log(paymentMethodsBranchData);
+            var list_ChartData = @Html.Raw(Json.Serialize(Model.ChartBranchDataVM));
+            console.log(list_ChartData);
             var labelsBranch;
             if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
 
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.enName;
                 });
             }
             else {
-                labelsBranch = paymentMethodsBranchData.map(function (paymentMethod) {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
                     return paymentMethod.arName;
                 });
             }
 
 
-            var data = paymentMethodsBranchData.map(function (paymentMethod) {
+            var data = list_ChartData.map(function (paymentMethod) {
                 return paymentMethod.value;
             });
 
