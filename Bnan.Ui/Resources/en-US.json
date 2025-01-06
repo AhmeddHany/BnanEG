@@ -1077,6 +1077,8 @@
     "ModalSecondMessage_EmployeesCAS_Hold": "Hold Data And Results2",
     "ModalFirstMessage_EmployeesCAS_UnHold": "UnHold Data And Results1",
     "ModalSecondMessage_EmployeesCAS_UnHold": "UnHold Data And Results2",
+    //Validities Employee
+    "View_User_Validities_PageTitle": "System Validities"
   },
   "ModalAutoLogout": "Your session is about to end!",
   "Arabic": "Arabic",

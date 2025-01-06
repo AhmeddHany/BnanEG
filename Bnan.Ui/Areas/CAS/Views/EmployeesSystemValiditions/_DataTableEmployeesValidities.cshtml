@@ -5,8 +5,11 @@
 @model IEnumerable<CrMasUserInformation>
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";   
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
+
+
+
 
 <table class=" tables-style table table-borderless " id="Table">
     <thead class="sticky-top">
@@ -26,7 +29,7 @@
         }
         @foreach (var item in Model)
         {
-            <tr onclick="location.href='@Url.Action("Edit", "Employees", new { id = item.CrMasUserInformationCode })'">
+            <tr onclick="location.href='@Url.Action("Edit", "EmployeesSystemValiditions", new { id = item.CrMasUserInformationCode })'">
                 <td>
                     <p class="FirstLineP">@item.CrMasUserInformationLastActionDate?.ToString("yyyy/MM/dd")</p>
                     <p class="secondLineP">@item.CrMasUserInformationLastActionDate?.ToString("HH:mm")</p>
@@ -86,3 +89,6 @@
 
     </tbody>
 </table>
+
+
+

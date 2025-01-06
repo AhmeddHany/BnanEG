@@ -1032,8 +1032,9 @@
     "ModalFirstMessage_EmployeesCAS_Hold": "ايقاف بيانات ونتائج1",
     "ModalSecondMessage_EmployeesCAS_Hold": "ايقاف بيانات ونتائج2",
     "ModalFirstMessage_EmployeesCAS_UnHold": "ارجاع بيانات ونتائج1",
-    "ModalSecondMessage_EmployeesCAS_UnHold": "ارجاع بيانات ونتائج2"
-
+    "ModalSecondMessage_EmployeesCAS_UnHold": "ارجاع بيانات ونتائج2",
+    //Validities Employee
+    "View_User_Validities_PageTitle": "صلاحيات النظام"
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 
