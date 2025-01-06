@@ -3,6 +3,7 @@ using Bnan.Core.Models;
 using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.BS.CreateContract;
 using Bnan.Ui.ViewModels.CAS;
+using Bnan.Ui.ViewModels.CAS.Employees;
 using Bnan.Ui.ViewModels.Identitiy;
 using Bnan.Ui.ViewModels.MAS;
 using Bnan.Ui.ViewModels.MAS.Users;
@@ -130,7 +131,8 @@ namespace Bnan.Inferastructure
             CreateMap <CountryClassificationVM, CrMasSupCountryClassification>().ReverseMap();
             CreateMap<CompanyUserVM, CrMasUserInformation>().ReverseMap();
             CreateMap<MASContractSourceVM, CrMasSupContractSource>().ReverseMap();
-            
+            CreateMap<EmployeesWithAuthrizationVM, CrMasUserInformation>().ReverseMap();
+
 
         }
 

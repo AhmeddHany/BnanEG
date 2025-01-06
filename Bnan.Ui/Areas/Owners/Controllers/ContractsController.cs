@@ -63,7 +63,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 StaticsVMs.Add(ownStatictsVM);
             }
-            return StaticsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return StaticsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetAmountValueContractsList(List<CrCasRenterContractStatistic> Contracts)
         {
@@ -123,7 +123,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 StaticsVMs.Add(ownStatictsVM);
             }
-            return StaticsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return StaticsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetDaysContractsList(List<CrCasRenterContractStatistic> Contracts)
         {
@@ -175,7 +175,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 StaticsVMs.Add(ownStatictsVM);
             }
-            return StaticsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return StaticsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetTimeContractsList(List<CrCasRenterContractStatistic> Contracts)
         {
@@ -231,7 +231,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 StaticsVMs.Add(ownStatictsVM);
             }
-            return StaticsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return StaticsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetDaysCountContractsList(List<CrCasRenterContractStatistic> Contracts)
         {
@@ -287,7 +287,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 StaticsVMs.Add(ownStatictsVM);
             }
-            return StaticsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return StaticsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetDistanceKMContractsList(List<CrCasRenterContractStatistic> Contracts)
         {
@@ -331,7 +331,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 StaticsVMs.Add(ownStatictsVM);
             }
-            return StaticsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return StaticsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
 
     }

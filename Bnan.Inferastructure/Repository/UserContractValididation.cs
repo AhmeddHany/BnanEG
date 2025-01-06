@@ -1,10 +1,5 @@
 ﻿using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -37,8 +32,8 @@ namespace Bnan.Inferastructure.Repository
                 CrMasUserContractValidityHour = 0,
                 CrMasUserContractValidityInsurance = false,
                 CrMasUserContractValidityId = false,
-                CrMasUserContractValidityKm= 0,
-                CrMasUserContractValidityLessContractValue= false,
+                CrMasUserContractValidityKm = 0,
+                CrMasUserContractValidityLessContractValue = false,
                 CrMasUserContractValidityLicenceMunicipale = false,
                 CrMasUserContractValidityMaintenance = false,
                 CrMasUserContractValidityOil = false,
@@ -49,9 +44,8 @@ namespace Bnan.Inferastructure.Repository
                 CrMasUserContractValidityTrafficLicense = false,
                 CrMasUserContractValidityTransferPermission = false,
             };
-            await _unitOfWork.CrMasUserContractValidity.AddAsync(crMasUserContractValidity);
-            await _unitOfWork.CompleteAsync();
-            return true;
+            if (await _unitOfWork.CrMasUserContractValidity.AddAsync(crMasUserContractValidity) != null) return true;
+            return false;
         }
 
         public async Task<bool> EditContractValiditionsForEmployee(CrMasUserContractValidity model)
@@ -89,8 +83,8 @@ namespace Bnan.Inferastructure.Repository
             contractValidition.CrMasUserContractValidityCreate = model.CrMasUserContractValidityCreate;
 
             _unitOfWork.CrMasUserContractValidity.Update(contractValidition);
-             await _unitOfWork.CompleteAsync();
-             return true;
+            await _unitOfWork.CompleteAsync();
+            return true;
         }
     }
 }

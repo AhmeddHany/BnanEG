@@ -740,7 +740,7 @@ namespace Bnan.Inferastructure.Repository
                     break;
                 }
             }
-            return !string.IsNullOrEmpty(MembershipCode) ? MembershipCode : null;
+            return !string.IsNullOrEmpty(MembershipCode) ? MembershipCode : Membership.Mutual;
         }
         private bool CheckCondition(CrCasLessorMembership membership, CrCasRenterLessor renter)
         {

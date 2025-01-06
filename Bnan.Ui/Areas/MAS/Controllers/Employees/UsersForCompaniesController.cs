@@ -125,21 +125,31 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             if (user == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return RedirectToAction("Users", "Users");
+                return RedirectToAction("Index", "UsersForCompanies");
             }
             // Check Validition
             if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Users", "Users");
+                return RedirectToAction("Index", "UsersForCompanies");
             }
-            IQueryable<CrMasLessorInformation> lessors = _unitOfWork.CrMasLessorInformation.GetTableNoTracking().Where(x => x.CrMasLessorInformationStatus != Status.Deleted && x.CrMasLessorInformationCode != "0000");
-            var lessorsListAr = lessors.Select(c => new SelectListItem { Value = c.CrMasLessorInformationCode.ToString().Trim(), Text = c.CrMasLessorInformationArLongName.Trim() }).ToList();
-            var lessorsListEn = lessors.Select(c => new SelectListItem { Value = c.CrMasLessorInformationCode.ToString().Trim(), Text = c.CrMasLessorInformationEnLongName.Trim() }).ToList();
+            var lessors = await _unitOfWork.CrMasLessorInformation.FindAllWithSelectAsNoTrackingAsync(x => x.CrMasLessorInformationStatus != Status.Deleted && x.CrMasLessorInformationCode != "0000",
+                                                                                                        query => query.Select(c => new
+                                                                                                        {
+                                                                                                            c.CrMasLessorInformationCode,
+                                                                                                            c.CrMasLessorInformationArLongName,
+                                                                                                            c.CrMasLessorInformationEnLongName
+                                                                                                        })
+                                                                                                    );
+
+            var lessorsListAr = lessors.Select(c => new SelectListItem { Value = c.CrMasLessorInformationCode.ToString().Trim(), Text = c.CrMasLessorInformationArLongName?.Trim() }).ToList();
+            var lessorsListEn = lessors.Select(c => new SelectListItem { Value = c.CrMasLessorInformationCode.ToString().Trim(), Text = c.CrMasLessorInformationEnLongName?.Trim() }).ToList();
+
             ViewData["LessorsAr"] = lessorsListAr; // Pass the callingKeys to the view
             ViewData["LessorsEn"] = lessorsListEn; // Pass the callingKeys to the view
 
-            var callingKeys = await _unitOfWork.CrMasSysCallingKeys.FindAllAsNoTrackingAsync(x => x.CrMasSysCallingKeysStatus == Status.Active);
+            var callingKeys = await _unitOfWork.CrMasSysCallingKeys.FindAllWithSelectAsNoTrackingAsync(x => x.CrMasSysCallingKeysStatus == Status.Active,
+                    query => query.Select(c => new { c.CrMasSysCallingKeysCode, c.CrMasSysCallingKeysNo }));
             var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString().Trim(), Text = c.CrMasSysCallingKeysNo?.Trim() }).ToList();
             ViewData["CallingKeys"] = callingKeyList; // Pass the callingKeys to the view
             CompanyUserVM registerViewModel = new CompanyUserVM();
@@ -157,7 +167,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             if (!ModelState.IsValid || model == null || user == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return View("Index");
+                return RedirectToAction("Index", "UsersForCompanies");
             }
             // Check Validition
             if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
@@ -284,7 +294,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
         public async Task<IActionResult> ResetPassword(string code)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-
+            if (currentUser == null) return Json(false);
             var employee = _unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == code);
             if (employee != null)
             {
@@ -395,7 +405,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
         }
         private string GetMessageToSendWhatsup(string userCode, string userArName, string userEnName)
         {
-            var messageAr = string.Format("عزيزي {0}، تم إنشاء مستخدم كود وباسورد '{1}'. " +
+            var messageAr = string.Format("عزيزي {0}، تم إنشاء مستخدم برقم وكلمة مرور '{1}'. " +
                               "يرجى تسجيل الدخول وتغيير كلمة المرور.",
                               userArName, userCode);
 

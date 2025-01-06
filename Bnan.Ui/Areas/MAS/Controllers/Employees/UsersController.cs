@@ -156,8 +156,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddUser(RegisterViewModel model)
         {
-
-            var pageNumber = SubTasks.CrMasSupRenterDrivingLicense;
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Insert, pageNumber);
 
@@ -316,12 +314,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
         private async Task AddModelErrorsAsync(CrMasUserInformation entity)
         {
 
-            if (await _masUser.ExistsByArabicNameAsync(entity.CrMasUserInformationArName, entity.CrMasUserInformationCode))
+            if (await _masUser.ExistsByArabicNameAsync(entity.CrMasUserInformationArName, entity.CrMasUserInformationCode, entity.CrMasUserInformationLessor))
             {
                 ModelState.AddModelError("CrMasUserInformationArName", _localizer["Existing"]);
             }
 
-            if (await _masUser.ExistsByEnglishNameAsync(entity.CrMasUserInformationEnName, entity.CrMasUserInformationCode))
+            if (await _masUser.ExistsByEnglishNameAsync(entity.CrMasUserInformationEnName, entity.CrMasUserInformationCode, entity.CrMasUserInformationLessor))
             {
                 ModelState.AddModelError("CrMasUserInformationEnName", _localizer["Existing"]);
             }

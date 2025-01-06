@@ -65,7 +65,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 NationlitystatictsVMs.Add(ownStatictsVM);
             }
-            return NationlitystatictsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return NationlitystatictsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetMemberShipList(List<CrCasRenterContractStatistic> Contracts, string lessorCode)
         {
@@ -83,7 +83,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 MemperShipstatictsVMs.Add(ownStatictsVM);
             }
-            return MemperShipstatictsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return MemperShipstatictsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetProffesionsList(List<CrCasRenterContractStatistic> Contracts, string lessorCode)
         {
@@ -102,7 +102,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
 
                 ProfessionstatictsVMs.Add(ownStatictsVM);
             }
-            return ProfessionstatictsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return ProfessionstatictsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetCityBranchList(List<CrCasRenterContractStatistic> Contracts, string lessorCode)
         {
@@ -120,7 +120,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 CitystatictsVMs.Add(ownStatictsVM);
             }
-            return CitystatictsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return CitystatictsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetCityRentersList(List<CrCasRenterContractStatistic> Contracts, string lessorCode)
         {
@@ -138,7 +138,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 CitystatictsVMs.Add(ownStatictsVM);
             }
-            return CitystatictsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return CitystatictsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetAgeList(List<CrCasRenterContractStatistic> Contracts, string lessorCode)
         {
@@ -193,7 +193,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 AgeStatictsVMs.Add(ownStatictsVM);
             }
-            return AgeStatictsVMs.OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
+            return AgeStatictsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count != 0).Take(3).ToList();
         }
     }
 }

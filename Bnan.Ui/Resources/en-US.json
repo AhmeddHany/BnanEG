@@ -1035,12 +1035,29 @@
     "LimitCredit": "Limit Credit",
     "PasswordHint": "Password Hint",
     "LastActive": "Last Active",
-    "LastUpdate": "Last Update"
+    "LastUpdate": "Last Update",
 
-
+    //Add Employee
+    "PersonalInforamtion": "Personal Inforamtion",
+    "AuthCustody": "Authorize Custody",
+    "CreditLimitCAS": "Credit Limit",
+    "DailyLimit": "Daily Limit",
+    "ValiditySystemCAS": "Validity Systems",
+    "ValidityCAS": "Validity Adminstritive",
+    "ValidityOWN": "Validity Owners",
+    "ValidityBS": "Validity Branches",
+    // Edit Employee
+    "CantChangeAuthForBranch": "Cant Change Authrization For Branch",
+    "ModalFirstMessage_EmployeesCAS_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_EmployeesCAS_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_EmployeesCAS_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_EmployeesCAS_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_EmployeesCAS_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_EmployeesCAS_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_EmployeesCAS_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_EmployeesCAS_UnHold": "UnHold Data And Results2",
   },
   "ModalAutoLogout": "Your session is about to end!",
-
   "Arabic": "Arabic",
   "English": "English",
   // CAS System SideBar

@@ -1,4 +1,5 @@
-﻿@using Bnan.Ui.ViewModels.CAS.Notifications
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS.Notifications
 @model NotificationsForCasVM
 @inject IViewLocalizer localizer
 
@@ -203,43 +204,111 @@
                                 <path d="m6 9 6 6 6-6" />
                             </svg>
                         </div>
-                        <div class="accordion-item-description-wrapper">
+                        <div class="accordion-item-description-wrapper employees-alerts">
                             <div class="accordion-item-description">
                                 <div class="container-fluid">
                                     @if (Model.employeesBalances?.employeesInfo != null && Model.employeesBalances.employeesInfo.Any())
                                     {
                                         @foreach (var item in Model.employeesBalances.employeesInfo)
                                         {
-                                            <div class="row align-items-center ">
-                                                <div class="col-auto p-1">
-                                                    @if ((bool)item.HaveCustodyNotAccepted && (bool)item.CreditLimitExceeded)
-                                                    {
-                                                        <img src="~/CasSys/images/Frame 2608955.svg" />
-                                                    }
-                                                    else if ((bool)item.HaveCustodyNotAccepted)
-                                                    {
-                                                        <img src="~/CasSys/images/arrow icon (2).svg" />
-                                                    }
-                                                    else if ((bool)item.CreditLimitExceeded)
-                                                    {
-                                                        <img src="~/CasSys/images/red arrow icon (2).svg" />
-                                                    }
 
-                                                    <img src="@Url.Content(item.Picture?.ToString())" class="employee-custody-img"> @item.Name
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <div class="col-auto p-1">
+                                                            @if ((bool)item.HaveCustodyNotAccepted && (bool)item.CreditLimitExceeded)
+                                                            {
+                                                                <img src="~/CasSys/images/Frame 2608955.svg" />
+                                                            }
+                                                            else if ((bool)item.HaveCustodyNotAccepted)
+                                                            {
+                                                                <img src="~/CasSys/images/arrow icon (2).svg" />
+                                                            }
+                                                            else if ((bool)item.CreditLimitExceeded)
+                                                            {
+                                                                <img src="~/CasSys/images/red arrow icon (2).svg" />
+                                                            }
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <div class="row">
+                                                                <div class="col-auto p-0">
+                                                                    <div class="employeePhoto">
+                                                                        <img src="@Url.Content(item.Picture?.ToString())"  class="employeePhoto border-0 w-100 h-100">
+                                                                        <div class="active_statue @((bool) item.OnlineOrOffline ? "bg-success" : "bg-danger")"></div>
+
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <p class="employee-name mb-1 p-0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                       data-bs-custom-class="custom-tooltip" data-bs-title="@item.FullName">@item.Name</p>
+                                                                    <div class="row EmployeeLastActive">
+                                                                        <div class="col-auto px-1">
+                                                                            <p>@item.LastActionTime</p>
+                                                                        </div>
+                                                                        <div class="col-auto px-1">
+                                                                            <p>@item.LastActionDate</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-auto">@item.AvaliableBalance</div>
+                                                <div class="col-auto">
+                                                    @item.AvaliableBalance
+                                                </div>
                                             </div>
                                             <hr>
+
                                         }
                                     }
-                                    else
-                                    {
-                                        <p>@localizer["NoDataAvailable"]</p>
-                                    }
-
                                 </div>
                             </div>
                         </div>
+
+
+
+
+
+
+                        @* <div class="accordion-item-description-wrapper employees-alerts">
+                        <div class="accordion-item-description">
+                        <div class="container-fluid">
+                        @if (Model.employeesBalances?.employeesInfo != null && Model.employeesBalances.employeesInfo.Any())
+                        {
+                        @foreach (var item in Model.employeesBalances.employeesInfo)
+                        {
+                        <div class="row align-items-center ">
+                        <div class="col-auto p-1">
+                        @if ((bool)item.HaveCustodyNotAccepted && (bool)item.CreditLimitExceeded)
+                        {
+                        <img src="~/CasSys/images/Frame 2608955.svg" />
+                        }
+                        else if ((bool)item.HaveCustodyNotAccepted)
+                        {
+                        <img src="~/CasSys/images/arrow icon (2).svg" />
+                        }
+                        else if ((bool)item.CreditLimitExceeded)
+                        {
+                        <img src="~/CasSys/images/red arrow icon (2).svg" />
+                        }
+
+                        <img src="@Url.Content(item.Picture?.ToString())" class="employee-custody-img"> @item.Name
+                        </div>
+                        <div class="col-auto">@item.AvaliableBalance</div>
+                        </div>
+                        <hr>
+                        }
+                        }
+                        else
+                        {
+                        <p>@localizer["NoDataAvailable"]</p>
+                        }
+
+                        </div>
+                        </div>
+                        </div> *@
                     </div>
                     <div class="accordion-item">
                         <div class="accordion-item-header">
@@ -249,7 +318,7 @@
                                 {
                                     <div class="notify"></div>
                                 }
-                                </span>
+                            </span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down accordion-item-header-icon">
                                 <path d="m6 9 6 6 6-6" />
                             </svg>

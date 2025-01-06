@@ -406,8 +406,8 @@
     "UserCode": "رقم الموظف",
     "UserID": "رقم الهوية",
     "EmployementName": "المسمى الوظيفي",
-    "EmployementNameAr": "المسمى الوظيفي انجليزي",
-    "EmployementNameEn": "المسمى الوظيفي عربي",
+    "EmployementNameAr": "المسمى الوظيفي عربي",
+    "EmployementNameEn": "المسمى الوظيفي انجليزي ",
     "UserNameAr_add": "الموظف عربي",
     "UserNameEn_add": "الموظف انجليزي",
     "UserNameAr_edit": "الموظف عربي",
@@ -996,7 +996,26 @@
     "LimitCredit": "الحد الإئتماني",
     "PasswordHint": "تلميح كلمة السر",
     "LastActive": "آخر نشاط",
-    "LastUpdate": "آخر تحديث"
+    "LastUpdate": "آخر تحديث",
+    //Add Employee
+    "PersonalInforamtion": "بيانات شخصية",
+    "AuthCustody": "صلاحية العهدة",
+    "CreditLimitCAS": "الحد الائتماني",
+    "DailyLimit": "الحد اليومي",
+    "ValiditySystemCAS": "صلاحيات الأنظمة",
+    "ValidityCAS": "صلاحية الإدارة",
+    "ValidityOWN": "صلاحية الملاك",
+    "ValidityBS": "صلاحية الفروع",
+    // Edit Employee
+    "CantChangeAuthForBranch": "لا يمكن تعديل الصلاحية بسبب وجود رصيد في الفرع",
+    "ModalFirstMessage_EmployeesCAS_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_EmployeesCAS_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_EmployeesCAS_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_EmployeesCAS_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_EmployeesCAS_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_EmployeesCAS_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_EmployeesCAS_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_EmployeesCAS_UnHold": "ارجاع بيانات ونتائج2"
 
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
