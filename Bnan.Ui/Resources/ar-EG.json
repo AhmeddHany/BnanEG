@@ -1034,7 +1034,13 @@
     "ModalFirstMessage_EmployeesCAS_UnHold": "ارجاع بيانات ونتائج1",
     "ModalSecondMessage_EmployeesCAS_UnHold": "ارجاع بيانات ونتائج2",
     //Validities Employee
-    "View_User_Validities_PageTitle": "صلاحيات النظام"
+    "View_User_Validities_PageTitle": "صلاحيات النظام",
+    //Validities Employee
+    "View_User_ValiditiesContract_PageTitle": "صلاحيات العقد",
+    "UpdateValiditiesContract": "تحديث صلاحيات العقود",
+    "NumberBetween0To100": "يجب ان يكون الرقم ما بين 0 الى 100",
+    "NumberBetween0To500": "يجب ان يكون الرقم ما بين 0 الى 500",
+    "NumberBetween0To9": "يجب ان يكون الرقم ما بين 0 الى 9"
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 

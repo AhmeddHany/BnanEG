@@ -1078,7 +1078,13 @@
     "ModalFirstMessage_EmployeesCAS_UnHold": "UnHold Data And Results1",
     "ModalSecondMessage_EmployeesCAS_UnHold": "UnHold Data And Results2",
     //Validities Employee
-    "View_User_Validities_PageTitle": "System Validities"
+    "View_User_Validities_PageTitle": "System Validities",
+    //ValiditiesContract Employee
+    "View_User_ValiditiesContract_PageTitle": "Contract Validities",
+    "UpdateValiditiesContract": "Update Contract Validities ",
+    "NumberBetween0To100": "Number must be between 0 and 100.",
+    "NumberBetween0To500": "Number must be between 0 and 500.",
+    "NumberBetween0To9": "Number must be between 0 and 9."
   },
   "ModalAutoLogout": "Your session is about to end!",
   "Arabic": "Arabic",

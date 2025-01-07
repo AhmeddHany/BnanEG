@@ -1,0 +1,72 @@
+﻿@model IEnumerable<CrMasUserInformation>
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<div class="col d-flex align-items-center justify-content-center">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3 mb-2">
+                <div class="col">
+                    <h3>@localizer["View_User_ValiditiesContract_PageTitle"]</h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
+
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search" class="form-control inputs search-input" name="search"
+                                   aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
+                    <partial name="_DataTableEmployeesContractValidities">
+                </div>
+            </div>
+        </form>
+        <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="main-page-icon">
+            <img src="~/CasSys/images/back to main.svg" alt="man">
+        </a>
+    </div>
+</div>
+@section scripts {
+    <script src="~/js/toastr.js"></script>
+
+
+    <script>
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        //get AccountBank By Status function
+        function GetEmployeesFitler(search) {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetEmployeesBySearch", "EmployeesContractValiditions", new { Area = "CAS" })", // تأكد أن الرابط صحيح
+                data: {
+                    search: search
+                },
+                success: function (response) {
+                    $(".dataTable").html(response); // إدراج المحتوى الجديد
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", xhr.responseText);
+                }
+            });
+        }
+
+
+        $("#search").on("keyup", function () {
+            const search = $(this).val();
+            GetEmployeesFitler(search);
+        });
+    </script>
+}

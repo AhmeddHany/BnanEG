@@ -5,43 +5,45 @@ namespace Bnan.Ui.ViewModels.CAS
 {
     public class ContractValiditionsVM
     {
-        public string CrMasUserContractValidityUserId { get; set; } 
-        public string CrMasUserContractValidityAdmin { get; set; }
-        public bool CrMasUserContractValidityRegister { get; set; }
-        public bool CrMasUserContractValidityChamber { get; set; }
-        public bool CrMasUserContractValidityTransferPermission { get; set; }
-        public bool CrMasUserContractValidityLicenceMunicipale { get; set; }
-        public bool CrMasUserContractValidityCompanyAddress { get; set; }
-        public bool CrMasUserContractValidityTrafficLicense { get; set; }
-        public bool CrMasUserContractValidityInsurance { get; set; }
-        public bool CrMasUserContractValidityOperatingCard { get; set; }
-        public bool CrMasUserContractValidityChkecUp { get; set; }
-        public bool CrMasUserContractValidityId { get; set; }
-        public bool CrMasUserContractValidityDrivingLicense { get; set; }
-        public bool CrMasUserContractValidityRenterAddress { get; set; }
-        public bool CrMasUserContractValidityEmployer { get; set; }
-        public bool CrMasUserContractValidityAge { get; set; }
-        public bool CrMasUserContractValidityTires { get; set; }
-        public bool CrMasUserContractValidityOil { get; set; }
-        public bool CrMasUserContractValidityMaintenance { get; set; }
-        public bool CrMasUserContractValidityFbrake { get; set; }
-        public bool CrMasUserContractValidityBbrake { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
-        public decimal CrMasUserContractValidityDiscountRate { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
-        public int CrMasUserContractValidityKm { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
-        public int CrMasUserContractValidityHour { get; set; }
-        public bool CrMasUserContractValidityLessContractValue { get; set; }
-        public bool CrMasUserContractValidityCancel { get; set; }
-        public bool CrMasUserContractValidityExtension { get; set; }
-        public bool CrMasUserContractValidityEnd { get; set; }
-        public bool CrMasUserContractValidityCreate { get; set; }
+        public string CrMasUserContractValidityUserId { get; set; }
+        public string? CrMasUserContractValidityAdmin { get; set; }
+        public bool? CrMasUserContractValidityRegister { get; set; } = false;
+        public bool? CrMasUserContractValidityChamber { get; set; } = false;
+        public bool? CrMasUserContractValidityTransferPermission { get; set; } = false;
+        public bool? CrMasUserContractValidityLicenceMunicipale { get; set; } = false;
+        public bool? CrMasUserContractValidityCompanyAddress { get; set; } = false;
+        public bool? CrMasUserContractValidityTrafficLicense { get; set; } = false;
+        public bool? CrMasUserContractValidityInsurance { get; set; } = false;
+        public bool? CrMasUserContractValidityOperatingCard { get; set; } = false;
+        public bool? CrMasUserContractValidityChkecUp { get; set; } = false;
+        public bool? CrMasUserContractValidityId { get; set; } = false;
+        public bool? CrMasUserContractValidityDrivingLicense { get; set; } = false;
+        public bool? CrMasUserContractValidityRenterAddress { get; set; } = false;
+        public bool? CrMasUserContractValidityEmployer { get; set; } = false;
+        public bool? CrMasUserContractValidityAge { get; set; } = false;
+        public bool? CrMasUserContractValidityTires { get; set; } = false;
+        public bool? CrMasUserContractValidityOil { get; set; } = false;
+        public bool? CrMasUserContractValidityMaintenance { get; set; } = false;
+        public bool? CrMasUserContractValidityFbrake { get; set; } = false;
+        public bool? CrMasUserContractValidityBbrake { get; set; } = false;
+
+        [Range(0, 100, ErrorMessage = "NumberBetween0To100")]
+        public decimal CrMasUserContractValidityDiscountRate { get; set; } = 0;
+
+        [Range(0, 500, ErrorMessage = "NumberBetween0To500")]
+        public int CrMasUserContractValidityKm { get; set; } = 0;
+
+        [Range(0, 9, ErrorMessage = "NumberBetween0To9")]
+        public int CrMasUserContractValidityHour { get; set; } = 0;
+
+        public bool? CrMasUserContractValidityLessContractValue { get; set; } = false;
+        public bool? CrMasUserContractValidityCancel { get; set; } = false;
+        public bool? CrMasUserContractValidityExtension { get; set; } = false;
+        public bool? CrMasUserContractValidityEnd { get; set; } = false;
+        public bool? CrMasUserContractValidityCreate { get; set; } = false;
 
         public virtual CrMasUserInformation CrMasUserContractValidityUser { get; set; } = null!;
         public virtual List<CrCasLessorMechanism>? CrCasLessorMechanism { get; set; }
         public virtual List<CrMasSysProcedure>? CrMasSysProcedure { get; set; }
-
-
     }
 }

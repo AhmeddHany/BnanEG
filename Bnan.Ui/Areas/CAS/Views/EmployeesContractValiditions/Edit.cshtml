@@ -1,0 +1,671 @@
+﻿@model Bnan.Ui.ViewModels.CAS.ContractValiditionsVM
+@inject IViewLocalizer localizer
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="CAS" asp-action="Edit" asp-controller="EmployeesContractValiditions" class="needs-validation" novalidate>
+            <input hidden asp-for="CrMasUserContractValidityUserId" />
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="row g-3 my-2">
+                        <div class="col-md-6">
+                            <h3>@localizer["UpdateValiditiesContract"]</h3>
+                        </div>
+                        <div class="col-md-6 save-col">
+
+                            <button type="submit" class="custom-img-btn">
+                                <img src="~/CasSys/images/save.svg" />
+                            </button>
+                            <button type="button" class="custom-img-btn">
+                                <a href="/CAS/EmployeesContractValiditions/Index">
+                                    <img class="Chevron"
+                                         src="~/CasSys/images/Chevron_Left.svg" />
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                    <main class="mt-4 g-3">
+                        <h5 class="subtitle">
+                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ?
+                                Model.CrMasUserContractValidityUser.CrMasUserInformationEnName :
+                                Model.CrMasUserContractValidityUser.CrMasUserInformationArName)
+                        </h5>
+                        <div class="accordion inputs-accordion">
+                            <div class=" inputs-accordion-item">
+                                <div class=" inputs-accordion-item-header">
+                                    <span class="accordion-item-header-title">
+                                        @localizer["ContractCompany"]
+                                    </span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                         viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                         stroke-width="3" stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         class="lucide lucide-chevron-down accordion-item-header-icon">
+                                        <path d="m6 9 6 6 6-6" />
+                                    </svg>
+                                </div>
+                                <div class="accordion-item-description-wrapper">
+
+                                    <div class="accordion-item-description">
+                                        <hr class="accordion-items-hr">
+
+                                        <div class="container-fluid">
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "100").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "100");
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityRegister"
+                                                            @((bool)Model.CrMasUserContractValidityRegister ? "checked='checked'" : "")
+                                                                   name="CrMasUserContractValidityRegister" value="@Model.CrMasUserContractValidityRegister">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityRegister">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "101").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "101");
+                                                <div class="row my-3">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityChamber"
+                                                            @((bool)Model.CrMasUserContractValidityChamber ? "checked='checked'" : "")
+                                                                   name="CrMasUserContractValidityChamber" value="@Model.CrMasUserContractValidityChamber">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityChamber">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "102").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "102");
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityTransferPermission"
+                                                            @((bool)Model.CrMasUserContractValidityTransferPermission ? "checked='checked'" : "")
+                                                                   name="CrMasUserContractValidityTransferPermission" value="@Model.CrMasUserContractValidityTransferPermission">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityTransferPermission">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "103").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "103");
+                                                <div class="row my-3">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityLicenceMunicipale"
+                                                            @((bool)Model.CrMasUserContractValidityLicenceMunicipale ? "checked='checked'" : "")
+                                                                   name="CrMasUserContractValidityLicenceMunicipale" value="@Model.CrMasUserContractValidityLicenceMunicipale">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityLicenceMunicipale">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "104").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "104");
+                                                <div class="row my-3">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityCompanyAddress"
+                                                            @((bool)Model.CrMasUserContractValidityCompanyAddress ? "checked='checked'" : "")
+                                                                   name="CrMasUserContractValidityCompanyAddress" value="@Model.CrMasUserContractValidityCompanyAddress">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityCompanyAddress">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" inputs-accordion-item">
+                                <div class=" inputs-accordion-item-header">
+                                    <span class="accordion-item-header-title">
+                                        @localizer["CarsDocuments"]
+                                    </span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                         viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                         stroke-width="3" stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         class="lucide lucide-chevron-down accordion-item-header-icon">
+                                        <path d="m6 9 6 6 6-6" />
+                                    </svg>
+                                </div>
+                                <div class="accordion-item-description-wrapper">
+
+                                    <div class="accordion-item-description">
+                                        <hr class="accordion-items-hr">
+
+                                        <div class="container-fluid">
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "120").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "120");
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityTrafficLicense"
+                                                            @((bool)Model.CrMasUserContractValidityTrafficLicense ? "checked='checked'" : "")
+                                                                   name="CrMasUserContractValidityTrafficLicense" value="@Model.CrMasUserContractValidityTrafficLicense">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityTrafficLicense">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "121").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "121");
+                                                <div class="row my-3">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityInsurance"
+                                                            @((bool)Model.CrMasUserContractValidityInsurance ? "checked='checked'" : "")
+                                                                   name="CrMasUserContractValidityInsurance" value="@Model.CrMasUserContractValidityInsurance">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityInsurance">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "122").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "122");
+                                                <div class="row mb-3">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityOperatingCard"
+                                                            @((bool)Model.CrMasUserContractValidityOperatingCard ? "checked='checked'" : "")
+                                                                   name="CrMasUserContractValidityOperatingCard" value="@Model.CrMasUserContractValidityOperatingCard">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityOperatingCard">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "123").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "123");
+                                                <div class="row mb-3">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityChkecUp"
+                                                            @((bool)Model.CrMasUserContractValidityChkecUp ? "checked='checked'" : "")
+                                                                   name="CrMasUserContractValidityChkecUp" value="@Model.CrMasUserContractValidityChkecUp">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityChkecUp">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" inputs-accordion-item">
+                                <div class=" inputs-accordion-item-header">
+                                    <span class="accordion-item-header-title">
+                                        @localizer["CarsFixed"]
+                                    </span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                         viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                         stroke-width="3" stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         class="lucide lucide-chevron-down accordion-item-header-icon">
+                                        <path d="m6 9 6 6 6-6" />
+                                    </svg>
+                                </div>
+                                <div class="accordion-item-description-wrapper">
+
+                                    <div class="accordion-item-description">
+                                        <hr class="accordion-items-hr">
+
+                                        <div class="container-fluid">
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "130").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "130");
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityTires"
+                                                            @((bool)Model.CrMasUserContractValidityTires ? "checked='checked'" : "")
+                                                                   name="CrMasUserContractValidityTires" value="@Model.CrMasUserContractValidityTires">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityTires">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "131").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "131");
+                                                <div class="row my-3">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityOil"
+                                                            @((bool)Model.CrMasUserContractValidityOil ? "checked='checked'" : "")
+                                                                   name="CrMasUserContractValidityOil" value="@Model.CrMasUserContractValidityOil">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityOil">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "132").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "132");
+                                                <div class="row mb-3">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityMaintenance"
+                                                            @((bool)Model.CrMasUserContractValidityMaintenance ? "checked='checked'" : "") name="CrMasUserContractValidityMaintenance"
+                                                                   value="@Model.CrMasUserContractValidityMaintenance">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityMaintenance">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "133").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "133");
+                                                <div class="row mb-3">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityFbrake"
+                                                            @((bool)Model.CrMasUserContractValidityFbrake ? "checked='checked'" : "") name="CrMasUserContractValidityFbrake"
+                                                                   value="@Model.CrMasUserContractValidityFbrake">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityFbrake">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (Model.CrCasLessorMechanism.Find(x => x.CrCasLessorMechanismProcedures == "134").CrCasLessorMechanismActivate == true)
+                                            {
+                                                var procedure = Model.CrMasSysProcedure.Find(x => x.CrMasSysProceduresCode == "134");
+                                                <div class="row mb-3">
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityBbrake"
+                                                            @((bool)Model.CrMasUserContractValidityBbrake ? "checked='checked'" : "") name="CrMasUserContractValidityBbrake"
+                                                                   value="@Model.CrMasUserContractValidityBbrake">
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserContractValidityBbrake">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? procedure.CrMasSysProceduresEnName : procedure.CrMasSysProceduresArName)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" inputs-accordion-item">
+                                <div class=" inputs-accordion-item-header">
+                                    <span class="accordion-item-header-title">
+                                        @localizer["RenterAndDriver"]
+                                    </span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                         viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                         stroke-width="3" stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         class="lucide lucide-chevron-down accordion-item-header-icon">
+                                        <path d="m6 9 6 6 6-6" />
+                                    </svg>
+                                </div>
+                                <div class="accordion-item-description-wrapper">
+
+                                    <div class="accordion-item-description">
+                                        <hr class="accordion-items-hr">
+
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                            </div>
+
+                                            <div class="row my-3">
+                                                <div class="col-12">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityId"
+                                                        @((bool)Model.CrMasUserContractValidityId ? "checked='checked'" : "")
+                                                               name="CrMasUserContractValidityId" value="@Model.CrMasUserContractValidityId">
+                                                        <label class="form-check-label main-checkbox" for="CrMasUserContractValidityId">
+                                                            @localizer["CrMasUserContractValidityId"]
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-12">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityDrivingLicense"
+                                                        @((bool)Model.CrMasUserContractValidityDrivingLicense ? "checked='checked'" : "")
+                                                               name="CrMasUserContractValidityDrivingLicense" value="@Model.CrMasUserContractValidityDrivingLicense">
+                                                        <label class="form-check-label main-checkbox" for="CrMasUserContractValidityDrivingLicense">
+                                                            @localizer["CrMasUserContractValidityDrivingLicense"]
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-12">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityRenterAddress"
+                                                        @((bool)Model.CrMasUserContractValidityRenterAddress ? "checked='checked'" : "")
+                                                               name="CrMasUserContractValidityRenterAddress" value="@Model.CrMasUserContractValidityRenterAddress">
+                                                        <label class="form-check-label main-checkbox" for="CrMasUserContractValidityRenterAddress">
+                                                            @localizer["CrMasUserContractValidityRenterAddress"]
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+
+
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-12">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityEmployer"
+                                                        @((bool)Model.CrMasUserContractValidityEmployer ? "checked='checked'" : "")
+                                                               name="CrMasUserContractValidityEmployer" value="@Model.CrMasUserContractValidityEmployer">
+                                                        <label class="form-check-label main-checkbox" for="CrMasUserContractValidityEmployer">
+                                                            @localizer["CrMasUserContractValidityEmployer"]
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-12">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityAge"
+                                                        @((bool)Model.CrMasUserContractValidityAge ? "checked='checked'" : "") name="CrMasUserContractValidityAge" value="@Model.CrMasUserContractValidityAge">
+                                                        <label class="form-check-label main-checkbox" for="CrMasUserContractValidityAge">
+                                                            @localizer["CrMasUserContractValidityAge"]
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" inputs-accordion-item">
+                                <div class=" inputs-accordion-item-header">
+                                    <span class="accordion-item-header-title">
+                                        @localizer["Contractss"]
+                                    </span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                         viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                         stroke-width="3" stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         class="lucide lucide-chevron-down accordion-item-header-icon">
+                                        <path d="m6 9 6 6 6-6" />
+                                    </svg>
+                                </div>
+                                <div class="accordion-item-description-wrapper">
+
+                                    <div class="accordion-item-description">
+                                        <hr class="accordion-items-hr">
+
+                                        <div class="container-fluid">
+
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityCreate"
+                                                        @((bool)Model.CrMasUserContractValidityCreate ? "checked='checked'" : "")
+                                                               name="CrMasUserContractValidityCreate" value="@Model.CrMasUserContractValidityCreate">
+                                                        <label class="form-check-label main-checkbox" for="CrMasUserContractValidityCreate">
+                                                            @localizer["CRMasUserContractValidityCreate"]
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row my-3">
+                                                <div class="col-12">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityExtension"
+                                                        @((bool)Model.CrMasUserContractValidityExtension ? "checked='checked'" : "")
+                                                               name="CrMasUserContractValidityExtension" value="@Model.CrMasUserContractValidityExtension">
+                                                        <label class="form-check-label main-checkbox" for="CrMasUserContractValidityExtension">
+                                                            @localizer["CrMasUserContractValidityExtension"]
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-12">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityCancel"
+                                                        @((bool)Model.CrMasUserContractValidityCancel ? "checked='checked'" : "")
+                                                               name="CrMasUserContractValidityCancel" value="@Model.CrMasUserContractValidityCancel">
+                                                        <label class="form-check-label main-checkbox" for="CrMasUserContractValidityCancel">
+                                                            @localizer["CrMasUserContractValidityCancel"]
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-12">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityEnd"
+                                                        @((bool)Model.CrMasUserContractValidityEnd ? "checked='checked'" : "")
+                                                               name="CrMasUserContractValidityEnd" value="@Model.CrMasUserContractValidityEnd">
+                                                        <label class="form-check-label main-checkbox" for="CrMasUserContractValidityEnd">
+                                                            @localizer["CrMasUserContractValidityEnd"]
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-12">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserContractValidityLessContractValue"
+                                                        @((bool)Model.CrMasUserContractValidityLessContractValue ? "checked='checked'" : "")
+                                                               name="CrMasUserContractValidityLessContractValue" value="@Model.CrMasUserContractValidityLessContractValue">
+                                                        <label class="form-check-label main-checkbox"
+                                                               for="CrMasUserContractValidityLessContractValue">
+                                                            @localizer["CrMasUserContractValidityLessContractValue"]
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <div class="row mb-3">
+                                                    <div class="col-xl-3">
+                                                        <label asp-for="CrMasUserContractValidityDiscountRate" class="form-label">
+                                                            @localizer["CrMasUserContractValidityDiscountRate"]
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-auto">
+                                                        <input class="form-control inputs text-center"
+                                                               type="text"
+                                                               asp-for="CrMasUserContractValidityDiscountRate"
+                                                               maxlength="5"
+                                                               max="100">
+                                                        <span asp-validation-for="CrMasUserContractValidityDiscountRate" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3">
+                                                    <div class="col-xl-3">
+                                                        <label asp-for="CrMasUserContractValidityKm" class="form-label">
+                                                            @localizer["CrMasUserContractValidityKm"]
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-auto">
+                                                        <input class="form-control inputs text-center"
+                                                               type="text"
+                                                               asp-for="CrMasUserContractValidityKm"
+                                                               maxlength="3"
+                                                               max="500">
+                                                        <span asp-validation-for="CrMasUserContractValidityKm" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3">
+                                                    <div class="col-xl-3">
+                                                        <label asp-for="CrMasUserContractValidityHour" class="form-label">
+                                                            @localizer["CrMasUserContractValidityHour"]
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-auto">
+                                                        <input class="form-control inputs text-center"
+                                                               type="text"
+                                                               asp-for="CrMasUserContractValidityHour"
+                                                               maxlength="1"
+                                                               max="9">
+                                                        <span asp-validation-for="CrMasUserContractValidityHour" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </main>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            var checkboxs = document.querySelectorAll("input[type='checkbox']");
+            checkboxs.forEach(function (checkbox) {
+                // التحقق إذا كان الـ checkbox محددًا أم لا عند التحميل
+                checkbox.checked = checkbox.checked !== null ? checkbox.checked : false;
+            });
+        });
+
+        $(document).on("click", "[type='checkbox']", function (e) {
+            // تحديث قيمة الـ checkbox عند التحديد أو الإلغاء
+            if (this.checked) {
+                $(this).val("true"); // حددها كـ true عند التحديد
+            } else {
+                $(this).val("false"); // حددها كـ false عند الإلغاء
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                const maxLength = input.getAttribute('maxlength');
+                input.addEventListener('input', () => {
+                    if (input.value.length > maxLength) {
+                        input.value = input.value.slice(0, maxLength);
+                    }
+                });
+            });
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            // الحصول على حقل الخصم
+            const discountRateInput = document.querySelector('input[name="CrMasUserContractValidityDiscountRate"]');
+
+            // الحصول على الحقول الأخرى التي تقبل أعداد صحيحة فقط
+            const integerInputs = document.querySelectorAll('input[type="text"]:not([name="CrMasUserContractValidityDiscountRate"])');
+
+            // السماح فقط بالأرقام العشرية لحقل الخصم
+            discountRateInput.addEventListener('input', () => {
+                const maxValue = discountRateInput.getAttribute('max'); // قراءة الحد الأقصى
+                if (Number(discountRateInput.value) > Number(maxValue)) {
+                    discountRateInput.value = maxValue; // تعيين القيمة إلى الحد الأقصى
+                }
+
+                // التأكد من أن الإدخال صالح كرقم عشري
+                if (!/^\d*\.?\d*$/.test(discountRateInput.value)) {
+                    discountRateInput.value = discountRateInput.value.slice(0, -1); // إزالة الأحرف غير الصالحة
+                }
+            });
+
+            // السماح فقط بالأرقام الصحيحة لبقية الحقول
+            integerInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    const maxValue = input.getAttribute('max'); // قراءة الحد الأقصى
+                    if (Number(input.value) > Number(maxValue)) {
+                        input.value = maxValue; // تعيين القيمة إلى الحد الأقصى
+                    }
+
+                    // منع إدخال النقطة العشرية
+                    if (input.value.includes('.')) {
+                        input.value = input.value.split('.')[0]; // إزالة الجزء العشري
+                    }
+
+                    // السماح فقط بالأرقام الصحيحة
+                    input.value = input.value.replace(/[^0-9]/g, ''); // إزالة الأحرف غير الرقمية
+                });
+            });
+
+            // السماح فقط بالأرقام وإزالة أي أحرف غير رقمية لبقية الحقول النصية
+            const inputs = document.querySelectorAll('input[type="text"]');
+
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    // السماح فقط بالأرقام والنقطة لحقل الخصم
+                    if (input.name === "CrMasUserContractValidityDiscountRate") {
+                        input.value = input.value.replace(/[^0-9.]/g, ''); // يسمح بالأرقام والنقطة فقط
+                    } else {
+                        input.value = input.value.replace(/[^0-9]/g, ''); // السماح بالأرقام فقط
+                    }
+                });
+
+                input.addEventListener('blur', () => {
+                    if (input.name === "CrMasUserContractValidityDiscountRate") {
+                        // إذا انتهى الإدخال بنقطة (مثل 99.)
+                        if (input.value.endsWith('.')) {
+                            input.value = input.value.slice(0, -1); // إزالة النقطة
+                        }
+                        // إذا كان الإدخال يحتوي على أرقام فقط، أضف .00
+                        if (!input.value.includes('.')) {
+                            input.value += '.00';
+                        }
+                        // إذا كان الرقم عشريًا جزئيًا (مثل 99.5)، أضف الرقم اللازم ليصبح عشريتين
+                        const decimalParts = input.value.split('.');
+                        if (decimalParts[1] && decimalParts[1].length === 1) {
+                            input.value += '0'; // أضف صفرًا إضافيًا ليصبح عشريتين
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -43,6 +43,7 @@ namespace Bnan.Inferastructure.Repository
                 CrMasUserContractValidityTires = false,
                 CrMasUserContractValidityTrafficLicense = false,
                 CrMasUserContractValidityTransferPermission = false,
+                CrMasUserContractValidityCreate = false,
             };
             if (await _unitOfWork.CrMasUserContractValidity.AddAsync(crMasUserContractValidity) != null) return true;
             return false;
@@ -50,13 +51,13 @@ namespace Bnan.Inferastructure.Repository
 
         public async Task<bool> EditContractValiditionsForEmployee(CrMasUserContractValidity model)
         {
-            var contractValidition = _unitOfWork.CrMasUserContractValidity.Find(x => x.CrMasUserContractValidityUserId == model.CrMasUserContractValidityUserId);
+            var contractValidition = await _unitOfWork.CrMasUserContractValidity.FindAsync(x => x.CrMasUserContractValidityUserId == model.CrMasUserContractValidityUserId);
 
             contractValidition.CrMasUserContractValidityUserId = model.CrMasUserContractValidityUserId;
             contractValidition.CrMasUserContractValidityAdmin = model.CrMasUserContractValidityAdmin;
             contractValidition.CrMasUserContractValidityAge = model.CrMasUserContractValidityAge;
             contractValidition.CrMasUserContractValidityBbrake = model.CrMasUserContractValidityBbrake;
-            contractValidition.CrMasUserContractValidityCancel = model.CrMasUserContractValidityFbrake;
+            contractValidition.CrMasUserContractValidityCancel = model.CrMasUserContractValidityCancel;
             contractValidition.CrMasUserContractValidityChamber = model.CrMasUserContractValidityChamber;
             contractValidition.CrMasUserContractValidityChkecUp = model.CrMasUserContractValidityChkecUp;
             contractValidition.CrMasUserContractValidityCompanyAddress = model.CrMasUserContractValidityCompanyAddress;
@@ -82,9 +83,9 @@ namespace Bnan.Inferastructure.Repository
             contractValidition.CrMasUserContractValidityTransferPermission = model.CrMasUserContractValidityTransferPermission;
             contractValidition.CrMasUserContractValidityCreate = model.CrMasUserContractValidityCreate;
 
-            _unitOfWork.CrMasUserContractValidity.Update(contractValidition);
-            await _unitOfWork.CompleteAsync();
-            return true;
+            if (_unitOfWork.CrMasUserContractValidity.Update(contractValidition) != null) return true;
+            return false;
+
         }
     }
 }

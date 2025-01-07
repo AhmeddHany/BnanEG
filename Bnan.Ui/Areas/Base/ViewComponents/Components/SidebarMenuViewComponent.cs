@@ -277,7 +277,7 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                         {
                                             ("2207001", "Employees", "Index"),
                                             ("2207002", "EmployeesSystemValiditions", "Index"),
-                                            ("2207003", "#", "#"),
+                                            ("2207003", "EmployeesContractValiditions", "Index"),
                                         }),
                                         ("208", "/CasSys/images/services.svg", "services-items", new List<(string, string, string)>
                                         {
