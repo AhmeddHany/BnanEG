@@ -7,6 +7,7 @@ using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
+using Bnan.Ui.ViewModels.CAS;
 using Bnan.Ui.ViewModels.MAS.WhatsupVMS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,10 +17,10 @@ using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using NToastNotify;
 
-namespace Bnan.Ui.Areas.MAS.Controllers
+namespace Bnan.Ui.Areas.CAS.Controllers.Services
 {
-    [Area("MAS")]
-    [Authorize(Roles = "MAS")]
+    [Area("CAS")]
+    [Authorize(Roles = "CAS")]
     [ServiceFilter(typeof(SetCurrentPathMASFilter))]
     public class TechnicalConnectivityController : BaseController
     {
@@ -29,15 +30,13 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IMasWhatsupConnect _masTechnicalConnect;
-
+        private readonly IWhatsupConnect _technicalConnect;
+        private readonly ICommunications _communications;
         private readonly IStringLocalizer<TechnicalConnectivityController> _localizer;
-        private readonly string pageNumber = SubTasks.Technical_Connectivity;
-
-
+        private readonly string pageNumber = SubTasks.TechnicalConnectivityCAS;
         public TechnicalConnectivityController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IBaseRepo BaseRepo, IMasBase masBase,
-            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<TechnicalConnectivityController> localizer, IMasWhatsupConnect masTechnicalConnect) : base(userManager, unitOfWork, mapper)
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<TechnicalConnectivityController> localizer, IWhatsupConnect TechnicalConnect, ICommunications communications) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
             _userLoginsService = userLoginsService;
@@ -46,8 +45,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
-            _masTechnicalConnect = masTechnicalConnect;
+            _technicalConnect = TechnicalConnect;
+            _communications = communications;
         }
+
         [HttpGet]
         public async Task<IActionResult> Connect()
         { // Set page titles
@@ -59,16 +60,63 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
-            var connect = await GetLastConnect(user.CrMasUserInformationLessor);
-            return View(connect);
-        }
+            var Communication = await _unitOfWork.CrMasLessorCommunication.FindAsync(x => x.CrMasLessorCommunicationsLessorCode == user.CrMasUserInformationLessor);
+            var communicationVM = _mapper.Map<CommunicationsVM>(Communication);
 
-        [HttpGet]
-        public async Task<IActionResult> GenerateQrCode(string companyId)
+            return View(communicationVM);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Connect(CommunicationsVM model)
         {
             try
             {
-                var response = await WhatsAppServicesExtension.GenerateQrCode(companyId);
+                var user = await _userManager.GetUserAsync(User);
+
+                // Set page titles
+                await SetPageTitleAsync(string.Empty, pageNumber);
+
+                // Check validation
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var existingCommunication = await _unitOfWork.CrMasLessorCommunication.FindAsync(
+                    x => x.CrMasLessorCommunicationsLessorCode == user.CrMasUserInformationLessor
+                );
+
+                var newCommunication = _mapper.Map<CrMasLessorCommunication>(model);
+                newCommunication.CrMasLessorCommunicationsLessorCode = user.CrMasUserInformationLessor;
+
+                bool result = existingCommunication == null
+                    ? await _communications.AddCommunications(newCommunication)
+                    : await _communications.UpdateCommunications(newCommunication);
+
+                if (result && await _unitOfWork.CompleteAsync() > 0)
+                {
+                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    await SaveTracingForUserChange(Status.Update, pageNumber);
+                    return RedirectToAction("Index", "Home");
+                }
+
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View(model);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GenerateQrCode()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var response = await WhatsAppServicesExtension.GenerateQrCode(user.CrMasUserInformationLessor);
                 return Content(response, "application/json");
             }
             catch (Exception ex)
@@ -78,18 +126,18 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> IsClientReady(string companyId)
+        public async Task<IActionResult> IsClientReady()
         {
-            companyId = "0000";
             try
             {
-                var content = await WhatsAppServicesExtension.IsClientReady(companyId);
+                var user = await _userManager.GetUserAsync(User);
+                var content = await WhatsAppServicesExtension.IsClientReady(user.CrMasUserInformationLessor);
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
 
                 if (apiResponse?.Status == true)
                 {
                     var clientData = apiResponse.Data;
-                    bool updateResult = await UpdateClientInfo(companyId, clientData);
+                    bool updateResult = await UpdateClientInfo(user.CrMasUserInformationLessor, clientData);
 
                     if (updateResult)
                         return Content(content, "application/json");
@@ -106,20 +154,18 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> LogoutClient(string companyId)
+        public async Task<IActionResult> LogoutClient()
         {
-            var user = await _userManager.GetUserAsync(User);
 
             try
             {
-                var response = await WhatsAppServicesExtension.LogoutAsync(companyId);
-
+                var user = await _userManager.GetUserAsync(User);
+                var response = await WhatsAppServicesExtension.LogoutAsync(user.CrMasUserInformationLessor);
                 if (response.IsSuccessStatusCode)
                 {
-                    await _masTechnicalConnect.ChangeStatusOldWhatsupConnect(companyId, user.CrMasUserInformationCode);
-                    await _masTechnicalConnect.AddNewWhatsupConnect(companyId);
+                    await _technicalConnect.ChangeStatusOldWhatsupConnect(user.CrMasUserInformationLessor, user.CrMasUserInformationCode);
+                    await _technicalConnect.AddNewWhatsupConnect(user.CrMasUserInformationLessor);
                     await _unitOfWork.CompleteAsync();
-
                     return Json(new { status = true, message = "تم قطع الاتصال بنجاح" });
                 }
                 else
@@ -137,13 +183,15 @@ namespace Bnan.Ui.Areas.MAS.Controllers
         {
             try
             {
+                var user = await _userManager.GetUserAsync(User);
+
                 if (string.IsNullOrEmpty(request.Phone) || string.IsNullOrEmpty(request.Message))
                 {
                     return Json(new { status = false, message = "رقم الهاتف والرسالة مطلوبان" });
                 }
 
                 // استخدام الـ Extension Method لإرسال الرسالة
-                var result = await WhatsAppServicesExtension.SendMessageAsync(request.Phone, request.Message, request.CompanyId);
+                var result = await WhatsAppServicesExtension.SendMessageAsync(request.Phone, request.Message, user.CrMasUserInformationLessor);
 
                 // إرجاع الاستجابة الناجحة
                 return Json(new { status = true, message = result });
@@ -155,24 +203,24 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> CheckLessorIsConnected(string companyId)
+        public async Task<IActionResult> CheckLessorIsConnected()
         {
-            companyId = "0000"; // افتراضي لاختبار الكود، غيّر حسب المطلوب
-
             try
             {
+                var user = await _userManager.GetUserAsync(User);
+
                 // استدعاء الميثود الجديدة التي تحقق الاتصال
-                var content = await WhatsAppServicesExtension.CheckIsConnected(companyId);
+                var content = await WhatsAppServicesExtension.CheckIsConnected(user.CrMasUserInformationLessor);
                 // تحويل الـ Response إلى كائن C#
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
                 if (apiResponse.Key == "3" && apiResponse?.Status == true) return Json(new { status = true, message = "1" });
                 else if (apiResponse.Key == "4" && apiResponse?.Status == true && apiResponse.Data != null)
                 {
                     var clientData = apiResponse.Data;
-                    var lastConnect = await GetLastConnect(companyId);
+                    var lastConnect = await GetLastConnect(user.CrMasUserInformationLessor);
                     if (lastConnect != null && lastConnect.CrCasLessorWhatsupConnectStatus == "N") return Json(new { status = true, message = "2" });
-                    bool updateConnect = await _masTechnicalConnect.ChangeStatusOldWhenDisconnectFromWhatsup(companyId, clientData.LastLogOut);
-                    bool addNewConnect = await _masTechnicalConnect.AddNewWhatsupConnect(companyId);
+                    bool updateConnect = await _technicalConnect.ChangeStatusOldWhenDisconnectFromWhatsup(user.CrMasUserInformationLessor, clientData.LastLogOut);
+                    bool addNewConnect = await _technicalConnect.AddNewWhatsupConnect(user.CrMasUserInformationLessor);
                     if (updateConnect && addNewConnect && await _unitOfWork.CompleteAsync() > 0) return Json(new { status = true, message = "3" });
                     else return Json(new { status = false, message = "حدث خطأ اثناء حفظ البيانات" });
                 }
@@ -195,7 +243,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 if (lastConnect == null) return false;
                 if (lastConnect.CrCasLessorWhatsupConnectStatus == Status.Active) return true;
 
-                var updateClient = await _masTechnicalConnect.UpdateWhatsupConnectInfo(
+                var updateClient = await _technicalConnect.UpdateWhatsupConnectInfo(
                     lessorCode,
                     clientInfoWhatsup.Name,
                     clientInfoWhatsup.Mobile,
@@ -222,5 +270,32 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             var lastConnect = await _unitOfWork.CrCasLessorWhatsupConnect.FindAllAsync(x => x.CrCasLessorWhatsupConnectLessor == LessorCode);
             return lastConnect.OrderByDescending(x => x.CrCasLessorWhatsupConnectSerial).FirstOrDefault();
         }
+        private async Task SaveTracingForUserChange(string status, string pageNumber)
+        {
+
+
+            var recordAr = "الربط التقني";
+            var recordEn = "TechnicalConnectivity";
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+
     }
 }

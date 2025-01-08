@@ -50,6 +50,7 @@
 
   <ItemGroup>
     <Folder Include="Hubs\" />
+    <Folder Include="Repository\CAS\" />
   </ItemGroup>
 
 </Project>

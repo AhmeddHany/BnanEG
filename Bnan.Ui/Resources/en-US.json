@@ -1084,7 +1084,22 @@
     "UpdateValiditiesContract": "Update Contract Validities ",
     "NumberBetween0To100": "Number must be between 0 and 100.",
     "NumberBetween0To500": "Number must be between 0 and 500.",
-    "NumberBetween0To9": "Number must be between 0 and 9."
+    "NumberBetween0To9": "Number must be between 0 and 9.",
+    //TechnicalConnectivity
+    "TechnicalConnectivity": "Technical Connectivity",
+    "TransportAuthority": "Transport Authority",
+    "Shemoos": "Shemoos",
+    "AppID": "App ID",
+    "AppKey": "App Key",
+    "Authorization": "Authorization",
+    "ContentType": "Content Type",
+    "SMS": "SMS",
+    "UserNameSMS": "User Name",
+    "APIToken": "API Token",
+    "Whatsup": "Whatsup",
+    "DeviceName": "Device Name",
+    "DeviceType": "Device Type",
+    "WhatsupPhone": "Phone"
   },
   "ModalAutoLogout": "Your session is about to end!",
   "Arabic": "Arabic",

@@ -1040,7 +1040,22 @@
     "UpdateValiditiesContract": "تحديث صلاحيات العقود",
     "NumberBetween0To100": "يجب ان يكون الرقم ما بين 0 الى 100",
     "NumberBetween0To500": "يجب ان يكون الرقم ما بين 0 الى 500",
-    "NumberBetween0To9": "يجب ان يكون الرقم ما بين 0 الى 9"
+    "NumberBetween0To9": "يجب ان يكون الرقم ما بين 0 الى 9",
+    //TechnicalConnectivity
+    "TechnicalConnectivity": "الربط التقني",
+    "TransportAuthority": "هيئة النقل",
+    "Shemoos": "شموس",
+    "AppID": "معرف التطبيق",
+    "AppKey": "مفتاح التطبيق",
+    "Authorization": "التفويض",
+    "ContentType": "نوع المحتوى",
+    "SMS": "رسائل نصية",
+    "UserNameSMS": "أسم المستخدم",
+    "APIToken": "رمز API",
+    "Whatsup": "واتساب",
+    "DeviceName": "اسم الجهاز",
+    "DeviceType": "نوع الجهاز",
+    "WhatsupPhone": "رقم الجوال"
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 

@@ -87,7 +87,7 @@ namespace Bnan.Inferastructure.Repository
         public IGenric<CrCasRenterContractAdditional> CrCasRenterContractAdditional { get; private set; }
         public IGenric<CrCasRenterContractCarCheckup> CrCasRenterContractCarCheckup { get; private set; }
         public IGenric<CrMasSupContractCarCheckupDetail> CrMasSupContractCarCheckupDetail { get; private set; }
-        
+
         public IGenric<CrCasRenterContractBasic> CrCasRenterContractBasic { get; private set; }
         public IGenric<CrCasRenterContractAdvantage> CrCasRenterContractAdvantage { get; private set; }
         public IGenric<CrCasRenterContractAuthorization> CrCasRenterContractAuthorization { get; private set; }
@@ -105,7 +105,8 @@ namespace Bnan.Inferastructure.Repository
 
         public IGenric<CrCasRenterContractEvaluation> CrCasRenterContractEvaluation { get; private set; }
         public IGenric<CrMasSupContractSource> CrMasSupContractSource { get; private set; }
-        
+        public IGenric<CrMasLessorCommunication> CrMasLessorCommunication { get; private set; }
+
 
 
         public UnitOfWork(BnanSCContext context)
@@ -122,7 +123,7 @@ namespace Bnan.Inferastructure.Repository
             CrMasUserProceduresValidations = new BaseRepository<CrMasUserProceduresValidation>(_context);
             CrMasSysProceduresTasks = new BaseRepository<CrMasSysProceduresTask>(_context);
             CrMasSysCallingKeys = new BaseRepository<CrMasSysCallingKey>(_context);
-            CrMasSysQuestionsAnswer = new BaseRepository<CrMasSysQuestionsAnswer>(_context);           
+            CrMasSysQuestionsAnswer = new BaseRepository<CrMasSysQuestionsAnswer>(_context);
             CrMasLessorImage = new BaseRepository<CrMasLessorImage>(_context);
             CrCasOwner = new BaseRepository<CrCasOwner>(_context);
             CrCasBeneficiary = new BaseRepository<CrCasBeneficiary>(_context);
@@ -198,7 +199,7 @@ namespace Bnan.Inferastructure.Repository
             CrMasSupCountryClassification = new BaseRepository<CrMasSupCountryClassification>(_context);
             CrCasLessorWhatsupConnect = new BaseRepository<CrCasLessorWhatsupConnect>(_context);
             CrMasSupContractSource = new BaseRepository<CrMasSupContractSource>(_context);
-            
+            CrMasLessorCommunication = new BaseRepository<CrMasLessorCommunication>(_context);
         }
         public int Complete()
         {

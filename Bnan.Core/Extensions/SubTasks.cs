@@ -41,7 +41,7 @@
 
         ////////////
         //MAS  Services
-        public static string Technical_Connectivity { get; set; } = "1112001";
+        public static string TechnicalConnectivityMAS { get; set; } = "1112001";
         public static string CrMasSupCountryClassification { get; set; } = "1112002";
         public static string CrCasLessorClassification { get; set; } = "1112003";
         public static string Evaluation { get; set; } = "1112004";
@@ -98,12 +98,14 @@
         // CAS Employees
 
         ////////////
-        //MAS  Users
+        //CAS  Users
         public static string CrMasUserInformationForCAS { get; set; } = "2207001";
         public static string CrMasUserSystemValiditionsCAS { get; set; } = "2207002";
         public static string CrMasUserContractValiditionsCAS { get; set; } = "2207003";
         public static string MyAccountCAS { get; set; } = "2207004";
         public static string ChangePasswordCAS { get; set; } = "2207005";
+        //MAS  Services
+        public static string TechnicalConnectivityCAS { get; set; } = "2208004";
         //public static string CrMasUserInformationFromMASToCAS { get; set; } = "1106003";
     }
 }

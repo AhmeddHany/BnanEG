@@ -284,7 +284,7 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                             ("2208001", "#", "#"),
                                             ("2208002", "#", "#"),
                                             ("2208003", "#", "#"),
-                                            ("2208004", "#", "#"),
+                                            ("2208004", "TechnicalConnectivity", "Connect"),
                                             ("2208005", "#", "#"),
                                             ("2208006", "#", "#"),
                                         })
