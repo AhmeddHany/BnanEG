@@ -7,7 +7,6 @@ using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.CAS;
 using Bnan.Ui.ViewModels.MAS.WhatsupVMS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -31,12 +30,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IWhatsupConnect _technicalConnect;
-        private readonly ICommunications _communications;
         private readonly IStringLocalizer<TechnicalConnectivityController> _localizer;
         private readonly string pageNumber = SubTasks.TechnicalConnectivityCAS;
         public TechnicalConnectivityController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IBaseRepo BaseRepo, IMasBase masBase,
-            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<TechnicalConnectivityController> localizer, IWhatsupConnect TechnicalConnect, ICommunications communications) : base(userManager, unitOfWork, mapper)
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<TechnicalConnectivityController> localizer, IWhatsupConnect TechnicalConnect) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
             _userLoginsService = userLoginsService;
@@ -46,7 +44,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
             _technicalConnect = TechnicalConnect;
-            _communications = communications;
         }
 
         [HttpGet]
@@ -60,55 +57,55 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
-            var Communication = await _unitOfWork.CrMasLessorCommunication.FindAsync(x => x.CrMasLessorCommunicationsLessorCode == user.CrMasUserInformationLessor);
-            var communicationVM = _mapper.Map<CommunicationsVM>(Communication);
+            //var Communication = await _unitOfWork.CrMasLessorCommunication.FindAsync(x => x.CrMasLessorCommunicationsLessorCode == user.CrMasUserInformationLessor);
+            //var communicationVM = _mapper.Map<CommunicationsVM>(Communication);
 
-            return View(communicationVM);
+            return View();
         }
-        [HttpPost]
-        public async Task<IActionResult> Connect(CommunicationsVM model)
-        {
-            try
-            {
-                var user = await _userManager.GetUserAsync(User);
+        //[HttpPost]
+        //public async Task<IActionResult> Connect(CommunicationsVM model)
+        //{
+        //    try
+        //    {
+        //        var user = await _userManager.GetUserAsync(User);
 
-                // Set page titles
-                await SetPageTitleAsync(string.Empty, pageNumber);
+        //        // Set page titles
+        //        await SetPageTitleAsync(string.Empty, pageNumber);
 
-                // Check validation
-                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
-                {
-                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return RedirectToAction("Index", "Home");
-                }
+        //        // Check validation
+        //        if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+        //        {
+        //            _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+        //            return RedirectToAction("Index", "Home");
+        //        }
 
-                var existingCommunication = await _unitOfWork.CrMasLessorCommunication.FindAsync(
-                    x => x.CrMasLessorCommunicationsLessorCode == user.CrMasUserInformationLessor
-                );
+        //        var existingCommunication = await _unitOfWork.CrMasLessorCommunication.FindAsync(
+        //            x => x.CrMasLessorCommunicationsLessorCode == user.CrMasUserInformationLessor
+        //        );
 
-                var newCommunication = _mapper.Map<CrMasLessorCommunication>(model);
-                newCommunication.CrMasLessorCommunicationsLessorCode = user.CrMasUserInformationLessor;
+        //        var newCommunication = _mapper.Map<CrMasLessorCommunication>(model);
+        //        newCommunication.CrMasLessorCommunicationsLessorCode = user.CrMasUserInformationLessor;
 
-                bool result = existingCommunication == null
-                    ? await _communications.AddCommunications(newCommunication)
-                    : await _communications.UpdateCommunications(newCommunication);
+        //        bool result = existingCommunication == null
+        //            ? await _communications.AddCommunications(newCommunication)
+        //            : await _communications.UpdateCommunications(newCommunication);
 
-                if (result && await _unitOfWork.CompleteAsync() > 0)
-                {
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    await SaveTracingForUserChange(Status.Update, pageNumber);
-                    return RedirectToAction("Index", "Home");
-                }
+        //        if (result && await _unitOfWork.CompleteAsync() > 0)
+        //        {
+        //            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+        //            await SaveTracingForUserChange(Status.Update, pageNumber);
+        //            return RedirectToAction("Index", "Home");
+        //        }
 
-                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return View(model);
-            }
-        }
+        //        _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+        //        return View(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+        //        return View(model);
+        //    }
+        //}
 
         [HttpGet]
         public async Task<IActionResult> GenerateQrCode()

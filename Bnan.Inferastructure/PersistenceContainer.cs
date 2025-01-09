@@ -219,9 +219,6 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasRenterInformation, MasRenterInformation>();
             builder.Services.AddScoped<IMasLessorMarketing, MasLessorMarketing>();
             builder.Services.AddScoped<IMasCompanyUsers, MasCompanyUsers>();
-            builder.Services.AddScoped<ICommunications, Communications>();
-
-
 
 
             return builder;

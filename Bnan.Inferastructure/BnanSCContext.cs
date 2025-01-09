@@ -31,6 +31,9 @@ namespace Bnan.Core.Models
         public virtual DbSet<CrCasLessorClassification> CrCasLessorClassifications { get; set; } = null!;
         public virtual DbSet<CrCasLessorMechanism> CrCasLessorMechanisms { get; set; } = null!;
         public virtual DbSet<CrCasLessorMembership> CrCasLessorMemberships { get; set; } = null!;
+        public virtual DbSet<CrCasLessorShomoosConnect> CrCasLessorShomoosConnects { get; set; } = null!;
+        public virtual DbSet<CrCasLessorSmsConnect> CrCasLessorSmsConnects { get; set; } = null!;
+        public virtual DbSet<CrCasLessorTgaConnect> CrCasLessorTgaConnects { get; set; } = null!;
         public virtual DbSet<CrCasLessorWhatsupConnect> CrCasLessorWhatsupConnects { get; set; } = null!;
         public virtual DbSet<CrCasOwner> CrCasOwners { get; set; } = null!;
         public virtual DbSet<CrCasPriceCarAdditional> CrCasPriceCarAdditionals { get; set; } = null!;
@@ -53,7 +56,6 @@ namespace Bnan.Core.Models
         public virtual DbSet<CrCasSysAdministrativeProcedure> CrCasSysAdministrativeProcedures { get; set; } = null!;
         public virtual DbSet<CrMasContractCompany> CrMasContractCompanies { get; set; } = null!;
         public virtual DbSet<CrMasContractCompanyDetailed> CrMasContractCompanyDetaileds { get; set; } = null!;
-        public virtual DbSet<CrMasLessorCommunication> CrMasLessorCommunications { get; set; } = null!;
         public virtual DbSet<CrMasLessorImage> CrMasLessorImages { get; set; } = null!;
         public virtual DbSet<CrMasLessorInformation> CrMasLessorInformations { get; set; } = null!;
         public virtual DbSet<CrMasLessorMessage> CrMasLessorMessages { get; set; } = null!;
@@ -1887,7 +1889,120 @@ namespace Bnan.Core.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("CR_Mas_Lessor_Information_CR_Mas_Sup_Renter_Membership");
             });
+            modelBuilder.Entity<CrCasLessorShomoosConnect>(entity =>
+            {
+                entity.HasKey(e => e.CrMasLessorShomoosConnectLessor);
 
+                entity.ToTable("CR_Cas_Lessor_Shomoos_Connect");
+
+                entity.Property(e => e.CrMasLessorShomoosConnectLessor)
+                    .HasMaxLength(4)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Lessor_Shomoos_Connect_Lessor")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrMasLessorShomoosConnectAppId)
+                    .HasMaxLength(200)
+                    .HasColumnName("CR_Mas_Lessor_Shomoos_Connect_App_Id");
+
+                entity.Property(e => e.CrMasLessorShomoosConnectAppKey)
+                    .HasMaxLength(200)
+                    .HasColumnName("CR_Mas_Lessor_Shomoos_Connect_App_Key");
+
+                entity.Property(e => e.CrMasLessorShomoosConnectAuthorization)
+                    .HasMaxLength(200)
+                    .HasColumnName("CR_Mas_Lessor_Shomoos_Connect_Authorization");
+
+                entity.Property(e => e.CrMasLessorShomoosConnectContentType)
+                    .HasMaxLength(200)
+                    .HasColumnName("CR_Mas_Lessor_Shomoos_Connect_Content_Type");
+
+                entity.Property(e => e.CrMasLessorShomoosConnectStatus)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Lessor_Shomoos_Connect_Status")
+                    .IsFixedLength();
+
+                entity.HasOne(d => d.CrMasLessorShomoosConnectLessorNavigation)
+                    .WithOne(p => p.CrCasLessorShomoosConnect)
+                    .HasForeignKey<CrCasLessorShomoosConnect>(d => d.CrMasLessorShomoosConnectLessor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CR_Cas_Lessor_Shomoos_Connect_CR_Mas_Lessor_Information");
+            });
+
+            modelBuilder.Entity<CrCasLessorSmsConnect>(entity =>
+            {
+                entity.HasKey(e => e.CrMasLessorSmsConnectLessor);
+
+                entity.ToTable("CR_Cas_Lessor_SMS_Connect");
+
+                entity.Property(e => e.CrMasLessorSmsConnectLessor)
+                    .HasMaxLength(4)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Lessor_SMS_Connect_Lessor")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrMasLessorSmsConnectAuthorization)
+                    .HasMaxLength(200)
+                    .HasColumnName("CR_Mas_Lessor_SMS_Connect_Authorization");
+
+                entity.Property(e => e.CrMasLessorSmsConnectName)
+                    .HasMaxLength(200)
+                    .HasColumnName("CR_Mas_Lessor_SMS_Connect_Name");
+
+                entity.Property(e => e.CrMasLessorSmsConnectStatus)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Lessor_SMS_Connect_Status")
+                    .IsFixedLength();
+
+                entity.HasOne(d => d.CrMasLessorSmsConnectLessorNavigation)
+                    .WithOne(p => p.CrCasLessorSmsConnect)
+                    .HasForeignKey<CrCasLessorSmsConnect>(d => d.CrMasLessorSmsConnectLessor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CR_Cas_Lessor_SMS_Connect_CR_Mas_Lessor_Information");
+            });
+
+            modelBuilder.Entity<CrCasLessorTgaConnect>(entity =>
+            {
+                entity.HasKey(e => e.CrMasLessorTgaConnectLessor);
+
+                entity.ToTable("CR_Cas_Lessor_TGA_Connect");
+
+                entity.Property(e => e.CrMasLessorTgaConnectLessor)
+                    .HasMaxLength(4)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Lessor_TGA_Connect_Lessor")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrMasLessorTgaConnectAppId)
+                    .HasMaxLength(200)
+                    .HasColumnName("CR_Mas_Lessor_TGA_Connect_App_Id");
+
+                entity.Property(e => e.CrMasLessorTgaConnectAppKey)
+                    .HasMaxLength(200)
+                    .HasColumnName("CR_Mas_Lessor_TGA_Connect_App_Key");
+
+                entity.Property(e => e.CrMasLessorTgaConnectAuthorization)
+                    .HasMaxLength(200)
+                    .HasColumnName("CR_Mas_Lessor_TGA_Connect_Authorization");
+
+                entity.Property(e => e.CrMasLessorTgaConnectContentType)
+                    .HasMaxLength(200)
+                    .HasColumnName("CR_Mas_Lessor_TGA_Connect_Content_Type");
+
+                entity.Property(e => e.CrMasLessorTgaConnectStatus)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Lessor_TGA_Connect_Status")
+                    .IsFixedLength();
+
+                entity.HasOne(d => d.CrMasLessorTgaConnectLessorNavigation)
+                    .WithOne(p => p.CrCasLessorTgaConnect)
+                    .HasForeignKey<CrCasLessorTgaConnect>(d => d.CrMasLessorTgaConnectLessor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CR_Cas_Lessor_TGA_Connect_CR_Mas_Lessor_Information");
+            });
             modelBuilder.Entity<CrCasLessorWhatsupConnect>(entity =>
             {
                 entity.ToTable("CR_Cas_Lessor_Whatsup_Connect");
@@ -4234,75 +4349,7 @@ namespace Bnan.Core.Models
                     .HasConstraintName("CR_Mas_Contract_Company_Detailed_CR_Mas_Contract_Company");
             });
 
-            modelBuilder.Entity<CrMasLessorCommunication>(entity =>
-            {
-                entity.HasKey(e => e.CrMasLessorCommunicationsLessorCode);
 
-                entity.ToTable("CR_Mas_Lessor_Communications");
-
-                entity.Property(e => e.CrMasLessorCommunicationsLessorCode)
-                    .HasMaxLength(4)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Mas_Lessor_Communications_Lessor_Code")
-                    .IsFixedLength();
-
-                entity.Property(e => e.CrMasLessorCommunicationsDefaultLanguage)
-                    .HasMaxLength(2)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Mas_Lessor_Communications_Default_Language")
-                    .IsFixedLength();
-
-                entity.Property(e => e.CrMasLessorCommunicationsShomoosAuthorization)
-                    .HasMaxLength(200)
-                    .HasColumnName("CR_Mas_Lessor_Communications_Shomoos_Authorization");
-
-                entity.Property(e => e.CrMasLessorCommunicationsShomoosStatus)
-                    .HasMaxLength(10)
-                    .HasColumnName("CR_Mas_Lessor_Communications_Shomoos_Status")
-                    .IsFixedLength();
-
-                entity.Property(e => e.CrMasLessorCommunicationsSmsApi)
-                    .HasMaxLength(200)
-                    .HasColumnName("CR_Mas_Lessor_Communications_SMS_Api");
-
-                entity.Property(e => e.CrMasLessorCommunicationsSmsName)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Mas_Lessor_Communications_SMS_Name");
-
-                entity.Property(e => e.CrMasLessorCommunicationsSmsStatus)
-                    .HasMaxLength(1)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Mas_Lessor_Communications_SMS_Status")
-                    .IsFixedLength();
-
-                entity.Property(e => e.CrMasLessorCommunicationsTgaAppId)
-                    .HasMaxLength(200)
-                    .HasColumnName("CR_Mas_Lessor_Communications_TGA_App_Id");
-
-                entity.Property(e => e.CrMasLessorCommunicationsTgaAppKey)
-                    .HasMaxLength(200)
-                    .HasColumnName("CR_Mas_Lessor_Communications_TGA_App_Key");
-
-                entity.Property(e => e.CrMasLessorCommunicationsTgaAuthorization)
-                    .HasMaxLength(200)
-                    .HasColumnName("CR_Mas_Lessor_Communications_TGA_Authorization");
-
-                entity.Property(e => e.CrMasLessorCommunicationsTgaContentType)
-                    .HasMaxLength(200)
-                    .HasColumnName("CR_Mas_Lessor_Communications_TGA_Content_Type");
-
-                entity.Property(e => e.CrMasLessorCommunicationsTgaStatus)
-                    .HasMaxLength(1)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Mas_Lessor_Communications_TGA_Status")
-                    .IsFixedLength();
-
-                entity.HasOne(d => d.CrMasLessorCommunicationsLessorCodeNavigation)
-                    .WithOne(p => p.CrMasLessorCommunication)
-                    .HasForeignKey<CrMasLessorCommunication>(d => d.CrMasLessorCommunicationsLessorCode)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CR_Mas_Lessor_Communications_CR_Mas_Lessor_Information");
-            });
 
             modelBuilder.Entity<CrMasLessorImage>(entity =>
             {

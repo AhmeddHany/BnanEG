@@ -47,7 +47,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IBaseRepo _baseRepo;
         private readonly IMasLessor _masLessor;
-        private readonly ICommunications _communications;
 
         private readonly string pageNumber = SubTasks.CrMasLessorInformation;
 
@@ -71,7 +70,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                                     ISalesPoint salesPoint,
                                     IStringLocalizer<LessorsKSAController> localizer,
                                     IAuthService authService,
-                                    IUserMainValidtion userMainValidtion, IWebHostEnvironment webHostEnvironment, IMasWhatsupConnect masTechnicalConnect, IBaseRepo baseRepo, IMasLessor masLessor, ICommunications communications) : base(userManager, unitOfWork, mapper)
+                                    IUserMainValidtion userMainValidtion, IWebHostEnvironment webHostEnvironment, IMasWhatsupConnect masTechnicalConnect, IBaseRepo baseRepo, IMasLessor masLessor) : base(userManager, unitOfWork, mapper)
         {
             _userLoginsService = userLoginsService;
             _userService = userService;
@@ -95,7 +94,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             _masTechnicalConnect = masTechnicalConnect;
             _baseRepo = baseRepo;
             _masLessor = masLessor;
-            _communications = communications;
         }
 
         [HttpGet]
@@ -291,7 +289,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
                     await _BranchDocument.AddBranchDocumentDefault(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _communications.AddCommunicationsDefault(LessorVMTlessor.CrMasLessorInformationCode);
                     // add whatsup record
                     // add TGA And shomos record
                     //await _authService.AddUserDefault(LessorVMTlessor.CrMasLessorInformationCode);

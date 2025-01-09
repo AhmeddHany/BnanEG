@@ -132,8 +132,6 @@ namespace Bnan.Inferastructure
             CreateMap<CompanyUserVM, CrMasUserInformation>().ReverseMap();
             CreateMap<MASContractSourceVM, CrMasSupContractSource>().ReverseMap();
             CreateMap<EmployeesWithAuthrizationVM, CrMasUserInformation>().ReverseMap();
-            CreateMap<CommunicationsVM, CrMasLessorCommunication>().ReverseMap();
-
 
         }
 
