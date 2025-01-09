@@ -2732,7 +2732,7 @@
   "CrMasUserContractValidityAge": "Validity Renter Age",
   "CrMasUserContractValidityExtension": "Contract Validity Extension",
   "CRMasUserContractValidityCreate": "Create Contract",
-  "CrMasUserContractValidityCancel": "Contract Validity Cancel",
+  "CrMasUserContractValidityCancel": "Contract Saved Validity Cancel",
   "CrMasUserContractValidityEnd": "Contract Validity End",
   "CrMasUserContractValidityLessContractValue": "The payment is less than the contract value",
   "CrMasUserContractValidityDiscountRate": "Discount Rate",

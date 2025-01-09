@@ -2226,9 +2226,9 @@
 
             const formattedAmount = Math.abs(AmountRequired).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             // تحويل القيمة إلى رقم عند الإرسال
-            const numericAmount = parseFloat(formattedAmount.replace(/,/g, ''));
-            $("#ContractSettlement_AmountRequired").val(numericAmount);
+            $("#ContractSettlement_AmountRequired").val(AmountRequired);
             document.getElementById('AmountRequired').textContent = formattedAmount;
+            console.log("AmountRequired Check Minis", AmountRequired)
 
         }
         function getAdditionalHoursValue() {

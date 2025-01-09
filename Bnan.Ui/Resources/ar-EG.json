@@ -2709,7 +2709,7 @@
   "CrMasUserContractValidityAge": "صلاحية تجاوز عمر السائق",
   "CrMasUserContractValidityExtension": "تمديد العقد",
   "CRMasUserContractValidityCreate": "انشاء العقد",
-  "CrMasUserContractValidityCancel": "الغاء العقد",
+  "CrMasUserContractValidityCancel": "الغاء العقد المحفوظ",
   "CrMasUserContractValidityEnd": "تسوية العقد",
   "CrMasUserContractValidityLessContractValue": "المقدم اقل من قيمة العقد",
   "CrMasUserContractValidityDiscountRate": "نسبة الخصم",
