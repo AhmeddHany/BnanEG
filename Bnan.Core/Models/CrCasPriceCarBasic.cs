@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Bnan.Core.Models
+﻿namespace Bnan.Core.Models
 {
     public partial class CrCasPriceCarBasic
     {
@@ -40,7 +37,6 @@ namespace Bnan.Core.Models
         public bool? CrCasPriceCarBasicIsAdditionalDriver { get; set; }
         public decimal? CrCasPriceCarBasicAdditionalDriverValue { get; set; }
         public decimal? CrCasPriceCarBasicPrivateDriverValue { get; set; }
-        public decimal? CrCasPriceCarBasicFuelValue { get; set; }
         public decimal? CrCasPriceCarBasicTransferValue { get; set; }
         public decimal? CrCasCarPriceBasicInFeesTamm { get; set; }
         public decimal? CrCasCarPriceBasicOutFeesTamm { get; set; }

@@ -105,6 +105,9 @@ namespace Bnan.Inferastructure.Repository
 
         public IGenric<CrCasRenterContractEvaluation> CrCasRenterContractEvaluation { get; private set; }
         public IGenric<CrMasSupContractSource> CrMasSupContractSource { get; private set; }
+        public IGenric<CrCasLessorShomoosConnect> CrCasLessorShomoosConnect { get; private set; }
+        public IGenric<CrCasLessorSmsConnect> CrCasLessorSmsConnect { get; private set; }
+        public IGenric<CrCasLessorTgaConnect> CrCasLessorTgaConnect { get; private set; }
 
 
         public UnitOfWork(BnanSCContext context)
@@ -197,6 +200,9 @@ namespace Bnan.Inferastructure.Repository
             CrMasSupCountryClassification = new BaseRepository<CrMasSupCountryClassification>(_context);
             CrCasLessorWhatsupConnect = new BaseRepository<CrCasLessorWhatsupConnect>(_context);
             CrMasSupContractSource = new BaseRepository<CrMasSupContractSource>(_context);
+            CrCasLessorTgaConnect = new BaseRepository<CrCasLessorTgaConnect>(_context);
+            CrCasLessorSmsConnect = new BaseRepository<CrCasLessorSmsConnect>(_context);
+            CrCasLessorShomoosConnect = new BaseRepository<CrCasLessorShomoosConnect>(_context);
         }
         public int Complete()
         {

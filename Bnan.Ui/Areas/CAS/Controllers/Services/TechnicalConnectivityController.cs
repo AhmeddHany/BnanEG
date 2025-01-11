@@ -7,6 +7,7 @@ using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
+using Bnan.Ui.ViewModels.CAS;
 using Bnan.Ui.ViewModels.MAS.WhatsupVMS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -29,12 +30,16 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
         private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IWhatsupConnect _technicalConnect;
+        private readonly IWhatsupConnect _whatsupConnect;
+        private readonly ITGAConnect _tgaConnect;
+        private readonly ISMSConnect _smsConnect;
+        private readonly IShomoosConnect _shomoosConnect;
         private readonly IStringLocalizer<TechnicalConnectivityController> _localizer;
         private readonly string pageNumber = SubTasks.TechnicalConnectivityCAS;
         public TechnicalConnectivityController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
             IMapper mapper, IUserService userService, IBaseRepo BaseRepo, IMasBase masBase,
-            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<TechnicalConnectivityController> localizer, IWhatsupConnect TechnicalConnect) : base(userManager, unitOfWork, mapper)
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<TechnicalConnectivityController> localizer,
+            IWhatsupConnect whatsupConnect, ITGAConnect tgaConnect, ISMSConnect smsConnect, IShomoosConnect shomoosConnect) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
             _userLoginsService = userLoginsService;
@@ -43,7 +48,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
-            _technicalConnect = TechnicalConnect;
+            _whatsupConnect = whatsupConnect;
+            _tgaConnect = tgaConnect;
+            _smsConnect = smsConnect;
+            _shomoosConnect = shomoosConnect;
         }
 
         [HttpGet]
@@ -57,55 +65,65 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
-            //var Communication = await _unitOfWork.CrMasLessorCommunication.FindAsync(x => x.CrMasLessorCommunicationsLessorCode == user.CrMasUserInformationLessor);
-            //var communicationVM = _mapper.Map<CommunicationsVM>(Communication);
-
-            return View();
+            var smsConnect = await _unitOfWork.CrCasLessorSmsConnect.FindAsync(x => x.CrMasLessorSmsConnectLessor == user.CrMasUserInformationLessor);
+            var tgaConnect = await _unitOfWork.CrCasLessorTgaConnect.FindAsync(x => x.CrMasLessorTgaConnectLessor == user.CrMasUserInformationLessor);
+            var shomoosConnect = await _unitOfWork.CrCasLessorShomoosConnect.FindAsync(x => x.CrMasLessorShomoosConnectLessor == user.CrMasUserInformationLessor);
+            CommunicationsVM communicationsVM = new CommunicationsVM();
+            communicationsVM.crCasLessorSmsConnect = smsConnect;
+            communicationsVM.crCasLessorShomoosConnect = shomoosConnect;
+            communicationsVM.crCasLessorTgaConnect = tgaConnect;
+            return View(communicationsVM);
         }
-        //[HttpPost]
-        //public async Task<IActionResult> Connect(CommunicationsVM model)
-        //{
-        //    try
-        //    {
-        //        var user = await _userManager.GetUserAsync(User);
+        [HttpPost]
+        public async Task<IActionResult> Connect(CommunicationsVM model)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
 
-        //        // Set page titles
-        //        await SetPageTitleAsync(string.Empty, pageNumber);
+                // Set page titles
+                await SetPageTitleAsync(string.Empty, pageNumber);
 
-        //        // Check validation
-        //        if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
-        //        {
-        //            _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-        //            return RedirectToAction("Index", "Home");
-        //        }
+                // Check validation
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return RedirectToAction("Index", "Home");
+                }
 
-        //        var existingCommunication = await _unitOfWork.CrMasLessorCommunication.FindAsync(
-        //            x => x.CrMasLessorCommunicationsLessorCode == user.CrMasUserInformationLessor
-        //        );
+                // TGA
+                var existingTGAConnect = await _unitOfWork.CrCasLessorTgaConnect.FindAsync(x => x.CrMasLessorTgaConnectLessor == user.CrMasUserInformationLessor);
+                var newTgaConnect = model.crCasLessorTgaConnect;
+                newTgaConnect.CrMasLessorTgaConnectLessor = user.CrMasUserInformationLessor;
+                bool resultTga = existingTGAConnect == null ? await _tgaConnect.AddNew(newTgaConnect) : await _tgaConnect.Update(newTgaConnect);
+                // Shomoos
+                var existingShomoosConnect = await _unitOfWork.CrCasLessorShomoosConnect.FindAsync(x => x.CrMasLessorShomoosConnectLessor == user.CrMasUserInformationLessor);
+                var newShomoosConnect = model.crCasLessorShomoosConnect;
+                newShomoosConnect.CrMasLessorShomoosConnectLessor = user.CrMasUserInformationLessor;
+                bool resultShomoos = existingShomoosConnect == null ? await _shomoosConnect.AddNew(newShomoosConnect) : await _shomoosConnect.Update(newShomoosConnect);
+                // SMS 
+                var existingSMSConnect = await _unitOfWork.CrCasLessorSmsConnect.FindAsync(x => x.CrMasLessorSmsConnectLessor == user.CrMasUserInformationLessor);
+                var newSMSConnect = model.crCasLessorSmsConnect;
+                newSMSConnect.CrMasLessorSmsConnectLessor = user.CrMasUserInformationLessor;
+                bool resultSMS = existingSMSConnect == null ? await _smsConnect.AddNew(newSMSConnect) : await _smsConnect.Update(newSMSConnect);
 
-        //        var newCommunication = _mapper.Map<CrMasLessorCommunication>(model);
-        //        newCommunication.CrMasLessorCommunicationsLessorCode = user.CrMasUserInformationLessor;
 
-        //        bool result = existingCommunication == null
-        //            ? await _communications.AddCommunications(newCommunication)
-        //            : await _communications.UpdateCommunications(newCommunication);
+                if (resultTga && resultSMS && resultShomoos && await _unitOfWork.CompleteAsync() > 0)
+                {
+                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    await SaveTracingForUserChange(Status.Update, pageNumber);
+                    return RedirectToAction("Index", "Home");
+                }
 
-        //        if (result && await _unitOfWork.CompleteAsync() > 0)
-        //        {
-        //            _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-        //            await SaveTracingForUserChange(Status.Update, pageNumber);
-        //            return RedirectToAction("Index", "Home");
-        //        }
-
-        //        _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-        //        return View(model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-        //        return View(model);
-        //    }
-        //}
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View(model);
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> GenerateQrCode()
@@ -160,8 +178,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 var response = await WhatsAppServicesExtension.LogoutAsync(user.CrMasUserInformationLessor);
                 if (response.IsSuccessStatusCode)
                 {
-                    await _technicalConnect.ChangeStatusOldWhatsupConnect(user.CrMasUserInformationLessor, user.CrMasUserInformationCode);
-                    await _technicalConnect.AddNewWhatsupConnect(user.CrMasUserInformationLessor);
+                    await _whatsupConnect.ChangeStatusOldWhatsupConnect(user.CrMasUserInformationLessor, user.CrMasUserInformationCode);
+                    await _whatsupConnect.AddNewWhatsupConnect(user.CrMasUserInformationLessor);
                     await _unitOfWork.CompleteAsync();
                     return Json(new { status = true, message = "تم قطع الاتصال بنجاح" });
                 }
@@ -216,8 +234,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                     var clientData = apiResponse.Data;
                     var lastConnect = await GetLastConnect(user.CrMasUserInformationLessor);
                     if (lastConnect != null && lastConnect.CrCasLessorWhatsupConnectStatus == "N") return Json(new { status = true, message = "2" });
-                    bool updateConnect = await _technicalConnect.ChangeStatusOldWhenDisconnectFromWhatsup(user.CrMasUserInformationLessor, clientData.LastLogOut);
-                    bool addNewConnect = await _technicalConnect.AddNewWhatsupConnect(user.CrMasUserInformationLessor);
+                    bool updateConnect = await _whatsupConnect.ChangeStatusOldWhenDisconnectFromWhatsup(user.CrMasUserInformationLessor, clientData.LastLogOut);
+                    bool addNewConnect = await _whatsupConnect.AddNewWhatsupConnect(user.CrMasUserInformationLessor);
                     if (updateConnect && addNewConnect && await _unitOfWork.CompleteAsync() > 0) return Json(new { status = true, message = "3" });
                     else return Json(new { status = false, message = "حدث خطأ اثناء حفظ البيانات" });
                 }
@@ -240,7 +258,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 if (lastConnect == null) return false;
                 if (lastConnect.CrCasLessorWhatsupConnectStatus == Status.Active) return true;
 
-                var updateClient = await _technicalConnect.UpdateWhatsupConnectInfo(
+                var updateClient = await _whatsupConnect.UpdateWhatsupConnectInfo(
                     lessorCode,
                     clientInfoWhatsup.Name,
                     clientInfoWhatsup.Mobile,

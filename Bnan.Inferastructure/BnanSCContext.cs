@@ -2335,10 +2335,6 @@ namespace Bnan.Core.Models
 
                 entity.Property(e => e.CrCasPriceCarBasicFreeAdditionalHours).HasColumnName("CR_Cas_Price_Car_Basic_Free_Additional_Hours");
 
-                entity.Property(e => e.CrCasPriceCarBasicFuelValue)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasColumnName("CR_Cas_Price_Car_Basic_Fuel_Value");
-
                 entity.Property(e => e.CrCasPriceCarBasicHourMax).HasColumnName("CR_Cas_Price_Car_Basic_Hour_Max");
 
                 entity.Property(e => e.CrCasPriceCarBasicIsAdditionalDriver).HasColumnName("CR_Cas_Price_Car_Basic_Is_Additional_Driver");

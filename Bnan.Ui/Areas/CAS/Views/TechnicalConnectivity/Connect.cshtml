@@ -2,6 +2,7 @@
 @using Bnan.Ui.ViewModels.CAS
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
+@model CommunicationsVM
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
@@ -48,8 +49,8 @@
                                                         <label for="CrMasLessorCommunicationsTgaAppId" class="form-label">
                                                             @localizer["ContentType"]
                                                         </label>
-                                                        @*                                                         <input type="text" class="form-control inputs english-input" asp-for="CrMasLessorCommunicationsTgaAppId" maxlength="100">
-                                                        *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <input type="text" class="form-control inputs english-input" asp-for="crCasLessorTgaConnect.CrMasLessorTgaConnectAppId" maxlength="100">
+                                                        @* <div class="invaild  techncal-connect-error   ">
                                                         <div class="invalid-feedback">
                                                         الحقل مطلوب
                                                         </div>
@@ -59,8 +60,8 @@
                                                         <label for="CrMasLessorCommunicationsTgaContentType" class="form-label">
                                                             @localizer["AppID"]
                                                         </label>
-                                                        @*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsTgaContentType" maxlength="100">
-                                                        *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <input type="text" class="form-control inputs  english-input" asp-for="crCasLessorTgaConnect.CrMasLessorTgaConnectContentType" maxlength="100">
+                                                                                                               @* <div class="invaild  techncal-connect-error   ">
                                                         <div class="invalid-feedback">
                                                         الحقل مطلوب
                                                         </div>
@@ -73,8 +74,8 @@
                                                         <label for="CrMasLessorCommunicationsTgaAppKey" class="form-label">
                                                             @localizer["AppKey"]
                                                         </label>
-                                                        @*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsTgaAppKey" maxlength="100">
-                                                        *@                                                        @*  <div class="invaild  techncal-connect-error   ">
+                                                        <input type="text" class="form-control inputs  english-input" asp-for="crCasLessorTgaConnect.CrMasLessorTgaConnectAppKey" maxlength="100">
+                                                        @*  <div class="invaild  techncal-connect-error   ">
                                                         <div class="invalid-feedback">
                                                         الحقل مطلوب
                                                         </div>
@@ -84,8 +85,8 @@
                                                         <label for="CrMasLessorCommunicationsTgaAuthorization" class="form-label">
                                                             @localizer["Authorization"]
                                                         </label>
-                                                        @*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsTgaAuthorization" maxlength="100">
-                                                        *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <input type="text" class="form-control inputs  english-input" asp-for="crCasLessorTgaConnect.CrMasLessorTgaConnectAuthorization" maxlength="100">
+                                                        @* <div class="invaild  techncal-connect-error   ">
                                                         <div class="invalid-feedback">
                                                         الحقل مطلوب
                                                         </div>
@@ -119,8 +120,8 @@
                                                         <label for="CrMasLessorCommunicationsShomoosContentType" class="form-label">
                                                             @localizer["ContentType"]
                                                         </label>
-                                                        @*                                                         <input type="text" class="form-control inputs english-input" asp-for="CrMasLessorCommunicationsShomoosContentType" maxlength="100">
-                                                        *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <input type="text" class="form-control inputs  english-input" asp-for="crCasLessorShomoosConnect.CrMasLessorShomoosConnectContentType" maxlength="100">
+                                                        @* <div class="invaild  techncal-connect-error   ">
                                                         <div class="invalid-feedback">
                                                         الحقل مطلوب
                                                         </div>
@@ -130,8 +131,8 @@
                                                         <label for="CrMasLessorCommunicationsShomoosAppId" class="form-label">
                                                             @localizer["AppID"]
                                                         </label>
-                                                        @*                                                         <input type="text" class="form-control inputs english-input" asp-for="CrMasLessorCommunicationsShomoosAppId" maxlength="100">
-                                                        *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <input type="text" class="form-control inputs  english-input" asp-for="crCasLessorShomoosConnect.CrMasLessorShomoosConnectAppId" maxlength="100">
+                                                        @* <div class="invaild  techncal-connect-error   ">
                                                         <div class="invalid-feedback">
                                                         الحقل مطلوب
                                                         </div>
@@ -144,8 +145,8 @@
                                                         <label for="CrMasLessorCommunicationsShomoosAppKey" class="form-label">
                                                             @localizer["AppKey"]
                                                         </label>
-                                                        @*                                                         <input type="text" class="form-control inputs english-input" asp-for="CrMasLessorCommunicationsShomoosAppKey" maxlength="100">
-                                                        *@
+                                                        <input type="text" class="form-control inputs  english-input" asp-for="crCasLessorShomoosConnect.CrMasLessorShomoosConnectAppKey" maxlength="100">
+
                                                         @*  <div class="invaild  techncal-connect-error   ">
                                                         <div class="invalid-feedback">
                                                         الحقل مطلوب
@@ -156,8 +157,8 @@
                                                         <label for="CrMasLessorCommunicationsShomoosAuthorization" class="form-label">
                                                             @localizer["Authorization"]
                                                         </label>
-                                                        @*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsShomoosAuthorization" maxlength="100">
-                                                        *@                                                        @*  <div class="invaild  techncal-connect-error">
+                                                        <input type="text" class="form-control inputs  english-input" asp-for="crCasLessorShomoosConnect.CrMasLessorShomoosConnectAuthorization" maxlength="100">
+                                                        @*  <div class="invaild  techncal-connect-error">
                                                         <div class="invalid-feedback">
                                                         الحقل مطلوب
                                                         </div>
@@ -191,8 +192,8 @@
                                                         <label for="CrMasLessorCommunicationsSmsName" class="form-label">
                                                             @localizer["UserNameSMS"]
                                                         </label>
-                                                        @*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsSmsName" maxlength="100">
-                                                        *@                                                        @*  <div class="invaild  techncal-connect-error   ">
+                                                        <input type="text" class="form-control inputs  english-input" asp-for="crCasLessorSmsConnect.CrMasLessorSmsConnectName" maxlength="100">
+                                                        @*  <div class="invaild  techncal-connect-error   ">
                                                         <div class="invalid-feedback">
                                                         الحقل مطلوب
                                                         </div>
@@ -202,8 +203,8 @@
                                                         <label for="CrMasLessorCommunicationsSmsApi" class="form-label">
                                                             @localizer["APIToken"]
                                                         </label>
-                                                        @*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsSmsApi" maxlength="100">
-                                                        *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <input type="text" class="form-control inputs  english-input" asp-for="crCasLessorSmsConnect.CrMasLessorSmsConnectAuthorization" maxlength="100">
+                                                        @* <div class="invaild  techncal-connect-error   ">
                                                         <div class="invalid-feedback">
                                                         الحقل مطلوب
                                                         </div>
@@ -545,12 +546,12 @@
             $('#QRArea').empty();
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').append(`
-                                                                                <div class="col-auto d-flex flex-column justify-content-center align-items-center">
-                                                                                    <div id="QRCode"></div>
-                                                                                    <br>
-                                                                                    <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
-                                                                                </div>
-                                                                            `);
+                                                                                        <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+                                                                                            <div id="QRCode"></div>
+                                                                                            <br>
+                                                                                            <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
+                                                                                        </div>
+                                                                                    `);
             $('#QRCode').qrcode(qr);
         }
 
@@ -558,33 +559,33 @@
             $('#QRArea').empty();
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').append(`
-                                                                                <div class="col-auto d-flex gap-4 flex-column justify-content-center align-items-center"
-                                                                                     style="cursor:pointer;" id="ExpiredQRMessage" onclick="fetchQrCode()">
-                                                                                    <img src="/MasSystem/images/NotScannedQR.svg" alt="Expired QR">
-                                                                                    <p>انتهت صلاحية الرمز اضغط لإعادة التحميل</p>
-                                                                                </div>
-                                                                            `);
+                                                                                        <div class="col-auto d-flex gap-4 flex-column justify-content-center align-items-center"
+                                                                                             style="cursor:pointer;" id="ExpiredQRMessage" onclick="fetchQrCode()">
+                                                                                            <img src="/MasSystem/images/NotScannedQR.svg" alt="Expired QR">
+                                                                                            <p>انتهت صلاحية الرمز اضغط لإعادة التحميل</p>
+                                                                                        </div>
+                                                                                    `);
         }
 
         function showQrButton() {
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                                                                                </button>
-                                                                            `);
+                                                                                        <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                                            <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                                        </button>
+                                                                                    `);
         }
 
         function showClientConnected(name, mobile, deviceType) {
             $("#data-check-whatsup").css("background-color", "green");
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                                <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
-                                                                                    <img src="/MasSystem/images/done.svg" style="width: 50px;">
-                                                                                    <p>أنت متصل بالواتساب</p>
-                                                                                    <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
-                                                                                </div>
-                                                                            `);
+                                                                                        <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
+                                                                                            <img src="/MasSystem/images/done.svg" style="width: 50px;">
+                                                                                            <p>أنت متصل بالواتساب</p>
+                                                                                            <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
+                                                                                        </div>
+                                                                                    `);
             $("#DeviceName-whatsapp").val(name);
             $("#DeviceNameType-whatsapp").val(deviceType);
             $("#phone2").val(mobile);
@@ -600,11 +601,11 @@
         function showFailureMessage(message) {
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                                                                                </button>
-                                                                                <p>${message}</p>
-                                                                            `);
+                                                                                        <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                                            <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                                        </button>
+                                                                                        <p>${message}</p>
+                                                                                    `);
         }
 
         function clearClientInfo() {
@@ -616,11 +617,11 @@
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                                        <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                                                                                </button>
-                                                                                <p>${message}</p>
-                                                                            `);
+                                                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                                            <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                                        </button>
+                                                                                        <p>${message}</p>
+                                                                                    `);
         }
 
 
