@@ -90,19 +90,19 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
             }
             else ViewBag.radio = "A";
 
-            var all_status_sms = await _unitOfWork.CrMasLessorCommunication.FindAllWithSelectAsNoTrackingAsync(
-          predicate: null,
-          selectProjection: query => query.Select(x => new lessor_SMS_VM
-          {
-              lessor_Code = x.CrMasLessorCommunicationsLessorCode.Trim(),
-              sms_Name = x.CrMasLessorCommunicationsSmsName,
-              sms_Api = x.CrMasLessorCommunicationsSmsApi,
-              sms_Status = x.CrMasLessorCommunicationsSmsStatus,
-          }));
+          //  var all_status_sms = await _unitOfWork.CrMasLessorCommunication.FindAllWithSelectAsNoTrackingAsync(
+          //predicate: null,
+          //selectProjection: query => query.Select(x => new lessor_SMS_VM
+          //{
+          //    lessor_Code = x.CrMasLessorCommunicationsLessorCode.Trim(),
+          //    sms_Name = x.CrMasLessorCommunicationsSmsName,
+          //    sms_Api = x.CrMasLessorCommunicationsSmsApi,
+          //    sms_Status = x.CrMasLessorCommunicationsSmsStatus,
+          //}));
 
             Mas_CompanyMessages_VM VM = new Mas_CompanyMessages_VM();
             VM.all_lessors = lessors;
-            VM.all_status_sms = all_status_sms;
+            //VM.all_status_sms = all_status_sms;
             return View(VM);
         }
 

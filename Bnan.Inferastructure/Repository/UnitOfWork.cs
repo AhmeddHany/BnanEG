@@ -13,7 +13,6 @@ namespace Bnan.Inferastructure.Repository
         public IGenric<CrMasUserLogin> CrMasUserLogins { get; private set; }
         public IGenric<CrMasSysSystem> CrMasSysSystems { get; private set; }
         public IGenric<CrMasLessorInformation> CrMasLessorInformation { get; private set; }
-        public IGenric<CrMasLessorCommunication> CrMasLessorCommunication { get; private set; }
         public IGenric<CrMasSysProcedure> CrMasSysProcedure { get; private set; }
         public IGenric<CrMasUserMainValidation> CrMasUserMainValidations { get; private set; }
         public IGenric<CrMasUserSubValidation> CrMasUserSubValidations { get; private set; }
@@ -119,7 +118,6 @@ namespace Bnan.Inferastructure.Repository
             CrMasUserLogins = new BaseRepository<CrMasUserLogin>(_context);
             CrMasSysSystems = new BaseRepository<CrMasSysSystem>(_context);
             CrMasLessorInformation = new BaseRepository<CrMasLessorInformation>(_context);
-            CrMasLessorCommunication = new BaseRepository<CrMasLessorCommunication>(_context);
             CrMasSysProcedure = new BaseRepository<CrMasSysProcedure>(_context);
             CrMasUserMainValidations = new BaseRepository<CrMasUserMainValidation>(_context);
             CrMasUserSubValidations = new BaseRepository<CrMasUserSubValidation>(_context);
