@@ -125,10 +125,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             }
             if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
             {
-                var start_Date = DateTime.Parse(start).AddDays(-1);
-                var end_Date = DateTime.Parse(end);
-                VM.start_Date = start_Date.AddDays(1).ToString("yyyy-MM-dd");
-                VM.end_Date = end_Date.ToString("yyyy-MM-dd");
+                var start_Date = DateTime.Parse(start);
+                var end_Date = DateTime.Parse(end).AddDays(1);
+                VM.start_Date = start_Date.ToString("yyyy-MM-dd");
+                VM.end_Date = end_Date.AddDays(-1).ToString("yyyy-MM-dd");
 
                 await SetPageTitleAsync(Status.Update, pageNumber);
                 var thisRenterBasicContract = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
@@ -214,7 +214,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                         summition.contract_Values_Total += single.CrCasRenterContractBasicExpectedTotal;
                     }
                 }
-
+                if (thisRenterBasicContract.Count > 0)
+                {
+                    thisRenterBasicContract = thisRenterBasicContract.OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+                }
                 VM.CrCasRenterContractBasicCarSerailNo = id;
                 VM.all_contractBasic = thisRenterBasicContract;
                 VM.all_Renters = all_renters;
@@ -239,7 +242,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var listmaxDate = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
-                    predicate: x=> x.CrCasRenterContractBasicStatus != Status.Extension,
+                    predicate: x=> x.CrCasRenterContractBasicCarSerailNo == id && x.CrCasRenterContractBasicStatus != Status.Extension,
                     selectProjection: query => query.Select(x => new Date_ReportActiveContractVM
                     {
                         dates = x.CrCasRenterContractBasicExpectedStartDate,
@@ -252,19 +255,22 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             }
 
             var maxDate = listmaxDate.Max(x => x.dates)?.ToString("yyyy-MM-dd");
-            var minDate = listmaxDate.Min(x => x.dates)?.ToString("yyyy-MM-dd");
+            //var minDate = listmaxDate.Min(x => x.dates)?.ToString("yyyy-MM-dd");
 
-            var end = DateTime.Now;
-            var start = DateTime.Now.AddMonths(-1).AddDays(-1);
+            var end = DateTime.Now.AddDays(1);
+            var start = DateTime.Now.AddMonths(-1);
             if (maxDate != null)
             {
-                end = DateTime.Parse(maxDate);
-                start = DateTime.Parse(minDate);
+                end = DateTime.Parse(maxDate).Date.AddDays(1);
+                //start = DateTime.Parse(minDate);
+                start = DateTime.Parse(maxDate).Date.AddMonths(-1);
+
             }
 
             var thisRenterBasicContract = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                 predicate: x => x.CrCasRenterContractBasicCarSerailNo == id
+                && x.CrCasRenterContractBasicExpectedStartDate > start && x.CrCasRenterContractBasicExpectedStartDate <= end
                 && x.CrCasRenterContractBasicStatus != Status.Extension
                 ,
                 selectProjection: query => query.Select(x => new ReportCarContractVM
@@ -352,13 +358,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "ReportCarContract");
             }
+            if (thisRenterBasicContract.Count > 0)
+            {
+                thisRenterBasicContract = thisRenterBasicContract.OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+            }
             VM.CrCasRenterContractBasicCarSerailNo = id;
             VM.all_contractBasic = thisRenterBasicContract;
             VM.all_Renters = all_renters;
             VM.all_Invoices = all_Invoices;
             VM.summition = summition;
-            VM.start_Date = start.AddDays(1).ToString("yyyy-MM-dd");
-            VM.end_Date = end.ToString("yyyy-MM-dd");
+            VM.start_Date = start.ToString("yyyy-MM-dd");
+            VM.end_Date = end.AddDays(-1).ToString("yyyy-MM-dd");
             return View(VM);
         }
 

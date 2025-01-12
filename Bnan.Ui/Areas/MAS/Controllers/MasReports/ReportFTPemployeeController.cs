@@ -169,10 +169,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             }
             if (!string.IsNullOrEmpty(status) && !string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
             {
-                var start_Date = DateTime.Parse(start).AddDays(-1);
-                var end_Date = DateTime.Parse(end);
-                VM.start_Date = start_Date.AddDays(1).ToString("yyyy-MM-dd");
-                VM.end_Date = end_Date.ToString("yyyy-MM-dd");
+                var start_Date = DateTime.Parse(start);
+                var end_Date = DateTime.Parse(end).AddDays(1);
+                VM.start_Date = start_Date.ToString("yyyy-MM-dd");
+                VM.end_Date = end_Date.AddDays(-1).ToString("yyyy-MM-dd");
 
                 await SetPageTitleAsync(Status.Update, pageNumber);
                 var all_Recipts = await _unitOfWork.CrCasAccountReceipt.FindAllWithSelectAsNoTrackingAsync(
@@ -250,7 +250,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                         nameEn = x.CrMasLessorInformationEnShortName,
                     })
                     );
-
+                if (all_Recipts.Count > 0)
+                {
+                    all_Recipts = all_Recipts.OrderBy(x => x.CrCasAccountReceiptDate).ToList();
+                }
                 VM.UserId = id;
                 VM.ThisUserData = ThisUserData?.FirstOrDefault();
                 VM.summition = summition;
@@ -273,27 +276,28 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var listmaxDate = await _unitOfWork.CrCasAccountReceipt.FindAllWithSelectAsNoTrackingAsync(
-                    predicate: null,
+                    predicate: x=> x.CrCasAccountReceiptUser == id,
                     selectProjection: query => query.Select(x => new Date_ReportActiveContractVM
                     {
                         dates = x.CrCasAccountReceiptDate,
                     }));
 
-            if (listmaxDate?.Count == 0 || string.IsNullOrEmpty(id))
+            //if (listmaxDate?.Count == 0 || string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id))
             {
                 _toastNotification.AddErrorToastMessage(_localizer["NoDataToShow"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
 
             var maxDate = listmaxDate.Max(x => x.dates)?.ToString("yyyy-MM-dd");
-            var minDate = listmaxDate.Min(x => x.dates)?.ToString("yyyy-MM-dd");
+            //var minDate = listmaxDate.Min(x => x.dates)?.ToString("yyyy-MM-dd");
 
-            var end = DateTime.Now;
-            var start = DateTime.Now.AddMonths(-1).AddDays(-1);
+            var end = DateTime.Now.AddDays(1);
+            var start = DateTime.Now.AddMonths(-1);
             if (maxDate != null)
             {
-                end = DateTime.Parse(maxDate);
-                start = DateTime.Parse(maxDate).AddMonths(-1).AddDays(-1);
+                end = DateTime.Parse(maxDate).AddDays(1).Date;
+                start = DateTime.Parse(maxDate).AddMonths(-1).Date;
             }
 
             var all_Recipts = await _unitOfWork.CrCasAccountReceipt.FindAllWithSelectAsNoTrackingAsync(
@@ -364,13 +368,17 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "ReportFTPemployee");
             }
+            if (all_Recipts.Count > 0 )
+            {
+                all_Recipts = all_Recipts.OrderBy(x=>x.CrCasAccountReceiptDate).ToList();
+            }
             VM.UserId = id;
             VM.ThisUserData = ThisUserData?.FirstOrDefault();
             VM.summition = summition;
             VM.all_Recipts = all_Recipts;
             VM.all_lessors = all_lessors;
-            VM.start_Date = start.AddDays(1).ToString("yyyy-MM-dd");
-            VM.end_Date = end.ToString("yyyy-MM-dd");
+            VM.start_Date = start.ToString("yyyy-MM-dd");
+            VM.end_Date = end.AddDays(-1).ToString("yyyy-MM-dd");
             return View(VM);
         }
 

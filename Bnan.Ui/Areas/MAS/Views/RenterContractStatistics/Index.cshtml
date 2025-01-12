@@ -9,7 +9,7 @@
 @using Microsoft.EntityFrameworkCore;
 @using Microsoft.Extensions.Options;
 @using System.Globalization;
-@model CasStatisticLayoutMAS_VM
+@model MasStatistics_ContractsVM
 @inject UserManager<CrMasUserInformation> userManager
 @inject SignInManager<CrMasUserInformation> signinManager
 @inject IViewLocalizer localizer
@@ -17,327 +17,95 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["RenterContractStatistics Data"];
-    ViewData["Page-Hint"] = @localizer["RenterContractStatistics Hint"];
+    ViewData["Page-title"] = @localizer["ContractStatistics Data"];
+    ViewData["Page-Hint"] = @localizer["ContractStatistics Hint"];
 }
-    
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <div class="row g-3 my-3">
+                    <div class="col-md-12">
+                        <input type="text" asp-for="thisFunctionRunned" id="thisFunctionRunned" hidden />
+                        <h3>@localizer["RenterContractStatistics_Statistics_Contracts_n"]</h3>
+                    </div>
+                    <div class="col-md-12 ">
+                        <p class="d-inline-block headLines">@localizer["ContractStatistics_count_Contracts"] : </p>
+                        <p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("0") ?? "0") @localizer["ContractStatistics_Contract"]</p>
 
-    <style>
-        .noti-icon-badge {
-            display: inline-block;
-            position: absolute;
-            top: 22px;
-            right: 6px;
-            border-radius: 50%;
-            height: 7px;
-            width: 7px;
-            background-color: #fa5c7c;
-        }
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-lg-8">
+                            <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
+                                <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                    <label for="start-date">@localizer["From_n"]</label>
+                                    <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required/>
+                                </div>
+                                <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                    <label for="end-date">@localizer["To_n"]</label>
+                                    <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required/>
+                                </div>
 
-        .alert {
-            color: #fff;
-            background-color: #FF992E;
-            flex-direction: row-reverse;
-            font-size: .7rem;
-            font-weight: 600;
-            margin-bottom: 0;
-            border: 1px solid #4e73df;
-            padding: 0.5rem 0.6rem;
-        }
-
-        .dropdown-item-custom {
-            display: flex;
-            flex-direction: row-reverse;
-            /*padding-bottom: 0.5rem;*/
-            border-bottom: 1px solid #e3e6f0;
-            border-color:#74D9EB;
-            font-size: .9rem;
-            flex-direction: row-reverse;
-        }
-        
-        .ended-Docs-Num {
-            color: red;
-        }
-
-        .Not-ended-Docs-Num {
-            color: #FF992E;
-        }
-    </style>
-
-
-    @*/////////////////////////////*@
-<style>
-    body {
-        overflow: hidden
-    }
-
-    @@media (max-width: 600px) {
-        #basic-datatable1_wrapper .row:first-child > div {
-            text-align: left;
-            overflow: scroll;
-            text-overflow: ellipsis;
-        }
-
-            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
-                text-align: right;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-    }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f9f9f9;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-
-    #_Nc {
-        text-align: center;
-    }
-
-</style>
-
-
-
-<style>
-    .wrapper {
-        margin-bottom: 60px;
-        overflow: hidden;
-        background-image: url("~/Pictures/bg.jpg") !important;
-    }
-
-    .table-bordered td,
-    .table-bordered th {
-        border: none;
-    }
-</style>
-
-@if (requestCulture.RequestCulture.UICulture.Name == "en-US")
-{
-    <style>
-            .arrow {
-            background: linear-gradient( -125deg, transparent 22px, #0488C7 22px) top left, linear-gradient( -55deg, transparent 22px, #0488C7 22px ) bottom left;
-            background-size: 100% 50%;
-                background-repeat: no-repeat;
-            }
-
-        .btn1 {
-            margin: 8px auto;
-            flex-shrink: 0;
-            width: 660px;
-            height: 64px;
-            text-align: left;
-            padding-left: 100px;
-        }
-    </style>
-    <style>
-        .arrow:hover {
-            background: linear-gradient( -125deg, transparent 22px, #04AA6D 22px ) top left, linear-gradient( -55deg, transparent 22px, #04AA6D 22px) bottom left;
-            background-size: 100% 50%;
-            background-repeat: no-repeat;
-        }
-
-        .arrow:focus {
-            background: linear-gradient( -125deg, transparent 22px, #04AA6D 22px ) top left, linear-gradient( -55deg, transparent 22px, #04AA6D 22px) bottom left;
-            background-size: 100% 50%;
-            background-repeat: no-repeat;
-        }
-
-        #Date_cusor1, #Date_cusor2 {
-            margin-right: 13px;
-            direction: rtl;
-        }
-    </style>
-
-    }
-    else
-    {
-    <style>
-        .arrow {
-            background: linear-gradient( 125deg, transparent 22px, #0488C7 22px ) top left, linear-gradient( 55deg, transparent 22px, #0488C7 22px) bottom left;
-            background-size: 100% 50%;
-            background-repeat: no-repeat;  
-        }
-
-        .btn1 {
-            margin: 8px auto;
-            flex-shrink: 0;
-            width: 660px;
-            height: 64px;
-            text-align: right;
-            padding-right: 100px;
-        }
-    </style>
-    <style>
-        .arrow:hover {
-            background: linear-gradient( 125deg, transparent 22px, #04AA6D 22px ) top left, linear-gradient( 55deg, transparent 22px, #04AA6D 22px) bottom left;
-            background-size: 100% 50%;
-            background-repeat: no-repeat;
-        }
-
-        .arrow:focus {
-            background: linear-gradient( 125deg, transparent 22px, #04AA6D 22px ) top left, linear-gradient( 55deg, transparent 22px, #04AA6D 22px) bottom left;
-            background-size: 100% 50%;
-            background-repeat: no-repeat;
-        }
-
-        #Date_cusor1, #Date_cusor2 {
-            margin-left: 13px;
-            direction: ltr;
-        }
-    </style>
-    }
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-@*<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>*@
-@*<script type="text/javascript" src="jscript/graph.js"></script>*@
-
-<style>
-    .legend-item {
-        font-size: .7rem;
-        color: #000000;
-    }
-</style>
-
-
-<div class="sub-container" style="margin-top:-20px;">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div >
-                <div >
-                    <a type="button" class="btn btn-danger" title="@localizer["Back"]" asp-area="MAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
-
-
-
-                <div class="row" id="second-row-of-charts" style="display:flex;justify-content:0;justify-content: space-between;">
-
-
-                    <div class="" style="width:480px;">
-
-            <div style="margin-top:20px;">
-                                @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
-                                {
-                                    <p class="form-label">@localizer["ContractStatistics_ContractCount"] <span style="margin-inline-start:15px;">@ViewBag.count_Renters</span></p>
-
-                                }
-                                else
-                                {
-                                    <p class="form-label">@localizer["ContractStatistics_ContractCount"] <span style="margin-inline-start:15px;">@ViewBag.count_Renters</span></p>
-
-                                }
+                                <button type="button" class="btn btn-standard" id="btn_view" name="btn_view" onclick="btn_view_clicked()">@localizer["View_n"]</button>
                             </div>
-
-                <div style="display:flex;justify-content:start;gap:20px;">
-
-                    <div class="Branch" style="display:flex;gap:10px;margin-top:10px;height:40px">
-                        @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
-                        {
-                            <label for="brunch_name" style="padding-top:8px;width:75px;">@localizer["Company"]</label>
-                            @*<select class="text-right form-select" id="SelectedType" onchange="getSelectedType(this)"  style="width:150px;border-color:#74D9EB;border-radius:5px;">*@
-                            <select class="text-right form-select" id="SelectedCompany" onchange="getSelectedType('Companychanged')" style="width:150px;">
-                                @foreach (var single in Model.All_Lessors)
-                                {
-                                    <option id="@single.CrMasLessorInformationCode" value="@single.CrMasLessorInformationCode">@single.CrMasLessorInformationEnShortName</option>
-
-                                }
-                            </select>
-                        }
-                        else
-                        {
-                            <label for="brunch_name" style="padding-top:8px;width:45px;">@localizer["Company"]</label>
-                            @*<select class="text-right form-select" id="SelectedType" onchange="getSelectedType(this)"  style="width:150px;border-color:#74D9EB;border-radius:5px;">*@
-                            <select class="text-right form-select" id="SelectedCompany" onchange="getSelectedType('Companychanged')" style="width:130px;">
-                                @foreach (var single in Model.All_Lessors)
-                                {
-                                    <option id="@single.CrMasLessorInformationCode" value="@single.CrMasLessorInformationCode">@single.CrMasLessorInformationArShortName</option>
-
-                                }
-                            </select>
-                        }
-
+                        </div>
                     </div>
+                    <div class="col-md-12">
+                        <div class="row mt-3 g-2 justify-content-between">
+                            <div class="col-lg-3">
+                                <p class="headLines">@localizer["RenterStatistics_Type_n"]</p>
+                                <div class="row">
 
-                    <div class="Branch" style="display:flex;gap:10px;margin-top:10px;height:40pxmargin-top:10px">
-                        @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
-                        {
-                            <label for="brunch_name" style="padding-top:8px;width:95px;">@localizer["CarStatistics_Type"]</label>
-                        }
-                        else
-                        {
-                            <label for="brunch_name" style="padding-top:8px;width:140px;">@localizer["CarStatistics_Type"]</label>
-                        }
-                        <select class="text-right form-select" id="SelectedType" onchange="getSelectedType(this)" style="width:135px;">
-                            <option id="0" selected="selected" value="0">@localizer["RenterStatistics_Nationality"]</option>
-                            <option id="1" value="1">@localizer["RenterStatistics_MemperShip"]</option>
-                            <option id="2" value="2">@localizer["RenterStatistics_profession"]</option>
-                            <option id="3" value="3">@localizer["RenterStatistics_Rigon"]</option>
-                            <option id="4" value="4">@localizer["RenterStatistics_City"]</option>
-                            <option id="5" value="5">@localizer["RenterStatistics_Age"]</option>
-                        </select>                                
-                    </div>
-                </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn active-stat-btn"
+                                                onclick="handleButtonClick(this, NationalityChart)">
+                                            @localizer["RenterStatistics_Nationality"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, ProfessionChart)">
+                                            @localizer["RenterStatistics_profession"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, AreaChart)">
+                                            @localizer["RenterStatistics_Rigon"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, CityChart)">
+                                            @localizer["RenterStatistics_City"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, AgeChart)">
+                                            @localizer["RenterStatistics_Age"]
+                                        </button>
+                                    </div>
 
 
-                <div class="" style="display:flex;gap: 15px;-webkit-flex-item-align:center;height:45px;margin-top:5px">
+                                </div>
+                            </div>
+                            <div class="col-lg-9 text-center charts-border">
+                                <canvas id="myChart"></canvas>
 
-                    <!-- Autoclose -->
-                    <div style="width:30px;margin-top:7px;">
-                        <label class="form-label " style="">@localizer["StartDate_from"]</label>
-                    </div>
-                    @*<div class="dateRelative" style="width:180px;">
-                    <input type="date" class="form-control dateInput" max="2024-02-15" value="@ViewBag.StartDate" id="startDateInput" />
-                    </div>*@
-                    <div class="dateRelative " style="display:grid;width:220px;height:40px;">
-                        <input type="text" class="form-control " id="startDateInput" name="startDateInput" style="grid-column: 1;grid-row: 1;width:220px;" />
-                        <i class="dripicons-calendar" id="Date_cusor1" style="cursor:pointer; grid-column: 1;grid-row: 1;  margin-top:10px;"></i>
-                    </div>
+                            </div>
+                        </div>
 
-                    <!-- Autoclose -->
-                    <div style="width:50px;margin-top:7px;">
-                        <label class="form-label p-0 mt-0">@localizer["EndDate_to"]</label>
-                    </div>
-                    @*                    <div class="dateRelative" style="width:180px;">
-                    <input type="date" class="form-control dateInput" max="2024-02-15" value="@ViewBag.EndDate" id="endDateInput" style="background-color:white" />
-                    </div>*@
-                    <div class="dateRelative " style="display:grid;width:185px;height:40px;">
-                        <input type="text" class="form-control " id="endDateInput" name="endDateInput" style="grid-column: 1;grid-row: 1;width:185px;" />
-                        <i class="dripicons-calendar" id="Date_cusor2" style="cursor:pointer; grid-column: 1;grid-row: 1;  margin-top:10px;"></i>
-                    </div>
-                    <div style="width:50px;">
-                        <a class="btn btn-primary" onclick="GetReportFitlerDate('All')">
-                            <i class="mdi mdi-search-web"></i>
-                        </a>
                     </div>
                 </div>
 
-                    @*<div class="partial" style="width:480px;margin-top:10px;">
-                        <partial name="_PartialDatatable" />
-                    </div>*@
-
-                </div>
-
-
-
-                <div class="partial row" style="width:1040px;margin-top:125px">
-                    <partial name="_PartialChartData" />
-                </div>
-
-
-        </div>
             </div>
         </div>
+        <a href="~/MasSystem/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
+           class="new-Page-icon"><img src="~/MasSystem/images/back to main.svg" alt="man"></a>
     </div>
 </div>
-
 
 
 
@@ -345,236 +113,623 @@
 @section Scripts {
 
 
-        @*Get AccountBank Using filter*@
-        <script>
-            $(document).ready(function () {
-                var today = new Date();
-                var startDate = new Date();
-                var EndDate = new Date();
-                startDate.setDate(today.getDate() - 30);
+    <!--- @*<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>*@ --->
+    <script src="~/MasSystem/js/chart.js"></script>
+            
+<!---@*    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
 
-                var StartformattedDate = new Date('@ViewBag.StartDate');
-
-                var EndformattedDate = new Date('@ViewBag.EndDate');
-
-                var x_date = document.getElementById("startDateInput").value;
-                var First_formattedDate = new Date(x_date);
-
-
-                if (!StartformattedDate || StartformattedDate === "") {
-                    StartformattedDate = today; // Set date to today if it's empty or null
-                }
-                if (!EndformattedDate || EndformattedDate === "") {
-                    EndformattedDate = today; // Set date to today if it's empty or null
-                }
-
-
-
-
-                $("#startDateInput").datepicker({
-                    dateFormat: 'yy/mm/dd',
-                    defaultDate: StartformattedDate, // Set the minimum date to today
-                    maxDate: today,
-                }).datepicker("widget").addClass("datepicker-widget");
-                $("#startDateInput").datepicker("setDate", StartformattedDate);
-                $("#startDateInput").click(function () {
-                    $(this).datepicker("show");
-                });
-
-                var First_formattedDate = $("#startDateInput").val();
-                console.log(First_formattedDate);
-
-
-                $("#endDateInput").datepicker({
-                    dateFormat: 'yy/mm/dd',
-                    defaultDate: EndformattedDate,// Set the minimum date to today
-                    minDate: First_formattedDate,
-                    maxDate: today,
-                }).datepicker("widget").addClass("datepicker-widget");
-                $("#endDateInput").datepicker("setDate", EndformattedDate);
-                $("#endDateInput").click(function () {
-                    $(this).datepicker("show");
-                });
-
-                //on Change StartDate set min of lastDate
-                $('#startDateInput').datepicker().on('change', function (ev) {
-                    var firstDate1 = $(this).val();
-                    //alert(firstDate1);
-                    $('#endDateInput').datepicker('option', {
-                        minDate: new Date(firstDate1)
-                    });
-                });
-
-
-                $("#Date_cusor1").click(function () {
-                    $(this).prevAll('input').datepicker("show");
-                });
-
-                $("#Date_cusor2").click(function () {
-                    $(this).prevAll('input').datepicker("show");
-                });
-
-            });
-        </script>
-
-    <!--Charts-->
-
-        <script>
-            function GetAllByType(Type, listDrop, singleNo, startDate, endDate, company) {
-                //console.log("Mazzen1")
-            if (Type != null && Type != "" & Type != undefined) {
-                //console.log("Mazzen2")
-                    location.href = '@Url.Action("GetAllByType", "RenterContractStatistics")?Type=' + Type + '&listDrop=' + listDrop + '&singleNo=' + singleNo + '&startDate=' + startDate + '&endDate=' + endDate + '&company_now=' + company;
-                }
-        }
-    </script>
-  
-
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="~/MasSystem/scripts/Scripts.js"></script>>*@--->
     <script>
-        //onchange="getSelectedType(this)"
-        function getSelectedType(selectObject) {
-                //var single = selectObject.value;
-                var single = $('#SelectedType').val();
-                var type = "";
-            switch (single) {
-                    case "0":
-                        type = "Nationality";
-                        break;
-                    case "1":
-                        type = "MemperShip";
-                        break;
-                    case "2":
-                        type = "profession";
-                        break;
-                    case "3":
-                        type = "Rigon";
-                        break;
-                    case "4":
-                        type = "City";
-                        break;
-                    case "5":
-                        type = "Age";
-                        break;
-                    //default:
-                    //    type = "Nationality";
-            }
-                var listDrop = "@ViewBag.concate_DropDown";
-                console.log(single);
 
-                var startDate = $("#startDateInput").val();
-                var endDate = $("#endDateInput").val();
-
-                console.log(startDate)
-                console.log(endDate)
-
-                var listDrop = "@ViewBag.concate_DropDown";
-                //console.log(single);
-                var company = $('#SelectedCompany').val();
-                console.log(company);
-                if (selectObject == "Companychanged") 
-                {
-                    GetAllByType(type, listDrop, single, startDate, endDate, company);
-                }
-                else 
-                {
-                    GetAllByType(type, listDrop, single, startDate, endDate, "-1" + company);
-                }
-
-            };
-    </script>
-
-
-
-    <script>
         $(document).ready(function () {
-        var string ="@ViewBag.concate_DropDown";
-        const usingSpread = [...string];
-        const usingArrayFrom = Array.from(string);
-        console.log(usingArrayFrom);
+        $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
+        $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
 
-        var list_dropdown = ['0','1','2','3','4','5'];
-
-        list_dropdown.forEach(myFunction_hide);
-
-        usingArrayFrom.forEach(myFunction_show);
- 
-        function myFunction_hide(item, index) {
-          var xitemId = "#"+item;
-          console.log(xitemId);
-          document.getElementById(item).style.display='none';
-        }
-
-        function myFunction_show(item, index) {
-          var xitemId = "#"+item;
-          console.log(xitemId);
-          document.getElementById(item).style.display='inline';
-        }
-
-        var single = "@ViewBag.singleType";
-        $('#SelectedType').val(single).change();
-        console.log(single);
-        console.log(usingArrayFrom.indexOf(single));
+        //$(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
 
         });
     </script>
 
+    <script>
+        function btn_view_clicked(){
+            var thisFunctionNow = $("#thisFunctionRunned").val();
 
-        <script>
-            //get AccountBank By Status function
-            function GetReportFitlerDate() {
-                var selectObject = document.getElementById("SelectedType");
-                var value = selectObject.value;
-                //var text = e.options[e.selectedIndex].text;
-                //var single = selectObject.value;
-                var single = $('#SelectedType').val();
-                var type = "";
-                switch (single) {
-                    case "0":
-                        type = "Nationality";
-                        break;
-                    case "1":
-                        type = "MemperShip";
-                        break;
-                    case "2":
-                        type = "profession";
-                        break;
-                    case "3":
-                        type = "Rigon";
-                        break;
-                    case "4":
-                        type = "City";
-                        break;
-                    case "5":
-                        type = "Age";
-                        break;
-                    //default:
-                    //    type = "Nationality";
+            if (thisFunctionNow == "NationalityChart") {
+                NationalityChart();
+            }
+            else if (thisFunctionNow == "ProfessionChart") {
+                ProfessionChart();
+            }
+            else if (thisFunctionNow == "AreaChart") {
+                AreaChart();
+            }
+            else if (thisFunctionNow == "CityChart") {
+                CityChart();
+            }
+            else if (thisFunctionNow == "AgeChart") {
+                AgeChart();
+            }
+           
+            
+        }
+        window.addEventListener('load', function () {
+            NationalityChart()
+            $("#thisFunctionRunned").val("NationalityChart");
+        })
+    </script>
+
+    <script>
+        async function GetAllBy_Nationality() {  // -- 1
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Nationality", "RenterContractStatistics", new { Area = "MAS" })", // -- 2
+                    success: function (response) {
+                        //$(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        $("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("NationalityChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Profession() {  // -- 1
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Profession", "RenterContractStatistics", new { Area = "MAS" })", // -- 2
+                    success: function (response) {
+                        //$(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        $("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("ProfessionChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Region() {  // -- 1
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Region", "RenterContractStatistics", new { Area = "MAS" })", // -- 2
+                    success: function (response) {
+                        //$(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        $("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("AreaChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_City() {  // -- 1
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_City", "RenterContractStatistics", new { Area = "MAS" })", // -- 2
+                    success: function (response) {
+                        //$(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        $("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("CityChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Age() {  // -- 1
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Age", "RenterContractStatistics", new { Area = "MAS" })", // -- 2
+                    success: function (response) {
+                        //$(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        $("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("AgeChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        
+        let chartInstance = null;
+
+        function handleButtonClick(button, chartFunction) {
+            document.querySelectorAll('.stat-btn').forEach(btn => btn.classList.remove('active-stat-btn'));
+
+            button.classList.add('active-stat-btn');
+
+            chartFunction();
+        }
+        function createChart(chartType, chartData, chartOptions) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: chartType,
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+
+        async function NationalityChart() {
+            let list_ChartData = await GetAllBy_Nationality();
+            //console.log(list_ChartData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = list_ChartData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('polarArea', {
+                //labels: ['سعودي', 'مصري', 'أخرى'],
+                labels: labelsBranch,
+                datasets: [{
+                    //data: [345, 71, 169],
+                    data: dataValues,
+                    backgroundColor: [
+                        "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(75, 192, 192, 0.6)", "rgba(255, 206, 86, 0.6)",
+                        '#1A31F0', '#145656', '#F5A623', '#9B59B6', '#E74C3C', '#3498DB', '#2ECC71', '#F39C12',
+                        '#8E44AD', '#16A085', '#D35400', '#1ABC9C', '#9C27B0', '#FF5722', '#00BFFF',
+
+                    ],
+                    borderColor: [
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                scales: {
+                    r: {
+                        pointLabels: {
+                            display: false, // إخفاء النقاط التي تُعرض عليها التسميات داخل المحاور القطبية
+                            //display: true,
+                            centerPointLabels: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        //display: false,  // إخفاء التسمية الخاصة بالصورة داخلياً
+                        position: 'left',
+                        labels: {
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["RenterContract_inChart_Nationality"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
                 }
-                var listDrop = "@ViewBag.concate_DropDown";
-                console.log(single);
+            });
+        }
 
-                var startDate = $("#startDateInput").val();
-                var endDate = $("#endDateInput").val();
+        async function ProfessionChart() {
+            let list_ChartData = await GetAllBy_Profession();
 
-                console.log(startDate)
-                console.log(endDate)
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
 
-                var listDrop = "@ViewBag.concate_DropDown";
-                //console.log(single);
-                var company = $('#SelectedCompany').val();
-                console.log(company);
-                if (selectObject == "Companychanged") {
-                    GetAllByType(type, listDrop, single, startDate, endDate, company);
-                }
-                else {
-                    GetAllByType(type, listDrop, single, startDate, endDate, "-1" + company);
-                }
-
-
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(list_ChartData);
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = list_ChartData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = list_ChartData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
             }
 
 
-        </script>
+            createChart('scatter', {
+                datasets: labelsBranch2,
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["RenterContract_inChart_Profession"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        //labels: ['أقل من 20', '25 - 21', '30 - 26', '35 - 31', '40 - 36', '50 - 41', '60 - 51', 'أعلى من 60'],
+                        labels: labelsBranch,
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+
+
+        }
+        async function AreaChart() {
+            let list_ChartData = await GetAllBy_Region();
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(list_ChartData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = list_ChartData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('bar', {
+                //labels: ['الشرقية', 'الرياض ', 'مكة المكرمة', 'القصيم ', 'المدينة المنورة', 'غير متوفرة', 'أخرى'],
+                labels: labelsBranch,
+                datasets: [{
+                    barThickness: 40,
+                    minBarLength: 2,
+                    //data: [15, 20, 30, 60, 90, 10, 4],
+                    data: dataValues,
+                    backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99', '#F1F2F3'],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+                        '#C9CBCF',
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["RenterContract_inChart_Region"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        async function CityChart() {
+            let list_ChartData = await GetAllBy_City();
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(list_ChartData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = list_ChartData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('bar', {
+                //labels: ['الدمام', 'الرياض', 'مكة المكرمة', 'بريدة', 'المدينة المنورة', 'أخرى'],
+                labels: labelsBranch,
+                datasets: [{
+                    barThickness: 40,
+                    minBarLength: 2,
+                    //data: [15, 20, 30, 60, 90, 10],
+                    data: dataValues,
+                    backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99'],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["RenterContract_inChart_City"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        async function AgeChart() {
+            let list_ChartData = await GetAllBy_Age();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listMasChartdataVM));*@
+            //console.log(list_ChartData);
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = list_ChartData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = list_ChartData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            createChart('scatter', {
+                datasets: labelsBranch2
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["RenterContract_inChart_Age"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        //labels: ['أقل من 20', '25 - 21', '30 - 26', '35 - 31', '40 - 36', '50 - 41', '60 - 51', 'أعلى من 60'],
+                        labels: labelsBranch,
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+
+
+    </script>
     
 }
 

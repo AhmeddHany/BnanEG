@@ -78,12 +78,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
 
             var maxDate = listmaxDate.Max(x => x.dates)?.ToString("yyyy-MM-dd");
 
-            var end = DateTime.Now;
-            var start = DateTime.Now.AddMonths(-1).AddDays(-1);
+            var end = DateTime.Now.AddDays(1);
+            var start = DateTime.Now.AddMonths(-1);
             if (maxDate != null)
             {
-                end = DateTime.Parse(maxDate);
-                start = DateTime.Parse(maxDate).AddMonths(-1).AddDays(-1);
+                end = DateTime.Parse(maxDate).AddDays(1);
+                start = DateTime.Parse(maxDate).AddMonths(-1);
             }
 
             var all_RenterBasicContract = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
@@ -153,8 +153,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             VM.all_lessors = allLessors;
             VM.all_contractBasic = all_RenterBasicContract;
             VM.all_Invoices = all_Invoices;
-            VM.start_Date = start.AddDays(1).ToString("yyyy-MM-dd");
-            VM.end_Date = end.ToString("yyyy-MM-dd");
+            VM.start_Date = start.ToString("yyyy-MM-dd");
+            VM.end_Date = end.AddDays(-1).ToString("yyyy-MM-dd");
 
             return View(VM);
         }

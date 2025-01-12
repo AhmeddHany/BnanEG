@@ -200,7 +200,57 @@
                 });
             });
         }
-   
+
+        async function GetAllBy_Categos() {  // -- 1
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Categos", "CarContractStatistics", new { Area = "MAS" })", // -- 2
+                    success: function (response) {
+                        //$(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        $("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("categoryChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Years() {  // -- 1
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Years", "CarContractStatistics", new { Area = "MAS" })", // -- 2
+                    success: function (response) {
+                        //$(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        $("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("yearChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
         
         let chartInstance = null;
 
@@ -419,18 +469,34 @@
                 }
             });
         }
-        function categoryChart() {
-            createChart('polarArea', {
-                labels: ['سيدان متوسطة', 'سيدان صغيرة', 'اقتصادية', 'عائلية كبيرة', 'أخرى'],
-                datasets: [{
-                    data: [30, 100, 60, 133, 100],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(255, 206, 86, 0.7)',
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(153, 102, 255, 0.7)',
+        async function categoryChart() {
+            let listBranchData = await GetAllBy_Categos();
 
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = listBranchData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            
+            createChart('polarArea', {
+                labels: labelsBranch,
+                datasets: [{
+                    data: dataValues,
+                    backgroundColor: [
+                        "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(75, 192, 192, 0.6)", "rgba(255, 206, 86, 0.6)",
+                        '#1A31F0', '#145656', '#F5A623', '#9B59B6', '#E74C3C', '#3498DB', '#2ECC71', '#F39C12',
+                        '#8E44AD', '#16A085', '#D35400', '#1ABC9C', '#9C27B0', '#FF5722', '#00BFFF',
                     ],
                     borderColor: [
                         'rgb(255, 255, 255)',
@@ -480,34 +546,39 @@
                 }
             });
         }
-        function yearChart() {
+        async function yearChart() {
+            let listBranchData = await GetAllBy_Years();
+
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = listBranchData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+
             createChart('polarArea', {
-                labels: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+                labels: labelsBranch,
                 datasets: [{
-                    data: [30, 10, 20, 100, 60, 102, 133, 100, 15, 140],
+                    data: dataValues,
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(255, 206, 86, 0.7)',
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(153, 102, 255, 0.7)',
-                        'rgba(255, 159, 64, 0.7)',
-                        'rgba(201, 203, 207, 0.7)',
-                        'rgba(144, 238, 144, 0.7)',
-                        'rgba(255, 182, 193, 0.7)',
-                        'rgba(30, 144, 255, 0.7)'
+                        "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(75, 192, 192, 0.6)", "rgba(255, 206, 86, 0.6)",
+                        '#1A31F0', '#145656', '#F5A623', '#9B59B6', '#E74C3C', '#3498DB', '#2ECC71', '#F39C12',
+                        '#8E44AD', '#16A085', '#D35400', '#1ABC9C', '#9C27B0', '#FF5722', '#00BFFF',
                     ],
                     borderColor: [
                         'rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)',
+
 
                     ],
                     borderWidth: 2
@@ -553,7 +624,6 @@
                 }
             });
         }
-        
 
 
     </script>

@@ -11,6 +11,8 @@
     "AuthEmplpoyee_NoUpdate": "You can't Update This Record.",
     "AuthEmplpoyee_NoDelete": "You can't Delete it.",
     "NoDataToShow": "!! No Data To Show",
+    "No_company_choosed": "select a company ,please",
+    "No_connect_way": "There's no way to communicate",
     "toastor_Exist": "This Record is Recorded before",
     "MobilePatternError": "Enter a valid mobile number",
     "error_Codestart50": "This Code should start with 50 and add another 8 numbers",
@@ -18,6 +20,17 @@
     "error_Codestart2": "This Code contain 2 Digits",
     "error_Codestart1": "Insert Code From 1 - 9",
     "error_Codestart9": "Insert Code From 1 - 99",
+
+    "toasterForWhats_Success": "Done Success",
+    "toasterForWhats_Failure": "Failure Error in sending",
+    "toasterForWhats_AlreadyExists": "Already Exists",
+    "toasterForWhats_ValidationError": "Validation Error",
+    "toasterForWhats_Unauthorized": "Unauthorized",
+    "toasterForWhats_Forbidden": "Forbidden",
+    "toasterForWhats_ServerError": "ServerError",
+    "toasterForWhats_BadRequest": "BadRequest",
+    "toasterForWhats_Conflict": "Conflict",
+
     /////////// 
     "RentalSystemCode": "Tajeer Code",
     "RentalSystemNo": "Tajeer No",
@@ -554,6 +567,12 @@
     "Contract_inChart_Value": "Statistical indicator of contract values",
     "Contract_inChart_KM": "Statistical indicator of contract kM",
 
+    "RenterContract_inChart_Nationality": "Statistical indicator of Renters' Contracts' Nationalities",
+    "RenterContract_inChart_Profession": "Statistical indicator of Renters' Contracts' Proffessions",
+    "RenterContract_inChart_Region": "Statistical indicator of Renters' Contracts' Regions",
+    "RenterContract_inChart_City": "Statistical indicator of Renters' Contracts' Cities",
+    "RenterContract_inChart_Age": "Statistical indicator of Renters' Contracts' Ages",
+
     "CarContract_inChart_Brand": "Statistical indicator of Cars' Contracts' Brands",
     "CarContract_inChart_Model": "Statistical indicator of Cars' Models",
     "CarContract_inChart_Category": "Statistical indicator of Cars' Contracts' Categories",
@@ -955,8 +974,23 @@
     //TechnicalConnectivity
     "Company": "Company",
     "CompaniesInformations": "Companies Informations",
-    "BranchesNo": "Branches No.",
+    "BranchesNo": "Branches No",
     "CountryRegion": "Country/Region",
+
+    //MAS CompanyMessages
+    "CompanyMessages_Companies": "List Of Companies",
+    "CompanyMessages_All": "All",
+    "CompanyMessages_CreateNewMessage": "Create a New Message",
+    "CompanyMessages_BackToHome": "Back To Home",
+    "CompanyMessages_CompaniesMessages": "Messages For Companies",
+    "CompanyMessages_Chating": "Texting",
+    "CompanyMessages_address": "Address",
+    "CompanyMessages_M_phoneAndMessageRequired": "Phone Number and Message Required",
+    "CompanyMessages_address_M_ErrorPart1": "An error occurred while sending this message to the company No :",
+    "CompanyMessages_address_M_ErrorPart2": " and all of The Next",
+    "CompanyMessages_address_M_Error_BnanPhone_notConnected": "Bnan's Phone Not Connected",
+
+
     //Companies
     "AddLessor": "Add Lessor",
     "LessorCode": "lessor Code",

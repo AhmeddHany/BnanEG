@@ -9,6 +9,7 @@ namespace Bnan.Core.Interfaces
         public IGenric<CrMasUserLogin> CrMasUserLogins { get; }
         public IGenric<CrMasSysSystem> CrMasSysSystems { get; }
         public IGenric<CrMasLessorInformation> CrMasLessorInformation { get; }
+        public IGenric<CrMasLessorCommunication> CrMasLessorCommunication { get; }
         public IGenric<CrMasUserMainValidation> CrMasUserMainValidations { get; }
         public IGenric<CrMasUserSubValidation> CrMasUserSubValidations { get; }
         public IGenric<CrMasUserProceduresValidation> CrMasUserProceduresValidations { get; }

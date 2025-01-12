@@ -11,6 +11,18 @@
     "AuthEmplpoyee_NoDelete": "لا يمكن حذفه",
     "toastor_Exist": "هذا السجل مسجل من قبل",
     "NoDataToShow": "لا توجد بيانات لعرضها !!",
+    "No_company_choosed": "الرجاء اختيار شركة",
+    "No_connect_way": "لا توجد وسيلة تواصل",
+
+    "toasterForWhats_Success": "تم التنفيذ",
+    "toasterForWhats_Failure": "فشل ارسال الرسالة",
+    "toasterForWhats_AlreadyExists": "موجود من قبل",
+    "toasterForWhats_ValidationError": "خطأ في التحقق",
+    "toasterForWhats_Unauthorized": "غير موثوق",
+    "toasterForWhats_Forbidden": "ممنوع",
+    "toasterForWhats_ServerError": "خطأ سيرفر",
+    "toasterForWhats_BadRequest": "طلب غير مشروع",
+    "toasterForWhats_Conflict": "تعارض",
 
     "MobilePatternError": "ادخل رقم الجوال صحيح",
     "error_Codestart50": "الرمز لابد يبدأ ب 50 ثم اضف 8 ارقام",
@@ -541,6 +553,11 @@
     "Contract_inChart_Value": "المؤشر الإحصائي لقيم العقود",
     "Contract_inChart_KM": "المؤشر الإحصائي للكيلوات المقطوعة في العقود",
 
+    "RenterContract_inChart_Nationality": "المؤشر الإحصائي لجنسيات عقود المستأجرين",
+    "RenterContract_inChart_Profession": "المؤشر الإحصائي لمهن عقود المستأجرين",
+    "RenterContract_inChart_Region": "المؤشر الإحصائي لمناطق عقود المستأجرين",
+    "RenterContract_inChart_City": "المؤشر الإحصائي لمدن عقود المستأجرين",
+    "RenterContract_inChart_Age": "المؤشر الإحصائي لأعمار عقود المستأجرين",
 
     "CarContract_inChart_Brand": "المؤشر الإحصائي لماركات عقود السيارات",
     "CarContract_inChart_Model": "المؤشر الإحصائي لطراز السيارات",
@@ -915,6 +932,19 @@
     "CompaniesInformations": "بيانات الشركات",
     "BranchesNo": "عدد الفروع",
     "CountryRegion": "المدينة/المنطقة",
+
+    //MAS CompanyMessages
+    "CompanyMessages_Companies": "قائمة الشركات",
+    "CompanyMessages_All": "الكل",
+    "CompanyMessages_CreateNewMessage": "إنشاء رسالة جديدة",
+    "CompanyMessages_BackToHome": "العودة الي الرئيسية",
+    "CompanyMessages_CompaniesMessages": "رسائل للشركات",
+    "CompanyMessages_Chating": "مراسلة",
+    "CompanyMessages_address": "العنوان",
+    "CompanyMessages_M_phoneAndMessageRequired": "رقم الهاتف والرسالة مطلوبان",
+    "CompanyMessages_address_M_ErrorPart1": "حدث خطأ أثناء إرسال الرسالة للشركة رقم:",
+    "CompanyMessages_address_M_ErrorPart2": "وكل ما بعدها",
+    "CompanyMessages_address_M_Error_BnanPhone_notConnected": "جوال نظام بنان غير متصل",
 
     //Companies
     "AddLessor": "إضافة شركة",

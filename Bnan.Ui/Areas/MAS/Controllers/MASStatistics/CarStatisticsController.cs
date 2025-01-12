@@ -88,7 +88,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             var all_Type = all_Car_Region.DistinctBy(y => y.Type_Id).ToList();
 
             var all_names_Region = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasSupPostRegionsStatus != Status.Deleted,
+              predicate: null,
               selectProjection: query => query.Select(x => new list_String_4
               {
                   id_key = x.CrMasSupPostRegionsCode,
@@ -168,6 +168,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //ViewBag.singleType = "0";
             //ViewBag.singleType = concate_DropDown[0].ToString();
             MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
+            if (listMaschartBranchDataVM2.Count > 0)
+            {
+                listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            }
             // pass --> 1  if no Other --> 2 if were other
             MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
             MasStatistics_CarsVM.Cars_Count = count_Cars;
@@ -284,6 +288,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //ViewBag.singleType = "0";
             //ViewBag.singleType = concate_DropDown[0].ToString();
             MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
+            if (listMaschartBranchDataVM2.Count > 0)
+            {
+                listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            }
             // pass --> 1  if no Other --> 2 if were other
             MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
             MasStatistics_CarsVM.Cars_Count = count_Cars;
@@ -321,7 +329,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             }
 
             var all_names_City = await _unitOfWork.CrMasSupPostCity.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasSupPostCityStatus != Status.Deleted,
+              predicate: null,
               selectProjection: query => query.Select(x => new list_String_4
               {
                   id_key = x.CrMasSupPostCityCode,
@@ -401,6 +409,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //ViewBag.singleType = "0";
             //ViewBag.singleType = concate_DropDown[0].ToString();
             MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
+            if (listMaschartBranchDataVM2.Count > 0)
+            {
+                listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            }
             // pass --> 1  if no Other --> 2 if were other
             MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
             MasStatistics_CarsVM.Cars_Count = count_Cars;
@@ -534,6 +546,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //ViewBag.singleType = "0";
             //ViewBag.singleType = concate_DropDown[0].ToString();
             MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
+            if (listMaschartBranchDataVM2.Count > 0)
+            {
+                listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            }
             // pass --> 1  if no Other --> 2 if were other
             MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
             MasStatistics_CarsVM.Cars_Count = count_Cars;
@@ -666,6 +682,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             }
 
             MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
+            if (listMaschartBranchDataVM2.Count > 0)
+            {
+                listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            }
             // pass --> 1  if no Other --> 2 if were other
             MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
             MasStatistics_CarsVM.Cars_Count = count_Cars;
@@ -777,6 +797,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             // till here //  //  //  //
 
             MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();
+            if (listMaschartBranchDataVM2.Count > 0)
+            {
+                listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            }
             // pass --> 1  if no Other --> 2 if were other
             MasStatistics_CarsVM.listMasChartdataVM = listMaschartBranchDataVM2;
             MasStatistics_CarsVM.Cars_Count = count_Cars;
@@ -840,30 +864,30 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             other.EnName = "  Others";
             other.Code = "Aa";
 
-            var Type_Avarage = listMaschartBranchDataVM.Average(x => x.Value);
-            var Type_Sum = listMaschartBranchDataVM.Sum(x => x.Value);
-            var Type_Count = listMaschartBranchDataVM.Count();
-            var Type_Avarage_percentage = Type_Avarage / Type_Sum;
-            var Static_Percentage_rate = 0.10;
+            //var Type_Avarage = listMaschartBranchDataVM.Average(x => x.Value);
+            //var Type_Sum = listMaschartBranchDataVM.Sum(x => x.Value);
+            //var Type_Count = listMaschartBranchDataVM.Count();
+            //var Type_Avarage_percentage = Type_Avarage / Type_Sum;
+            //var Static_Percentage_rate = 0.10;
 
             var max = listMaschartBranchDataVM.Max(x => x.Value);
             var max1 = (int)max;
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
-            var x = true;
-            for (var i = 0; x == true; i++)
-            {
+            //var x = true;
+            //for (var i = 0; x == true; i++)
+            //{
 
-                if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
-                {
-                    listMaschartBranchDataVM[i].IsTrue = false;
-                    x = false;
-                    listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(i).ToList();
-                    other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-                    listMaschartBranchDataVM2.Add(other);
-                    break;
-                }
-            }
+            //    if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
+            //    {
+            //        listMaschartBranchDataVM[i].IsTrue = false;
+            //        x = false;
+            //        listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(i).ToList();
+            //        other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
+            //        listMaschartBranchDataVM2.Add(other);
+            //        break;
+            //    }
+            //}
             if (listMaschartBranchDataVM2.Count > 14)
             {
                 listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(14).ToList();
@@ -874,7 +898,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             {
                 listMaschartBranchDataVM2 = listMaschartBranchDataVM;
             }
-            listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            if (listMaschartBranchDataVM2.Count > 0)
+            {
+                listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            }
             // till here //  //  //  //
 
             MasStatistics_CarsVM MasStatistics_CarsVM = new MasStatistics_CarsVM();

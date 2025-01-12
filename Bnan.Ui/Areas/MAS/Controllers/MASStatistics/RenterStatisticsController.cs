@@ -203,6 +203,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //ViewBag.singleType = "0";
             //ViewBag.singleType = concate_DropDown[0].ToString();
             MasStatistics_RentersVM MasStatistics_RentersVM = new MasStatistics_RentersVM();
+            if (listMaschartBranchDataVM2.Count > 0)
+            {
+                listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            }
+
             // pass --> 1  if no Other --> 2 if were other
             MasStatistics_RentersVM.listMasChartdataVM = listMaschartBranchDataVM2;
             MasStatistics_RentersVM.Renters_Count = count_Renters;
@@ -337,6 +342,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //ViewBag.singleType = "0";
             //ViewBag.singleType = concate_DropDown[0].ToString();
             MasStatistics_RentersVM MasStatistics_RentersVM = new MasStatistics_RentersVM();
+            if (listMaschartBranchDataVM2.Count > 0)
+            {
+                listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            }
             // pass --> 1  if no Other --> 2 if were other
             MasStatistics_RentersVM.listMasChartdataVM = listMaschartBranchDataVM2;
             MasStatistics_RentersVM.Renters_Count = count_Renters;
@@ -355,12 +364,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //await SetPageTitleAsync(string.Empty, pageNumber);
             //// Check Validition
 
-            var all_Renter_City = await _unitOfWork.CrMasRenterPost.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasRenterPostStatus != Status.Deleted,
+            var all_Renter_City = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
               selectProjection: query => query.Select(x => new Renter_TypeVM
               {
-                  Renter_Code = x.CrMasRenterPostCode,
-                  Type_Id = x.CrMasRenterPostCity,
+                  Renter_Code = x.CrCasRenterLessorId,
+                  Type_Id = x.CrCasRenterLessorStatisticsCity,
               }));
             all_Renter_City = all_Renter_City.DistinctBy(x => x.Renter_Code).ToList();
             var all_Type = all_Renter_City.DistinctBy(y => y.Type_Id).ToList();
@@ -374,7 +383,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             }
 
             var all_names_City = await _unitOfWork.CrMasSupPostCity.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasSupPostCityStatus != Status.Deleted,
+              predicate: null,
               selectProjection: query => query.Select(x => new list_String_4
               {
                   id_key = x.CrMasSupPostCityCode,
@@ -384,7 +393,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
 
             List<MASChartBranchDataVM> listMaschartBranchDataVM = new List<MASChartBranchDataVM>();
-            var count_Renters = 0;
+            var count_Renters = all_Renter_City.Count;
 
             foreach (var single in all_Type)
             {
@@ -399,7 +408,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                 chartBranchDataVM.Value = CategoryCount;
                 chartBranchDataVM.IsTrue = true;
                 listMaschartBranchDataVM.Add(chartBranchDataVM);
-                count_Renters = CategoryCount + count_Renters;
             }
             listMaschartBranchDataVM = listMaschartBranchDataVM.OrderByDescending(x => x.Value).ToList();
             ViewBag.count_Renters = count_Renters;
@@ -454,6 +462,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //ViewBag.singleType = "0";
             //ViewBag.singleType = concate_DropDown[0].ToString();
             MasStatistics_RentersVM MasStatistics_RentersVM = new MasStatistics_RentersVM();
+            if (listMaschartBranchDataVM2.Count > 0)
+            {
+                listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            }
             // pass --> 1  if no Other --> 2 if were other
             MasStatistics_RentersVM.listMasChartdataVM = listMaschartBranchDataVM2;
             MasStatistics_RentersVM.Renters_Count = count_Renters;
@@ -471,12 +483,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //await SetPageTitleAsync(string.Empty, pageNumber);
             //// Check Validition
 
-            var all_Renter_Region = await _unitOfWork.CrMasRenterPost.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasRenterPostStatus != Status.Deleted,
+            var all_Renter_Region = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
+              predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
               selectProjection: query => query.Select(x => new Renter_TypeVM
               {
-                  Renter_Code = x.CrMasRenterPostCode,
-                  Type_Id = x.CrMasRenterPostRegions,
+                  Renter_Code = x.CrCasRenterLessorId,
+                  Type_Id = x.CrCasRenterLessorStatisticsRegions,
               }));
             all_Renter_Region = all_Renter_Region.DistinctBy(x => x.Renter_Code).ToList();
             var all_Type = all_Renter_Region.DistinctBy(y => y.Type_Id).ToList();
@@ -490,7 +502,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             }
 
             var all_names_Region = await _unitOfWork.CrMasSupPostRegion.FindAllWithSelectAsNoTrackingAsync(
-              predicate: x => x.CrMasSupPostRegionsStatus != Status.Deleted,
+              predicate: null,
               selectProjection: query => query.Select(x => new list_String_4
               {
                   id_key = x.CrMasSupPostRegionsCode,
@@ -500,7 +512,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
 
             List<MASChartBranchDataVM> listMaschartBranchDataVM = new List<MASChartBranchDataVM>();
-            var count_Renters = 0;
+            var count_Renters = all_Renter_Region.Count;
 
             foreach (var single in all_Type)
             {
@@ -515,7 +527,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                 chartBranchDataVM.Value = CategoryCount;
                 chartBranchDataVM.IsTrue = true;
                 listMaschartBranchDataVM.Add(chartBranchDataVM);
-                count_Renters = CategoryCount + count_Renters;
             }
             listMaschartBranchDataVM = listMaschartBranchDataVM.OrderByDescending(x => x.Value).ToList();
             ViewBag.count_Renters = count_Renters;
@@ -570,6 +581,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //ViewBag.singleType = "0";
             //ViewBag.singleType = concate_DropDown[0].ToString();
             MasStatistics_RentersVM MasStatistics_RentersVM = new MasStatistics_RentersVM();
+            if (listMaschartBranchDataVM2.Count > 0)
+            {
+                listMaschartBranchDataVM2 = listMaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
+            }
             // pass --> 1  if no Other --> 2 if were other
             MasStatistics_RentersVM.listMasChartdataVM = listMaschartBranchDataVM2;
             MasStatistics_RentersVM.Renters_Count = count_Renters;
@@ -595,7 +610,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             var all_Type = all_Renter_Age.DistinctBy(y => y.Type_Id).ToList();
 
             List<MASChartBranchDataVM> list_chartBranchDataVM = new List<MASChartBranchDataVM>();
-            var maxStatusSwitch = 6;
+            var maxStatusSwitch = 8;
             for (var i = 1; i < maxStatusSwitch + 1; i++)
             {
                 var CategoryCount = all_Renter_Age.Count(x => x.Type_Id == i.ToString());
@@ -608,28 +623,32 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                         chartBranchDataVM.EnName = "Less Than 20";
                         break;
                     case "2":
-                        chartBranchDataVM.ArName = "من 21 إلى 30";
-                        chartBranchDataVM.EnName = "From 21 To 30";
+                        chartBranchDataVM.ArName = "25 - 21";
+                        chartBranchDataVM.EnName = "21 - 25";
                         break;
                     case "3":
-                        chartBranchDataVM.ArName = "من 31 إلى 40";
-                        chartBranchDataVM.EnName = "From 31 To 40";
+                        chartBranchDataVM.ArName = "30 - 26";
+                        chartBranchDataVM.EnName = "26 - 30";
                         break;
                     case "4":
-                        chartBranchDataVM.ArName = "من 41 إلى 50";
-                        chartBranchDataVM.EnName = "From 41 To 50";
+                        chartBranchDataVM.ArName = "35 - 31";
+                        chartBranchDataVM.EnName = "31 - 35";
                         break;
                     case "5":
-                        chartBranchDataVM.ArName = "من 51 إلى 60";
-                        chartBranchDataVM.EnName = "From 51 To 60";
+                        chartBranchDataVM.ArName = "40 - 36";
+                        chartBranchDataVM.EnName = "36 - 40";
                         break;
                     case "6":
+                        chartBranchDataVM.ArName = "50 - 41";
+                        chartBranchDataVM.EnName = "41 - 50";
+                        break;
+                    case "7":
+                        chartBranchDataVM.ArName = "60 - 51";
+                        chartBranchDataVM.EnName = "51 - 60";
+                        break;
+                    case "8":
                         chartBranchDataVM.ArName = "أكثر من 60";
                         chartBranchDataVM.EnName = "More Than 60";
-                        break;
-                    default:
-                        chartBranchDataVM.ArName = "أقل من 20";
-                        chartBranchDataVM.EnName = "Less Than 20";
                         break;
                 }
                 

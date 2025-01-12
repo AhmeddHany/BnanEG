@@ -196,8 +196,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                     chartBranchDataVM.Value = CategoryCount;
                     list_chartBranchDataVM.Add(chartBranchDataVM);
                 }
-                if (CultureInfo.CurrentUICulture.Name == "en-US") { list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList(); }
-                else { list_chartBranchDataVM = list_chartBranchDataVM.OrderByDescending(x => x.Code).ToList(); }
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => int.Parse(x.Code ?? "0")).ToList();
+                //if (CultureInfo.CurrentUICulture.Name == "en-US") { list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList(); }
+                //else { list_chartBranchDataVM = list_chartBranchDataVM.OrderByDescending(x => x.Code).ToList(); }
 
                 var response = new
                 {
@@ -302,7 +303,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                     list_chartBranchDataVM.Add(chartBranchDataVM);
                 }
 
-                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => int.Parse(x.Code ?? "0")).ToList();
                 //if (CultureInfo.CurrentUICulture.Name == "en-US") { list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList(); }
                 //else { list_chartBranchDataVM = list_chartBranchDataVM.OrderByDescending(x => x.Code).ToList(); }
 
@@ -409,7 +410,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                     list_chartBranchDataVM.Add(chartBranchDataVM);
                 }
 
-                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => int.Parse(x.Code ?? "0")).ToList();
                 //if (CultureInfo.CurrentUICulture.Name == "en-US") { list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList(); }
                 //else { list_chartBranchDataVM = list_chartBranchDataVM.OrderByDescending(x => x.Code).ToList(); }
 
@@ -530,7 +531,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                     list_chartBranchDataVM.Add(chartBranchDataVM);
                 }
 
-                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x =>  int.Parse(x.Code??"0")).ToList();
                 //if (CultureInfo.CurrentUICulture.Name == "en-US") { list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList(); }
                 //else { list_chartBranchDataVM = list_chartBranchDataVM.OrderByDescending(x => x.Code).ToList(); }
 
@@ -651,7 +652,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                     list_chartBranchDataVM.Add(chartBranchDataVM);
                 }
 
-                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => int.Parse(x.Code ?? "0")).ToList();
                 //if (CultureInfo.CurrentUICulture.Name == "en-US") { list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList(); }
                 //else { list_chartBranchDataVM = list_chartBranchDataVM.OrderByDescending(x => x.Code).ToList(); }
 
@@ -695,7 +696,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                 var start_Date = DateTime.Parse(start).AddDays(-1);
                 var end_Date = DateTime.Parse(end);
 
-                var all_Contract_GregorianMonths = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
+                var all_Contract_ValueNo = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
               selectProjection: query => query.Select(x => new Contract_TypeVM
               {
@@ -703,16 +704,16 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                   Type_Id = x.CrCasRenterContractStatisticsValueNo,
               }));
 
-                all_Contract_GregorianMonths = all_Contract_GregorianMonths.DistinctBy(x => x.Contract_Code).ToList();
-                var all_Type = all_Contract_GregorianMonths.DistinctBy(y => y.Type_Id?.Trim()).ToList();
-                var count_Contracts = all_Contract_GregorianMonths.Count;
+                all_Contract_ValueNo = all_Contract_ValueNo.DistinctBy(x => x.Contract_Code).ToList();
+                var all_Type = all_Contract_ValueNo.DistinctBy(y => y.Type_Id?.Trim()).ToList();
+                var count_Contracts = all_Contract_ValueNo.Count;
 
 
                 List<MASChartBranchDataVM> list_chartBranchDataVM = new List<MASChartBranchDataVM>();
                 var maxStatusSwitch = 9;
                 for (var i = 1; i < maxStatusSwitch + 1; i++)
                 {
-                    var CategoryCount = all_Contract_GregorianMonths.Count(x => x.Type_Id?.Trim() == i.ToString());
+                    var CategoryCount = all_Contract_ValueNo.Count(x => x.Type_Id?.Trim() == i.ToString());
 
                     MASChartBranchDataVM chartBranchDataVM = new MASChartBranchDataVM();
                     switch (i.ToString())
@@ -760,7 +761,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                     list_chartBranchDataVM.Add(chartBranchDataVM);
                 }
 
-                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => int.Parse(x.Code ?? "0")).ToList();
 
                 var response = new
                 {
@@ -815,7 +816,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
 
                 List<MASChartBranchDataVM> list_chartBranchDataVM = new List<MASChartBranchDataVM>();
-                var maxStatusSwitch = 5;
+                var maxStatusSwitch = 6;
                 for (var i = 1; i < maxStatusSwitch + 1; i++)
                 {
                     var CategoryCount = all_Contract_KM.Count(x => x.Type_Id?.Trim() == i.ToString());
@@ -840,8 +841,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                             chartBranchDataVM.EnName = "301 - 400";
                             break;
                         case "5":
-                            chartBranchDataVM.ArName = "أكثر من 400";
-                            chartBranchDataVM.EnName = "More Than 400";
+                            chartBranchDataVM.ArName = "500 - 401";
+                            chartBranchDataVM.EnName = "401 - 500";
+                            break;
+                        case "6":
+                            chartBranchDataVM.ArName = "أكثر من 500";
+                            chartBranchDataVM.EnName = "More Than 500";
                             break;
                     }
 
@@ -850,7 +855,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                     list_chartBranchDataVM.Add(chartBranchDataVM);
                 }
 
-                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => x.Code).ToList();
+                list_chartBranchDataVM = list_chartBranchDataVM.OrderBy(x => int.Parse(x.Code ?? "0")).ToList();
 
                 var response = new
                 {

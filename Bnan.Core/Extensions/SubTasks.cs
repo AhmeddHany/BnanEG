@@ -75,6 +75,15 @@
         public static string lessor_Marketing { get; set; } = "1102002";
 
         /////////
+        // Mas Companies
+        public static string Company_Data { get; set; } = "1101001";
+        public static string Support_Photos { get; set; } = "1101002";
+        public static string Contracts { get; set; } = "1101003";
+        public static string Dues { get; set; } = "1101004";
+        public static string Payment_Of_Dues { get; set; } = "1101005";
+        public static string CompanyMessages { get; set; } = "1101006";
+
+        /////////
         // Mas Reports 
         public static string MasReport1 { get; set; } = "1104001";
         public static string MasReport2 { get; set; } = "1104002";
