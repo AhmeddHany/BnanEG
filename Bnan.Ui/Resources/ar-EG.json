@@ -1085,7 +1085,12 @@
     "Whatsup": "واتساب",
     "DeviceName": "اسم الجهاز",
     "DeviceType": "نوع الجهاز",
-    "WhatsupPhone": "رقم الجوال"
+    "WhatsupPhone": "رقم الجوال",
+    //Alerts 
+    "ShomoosNotConnect": "يرجى توصيل خدمة شموس لإتمام للاستفادة من المميزات.",
+    "TGANotConnect": "يرجى توصيل خدمة العقد الموحد للاستفادة من المميزات.",
+    "SMSNotConnect": "يرجى توصيل خدمة الرسائل القصيرة للاستفادة من المميزات.",
+    "WhatsupNotConnect": "يرجى توصيل خدمة واتساب للاستفادة من المميزات."
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 
@@ -2575,7 +2580,7 @@
   "CompanyHoldedDanger": "تم ايقاف خدمات الشركة الرجاء مراجعة الشركة المطورة",
   "ContractNewDanger": "لم يتم تسجيل العقد بعد ، يرجي تسجيل العقد لتفعيل جميع الصلاحيات",
   "ContractExpireDanger": "العقد منتهي ، الرجاء مراجعة الشركه المطورة",
-  "ContractAboutExpireDanger": "تنبيه ..... العقد على وشك الانتهاء الرجاء مراجعة الشركة المشغلة",
+  "ContractAboutExpireDanger": ".العقد على وشك الانتهاء الرجاء مراجعة الشركة المشغلة",
 
   //PostRegion Services
   "PostRegion Data": "بيانات المنطقة",

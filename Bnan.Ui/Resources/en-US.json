@@ -1133,7 +1133,12 @@
     "Whatsup": "Whatsup",
     "DeviceName": "Device Name",
     "DeviceType": "Device Type",
-    "WhatsupPhone": "Phone"
+    "WhatsupPhone": "Phone",
+    //Alerts
+    "ShomoosNotConnect": "Please connect the Shomoos service to benefit from the features.",
+    "TGANotConnect": "Please connect the TGA service to benefit from the features.",
+    "SMSNotConnect": "Please connect the SMS service to benefit from the features.",
+    "WhatsupNotConnect": "Please connect the WhatsApp service to benefit from the features."
   },
   "ModalAutoLogout": "Your session is about to end!",
   "Arabic": "Arabic",

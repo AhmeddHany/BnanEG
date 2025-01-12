@@ -27,23 +27,18 @@ namespace Bnan.Inferastructure.Repository
             var ShomoosConnect = await _unitOfWork.CrCasLessorShomoosConnect.FindAsync(x => x.CrMasLessorShomoosConnectLessor == model.CrMasLessorShomoosConnectLessor);
             if (ShomoosConnect != null) return false;
 
-            CrCasLessorShomoosConnect crCasLessorShomoosConnect = new CrCasLessorShomoosConnect();
-            crCasLessorShomoosConnect.CrMasLessorShomoosConnectLessor = model.CrMasLessorShomoosConnectLessor;
-            crCasLessorShomoosConnect.CrMasLessorShomoosConnectAppId = model.CrMasLessorShomoosConnectAppId;
-            crCasLessorShomoosConnect.CrMasLessorShomoosConnectAuthorization = model.CrMasLessorShomoosConnectAuthorization;
-            crCasLessorShomoosConnect.CrMasLessorShomoosConnectAppKey = model.CrMasLessorShomoosConnectAppKey;
-            crCasLessorShomoosConnect.CrMasLessorShomoosConnectContentType = model.CrMasLessorShomoosConnectContentType;
-            // Some Check and we delete it 
-            if (!string.IsNullOrWhiteSpace(crCasLessorShomoosConnect.CrMasLessorShomoosConnectAppId) &&
-               !string.IsNullOrWhiteSpace(crCasLessorShomoosConnect.CrMasLessorShomoosConnectAuthorization) &&
-               !string.IsNullOrWhiteSpace(crCasLessorShomoosConnect.CrMasLessorShomoosConnectAppKey) &&
-               !string.IsNullOrWhiteSpace(crCasLessorShomoosConnect.CrMasLessorShomoosConnectContentType))
-            {
-                crCasLessorShomoosConnect.CrMasLessorShomoosConnectStatus = Status.Active;
-            }
-            else crCasLessorShomoosConnect.CrMasLessorShomoosConnectStatus = Status.Renewed;
 
-            var result = _unitOfWork.CrCasLessorShomoosConnect.Update(crCasLessorShomoosConnect);
+            // Some Check and we delete it 
+            if (!string.IsNullOrWhiteSpace(model.CrMasLessorShomoosConnectAppId) &&
+               !string.IsNullOrWhiteSpace(model.CrMasLessorShomoosConnectAuthorization) &&
+               !string.IsNullOrWhiteSpace(model.CrMasLessorShomoosConnectAppKey) &&
+               !string.IsNullOrWhiteSpace(model.CrMasLessorShomoosConnectContentType))
+            {
+                model.CrMasLessorShomoosConnectStatus = Status.Active;
+            }
+            else model.CrMasLessorShomoosConnectStatus = Status.Renewed;
+
+            var result = await _unitOfWork.CrCasLessorShomoosConnect.AddAsync(model);
             if (result != null) return true;
             return false;
         }

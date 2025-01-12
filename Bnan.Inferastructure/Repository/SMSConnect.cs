@@ -27,19 +27,16 @@ namespace Bnan.Inferastructure.Repository
             var SmsConnect = await _unitOfWork.CrCasLessorSmsConnect.FindAsync(x => x.CrMasLessorSmsConnectLessor == model.CrMasLessorSmsConnectLessor);
             if (SmsConnect != null) return false;
 
-            CrCasLessorSmsConnect crCasLessorSmsConnect = new CrCasLessorSmsConnect();
-            crCasLessorSmsConnect.CrMasLessorSmsConnectLessor = model.CrMasLessorSmsConnectLessor;
-            crCasLessorSmsConnect.CrMasLessorSmsConnectName = model.CrMasLessorSmsConnectName;
-            crCasLessorSmsConnect.CrMasLessorSmsConnectAuthorization = model.CrMasLessorSmsConnectAuthorization;
-            // Some Check and we delete it 
-            if (!string.IsNullOrWhiteSpace(crCasLessorSmsConnect.CrMasLessorSmsConnectName) &&
-               !string.IsNullOrWhiteSpace(crCasLessorSmsConnect.CrMasLessorSmsConnectAuthorization))
-            {
-                crCasLessorSmsConnect.CrMasLessorSmsConnectStatus = Status.Active;
-            }
-            else crCasLessorSmsConnect.CrMasLessorSmsConnectStatus = Status.Renewed;
 
-            var result = _unitOfWork.CrCasLessorSmsConnect.Update(crCasLessorSmsConnect);
+            // Some Check and we delete it 
+            if (!string.IsNullOrWhiteSpace(model.CrMasLessorSmsConnectName) &&
+               !string.IsNullOrWhiteSpace(model.CrMasLessorSmsConnectAuthorization))
+            {
+                model.CrMasLessorSmsConnectStatus = Status.Active;
+            }
+            else model.CrMasLessorSmsConnectStatus = Status.Renewed;
+
+            var result = await _unitOfWork.CrCasLessorSmsConnect.AddAsync(model);
             if (result != null) return true;
             return false;
         }
