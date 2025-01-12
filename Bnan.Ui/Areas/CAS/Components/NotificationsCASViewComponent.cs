@@ -194,23 +194,47 @@ namespace Bnan.Ui.Areas.CAS.Components
                     user.CrMasUserInformationAvailableBalance,
                     user.CrMasUserInformationReservedBalance,
                     user.CrMasUserInformationCreditLimit,
-                    user.CrMasUserInformationPicture
+                    user.CrMasUserInformationPicture,
+                    user.CrMasUserInformationEntryLastTime,
+                    user.CrMasUserInformationEntryLastDate,
+                    user.CrMasUserInformationLastActionDate
                 })
             );
 
             foreach (var user in usersInformation)
             {
                 var fullName = CultureInfo.CurrentCulture.Name == "en-US" ? user.CrMasUserInformationEnName : user.CrMasUserInformationArName;
-
                 // تقسيم الاسم باستخدام المسافات الفارغة (whitespace)
                 var nameParts = fullName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                // إذا كان الاسم يحتوي على أكثر من جزء، نأخذ أول جزئين فقط. وإذا كان جزءًا واحدًا، نستخدمه كما هو.
+                var name = nameParts.Length > 1 ? string.Join(" ", nameParts.Take(2)) : fullName;
+                bool onlineOrOffline = false;
 
-                // إذا كان الاسم يحتوي على أكثر من جزئين نأخذ أول جزئين فقط
-                var name = nameParts.Length >= 2 ? string.Join(" ", nameParts.Take(2)) : fullName;
+                string lastActionTime = "00:00";
+                string lastActionDate = user.CrMasUserInformationEntryLastDate?.ToString("yyyy/MM/dd");
+
+                if (user.CrMasUserInformationEntryLastTime != null)
+                {
+                    var time = DateTime.Today.Add(user.CrMasUserInformationEntryLastTime.Value);
+                    lastActionTime = time.ToString("HH:mm");
+                }
+
+                if (user.CrMasUserInformationLastActionDate == null) onlineOrOffline = false;
+                else
+                {
+                    var timeDifference = DateTime.Now - user.CrMasUserInformationLastActionDate;
+                    if (timeDifference?.TotalMinutes > 10) onlineOrOffline = false;
+                    else onlineOrOffline = true;
+                }
+
 
                 var employeeBalance = new EmployeesInfoVM
                 {
                     Name = name,
+                    FullName = fullName,
+                    OnlineOrOffline = onlineOrOffline,
+                    LastActionDate = lastActionDate,
+                    LastActionTime = lastActionTime,
                     AvaliableBalance = user.CrMasUserInformationAvailableBalance?.ToString("N2", CultureInfo.InvariantCulture),
                     ResevedBalance = user.CrMasUserInformationReservedBalance?.ToString("N2", CultureInfo.InvariantCulture),
                     HaveCustodyNotAccepted = user.CrMasUserInformationReservedBalance > 0,

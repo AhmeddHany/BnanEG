@@ -6,7 +6,8 @@ namespace Bnan.Core.Interfaces
     public interface IAuthService
     {
         Task<bool> RegisterAsync(CrMasUserInformation model);
-        Task<bool> RegisterForCasAsync(CrMasUserInformation model);
+        Task<CrMasUserInformation> RegisterForCasAsync(CrMasUserInformation model);
+        Task<CrMasUserInformation> UpdateForCasAsync(CrMasUserInformation model);
         //Task<bool> AddUserDefault(string LessorCode);
         Task<string> AddUserCompanyForCas(CrMasUserInformation model);
         Task<bool> AddRoleAsync(CrMasUserInformation user, string Role);

@@ -1,0 +1,94 @@
+﻿@using System.Globalization;
+@using Bnan.Core.Extensions
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@model IEnumerable<CrMasUserInformation>
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+
+            <th scope="col">@localizer["LastActive"]</th>
+            <th scope="col">@localizer["LastUpdate"]</th>
+            <th scope="col"> @localizer["MobilePhone"]</th>
+            <th scope="col"> @localizer["Email"] </th>
+            <th scope="col" class="DifferAlign"> @localizer["UserName_view"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "EmployeesSystemValiditions", new { id = item.CrMasUserInformationCode })'">
+                <td>
+                    <p class="FirstLineP">@item.CrMasUserInformationLastActionDate?.ToString("yyyy/MM/dd")</p>
+                    <p class="secondLineP">@item.CrMasUserInformationLastActionDate?.ToString("HH:mm")</p>
+                </td>
+                <td>
+                    <p class="FirstLineP">@item.CrMasUserInformationChangePassWordLastDate?.ToString("yyyy/MM/dd")</p>
+                    <p class="secondLineP">@item.CrMasUserInformationChangePassWordLastDate?.ToString("HH:mm")</p>
+                </td>
+                <td>
+                    <p>@item.CrMasUserInformationCallingKey@item.CrMasUserInformationMobileNo</p>
+                </td>
+                <td class="DifferAlign"><p>@item.Email</p></td>
+
+                <td class="DifferAlign">
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="col">
+                            <p class="FirstLineP">@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasUserInformationEnName : item.CrMasUserInformationArName)</p>
+                            <p class="secondLineP">@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasUserInformationTasksEnName : item.CrMasUserInformationTasksArName)</p>
+                        </div>
+                        <div class="col-auto d-flex justify-content-end">
+                            <div class="employee">
+                                <img src="@Url.Content(item.CrMasUserInformationPicture)"
+                                     class="employee border-0 w-100 h-100">
+                                @{
+                                    bool OnlineOrOflline = false;
+                                    if (item.CrMasUserInformationLastActionDate == null) OnlineOrOflline = false;
+                                    else
+                                    {
+                                        var timeDifference = DateTime.Now - item.CrMasUserInformationLastActionDate;
+                                        if (timeDifference?.TotalMinutes > 10) OnlineOrOflline = false;
+                                        else OnlineOrOflline = true;
+
+                                    }
+                                }
+                                <div class="active_statue @((bool) OnlineOrOflline ? "bg-success" : "bg-danger")"></div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasUserInformationStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasUserInformationStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasUserInformationStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>
+
+
+

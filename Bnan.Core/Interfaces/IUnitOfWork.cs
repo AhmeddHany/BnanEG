@@ -98,7 +98,9 @@ namespace Bnan.Core.Interfaces
 
         public IGenric<CrCasRenterContractEvaluation> CrCasRenterContractEvaluation { get; }
         public IGenric<CrMasSupContractSource> CrMasSupContractSource { get; }
-        
+        public IGenric<CrCasLessorTgaConnect> CrCasLessorTgaConnect { get; }
+        public IGenric<CrCasLessorSmsConnect> CrCasLessorSmsConnect { get; }
+        public IGenric<CrCasLessorShomoosConnect> CrCasLessorShomoosConnect { get; }
         int Complete();
         Task<int> CompleteAsync();
     }

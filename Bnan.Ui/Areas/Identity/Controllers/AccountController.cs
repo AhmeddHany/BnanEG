@@ -236,8 +236,30 @@ namespace Bnan.Ui.Areas.Identity.Controllers
         public async Task<IActionResult> Systems()
         {
             var user = await _userService.GetUserByUserNameAsync(User.Identity.Name);
-            if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Systems", "", "", "", "", user.CrMasUserInformationEnName);
-            else await ViewData.SetPageTitleAsync("الأنظمة", "", "", "", "", user.CrMasUserInformationArName);
+
+            // إعداد عنوان الصفحة بناءً على اللغة
+            if (CultureInfo.CurrentUICulture.Name == "en-US")
+                await ViewData.SetPageTitleAsync("Systems", "", "", "", "", user.CrMasUserInformationEnName);
+            else
+                await ViewData.SetPageTitleAsync("الأنظمة", "", "", "", "", user.CrMasUserInformationArName);
+
+            // قائمة للصلاحيات المفعّلة
+            var permissions = new List<string>();
+
+            if (user.CrMasUserInformationAuthorizationOwner == true)
+                permissions.Add("OWN");
+            if (user.CrMasUserInformationAuthorizationAdmin == true)
+                permissions.Add("CAS");
+            if (user.CrMasUserInformationAuthorizationBranch == true)
+                permissions.Add("BS");
+
+            // إذا كان لديه صلاحية واحدة فقط
+            if (permissions.Count == 1)
+            {
+                return RedirectToAction("Index", "Home", new { area = permissions.First() });
+            }
+
+            // إذا كان لديه أكثر من صلاحية، اعرض صفحة الأنظمة
             return View();
         }
 

@@ -2,18 +2,19 @@
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.CAS;
+using Bnan.Ui.ViewModels.CAS.Employees;
 using Bnan.Ui.ViewModels.Identitiy;
+using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 using NToastNotify;
 using System.Globalization;
 
@@ -39,11 +40,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
         private readonly IStringLocalizer<EmployeesController> _localizer;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IBaseRepo _baseRepo;
+        private readonly IMasUser _masUser;
 
         private readonly string pageNumber = SubTasks.CrMasUserInformationForCAS;
 
 
-        public EmployeesController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, IAuthService authService, IUserService userService, IWebHostEnvironment webHostEnvironment, IUserLoginsService userLoginsService, IUserMainValidtion userMainValidtion, IUserSubValidition userSubValidition, IUserProcedureValidition userProcedureValidition, IUserBranchValidity userBranchValidity, IToastNotification toastNotification, IStringLocalizer<EmployeesController> localizer, IUserContractValididation userContractValididation, IAdminstritiveProcedures adminstritiveProcedures, IWebHostEnvironment hostingEnvironment, IBaseRepo baseRepo) : base(userManager, unitOfWork, mapper)
+        public EmployeesController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, IAuthService authService, IUserService userService, IWebHostEnvironment webHostEnvironment, IUserLoginsService userLoginsService, IUserMainValidtion userMainValidtion, IUserSubValidition userSubValidition, IUserProcedureValidition userProcedureValidition, IUserBranchValidity userBranchValidity, IToastNotification toastNotification, IStringLocalizer<EmployeesController> localizer, IUserContractValididation userContractValididation, IAdminstritiveProcedures adminstritiveProcedures, IWebHostEnvironment hostingEnvironment, IBaseRepo baseRepo, IMasUser masUser) : base(userManager, unitOfWork, mapper)
         {
             _authService = authService;
             _userService = userService;
@@ -59,6 +61,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             _adminstritiveProcedures = adminstritiveProcedures;
             _hostingEnvironment = hostingEnvironment;
             _baseRepo = baseRepo;
+            _masUser = masUser;
         }
 
         [HttpGet]
@@ -70,19 +73,16 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             var lessorCode = user.CrMasUserInformationLessor;
 
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
             if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
-            // Retrieve active driving licenses
             var usersInfo = await _unitOfWork.CrMasUserInformation
                 .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && x.CrMasUserInformationCode != "CAS" + user.CrMasUserInformationLessor &&
                                                   x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
                                                   x.CrMasUserInformationStatus == Status.Active);
 
-            // If no active licenses, retrieve all licenses
             if (!usersInfo.Any())
             {
                 usersInfo = await _unitOfWork.CrMasUserInformation
@@ -128,258 +128,282 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             return PartialView();
         }
 
+        [HttpGet]
         public async Task<IActionResult> AddEmployee()
         {
-            //sidebar Active
-            ViewBag.id = "#sidebarUsers";
-            ViewBag.no = "0";
-            //To Set Title;
-            var titles = await setTitle("206", "2206001", "2");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "اضافة", "Create", titles[3]);
-            var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active);
-            var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo }).ToList();
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Employees", "Index");
+            }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Employees", "Index");
+            }
+            var callingKeys = await _unitOfWork.CrMasSysCallingKeys.FindAllWithSelectAsNoTrackingAsync(x => x.CrMasSysCallingKeysStatus == Status.Active,
+                     query => query.Select(c => new { c.CrMasSysCallingKeysCode, c.CrMasSysCallingKeysNo }));
+            var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString().Trim(), Text = c.CrMasSysCallingKeysNo?.Trim() }).ToList();
             ViewData["CallingKeys"] = callingKeyList; // Pass the callingKeys to the view
-            var currentUser = await _userManager.GetUserAsync(User);
-            var lastUser = _userManager.Users.ToList().LastOrDefault(x => x.CrMasUserInformationLessor == currentUser.CrMasUserInformationLessor);
-            ViewBag.Branches = _unitOfWork.CrCasBranchInformation.FindAll(x => x.CrCasBranchInformationLessor == currentUser.CrMasUserInformationLessor && x.CrCasBranchInformationStatus == Status.Active);
 
-            return View();
+            var branches = await _unitOfWork.CrCasBranchInformation.FindAllWithSelectAsNoTrackingAsync(x => x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor && x.CrCasBranchInformationStatus == Status.Active,
+                query => query.Select(branch => new
+                {
+                    branch.CrCasBranchInformationCode,
+                    branch.CrCasBranchInformationArName,
+                    branch.CrCasBranchInformationEnName,
+                }));
+
+            EmployeesWithAuthrizationVM AddEmployeesWithAuthrization = new EmployeesWithAuthrizationVM
+            {
+                BranchesAuthrization = branches.Select(branch => new AuthrizationBranchesVM
+                {
+                    Code = branch.CrCasBranchInformationCode,
+                    Name = CultureInfo.CurrentCulture.Name == "en-US" ? branch.CrCasBranchInformationEnName : branch.CrCasBranchInformationArName,
+                    Authrization = false
+                }).ToList()
+
+            };
+            AddEmployeesWithAuthrization.CrMasUserInformationLessor = user.CrMasUserInformationLessor;
+            return View(AddEmployeesWithAuthrization);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddEmployee(RegisterViewModel model, IFormFile? UserSignatureFile, IFormFile? UserImgFile, List<string> CheckboxBranchesWithData,
-            bool CrMasUserInformationAuthorizationAdmin, bool CrMasUserInformationAuthorizationOwner, bool CrMasUserInformationAuthorizationBranch)
+        public async Task<IActionResult> AddEmployee(EmployeesWithAuthrizationVM model)
         {
-            var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active);
-            var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo }).ToList();
-            ViewData["CallingKeys"] = callingKeyList; // Pass the callingKeys to the view
-            var currentUser = await _userManager.GetUserAsync(User);
-            ViewBag.Branches = _unitOfWork.CrCasBranchInformation.FindAll(x => x.CrCasBranchInformationLessor == currentUser.CrMasUserInformationLessor);
+            var userLogin = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
 
+            // التحقق من تسجيل دخول المستخدم
+            if (userLogin == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Employees");
+            }
+
+            // التحقق من صحة البيانات المدخلة
             if (ModelState.IsValid)
             {
-                var userLogin = await _userManager.GetUserAsync(User);
+                // التحقق من صلاحية المستخدم لإضافة موظف جديد
+                if (!await _baseRepo.CheckValidation(userLogin.CrMasUserInformationCode, pageNumber, Status.Insert))
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return RedirectToAction("Index", "Employees");
+                }
+
+                // التحقق إذا كان الموظف موجود مسبقًا
                 var user = await _userService.GetUserByUserNameAsync(model.CrMasUserInformationCode);
                 if (user != null)
                 {
-
                     ModelState.AddModelError("Exist", _localizer["EmployeeExist"]);
                     return View(model);
                 }
 
-                string foldername = $"{"images\\Company"}\\{userLogin.CrMasUserInformationLessor}\\{"Users"}\\{model.CrMasUserInformationCode}";
-                string filePathImage;
-                string filePathSignture;
-
-                if (UserImgFile != null)
-                {
-                    string fileNameImg = "Image";
-                    filePathImage = await UserImgFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png");
-                }
-                else
-                {
-                    filePathImage = "~/images/common/user.jpg";
-                }
-                if (UserSignatureFile != null)
-                {
-                    string fileNameSignture = "Signture";
-                    filePathSignture = await UserSignatureFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameSignture, ".png");
-                }
-                else
-                {
-                    filePathSignture = "~/images/common/DefualtUserSignature.png";
-                }
-
-
-                model.CrMasUserInformationSignature = filePathSignture;
-                model.CrMasUserInformationPicture = filePathImage;
+                // تعيين معطيات الموظف الجديدة
                 model.CrMasUserInformationLessor = userLogin.CrMasUserInformationLessor;
-                model.CrMasUserInformationAuthorizationAdmin = CrMasUserInformationAuthorizationAdmin;
-                model.CrMasUserInformationAuthorizationOwner = CrMasUserInformationAuthorizationOwner;
-                model.CrMasUserInformationAuthorizationBranch = CrMasUserInformationAuthorizationBranch;
                 var crMasUserInformation = _mapper.Map<CrMasUserInformation>(model);
+
+                // التحقق إذا كان هذا الموظف موجود في قاعدة البيانات
+                if (await _masUser.ExistsByDetailsAsync(crMasUserInformation))
+                {
+                    await AddModelErrorsAsync(crMasUserInformation);
+                    _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return View("AddEmployee", model);
+                }
+
+                // إنشاء المستخدم
                 var createUser = await _authService.RegisterForCasAsync(crMasUserInformation);
 
-                if (!createUser)
+                // التحقق إذا كانت عملية التسجيل فشلت
+                if (createUser == null)
                 {
-                    ModelState.AddModelError("Exist", "Something went wrong");
-                    return View(model);
-                }
-                //Add Role 
-                var newUser = await _userService.GetUserByUserNameAsync(crMasUserInformation.CrMasUserInformationCode);
-                await _authService.AddRoleAsync(newUser, "CAS");
-
-                //Add Main Validitions
-                if (!await _userMainValidtion.AddMainValiditionsForEachUser(newUser.CrMasUserInformationCode, "2"))
-                {
-                    ModelState.AddModelError("Exist", "Something went wrong");
-                    return View(model);
+                    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return RedirectToAction("Index", "Employees");
                 }
 
-                //Add Sub Validitions
-                if (!await _userSubValidition.AddSubValiditionsForEachUser(newUser.CrMasUserInformationCode, "2"))
+                // إضافة الأدوار (Roles) للمستخدم
+                if (
+                    !await _userMainValidtion.AddMainValiditionsForEachUser(createUser.CrMasUserInformationCode, "2") ||
+                    !await _userSubValidition.AddSubValiditionsForEachUser(createUser.CrMasUserInformationCode, "2") ||
+                    !await _userProcedureValidition.AddProceduresValiditionsForEachUser(createUser.CrMasUserInformationCode, "2") ||
+                    !await _userContractValididation.AddContractValiditionsForEachUserInCas(createUser.CrMasUserInformationCode, null) ||
+                    !await ChangeRoleAsync(createUser))
                 {
-                    ModelState.AddModelError("Exist", "Something went wrong");
-                    return View(model);
+                    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return RedirectToAction("Index", "Employees");
                 }
 
-                //Add Procedures Validitions
-                if (!await _userProcedureValidition.AddProceduresValiditionsForEachUser(newUser.CrMasUserInformationCode, "2"))
+                // معالجة صلاحيات الفروع (Branches)
+                foreach (var item in model.BranchesAuthrization)
                 {
-                    ModelState.AddModelError("Exist", "Something went wrong");
-                    return View(model);
-                }
-
-
-
-                //Add Contract Validitions
-                if (!await _userContractValididation.AddContractValiditionsForEachUserInCas(newUser.CrMasUserInformationCode, null))
-                {
-                    ModelState.AddModelError("Exist", "Something went wrong");
-                    return View(model);
-                }
-
-                List<CheckboxBranchesAuthData> checkboxDataList = new List<CheckboxBranchesAuthData>();
-
-                // Deserialize and filter the checkbox data
-                foreach (var item in CheckboxBranchesWithData)
-                {
-                    List<CheckboxBranchesAuthData> deserializedData = JsonConvert.DeserializeObject<List<CheckboxBranchesAuthData>>(item);
-                    checkboxDataList.AddRange(deserializedData);
-                }
-
-                foreach (var item in checkboxDataList)
-                {
-                    var id = item.Id;
-                    var value = item.Value;
-                    if (newUser.CrMasUserInformationAuthorizationBranch == true)
+                    // إذا كان للمستخدم صلاحية فرع
+                    if ((bool)createUser.CrMasUserInformationAuthorizationBranch)
                     {
-                        if (value.ToLower() == "true")
+                        // إضافة الصلاحية إذا كانت مفعلة
+                        if (item.Authrization)
                         {
-                            await _userBranchValidity.AddUserBranchValidity(newUser.CrMasUserInformationCode, userLogin.CrMasUserInformationLessor, id, Status.Active);
+                            await _userBranchValidity.AddUserBranchValidity(createUser.CrMasUserInformationCode, userLogin.CrMasUserInformationLessor, item.Code, Status.Active);
                         }
                         else
                         {
-                            await _userBranchValidity.AddUserBranchValidity(newUser.CrMasUserInformationCode, userLogin.CrMasUserInformationLessor, id, Status.Deleted);
+                            // إزالة الصلاحية إذا كانت غير مفعلة
+                            await _userBranchValidity.AddUserBranchValidity(createUser.CrMasUserInformationCode, userLogin.CrMasUserInformationLessor, item.Code, Status.Deleted);
                         }
                     }
                     else
                     {
-                        await _userBranchValidity.AddUserBranchValidity(newUser.CrMasUserInformationCode, userLogin.CrMasUserInformationLessor, id, Status.Deleted);
-
+                        // إزالة الصلاحية إذا كان لا توجد صلاحية فرع للمستخدم
+                        await _userBranchValidity.AddUserBranchValidity(createUser.CrMasUserInformationCode, userLogin.CrMasUserInformationLessor, item.Code, Status.Deleted);
                     }
                 }
-                if (newUser != null) await ChangeRoleAsync(newUser);
-                // SaveTracing
-                var (mainTask, subTask, system, currentUserr) = await SetTrace("206", "2206001", "2");
-                await _userLoginsService.SaveTracing(currentUserr.CrMasUserInformationCode, "اضافة", "Add", mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
 
-                await _adminstritiveProcedures.SaveAdminstritive(currentUser.CrMasUserInformationCode, "1", "234", "20", currentUser.CrMasUserInformationLessor, "100",
-                    newUser.CrMasUserInformationCode, null, null, null, null, null, null, null, null, "اضافة",
-                    "Insert", "I", null);
-                _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return RedirectToAction("Employees", "Employees");
+                // التحقق من نجاح حفظ البيانات
+                if (await _unitOfWork.CompleteAsync() > 0)
+                {
+                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    // حفظ تتبع التغييرات للمستخدم
+                    await SaveTracingForUserChange(createUser, Status.Insert, pageNumber);
+                    return RedirectToAction("Index", "Employees");
+                }
+
+
             }
+
+            // إذا كانت البيانات المدخلة غير صالحة، أعد عرض النموذج مع الأخطاء
+            var callingKeys = await _unitOfWork.CrMasSysCallingKeys.FindAllWithSelectAsNoTrackingAsync(x => x.CrMasSysCallingKeysStatus == Status.Active,
+                     query => query.Select(c => new { c.CrMasSysCallingKeysCode, c.CrMasSysCallingKeysNo }));
+
+            var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString().Trim(), Text = c.CrMasSysCallingKeysNo?.Trim() }).ToList();
+            ViewData["CallingKeys"] = callingKeyList; // تمرير callingKeys إلى الـ View
             return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            //sidebar Active
-            ViewBag.id = "#sidebarUsers";
-            ViewBag.no = "0";
-
-            //To Set Title 
-            var titles = await setTitle("206", "2206001", "2");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
-            var user = await _userService.GetUserByUserNameAsync(id);
-            if (user == null)
+            var userLogin = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Update, pageNumber);
+            var userUpdated = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == id);
+            if (userUpdated == null)
             {
-                ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
-                return View("Employees");
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Employees");
             }
-            var currentUser = await _userManager.GetUserAsync(User);
-            var lastUser = _userManager.Users.ToList().LastOrDefault(x => x.CrMasUserInformationLessor == currentUser.CrMasUserInformationLessor);
-            var crMasUserInformation = _mapper.Map<RegisterViewModel>(user);
-            ViewBag.CreditLimit = crMasUserInformation.CrMasUserInformationCreditLimit?.ToString("N2", CultureInfo.InvariantCulture);
-            crMasUserInformation.CrMasUserBranchValidities = _unitOfWork.CrMasUserBranchValidity.FindAll(x => x.CrMasUserBranchValidityId == user.CrMasUserInformationCode).ToList();
-            crMasUserInformation.CrCasBranchInformations = _unitOfWork.CrCasBranchInformation.FindAll(x => x.CrCasBranchInformationLessor == currentUser.CrMasUserInformationLessor && x.CrCasBranchInformationStatus != Status.Deleted).ToList();
+            if (userUpdated.CrMasUserInformationCode == userLogin.CrMasUserInformationCode)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Employees");
+            }
+
+
+            var crMasUserInformationVM = _mapper.Map<EmployeesWithAuthrizationVM>(userUpdated);
+            if (crMasUserInformationVM.CrMasUserInformationCreditDaysLimit == null) crMasUserInformationVM.CrMasUserInformationCreditDaysLimit = 5;
+            var branches = await _unitOfWork.CrMasUserBranchValidity.FindAllWithSelectAsNoTrackingAsync(x => x.CrMasUserBranchValidityId == crMasUserInformationVM.CrMasUserInformationCode &&
+                                                                                                          x.CrMasUserBranchValidityLessor == crMasUserInformationVM.CrMasUserInformationLessor,
+
+            query => query.Select(branch => new
+            {
+                branch.CrMasUserBranchValidityId,
+                branch.CrMasUserBranchValidityBranch,
+                branch.CrMasUserBranchValidityBranchStatus,
+                branch.CrMasUserBranchValidity1,
+                branch.CrMasUserBranchValidityBranchCashBalance,
+                branch.CrMasUserBranchValidityBranchSalesPointBalance,
+                branch.CrMasUserBranchValidityBranchTransferBalance,
+            }), new[] { "CrMasUserBranchValidity1" });
+
+
+            crMasUserInformationVM.BranchesAuthrization = branches
+                     .Where(branch =>
+                         branch.CrMasUserBranchValidity1.CrCasBranchInformationStatus == Status.Active || // الفرع نشط
+                         branch.CrMasUserBranchValidityBranchCashBalance > 0 || // يحتوي على رصيد نقدي
+                         branch.CrMasUserBranchValidityBranchSalesPointBalance > 0 || // يحتوي على نقاط مبيعات
+                         branch.CrMasUserBranchValidityBranchTransferBalance > 0 || // يحتوي على رصيد تحويل
+                         (branch.CrMasUserBranchValidityBranchStatus == Status.Active) // الموظف لديه صلاحيات عليه
+                     )
+                     .Select(branch => new AuthrizationBranchesVM
+                     {
+                         Code = branch.CrMasUserBranchValidityBranch,
+                         Name = CultureInfo.CurrentCulture.Name == "en-US"
+                             ? branch.CrMasUserBranchValidity1.CrCasBranchInformationEnName
+                             : branch.CrMasUserBranchValidity1.CrCasBranchInformationArName,
+                         Authrization = branch.CrMasUserBranchValidityBranchStatus == Status.Active, // صلاحية الفرع للموظف
+                         IfCanChangeAuthrization = branch.CrMasUserBranchValidityBranchCashBalance == 0 &&
+                                                   branch.CrMasUserBranchValidityBranchSalesPointBalance == 0 &&
+                                                   branch.CrMasUserBranchValidityBranchTransferBalance == 0,
+                         BranchActiveOrHold = branch.CrMasUserBranchValidity1.CrCasBranchInformationStatus == Status.Active
+                     })
+                     .ToList();
+
+
 
             var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active);
-            var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo }).ToList();
+            var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysNo, Text = c.CrMasSysCallingKeysNo }).ToList();
             ViewData["CallingKeys"] = callingKeyList; // Pass the callingKeys to the view
 
-            return View(crMasUserInformation);
+            return View(crMasUserInformationVM);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(RegisterViewModel model, string CreditLimit, bool CrMasUserInformationAuthorizationAdmin, bool CrMasUserInformationAuthorizationOwner, bool CrMasUserInformationAuthorizationBranch, List<string> CheckboxBranchesWithData)
+        public async Task<IActionResult> Edit(EmployeesWithAuthrizationVM model)
         {
-            ModelState.Remove("CrMasUserInformationId");
-            if (ModelState.IsValid)
+            using (var transaction = await _unitOfWork.CrMasUserInformation.BeginTransactionAsync())
             {
-
-                var user = await _userService.GetUserByUserNameAsync(model.CrMasUserInformationCode);
-                if (user != null)
+                try
                 {
-                    user.CrMasUserInformationTasksArName = model.CrMasUserInformationTasksArName;
-                    user.CrMasUserInformationTasksEnName = model.CrMasUserInformationTasksEnName;
-                    user.CrMasUserInformationCallingKey = model.CrMasUserInformationCallingKey;
-                    user.CrMasUserInformationMobileNo = model.CrMasUserInformationMobileNo;
-                    user.CrMasUserInformationCreditLimit = decimal.Parse(CreditLimit, CultureInfo.InvariantCulture);
-                    user.CrMasUserInformationReasons = model.CrMasUserInformationReasons;
-                    user.CrMasUserInformationAuthorizationAdmin = CrMasUserInformationAuthorizationAdmin;
-                    user.CrMasUserInformationAuthorizationOwner = CrMasUserInformationAuthorizationOwner;
+                    var userLogin = await _userManager.GetUserAsync(User);
+                    await SetPageTitleAsync(Status.Update, pageNumber);
 
-                    List<CheckboxBranchesAuthData> checkboxDataList = new List<CheckboxBranchesAuthData>();
-
-                    // Deserialize and filter the checkbox data
-                    foreach (var item in CheckboxBranchesWithData)
+                    var user = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == model.CrMasUserInformationCode);
+                    if (user == null || user.CrMasUserInformationCode == userLogin.CrMasUserInformationCode)
                     {
-                        List<CheckboxBranchesAuthData> deserializedData = JsonConvert.DeserializeObject<List<CheckboxBranchesAuthData>>(item);
-                        checkboxDataList.AddRange(deserializedData);
+                        _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                        return RedirectToAction("Index", "Employees");
                     }
 
-                    foreach (var item in checkboxDataList)
+                    var crMasUserInformation = _mapper.Map<CrMasUserInformation>(model);
+                    if (crMasUserInformation.CrMasUserInformationAuthorizationBranch == true)
                     {
-                        var id = item.Id;
-                        var value = item.Value;
-                        if (CrMasUserInformationAuthorizationBranch == true && (value.ToLower() == "on" || value.ToLower() == "true"))
+                        if (model.BranchesAuthrization?.Where(x => x.Authrization == true).Count() == 0) crMasUserInformation.CrMasUserInformationAuthorizationBranch = false;
+                        else crMasUserInformation.CrMasUserInformationAuthorizationBranch = true;
+                    }
+
+                    var updatedUser = await _authService.UpdateForCasAsync(crMasUserInformation);
+
+                    foreach (var branch in model.BranchesAuthrization)
+                    {
+                        if (updatedUser.CrMasUserInformationAuthorizationBranch == true)
                         {
-                            await _userBranchValidity.UpdateUserBranchValidity(user.CrMasUserInformationCode, user.CrMasUserInformationLessor, id, Status.Active);
+                            if (branch.Authrization) await _userBranchValidity.UpdateUserBranchValidity(updatedUser.CrMasUserInformationCode, updatedUser.CrMasUserInformationLessor, branch.Code, Status.Active);
+                            else await _userBranchValidity.UpdateUserBranchValidity(updatedUser.CrMasUserInformationCode, updatedUser.CrMasUserInformationLessor, branch.Code, Status.Deleted);
                         }
                         else
                         {
-                            await _userBranchValidity.UpdateUserBranchValidity(user.CrMasUserInformationCode, user.CrMasUserInformationLessor, id, Status.Deleted);
+                            await _userBranchValidity.UpdateUserBranchValidity(updatedUser.CrMasUserInformationCode, updatedUser.CrMasUserInformationLessor, branch.Code, Status.Deleted);
                         }
-
                     }
-                    var BranchValidity = _unitOfWork.CrMasUserBranchValidity.FindAll(x => x.CrMasUserBranchValidityId == user.CrMasUserInformationCode &&
-                                                                                       x.CrMasUserBranchValidityLessor == user.CrMasUserInformationLessor &&
-                                                                                       x.CrMasUserBranchValidityBranchStatus == Status.Active);
-                    if (BranchValidity.Count() < 1) user.CrMasUserInformationAuthorizationBranch = false;
-                    else user.CrMasUserInformationAuthorizationBranch = true;
-                    await _userService.UpdateAsync(user);
-                    await ChangeRoleAsync(user);
-                    //SaveTracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("206", "2206001", "2");
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                    // Save Adminstrive Procedures
-                    await _adminstritiveProcedures.SaveAdminstritive(currentUser.CrMasUserInformationCode, "1", "234", "20", currentUser.CrMasUserInformationLessor, "100",
-                        user.CrMasUserInformationCode, null, null, null, null, null, null, null, null, "تعديل",
-                       "Edit", "U", null);
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return RedirectToAction("Employees", "Employees");
 
+                    if (await _unitOfWork.CompleteAsync() > 0 && await ChangeRoleAsync(updatedUser))
+                    {
+                        await transaction.CommitAsync();
+                        _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                        await SaveTracingForUserChange(updatedUser, Status.Update, pageNumber);
+                        return RedirectToAction("Index", "Employees");
+                    }
+
+                    await transaction.RollbackAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 }
             }
-            return View(model);
 
+            return RedirectToAction("Index", "Employees");
         }
         private async Task<bool> ChangeRoleAsync(CrMasUserInformation user)
         {
@@ -398,60 +422,46 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
 
                 if (propertyValue && !userHasRole)
                 {
-                    await _authService.AddRoleAsync(user, role);
+                    if (!await _authService.AddRoleAsync(user, role)) return false;
                 }
                 else if (!propertyValue && userHasRole)
                 {
-                    await _authService.RemoveRoleAsync(user, role);
+                    if (!await _authService.RemoveRoleAsync(user, role)) return false;
                 }
             }
             return true;
         }
         [HttpPost]
-        public async Task<IActionResult> EditStatus(string code, string status)
+        public async Task<string> EditStatus(string status, string code)
         {
-            string sAr = "";
-            string sEn = "";
-            var user = await _userService.GetUserByUserNameAsync(code);
-            if (user != null)
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return "false";
+
+            var EditedUser = await _unitOfWork.CrMasUserInformation.GetByIdAsync(code);
+            if (EditedUser == null) return "false";
+            try
             {
-                if (status == Status.Hold)
-                {
-                    sAr = "ايقاف";
-                    sEn = "Hold Employee";
-                    user.CrMasUserInformationStatus = Status.Hold;
-                }
-                else if (status == Status.Deleted)
-                {
-                    sAr = "حذف";
-                    sEn = "Remove Employee";
-                    user.CrMasUserInformationStatus = Status.Deleted;
-                }
-                else if (status == Status.Active)
-                {
-                    sAr = "استرجاع";
-                    sEn = "Retrive Employee";
-                    user.CrMasUserInformationStatus = Status.Active;
-                }
+                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
+                if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
+                EditedUser.CrMasUserInformationStatus = status;
+                _unitOfWork.CrMasUserInformation.Update(EditedUser);
                 await _unitOfWork.CompleteAsync();
-                // SaveTracing
-                var (mainTask, subTask, system, currentUser) = await SetTrace("206", "2206001", "2");
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                // Save Adminstrive Procedures
-                await _adminstritiveProcedures.SaveAdminstritive(currentUser.CrMasUserInformationCode, "1", "234", "20", currentUser.CrMasUserInformationLessor, "100",
-                    user.CrMasUserInformationCode, null, null, null, null, null, null, null, null, sAr, sEn, "U", null);
-                _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                return RedirectToAction("Employees", "Employees");
+                await SaveTracingForUserChange(EditedUser, status, pageNumber);
+                return "true";
             }
-            return View(user);
+            catch (Exception ex)
+            {
+                return "false";
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> ResetPassword(string code)
         {
             var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Json(false);
+
 
             var employee = _unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == code && x.CrMasUserInformationLessor == currentUser.CrMasUserInformationLessor);
             if (employee != null)
@@ -611,6 +621,60 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
 
             return View(model);
         }
+
+        //Error exist message when run post action to get what is the exist field << Help Up in Back End
+        //Error exist message when change input without run post action >> help us in front end
+        [HttpGet]
+        public async Task<JsonResult> CheckChangedField(string existName, string dataField, string lessorCode)
+        {
+            var All_Users = await _unitOfWork.CrMasUserInformation.GetAllAsync();
+            var errors = new List<ErrorResponse>();
+
+            if (!string.IsNullOrEmpty(dataField) && All_Users != null)
+            {
+                if (existName == "CrMasUserInformationArName" && All_Users.Any(x => x.CrMasUserInformationArName == dataField && x.CrMasUserInformationLessor == lessorCode))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasUserInformationArName", Message = _localizer["Existing"] });
+                }
+                else if (existName == "CrMasUserInformationEnName" && All_Users.Any(x => x.CrMasUserInformationEnName?.ToLower() == dataField.ToLower() && x.CrMasUserInformationLessor == lessorCode))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasUserInformationEnName", Message = _localizer["Existing"] });
+                }
+                else if (existName == "CrMasUserInformationCode" && !string.IsNullOrEmpty(dataField) && All_Users.Any(x => x.CrMasUserInformationCode == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasUserInformationCode", Message = _localizer["Existing"] });
+                }
+                else if (existName == "CrMasUserInformationId" && !string.IsNullOrEmpty(dataField) && All_Users.Any(x => x.CrMasUserInformationId == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrMasUserInformationId", Message = _localizer["Existing"] });
+                }
+            }
+
+            return Json(new { errors });
+        }
+        private async Task AddModelErrorsAsync(CrMasUserInformation entity)
+        {
+
+            if (await _masUser.ExistsByArabicNameAsync(entity.CrMasUserInformationArName, entity.CrMasUserInformationCode, entity.CrMasUserInformationLessor))
+            {
+                ModelState.AddModelError("CrMasUserInformationArName", _localizer["Existing"]);
+            }
+
+            if (await _masUser.ExistsByEnglishNameAsync(entity.CrMasUserInformationEnName, entity.CrMasUserInformationCode, entity.CrMasUserInformationLessor))
+            {
+                ModelState.AddModelError("CrMasUserInformationEnName", _localizer["Existing"]);
+            }
+
+            if (await _masUser.ExistsByUserCodeAsync(entity.CrMasUserInformationCode))
+            {
+                ModelState.AddModelError("CrMasUserInformationCode", _localizer["Existing"]);
+            }
+
+            if (await _masUser.ExistsByUserIdAsync(entity.CrMasUserInformationId, entity.CrMasUserInformationCode))
+            {
+                ModelState.AddModelError("CrMasUserInformationId", _localizer["Existing"]);
+            }
+        }
         private async Task SaveTracingForUserChange(CrMasUserInformation userCreated, string status, string pageNumber)
         {
 
@@ -637,15 +701,49 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 system.CrMasSysSystemArName,
                 system.CrMasSysSystemEnName);
         }
+
+        private async Task<bool> SendMessageToWhatsup(CrMasUserInformation user, string lessorCode)
+        {
+            var lessorNames = await _unitOfWork.CrMasLessorInformation.FindAsync(x => x.CrMasLessorInformationCode == lessorCode);
+            var message = GetMessageToSendWhatsup(user.CrMasUserInformationCode, lessorNames.CrMasLessorInformationArShortName, lessorNames.CrMasLessorInformationEnShortName,
+                                                  user.CrMasUserInformationArName, user.CrMasUserInformationEnName);
+            var result = await WhatsAppServicesExtension.SendMessageAsync($"{user.CrMasUserInformationCallingKey}{user.CrMasUserInformationMobileNo}", message, lessorCode);
+            return true;
+        }
+        private string GetMessageToSendWhatsup(string userCode, string companyNameAr, string companyNameEn, string userArName, string userEnName)
+        {
+            var messageAr = string.Format(
+                "عزيزي/عزيزتي {0}،\n\n" +
+                "نود إعلامك بأنه تم إنشاء حساب جديد لك برقم المستخدم: {1} وكلمة المرور: '{2}'، والخاصة بشركة {3}.\n\n" +
+                "يرجى تسجيل الدخول باستخدام هذه البيانات والعمل على تغيير كلمة المرور في أقرب وقت ممكن لضمان أمان حسابك.\n\n" +
+                "مع أطيب التحيات،\n" +
+                "شركة {3}",
+                userArName, userCode, userCode, companyNameAr);
+
+            var messageEn = string.Format(
+                "Dear {0},\n\n" +
+                "We are pleased to inform you that a new account has been created for you with the following details:\n" +
+                "User Code: {1}\n" +
+                "Password: '{2}'\n\n" +
+                "This account is associated with {3}.\n\n" +
+                "Please log in using these credentials and change your password promptly to ensure the security of your account.\n\n" +
+                "Best regards,\n" +
+                "{3}",
+                userEnName, userCode, userCode, companyNameEn);
+
+            var fullMessage = messageAr + Environment.NewLine + Environment.NewLine + messageEn;
+
+            return fullMessage;
+        }
         public IActionResult SuccessToast()
         {
             _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-            return RedirectToAction("EmployeeSystemValiditions", "Employees");
+            return RedirectToAction("Index", "Employees");
         }
-        public IActionResult SuccessResetPassword()
+        public IActionResult Failed()
         {
-            _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-            return RedirectToAction("Employees", "Employees");
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", });
+            return RedirectToAction("Index", "Employees");
         }
     }
 }

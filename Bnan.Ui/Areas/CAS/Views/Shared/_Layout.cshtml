@@ -43,6 +43,7 @@
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="~/CasSys/style/Layout.css">
     <link rel="stylesheet" href="~/CasSys/style/content.css">
+    <link href="~/css/toastr.css" rel="stylesheet" />
     @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
     {
         <link rel="stylesheet" href="~/CasSys/style/english.css">
@@ -102,7 +103,11 @@
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                     <li><a class="dropdown-item userDropdown-options" asp-area="CAS" asp-controller="Employees" asp-action="MyAccount">@localizer["My Account"]<img src="~/CasSys/images/Frame (2).svg" /></a></li>
                                     <li><a class="dropdown-item userDropdown-options" asp-area="CAS" asp-controller="Employees" asp-action="ChangePassword">@localizer["ChangePassword"] <img src="~/CasSys/images/Frame (1).svg" /></a></li>
-                                    <li><a class="dropdown-item userDropdown-options" asp-area="Identity" asp-controller="Account" asp-action="Systems"> @localizer["Systems"] <img src="~/CasSys/images/Frame (3).svg" /></a></li>
+
+                                    @if ((new[] { user.CrMasUserInformationAuthorizationAdmin, user.CrMasUserInformationAuthorizationBranch, user.CrMasUserInformationAuthorizationOwner }).Count(x => x == true) >= 2)
+                                    {
+                                        <li><a class="dropdown-item userDropdown-options" asp-area="Identity" asp-controller="Account" asp-action="Systems"> @localizer["Systems"] <img src="~/CasSys/images/Frame (3).svg" /></a></li>
+                                    }
 
                                     <li>
                                         <hr class="dropdown-divider">
@@ -157,6 +162,9 @@
             {
                 <p>@localizer["ContractAboutExpireDanger"]</p>
             }
+            <p>@localizer["ContractAboutExpireDanger"]</p>
+            <p>aaaaaaaaaaaaaaaaaaaaaa</p>
+
         </nav>
         <!-- end of alert bar -->
         <partial name="_ExpirationModal" />
@@ -186,6 +194,7 @@
 
             </div>
         </div>
+
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.9.2/dist/umd/popper.min.js"

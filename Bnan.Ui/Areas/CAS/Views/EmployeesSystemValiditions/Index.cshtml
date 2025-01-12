@@ -4,148 +4,69 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["SystemValiditions Data"];
-    ViewData["Page-Hint"] = @localizer["SystemValiditions Hint"];
 }
 
 
-<style>
-    body {
-        overflow: hidden
-    }
+<div class="col d-flex align-items-center justify-content-center">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3 mb-2">
+                <div class="col">
+                    <h3>@localizer["View_User_Validities_PageTitle"]</h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
 
-    @@media (max-width: 600px) {
-        #basic-datatable1_wrapper .row:first-child > div {
-            text-align: center;
-        }
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search" class="form-control inputs search-input" name="search"
+                                   aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
 
-            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
-                text-align: center;
-            }
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-    .email {
-        text-align: end;
-    }
-
-</style>
-
-<div class="sub-container">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div class="col-sm-12 col-md-9">
-                <div class="col-sm-12 col-md-4 p-0">
-                    <a type="button" class="btn btn-danger" asp-area="CAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
                 </div>
             </div>
-
-            @*search*@
-            <div class="col-sm-12 col-md-3 p-0">
-                <input class="form-control" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
+                    <partial name="_DataTableEmployeesValidities">
+                </div>
             </div>
-        </div>
-        <div class="dataTable">
-            @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-            {
-                <div class="col-sm-12">
-                    <table id="basic-datatable" class="table dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" style="width:100%">
-                        <thead>
-                            <tr role="row">
-                                <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                                <th aria-label="Position: activate to sort column ascending">@localizer["UserNo"]</th>
-                                <th aria-label="Position: activate to sort column ascending">@localizer["UserName"]</th>
-                                <th aria-label="Office: activate to sort column ascending">@localizer["Employement"]</th>
-                                <th aria-label="Age: activate to sort column ascending">@localizer["MobilePhone"]</th>
-                                <th aria-label="Age: activate to sort column ascending">@localizer["LastExitDate"]</th>
-                                <th aria-label="Age: activate to sort column ascending">@localizer["LastChangePassword"]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            @{
-                                int no = 1;
-                            }
-                            @foreach (var item in Model)
-                            {
-                                <tr onclick="location.href='@Url.Action("EditEmployeeSystemValiditions", "Employees", new { id = item.CrMasUserInformationCode })'" style="cursor:pointer; ">
-                                    <td>@no</td>
-                                    <td>@item.CrMasUserInformationCode</td>
-                                    <td>@item.CrMasUserInformationEnName</td>
-                                    <td>@item.CrMasUserInformationTasksEnName</td>
-                                    @if (item.CrMasUserInformationCallingKey != "" || item.CrMasUserInformationCallingKey != null)
-                                    {
-                                        <td>@item.CrMasUserInformationCallingKey @item.CrMasUserInformationMobileNo</td>
-                                    }
-                                    else
-                                    {
-                                        <td>@item.CrMasUserInformationMobileNo</td>
-                                    }
-                                    <td>@item.CrMasUserInformationExitLastDate?.ToString("dd/MM/yyyy")</td>
-                                    <td>@item.CrMasUserInformationChangePassWordLastDate?.ToString("dd/MM/yyyy")</td>
-                                </tr>
-
-                                no++;
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-            else
-            {
-
-                <div class="col-sm-12">
-                    <table id="basic-datatable" class="table dt-responsive nowrap w-100 dataTable no-footer dtr-inline  table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-                        <thead>
-                            <tr role="row">
-                                <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                                <th aria-label="Position: activate to sort column ascending">@localizer["UserNo"]</th>
-                                <th aria-label="Position: activate to sort column ascending">@localizer["UserName"]</th>
-                                <th aria-label="Office: activate to sort column ascending">@localizer["Employement"]</th>
-                                <th aria-label="Age: activate to sort column ascending">@localizer["MobilePhone"]</th>
-                                <th aria-label="Age: activate to sort column ascending">@localizer["LastExitDate"]</th>
-                                <th aria-label="Age: activate to sort column ascending">@localizer["LastChangePassword"]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{
-                                int no = 1;
-                            }
-                            @if (Model != null)
-                            {
-                                @foreach (var item in Model)
-                                {
-                                    <tr onclick="location.href='@Url.Action("EditEmployeeSystemValiditions", "Employees", new { id = item.CrMasUserInformationCode })'" style="cursor:pointer; ">
-                                        <td>@no</td>
-                                        <td>@item.CrMasUserInformationCode</td>
-                                        <td>@item.CrMasUserInformationArName</td>
-                                        <td>@item.CrMasUserInformationTasksArName</td>
-                                        @if (item.CrMasUserInformationCallingKey != "" || item.CrMasUserInformationCallingKey != null)
-                                        {
-                                            <td>@item.CrMasUserInformationCallingKey @item.CrMasUserInformationMobileNo</td>
-                                        }
-                                        else
-                                        {
-                                            <td>@item.CrMasUserInformationMobileNo</td>
-                                        }
-                                        <td>@item.CrMasUserInformationExitLastDate?.ToString("dd/MM/yyyy")</td>
-                                        <td>@item.CrMasUserInformationChangePassWordLastDate?.ToString("dd/MM/yyyy")</td>
-                                    </tr>
-
-                                    no++;
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-        </div>
+        </form>
+        <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="main-page-icon">
+            <img src="~/CasSys/images/back to main.svg" alt="man">
+        </a>
     </div>
 </div>
+@section scripts {
+    <script src="~/js/toastr.js"></script>
+
+   
+    <script>
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        //get AccountBank By Status function
+        function GetEmployeesFitler(search) {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetEmployeesBySearch", "EmployeesSystemValiditions", new { Area = "CAS" })", // تأكد أن الرابط صحيح
+                data: {
+                    search: search
+                },
+                success: function (response) {
+                    $(".dataTable").html(response); // إدراج المحتوى الجديد
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", xhr.responseText);
+                }
+            });
+        }
+
+        
+        $("#search").on("keyup", function () {
+            const search = $(this).val();
+            GetEmployeesFitler(search);
+        });
+    </script>
+}

@@ -58,7 +58,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 StaticsVMs.Add(ownStatictsVM);
             }
-            return StaticsVMs.OrderByDescending(x => x.Count).Where(x => x.Count > 0).Take(3).ToList();
+            return StaticsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count > 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetCategoryCarList(List<CrCasRenterContractStatistic> Contracts)
         {
@@ -76,7 +76,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 StaticsVMs.Add(ownStatictsVM);
             }
-            return StaticsVMs.OrderByDescending(x => x.Count).Where(x => x.Count > 0).Take(3).ToList();
+            return StaticsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count > 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetBrandCarList(List<CrCasRenterContractStatistic> Contracts)
         {
@@ -94,7 +94,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 StaticsVMs.Add(ownStatictsVM);
             }
-            return StaticsVMs.OrderByDescending(x => x.Count).Where(x => x.Count > 0).Take(3).ToList();
+            return StaticsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count > 0).Take(3).ToList();
         }
         private List<OwnStatictsVM> GetYearCarList(List<CrCasRenterContractStatistic> Contracts)
         {
@@ -110,7 +110,7 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 ownStatictsVM.Percent = Math.Round(Percent, 2);
                 StaticsVMs.Add(ownStatictsVM);
             }
-            return StaticsVMs.OrderByDescending(x => x.Count).Where(x => x.Count > 0).Take(3).ToList();
+            return StaticsVMs.GroupBy(x => x.Code).Select(g => g.First()).OrderByDescending(x => x.Count).Where(x => x.Count > 0).Take(3).ToList();
         }
 
     }

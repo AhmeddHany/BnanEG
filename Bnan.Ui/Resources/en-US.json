@@ -1090,12 +1090,52 @@
     "LimitCredit": "Limit Credit",
     "PasswordHint": "Password Hint",
     "LastActive": "Last Active",
-    "LastUpdate": "Last Update"
+    "LastUpdate": "Last Update",
 
-
+    //Add Employee
+    "PersonalInforamtion": "Personal Inforamtion",
+    "AuthCustody": "Authorize Custody",
+    "CreditLimitCAS": "Credit Limit",
+    "DailyLimit": "Daily Limit",
+    "ValiditySystemCAS": "Validity Systems",
+    "ValidityCAS": "Validity Adminstritive",
+    "ValidityOWN": "Validity Owners",
+    "ValidityBS": "Validity Branches",
+    // Edit Employee
+    "CantChangeAuthForBranch": "Cant Change Authrization For Branch",
+    "ModalFirstMessage_EmployeesCAS_Delete": "Delete Data And Results1",
+    "ModalSecondMessage_EmployeesCAS_Delete": "Delete Data And Results2",
+    "ModalFirstMessage_EmployeesCAS_UnDelete": "UnDelete Data And Results1",
+    "ModalSecondMessage_EmployeesCAS_UnDelete": "UnDelete Data And Results2",
+    "ModalFirstMessage_EmployeesCAS_Hold": "Hold Data And Results1",
+    "ModalSecondMessage_EmployeesCAS_Hold": "Hold Data And Results2",
+    "ModalFirstMessage_EmployeesCAS_UnHold": "UnHold Data And Results1",
+    "ModalSecondMessage_EmployeesCAS_UnHold": "UnHold Data And Results2",
+    //Validities Employee
+    "View_User_Validities_PageTitle": "System Validities",
+    //ValiditiesContract Employee
+    "View_User_ValiditiesContract_PageTitle": "Contract Validities",
+    "UpdateValiditiesContract": "Update Contract Validities ",
+    "NumberBetween0To100": "Number must be between 0 and 100.",
+    "NumberBetween0To500": "Number must be between 0 and 500.",
+    "NumberBetween0To9": "Number must be between 0 and 9.",
+    //TechnicalConnectivity
+    "TechnicalConnectivity": "Technical Connectivity",
+    "TransportAuthority": "Transport Authority",
+    "Shemoos": "Shemoos",
+    "AppID": "App ID",
+    "AppKey": "App Key",
+    "Authorization": "Authorization",
+    "ContentType": "Content Type",
+    "SMS": "SMS",
+    "UserNameSMS": "User Name",
+    "APIToken": "API Token",
+    "Whatsup": "Whatsup",
+    "DeviceName": "Device Name",
+    "DeviceType": "Device Type",
+    "WhatsupPhone": "Phone"
   },
   "ModalAutoLogout": "Your session is about to end!",
-
   "Arabic": "Arabic",
   "English": "English",
   // CAS System SideBar
@@ -2726,7 +2766,7 @@
   "CrMasUserContractValidityAge": "Validity Renter Age",
   "CrMasUserContractValidityExtension": "Contract Validity Extension",
   "CRMasUserContractValidityCreate": "Create Contract",
-  "CrMasUserContractValidityCancel": "Contract Validity Cancel",
+  "CrMasUserContractValidityCancel": "Contract Saved Validity Cancel",
   "CrMasUserContractValidityEnd": "Contract Validity End",
   "CrMasUserContractValidityLessContractValue": "The payment is less than the contract value",
   "CrMasUserContractValidityDiscountRate": "Discount Rate",

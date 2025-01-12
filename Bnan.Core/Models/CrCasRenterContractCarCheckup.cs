@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Bnan.Core.Models
+﻿namespace Bnan.Core.Models
 {
     public partial class CrCasRenterContractCarCheckup
     {

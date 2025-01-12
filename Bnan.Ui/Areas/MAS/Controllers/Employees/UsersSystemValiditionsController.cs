@@ -131,7 +131,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Update, pageNumber);
             // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
@@ -171,7 +171,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Update, pageNumber);
             // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return Json(new { success = false });

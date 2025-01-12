@@ -42,7 +42,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         private readonly IAccountBank _AccountBank;
         private readonly ISalesPoint _SalesPoint;
         private readonly IAuthService _authService;
-        private readonly IMasWhatsupConnect _masTechnicalConnect;
+        private readonly IWhatsupConnect _whatsupConnect;
+        private readonly ITGAConnect _tgaConnect;
+        private readonly IShomoosConnect _shomoosConnect;
+        private readonly ISMSConnect _smsConnect;
         private readonly IUserMainValidtion _UserMainValidtion;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IBaseRepo _baseRepo;
@@ -70,7 +73,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                                     ISalesPoint salesPoint,
                                     IStringLocalizer<LessorsKSAController> localizer,
                                     IAuthService authService,
-                                    IUserMainValidtion userMainValidtion, IWebHostEnvironment webHostEnvironment, IMasWhatsupConnect masTechnicalConnect, IBaseRepo baseRepo, IMasLessor masLessor) : base(userManager, unitOfWork, mapper)
+                                    IUserMainValidtion userMainValidtion, IWebHostEnvironment webHostEnvironment, IBaseRepo baseRepo, IMasLessor masLessor, IWhatsupConnect whatsupConnect, ITGAConnect tgaConnect, IShomoosConnect shomoosConnect, ISMSConnect smsConnect) : base(userManager, unitOfWork, mapper)
         {
             _userLoginsService = userLoginsService;
             _userService = userService;
@@ -91,9 +94,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             _authService = authService;
             _UserMainValidtion = userMainValidtion;
             _webHostEnvironment = webHostEnvironment;
-            _masTechnicalConnect = masTechnicalConnect;
             _baseRepo = baseRepo;
             _masLessor = masLessor;
+            _whatsupConnect = whatsupConnect;
+            _tgaConnect = tgaConnect;
+            _shomoosConnect = shomoosConnect;
+            _smsConnect = smsConnect;
         }
 
         [HttpGet]
@@ -288,12 +294,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     await _SalesPoint.AddSalesPointDefault(LessorVMTlessor.CrMasLessorInformationCode);
 
                     await _BranchDocument.AddBranchDocumentDefault(LessorVMTlessor.CrMasLessorInformationCode);
-                    // add whatsup record
-                    // add TGA And shomos record
-                    //await _authService.AddUserDefault(LessorVMTlessor.CrMasLessorInformationCode);
 
-                    await _masTechnicalConnect.AddDefaultWhatsupConnect(LessorVMTlessor.CrMasLessorInformationCode);
-                    _unitOfWork.Complete();
+                    // add Connects
+                    await _whatsupConnect.AddDefaultWhatsupConnect(LessorVMTlessor.CrMasLessorInformationCode);
+                    await _tgaConnect.AddDefault(LessorVMTlessor.CrMasLessorInformationCode);
+                    await _shomoosConnect.AddDefault(LessorVMTlessor.CrMasLessorInformationCode);
+                    await _smsConnect.AddDefault(LessorVMTlessor.CrMasLessorInformationCode);
+                    await _unitOfWork.CompleteAsync();
 
                     await SaveTracingForLessorChange(user, LessorVMTlessor, Status.Insert);
 

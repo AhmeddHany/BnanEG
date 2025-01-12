@@ -23,6 +23,14 @@
   --tran-05: all 0.3s ease;
   --transition: all 0.2s ease;
 }
+/* .Company-Logo{
+  background: url(../images/kodi\ logo.png);
+  width: 100px;
+  height: 60px;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+} */
 html{
 scroll-behavior: smooth;
 }
@@ -30,6 +38,8 @@ body {
   background-color:var(--body-color);
   direction: rtl;
   font-size: .875rem;
+  font-weight: 600;
+
 }
 .navbar{
   background-color: #ffce94;
@@ -493,8 +503,8 @@ body.dark .sidebar li a:hover .text {
 }
 
 .sidebar2 .menu {
-  margin-top: 40px;
-  height: 90%;
+  margin-top: 10px;
+  height: 98%;
   overflow-y: scroll;
 
 }
@@ -544,8 +554,8 @@ body.dark .sidebar li a:hover .text {
   margin: 0;
   font-weight: 600;
 }
-.Company-Logo-img {
-    height: 60px;
+.Company-Logo-img{
+  height: 60px;
 }
 .bell{
   width: 25px;
@@ -847,4 +857,34 @@ body.dark .sidebar li a:hover .text {
     top: 50px;
   }
   
+}
+
+/* ///// */
+.employees-alerts hr{
+  margin: .3rem 0rem;
+}
+.EmployeeLastActive p{
+  margin: 0;
+  padding: 0 !important;
+  font-size: 12px;
+}
+.employeePhoto {
+  position: relative;
+  border-radius: 50%;
+  background-color: #D9D9D9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  margin: 0px 5px;
+}
+.active_statue {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0px;
+  right: 1px;
+  border: 1px solid white;
 }

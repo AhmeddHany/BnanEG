@@ -276,15 +276,15 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                         ("207", "/CasSys/images/employees.svg", "employees-items", new List<(string, string, string)>
                                         {
                                             ("2207001", "Employees", "Index"),
-                                            ("2207002", "#", "#"),
-                                            ("2207003", "#", "#"),
+                                            ("2207002", "EmployeesSystemValiditions", "Index"),
+                                            ("2207003", "EmployeesContractValiditions", "Index"),
                                         }),
                                         ("208", "/CasSys/images/services.svg", "services-items", new List<(string, string, string)>
                                         {
                                             ("2208001", "#", "#"),
                                             ("2208002", "#", "#"),
                                             ("2208003", "#", "#"),
-                                            ("2208004", "#", "#"),
+                                            ("2208004", "TechnicalConnectivity", "Connect"),
                                             ("2208005", "#", "#"),
                                             ("2208006", "#", "#"),
                                         })

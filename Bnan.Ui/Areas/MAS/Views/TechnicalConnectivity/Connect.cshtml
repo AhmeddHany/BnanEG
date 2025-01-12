@@ -1,5 +1,5 @@
 ﻿@using Bnan.Core.Extensions
-@model CrCasLessorWhatsupConnect
+@using Bnan.Ui.ViewModels.CAS
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
@@ -9,14 +9,14 @@
 <link href="~/css/toastr.css" rel="stylesheet" />
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
-        <form action="" class="needs-validation" novalidate>
+        <form asp-area="MAS" asp-controller="TechnicalConnectivity" asp-action="Connect" class="needs-validation" method="post" novalidate>
             <div class="row mt-3 g-3">
 
                 <div class="row justify-content-center">
                     <div class="col-lg-9">
                         <div class="row g-3 my-2">
                             <div class="col">
-                                <h3> الربط التقني </h3>
+                                <h3> @localizer["TechnicalConnectivity"] </h3>
                             </div>
                             <div class="col-md-auto save-col">
                                 <button type="submit" class="custom-img-btn">
@@ -29,7 +29,7 @@
                                 <div class=" inputs-accordion-item">
                                     <div class=" inputs-accordion-item-header">
                                         <span class="accordion-item-header-title">
-                                            <i class="fa-solid fa-check data-check"></i> هيئة النقل
+                                            <i class="fa-solid fa-check data-check"></i> @localizer["TransportAuthority"]
                                         </span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
                                              viewBox="0 0 24 24" fill="none" stroke="#666666"
@@ -45,61 +45,51 @@
                                             <div class="container-fluid ">
                                                 <div class="row techncal-connect-rows">
                                                     <div class="col-md-6">
-                                                        <label for="Content-Type" class="form-label">
-                                                            Content-Type
+                                                        <label for="CrMasLessorCommunicationsTgaAppId" class="form-label">
+                                                            @localizer["ContentType"]
                                                         </label>
-                                                        <input type="text" id="Content-Type"
-                                                               class="form-control inputs english-input"
-                                                               name="Content-Type " maxlength="100"
-                                                               required>
-                                                        <div class="invaild  techncal-connect-error   ">
-                                                            <div class="invalid-feedback">
-                                                                الحقل مطلوب
-                                                            </div>
+@*                                                         <input type="text" class="form-control inputs english-input" asp-for="CrMasLessorCommunicationsTgaAppId" maxlength="100">
+ *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <div class="invalid-feedback">
+                                                        الحقل مطلوب
                                                         </div>
+                                                        </div> *@
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label for="App-ID" class="form-label">
-                                                            App-ID
+                                                        <label for="CrMasLessorCommunicationsTgaContentType" class="form-label">
+                                                            @localizer["AppID"]
                                                         </label>
-                                                        <input type="text" id="App-ID"
-                                                               class="form-control inputs  english-input"
-                                                               name="App-ID " maxlength="100" required>
-                                                        <div class="invaild  techncal-connect-error   ">
-                                                            <div class="invalid-feedback">
-                                                                الحقل مطلوب
-                                                            </div>
+@*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsTgaContentType" maxlength="100">
+ *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <div class="invalid-feedback">
+                                                        الحقل مطلوب
                                                         </div>
+                                                        </div> *@
                                                     </div>
 
                                                 </div>
                                                 <div class="row techncal-connect-rows">
                                                     <div class="col-md-6">
-                                                        <label for="App-Key" class="form-label">
-                                                            App-Key
+                                                        <label for="CrMasLessorCommunicationsTgaAppKey" class="form-label">
+                                                            @localizer["AppKey"]
                                                         </label>
-                                                        <input type="text" id="App-Key"
-                                                               class="form-control inputs english-input"
-                                                               name="App-Key " maxlength="100" required>
-                                                        <div class="invaild  techncal-connect-error   ">
-                                                            <div class="invalid-feedback">
-                                                                الحقل مطلوب
-                                                            </div>
+@*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsTgaAppKey" maxlength="100">
+ *@                                                        @*  <div class="invaild  techncal-connect-error   ">
+                                                        <div class="invalid-feedback">
+                                                        الحقل مطلوب
                                                         </div>
+                                                        </div> *@
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label for="Authorization " class="form-label">
-                                                            Authorization
+                                                        <label for="CrMasLessorCommunicationsTgaAuthorization" class="form-label">
+                                                            @localizer["Authorization"]
                                                         </label>
-                                                        <input type="text" id="Authorization "
-                                                               class="form-control inputs  english-input"
-                                                               name="Authorization  " maxlength="100"
-                                                               required>
-                                                        <div class="invaild  techncal-connect-error   ">
-                                                            <div class="invalid-feedback">
-                                                                الحقل مطلوب
-                                                            </div>
+@*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsTgaAuthorization" maxlength="100">
+ *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <div class="invalid-feedback">
+                                                        الحقل مطلوب
                                                         </div>
+                                                        </div> *@
                                                     </div>
 
                                                 </div>
@@ -110,7 +100,7 @@
                                 <div class="inputs-accordion-item">
                                     <div class="inputs-accordion-item-header">
                                         <span class="accordion-item-header-title">
-                                            <i class="fa-solid fa-check data-check"></i> شموس
+                                            <i class="fa-solid fa-check data-check"></i> @localizer["Shemoos"]
                                         </span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
                                              viewBox="0 0 24 24" fill="none" stroke="#666666"
@@ -126,61 +116,52 @@
                                             <div class="container-fluid ">
                                                 <div class="row techncal-connect-rows">
                                                     <div class="col-md-6">
-                                                        <label for="Content-Type-Shomoos"
-                                                               class="form-label"> Content-Type </label>
-                                                        <input type="text" id="Content-Type-Shomoos"
-                                                               class="form-control inputs english-input"
-                                                               name="Content-Type-Shomoos " maxlength="100"
-                                                               required>
-                                                        <div class="invaild  techncal-connect-error   ">
-                                                            <div class="invalid-feedback">
-                                                                الحقل مطلوب
-                                                            </div>
+                                                        <label for="CrMasLessorCommunicationsShomoosContentType" class="form-label">
+                                                            @localizer["ContentType"]
+                                                        </label>
+@*                                                         <input type="text" class="form-control inputs english-input" asp-for="CrMasLessorCommunicationsShomoosContentType" maxlength="100">
+ *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <div class="invalid-feedback">
+                                                        الحقل مطلوب
                                                         </div>
+                                                        </div> *@
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label for="App-ID-Shomoos" class="form-label">
-                                                            App-ID
+                                                        <label for="CrMasLessorCommunicationsShomoosAppId" class="form-label">
+                                                            @localizer["AppID"]
                                                         </label>
-                                                        <input type="text" id="App-ID-Shomoos"
-                                                               class="form-control inputs  english-input"
-                                                               name="App-ID-Shomoos " maxlength="100"
-                                                               required>
-                                                        <div class="invaild  techncal-connect-error   ">
-                                                            <div class="invalid-feedback">
-                                                                الحقل مطلوب
-                                                            </div>
+@*                                                         <input type="text" class="form-control inputs english-input" asp-for="CrMasLessorCommunicationsShomoosAppId" maxlength="100">
+ *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <div class="invalid-feedback">
+                                                        الحقل مطلوب
                                                         </div>
+                                                        </div> *@
                                                     </div>
 
                                                 </div>
                                                 <div class="row techncal-connect-rows">
                                                     <div class="col-md-6">
-                                                        <label for="App-Key-Shomoos" class="form-label">
-                                                            App-Key
+                                                        <label for="CrMasLessorCommunicationsShomoosAppKey" class="form-label">
+                                                            @localizer["AppKey"]
                                                         </label>
-                                                        <input type="text" id="App-Key-Shomoos"
-                                                               class="form-control inputs english-input"
-                                                               name="App-Key-Shomoos " maxlength="100"
-                                                               required>
-                                                        <div class="invaild  techncal-connect-error   ">
-                                                            <div class="invalid-feedback">
-                                                                الحقل مطلوب
-                                                            </div>
+@*                                                         <input type="text" class="form-control inputs english-input" asp-for="CrMasLessorCommunicationsShomoosAppKey" maxlength="100">
+ *@
+                                                        @*  <div class="invaild  techncal-connect-error   ">
+                                                        <div class="invalid-feedback">
+                                                        الحقل مطلوب
                                                         </div>
+                                                        </div> *@
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label for="Authorization-Shomoos "
-                                                               class="form-label"> Authorization </label>
-                                                        <input type="text" id="Authorization-Shomoos "
-                                                               class="form-control inputs  english-input"
-                                                               name="Authorization-Shomoos  "
-                                                               maxlength="100" required>
-                                                        <div class="invaild  techncal-connect-error   ">
-                                                            <div class="invalid-feedback">
-                                                                الحقل مطلوب
-                                                            </div>
+                                                        <label for="CrMasLessorCommunicationsShomoosAuthorization" class="form-label">
+                                                            @localizer["Authorization"]
+                                                        </label>
+@*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsShomoosAuthorization" maxlength="100">
+ *@                                                        @*  <div class="invaild  techncal-connect-error">
+                                                        <div class="invalid-feedback">
+                                                        الحقل مطلوب
                                                         </div>
+                                                        </div> *@
                                                     </div>
 
                                                 </div>
@@ -191,7 +172,7 @@
                                 <div class="inputs-accordion-item">
                                     <div class="inputs-accordion-item-header">
                                         <span class="accordion-item-header-title">
-                                            <i class="fa-solid fa-check data-check"></i> رسائل نصية
+                                            <i class="fa-solid fa-check data-check"></i> @localizer["SMS"]
                                         </span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
                                              viewBox="0 0 24 24" fill="none" stroke="#666666"
@@ -207,31 +188,26 @@
                                             <div class="container-fluid ">
                                                 <div class="row techncal-connect-rows">
                                                     <div class="col-md-6">
-                                                        <label for="UserName" class="form-label">
-                                                            User
-                                                            Name
+                                                        <label for="CrMasLessorCommunicationsSmsName" class="form-label">
+                                                            @localizer["UserNameSMS"]
                                                         </label>
-                                                        <input type="text" id="UserName"
-                                                               class="form-control inputs english-input"
-                                                               name="UserName " maxlength="100" required>
-                                                        <div class="invaild  techncal-connect-error   ">
-                                                            <div class="invalid-feedback">
-                                                                الحقل مطلوب
-                                                            </div>
+@*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsSmsName" maxlength="100">
+ *@                                                        @*  <div class="invaild  techncal-connect-error   ">
+                                                        <div class="invalid-feedback">
+                                                        الحقل مطلوب
                                                         </div>
+                                                        </div> *@
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label for="API-Token " class="form-label">
-                                                            API-Token
+                                                        <label for="CrMasLessorCommunicationsSmsApi" class="form-label">
+                                                            @localizer["APIToken"]
                                                         </label>
-                                                        <input type="text" id="API-Token "
-                                                               class="form-control inputs  english-input"
-                                                               name="API-Token  " maxlength="100" required>
-                                                        <div class="invaild  techncal-connect-error   ">
-                                                            <div class="invalid-feedback">
-                                                                الحقل مطلوب
-                                                            </div>
+@*                                                         <input type="text" class="form-control inputs  english-input" asp-for="CrMasLessorCommunicationsSmsApi" maxlength="100">
+ *@                                                        @* <div class="invaild  techncal-connect-error   ">
+                                                        <div class="invalid-feedback">
+                                                        الحقل مطلوب
                                                         </div>
+                                                        </div> *@
                                                     </div>
 
                                                 </div>
@@ -242,7 +218,7 @@
                                 <div class="inputs-accordion-item">
                                     <div class="inputs-accordion-item-header">
                                         <span class="accordion-item-header-title">
-                                            <i class="fa-solid fa-check data-check" id="data-check-whatsup"></i> واتساب
+                                            <i class="fa-solid fa-check data-check" id="data-check-whatsup"></i> @localizer["Whatsup"]
                                         </span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
                                              viewBox="0 0 24 24" fill="none" stroke="#666666"
@@ -262,13 +238,13 @@
                                                             <div class="col-md-10">
                                                                 <label for="DeviceName-whatsapp"
                                                                        class="form-label">
-                                                                    اسم الجهاز
+                                                                    @localizer["DeviceName"]
                                                                 </label>
                                                                 <input type="text"
                                                                        id="DeviceName-whatsapp"
                                                                        class="form-control inputs"
                                                                        name="DeviceName-whatsapp"
-                                                                       maxlength="100" required disabled>
+                                                                       maxlength="100" disabled>
                                                                 @*  <div class="invaild ">
                                                                 <div class="invalid-feedback">
                                                                 الحقل مطلوب
@@ -280,13 +256,13 @@
                                                             <div class="col-md-10">
                                                                 <label for="DeviceName-whatsapp"
                                                                        class="form-label">
-                                                                    نوع الجهاز
+                                                                    @localizer["DeviceType"]
                                                                 </label>
                                                                 <input type="text"
                                                                        id="DeviceNameType-whatsapp"
                                                                        class="form-control inputs"
                                                                        name="DeviceNameType-whatsapp"
-                                                                       maxlength="100" required disabled>
+                                                                       maxlength="100" disabled>
                                                                 @*  <div class="invaild ">
                                                                 <div class="invalid-feedback">
                                                                 الحقل مطلوب
@@ -297,10 +273,10 @@
                                                         <div class="row">
                                                             <div class="col-md-10">
                                                                 <label for="phone2" class="form-label">
-                                                                    الجوال
+                                                                    @localizer["WhatsupPhone"]
                                                                 </label>
                                                                 <div class="input-group ">
-                                                                    <input type="tel" class="form-control inputs" id="phone2" name="phone2" maxlength="20" required disabled>
+                                                                    <input type="tel" class="form-control inputs" id="phone2" name="phone2" maxlength="20" disabled>
                                                                     @*  <select class="input-group-text select-style counterCode"
                                                                     name="counterCode-phone2">
                                                                     <option value="+966">+966</option>
@@ -315,14 +291,14 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
+                                                        <div class="row" hidden>
                                                             <div class="col-md-10">
                                                                 <label for="phone2" class="form-label">
                                                                     ارسال الرسالة
                                                                 </label>
                                                                 <div class="input-group ">
-                                                                    <input type="text" class="form-control inputs" id="message" maxlength="100" placeholder="message" required>
-                                                                    <input type="tel" class="form-control inputs" id="toPhone" maxlength="100" placeholder="20123456789" required>
+                                                                    <input type="text" class="form-control inputs" id="message" maxlength="100" placeholder="message">
+                                                                    <input type="tel" class="form-control inputs" id="toPhone" maxlength="100" placeholder="20123456789">
                                                                     <button type="button" class="form-control inputs" id="sendMessage">ارسال</button>
                                                                     @*  <select class="input-group-text select-style counterCode"
                                                                     name="counterCode-phone2">
@@ -338,7 +314,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
+                                                        <div class="row" hidden>
                                                             <div class="col-md-10">
 
                                                                 <div class="input-group ">
@@ -419,14 +395,13 @@
             await checkClientConnectionWithUI();
             await setIntervalForChecklessorDisconnect();
         });
-        const companyId = "0000"; // معرف الشركة
         const qrCodeTimeout = 30000; // صلاحية QR Code (30 ثانية)
         const connectionCheckInterval = 5000; // زمن التحقق (5 ثواني)
 
 
 
         async function checkClientConnection() {
-            const url = `/MAS/TechnicalConnectivity/IsClientReady?companyId=${companyId}`;
+            const url = `/MAS/TechnicalConnectivity/IsClientReady`;
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000);
 
@@ -450,7 +425,7 @@
             }
         }
         async function checkClientConnectionWithUI() {
-            const url = `/MAS/TechnicalConnectivity/IsClientReady?companyId=${companyId}`;
+            const url = `/MAS/TechnicalConnectivity/IsClientReady`;
 
             // إظهار Loader أثناء التحقق
             showLoader();
@@ -479,7 +454,7 @@
 
             if (isConnected) return;
 
-            const url = `/MAS/TechnicalConnectivity/GenerateQrCode?companyId=${companyId}`;
+            const url = `/MAS/TechnicalConnectivity/GenerateQrCode`;
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 ثانية
 
@@ -506,7 +481,7 @@
         }
 
         async function logoutClient() {
-            const url = `/MAS/TechnicalConnectivity/LogoutClient?companyId=${companyId}`;
+            const url = `/MAS/TechnicalConnectivity/LogoutClient`;
             try {
                 const response = await fetch(url, { method: "GET" });
 
@@ -539,7 +514,7 @@
                 const isConnected = await checkClientConnection();
                 if (isConnected) {
                     clearTimeout(monitoringTimer); // إيقاف التحقق
-                    const response = await fetch(`/MAS/TechnicalConnectivity/IsClientReady?companyId=${companyId}`);
+                    const response = await fetch(`/MAS/TechnicalConnectivity/IsClientReady`);
                     const { name, mobile, deviceType } = (await response.json()).data;
                     showClientConnected(name, mobile, deviceType);
                     return; // إيقاف التكرار عند الاتصال
@@ -570,12 +545,12 @@
             $('#QRArea').empty();
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').append(`
-                                                                <div class="col-auto d-flex flex-column justify-content-center align-items-center">
-                                                                    <div id="QRCode"></div>
-                                                                    <br>
-                                                                    <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
-                                                                </div>
-                                                            `);
+                                                                                <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+                                                                                    <div id="QRCode"></div>
+                                                                                    <br>
+                                                                                    <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
+                                                                                </div>
+                                                                            `);
             $('#QRCode').qrcode(qr);
         }
 
@@ -583,33 +558,33 @@
             $('#QRArea').empty();
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').append(`
-                                                                <div class="col-auto d-flex gap-4 flex-column justify-content-center align-items-center"
-                                                                     style="cursor:pointer;" id="ExpiredQRMessage" onclick="fetchQrCode()">
-                                                                    <img src="/MasSystem/images/NotScannedQR.svg" alt="Expired QR">
-                                                                    <p>انتهت صلاحية الرمز اضغط لإعادة التحميل</p>
-                                                                </div>
-                                                            `);
+                                                                                <div class="col-auto d-flex gap-4 flex-column justify-content-center align-items-center"
+                                                                                     style="cursor:pointer;" id="ExpiredQRMessage" onclick="fetchQrCode()">
+                                                                                    <img src="/MasSystem/images/NotScannedQR.svg" alt="Expired QR">
+                                                                                    <p>انتهت صلاحية الرمز اضغط لإعادة التحميل</p>
+                                                                                </div>
+                                                                            `);
         }
 
         function showQrButton() {
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                                                                </button>
-                                                            `);
+                                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                                </button>
+                                                                            `);
         }
 
         function showClientConnected(name, mobile, deviceType) {
             $("#data-check-whatsup").css("background-color", "green");
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
-                                                                    <img src="/MasSystem/images/done.svg" style="width: 50px;">
-                                                                    <p>أنت متصل بالواتساب</p>
-                                                                    <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
-                                                                </div>
-                                                            `);
+                                                                                <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
+                                                                                    <img src="/MasSystem/images/done.svg" style="width: 50px;">
+                                                                                    <p>أنت متصل بالواتساب</p>
+                                                                                    <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
+                                                                                </div>
+                                                                            `);
             $("#DeviceName-whatsapp").val(name);
             $("#DeviceNameType-whatsapp").val(deviceType);
             $("#phone2").val(mobile);
@@ -625,11 +600,11 @@
         function showFailureMessage(message) {
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                                                                </button>
-                                                                <p>${message}</p>
-                                                            `);
+                                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                                </button>
+                                                                                <p>${message}</p>
+                                                                            `);
         }
 
         function clearClientInfo() {
@@ -641,11 +616,11 @@
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                        <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                                                                </button>
-                                                                <p>${message}</p>
-                                                            `);
+                                                                                        <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                                </button>
+                                                                                <p>${message}</p>
+                                                                            `);
         }
 
 
@@ -666,8 +641,7 @@
                     contentType: "application/json",
                     data: JSON.stringify({
                         phone: phone,
-                        message: message,
-                        companyId: companyId
+                        message: message
                     }),
                     success: function (response) {
                         $("#statusMessage").text(response.message)

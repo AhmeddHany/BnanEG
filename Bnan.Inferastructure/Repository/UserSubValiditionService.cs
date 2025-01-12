@@ -68,7 +68,7 @@ namespace Bnan.Inferastructure.Repository
             var subTasks = await _unitOfWork.CrMasSysSubTasks.FindAllAsNoTrackingAsync(x => x.CrMasSysSubTasksSystemCode == systemCode);
             foreach (var item in subTasks)
             {
-                if (item.CrMasSysSubTasksCode != "2207001" || item.CrMasSysSubTasksCode != "2207002" || item.CrMasSysSubTasksCode != "2207003" || item.CrMasSysSubTasksCode != "2208004")
+                if (item.CrMasSysSubTasksCode != "2207001" && item.CrMasSysSubTasksCode != "2207002" && item.CrMasSysSubTasksCode != "2207003" && item.CrMasSysSubTasksCode != "2208004")
                 {
                     CrMasUserSubValidation crMasUserSubValidation = new CrMasUserSubValidation();
                     crMasUserSubValidation.CrMasUserSubValidationUser = userCode;

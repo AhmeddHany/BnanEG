@@ -1,636 +1,443 @@
-﻿@model Bnan.Ui.ViewModels.Identitiy.RegisterViewModel
+﻿@using Bnan.Ui.ViewModels.CAS.Employees
+@model EmployeesWithAuthrizationVM
 
 @inject IViewLocalizer localizer
 
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = localizer["Add User Data"];
-    ViewData["Page-Hint"] = localizer["Add User Hint"];
+   
 }
-<style>
 
-    .row {
-        align-items: center;
-    }
-
-    #signaturePreview, #imagePreview {
-        display: block;
-        margin-top: -5px;
-        float: right;
-        margin-right: 20px;
-        height: 100px;
-        width: 100px;
-        object-fit: cover;
-        border: .5px solid rgb(231, 231, 231);
-        position: relative;
-    }
-
-    #spanInput {
-        height: 35px;
-    }
-
-    .sub-container form .row > div:nth-child(odd):nth-child(-n+5), .sub-container-form form .row > div:nth-child(odd):nth-child(-n+5) {
-        margin: 0;
-    }
-
-    .file-upload {
-        background-color: #ffffff;
-        width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    .file-upload-btn {
-        width: 200px;
-        max-height: 200px;
-        max-width: 200px;
-        margin: 0;
-        color: #fff;
-        background: #727cf5;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        border-bottom: 4px solid #727cf5;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-    }
-
-        .file-upload-btn:hover {
-            background: #5661e3;
-            color: #ffffff;
-            transition: all .2s ease;
-            cursor: pointer;
-        }
-
-    /* .file-upload-btn:active {
-                        border: 0;
-                        transition: all .2s ease;
-                    }*/
-
-    .file-upload-content {
-        display: none;
-    }
-
-    .file-upload-input-picture, .file-upload-input-signature {
-        position: absolute;
-        margin: 0;
-        padding: 0;
-        width: 200px%;
-        height: 200px;
-        max-height: 200px;
-        max-width: 200px;
-        outline: none;
-        opacity: 0;
-        cursor: pointer;
-    }
-
-    .image-upload-wrap {
-        max-height: 200px;
-        max-width: 200px;
-        margin-top: 5px;
-        border: 4px dashed rgb(231, 231, 231);
-        position: relative;
-    }
-
-        .image-dropping,
-        .image-upload-wrap:hover {
-            background-color: rgb(231, 231, 231);
-            border: 4px dashed #ffffff;
-        }
-
-    .image-title-wrap {
-        color: #222;
-    }
-
-    .drag-text {
-        text-align: center;
-    }
-
-        .drag-text h3 {
-            font-weight: 100;
-            text-transform: uppercase;
-            padding: 60px 0;
-        }
-
-    .file-upload-image {
-        max-height: 200px;
-        max-width: 200px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        padding: 20px;
-        border: .5px solid rgb(231, 231, 231);
-    }
-
-    .remove-image {
-        margin: 0;
-        max-height: 200px;
-        max-width: 200px;
-        width: 100%;
-        color: #fff;
-        background: #fa5c7c;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        border-bottom: 4px solid #fa5c7c;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-    }
-
-        .remove-image:hover {
-            background: #f35474;
-            color: #ffffff;
-            transition: all .2s ease;
-            cursor: pointer;
-        }
-
-    /*.remove-image:active {
-                        border: 0;
-                        transition: all .2s ease;
-                    }*/
-    ul {
-        list-style-type: none;
-    }
-</style>
-<title>@ViewData["Title"]</title>
-
-
-
-<div class="sub-container-form">
-    <form id="form" class="needs-validation" novalidate asp-area="CAS" asp-controller="Employees" asp-action="AddEmployee" enctype="multipart/form-data">
-        <div class="form-contain">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label" for="UserCode">@localizer["User Code"]</label>
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="CAS" asp-controller="Employees" asp-action="AddEmployee" class="needs-validation" novalidate id="myForm">
+            @Html.AntiForgeryToken()
+            <input hidden asp-for="CrMasUserInformationLessor" id="lessorCode" />
+            <div class="row mt-3 g-3">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col-md-6">
+                                <h3>@localizer["Add_User_PageTitle"]</h3>
+                            </div>
+                            <div class="col-md-6 save-col">
+                                <button type="submit" class="custom-img-btn">
+                                    <img src="~/CasSys/images/save.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn"><a href="employees.html"><img class="Chevron" src="~/CasSys/images/Chevron_Left.svg" /></a></button>
+                            </div>
                         </div>
-                        <div class="col-md-8" style="margin-right: -80px;margin-left: -100px;">
-                            <input type="text" class="form-control" asp-for="CrMasUserInformationCode" maxlength="10" style="width: 130px;" data-val-required="@localizer["requiredFiled"]" data-val-minlength="@localizer["minLengthField"]" oninput="this.value=this.value.replace(/[^0-9]/g,'')" autocomplete="off" required>
-                            <div style="margin-top:2px">
-                                <div style="height: 1.0em">
-                                    <span asp-validation-for="@Model.CrMasUserInformationCode" class="text-danger"></span>
-                                    @Html.ValidationMessage("Exist", null, new { @class = "text-danger" })
+                        <main class="mt-3 g-3">
+
+                            <div class="accordion inputs-accordion">
+                                <div class=" inputs-accordion-item">
+                                    <div class=" inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            <i class="fa-solid fa-check data-check"></i> @localizer["PersonalInforamtion"]
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
+                                            <div class="container-fluid data-scroll-container">
+                                                <div class="row">
+                                                    <div class="col-md-6 ">
+                                                        <label for="CrMasUserInformationCode" class="form-label"> @localizer["MasEmployeeNo"] <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
+                                                        <input type="text" id="CrMasUserInformationCode" class="form-control inputs" asp-for="CrMasUserInformationCode" maxlength="10"
+                                                               onkeypress="return isEnglishAndNumbers(event)" oninput="removeInvalidChars(this)" required>
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasUserInformationCode" class="text-danger"></span>
+                                                                <span class="text-danger" id="CrMasUserInformationCode-Error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 ">
+                                                        <label for="CrMasUserInformationId" class="form-label">
+                                                            @localizer["UserID"]
+                                                            <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                                        </label>
+                                                        <input type="text" id="CrMasUserInformationId" class="form-control inputs" asp-for="CrMasUserInformationId" 
+                                                            oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10" required>
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasUserInformationId" class="text-danger"></span>
+                                                                <span class="text-danger" id="CrMasUserInformationId-Error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="CrMasUserInformationArName"
+                                                               class="form-label">
+                                                            @localizer["UserNameAr_add"]
+                                                            <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                                        </label>
+                                                        <input type="text" id="CrMasUserInformationArName" asp-for="CrMasUserInformationArName"
+                                                               class="form-control inputs arabic-input" maxlength="40" 
+                                                               oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" required>
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasUserInformationArName" class="text-danger"></span>
+                                                                <span class="text-danger" id="CrMasUserInformationArName-Error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="CrMasUserInformationEnName"
+                                                               class="form-label">
+                                                            @localizer["UserNameEn_add"]
+                                                            <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                                        </label>
+                                                        <input type="text" id="CrMasUserInformationEnName" asp-for="CrMasUserInformationEnName" class="form-control inputs english-input" maxlength="40" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" required>
+
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasUserInformationEnName" class="text-danger"></span>
+                                                                <span class="text-danger" id="CrMasUserInformationEnName-Error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="JobTitle-ar" class="form-label">
+                                                            @localizer["EmployementNameAr"]
+                                                            <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                                        </label>
+                                                        <input type="text" id="CrMasUserInformationTasksArName" asp-for="CrMasUserInformationTasksArName" class="form-control inputs arabic-input" maxlength="40" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" required>
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasUserInformationTasksArName" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="CrMasUserInformationTasksEnName" class="form-label">
+                                                            @localizer["EmployementNameEn"]
+                                                            <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                                        </label>
+                                                        <input type="text" id="CrMasUserInformationTasksEnName" asp-for="CrMasUserInformationTasksEnName" class="form-control inputs english-input" maxlength="40" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')" required>
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasUserInformationTasksEnName" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="CrMasUserInformationMobileNo" class="form-label">
+                                                            @localizer["MobilePhone"]
+                                                             <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                                        </label>
+                                                        <div class="input-group has-validation">
+                                                            <input type="tel" class="form-control inputs tel-input" id="CrMasUserInformationMobileNo" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10" required>
+                                                            <select class="input-group-text select-style counterCode" asp-for="CrMasUserInformationCallingKey">
+                                                                @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
+                                                                {
+                                                                    <option value="@callingKey.Text">@callingKey.Text</option>
+                                                                }
+                                                            </select>
+                                                            <div class="invaild">
+                                                                <div class="invalid-feedback">
+                                                                    <span asp-validation-for="@Model.CrMasUserInformationMobileNo" class="text-danger"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="CrMasUserInformationEmail" class="form-label">
+                                                            @localizer["Email"]
+                                                        </label>
+                                                        <input type="email" id="CrMasUserInformationEmail" asp-for="CrMasUserInformationEmail" class="form-control inputs english-input" maxlength="100">
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrMasUserInformationEmail" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row ">
+                                                    <div class="col-lg-12">
+                                                        <label for="CrMasUserInformationReasons">@localizer["Reason_s"]</label>
+                                                        <textarea class=" form-control textarea-inputs" rows="1" maxlength="100" asp-for="CrMasUserInformationReasons" type="text"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" inputs-accordion-item">
+                                    <div class=" inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            <i class="fa-solid fa-check data-check"></i> @localizer["AuthCustody"]
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
+                                            <div class="container-fluid ">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="CrMasUserInformationCreditLimit" class="form-label">@localizer["CreditLimitCAS"]<i class="fa-solid fa-star-of-life RequirdStar"></i></label>
+                                                        <input type="number" id="CrMasUserInformationCreditLimit" class="form-control inputs" asp-for="CrMasUserInformationCreditLimit" maxlength="10" min="0" required>
+                                                        <div class="invaild">
+                                                            <div class="invalid-feedback zero-feedback">
+                                                                <span asp-validation-for="@Model.CrMasUserInformationCreditLimit" class="text-danger"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="CrMasUserInformationCreditDaysLimit" class="form-label w-100">@localizer["DailyLimit"]</label>
+                                                        <div class="number-input-container  ">
+                                                            <div class="col">
+                                                                <input type="number" value="5" min="5" max="30" class="  alert-input" asp-for="CrMasUserInformationCreditDaysLimit" />
+                                                            </div>
+                                                            <div class="col d-flex flex-column-reverse">
+                                                                <button type="button" class="deincrement">
+                                                                </button>
+                                                                <button type="button" class="increment"></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" inputs-accordion-item">
+                                    <div class=" inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            <i class="fa-solid fa-check data-check"></i>
+                                            @localizer["ValiditySystemCAS"]
+
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
+
+                                            <div class="container-fluid data-scroll-container" style="height: 20vh;">
+                                                <div class="row">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <!-- حقل checkbox للصلاحية Admin -->
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserInformationAuthorizationAdmin" name="CrMasUserInformationAuthorizationAdmin" value="true" @(Model.CrMasUserInformationAuthorizationAdmin ? "checked" : "")>
+                                                        <input type="hidden" name="CrMasUserInformationAuthorizationAdmin" value="false"> <!-- القيمة الافتراضية -->
+                                                        <label class="form-check-label" for="CrMasUserInformationAuthorizationAdmin">
+                                                            @localizer["ValidityCAS"]
+                                                        </label>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row my-3">
+                                                    <div class="d-flex gap-3 align-items-center">
+                                                        <!-- حقل checkbox للصلاحية Owner -->
+                                                        <input class="form-check-input checkbox" type="checkbox" id="CrMasUserInformationAuthorizationOwner" name="CrMasUserInformationAuthorizationOwner" value="true" @(Model.CrMasUserInformationAuthorizationOwner ? "checked" : "")>
+                                                        <input type="hidden" name="CrMasUserInformationAuthorizationOwner" value="false"> <!-- القيمة الافتراضية -->
+                                                        <label class="form-check-label" for="CrMasUserInformationAuthorizationOwner">
+                                                            @localizer["ValidityOWN"]
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="row ">
+                                                    <div class="col-md-auto ">
+                                                        <div class="d-flex gap-3 align-items-center">
+                                                            <!-- حقل checkbox للصلاحية Branch -->
+                                                            <input class="form-check-input checkbox" type="checkbox" id="CrMasUserInformationAuthorizationBranch" name="CrMasUserInformationAuthorizationBranch" value="true" @(Model.CrMasUserInformationAuthorizationBranch ? "checked" : "")>
+                                                            <input type="hidden" name="CrMasUserInformationAuthorizationBranch" value="false"> <!-- القيمة الافتراضية -->
+                                                            <label class="form-check-label main-checkbox" for="CrMasUserInformationAuthorizationBranch">
+                                                                @localizer["ValidityBS"]
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6" id="hidden-Branches" style="display: none;">
+                                                        @if (Model.BranchesAuthrization != null && Model.BranchesAuthrization.Any())
+                                                        {
+                                                            for (int i = 0; i < Model.BranchesAuthrization.Count; i++)
+                                                            {
+                                                                <div class="d-flex gap-3 align-items-center">
+                                                                    <input class="form-check-input checkbox" type="checkbox" id="BranchesAuthrization[@i].Authrization"
+                                                                    name="BranchesAuthrization[@i].Authrization" value="true" @(Model.BranchesAuthrization[i].Authrization ? "checked" : "")>
+                                                                    <input type="hidden" name="BranchesAuthrization[@i].Code" value="@Model.BranchesAuthrization[i].Code" />
+                                                                    <input type="hidden" name="BranchesAuthrization[@i].Name" value="@Model.BranchesAuthrization[i].Name" />
+                                                                    <label class="form-check-label" for="BranchesAuthrization[@i].Authrization">
+                                                                        @Model.BranchesAuthrization[i].Name
+                                                                    </label>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label" for="UserCode">@localizer["RenterDriverID"]</label>
-                        </div>
-                        <div class="col-md-8" style="margin-right: -80px;margin-left: -100px;">
-                            <input type="text" class="form-control" asp-for="CrMasUserInformationId" maxlength="20" style="width: 50%;" data-val-required="@localizer["requiredFiled"]" oninput="this.value=this.value.replace(/[^0-9]/g,'')" autocomplete="off" required>
-                            <div style="margin-top:2px">
-                                <div style="height: 1.0em">
-                                    <span asp-validation-for="@Model.CrMasUserInformationId" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row mt-2">
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label" for="UserNameAr">@localizer["UserNameAr"]</label>
-                        </div>
-                        <div class="col-md-8" style="margin-right: -80px;margin-left: -100px;">
-                            <input type="text" class="form-control" asp-for="CrMasUserInformationArName" maxlength="40" style="width: 75%;" data-val-required="@localizer["requiredFiled"]" data-val-minlength="@localizer["minLengthField"]" autocomplete="off" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')">
-                            <div style="margin-top:2px">
-                                <div style="height: 1.0em">
-                                    <span asp-validation-for="@Model.CrMasUserInformationArName" class="text-danger" style="ma"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3" style="margin-right:230px">
-                    <h5>@localizer["ValiditySystem"]</h5>
-                </div>
-
-            </div>
-
-            <div class="row mt-2">
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label" for="UserNameEn">@localizer["UserNameEn"]</label>
-                        </div>
-                        <div class="col-md-8" style="margin-right: -80px;margin-left: -100px;">
-                            <input type="text" class="form-control" style="width: 75%;" asp-for="CrMasUserInformationEnName" maxlength="40" id="UserNameEn" autocomplete="off" data-val-required="@localizer["requiredFiled"]" data-val-minlength="@localizer["minLengthField"]" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')">
-                            <div style="margin-top:2px">
-                                <div style="height: 1.0em">
-                                    <span asp-validation-for="@Model.CrMasUserInformationEnName" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2" style="margin-right: 250px;">
-                    <h4 style="font-size: 20px;">
-                        <input type="checkbox" id="CrMasUserInformationAuthorizationAdmin" style="height: 18px;width: 21px;" name="CrMasUserInformationAuthorizationAdmin" class="Cas" value="false" />
-                        <label for="Cas" class="mb-1">
-                            @localizer["AdminAuth"]
-                        </label>
-                    </h4>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col-md-6">
-                    <div class="row">
-
-                        <div class="col-md-4">
-                            <label class="form-label" for="TasksArName">@localizer["EmployementAr"]</label>
-                        </div>
-                        <div class="col-md-8" style="margin-right: -80px;margin-left: -100px;">
-                            <input type="text" class="form-control" style="width: 75%;" asp-for="CrMasUserInformationTasksArName" maxlength="40" id="TasksArName" autocomplete="off" data-val-required="@localizer["requiredFiled"]" data-val-minlength="@localizer["minLengthField"]" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')">
-                            <div style="margin-top:2px">
-                                <div style="height: 1.0em">
-                                    <span asp-validation-for="@Model.CrMasUserInformationTasksArName" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-md-3" style="margin-right:250px;">
-                    <h4 style="font-size: 20px;">
-                        <input type="checkbox" id="CrMasUserInformationAuthorizationOwner" style="height: 18px;width: 21px;" name="CrMasUserInformationAuthorizationOwner" class="Owners" value="false" />
-                        <label for="Owners" class="mb-1">
-                            @localizer["Owners"]
-                        </label>
-                    </h4>
-                </div>
-            </div>
-            <div class="row mt-2" style="max-height:6vh">
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label" for="TasksEnName">@localizer["EmployementEn"]</label>
-                        </div>
-                        <div class="col-md-8" style="margin-right: -80px;margin-left: -100px;">
-                            <input type="text" class="form-control" style="width: 75%;" asp-for="CrMasUserInformationTasksEnName" maxlength="40" id="TasksEnName" autocomplete="off" data-val-required="@localizer["requiredFiled"]" data-val-minlength="@localizer["minLengthField"]" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')">
-                            <div style="margin-top:2px">
-                                <div style="height: 1.0em">
-                                    <span asp-validation-for="@Model.CrMasUserInformationTasksEnName" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3" style="margin-right:250px; ">
-                    <h4 style="font-size: 20px;">
-                        <input type="checkbox" id="Branches" style="height: 18px;width: 21px;" name="CrMasUserInformationAuthorizationBranch" class="Branches" />
-                        <label for="Branches" class="mb-1">
-                            @localizer["BranchesAuth"]
-                        </label>
-                        <a class="plus-icon" onclick="showBranches()">
-                            <i class="dripicons-plus"></i>
-                        </a>
-                    </h4>
-                    <div id="Branch" style="display: none;">
-                        @foreach (var item in ViewBag.Branches)
-                        {
-                            <ul class="list mt-2" style="font-size: 17px;">
-                                <li>
-                                    <h4 class="mb-1">
-                                        <input type="checkbox" id="CheckBoxBranches@(item.CrCasBranchInformationCode)" data-id="@item.CrCasBranchInformationCode" style="height: 15px;width: 30px;" name="CheckBoxBranches[IndexOf(item)]" class="checkbox-branch" value="false" />
-                                        @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
-                                        {
-                                            <label for="Branch">
-                                                @item.CrCasBranchInformationArShortName
-                                            </label>
-                                        }
-                                        else
-                                        {
-                                            <label for="Branch">
-                                                @item.CrCasBranchInformationEnShortName
-                                            </label>
-                                        }
-
-                                    </h4>
-                                </li>
-                            </ul>
-                        }
+                        </main>
                     </div>
                 </div>
             </div>
-            <div class="row mt-2">
-                <div class="col-md-2">
-                    <label class="form-label" for="CrMasUserInformationCreditLimit">@localizer["CreditLimit"]</label>
-                </div>
-                <div class="col-md-4" style="margin-right: -80px;margin-left:-100px">
-                    <input type="text" class="form-control" style="width:155px" asp-for="CrMasUserInformationCreditLimit" maxlength="9" id="CrMasUserInformationCreditLimit" autocomplete="off" data-val-required="@localizer["requiredFiled"]" oninput="validateInput9Digit(this)">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                            <span asp-validation-for="@Model.CrMasUserInformationCreditLimit" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="UserPhone">@localizer["User Phone"]</label>
-                </div>
-                <div class="col-auto">
-                    <div class="row">
-
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" id="CrMasUserInformationMobileNo" maxlength="15" asp-for="CrMasUserInformationMobileNo" data-val-minlength="@localizer["minLengthPhone"]" autocomplete="off" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                        </div>
-                        <div class="col-md-3">
-                            <select class="form-select" asp-for="CrMasUserInformationCallingKey" id="CrMasUserInformationCallingKey" name="CrMasUserInformationCallingKey" style="width: 90px;margin-right:-23px">
-                                @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
-                                {
-                                    <option value="@callingKey.Text">@callingKey.Text</option>
-                                }
-                            </select>
-                        </div>
-
-                    </div>
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                            <span asp-validation-for="@Model.CrMasUserInformationMobileNo" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row mt-2" hidden>
-                <div class="col-md-1">
-                    <label class="form-label" for="Email">@localizer["Email"]</label>
-                </div>
-                <div class="col-md-4">
-                    <input type="email" class="form-control" style="width: 75%;" asp-for="CrMasUserInformationEmail" autocomplete="off" maxlength="40" id="Email">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                            <span asp-validation-for="@Model.CrMasUserInformationEmail" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-md-1" style="width: 10.33333%">
-                    <label class="form-label" for="CrMasUserInformationReasons">@localizer["reasons"]</label>
-                </div>
-                <div class="col-md-4" style="margin-right: 1.2%;">
-                    <input type="text" class="form-control" style="width: 75%;" asp-for="CrMasUserInformationReasons" autocomplete="off" maxlength="100" id="CrMasUserInformationReasons">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                            <span asp-validation-for="@Model.CrMasUserInformationReasons" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row mt-2" hidden>
-                <div class="col-md-3 mt-3">
-                    <div class="file-upload">
-                        <button class="file-upload-btn" type="button" onclick="$('.file-upload-input-picture').trigger('click')">@localizer["Picture"]</button>
-                        <div class="image-upload-wrap">
-                            <input class="file-upload-input-picture" type="file" onchange="readURL(this, 'picture');" accept="image/*" id="UserImgFile" name="UserImgFile" />
-                            <div class="drag-text">
-                                <h3>@localizer["DragAndDrop"]</h3>
-                            </div>
-                        </div>
-                        <div class="file-upload-content picture">
-                            <img class="file-upload-image picture" src="#" alt="uploaded image" />
-                            <div class="image-title-wrap">
-                                <button type="button" onclick="removeUpload(this)" class="remove-image">@localizer["Remove"]</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <div class="file-upload">
-                        <button class="file-upload-btn" type="button" onclick="$('.file-upload-input-signature').trigger('click')">@localizer["Signture"]</button>
-                        <div class="image-upload-wrap">
-                            <input class="file-upload-input-signature" type="file" onchange="readURL(this, 'signature');" accept="image/*" id="UserSignatureFile" name="UserSignatureFile" />
-                            <div class="drag-text">
-                                <h3>@localizer["DragAndDrop"]</h3>
-                            </div>
-                        </div>
-                        <div class="file-upload-content signature">
-                            <img class="file-upload-image signature" src="#" alt="uploaded image" />
-                            <div class="image-title-wrap">
-                                <button type="button" onclick="removeUpload(this)" class="remove-image">@localizer["Remove"]</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        @Html.ValidationMessage("NoCHanged", null, new { @class = "text-danger" })
-        <div class="mt-3">
-            @*             <button class="btn btn-primary ms-2" type="submit">@localizer["Save"]</button>
-            *@<a class="btn btn-primary ms-2" id="submitButton">@localizer["Save"]</a>
-            <a type="button" class="btn btn-danger ms-2" title="@localizer["Back"]" asp-area="CAS" asp-controller="Employees" asp-action="Employees">
-                @localizer["Back"]
-            </a>
-        </div>
-    </form>
-
+        </form>
+    </div>
 </div>
+
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
     <script>
-        function readURL(input, type) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var container = $(input).closest('.file-upload');
-                    container.find('.file-upload-image.' + type).attr('src', e.target.result);
-                    container.find('.file-upload-content.' + type).show();
-                    container.find('.image-title.' + type).html(input.files[0].name);
-                    container.find('.image-upload-wrap').hide();
-                };
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                removeUpload(input);
-            }
+        // السماح فقط بالأحرف الإنجليزية والأرقام
+        function isEnglishAndNumbers(event) {
+            const char = String.fromCharCode(event.which);
+            const regex = /^[A-Za-z0-9]+$/; // يسمح فقط بالأحرف الإنجليزية والأرقام
+            return regex.test(char);
         }
 
-        function removeUpload(button) {
-            var container = $(button).closest('.file-upload');
-            var type = container.find('.file-upload-content').hasClass('signature') ? 'signature' : 'picture';
-            container.find('.file-upload-input-' + type).val('');
-            container.find('.file-upload-image.' + type).attr('src', '#');
-            container.find('.file-upload-content.' + type).hide();
-            container.find('.image-upload-wrap').show();
-        }
-
-        $('.image-upload-wrap').bind('dragover', function () {
-            $(this).addClass('image-dropping');
-        });
-        $('.image-upload-wrap').bind('dragleave', function () {
-            $(this).removeClass('image-dropping');
-        });
-    </script>
-    <script>
-        function showBranches() {
-            var list = document.getElementById("Branch");
-            var checkbox = document.getElementById("Branches");
-            var plusIcon = document.getElementById("plus-icon");
-            if (checkbox.checked) {
-                if (list.style.display === "block") {
-                    list.style.display = "none";
-                } else {
-                    list.style.display = "block";
-                }
-            }
-            else {
-                list.style.display = "none";
-            }
-            checkbox.addEventListener("change", function () {
-                showBranches();
-            })
+        // إزالة أي أحرف غير صالحة أثناء الإدخال
+        function removeInvalidChars(input) {
+            input.value = input.value.replace(/[^A-Za-z0-9]/g, '');
         }
     </script>
     <script>
-
-        // $(document).ready(function () {
-        //     // Handle form submission
-        //     $("#submitButton").click(function (e) {
-        //         e.preventDefault();
-        //         var CrMasUserInformationCode = $("CrMasUserInformationCode").val();
-        //         var CrMasUserInformationArName = $("CrMasUserInformationArName").val();
-        //         var CrMasUserInformationEnName = $("CrMasUserInformationEnName").val();
-        //         var CrMasUserInformationCreditLimit = $("CrMasUserInformationCreditLimit").val();
-        //         var CrMasUserInformationTasksArName = $("CrMasUserInformationTasksArName").val();
-        //         var CrMasUserInformationTasksEnName = $("CrMasUserInformationTasksEnName").val();
-        //         var CrMasUserInformationMobileNo = $("CrMasUserInformationMobileNo").val();
-        //         var CrMasUserInformationCallingKey = $("CrMasUserInformationCallingKey").val();
-
-
-        //         console.log(CrMasUserInformationCode)
-        //         console.log(CrMasUserInformationArName)
-        //         console.log(CrMasUserInformationEnName)
-        //         console.log(CrMasUserInformationCreditLimit)
-        //         console.log(CrMasUserInformationTasksArName)
-        //         console.log(CrMasUserInformationTasksEnName)
-        //         console.log(CrMasUserInformationMobileNo)
-        //         console.log(CrMasUserInformationCallingKey)
-
-
-        //         var formData = {
-        //             branches: $(".Branches").is(":checked"),
-        //             cas: $(".Cas").is(":checked"),
-        //             owners: $(".Owners").is(":checked")
-        //         };
-        //         var checkboxes = $(".Branch");
-        //         var checkboxesData = [];
-        //         checkboxes.each(function () {
-        //             var checkbox = $(this);
-        //             if (checkbox.is(":checked")) {
-        //                 var checkboxData = {
-        //                     value: checkbox.is(":checked"),
-        //                     name: checkbox.attr("name")
-        //                 };
-        //                 checkboxesData.push(checkboxData);
-        //             }
-        //         });
-
-        //         console.log(formData)
-        //         console.log(checkboxesData)
-        //     });
-        // });
-
-
-
-    </script>
-    <script>
-        $(document).on("click", "[type='checkbox']", function (e) {
-            if (this.checked) {
-                $(this).attr("value", "true");
-            } else {
-                $(this).attr("value", "false");
-            }
+        document.addEventListener("DOMContentLoaded", function () {
+            const BranchesAuthority = document.getElementById('CrMasUserInformationAuthorizationBranch');
+            const hiddenBranches = document.getElementById('hidden-Branches');
+            BranchesAuthority.addEventListener('change', function () {
+                const isChecked = BranchesAuthority.checked;
+                hiddenBranches.style.display = isChecked ? 'block' : 'none';
+            });
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Get the form element
-            var form = document.getElementById('form');
-            $("#submitButton").click(function (e) {
-                e.preventDefault();
+        let deincrement = document.querySelector(".deincrement");
+        let increment = document.querySelector(".increment");
+        let number = document.querySelector(".alert-input");
 
-                // Get the selected checkboxes and their IDs
-                var checkboxes = document.querySelectorAll('.checkbox-branch');
-                var data = [];
-                checkboxes.forEach(function (checkbox) {
-                    var id = checkbox.getAttribute('data-id');
-                    var value = checkbox.value;
-                    var checked = checkbox.checked;
-                    data.push({ Id: id, Value: checked });
+        let step = 5;
+        let max = 30;
+        let min = 5;
+
+        number.addEventListener('blur', () => {
+            let currentValue = parseInt(number.value);
+            if (isNaN(currentValue)) {
+                number.value = min;
+            } else if (currentValue > max) {
+                number.value = max;
+            } else if (currentValue < min) {
+                number.value = min;
+            }
+        });
+
+        increment.addEventListener("click", () => {
+            if (parseInt(number.value) + step >= max) {
+                number.value = max;
+                increment.style.backgroundImage = "url('/CasSys/images/up1.svg')";
+                deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+                return;
+            }
+            increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+            deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+            number.value = parseInt(number.value) + step;
+        });
+
+        deincrement.addEventListener("click", () => {
+            if (parseInt(number.value) - step <= min) {
+                number.value = min;
+                deincrement.style.backgroundImage = "url('/CasSys/images/down1.svg')";
+                increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+                return;
+            }
+            deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+            increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+            number.value = parseInt(number.value) - step;
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            function Check_onChange_input(existName, dataField) {
+                var lessorCode = $("#lessorCode").val();
+
+                $.ajax({
+                    type: "GET",
+                    url: "/CAS/Employees/CheckChangedField",
+                    data: { existName: existName, dataField: dataField, lessorCode: lessorCode },
+                    success: function (result) {
+                        console.log("feedback", result);
+                        // Hide all previous error messages
+                        $('.invalid-feedback').show();
+
+                        // Show new error messages if they exist
+                        if (result.errors && result.errors.length > 0) {
+                            result.errors.forEach(function (error) {
+                                // Use the ID from the error object to find the correct element
+                                $(`#${error.field}-Error`).text(error.message).show();
+                            });
+                        } else {
+                            // Hide the error message if no errors
+                            $(`#${existName}-Error`).text("");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
                 });
+            }
 
-                // Create a hidden input field with the data
-                var hiddenInput = document.createElement('input');
-                hiddenInput.setAttribute('type', 'hidden');
-                hiddenInput.setAttribute('name', 'CheckboxBranchesWithData');
-                hiddenInput.value = JSON.stringify(data);
+            $('#CrMasUserInformationCode').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasUserInformationCode', newValue);
+            });
 
-                // Append the hidden input field to the form BEFORE checking validity
-                form.appendChild(hiddenInput);
+            $('#CrMasUserInformationId').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasUserInformationId', newValue);
+            });
 
-                var allInputsValid = true;
-                var inputs = form.querySelectorAll('input[type="text"]');
-                var filteredInputs = [];
+            $('#CrMasUserInformationArName').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasUserInformationArName', newValue);
+            });
 
-                // inputs.forEach(function (input) {
-                //     var inputId = input.getAttribute('id');
-                //     if (inputId !== 'CrMasUserInformationEmail' && inputId !== 'CrMasUserInformationMobileNo' && inputId !== "CrMasUserInformationReasons") {
-                //         filteredInputs.push(input);
-                //     }
-                // });
+            $('#CrMasUserInformationEnName').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrMasUserInformationEnName', newValue);
+            });
 
-                filteredInputs.push(hiddenInput);
 
-                // filteredInputs.forEach(function (input) {
-                //     if (input.value == "" || input.value == null || !input.checkValidity()) {
-                //         allInputsValid = false;
-                //     }
-                // });
-
-                // var Spans = form.querySelectorAll('span');
-                // Spans.forEach(function (span) {
-                //     if (span.innerText !== '' && span.innerText !== null) {
-                //         console.log(span.innerText)
-                //         allInputsValid = false;
-                //     }
-                // })
-                form.submit();
-
-                // if (allInputsValid) {
-                //     form.submit();
-                // }
-            })
         });
 
     </script>
-
-    <script>
-        const input = document.getElementById('CrMasUserInformationCode');
-        input.addEventListener('input', function () {
-            const span = document.querySelector('span[data-valmsg-for="Exist"]');
-            span.textContent = '';
-        });
-    </script>
+    
 }
 
 

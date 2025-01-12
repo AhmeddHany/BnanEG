@@ -202,7 +202,7 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IFinancialTransactionOfEmployee, FinancialTransactionOfEmployee>();
             builder.Services.AddScoped<IContractSettlement, ContractSettlement>();
             builder.Services.AddScoped<IConvertedText, ConvertedText>();
-
+            builder.Services.AddScoped<IWhatsupConnect, WhatsupConnect>();
             //MAS
             builder.Services.AddScoped<IMasCarColor, MasCarColor>();
             builder.Services.AddScoped<IMasRenterDrivingLicense, MasRenterDrivingLicense>();
@@ -213,14 +213,15 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IMasRenterMembership, MasRenterMembership>();
             builder.Services.AddScoped<IMasUser, MasUser>();
             builder.Services.AddScoped<IMasQuestionsAnswer, MasQuestionsAnswer>();
-            builder.Services.AddScoped<IMasWhatsupConnect, MasWhatsupConnect>();
+            //builder.Services.AddScoped<IMasWhatsupConnect, MasWhatsupConnect>();
             builder.Services.AddScoped<IMasLessor, MasLessor>();
             builder.Services.AddScoped<IMasCountryClassification, MasCountryClassification>();
             builder.Services.AddScoped<IMasRenterInformation, MasRenterInformation>();
             builder.Services.AddScoped<IMasLessorMarketing, MasLessorMarketing>();
             builder.Services.AddScoped<IMasCompanyUsers, MasCompanyUsers>();
-
-
+            builder.Services.AddScoped<ITGAConnect, TGAConnect>();
+            builder.Services.AddScoped<IShomoosConnect, ShomoosConnect>();
+            builder.Services.AddScoped<ISMSConnect, SMSConnect>();
 
 
             return builder;

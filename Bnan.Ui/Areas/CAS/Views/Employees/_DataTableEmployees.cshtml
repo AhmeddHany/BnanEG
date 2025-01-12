@@ -5,24 +5,18 @@
 @model IEnumerable<CrMasUserInformation>
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";   
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";   
 }
-
-
-
-
-
-
 
 <table class=" tables-style table table-borderless " id="Table">
     <thead class="sticky-top">
         <tr>
+
             <th scope="col">@localizer["LastActive"]</th>
             <th scope="col">@localizer["LastUpdate"]</th>
-            <th class="DifferAlign">@localizer["Email"]</th>
-            <th class="DifferAlign">@localizer["EmployementName"]</th>
-            <th class="DifferAlign"> @localizer["UserName_view"]</th>
-            <th class="DifferAlign"> @localizer["UserCode"]</th>
+            <th scope="col"> @localizer["MobilePhone"]</th>
+            <th scope="col"> @localizer["Email"] </th>
+            <th scope="col" class="DifferAlign"> @localizer["UserName_view"]</th>
             <th></th>
         </tr>
     </thead>
@@ -41,20 +35,38 @@
                     <p class="FirstLineP">@item.CrMasUserInformationChangePassWordLastDate?.ToString("yyyy/MM/dd")</p>
                     <p class="secondLineP">@item.CrMasUserInformationChangePassWordLastDate?.ToString("HH:mm")</p>
                 </td>
-                
+                <td>
+                    <p>@item.CrMasUserInformationCallingKey@item.CrMasUserInformationMobileNo</p>
+                </td>
                 <td class="DifferAlign"><p>@item.Email</p></td>
+
                 <td class="DifferAlign">
-                    <p>
-                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasUserInformationTasksEnName : item.CrMasUserInformationTasksArName)
-                    </p>
-                </td>
-                <td class="DifferAlign">
-                    <p>
-                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasUserInformationEnName : item.CrMasUserInformationArName)
-                    </p>
-                </td>
-                <td class="DifferAlign">
-                    <p>@item.CrMasUserInformationCode</p>
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="col">
+                            <p class="FirstLineP">@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasUserInformationEnName : item.CrMasUserInformationArName)</p>
+                            <p class="secondLineP">@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasUserInformationTasksEnName : item.CrMasUserInformationTasksArName)</p>
+                        </div>
+                        <div class="col-auto d-flex justify-content-end">
+                            <div class="employee">
+                                <img src="@Url.Content(item.CrMasUserInformationPicture)"
+                                     class="employee border-0 w-100 h-100">
+                                @{
+                                    bool OnlineOrOflline = false;
+                                    if (item.CrMasUserInformationLastActionDate == null) OnlineOrOflline = false;
+                                    else
+                                    {
+                                        var timeDifference = DateTime.Now - item.CrMasUserInformationLastActionDate;
+                                        if (timeDifference?.TotalMinutes > 10) OnlineOrOflline = false;
+                                        else OnlineOrOflline = true;
+
+                                    }
+                                }
+                                <div class="active_statue @((bool) OnlineOrOflline ? "bg-success" : "bg-danger")"></div>
+
+
+                            </div>
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <div class="filter-number-td">

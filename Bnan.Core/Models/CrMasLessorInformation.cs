@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Bnan.Core.Models
+﻿namespace Bnan.Core.Models
 {
     public partial class CrMasLessorInformation
     {
@@ -58,7 +55,9 @@ namespace Bnan.Core.Models
         public string? CrMasLessorInformationReasons { get; set; }
 
         public virtual CrCasLessorClassification? CrMasLessorInformationClassificationNavigation { get; set; }
-        public virtual CrMasLessorCommunication CrMasLessorCommunication { get; set; } = null!;
+        public virtual CrCasLessorShomoosConnect CrCasLessorShomoosConnect { get; set; } = null!;
+        public virtual CrCasLessorSmsConnect CrCasLessorSmsConnect { get; set; } = null!;
+        public virtual CrCasLessorTgaConnect CrCasLessorTgaConnect { get; set; } = null!;
         public virtual CrMasLessorImage CrMasLessorImage { get; set; } = null!;
         public virtual ICollection<CrCasAccountBank> CrCasAccountBanks { get; set; }
         public virtual ICollection<CrCasAccountContractCompanyOwed> CrCasAccountContractCompanyOweds { get; set; }

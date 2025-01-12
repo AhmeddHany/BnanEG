@@ -26,7 +26,7 @@ namespace Bnan.Inferastructure.Repository.MAS
             var allUsers = await GetAllAsync();
 
             return allUsers.Any(x =>
-                x.CrMasUserInformationCode != entity.CrMasUserInformationCode && // Exclude the current entity being updated
+                x.CrMasUserInformationCode != entity.CrMasUserInformationCode && x.CrMasUserInformationLessor == entity.CrMasUserInformationLessor && // Exclude the current entity being updated
                 (
                     x.CrMasUserInformationArName == entity.CrMasUserInformationArName ||
                     x.CrMasUserInformationEnName.ToLower().Equals(entity.CrMasUserInformationEnName.ToLower())
@@ -35,18 +35,18 @@ namespace Bnan.Inferastructure.Repository.MAS
         }
 
 
-        public async Task<bool> ExistsByArabicNameAsync(string arabicName, string code)
+        public async Task<bool> ExistsByArabicNameAsync(string arabicName, string code, string lessorCode)
         {
             if (string.IsNullOrEmpty(arabicName)) return false;
             return await _unitOfWork.CrMasUserInformation
-                .FindAsync(x => x.CrMasUserInformationArName == arabicName && x.CrMasUserInformationCode != code) != null;
+                .FindAsync(x => x.CrMasUserInformationArName == arabicName && x.CrMasUserInformationLessor == lessorCode && x.CrMasUserInformationCode != code) != null;
         }
 
-        public async Task<bool> ExistsByEnglishNameAsync(string englishName, string code)
+        public async Task<bool> ExistsByEnglishNameAsync(string englishName, string code, string lessorCode)
         {
             if (string.IsNullOrEmpty(englishName)) return false;
             return await _unitOfWork.CrMasUserInformation
-                .FindAsync(x => x.CrMasUserInformationEnName.ToLower().Equals(englishName.ToLower()) && x.CrMasUserInformationCode != code) != null;
+                .FindAsync(x => x.CrMasUserInformationEnName.ToLower().Equals(englishName.ToLower()) && x.CrMasUserInformationLessor == lessorCode && x.CrMasUserInformationCode != code) != null;
         }
 
         public async Task<bool> ExistsByUserCodeAsync(string userCode)
