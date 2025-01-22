@@ -5,65 +5,78 @@ namespace Bnan.Ui.ViewModels.MAS
     public class LessorImagesVM
     {
         public string CrMasLessorImageCode { get; set; } = null!;
+        public IFormFile? FileCrMasLessorImageLogo { get; set; }
+        public IFormFile? FileCrMasLessorImageStamp { get; set; }
+        public IFormFile? FileCrMasLessorImageLoaderLogo { get; set; }
+        public IFormFile? FileCrMasLessorImageWhatsupLogo { get; set; }
+        public IFormFile? FileCrMasLessorImageQrCodeSite { get; set; }
+        public IFormFile? FileCrMasLessorImageAuthenticatedElectronically { get; set; }
+        public IFormFile? FileCrMasLessorImageQrCodeAuthenticated { get; set; }
+        public IFormFile? FileCrMasLessorImageMangerSignture { get; set; }
+        public IFormFile? FileCrMasLessorImageContractCard { get; set; }
+        public IFormFile? FileCrMasLessorImagePerformInvoice { get; set; }
+        public IFormFile? FileCrMasLessorImageTaxInvoice { get; set; }
+        public IFormFile? FileCrMasLessorImageReceipt { get; set; }
+        public IFormFile? FileCrMasLessorImageExchange { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage1 { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage2 { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage3 { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage4 { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage5 { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage6 { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage7 { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage8 { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage9 { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage10 { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage11 { get; set; }
+        public IFormFile? FileCrMasLessorImageContractPage12 { get; set; }
+        public IFormFile? FileCrMasLessorImageArConditionPage1 { get; set; }
+        public IFormFile? FileCrMasLessorImageArConditionPage2 { get; set; }
+        public IFormFile? FileCrMasLessorImageArConditionPage3 { get; set; }
+        public IFormFile? FileCrMasLessorImageEnConditionPage1 { get; set; }
+        public IFormFile? FileCrMasLessorImageEnConditionPage2 { get; set; }
+        public IFormFile? FileCrMasLessorImageEnConditionPage3 { get; set; }
+        public IFormFile? FileCrMasLessorImageArDailyReport { get; set; }
+        public IFormFile? FileCrMasLessorImageEnDailyReport { get; set; }
+
         public string? CrMasLessorImageLogo { get; set; }
         public string? CrMasLessorImageStamp { get; set; }
-        public string? CrMasLessorImageStampOutsideCity { get; set; }
-        public string? CrMasLessorImageStampOutsideCountry { get; set; }
-        public string? CrMasLessorImageStampFullAmountPaid { get; set; }
-        public string? CrMasLessorImageSignatureDirector { get; set; }
+        public string? CrMasLessorImageLoaderLogo { get; set; }
+        public string? CrMasLessorImageWhatsupLogo { get; set; }
+        public string? CrMasLessorImageQrCodeSite { get; set; }
+        public string? CrMasLessorImageAuthenticatedElectronically { get; set; }
+        public string? CrMasLessorImageQrCodeAuthenticated { get; set; }
+        public string? CrMasLessorImageMangerSignture { get; set; }
         public string? CrMasLessorImageContractCard { get; set; }
-        public string? CrMasLessorImageContractExtensionCard { get; set; }
-        public string? CrMasLessorImageContract24Hour { get; set; }
-        public string? CrMasLessorImageContract4Hour { get; set; }
-        public string? CrMasLessorImageContractFinished { get; set; }
-        public string? CrMasLessorImageContractClosed { get; set; }
-        public string? CrMasLessorImageContractCancelled { get; set; }
-        public string? CrMasLessorImageArInitialInvoice { get; set; }
-        public string? CrMasLessorImageArActualInvoice { get; set; }
-        public string? CrMasLessorImageArExternalCatchReceipt { get; set; }
-        public string? CrMasLessorImageArExternalBillExchangeReceipt { get; set; }
-        public string? CrMasLessorImageArInternalCatchReceipt { get; set; }
-        public string? CrMasLessorImageArInternalBillExchangeReceipt { get; set; }
-        public string? CrMasLessorImageEnInitialInvoice { get; set; }
-        public string? CrMasLessorImageEnActualInvoice { get; set; }
-        public string? CrMasLessorImageEnExternalCatchReceipt { get; set; }
-        public string? CrMasLessorImageEnExternalBillExchangeReceipt { get; set; }
-        public string? CrMasLessorImageEnInternalCatchReceipt { get; set; }
-        public string? CrMasLessorImageEnInternalBillExchangeReceipt { get; set; }
-        public string? CrMasLessorImageArContractPage1 { get; set; }
-        public string? CrMasLessorImageArContractPage2 { get; set; }
-        public string? CrMasLessorImageArContractPage3 { get; set; }
-        public string? CrMasLessorImageArContractPage4 { get; set; }
-        public string? CrMasLessorImageArContractPage5 { get; set; }
-        public string? CrMasLessorImageArContractPage6 { get; set; }
-        public string? CrMasLessorImageArContractPage7 { get; set; }
-        public string? CrMasLessorImageArContractPage8 { get; set; }
-        public string? CrMasLessorImageArContractPage9 { get; set; }
-        public string? CrMasLessorImageArContractTerms1 { get; set; }
-        public string? CrMasLessorImageArContractTerms2 { get; set; }
-        public string? CrMasLessorImageArContractTerms3 { get; set; }
-        public string? CrMasLessorImageArSettlementContractPage { get; set; }
-        public string? CrMasLessorImageArSettlementContractExpenses { get; set; }
-        public string? CrMasLessorImageArSettlementContractCompensation { get; set; }
-        public string? CrMasLessorImageEnContractPage1 { get; set; }
-        public string? CrMasLessorImageEnContractPage2 { get; set; }
-        public string? CrMasLessorImageEnContractPage3 { get; set; }
-        public string? CrMasLessorImageEnContractPage4 { get; set; }
-        public string? CrMasLessorImageEnContractPage5 { get; set; }
-        public string? CrMasLessorImageEnContractPage6 { get; set; }
-        public string? CrMasLessorImageEnContractPage7 { get; set; }
-        public string? CrMasLessorImageEnContractPage8 { get; set; }
-        public string? CrMasLessorImageEnContractPage9 { get; set; }
-        public string? CrMasLessorImageEnContractTerms1 { get; set; }
-        public string? CrMasLessorImageEnContractTerms2 { get; set; }
-        public string? CrMasLessorImageEnContractTerms3 { get; set; }
-        public string? CrMasLessorImageEnSettlementContractPage { get; set; }
-        public string? CrMasLessorImageEnSettlementContractExpenses { get; set; }
-        public string? CrMasLessorImageEnSettlementContractCompensation { get; set; }
+        public string? CrMasLessorImagePerformInvoice { get; set; }
+        public string? CrMasLessorImageTaxInvoice { get; set; }
+        public string? CrMasLessorImageReceipt { get; set; }
+        public string? CrMasLessorImageExchange { get; set; }
+        public string? CrMasLessorImageContractPage1 { get; set; }
+        public string? CrMasLessorImageContractPage2 { get; set; }
+        public string? CrMasLessorImageContractPage3 { get; set; }
+        public string? CrMasLessorImageContractPage4 { get; set; }
+        public string? CrMasLessorImageContractPage5 { get; set; }
+        public string? CrMasLessorImageContractPage6 { get; set; }
+        public string? CrMasLessorImageContractPage7 { get; set; }
+        public string? CrMasLessorImageContractPage8 { get; set; }
+        public string? CrMasLessorImageContractPage9 { get; set; }
+        public string? CrMasLessorImageContractPage10 { get; set; }
+        public string? CrMasLessorImageContractPage11 { get; set; }
+        public string? CrMasLessorImageContractPage12 { get; set; }
+        public string? CrMasLessorImageArConditionPage1 { get; set; }
+        public string? CrMasLessorImageArConditionPage2 { get; set; }
+        public string? CrMasLessorImageArConditionPage3 { get; set; }
+        public string? CrMasLessorImageEnConditionPage1 { get; set; }
+        public string? CrMasLessorImageEnConditionPage2 { get; set; }
+        public string? CrMasLessorImageEnConditionPage3 { get; set; }
+        public string? CrMasLessorImageArDailyReport { get; set; }
+        public string? CrMasLessorImageEnDailyReport { get; set; }
         public string? CrMasLessorNameAr { get; set; }
         public string? CrMasLessorNameEn { get; set; }
 
         public virtual CrMasLessorInformation CrMasLessorImageCodeNavigation { get; set; } = null!;
+
 
 
     }

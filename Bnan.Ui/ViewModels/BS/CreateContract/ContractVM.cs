@@ -1,29 +1,13 @@
-﻿using Bnan.Core.CustomAttribute;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Bnan.Ui.ViewModels.BS.CreateContract
 {
     public class ContractVM
     {
-        //[Required(ErrorMessage = "requiredFiled")]
-        //public string? RenterId { get; set; }
-        //[Required(ErrorMessage = "requiredFiled")]
-        //public string? RenterIdType { get; set; }
-        //[Required(ErrorMessage = "requiredFiled")]
-        //[DataType(DataType.Date)]
-        //[DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", ApplyFormatInEditMode = true)]
-        ////[CustomBirthDateValidation(15, ErrorMessage = "requiredAgeAtLeast15")]
-        //public DateTime? RenterBirthDate { get; set; }
         public RenterInfoVM? RenterInfo { get; set; }
         public RenterInfoVM? DriverInfo { get; set; }
         public RenterInfoVM? AddDriverInfo { get; set; }
-
-        //[Required(ErrorMessage = "requiredFiled")]
-        //[RegularExpression(@"^(?!7)\d{1,20}$", ErrorMessage = "NotStartWith7")]
-        //public string? DriverId { get; set; }
-        //[Required(ErrorMessage = "requiredFiled")]
-        //[RegularExpression(@"^(?!7)\d{1,20}$", ErrorMessage = "NotStartWith7")]
-        //public string? AdditionalDriverId { get; set; }
+        //public CarsInfoFromTajeerVM? CarsInfoFromTajeer { get; set; }
         public string? PrivateDriverId { get; set; }
         public string? RenterReasons { get; set; }
         public string? DriverReasons { get; set; }
@@ -36,6 +20,8 @@ namespace Bnan.Ui.ViewModels.BS.CreateContract
         public string? DaysNo { get; set; }
         public string? OutFeesTmm { get; set; }
         public string? FeesTmmValue { get; set; }
+        public string? AuthorizationNumber { get; set; }
+        public string? AdditionalHourValue { get; set; }
         public string? UserDiscount { get; set; }
         public string? UserAddHours { get; set; }
         public string? UserAddKm { get; set; }
@@ -57,11 +43,17 @@ namespace Bnan.Ui.ViewModels.BS.CreateContract
         public string? InitialInvoiceNo { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? BranchReceivingCode { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
+        public string? PolicyCode { get; set; }
+        public string? TokenNo { get; set; }
+        public long? TGAContractNo { get; set; }
+        public string? ContractTypeCode { get; set; }
+        public bool? SaveOrConclusionContract { get; set; }
     }
     public class CarCheckupDetailsVM
     {
         public string? Reason { get; set; }
-        public string? ReasonCheck { get; set; }
+        public string? ReasonCheckCode { get; set; }
         public bool CheckUp { get; set; }
 
     }

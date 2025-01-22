@@ -5339,18 +5339,23 @@
                 var dataEn = $label.data('en'); // Get the data-en attribute
                 var dataAr = $label.data('ar'); // Get the data-ar attribute
                 var isChecked = $row.find(".CheckUp").is(":checked");
-                var selectedReasonCheck = $row.find(".form-select").val(); // Get the selected value from the <select>
+                var selectedReasonCheckCode = $row.find(".form-select").data('code'); // Get the selected value from the <select>
+                var selectedReasonCheckId = $row.find(".form-select").val(); // Get the selected value from the <select>
+                var selectedReasonCheckName = $row.find(".form-select").text(); // Get the selected value from the <select>
 
                 // Check if the checkbox is checked
-                if (isChecked) {
+                 if (isChecked) {
                     // Create an object to store the extracted data
-                    var rowData = {
+                   var rowData = {
                         reason: notes,
+                        code: selectedReasonCheckCode,
+                        no: selectedReasonCheckId,
                         enName: dataEn,
                         arName: dataAr,
-                        reasonCheck: selectedReasonCheck // Add the selected value to the object
+                        reasonCheckName: selectedReasonCheckName, // Add the selected value to the object
+                        reasonCheckCode: selectedReasonCheckCode // Add the selected value to the object
                     };
-
+                    console.log("rowData CheckUp",rowData)
                     // Push the object into the array
                     checkUpData.push(rowData);
                     CarCheckUp = checkUpData;
@@ -5828,7 +5833,7 @@
         // Function to send an image and Ar PDF to WhatsApp
         async function sendArInvoiceToWhatsApp() {
             try {
-                const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArInitialInvoice";
+                const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArInitialInvoice";
                 const imagePath = imageLessor.replace('~', '');
                 const dates = getFormattedDatesMiliadiAndHijri("ar");
                 const miladiDateString = dates.miladiDate;
@@ -6070,7 +6075,7 @@
         // Function to send an image and En PDF to WhatsApp
         async function sendEnInvoiceToWhatsApp() {
             try {
-                const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnInitialInvoice";
+                const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnInitialInvoice";
                 const imagePath = imageLessor.replace('~', '');
                 const dates = getFormattedDatesMiliadiAndHijri("en");
                 const miladiDateString = dates.miladiDate;
@@ -6314,7 +6319,7 @@
         }
         async function sendArReceiptToWhatsApp() {
             try {
-                const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalCatchReceipt";
+                const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalCatchReceipt";
                 const imagePath = imageLessor.replace('~', '');
                 const dates = getFormattedDatesMiliadiAndHijri("ar");
                 const miladiDateString = dates.miladiDate;
@@ -6433,7 +6438,7 @@
         };
         async function sendEnReceiptToWhatsApp() {
             try {
-                const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnExternalCatchReceipt";
+                const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnExternalCatchReceipt";
                 const imagePath = imageLessor.replace('~', '');
                 const dates = getFormattedDatesMiliadiAndHijri("en");
                 const miladiDateString = dates.miladiDate;
@@ -6559,8 +6564,8 @@
             var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature") ? decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '') : null;
 
             var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorArName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector")
-                ? decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '')
+            var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector")
+                ? decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '')
                 : null;
 
             var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
@@ -6672,7 +6677,7 @@
             return new Promise(async (resolve, reject) => {
                 try {
                     console.log("RenterInformation FirstPage", RenterInformation);
-                    var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage1";
+                    var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage1";
                     var imagePath = image.replace('~', '');
                     // Contract Info
                     const contractNo = "@ViewBag.ContractNo";
@@ -6801,7 +6806,7 @@
         const CreateArPageContract2 = async () => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage2";
+                    var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage2";
                     var imagePath = image.replace('~', '');
                     // Get ALl Date for Page 2
                     const Data = getDataOfPage2();
@@ -6975,7 +6980,7 @@
         const CreateArPageContract3 = async () => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage3";
+                    var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage3";
                     var imagePath = image.replace('~', '');
                     // Get ALl Date for Page 2
                     var Data = getDataOfPage3();
@@ -7065,7 +7070,7 @@
         const CreateArPageContract4 = async () => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage4";
+                    var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage4";
                     var imagePath = image.replace('~', '');                    // Get ALl Date for Page 4
                     // Last Director and manger and user and renter with signture
                     var signtures = await loadArSignatures();
@@ -7161,7 +7166,7 @@
         const CreateArPageContract5 = async () => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage5";
+                    var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage5";
                     var imagePath = image.replace('~', '');
                     // Get ALl Date for Page 5
                     var pictures = await GetCheckUpPicture();
@@ -7213,7 +7218,7 @@
         const CreateArPageContract6 = async () => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage6";
+                    var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage6";
                     var imagePath = image.replace('~', '');
                     // Get ALl Date for Page 6
                     var pictures = await GetCheckUpPicture();
@@ -7275,7 +7280,7 @@
         // Page7
         async function getContractConditionPic1() {
             const mainImg = new Image();
-            var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms1";
+            var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms1";
             var imagePath = image.replace('~', '');
             mainImg.src = imagePath;
             return mainImg;
@@ -7283,7 +7288,7 @@
         const CreateArPageContract7 = async () => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage7";
+                    var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage7";
                     var imagePath = image.replace('~', '');
                     // Last Director and manger and user and renter with signture
                     //Get Pic
@@ -7328,7 +7333,7 @@
         // Page8
         async function getContractConditionPic2() {
             const mainImg = new Image();
-            var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms2";
+            var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms2";
             var imagePath = image.replace('~', '');
             mainImg.src = imagePath;
             return mainImg;
@@ -7336,7 +7341,7 @@
         const CreateArPageContract8 = async () => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage8";
+                    var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage8";
                     var imagePath = image.replace('~', '');
                     // Last Director and manger and user and renter with signture
                     //Get Pic
@@ -7380,7 +7385,7 @@
         // Page9
         async function getContractConditionPic3() {
             const mainImg = new Image();
-            var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms3";
+            var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms3";
             var imagePath = image.replace('~', '');
             mainImg.src = imagePath;
             return mainImg;
@@ -7388,7 +7393,7 @@
         const CreateArPageContract9 = async () => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage9";
+                    var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage9";
                     var imagePath = image.replace('~', '');
                     // Get ALl Date for Page 9
                     // var mainImg = await getContractConditionPic3();
@@ -7455,9 +7460,9 @@
                 }
                 // Paths to the terms images
                 // const termsImagePaths = [
-                //     "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms1",
-                //     "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms2",
-                //     "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms3"
+                //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms1",
+                //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms2",
+                //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms3"
                 // ];
 
                 // Corresponding create page functions for termsImagePaths
@@ -7469,9 +7474,9 @@
 
                 // Paths to the pages images
                 const pageImagePaths = [
-                    "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage7",
-                    "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage8",
-                    "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage9"
+                    "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage7",
+                    "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage8",
+                    "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage9"
                 ];
 
                 // Check if the terms images exist and add corresponding functions
@@ -7526,8 +7531,8 @@
             var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature") ? decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '') : null;
 
             var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorEnName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector")
-                ? decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '')
+            var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector")
+                ? decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '')
                 : null;
 
             var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorEnName");
@@ -7639,7 +7644,7 @@
         };
         const CreateEnPageContract1 = async () => {
             return new Promise(async (resolve, reject) => {
-                var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage1";
+                var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage1";
                 var imagePath = image.replace('~', '');
                 // Contract Info
                 const contractNo = "@ViewBag.ContractNo";
@@ -7769,7 +7774,7 @@
         };
         const CreateEnPageContract2 = async () => {
             return new Promise(async (resolve, reject) => {
-                var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage2";
+                var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage2";
                 var imagePath = image.replace('~', '');
                 // Get ALl Date for Page 2
                 const Data = getEnDataOfPage2();
@@ -7939,7 +7944,7 @@
         }
         const CreateEnPageContract3 = async () => {
             return new Promise(async (resolve, reject) => {
-                var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage3";
+                var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage3";
                 var imagePath = image.replace('~', '');
                 // Get ALl Date for Page 2
                 var Data = getEnDataOfPage3();
@@ -8025,7 +8030,7 @@
         }
         const CreateEnPageContract4 = async () => {
             return new Promise(async (resolve, reject) => {
-                var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage4";
+                var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage4";
                 var imagePath = image.replace('~', '');                    // Get ALl Date for Page 4
                 // Last Director and manger and user and renter with signture
                 var signtures = await loadEnSignatures();
@@ -8062,7 +8067,7 @@
         // Page5
         const CreateEnPageContract5 = async () => {
             return new Promise(async (resolve, reject) => {
-                var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage5";
+                var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage5";
                 var imagePath = image.replace('~', '');
                 // Get ALl Date for Page 5
                 var pictures = await GetCheckUpPicture();
@@ -8110,7 +8115,7 @@
         // Page6
         const CreateEnPageContract6 = async () => {
             return new Promise(async (resolve, reject) => {
-                var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage6";
+                var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage6";
                 var imagePath = image.replace('~', '');
                 // Get ALl Date for Page 6
                 var pictures = await GetCheckUpPicture();
@@ -8156,7 +8161,7 @@
         };
         // Page 7
         async function getContractEnConditionPic1() {
-            var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms1";
+            var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms1";
             var imagePath = image.replace('~', '');
             try {
                 const mainImg = await loadImage(imagePath);
@@ -8168,7 +8173,7 @@
         }
         const CreateEnPageContract7 = async () => {
             return new Promise(async (resolve, reject) => {
-                var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage7";
+                var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage7";
                 var imagePath = image.replace('~', '');
                 // Last Director and manger and user and renter with signture
                 //Get Pic
@@ -8208,7 +8213,7 @@
         };
         // Page 8
         async function getContractEnConditionPic2() {
-            var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms2";
+            var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms2";
             var imagePath = image.replace('~', '');
             try {
                 const mainImg = await loadImage(imagePath);
@@ -8220,7 +8225,7 @@
         }
         const CreateEnPageContract8 = async () => {
             return new Promise(async (resolve, reject) => {
-                var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage8";
+                var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage8";
                 var imagePath = image.replace('~', '');
                 // Last Director and manger and user and renter with signture
                 //Get Pic
@@ -8260,7 +8265,7 @@
         };
         // Page 9
         async function getContractEnConditionPic3() {
-            var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms3";
+            var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms3";
             var imagePath = image.replace('~', '');
             try {
                 const mainImg = await loadImage(imagePath);
@@ -8272,7 +8277,7 @@
         }
         const CreateEnPageContract9 = async () => {
             return new Promise(async (resolve, reject) => {
-                var image = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage9";
+                var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage9";
                 var imagePath = image.replace('~', '');
                 // Last Director and manger and user and renter with signture
                 //Get Pic
@@ -8335,9 +8340,9 @@
                 }
                 // Paths to the terms images
                 // const termsImagePaths = [
-                //     "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms1",
-                //     "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms2",
-                //     "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms3"
+                //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms1",
+                //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms2",
+                //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms3"
                 // ];
 
                 // Corresponding create page functions for termsImagePaths
@@ -8349,9 +8354,9 @@
 
                 // Paths to the pages images
                 const pageImagePaths = [
-                    "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage7",
-                    "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage8",
-                    "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage9"
+                    "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage7",
+                    "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage8",
+                    "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage9"
                 ];
 
                 // Check if the terms images exist and add corresponding functions

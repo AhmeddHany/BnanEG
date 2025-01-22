@@ -291,7 +291,7 @@ namespace Bnan.Inferastructure.Repository
             }
             return false;
         }
-        public async Task<bool> AddRenterContractCheckUp(string LessorCode, string ContractNo, string SerialNo, string PriceNo, string CheckUpCode, string Reasons)
+        public async Task<bool> AddRenterContractCheckUp(string LessorCode, string ContractNo, string SerialNo, string PriceNo, string CheckUpCode, string ReasonCheckCode, bool Status, string Reasons)
         {
             CrCasRenterContractCarCheckup renterContractCarCheckup = new CrCasRenterContractCarCheckup();
 
@@ -305,6 +305,8 @@ namespace Bnan.Inferastructure.Repository
                     renterContractCarCheckup.CrCasRenterContractCarCheckupNo = ContractNo;
                     renterContractCarCheckup.CrCasRenterContractCarCheckupCode = carCheckUp.CrMasSupContractCarCheckupCode;
                     renterContractCarCheckup.CrCasRenterContractCarCheckupType = "1";
+                    renterContractCarCheckup.CrCasRenterContractCarCheckupCheck = ReasonCheckCode;
+                    renterContractCarCheckup.CrCasRenterContractCarCheckupStatus = Status;
                     renterContractCarCheckup.CrCasRenterContractCarCheckupReasons = Reasons;
                 }
             }
@@ -338,7 +340,7 @@ namespace Bnan.Inferastructure.Repository
                                                        string AdditionalDriver, string SerialNo, string PriceNo, string DaysNo, string UserFreeHour, string UserFreeKm,
                                                        string CurrentMeter, string OptionsTotal, string AdditionalTotal, string ContractValueAfterDiscount,
                                                        string DiscountValue, string ContractValueBeforeDiscount, string TaxValue, string TotalAmount, string UserInsert,
-                                                       string Authrization, string UserDiscount, string AmountPayed, string ArContractPdf, string EnContractPdf, string Reasons)
+                                                       string Authrization, string UserDiscount, string AmountPayed, string ContractPdf, string Reasons)
         {
             DateTime now = DateTime.Now;
             CrCasRenterContractBasic renterContractBasic = new CrCasRenterContractBasic();
@@ -456,8 +458,7 @@ namespace Bnan.Inferastructure.Repository
             renterContractBasic.CrCasRenterContractPriceReference = carPrice.CrCasPriceCarBasicNo;
             renterContractBasic.CrCasRenterContractBasicUserInsert = UserInsert;
             renterContractBasic.CrCasRenterContractBasicStatus = Status.Active;
-            renterContractBasic.CrCasRenterContractBasicArPdfFile = ArContractPdf;
-            renterContractBasic.CrCasRenterContractBasicEnPdfFile = EnContractPdf;
+            renterContractBasic.CrCasRenterContractBasicPdfFile = ContractPdf;
             renterContractBasic.CrCasRenterContractBasicReasons = Reasons;
 
 
@@ -605,7 +606,7 @@ namespace Bnan.Inferastructure.Repository
         }
 
         public async Task<CrCasAccountReceipt> AddAccountReceipt(string ContractNo, string LessorCode, string BranchCode, string PaymentMethod, string Account, string SerialNo, string SalesPointNo, decimal TotalPayed,
-                                                                                                                        string RenterId, string sector, string UserId, string PassingType, string Reasons, string pdfPathAr, string pdfPathEn)
+                                                                                                                        string RenterId, string sector, string UserId, string PassingType, string Reasons, string pdfPath)
         {
             CrCasAccountReceipt crCasAccountReceipt = new CrCasAccountReceipt();
             var User = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == UserId && x.CrMasUserInformationLessor == LessorCode);
@@ -661,8 +662,7 @@ namespace Bnan.Inferastructure.Repository
             crCasAccountReceipt.CrCasAccountReceiptReceipt = 0;
             crCasAccountReceipt.CrCasAccountReceiptIsPassing = PassingType;
             crCasAccountReceipt.CrCasAccountReceiptReasons = Reasons;
-            crCasAccountReceipt.CrCasAccountReceiptArPdfFile = pdfPathAr;
-            crCasAccountReceipt.CrCasAccountReceiptEnPdfFile = pdfPathEn;
+            crCasAccountReceipt.CrCasAccountReceiptPdfFile = pdfPath;
 
             if (await _unitOfWork.CrCasAccountReceipt.AddAsync(crCasAccountReceipt) != null) return crCasAccountReceipt;
             return null;
@@ -1301,7 +1301,7 @@ namespace Bnan.Inferastructure.Repository
         }
 
 
-        public async Task<bool> AddAccountInvoice(string ContractNo, string RenterId, string sector, string LessorCode, string BranchCode, string UserId, string AccountReceiptNo, string pdfPathAr, string pdfPathEn)
+        public async Task<bool> AddAccountInvoice(string ContractNo, string RenterId, string sector, string LessorCode, string BranchCode, string UserId, string AccountReceiptNo, string pdfPath)
         {
             CrCasAccountInvoice crCasAccountInvoice = new CrCasAccountInvoice();
             var Renter = await _unitOfWork.CrCasRenterLessor.FindAsync(x => x.CrCasRenterLessorId == RenterId && x.CrCasRenterLessorCode == LessorCode);
@@ -1321,8 +1321,7 @@ namespace Bnan.Inferastructure.Repository
             crCasAccountInvoice.CrCasAccountInvoiceReferenceContract = ContractNo;
             crCasAccountInvoice.CrCasAccountInvoiceReferenceReceipt = AccountReceiptNo;
             crCasAccountInvoice.CrCasAccountInvoiceUserCode = UserId;
-            crCasAccountInvoice.CrCasAccountInvoiceArPdfFile = pdfPathAr;
-            crCasAccountInvoice.CrCasAccountInvoiceEnPdfFile = pdfPathEn;
+            crCasAccountInvoice.CrCasAccountInvoicePdfFile = pdfPath;
 
             if (await _unitOfWork.CrCasAccountInvoice.AddAsync(crCasAccountInvoice) != null) return true;
             return false;

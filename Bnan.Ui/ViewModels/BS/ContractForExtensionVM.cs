@@ -53,10 +53,8 @@ namespace Bnan.Ui.ViewModels.BS
         public decimal? CrCasRenterContractBasicPreviousBalance { get; set; }
         public decimal? CrCasRenterContractBasicAmountRequired { get; set; }
         public decimal? CrCasRenterContractBasicAmountPaidAdvance { get; set; }
-        public string? CrCasRenterContractBasicArPdfFile { get; set; }
-        public string? CrCasRenterContractBasicEnPdfFile { get; set; }
-        public string? CrCasRenterContractBasicArTga { get; set; }
-        public string? CrCasRenterContractBasicEnTga { get; set; }
+        public string? CrCasRenterContractBasicPdfFile { get; set; }
+        public string? CrCasRenterContractBasicPdfTga { get; set; }
         public string? CrCasRenterContractPriceReference { get; set; }
         public string? CrCasRenterContractOffersReference { get; set; }
         public string? CrCasRenterContractUserReference { get; set; }
@@ -83,8 +81,7 @@ namespace Bnan.Ui.ViewModels.BS
         public string? AccountNo { get; set; }
         public string? AccountReceiptNo { get; set; }
         public string? InitialInvoiceNo { get; set; }
-        public string? ArInvoicePdf { get; set; }
-        public string? EnInvoicePdf { get; set; }
+        public string? InvoicePdf { get; set; }
         public virtual CrCasRenterLessor? CrCasRenterContractBasic5 { get; set; }
         public virtual CrCasCarInformation? CrCasRenterContractBasicCarSerailNoNavigation { get; set; }
 

@@ -129,20 +129,20 @@
                         @{
                             if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                             {
-                                <td style="text-align:start">@item.CrCasAccountContractTaxOwedDate?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</td>
+                                <td style="text-align:start">@item.CrCasAccountContractTaxOwedDate?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)</td>
                             }
                             else
                             {
-                                <td style="text-align:start">@item.CrCasAccountContractTaxOwedDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</td>
+                                <td style="text-align:start">@item.CrCasAccountContractTaxOwedDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</td>
                             }
-                            <td id="_Nc">@item.CrCasAccountContractTaxOwedContractValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
-                            <td id="_Nc">@item.CrCasAccountContractTaxOwedPercentage?.ToString("N2",CultureInfo.InvariantCulture) %</td>
-                            <td id="_Nc">@item.CrCasAccountContractTaxOwedValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountContractTaxOwedContractValue?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountContractTaxOwedPercentage?.ToString("N2", CultureInfo.InvariantCulture) %</td>
+                            <td id="_Nc">@item.CrCasAccountContractTaxOwedValue?.ToString("N2", CultureInfo.InvariantCulture)</td>
 
                         }
 
                         @{
-                            var Link_pdf_Invoice = Model.CrCasAccountInvoice?.Find(x => x.CrCasAccountInvoiceNo == item.CrCasAccountContractTaxOwedContractNo)?.CrCasAccountInvoiceEnPdfFile;
+                            var Link_pdf_Invoice = Model.CrCasAccountInvoice?.Find(x => x.CrCasAccountInvoiceNo == item.CrCasAccountContractTaxOwedContractNo)?.CrCasAccountInvoicePdfFile;
                             var Target_pdf_1 = "#";
                             if (Link_pdf_Invoice?.Count() > 2)
                             {
@@ -196,19 +196,19 @@ else
                         @{
                             if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                             {
-                                <td style="text-align:start">@item.CrCasAccountContractTaxOwedDate?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</td>
+                                <td style="text-align:start">@item.CrCasAccountContractTaxOwedDate?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)</td>
                             }
                             else
                             {
-                                <td style="text-align:start">@item.CrCasAccountContractTaxOwedDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</td>
+                                <td style="text-align:start">@item.CrCasAccountContractTaxOwedDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</td>
                             }
-                            <td id="_Nc">@item.CrCasAccountContractTaxOwedContractValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
-                            <td id="_Nc">@item.CrCasAccountContractTaxOwedPercentage?.ToString("N2",CultureInfo.InvariantCulture) %</td>
-                            <td id="_Nc">@item.CrCasAccountContractTaxOwedValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountContractTaxOwedContractValue?.ToString("N2", CultureInfo.InvariantCulture)</td>
+                            <td id="_Nc">@item.CrCasAccountContractTaxOwedPercentage?.ToString("N2", CultureInfo.InvariantCulture) %</td>
+                            <td id="_Nc">@item.CrCasAccountContractTaxOwedValue?.ToString("N2", CultureInfo.InvariantCulture)</td>
 
                         }
                         @{
-                            var Link_pdf_Invoice = Model.CrCasAccountInvoice?.Find(x => x.CrCasAccountInvoiceNo == item.CrCasAccountContractTaxOwedContractNo)?.CrCasAccountInvoiceArPdfFile;
+                            var Link_pdf_Invoice = Model.CrCasAccountInvoice?.Find(x => x.CrCasAccountInvoiceNo == item.CrCasAccountContractTaxOwedContractNo)?.CrCasAccountInvoicePdfFile;
                             var Target_pdf_1 = "#";
                             if (Link_pdf_Invoice?.Count() > 2)
                             {

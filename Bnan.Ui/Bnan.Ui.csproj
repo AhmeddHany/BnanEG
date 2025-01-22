@@ -6,18 +6,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\MAS\Controllers\ViewComponents\**" />
     <Compile Remove="FollowUpContract\**" />
     <Compile Remove="wwwroot\BranchSys\Renters\**" />
     <Compile Remove="wwwroot\BranchSys\ٌRenters\**" />
     <Compile Remove="wwwroot\pages\**" />
+    <Content Remove="Areas\MAS\Controllers\ViewComponents\**" />
     <Content Remove="FollowUpContract\**" />
     <Content Remove="wwwroot\BranchSys\Renters\**" />
     <Content Remove="wwwroot\BranchSys\ٌRenters\**" />
     <Content Remove="wwwroot\pages\**" />
+    <EmbeddedResource Remove="Areas\MAS\Controllers\ViewComponents\**" />
     <EmbeddedResource Remove="FollowUpContract\**" />
     <EmbeddedResource Remove="wwwroot\BranchSys\Renters\**" />
     <EmbeddedResource Remove="wwwroot\BranchSys\ٌRenters\**" />
     <EmbeddedResource Remove="wwwroot\pages\**" />
+    <None Remove="Areas\MAS\Controllers\ViewComponents\**" />
     <None Remove="FollowUpContract\**" />
     <None Remove="wwwroot\BranchSys\Renters\**" />
     <None Remove="wwwroot\BranchSys\ٌRenters\**" />
@@ -403,7 +407,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\MAS\Controllers\ViewComponents\" />
     <Folder Include="wwwroot\images\Bnan\Models\" />
     <Folder Include="wwwroot\images\Company\" />
     <Folder Include="wwwroot\images\CAS\" />

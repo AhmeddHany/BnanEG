@@ -128,7 +128,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
         }
         [HttpPost]
         public async Task<IActionResult> CreateContract(BSLayoutVM? bSLayoutVM, string ChoicesList, string AdditionalsList, Dictionary<string, CarCheckupDetailsVM>? CheckupDetails, bool Contract_OutFeesTmm,
-                                                string? SavePdfArInvoice, string? SavePdfEnInvoice, string? SavePdfArReceipt, string? SavePdfEnReceipt, string? SavePdfArContract, string? SavePdfEnContract, string StaticContractCardImg)
+                                                 string? SavePdfInvoice, string? SavePdfReceipt, string? SavePdfContract, string StaticContractCardImg)
         {
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
@@ -162,46 +162,40 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             var basicContractNo = GenerateContractNumber(lessorCode, branch.CrCasBranchInformationCode, sectorCodeForRenter);
             //Contract
-            if (string.IsNullOrEmpty(SavePdfArContract) || string.IsNullOrEmpty(SavePdfEnContract))
+            if (string.IsNullOrEmpty(SavePdfContract))
             {
                 _toastNotification.AddErrorToastMessage("فشلت العملية لعدم استقبال ملف العقد، يجب ان تكون الصورة الواحدة لا تزيد 500 كيلو بايت", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
-            SavePdfArContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfArContract);
-            SavePdfEnContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfEnContract);
-            if (string.IsNullOrEmpty(SavePdfArContract) || string.IsNullOrEmpty(SavePdfEnContract))
+            SavePdfContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfContract);
+            if (string.IsNullOrEmpty(SavePdfContract))
             {
                 _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ العقد", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
-            var pdfArContract = await SavePdfAsync(SavePdfArContract, lessorCode, branch.CrCasBranchInformationCode, basicContractNo, "ar", "Contract");
-            var pdfEnContract = await SavePdfAsync(SavePdfEnContract, lessorCode, branch.CrCasBranchInformationCode, basicContractNo, "en", "Contract");
-            var basicContract = await AddRenterContractBasicAsync(lessorCode, branch, basicContractNo, contractInfo, userLogin, pdfArContract, pdfEnContract, sectorCodeForRenter);
+            var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, branch.CrCasBranchInformationCode, basicContractNo, "ar", "Contract");
+            var basicContract = await AddRenterContractBasicAsync(lessorCode, branch, basicContractNo, contractInfo, userLogin, pdfContract, sectorCodeForRenter);
             if (basicContract == null)
             {
-                await RemovePdfs(new[] { pdfArContract, pdfEnContract });
+                await RemovePdfs(new[] { pdfContract });
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
             //Receipt
             var checkAccountReceipt = new CrCasAccountReceipt();
             var amountPaid = (decimal)basicContract.CrCasRenterContractBasicAmountPaidAdvance;
-            var pdfArReceipt = "";
-            var pdfEnReceipt = "";
+            var pdfReceipt = "";
             if (amountPaid > 0)
             {
-                SavePdfArReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfArReceipt);
-                SavePdfEnReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfEnReceipt);
-                if (string.IsNullOrEmpty(SavePdfArReceipt) || string.IsNullOrEmpty(SavePdfEnReceipt))
+                SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
+                if (string.IsNullOrEmpty(SavePdfReceipt))
                 {
-                    await RemovePdfs(new[] { pdfArContract, pdfEnContract });
+                    await RemovePdfs(new[] { pdfContract });
                     _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ السند", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return RedirectToAction("Index", "Home");
                 }
-                pdfArReceipt = await SavePdfIfNotEmptyAsync(SavePdfArReceipt, lessorCode, branch.CrCasBranchInformationCode, contractInfo.AccountReceiptNo, "ar", "Receipt", amountPaid > 0);
-                pdfEnReceipt = await SavePdfIfNotEmptyAsync(SavePdfEnReceipt, lessorCode, branch.CrCasBranchInformationCode, contractInfo.AccountReceiptNo, "en", "Receipt", amountPaid > 0);
-
-                checkAccountReceipt = await AddAccountReceiptAsync(basicContract, lessorCode, sectorCodeForRenter, branch, contractInfo, userLogin, amountPaid, pdfArReceipt, pdfEnReceipt);
+                pdfReceipt = await SavePdfIfNotEmptyAsync(SavePdfReceipt, lessorCode, branch.CrCasBranchInformationCode, contractInfo.AccountReceiptNo, "ar", "Receipt", amountPaid > 0);
+                checkAccountReceipt = await AddAccountReceiptAsync(basicContract, lessorCode, sectorCodeForRenter, branch, contractInfo, userLogin, amountPaid, pdfReceipt);
             }
 
 
@@ -211,22 +205,20 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
 
 
-            SavePdfArInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfArInvoice);
-            SavePdfEnInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfEnInvoice);
-            if (string.IsNullOrEmpty(SavePdfArInvoice) || string.IsNullOrEmpty(SavePdfEnInvoice))
+            SavePdfInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfInvoice);
+            if (string.IsNullOrEmpty(SavePdfInvoice))
             {
-                await RemovePdfs(new[] { pdfArContract, pdfEnContract, SavePdfArReceipt, SavePdfEnReceipt });
+                await RemovePdfs(new[] { pdfContract, SavePdfReceipt });
                 _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ الفاتورة", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
-            var pdfArInvoice = await SavePdfAsync(SavePdfArInvoice, lessorCode, branch.CrCasBranchInformationCode, contractInfo.InitialInvoiceNo, "ar", "Invoice");
-            var pdfEnInvoice = await SavePdfAsync(SavePdfEnInvoice, lessorCode, branch.CrCasBranchInformationCode, contractInfo.InitialInvoiceNo, "en", "Invoice");
+            var pdfInvoice = await SavePdfAsync(SavePdfInvoice, lessorCode, branch.CrCasBranchInformationCode, contractInfo.InitialInvoiceNo, "ar", "Invoice");
 
-            var checkAccountInvoice = await AddAccountInvoiceAsync(basicContract, checkAccountReceipt, sectorCodeForRenter, pdfArInvoice, pdfEnInvoice);
+            var checkAccountInvoice = await AddAccountInvoiceAsync(basicContract, checkAccountReceipt, sectorCodeForRenter, pdfInvoice);
 
             var checks = await PerformAdditionalChecksAsync(basicContract, lessorCode, contractInfo, ChoicesList, AdditionalsList, CheckupDetails);
 
-            var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, pdfArContract, pdfEnContract, pdfArInvoice, pdfEnInvoice, pdfArReceipt, pdfEnReceipt, amountPaid);
+            var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, pdfContract, pdfInvoice, pdfReceipt, amountPaid);
 
             bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
             if (!checkPdf || !checks || !checkAccountInvoice)
@@ -289,24 +281,16 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
             return false;
         }
-        private Dictionary<string, string> GetPdfDictionary(string culture, string arContract, string enContract, string arInvoice, string enInvoice, string arReceipt, string enReceipt, decimal amountPaid)
+        private Dictionary<string, string> GetPdfDictionary(string culture, string Contract, string Invoice, string Receipt, decimal amountPaid)
         {
             var pdfDictionary = new Dictionary<string, string>();
-
-            if (culture == "ar-EG")
-            {
-                pdfDictionary = new Dictionary<string, string> { { arContract, "ArContract" }, { arInvoice, "ArInvoice" } };
-                if (amountPaid > 0) pdfDictionary.Add(arReceipt, "ArReceipt");
-            }
-            else
-            {
-                pdfDictionary = new Dictionary<string, string> { { enContract, "EnContract" }, { enInvoice, "EnInvoice" } };
-                if (amountPaid > 0) pdfDictionary.Add(enReceipt, "EnReceipt");
-            }
+            pdfDictionary = new Dictionary<string, string> { { Contract, "Contract" }, { Invoice, "Invoice" } };
+            if (amountPaid > 0) pdfDictionary.Add(Receipt, "Receipt");
             return pdfDictionary;
         }
 
-        private async Task<CrCasRenterContractBasic> AddRenterContractBasicAsync(string lessorCode, CrCasBranchInformation branch, string contractNo, ContractVM contractInfo, CrMasUserInformation userLogin, string ArContractPdf, string EnContractPdf, string sectorCodeForRenter)
+        private async Task<CrCasRenterContractBasic> AddRenterContractBasicAsync(string lessorCode, CrCasBranchInformation branch, string contractNo, ContractVM contractInfo, CrMasUserInformation userLogin,
+             string ContractPdf, string sectorCodeForRenter)
         {
             return await _ContractServices.AddRenterContractBasic(
                 lessorCode, branch.CrCasBranchInformationCode, contractNo, contractInfo.RenterInfo.CrMasRenterInformationId, sectorCodeForRenter, contractInfo.DriverInfo.CrMasRenterInformationId,
@@ -314,10 +298,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 contractInfo.DaysNo, contractInfo.UserAddHours, contractInfo.UserAddKm, contractInfo.CurrentMeter, contractInfo.OptionTotal,
                 contractInfo.AdditionalTotal, contractInfo.ContractValueAfterDiscount, contractInfo.DiscountValue, contractInfo.ContractValueBeforeDiscount,
                 contractInfo.TaxValue, contractInfo.TotalContractAmount, userLogin.CrMasUserInformationCode, contractInfo.OutFeesTmm,
-                contractInfo.UserDiscount, contractInfo.AmountPayed, ArContractPdf, EnContractPdf, contractInfo.RenterReasons);
+                contractInfo.UserDiscount, contractInfo.AmountPayed, ContractPdf, contractInfo.RenterReasons);
         }
 
-        private async Task<CrCasAccountReceipt> AddAccountReceiptAsync(CrCasRenterContractBasic basicContract, string lessorCode, string sectorCode, CrCasBranchInformation branch, ContractVM contractInfo, CrMasUserInformation userLogin, decimal amountPaid, string pdfArReceipt, string pdfEnReceipt)
+        private async Task<CrCasAccountReceipt> AddAccountReceiptAsync(CrCasRenterContractBasic basicContract, string lessorCode, string sectorCode, CrCasBranchInformation branch,
+            ContractVM contractInfo, CrMasUserInformation userLogin, decimal amountPaid, string pdfReceipt)
         {
             if (amountPaid <= 0) return null;
 
@@ -331,7 +316,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 basicContract.CrCasRenterContractBasicNo, lessorCode, basicContract.CrCasRenterContractBasicBranch,
                 contractInfo.PaymentMethod, contractInfo.AccountNo, basicContract.CrCasRenterContractBasicCarSerailNo,
                 contractInfo.SalesPoint, amountPaid, basicContract.CrCasRenterContractBasicRenterId, sectorCode, userLogin.CrMasUserInformationCode,
-                passing, contractInfo.PaymentReasons, pdfArReceipt, pdfEnReceipt);
+                passing, contractInfo.PaymentReasons, pdfReceipt);
             return receipt;
         }
 
@@ -349,12 +334,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
         }
 
-        private async Task<bool> AddAccountInvoiceAsync(CrCasRenterContractBasic basicContract, CrCasAccountReceipt accountReceipt, string sector, string pdfArInvoice, string pdfEnInvoice)
+        private async Task<bool> AddAccountInvoiceAsync(CrCasRenterContractBasic basicContract, CrCasAccountReceipt accountReceipt, string sector, string pdfInvoice)
         {
             return await _ContractServices.AddAccountInvoice(
                 basicContract.CrCasRenterContractBasicNo, basicContract.CrCasRenterContractBasicRenterId, sector,
                 basicContract.CrCasRenterContractBasicLessor, basicContract.CrCasRenterContractBasicBranch,
-                basicContract.CrCasRenterContractBasicUserInsert, accountReceipt.CrCasAccountReceiptNo, pdfArInvoice, pdfEnInvoice);
+                basicContract.CrCasRenterContractBasicUserInsert, accountReceipt.CrCasAccountReceiptNo, pdfInvoice);
         }
 
         private async Task<bool> PerformAdditionalChecksAsync(CrCasRenterContractBasic basicContract, string lessorCode, ContractVM contractInfo, string choicesList, string additionalsList, Dictionary<string, CarCheckupDetailsVM> reasons)
@@ -422,16 +407,46 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
         private async Task<bool> CheckCheckUpCarAsync(CrCasRenterContractBasic basicContract, string lessorCode, ContractVM contractInfo, Dictionary<string, CarCheckupDetailsVM> reasons)
         {
-            if (reasons == null) return true;
+            var cultureName = CultureInfo.CurrentCulture.Name;
+            var isArabic = cultureName == "ar-EG";
+
+            // التحقق من أن البيانات ليست فارغة
+            if (reasons == null || !reasons.Any())
+                return true;
 
             foreach (var item in reasons)
             {
-                string reason = string.IsNullOrEmpty(item.Value.Reason) ? item.Value.ReasonCheck : $"{item.Value.ReasonCheck} - {item.Value.Reason}";
-                if (!await _ContractServices.AddRenterContractCheckUp(lessorCode, basicContract.CrCasRenterContractBasicNo, contractInfo.SerialNo, contractInfo.PriceNo, item.Key, reason))
+                var checkUpDetail = await _unitOfWork.CrMasSupContractCarCheckupDetail.FindAsync(x =>
+                    x.CrMasSupContractCarCheckupDetailsCode == item.Key &&
+                    x.CrMasSupContractCarCheckupDetailsNo == item.Value.ReasonCheckCode &&
+                    x.CrMasSupContractCarCheckupDetailsStatus == Status.Active);
+
+                // التحقق إذا لم يتم العثور على التفاصيل
+                if (checkUpDetail == null)
+                {
+                    continue; // أو يمكنك إرجاع false إذا كان ذلك مطلوباً
+                }
+
+                // التحقق من اسم الفحص
+                string nameOfCheckUpDetail = isArabic
+                    ? (checkUpDetail.CrMasSupContractCarCheckupDetailsArName ?? "اسم غير متوفر")
+                    : (checkUpDetail.CrMasSupContractCarCheckupDetailsEnName ?? "Name not available");
+
+                // التحقق من السبب وإضافة القيمة الافتراضية
+                string reason = string.IsNullOrEmpty(item.Value.Reason)
+                    ? nameOfCheckUpDetail
+                    : $"{nameOfCheckUpDetail} - {item.Value.Reason}";
+
+                // استدعاء الخدمة
+                var result = await _ContractServices.AddRenterContractCheckUp(lessorCode, basicContract?.CrCasRenterContractBasicNo, contractInfo?.SerialNo,
+                                                                                contractInfo?.PriceNo, item.Key, item.Value.ReasonCheckCode, item.Value.CheckUp, reason);
+
+                if (!result)
                 {
                     return false;
                 }
             }
+
             return true;
         }
 

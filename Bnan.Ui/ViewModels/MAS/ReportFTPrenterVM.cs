@@ -9,14 +9,14 @@ namespace Bnan.Ui.ViewModels.MAS
     }
     public class listReportFTPrenterVM
     {
-        
+
         public sumitionofClass_FTPrenter_VM summition = new sumitionofClass_FTPrenter_VM();
         public List<Renterinfo_FTP_VM> all_Rentersinfo = new List<Renterinfo_FTP_VM>();
         public List<TResult2> all_bonds = new List<TResult2>();
         public List<TResult2> all_exchanges = new List<TResult2>();
         public List<list_String_2> all_RentersIds_recipt = new List<list_String_2>();
         public list_String_4 ThisRenterData = new list_String_4();
-        public List<list_String_4> all_UsersData = new List<list_String_4>();       
+        public List<list_String_4> all_UsersData = new List<list_String_4>();
         public List<Recipt_ForRenter_VM> all_Recipts = new List<Recipt_ForRenter_VM>();
         public List<list_String_4> all_lessors = new List<list_String_4>();
 
@@ -96,8 +96,7 @@ namespace Bnan.Ui.ViewModels.MAS
         //public DateTime? CrCasAccountReceiptPassingDate { get; set; }
         public string? CrCasAccountReceiptPassingUser { get; set; }
         public string? CrCasAccountReceiptPassingReference { get; set; }
-        public string? CrCasAccountReceiptArPdfFile { get; set; }
-        public string? CrCasAccountReceiptEnPdfFile { get; set; }
+        public string? CrCasAccountReceiptPdfFile { get; set; }
         //public string? CrCasAccountReceiptReasons { get; set; }
 
         public string? PaymentMethod_Ar { get; set; }

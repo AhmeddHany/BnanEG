@@ -1,140 +1,105 @@
 ﻿@using Bnan.Core.Extensions
-@model IEnumerable<CrMasLessorInformation>
+@model List<CrMasLessorInformation>
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["Lessors Data"];
-    ViewData["Page-Hint"] = @localizer["LessorsImages Hint"];
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
-<style>
-    body {
-        overflow: hidden
-    }
+<link href="~/css/toastr.css" rel="stylesheet" />
 
-    @@media (max-width: 600px) {
-        #basic-datatable1_wrapper .row:first-child > div {
-            text-align: center;
-        }
+<div class="col d-flex align-items-center justify-content-center">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3 mb-2">
+                <div class="col">
+                    <h3> @localizer["SupportImagesForlessor"] </h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
 
-            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
-                text-align: center;
-            }
-    }
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search" class="form-control inputs search-input" name="search" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
 
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f9f9f9;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-</style>
-
-<div class="sub-container">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div class="col-sm-12 col-md-9">
-                <div class="col-sm-12 col-md-4 p-0">
-                    <a type="button" class="btn btn-danger" title="@localizer["Back"]" asp-area="MAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
                 </div>
             </div>
+            <div class="row mb-3">
+                <div class="col-12 filters-col">
+                    <div class="filters-custom-order">
+                        <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioAll" name="customRadio" value="All" />
+                    </div>
 
-            @*search And Fitler Radio Button*@
-            <div class="col-sm-12 col-md-3 p-0">
-                <input class="form-control" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
+                    <div class="filters-custom-order">
+                        <label class="form-check-label filter2" for="customRadioActive">@localizer["Active"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioActive" name="customRadio" value="A" checked />
+                    </div>
+
+                    <div class="filters-custom-order">
+                        <label class="form-check-label  filter1" for="customRadioStoped">@localizer["Stoped"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioStoped" name="customRadio" value="H" />
+                    </div>
+                    <div class="filters-custom-order">
+                        <label class="form-check-label filter3" for="customRadioRemoved">@localizer["Deleted"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioRemoved" name="customRadio" value="D" />
+                    </div>
+
+                </div>
             </div>
-        </div>
-        <div class=dataTable>
-            @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-            {
-                <div class="col-sm-12">
-                    <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-                        <thead>
-                            <tr role="row">
-                                <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                                <th aria-label="Position: activate to sort column ascending">@localizer["LessorNo"]</th>
-                                <th aria-label="Position: activate to sort column ascending">@localizer["LessorName"]</th>
-                                <th aria-label="Position: activate to sort column ascending">@localizer["DirName"]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            @{
-                                int no = 1;
-                            }
-                            @foreach (var item in Model)
-                            {
-                                <tr onclick="location.href='@Url.Action("Edit", "LessorImages", new { id = item.CrMasLessorInformationCode })'">
-                                    <td>@no</td>
-                                    <td>@item.CrMasLessorInformationCode</td>
-                                    <td>@item.CrMasLessorInformationEnLongName</td>
-                                    <td>@item.CrMasLessorInformationDirectorEnName</td>
-                                </tr>
-                                no++;
-                            }
-                        </tbody>
-                    </table>
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm  w-100  dataTable">
+                    <partial name="_DataTableForLessorImages" />
                 </div>
-            }
-            else
-            {
-                <div class="col-sm-12">
-                    <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-                        <thead>
-                            <tr role="row">
-                                <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                                <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["LessorNo"]</th>
-                                <th aria-label="Position: activate to sort column ascending">@localizer["LessorName"]</th>
-                                <th aria-label="Position: activate to sort column ascending">@localizer["DirName"]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{
-                                int no = 1;
-                            }
-                            @foreach (var item in Model)
-                            {
-
-                                <tr onclick="location.href='@Url.Action("Edit", "LessorImages", new { id = item.CrMasLessorInformationCode })'" style="cursor:pointer; ">
-                                    <td>@no</td>
-                                    <td>@item.CrMasLessorInformationCode</td>
-                                    <td>@item.CrMasLessorInformationArLongName</td>
-                                    <td>@item.CrMasLessorInformationDirectorArName</td>
-                                </tr>
-
-                                no++;
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-        </div>
+            </div>
+        </form>
+        <a asp-area="MAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="main-page-icon">
+            <img src="~/MasSystem/images/back to main.svg" alt="man">
+        </a>
     </div>
 </div>
 
 @section scripts {
-   
-   
+    <script src="~/js/toastr.js"></script>
+
+    <script>
+        // لجعل الحالة حسب ما هي جاية من index نشط او الكل
+        $(document).ready(function () {
+            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+        });
+    </script>
+    <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        function GetLessorsFitler(status, search) {
+            $.ajax({
+                type: "GET",
+                data: {
+                    status: status, search: search
+                },
+                url: "@Url.Action("GetLessorsByStatus", "LessorImages", new { Area = "MAS" })",
+                success: function (response) {
+                    $(".dataTable").html(response);
+                },
+            })
+        }
+
+        $("input[name='customRadio']").on("click", function () {
+            const status = $(this).val();
+            const search = $("#search").val(); // الحصول على قيمة البحث
+            GetLessorsFitler(status, search);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#search").on("keyup", function () {
+            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+            const search = $(this).val(); // الحصول على قيمة البحث
+            GetLessorsFitler(status, search);
+        });
+    </script>
 }
-
-
-<style>
-    .wrapper {
-        margin-bottom: 60px;
-        overflow: hidden;
-        background-image: url("~/Pictures/bg.jpg") !important;
-    }
-
-    .table-bordered td,
-    .table-bordered th {
-        border: none;
-    }
-</style>
-

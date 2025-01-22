@@ -87,7 +87,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 admintritives.Add(newAdmins);
             }
             var result = admintritives.Where(l => l.CrCasSysAdministrativeProceduresStatus == "I"); //UnderProcedure
-            if (result.Count()>0)
+            if (result.Count() > 0)
             {
                 return View(result);
             }
@@ -186,7 +186,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 newAdmins.AccountReceipt = Receipts;
                 newAdmins.NewReceiptNo = _Custody.GetAccountReceiptNo(adminstritive.CrCasSysAdministrativeProceduresBranch, userLogin.CrMasUserInformationLessor);
                 var paymentMethod = _unitOfWork.CrCasAccountSalesPoint.Find(x => x.CrCasAccountSalesPointCode == adminstritive.CrCasSysAdministrativeProceduresDocNo);
-                if (paymentMethod.CrCasAccountSalesPointBank=="00")
+                if (paymentMethod.CrCasAccountSalesPointBank == "00")
                 {
                     newAdmins.PaymentMethodAr = "نقدا";
                     newAdmins.PaymentMethodEn = "CASH";
@@ -204,7 +204,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             return RedirectToAction("Index");
         }
         [HttpPost]
-        public async Task<IActionResult> ActionCustody(AdmintritiveCustodyVM custodyVM, string status,string SavePdfArReceipt,string SavePdfEnReceipt, string AccountReceiptNo , string Reasons)
+        public async Task<IActionResult> ActionCustody(AdmintritiveCustodyVM custodyVM, string status, string SavePdfReceipt, string AccountReceiptNo, string Reasons)
         {
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
@@ -221,7 +221,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
                 subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
 
-                
+
 
 
                 var CheckAddReceipt = true;
@@ -232,20 +232,18 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 var CheckUpdateAccountReceipts = true;
 
 
-                if (status==Status.Accept)
+                if (status == Status.Accept)
                 {
-                    SavePdfArReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfArReceipt);
-                    SavePdfEnReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfEnReceipt);
-                    if (!string.IsNullOrEmpty(SavePdfArReceipt)) SavePdfArReceipt = await SavePdfAsync(SavePdfArReceipt, lessorCode, Adminstritive.CrCasSysAdministrativeProceduresBranch, AccountReceiptNo, "ar", "Receipt");
-                    if (!string.IsNullOrEmpty(SavePdfEnReceipt)) SavePdfEnReceipt = await SavePdfAsync(SavePdfEnReceipt, lessorCode, Adminstritive.CrCasSysAdministrativeProceduresBranch, AccountReceiptNo, "en", "Receipt");
-
+                    SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
+                    if (!string.IsNullOrEmpty(SavePdfReceipt)) SavePdfReceipt = await SavePdfAsync(SavePdfReceipt, lessorCode, Adminstritive.CrCasSysAdministrativeProceduresBranch, AccountReceiptNo, "ar", "Receipt");
                     CheckAddReceipt = await _Custody.AddAccountReceiptReceivedCustody(Adminstritive.CrCasSysAdministrativeProceduresNo,
-                                                                                  lessorCode, Adminstritive.CrCasSysAdministrativeProceduresBranch, custodyVM.TotalAmount, Adminstritive.CrCasSysAdministrativeProceduresTargeted, SavePdfArReceipt, SavePdfEnReceipt, Reasons);
+                                                                                  lessorCode, Adminstritive.CrCasSysAdministrativeProceduresBranch,
+                                                                                  custodyVM.TotalAmount, Adminstritive.CrCasSysAdministrativeProceduresTargeted, SavePdfReceipt, Reasons);
                 }
 
                 CheckUpdateAccountReceipts = _Custody.UpdateAccountReceiptReceivedCustody(Adminstritive.CrCasSysAdministrativeProceduresNo, userLogin.CrMasUserInformationCode, status, custodyVM.CrCasSysAdministrativeProceduresReasons);
                 CheckUpdateBranch = await _Custody.UpdateBranchReceivedCustody(Adminstritive.CrCasSysAdministrativeProceduresBranch, lessorCode, custodyVM.TotalAmount, status);
-                CheckUpdateSalesPoint = await _Custody.UpdateSalesPointReceivedCustody(lessorCode,Adminstritive.CrCasSysAdministrativeProceduresBranch, Adminstritive.CrCasSysAdministrativeProceduresNo, custodyVM.TotalAmount, status);
+                CheckUpdateSalesPoint = await _Custody.UpdateSalesPointReceivedCustody(lessorCode, Adminstritive.CrCasSysAdministrativeProceduresBranch, Adminstritive.CrCasSysAdministrativeProceduresNo, custodyVM.TotalAmount, status);
                 CheckUpdateUserInfo = await _Custody.UpdateUserInfoReceivedCustody(Adminstritive.CrCasSysAdministrativeProceduresTargeted, lessorCode, custodyVM.TotalAmount, status);
                 CheckUpdateUserValidtyBrn = await _Custody.UpdateBranchValidityReceivedCustody(Adminstritive.CrCasSysAdministrativeProceduresTargeted.Trim(), lessorCode, Adminstritive.CrCasSysAdministrativeProceduresBranch,
                                                                                                Adminstritive.CrCasSysAdministrativeProceduresNo, custodyVM.TotalAmount, status);
@@ -253,9 +251,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
 
                 if (CheckAdminstritive && CheckAddReceipt && CheckUpdateBranch &&
-                    CheckUpdateSalesPoint && CheckUpdateUserInfo && 
+                    CheckUpdateSalesPoint && CheckUpdateUserInfo &&
                     CheckUpdateUserValidtyBrn) if (await _unitOfWork.CompleteAsync() > 1) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                                               else _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    else _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             }
 
             return RedirectToAction("Index");

@@ -94,7 +94,7 @@ namespace Bnan.Inferastructure.Repository
             return false;
         }
         public async Task<bool> AddAccountReceiptReceivedCustody(string AdmintritiveNo, string lessorCode, string BranchCode,
-                                                                 string TotalAmount,string userCode,string SavePdfArReceipt, string SavePdfEnReceipt, string reasons)
+                                                                 string TotalAmount,string userCode,string SavePdfReceipt, string reasons)
         {
 
             CrCasAccountReceipt receipt = new CrCasAccountReceipt();
@@ -127,8 +127,7 @@ namespace Bnan.Inferastructure.Repository
             receipt.CrCasAccountReceiptIsPassing = "3";
             receipt.CrCasAccountReceiptPassingUser = adminstritive.CrCasSysAdministrativeProceduresUserInsert;
             receipt.CrCasAccountReceiptPassingDate = DateTime.Now;
-            receipt.CrCasAccountReceiptArPdfFile = SavePdfArReceipt;
-            receipt.CrCasAccountReceiptEnPdfFile = SavePdfEnReceipt;
+            receipt.CrCasAccountReceiptPdfFile = SavePdfReceipt;
             receipt.CrCasAccountReceiptReasons = reasons;
             if (await _unitOfWork.CrCasAccountReceipt.AddAsync(receipt) != null) return true;
             return false;

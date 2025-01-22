@@ -21,12 +21,12 @@ namespace Bnan.Core.Interfaces
         Task<bool> AddRenterContractChoice(string LessorCode,string ContractNo, string SerialNo, string PriceNo, string Choice);
         Task<bool> AddRenterContractAdditional(string LessorCode, string ContractNo, string SerialNo, string PriceNo, string Choice);
         Task<bool> AddRenterContractAdvantages(CrCasPriceCarAdvantage crCasPriceCarAdvantage, string ContractNo);
-        Task<bool> AddRenterContractCheckUp(string LessorCode, string ContractNo, string SerialNo, string PriceNo, string CheckUpCode, string Reasons);
+        Task<bool> AddRenterContractCheckUp(string LessorCode, string ContractNo, string SerialNo, string PriceNo, string CheckUpCode, string ReasonCheckCode, bool Status, string Reasons);
         Task<CrCasRenterContractBasic> AddRenterContractBasic(string LessorCode, string BranchCode, string ContractNo, string RenterId,string sectorCodeForRenter, string DriverId, string PrivateDriver,
                                                        string AdditionalDriver, string SerialNo, string PriceNo, string DaysNo, string UserFreeHour, string UserFreeKm,
                                                        string CurrentMeter, string OptionsTotal, string AdditionalTotal, string ContractValueAfterDiscount,
                                                        string DiscountValue, string ContractValueBeforeDiscount, string TaxValue, string TotalAmount, string UserInsert,
-                                                       string Authrization,string UserDiscount, string AmountPayed,string ArContractPdf,string EnContractPdf, string Reasons);
+                                                       string Authrization,string UserDiscount, string AmountPayed, string ContractPdf, string Reasons);
         Task<bool> AddRenterContractAuthrization(string ContractNo,string LessorCode,string AuthrizationType,string AuthrizationValue);
         Task<bool> UpdateCarInformation(string SerialNo, string LessorCode, string BranchCode, DateTime LastContract, int DaysNo, int CurrentMeter,string ExpireMaintainceCount);
         Task<string> UpdateCarDocMaintainance(string SerialNo, string LessorCode, string BranchCode, int CurrentMeter);
@@ -35,9 +35,9 @@ namespace Bnan.Core.Interfaces
         Task<bool> UpdateDriverStatus(string DriverId, string LessorCode,string Reasons);
         Task<bool> UpdatePrivateDriverStatus(string PrivateDriverId, string LessorCode);
         Task<CrCasAccountReceipt> AddAccountReceipt(string ContractNo, string LessorCode,string BranchCode,string PaymentMethod,string Account,string SerialNo,string SalesPointNo,
-                                     decimal TotalPayed,string RenterId,string sector, string UserId, string PassingType,string Reasons,string pdfPathAr,string pdfPathEn);
+                                     decimal TotalPayed,string RenterId,string sector, string UserId, string PassingType,string Reasons,string pdfPath);
 
-        Task<bool> AddAccountInvoice(string ContractNo,string RenterId, string sector, string LessorCode, string BranchCode, string UserId, string AccountReceiptNo, string pdfPathAr, string pdfPathEn);
+        Task<bool> AddAccountInvoice(string ContractNo,string RenterId, string sector, string LessorCode, string BranchCode, string UserId, string AccountReceiptNo, string pdfPath);
         Task<bool> UpdateBranchBalance(string BranchCode, string LessorCode, decimal AmountPaid);
         Task<bool> UpdateSalesPointBalance(string BranchCode, string LessorCode,string SalesPointCode, decimal AmountPaid);
         Task<bool> UpdateBranchValidity(string BranchCode, string LessorCode,string UserId,string PaymentMethod, decimal AmountPaid);

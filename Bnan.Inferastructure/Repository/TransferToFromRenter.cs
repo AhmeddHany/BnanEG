@@ -16,7 +16,8 @@ namespace Bnan.Inferastructure.Repository
             _unitOfWork = unitOfWork;
             _userManager = userManager;
         }
-        public async Task<bool> AddAccountReceiptTransferToRenter(string AccountReceiptNo, string AdmintritiveNo, string RenterId, string userCode, string ProcedureCode, string ReferenceType, string lessorCode, string BankNo, string AccountNo, string TotalAmountPayment, string TotalAmountReceipt, string SavePdfArReceipt, string SavePdfEnReceipt, string reasons)
+        public async Task<bool> AddAccountReceiptTransferToRenter(string AccountReceiptNo, string AdmintritiveNo, string RenterId, string userCode, string ProcedureCode, string ReferenceType, 
+            string lessorCode, string BankNo, string AccountNo, string TotalAmountPayment, string TotalAmountReceipt, string SavePdfReceipt, string reasons)
         {
             CrCasAccountReceipt receipt = new CrCasAccountReceipt();
             var Renter = await _unitOfWork.CrCasRenterLessor.FindAsync(x => x.CrCasRenterLessorId == RenterId);
@@ -43,8 +44,7 @@ namespace Bnan.Inferastructure.Repository
             receipt.CrCasAccountReceiptIsPassing = "4";
             receipt.CrCasAccountReceiptPaymentMethod = "30";
             receipt.CrCasAccountReceiptPassingDate = DateTime.Now;
-            receipt.CrCasAccountReceiptArPdfFile = SavePdfArReceipt;
-            receipt.CrCasAccountReceiptEnPdfFile = SavePdfEnReceipt;
+            receipt.CrCasAccountReceiptPdfFile = SavePdfReceipt;
             receipt.CrCasAccountReceiptReasons = reasons;
             if (await _unitOfWork.CrCasAccountReceipt.AddAsync(receipt) != null) return true;
             return false;

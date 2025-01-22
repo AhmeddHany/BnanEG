@@ -284,7 +284,7 @@
     </script>
     <script>
         const ArReceipt = async () => {
-            const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalCatchReceipt";
+            const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalCatchReceipt";
             const imagePath = imageLessor.replace('~', '');
             const dates = getFormattedDatesMiliadiAndHijri("ar");
             const miladiDateString = dates.miladiDate;
@@ -391,7 +391,7 @@
             img.src = URL.createObjectURL(blob);
         };
         const EnReceipt = async () => {
-            const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnExternalCatchReceipt";
+            const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnExternalCatchReceipt";
             const imagePath = imageLessor.replace('~', '');
             const dates = getFormattedDatesMiliadiAndHijri("en");
             const miladiDateString = dates.miladiDate;
@@ -520,8 +520,8 @@
                     }
                     else {
                         $('.main').show(); // Show the main container with fade effect
-                        ArReceipt();
-                        EnReceipt();
+                        // ArReceipt();
+                        // EnReceipt();
                         setTimeout(function () {
                             form.submit();
                         }, 5000);
@@ -545,7 +545,7 @@
             var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
             var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
             var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation?.CrMasLessorInformationDirectorArName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
             var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
             var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
 
@@ -588,7 +588,7 @@
             var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
             var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
             var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation?.CrMasLessorInformationDirectorEnName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
             var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationDirectorEnName");
             var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationDirectorSignature").replace('~', '');
             const promises = [];

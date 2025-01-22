@@ -53,10 +53,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
             {
                 var authContract = _unitOfWork.CrCasRenterContractAuthorization.Find(x => x.CrCasRenterContractAuthorizationLessor == lessorCode &&
                 x.CrCasRenterContractAuthorizationContractNo == contract.CrCasRenterContractBasicNo);
-                var ArInvoice = _unitOfWork.CrCasAccountInvoice.FindAll(x => x.CrCasAccountInvoiceReferenceContract == contract.CrCasRenterContractBasicNo).LastOrDefault()?.CrCasAccountInvoiceArPdfFile;
-                var EnInvoice = _unitOfWork.CrCasAccountInvoice.FindAll(x => x.CrCasAccountInvoiceReferenceContract == contract.CrCasRenterContractBasicNo).LastOrDefault()?.CrCasAccountInvoiceEnPdfFile;
-                contract.ArInvoicePdf = ArInvoice;
-                contract.EnInvoicePdf = EnInvoice;
+                var Invoice = _unitOfWork.CrCasAccountInvoice.FindAll(x => x.CrCasAccountInvoiceReferenceContract == contract.CrCasRenterContractBasicNo).LastOrDefault()?.CrCasAccountInvoicePdfFile;
+                contract.InvoicePdf = Invoice;
                 if (authContract != null) contract.AuthEndDate = authContract.CrCasRenterContractAuthorizationEndDate;
             }
             bsLayoutVM.ExtensionContracts = contractMap.Where(x => x.AuthEndDate > DateTime.Now).OrderBy(x => x.CrCasRenterContractBasicExpectedEndDate).ToList();
@@ -137,15 +135,14 @@ namespace Bnan.Ui.Areas.BS.Controllers
             contractMap.CasRenterPreviousBalance = contract.CrCasRenterContractBasic5?.CrCasRenterLessorAvailableBalance;
             contractMap.AdvatagesValue = (advatagesContract * contract.CrCasRenterContractBasicExpectedRentalDays)?.ToString("N2", CultureInfo.InvariantCulture);
             contractMap.ChoicesValue = ChoicesContract?.ToString("N2", CultureInfo.InvariantCulture);
-            contractMap.ArInvoicePdf = Invoice?.CrCasAccountInvoiceArPdfFile;
-            contractMap.EnInvoicePdf = Invoice?.CrCasAccountInvoiceEnPdfFile;
+            contractMap.InvoicePdf = Invoice?.CrCasAccountInvoicePdfFile;
             bsLayoutVM.ExtensionContract = contractMap;
             bsLayoutVM.SalesPoint = SalesPoint;
             bsLayoutVM.PaymentMethods = PaymentMethod;
             return View(bsLayoutVM);
         }
         [HttpPost]
-        public async Task<IActionResult> Create(BSLayoutVM bSLayoutVM, string ExtensionValue, string reasons, string? SavePdfArInvoice, string? SavePdfEnInvoice, string? SavePdfArReceipt, string? SavePdfEnReceipt, string StaticContractCardImg)
+        public async Task<IActionResult> Create(BSLayoutVM bSLayoutVM, string ExtensionValue, string reasons, string? SavePdfInvoice, string? SavePdfReceipt, string StaticContractCardImg)
         {
 
             var userLogin = await _userManager.GetUserAsync(User);
@@ -175,8 +172,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     var CheckUserInformation = true;
 
                     var passing = "";
-                    var PdfArReceipt = "";
-                    var PdfEnReceipt = "";
+                    var PdfReceipt = "";
                     if (decimal.Parse(ContractInfo.AmountPayed, CultureInfo.InvariantCulture) != null && decimal.Parse(ContractInfo.AmountPayed, CultureInfo.InvariantCulture) > 0)
                     {
 
@@ -189,14 +185,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
                         {
                             passing = "1";
                         }
-                        SavePdfArReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfArReceipt);
-                        SavePdfEnReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfEnReceipt);
-                        if (!string.IsNullOrEmpty(SavePdfArReceipt)) PdfArReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfArReceipt, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.AccountReceiptNo, "ar", "Receipt");
-                        if (!string.IsNullOrEmpty(SavePdfEnReceipt)) PdfEnReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfEnReceipt, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.AccountReceiptNo, "en", "Receipt");
+                        SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
+                        if (!string.IsNullOrEmpty(SavePdfReceipt)) PdfReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfReceipt, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.AccountReceiptNo, "ar", "Receipt");
                         CheckAccountReceipt = await _contractExtension.AddAccountReceipt(NewContract.CrCasRenterContractBasicNo, lessorCode, NewContract.CrCasRenterContractBasicBranch,
                                                                                       ContractInfo.PaymentMethod, ContractInfo.AccountNo, NewContract.CrCasRenterContractBasicCarSerailNo,
                                                                                       ContractInfo.SalesPoint, decimal.Parse(ContractInfo.AmountPayed, CultureInfo.InvariantCulture),
-                                                                                      NewContract.CrCasRenterContractBasicRenterId, userLogin.CrMasUserInformationCode, passing, reasons, PdfArReceipt, PdfEnReceipt);
+                                                                                      NewContract.CrCasRenterContractBasicRenterId, userLogin.CrMasUserInformationCode, passing, reasons, PdfReceipt);
                         //Update Branch Balance , But first Check if passing equal 4 or not 
                         if (passing != "4") CheckBranch = await _contractExtension.UpdateBranchBalance(Branch.CrCasBranchInformationCode, lessorCode, decimal.Parse(ContractInfo.AmountPayed, CultureInfo.InvariantCulture));
                         //Update SalesPoint Balance , But first Check if passing equal 4 or not 
@@ -209,11 +203,10 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
 
                     // Invoice 
-                    SavePdfArInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfArInvoice);
-                    SavePdfEnInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfEnInvoice);
-                    if (!string.IsNullOrEmpty(SavePdfArInvoice)) SavePdfArInvoice = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfArInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "ar", "Invoice");
-                    if (!string.IsNullOrEmpty(SavePdfEnInvoice)) SavePdfEnInvoice = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfEnInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "en", "Invoice");
-                    var CheckAccountInvoice = await _contractExtension.AddAccountInvoice(NewContract.CrCasRenterContractBasicNo, NewContract.CrCasRenterContractBasicRenterId, lessorCode, Branch.CrCasBranchInformationCode, NewContract.CrCasRenterContractBasicUserInsert, CheckAccountReceipt.CrCasAccountReceiptNo, SavePdfArInvoice, SavePdfEnInvoice);
+                    SavePdfInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfInvoice);
+                    if (!string.IsNullOrEmpty(SavePdfInvoice)) SavePdfInvoice = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "ar", "Invoice");
+                    var CheckAccountInvoice = await _contractExtension.AddAccountInvoice(NewContract.CrCasRenterContractBasicNo, NewContract.CrCasRenterContractBasicRenterId, lessorCode, Branch.CrCasBranchInformationCode,
+                        NewContract.CrCasRenterContractBasicUserInsert, CheckAccountReceipt.CrCasAccountReceiptNo, SavePdfInvoice);
 
 
 
@@ -224,7 +217,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     var CheckRenterAlert = true;
                     CheckRenterAlert = await _contractExtension.UpdateAlertContract(NewContract);
 
-                    var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, SavePdfArInvoice, SavePdfEnInvoice, PdfArReceipt, PdfEnReceipt, (decimal)NewContract.CrCasRenterContractBasicAmountPaidAdvance);
+                    var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, SavePdfInvoice, PdfReceipt, (decimal)NewContract.CrCasRenterContractBasicAmountPaidAdvance);
                     bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
                     if (!checkPdf)
                     {
@@ -276,20 +269,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             return false;
         }
-        private Dictionary<string, string> GetPdfDictionary(string culture, string arInvoice, string enInvoice, string arReceipt, string enReceipt, decimal amountPaid)
+        private Dictionary<string, string> GetPdfDictionary(string culture, string Invoice, string Receipt, decimal amountPaid)
         {
             var pdfDictionary = new Dictionary<string, string>();
-
-            if (culture == "ar-EG")
-            {
-                pdfDictionary = new Dictionary<string, string> { { arInvoice, "ArInvoice" } };
-                if (amountPaid > 0) pdfDictionary.Add(arReceipt, "ArReceipt");
-            }
-            else
-            {
-                pdfDictionary = new Dictionary<string, string> { { enInvoice, "EnInvoice" } };
-                if (amountPaid > 0) pdfDictionary.Add(enReceipt, "EnReceipt");
-            }
+            pdfDictionary = new Dictionary<string, string> { { Invoice, "Invoice" } };
+            if (amountPaid > 0) pdfDictionary.Add(Receipt, "Receipt");
             return pdfDictionary;
         }
         private async Task<string> SavePdfAsync(string? savePdf, string lessorCode, string branchCode, string contractNo, string lang, string type)

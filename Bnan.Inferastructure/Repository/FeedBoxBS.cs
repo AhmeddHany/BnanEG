@@ -19,7 +19,7 @@ namespace Bnan.Inferastructure.Repository
         }
 
         public async Task<bool> AddAccountReceipt(string AdmintritiveNo, string lessorCode, string UserLogin, string BranchCode,
-                                                                 decimal TotalAmount, string reasons, string ArPdf, string EnPdf)
+                                                                 decimal TotalAmount, string reasons, string Pdf)
         {
 
             CrCasAccountReceipt receipt = new CrCasAccountReceipt();
@@ -49,8 +49,7 @@ namespace Bnan.Inferastructure.Repository
             receipt.CrCasAccountReceiptIsPassing = "1";
             receipt.CrCasAccountReceiptPassingUser = UserTarget.CrMasUserInformationCode;
             receipt.CrCasAccountReceiptPassingDate = DateTime.Now;
-            receipt.CrCasAccountReceiptArPdfFile = ArPdf;
-            receipt.CrCasAccountReceiptEnPdfFile = EnPdf;
+            receipt.CrCasAccountReceiptPdfFile = Pdf;
             receipt.CrCasAccountReceiptReasons = reasons;
             if (await _unitOfWork.CrCasAccountReceipt.AddAsync(receipt) != null) return true;
             return false;

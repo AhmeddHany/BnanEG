@@ -67,7 +67,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
 
             var all_RenterInfo = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
                 predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
-                 //x.CrCasCarInformationLastContractDate > start && x.CrCasCarInformationLastContractDate <= end,
+                //x.CrCasCarInformationLastContractDate > start && x.CrCasCarInformationLastContractDate <= end,
                 selectProjection: query => query.Select(x => new Renterinfo_FTP_VM
                 {
                     CrCasRenterLessorId = x.CrCasRenterLessorId,
@@ -84,8 +84,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 })
                 , includes: new string[] { "CrCasRenterLessorNavigation" }
                 );
-            var all_RenterInfo2 = all_RenterInfo.DistinctBy(x=>x.CrCasRenterLessorId);
-            foreach(var r in all_RenterInfo2)
+            var all_RenterInfo2 = all_RenterInfo.DistinctBy(x => x.CrCasRenterLessorId);
+            foreach (var r in all_RenterInfo2)
             {
                 var theseSingles = all_RenterInfo.Where(x => x.CrCasRenterLessorId == r.CrCasRenterLessorId);
                 r.CrCasRenterLessorReservedBalance = theseSingles.Sum(x => x.CrCasRenterLessorReservedBalance);
@@ -110,7 +110,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             ////    //, includes: new string[] { "CrCasRenterLessorNavigation" }
             ////    );
 
-             
+
             //var all_RentersIds_recipt = await _unitOfWork.CrCasAccountReceipt.FindAllWithSelectAsNoTrackingAsync(
             //    predicate: x=>x.CrCasAccountReceiptType =="301" || x.CrCasAccountReceiptType == "302",
             //    selectProjection: query => query.Select(x => new list_String_2
@@ -123,12 +123,12 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             var all_bonds = await _unitOfWork.CrCasAccountReceipt.FindCountByColumnAsync<CrCasAccountReceipt>(
                    predicate: x => x.CrCasAccountReceiptType == "301",
                    columnSelector: x => x.CrCasAccountReceiptRenterId  // تحديد العمود الذي نريد التجميع بناءً عليه
-                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                                                                       //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                    );
             var all_exchanges = await _unitOfWork.CrCasAccountReceipt.FindCountByColumnAsync<CrCasAccountReceipt>(
                predicate: x => x.CrCasAccountReceiptType == "302",
                columnSelector: x => x.CrCasAccountReceiptRenterId  // تحديد العمود الذي نريد التجميع بناءً عليه
-                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                                                                   //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                );
 
             //// filter الموظفين اللي مش له recipte
@@ -172,7 +172,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
 
         [HttpGet]
         //[Route("/MAS/ReportFTPrenter/GetContractsByStatus")]
-        public async Task<PartialViewResult> GetContractsByStatus(string id,string start, string end)
+        public async Task<PartialViewResult> GetContractsByStatus(string id, string start, string end)
         {
             listReportFTPrenterVM VM = new listReportFTPrenterVM();
 
@@ -212,8 +212,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     CrCasAccountReceiptIsPassing = x.CrCasAccountReceiptIsPassing,
                     CrCasAccountReceiptPassingReference = x.CrCasAccountReceiptPassingReference,
                     CrCasAccountReceiptPassingUser = x.CrCasAccountReceiptPassingUser,
-                    CrCasAccountReceiptArPdfFile = x.CrCasAccountReceiptArPdfFile,
-                    CrCasAccountReceiptEnPdfFile = x.CrCasAccountReceiptEnPdfFile,
+                    CrCasAccountReceiptPdfFile = x.CrCasAccountReceiptPdfFile,
                     PaymentMethod_Ar = x.CrCasAccountReceiptPaymentMethodNavigation.CrMasSupAccountPaymentMethodArName,
                     PaymentMethod_En = x.CrCasAccountReceiptPaymentMethodNavigation.CrMasSupAccountPaymentMethodEnName,
                     ReferanceType_Ar = x.CrCasAccountReceiptReferenceTypeNavigation.CrMasSupAccountReceiptReferenceArName,
@@ -324,7 +323,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     CrCasAccountReceiptNo = x.CrCasAccountReceiptNo,
                     CrCasAccountReceiptType = x.CrCasAccountReceiptType,
                     CrCasAccountReceiptDate = x.CrCasAccountReceiptDate,
-                    CrCasAccountReceiptLessorCode=x.CrCasAccountReceiptLessorCode,
+                    CrCasAccountReceiptLessorCode = x.CrCasAccountReceiptLessorCode,
                     CrCasAccountReceiptReferenceType = x.CrCasAccountReceiptReferenceType,
                     CrCasAccountReceiptSalesPoint = x.CrCasAccountReceiptSalesPoint,
                     CrCasAccountReceiptReferenceNo = x.CrCasAccountReceiptReferenceNo,
@@ -335,8 +334,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     CrCasAccountReceiptIsPassing = x.CrCasAccountReceiptIsPassing,
                     CrCasAccountReceiptPassingReference = x.CrCasAccountReceiptPassingReference,
                     CrCasAccountReceiptPassingUser = x.CrCasAccountReceiptPassingUser,
-                    CrCasAccountReceiptArPdfFile = x.CrCasAccountReceiptArPdfFile,
-                    CrCasAccountReceiptEnPdfFile = x.CrCasAccountReceiptEnPdfFile,
+                    CrCasAccountReceiptPdfFile = x.CrCasAccountReceiptPdfFile,
                     PaymentMethod_Ar = x.CrCasAccountReceiptPaymentMethodNavigation.CrMasSupAccountPaymentMethodArName,
                     PaymentMethod_En = x.CrCasAccountReceiptPaymentMethodNavigation.CrMasSupAccountPaymentMethodEnName,
                     ReferanceType_Ar = x.CrCasAccountReceiptReferenceTypeNavigation.CrMasSupAccountReceiptReferenceArName,
@@ -358,7 +356,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 })
                 );
             var ThisRenterData = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
-                predicate: x=>x.CrMasRenterInformationId==id,
+                predicate: x => x.CrMasRenterInformationId == id,
                 selectProjection: query => query.Select(x => new list_String_4
                 {
                     id_key = x.CrMasRenterInformationId,
@@ -366,7 +364,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     nameEn = x.CrMasRenterInformationEnName,
                 })
                 );
-            
+
 
             var all_lessors = await _unitOfWork.CrMasLessorInformation.FindAllWithSelectAsNoTrackingAsync(
                 predicate: x => x.CrMasLessorInformationStatus != Status.Deleted,

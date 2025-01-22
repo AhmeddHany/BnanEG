@@ -1,0 +1,61 @@
+﻿@using Bnan.Core.Extensions
+@model List<CrMasLessorInformation>
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<table class=" tables-style table table-borderless " id="Branches-table">
+    <thead class="sticky-top">
+        <tr>
+            <th class="DifferAlign"> @localizer["Email"]</th>
+            <th> @localizer["BranchesNo"]</th>
+            <th class="DifferAlign"> @localizer["CountryRegion"]</th>
+            <th class="DifferAlign"> @localizer["Company"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "LessorImages", new { id = item.CrMasLessorInformationCode })'">
+                <td class="DifferAlign">
+                    <p>@item.CrMasLessorInformationEmail</p>
+                </td>
+                <td>
+                    <p>@item.CrCasBranchInformations.Count()</p>
+                </td>
+                <td class="DifferAlign">
+                    <p>
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrCasBranchInformations.FirstOrDefault(x => x.CrCasBranchInformationCode == "100")?.CrCasBranchPost.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateEnName :
+                            item.CrCasBranchInformations.FirstOrDefault(x => x.CrCasBranchInformationCode == "100")?.CrCasBranchPost.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateArName)
+                    </p>
+                </td>
+                <td class="DifferAlign">
+                    <p class="FirstLineP">
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasLessorInformationEnLongName : item.CrMasLessorInformationArLongName)
+                    </p>
+                    <p class="secondLineP"> @item.CrMasLessorInformationCode </p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasLessorInformationStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasLessorInformationStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasLessorInformationStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>

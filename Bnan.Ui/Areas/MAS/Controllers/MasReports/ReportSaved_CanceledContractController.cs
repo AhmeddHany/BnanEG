@@ -70,7 +70,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                         dates = x.CrCasRenterContractBasicExpectedStartDate,
                     }));
 
-            if (listmaxDate?.Count == 0 )
+            if (listmaxDate?.Count == 0)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["NoDataToShow"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
@@ -99,10 +99,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     CrCasRenterContractBasicCarSerailNo = x.CrCasRenterContractBasicCarSerailNo,
                     CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
                     //CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
-                    CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                    CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                    CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                    CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                    CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                    CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                     CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
                     CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
                     CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -141,8 +139,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                  selectProjection: query => query.Select(x => new list_String_4
                  {
                      id_key = x.CrCasAccountInvoiceReferenceContract,
-                     nameAr = x.CrCasAccountInvoiceArPdfFile,
-                     nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                     nameAr = x.CrCasAccountInvoicePdfFile,
+                     nameEn = x.CrCasAccountInvoicePdfFile,
                      str4 = x.CrCasAccountInvoiceUserCode,
                  })
                  //,includes: new string[] { "" } 
@@ -163,7 +161,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
         //[Route("/MAS/ReportSaved_CanceledContract/GetContractsByStatus")]
         public async Task<PartialViewResult> GetContractsByStatus(string status)
         {
-            
+
             if (!string.IsNullOrEmpty(status))
             {
 
@@ -179,10 +177,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                         CrCasRenterContractBasicCarSerailNo = x.CrCasRenterContractBasicCarSerailNo,
                         CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
                         //CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
-                        CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                        CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                        CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                        CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                        CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                        CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                         CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
                         CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
                         CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -220,8 +216,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     selectProjection: query => query.Select(x => new list_String_4
                     {
                         id_key = x.CrCasAccountInvoiceReferenceContract,
-                        nameAr = x.CrCasAccountInvoiceArPdfFile,
-                        nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                        nameAr = x.CrCasAccountInvoicePdfFile,
+                        nameEn = x.CrCasAccountInvoicePdfFile,
                         str4 = x.CrCasAccountInvoiceUserCode,
                     })
                     //,includes: new string[] { "" } 

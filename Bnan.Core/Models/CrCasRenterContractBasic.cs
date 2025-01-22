@@ -19,7 +19,6 @@ namespace Bnan.Core.Models
         public string? CrCasRenterContractBasicBranchRecevied { get; set; }
         public string? CrCasRenterContractBasicOwner { get; set; }
         public DateTime? CrCasRenterContractBasicIssuedDate { get; set; }
-        public DateTime? CrCasRenterContractBasicTgaEndSave { get; set; }
         public DateTime? CrCasRenterContractBasicAllowCanceled { get; set; }
         public DateTime? CrCasRenterContractBasicExpectedStartDate { get; set; }
         public DateTime? CrCasRenterContractBasicExpectedEndDate { get; set; }
@@ -86,10 +85,8 @@ namespace Bnan.Core.Models
         public string? CrCasRenterContractBasicCompensationDescription { get; set; }
         public decimal? CrCasRenterContractBasicActualAmountRequired { get; set; }
         public decimal? CrCasRenterContractBasicAmountPaid { get; set; }
-        public string? CrCasRenterContractBasicArPdfFile { get; set; }
-        public string? CrCasRenterContractBasicEnPdfFile { get; set; }
-        public string? CrCasRenterContractBasicArTga { get; set; }
-        public string? CrCasRenterContractBasicEnTga { get; set; }
+        public string? CrCasRenterContractBasicPdfFile { get; set; }
+        public string? CrCasRenterContractBasicPdfTga { get; set; }
         public string? CrCasRenterContractPriceReference { get; set; }
         public string? CrCasRenterContractOffersReference { get; set; }
         public string? CrCasRenterContractUserReference { get; set; }

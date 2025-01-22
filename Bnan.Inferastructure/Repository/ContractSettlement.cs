@@ -32,7 +32,7 @@ namespace Bnan.Inferastructure.Repository
         }
 
         public async Task<CrCasAccountReceipt> AddAccountReceipt(string ContractNo, string LessorCode, string BranchCode, string PaymentMethod, string Account, string SerialNo, string SalesPointNo,
-                                                  decimal TotalPayed, string RenterId, string UserId, string PassingType, string Reasons, string pdfPathAr, string pdfPathEn, string procedureCode)
+                                                  decimal TotalPayed, string RenterId, string UserId, string PassingType, string Reasons, string pdfPath, string procedureCode)
         {
             CrCasAccountReceipt crCasAccountReceipt = new CrCasAccountReceipt();
             var User = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == UserId && x.CrMasUserInformationLessor == LessorCode);
@@ -100,14 +100,13 @@ namespace Bnan.Inferastructure.Repository
 
             crCasAccountReceipt.CrCasAccountReceiptIsPassing = PassingType;
             crCasAccountReceipt.CrCasAccountReceiptReasons = Reasons;
-            crCasAccountReceipt.CrCasAccountReceiptArPdfFile = pdfPathAr;
-            crCasAccountReceipt.CrCasAccountReceiptEnPdfFile = pdfPathEn;
+            crCasAccountReceipt.CrCasAccountReceiptPdfFile = pdfPath;
 
             if (await _unitOfWork.CrCasAccountReceipt.AddAsync(crCasAccountReceipt) != null) return crCasAccountReceipt;
             return null;
         }
 
-        public async Task<string> AddAccountInvoice(string ContractNo, string RenterId, string LessorCode, string BranchCode, string UserId, string AccountReceiptNo, string pdfPathAr, string pdfPathEn)
+        public async Task<string> AddAccountInvoice(string ContractNo, string RenterId, string LessorCode, string BranchCode, string UserId, string AccountReceiptNo, string pdfPath)
         {
             CrCasAccountInvoice crCasAccountInvoice = new CrCasAccountInvoice();
             var Renter = await _unitOfWork.CrCasRenterLessor.FindAsync(x => x.CrCasRenterLessorId == RenterId && x.CrCasRenterLessorCode == LessorCode);
@@ -129,8 +128,7 @@ namespace Bnan.Inferastructure.Repository
             crCasAccountInvoice.CrCasAccountInvoiceReferenceContract = ContractNo;
             crCasAccountInvoice.CrCasAccountInvoiceReferenceReceipt = AccountReceiptNo;
             crCasAccountInvoice.CrCasAccountInvoiceUserCode = UserId;
-            crCasAccountInvoice.CrCasAccountInvoiceArPdfFile = pdfPathAr;
-            crCasAccountInvoice.CrCasAccountInvoiceEnPdfFile = pdfPathEn;
+            crCasAccountInvoice.CrCasAccountInvoicePdfFile = pdfPath;
 
             if (await _unitOfWork.CrCasAccountInvoice.AddAsync(crCasAccountInvoice) != null) return crCasAccountInvoice.CrCasAccountInvoiceNo;
             return null;
@@ -291,7 +289,7 @@ namespace Bnan.Inferastructure.Repository
         public async Task<CrCasRenterContractBasic> UpdateRenterSettlementContract(string ContractNo, string UserInsert, string ActualDaysNo, string Mechanizm, string CurrentMeter, string AdditionalKm,
                                                                               string TaxValue, string DiscountValue, string RequiredValue, string AmountPaid, string ExpensesValue, string ExpensesReasons, string CompensationValue,
                                                                              string CompensationReasons, string MaxHours, string MaxMinutes, string ExtraValueHours, string PrivateDriverValueTotal, string ChoicesValueTotal, string AdvantagesValueTotal, string ContractValue,
-                                                                             string ContractValueAfterDiscount, string TotalContract, decimal PreviousBalance, string ArPdfContract, string EnPdfContract, string Reasons)
+                                                                             string ContractValueAfterDiscount, string TotalContract, decimal PreviousBalance, string PdfContract, string Reasons)
         {
             var OldContract = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicNo == ContractNo).OrderByDescending(x => x.CrCasRenterContractBasicCopy).FirstOrDefault();
             var User = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == UserInsert);
@@ -326,8 +324,7 @@ namespace Bnan.Inferastructure.Repository
             OldContract.CrCasRenterContractBasicActualAmountRequired = decimal.Parse(RequiredValue, CultureInfo.InvariantCulture);
             OldContract.CrCasRenterContractBasicAmountPaid = decimal.Parse(AmountPaid, CultureInfo.InvariantCulture);
             OldContract.CrCasRenterContractBasicStatus = Status.Closed;
-            OldContract.CrCasRenterContractBasicArPdfFile = ArPdfContract;
-            OldContract.CrCasRenterContractBasicEnPdfFile = EnPdfContract;
+            OldContract.CrCasRenterContractBasicPdfFile = PdfContract;
             OldContract.CrCasRenterContractBasicReasons = Reasons;
             if (_unitOfWork.CrCasRenterContractBasic.Update(OldContract) != null) return OldContract;
             return null;

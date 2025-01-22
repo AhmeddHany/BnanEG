@@ -14,9 +14,7 @@ namespace Bnan.Core.Models
         public string? CrCasAccountInvoiceReferenceContract { get; set; }
         public string? CrCasAccountInvoiceReferenceReceipt { get; set; }
         public string? CrCasAccountInvoiceUserCode { get; set; }
-        public string? CrCasAccountInvoiceArPdfFile { get; set; }
-        public string? CrCasAccountInvoiceEnPdfFile { get; set; }
-
+        public string? CrCasAccountInvoicePdfFile { get; set; }
         public virtual CrCasBranchInformation? CrCasAccountInvoiceNavigation { get; set; }
         public virtual CrCasAccountReceipt? CrCasAccountInvoiceReferenceReceiptNavigation { get; set; }
         public virtual CrMasUserInformation? CrCasAccountInvoiceUserCodeNavigation { get; set; }

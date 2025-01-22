@@ -22,10 +22,10 @@
                 @if (CarCheckupDetails.Count() > 0)
                 {
                     <td>
-                        <select class="form-select table-select-style" aria-label="Default select example" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].ReasonCheck">
+                        <select class="form-select table-select-style" aria-label="Default select example" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].ReasonCheckCode" data-code="@item.CrMasSupContractCarCheckupCode">
                             @foreach (var CheckupDetail in CarCheckupDetails)
                             {
-                                <option value="@CheckupDetail.CrMasSupContractCarCheckupDetailsEnName">
+                                <option value="@CheckupDetail.CrMasSupContractCarCheckupDetailsNo">
                                     @CheckupDetail.CrMasSupContractCarCheckupDetailsEnName
                                 </option>
                             }
@@ -58,10 +58,10 @@
                 @if (CarCheckupDetails.Count() > 0)
                 {
                     <td>
-                        <select class="form-select table-select-style" aria-label="Default select example" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].ReasonCheck">
+                        <select class="form-select table-select-style" aria-label="Default select example" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].ReasonCheckCode" data-code="@item.CrMasSupContractCarCheckupCode">
                             @foreach (var CheckupDetail in CarCheckupDetails)
                             {
-                                <option value="@CheckupDetail.CrMasSupContractCarCheckupDetailsArName">
+                                <option value="@CheckupDetail.CrMasSupContractCarCheckupDetailsNo">
                                     @CheckupDetail.CrMasSupContractCarCheckupDetailsArName
                                 </option>
                             }

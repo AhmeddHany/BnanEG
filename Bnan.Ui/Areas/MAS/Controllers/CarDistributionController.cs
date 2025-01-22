@@ -6,7 +6,7 @@ using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.Areas.CAS.Controllers;
+using Bnan.Ui.Areas.MAS.Controllers.Companies;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
