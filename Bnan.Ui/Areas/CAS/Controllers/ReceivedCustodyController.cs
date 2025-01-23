@@ -235,7 +235,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 if (status == Status.Accept)
                 {
                     SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
-                    if (!string.IsNullOrEmpty(SavePdfReceipt)) SavePdfReceipt = await SavePdfAsync(SavePdfReceipt, lessorCode, Adminstritive.CrCasSysAdministrativeProceduresBranch, AccountReceiptNo, "ar", "Receipt");
+                    if (!string.IsNullOrEmpty(SavePdfReceipt)) SavePdfReceipt = await SavePdfAsync(SavePdfReceipt, lessorCode, Adminstritive.CrCasSysAdministrativeProceduresBranch, AccountReceiptNo, "Receipt");
                     CheckAddReceipt = await _Custody.AddAccountReceiptReceivedCustody(Adminstritive.CrCasSysAdministrativeProceduresNo,
                                                                                   lessorCode, Adminstritive.CrCasSysAdministrativeProceduresBranch,
                                                                                   custodyVM.TotalAmount, Adminstritive.CrCasSysAdministrativeProceduresTargeted, SavePdfReceipt, Reasons);
@@ -258,11 +258,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             return RedirectToAction("Index");
         }
-        private async Task<string> SavePdfAsync(string? savePdf, string lessorCode, string branchCode, string contractNo, string lang, string type)
+        private async Task<string> SavePdfAsync(string? savePdf, string lessorCode, string branchCode, string contractNo, string type)
         {
             if (!string.IsNullOrEmpty(savePdf))
             {
-                return await FileExtensions.SavePdf(_hostingEnvironment, savePdf, lessorCode, branchCode, contractNo, lang, type);
+                return await FileExtensions.SavePdf(_hostingEnvironment, savePdf, lessorCode, branchCode, contractNo, type);
             }
             return string.Empty;
         }

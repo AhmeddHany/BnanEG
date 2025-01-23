@@ -64,87 +64,87 @@ $(document).ready(function () {
 
 
 ///////////////////////////////////////////////the-Modal-6-digit-vaildation/////////////////////
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelector("#otc").addEventListener("submit", function (event) {
-        event.preventDefault();
-        var inputFieldValue = document.getElementById("otc-1");
-        var numericValue = parseInt(inputFieldValue.value);
+//document.addEventListener("DOMContentLoaded", function () {
+//    document.querySelector("#otc").addEventListener("submit", function (event) {
+//        event.preventDefault();
+//        var inputFieldValue = document.getElementById("otc-1");
+//        var numericValue = parseInt(inputFieldValue.value);
 
-        if (isNaN(numericValue)) {
-            console.log("Input value:", numericValue);
-            return;
-        }
-        $.ajax({
-            type: "POST",
-            url: "https://jsonplaceholder.typicode.com/posts",
-            data: $(this).serialize(),
-            success: function (response) {
-                console.log("Form data submitted successfully:", response);
-            },
-            error: function (error) {
-                console.error("Error submitting form data:", error);
-            },
-        });
-    });
-});
+//        if (isNaN(numericValue)) {
+//            console.log("Input value:", numericValue);
+//            return;
+//        }
+//        $.ajax({
+//            type: "POST",
+//            url: "https://jsonplaceholder.typicode.com/posts",
+//            data: $(this).serialize(),
+//            success: function (response) {
+//                console.log("Form data submitted successfully:", response);
+//            },
+//            error: function (error) {
+//                console.error("Error submitting form data:", error);
+//            },
+//        });
+//    });
+//});
 
-let in1 = document.getElementById("otc-1"),
-    ins = document.querySelectorAll('input[type="number"]'),
-    splitNumber = function (e) {
-        let data = e.data || e.target.value;
-        if (!data) return;
-        if (data.length === 1) return;
+//let in1 = document.getElementById("otc-1"),
+//    ins = document.querySelectorAll('input[type="number"]'),
+//    splitNumber = function (e) {
+//        let data = e.data || e.target.value;
+//        if (!data) return;
+//        if (data.length === 1) return;
 
-        popuNext(e.target, data);
-    },
-    popuNext = function (el, data) {
-        el.value = data[0];
-        data = data.substring(1);
-        if (el.nextElementSibling && data.length) {
-            popuNext(el.nextElementSibling, data);
-        }
-    };
+//        popuNext(e.target, data);
+//    },
+//    popuNext = function (el, data) {
+//        el.value = data[0];
+//        data = data.substring(1);
+//        if (el.nextElementSibling && data.length) {
+//            popuNext(el.nextElementSibling, data);
+//        }
+//    };
 
-ins.forEach(function (input) {
-    input.addEventListener("keyup", function (e) {
-        if (
-            e.keyCode === 16 ||
-            e.keyCode == 9 ||
-            e.keyCode == 224 ||
-            e.keyCode == 18 ||
-            e.keyCode == 17
-        ) {
-            return;
-        }
+//ins.forEach(function (input) {
+//    input.addEventListener("keyup", function (e) {
+//        if (
+//            e.keyCode === 16 ||
+//            e.keyCode == 9 ||
+//            e.keyCode == 224 ||
+//            e.keyCode == 18 ||
+//            e.keyCode == 17
+//        ) {
+//            return;
+//        }
 
-        if (
-            (e.keyCode === 8 || e.keyCode === 37) &&
-            this.previousElementSibling &&
-            this.previousElementSibling.tagName === "INPUT"
-        ) {
-            this.previousElementSibling.select();
-        } else if (e.keyCode !== 8 && this.nextElementSibling) {
-            this.nextElementSibling.select();
-        }
+//        if (
+//            (e.keyCode === 8 || e.keyCode === 37) &&
+//            this.previousElementSibling &&
+//            this.previousElementSibling.tagName === "INPUT"
+//        ) {
+//            this.previousElementSibling.select();
+//        } else if (e.keyCode !== 8 && this.nextElementSibling) {
+//            this.nextElementSibling.select();
+//        }
 
-        if (e.target.value.length > 1) {
-            splitNumber(e);
-        }
-    });
+//        if (e.target.value.length > 1) {
+//            splitNumber(e);
+//        }
+//    });
 
-    input.addEventListener("focus", function (e) {
-        if (this === in1) return;
+//    input.addEventListener("focus", function (e) {
+//        if (this === in1) return;
 
-        if (in1.value == "") {
-            in1.focus();
-        }
-        if (this.previousElementSibling.value == "") {
-            this.previousElementSibling.focus();
-        }
-    });
-    const B = document.querySelector(".check-btn.check");
-});
-in1.addEventListener("input", splitNumber);
+//        if (in1.value == "") {
+//            in1.focus();
+//        }
+//        if (this.previousElementSibling.value == "") {
+//            this.previousElementSibling.focus();
+//        }
+//    });
+//    const B = document.querySelector(".check-btn.check");
+//});
+//in1.addEventListener("input", splitNumber);
 
 // ///////////////timer function in the otc modal /////////////////////
 var interval;

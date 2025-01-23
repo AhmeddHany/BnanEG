@@ -2075,7 +2075,6 @@ namespace Bnan.Core.Models
 
                 entity.HasIndex(e => e.CrCasOwnersLessorCode, "IX_CR_Cas_Owners_CR_Cas_Owners_Lessor_Code");
 
-                entity.HasIndex(e => e.CrCasOwnersSector, "IX_CR_Cas_Owners_CR_Cas_Owners_Sector");
 
                 entity.HasIndex(e => new { e.CrCasOwnersCode, e.CrCasOwnersLessorCode }, "uq_CR_Cas_Owners")
                     .IsUnique();
@@ -2095,11 +2094,6 @@ namespace Bnan.Core.Models
                     .HasMaxLength(100)
                     .HasColumnName("CR_Cas_Owners_Ar_Name");
 
-                entity.Property(e => e.CrCasOwnersCommercialNo)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Cas_Owners_Commercial_No");
-
                 entity.Property(e => e.CrCasOwnersCountryKey)
                     .HasMaxLength(10)
                     .HasColumnName("CR_Cas_Owners_Country_Key");
@@ -2116,15 +2110,18 @@ namespace Bnan.Core.Models
                     .HasMaxLength(100)
                     .HasColumnName("CR_Cas_Owners_Reasons");
 
-                entity.Property(e => e.CrCasOwnersSector)
+
+
+                entity.Property(e => e.CrCasOwnersEmail)
+                .HasColumnName("CR_Cas_Owners_Email")
+                .HasMaxLength(100);
+                    
+
+                entity.Property(e => e.CrCasOwnersConnectStatus)
                     .HasMaxLength(1)
                     .IsUnicode(false)
-                    .HasColumnName("CR_Cas_Owners_Sector")
+                    .HasColumnName("CR_Cas_Owners_Connect_Status")
                     .IsFixedLength();
-
-                entity.Property(e => e.CrCasOwnersSendContractByEmail).HasColumnName("CR_Cas_Owners_Send_Contract_By_Email");
-
-                entity.Property(e => e.CrCasOwnersSendContractByWhatsUp).HasColumnName("CR_Cas_Owners_Send_Contract_By_WhatsUp");
 
                 entity.Property(e => e.CrCasOwnersStatus)
                     .HasMaxLength(1)
@@ -2138,10 +2135,6 @@ namespace Bnan.Core.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("CR_Cas_Owners_CR_Mas_Lessor_Information");
 
-                entity.HasOne(d => d.CrCasOwnersSectorNavigation)
-                    .WithMany(p => p.CrCasOwners)
-                    .HasForeignKey(d => d.CrCasOwnersSector)
-                    .HasConstraintName("CR_Cas_Owners_CR_Mas_Sup_Renter_Sector");
             });
 
             modelBuilder.Entity<CrCasPriceCarAdditional>(entity =>

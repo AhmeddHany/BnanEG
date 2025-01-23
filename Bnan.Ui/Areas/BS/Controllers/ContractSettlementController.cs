@@ -199,7 +199,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             if (userLogin != null && Renter != null && Car != null && CarPrice != null && Branch != null)
             {
                 SavePdfContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfContract);
-                var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, Branch.CrCasBranchInformationCode, OldContract.CrCasRenterContractBasicNo, "ar", "Contract");
+                var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, Branch.CrCasBranchInformationCode, OldContract.CrCasRenterContractBasicNo, "Contract");
                 var UpdateSettlementContract = await UpdateRenterContractBasicAsync(lessorCode, Branch, OldContract.CrCasRenterContractBasicNo, ContractInfo, userLogin, pdfContract, (decimal)RenterLessor.CrCasRenterLessorAvailableBalance);
                 if (UpdateSettlementContract == null)
                 {
@@ -219,14 +219,14 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 if (UpdateSettlementContract.CrCasRenterContractBasicAmountPaid > 0)
                 {
                     SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
-                    if (!string.IsNullOrEmpty(SavePdfReceipt)) pdfReceipt = await SavePdfAsync(SavePdfReceipt, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.AccountReceiptNo, "ar", "Receipt");
+                    if (!string.IsNullOrEmpty(SavePdfReceipt)) pdfReceipt = await SavePdfAsync(SavePdfReceipt, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.AccountReceiptNo, "Receipt");
                     CheckAccountReceipt = await AddAccountReceiptAsync(UpdateSettlementContract, lessorCode, Branch, ContractInfo, userLogin, pdfReceipt);
                     CheckBalances = await UpdateBalancesAsync(Branch, UpdateSettlementContract, userLogin, ContractInfo);
                 }
 
                 // Invoice 
                 SavePdfInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfInvoice);
-                var pdfInvoice = await SavePdfAsync(SavePdfInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "ar", "Invoice");
+                var pdfInvoice = await SavePdfAsync(SavePdfInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "Invoice");
                 var checkAccountInvoiceNo = await AddAccountInvoiceAsync(UpdateSettlementContract, CheckAccountReceipt, pdfInvoice);
 
                 // Renter Balance 
@@ -451,11 +451,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
             if (amountPaid > 0) pdfDictionary.Add(Receipt, "Receipt");
             return pdfDictionary;
         }
-        private async Task<string> SavePdfAsync(string? savePdf, string lessorCode, string branchCode, string contractNo, string lang, string type)
+        private async Task<string> SavePdfAsync(string? savePdf, string lessorCode, string branchCode, string contractNo, string type)
         {
             if (!string.IsNullOrEmpty(savePdf))
             {
-                return await FileExtensions.SavePdf(_hostingEnvironment, savePdf, lessorCode, branchCode, contractNo, lang, type);
+                return await FileExtensions.SavePdf(_hostingEnvironment, savePdf, lessorCode, branchCode, contractNo, type);
             }
             return string.Empty;
         }

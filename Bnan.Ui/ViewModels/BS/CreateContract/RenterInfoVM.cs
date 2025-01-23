@@ -6,6 +6,7 @@ namespace Bnan.Ui.ViewModels.BS.CreateContract
     public class RenterInfoVM
     {
         [Required(ErrorMessage = "requiredFiled")]
+        [RegularExpression("^[1-9][0-9]*$", ErrorMessage = "requiredFiled")]
         public string CrMasRenterInformationId { get; set; } = null!;
         public int? CrMasRenterInformationCopyId { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
@@ -65,6 +66,15 @@ namespace Bnan.Ui.ViewModels.BS.CreateContract
         public string? CrMasRenterInformationEmployerName { get; set; }
         public string? CrMasRenterInformationArAddress { get; set; }
         public string? CrMasRenterInformationEnAddress { get; set; }
+
+        [Required(ErrorMessage = "requiredFiled")]
+        public string? DayDate { get; set; }
+
+        [Required(ErrorMessage = "requiredFiled")]
+        public string? MonthDate { get; set; }
+
+        [Required(ErrorMessage = "requiredFiled")]
+        public string? YearDate { get; set; }
 
     }
 }

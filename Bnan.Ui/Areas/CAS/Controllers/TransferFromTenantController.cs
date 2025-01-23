@@ -114,7 +114,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                                                                                    0, decimal.Parse(renterLessorVM.Amount, CultureInfo.InvariantCulture), renterLessorVM.Reasons);
 
             SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
-            if (!string.IsNullOrEmpty(SavePdfReceipt)) SavePdfReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfReceipt, lessorCode, "100", AccountReceiptNo, "ar", "Receipt");
+            if (!string.IsNullOrEmpty(SavePdfReceipt)) SavePdfReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfReceipt, lessorCode, "100", AccountReceiptNo, "Receipt");
             var CheckAddReceipt = await _tranferToRenter.AddAccountReceiptTransferToRenter(AccountReceiptNo, AddAdminstritive.CrCasSysAdministrativeProceduresNo, Renter.CrCasRenterLessorId, userLogin.CrMasUserInformationCode, "301", "16", lessorCode,
                                                                                         renterLessorVM.FromBank, renterLessorVM.FromAccountBankSelected, "0", renterLessorVM.Amount, SavePdfReceipt, renterLessorVM.Reasons);
 
