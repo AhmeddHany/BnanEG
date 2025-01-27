@@ -56,6 +56,7 @@ namespace Bnan.Core.Models
         public virtual DbSet<CrCasSysAdministrativeProcedure> CrCasSysAdministrativeProcedures { get; set; } = null!;
         public virtual DbSet<CrMasContractCompany> CrMasContractCompanies { get; set; } = null!;
         public virtual DbSet<CrMasContractCompanyDetailed> CrMasContractCompanyDetaileds { get; set; } = null!;
+        public virtual DbSet<CrCasLessorPolicy> CrCasLessorPolicies { get; set; } = null!;
         public virtual DbSet<CrMasLessorImage> CrMasLessorImages { get; set; } = null!;
         public virtual DbSet<CrMasLessorInformation> CrMasLessorInformations { get; set; } = null!;
         public virtual DbSet<CrMasLessorMessage> CrMasLessorMessages { get; set; } = null!;
@@ -2993,6 +2994,9 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Cas_Renter_Contract_Basic_Source")
                     .IsFixedLength();
 
+                entity.Property(e => e.CrCasRenterContractBasicPolicy)
+                    .HasColumnName("CR_Cas_Renter_Contract_Basic_Policy");
+
                 entity.Property(e => e.CrCasRenterContractBasicStatus)
                     .HasMaxLength(1)
                     .IsUnicode(false)
@@ -3634,6 +3638,55 @@ namespace Bnan.Core.Models
                     .WithMany(p => p.CrCasRenterContractStatistics)
                     .HasForeignKey(d => new { d.CrCasRenterContractStatisticsRenter, d.CrCasRenterContractStatisticsLessor })
                     .HasConstraintName("fk_CR_Cas_Renter_Contract_Statistics_CR_Cas_Renter_Lessor");
+            });
+
+            modelBuilder.Entity<CrCasLessorPolicy>(entity =>
+            {
+                entity.HasKey(e => new { e.CrCasLessorPolicyCode, e.CrCasLessorPolicyLessor });
+                entity.ToTable("CR_Cas_Lessor_Policy");
+
+               
+                entity.Property(e => e.CrCasLessorPolicyCode)
+                   .HasColumnName("CR_Cas_Lessor_Policy_Code");
+
+                entity.Property(e => e.CrCasLessorPolicyLessor)
+                    .HasMaxLength(4)
+                    .HasColumnName("CR_Cas_Lessor_Policy_Lessor")
+                    .IsFixedLength();
+                entity.Property(e => e.CrCasLessorPolicyShortName)
+                .HasColumnName("CR_Cas_Lessor_Policy_Short_Name")
+                .HasMaxLength(100);
+                entity.Property(e => e.CrCasLessorPolicyFuel)
+                .HasColumnName("CR_Cas_Lessor_Policy_Fuel")
+                .HasMaxLength(100);
+                entity.Property(e => e.CrCasLessorPolicyEarlyReturn)
+                .HasColumnName("CR_Cas_Lessor_Policy_Early_Return")
+                .HasMaxLength(100);
+                entity.Property(e => e.CrCasLessorPolicyExtension)
+                .HasColumnName("CR_Cas_Lessor_Policy_Extension")
+                .HasMaxLength(100);
+                entity.Property(e => e.CrCasLessorPolicyExtendDays)
+               .HasColumnName("CR_Cas_Lessor_Policy_Extend_Days");
+                entity.Property(e => e.CrCasLessorPolicyAccidents)
+                .HasColumnName("CR_Cas_Lessor_Policy_Accidents")
+                .HasMaxLength(100);
+                entity.Property(e => e.CrCasLessorPolicyFault)
+                .HasColumnName("CR_Cas_Lessor_Policy_Fault")
+                .HasMaxLength(100);
+                entity.Property(e => e.CrCasLessorPolicyDefault)
+                .HasColumnName("CR_Cas_Lessor_Policy_Default");
+                entity.Property(e => e.CrCasLessorPolicyDateTime)
+                .HasColumnName("CR_Cas_Lessor_Policy_DateTime");
+                entity.Property(e => e.CrCasLessorPolicyStatus)
+                .HasColumnName("CR_Cas_Lessor_Policy_Status")
+                .HasMaxLength(1);
+                entity.Property(e => e.CrCasLessorPolicyReasons)
+                .HasColumnName("CR_Cas_Lessor_Policy_Reasons")
+                .HasMaxLength(100);
+
+                entity.HasOne(d => d.CrCasLessorPolicyLessorNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.CrCasLessorPolicyLessor);
             });
 
             modelBuilder.Entity<CrCasRenterLessor>(entity =>

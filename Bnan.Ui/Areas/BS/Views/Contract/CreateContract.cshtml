@@ -5619,32 +5619,16 @@
             TotalActualContract = 0;
             TotalAmount = 0;
         }
-        //validiton on DaysNo Input
         function validateDaysNo(input) {
             let maximumNoDays = 365;
-            var today = new Date();
-            var endDate = new Date(DateToDetermineMaximumDays);
-            console.log("DateToDetermineMaximumDays", DateToDetermineMaximumDays);
-            console.log("endDate", endDate);
-
-            var timeDiff = endDate - today;
-            var daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-
-            if (daysDiff < 1) {
-                daysDiff = 1;
-            }
-
-            if (daysDiff > maximumNoDays) {
-                daysDiff = maximumNoDays;
-            }
 
             input.value = input.value.replace(/[^0-9]/g, '');
             let value = parseInt(input.value);
 
             if (isNaN(value)) {
                 input.value = '';
-            } else if (value > daysDiff) {
-                input.value = daysDiff.toString();
+            } else if (value > maximumNoDays) {
+                input.value = maximumNoDays.toString();
             } else if (value < 1) {
                 input.value = '1';
             }
@@ -6647,6 +6631,7 @@
         // }
 
     </script>
+    <!--Create Receipt PDf-->
     <script>
     async function CreateReceiptPdf() {
             const accountReceiptNo = "@ViewBag.AccountReceiptNo";
@@ -6688,7 +6673,6 @@
             await drawReceipt(canvas, dataWithImages);
             createPdf(accountReceiptNo, canvas, "SavePdfReceipt", "Contract_AccountReceiptNo");
     };
-
     function getSelectedOptionDataPaymentMethod() {
             var selectElement = document.getElementById("Contract_PaymentMethod");
             var selectedOption = selectElement.options[selectElement.selectedIndex];
@@ -8661,23 +8645,6 @@
                 }
             });
         });
-        async function getDataFromContract(contractNumber) {
-            // Check if contract number is valid
-            if (!contractNumber || contractNumber === "") {
-                // Log a message and stop further execution
-                console.log("No valid contract number received.");
-                $("#CreatedOrNot").text("لم يتم جلب بيانات العقد");
-                return false; // This will stop further execution of the code
-            }
-
-            await delay(2000);
-            // Retrieve contract details
-            await GetContractDetailsFromTajeerApi(contractNumber);
-            $("#CreatedOrNot").text("تم جلب بيانات العقد");
-            console.log("Contract details retrieved successfully.");
-            return true; // This will stop further execution of the code
-
-        }
         async function handleContractProcessing() {
             const form = document.getElementById('msform');
             const AmountPayed = document.getElementById("AmountPayed").value;

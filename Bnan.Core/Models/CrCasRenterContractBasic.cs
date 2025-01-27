@@ -14,6 +14,7 @@ namespace Bnan.Core.Models
         public string? CrCasRenterContractBasicSector { get; set; }
         public string? CrCasRenterContractBasicProcedures { get; set; }
         public string? CrCasRenterContractBasicSource { get; set; }
+        public int? CrCasRenterContractBasicPolicy { get; set; }
         public string? CrCasRenterContractBasicLessor { get; set; }
         public string? CrCasRenterContractBasicBranch { get; set; }
         public string? CrCasRenterContractBasicBranchRecevied { get; set; }
