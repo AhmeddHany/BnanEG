@@ -223,7 +223,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             var checks = await PerformAdditionalChecksAsync(basicContract, lessorCode, contractInfo, ChoicesList, AdditionalsList, CheckupDetails);
 
-            var pdfDictionaryPaths = GetPdfDictionaryWithPath(CultureInfo.CurrentCulture.Name, /*pdfContract*/"", pdfInvoicePath, pdfReceiptPath, amountPaid);
+            var pdfDictionaryPaths = GetPdfDictionaryWithPath(/*pdfContract*/"", pdfInvoicePath, pdfReceiptPath, amountPaid);
 
             //bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
             if (/*!checkPdf ||*/ !checks || !checkAccountInvoice)
@@ -235,8 +235,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             if (await _unitOfWork.CompleteAsync() > 0)
             {
-                //if (StaticContractCardImg != null) await WhatsupExtension.SendBase64StringAsImageToWhatsUp(StaticContractCardImg, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ");
-                var pdfDictionaryBase64 = GetPdfDictionaryBase64(CultureInfo.CurrentCulture.Name, /*SavePdfContract*/"", SavePdfInvoice, SavePdfReceipt, amountPaid);
+                if (StaticContractCardImg != null) await WhatsAppServicesExtension.SendMediaAsync(userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ", lessorCode, StaticContractCardImg, "CreateContractCard.png");
+                var pdfDictionaryBase64 = GetPdfDictionaryBase64(/*SavePdfContract*/"", SavePdfInvoice, SavePdfReceipt, amountPaid);
                 await SendPdfsToWhatsAppAsync(pdfDictionaryBase64, lessorCode,contractInfo.AccountReceiptNo,contractInfo.InitialInvoiceNo, basicContract.CrCasRenterContractBasicNo,
                                               userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, contractInfo.RenterInfo.CrMasRenterInformationArName, contractInfo.RenterInfo.CrMasRenterInformationEnName);
                 _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -292,14 +292,14 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
             return false;
         }
-        private Dictionary<string, string> GetPdfDictionaryWithPath(string culture, string Contract, string Invoice, string Receipt, decimal amountPaid)
+        private Dictionary<string, string> GetPdfDictionaryWithPath(string Contract, string Invoice, string Receipt, decimal amountPaid)
         {
             var pdfDictionary = new Dictionary<string, string>();
             pdfDictionary = new Dictionary<string, string> { { Contract, "Contract" }, { Invoice, "Invoice" } };
             if (amountPaid > 0) pdfDictionary.Add(Receipt, "Receipt");
             return pdfDictionary;
         }
-        private Dictionary<string, string> GetPdfDictionaryBase64(string culture, string Contract, string Invoice, string Receipt, decimal amountPaid)
+        private Dictionary<string, string> GetPdfDictionaryBase64(string Contract, string Invoice, string Receipt, decimal amountPaid)
         {
             var pdfDictionary = new Dictionary<string, string>();
             pdfDictionary = new Dictionary<string, string> { { Contract, "Contract" }, { Invoice, "Invoice" } };

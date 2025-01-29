@@ -4,7 +4,7 @@
     font-family: 'Sakkal Majalla Regular';
     font-style: normal;
     font-weight: normal;
-    src: local('Sakkal Majalla Regular'), url('PdfJS/CatchReceipt/Font/majalla.woff') format('woff');
+    src: local('Sakkal Majalla Regular'), url('PdfJS/style/style/Font/majalla.woff') format('woff');
 }
 
 
@@ -12,5 +12,5 @@
     font-family: 'Sakkal Majalla Bold';
     font-style: normal;
     font-weight: normal;
-    src: local('Sakkal Majalla Bold'), url('PdfJS/CatchReceipt/Font/majallab.woff') format('woff');
+    src: local('Sakkal Majalla Bold'), url('PdfJS/style/style/Font/majallab.woff') format('woff');
 }

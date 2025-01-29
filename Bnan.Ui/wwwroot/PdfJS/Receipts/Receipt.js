@@ -1,28 +1,3 @@
-const loadDynamicImages = async (images) => {
-    const loadedImages = {};
-    for (const [key, src] of Object.entries(images)) {
-        try {
-            loadedImages[key] = await loadImage(src);
-        } catch (error) {
-            console.warn(`Using fallback for: ${key}`);
-            console.warn(`Using fallback for src: ${src}`);
-            loadedImages[key] = null; // استخدم null أو صورة افتراضية
-        }
-    }
-    return loadedImages;
-};
-
-const loadImage = (src) => {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = (error) => {
-            console.error(`Failed to load image: ${src}`, error);
-            reject(error);
-        };
-        img.src = src;
-    });
-};
 
 // رسم الإيصال على الـ Canvas
 const drawReceipt = async (canvas, data) => {
@@ -93,29 +68,6 @@ const drawReceipt = async (canvas, data) => {
     });
 };
 
-// تحويل الـ Canvas إلى PDF
-const createPdf = (PdfNo, canvas, InputPdf, InputHaveNo) => {
-    const doc = new jsPDF("p", "pt", "a4", true);
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-
-    canvas.toBlob((blob) => {
-        const reader = new FileReader();
-        reader.onload = function () {
-            const imageDataUrl = reader.result;
-            doc.addImage(imageDataUrl, "PNG", 0, 0, pageWidth, pageHeight, "", "FAST");
-            const pdfBlob = doc.output("blob");
-            const pdfBase64 = doc.output("datauristring");
-            // مدخلات لتخزين  ورقم السند
-            document.getElementById(InputPdf).value = pdfBase64;
-            document.getElementById(InputHaveNo).value = PdfNo;
-            console.log("pdfBase64", pdfBase64);
-            console.log("PdfNo", PdfNo);
-            // تحميل الملف
-        };
-        reader.readAsDataURL(blob);
-    });
-};
 
 
 

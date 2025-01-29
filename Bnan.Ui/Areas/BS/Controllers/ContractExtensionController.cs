@@ -203,10 +203,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
 
                     // Invoice 
+                    var PdfInovice = "";
                     SavePdfInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfInvoice);
-                    if (!string.IsNullOrEmpty(SavePdfInvoice)) SavePdfInvoice = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "Invoice");
+                    if (!string.IsNullOrEmpty(SavePdfInvoice)) PdfInovice = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "Invoice");
                     var CheckAccountInvoice = await _contractExtension.AddAccountInvoice(NewContract.CrCasRenterContractBasicNo, NewContract.CrCasRenterContractBasicRenterId, lessorCode, Branch.CrCasBranchInformationCode,
-                        NewContract.CrCasRenterContractBasicUserInsert, CheckAccountReceipt.CrCasAccountReceiptNo, SavePdfInvoice);
+                        NewContract.CrCasRenterContractBasicUserInsert, CheckAccountReceipt.CrCasAccountReceiptNo, PdfInovice);
 
 
 
@@ -217,7 +218,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     var CheckRenterAlert = true;
                     CheckRenterAlert = await _contractExtension.UpdateAlertContract(NewContract);
 
-                    var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, SavePdfInvoice, PdfReceipt, (decimal)NewContract.CrCasRenterContractBasicAmountPaidAdvance);
+                    var pdfDictionary = GetPdfDictionaryWithPath(PdfInovice, PdfReceipt, (decimal)NewContract.CrCasRenterContractBasicAmountPaidAdvance);
                     bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
                     if (!checkPdf)
                     {
@@ -233,8 +234,10 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
                         if (await _unitOfWork.CompleteAsync() > 0)
                         {
-                            if (StaticContractCardImg != null) await WhatsupExtension.SendBase64StringAsImageToWhatsUp(StaticContractCardImg, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ");
-                            await SendPdfsToWhatsAppAsync(pdfDictionary, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter);
+                            if (StaticContractCardImg != null) await WhatsAppServicesExtension.SendMediaAsync(userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ", lessorCode, StaticContractCardImg, "ExtensionContractCard.png");
+                            var pdfDictionaryBase64 = GetPdfDictionaryBase64(SavePdfInvoice, SavePdfReceipt, (decimal)NewContract.CrCasRenterContractBasicAmountPaidAdvance);
+                            await SendPdfsToWhatsAppAsync(pdfDictionaryBase64, lessorCode, ContractInfo.AccountReceiptNo, ContractInfo.InitialInvoiceNo, NewContract.CrCasRenterContractBasicNo,
+                                                                         userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter.CrMasRenterInformationArName, Renter.CrMasRenterInformationEnName);
                             _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                             return RedirectToAction("Index", "Home");
 
@@ -253,23 +256,32 @@ namespace Bnan.Ui.Areas.BS.Controllers
             _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             return RedirectToAction("Index");
         }
-        private async Task<bool> SendPdfsToWhatsAppAsync(Dictionary<string, string> pdfDictionary, string toNumber, CrMasRenterInformation renter)
+        private async Task<bool> SendPdfsToWhatsAppAsync(Dictionary<string, string> pdfDictionary, string lessorCode, string receiptNo, string invoiceNo, string contractNo, string toNumber, string renterArName, string renterEnName)
         {
             if (pdfDictionary != null)
             {
                 foreach (var kvp in pdfDictionary)
                 {
+                    var fileNo = "";
                     string pdf = kvp.Key;
                     string documentType = kvp.Value;
-                    string message = WhatsupExtension.GetMessage(documentType, renter.CrMasRenterInformationArName, renter.CrMasRenterInformationEnName);
-                    await WhatsupExtension.SendFile(_hostingEnvironment, pdf, toNumber, message);
+                    string message = WhatsupExtension.GetMessage(documentType, renterArName, renterEnName);
+                    if (documentType == "Receipt" && !string.IsNullOrEmpty(pdf)) fileNo = receiptNo;
+                    else if (documentType == "Invoice" && !string.IsNullOrEmpty(pdf)) fileNo = invoiceNo;
+                    if (!string.IsNullOrEmpty(fileNo)) await WhatsAppServicesExtension.SendMediaAsync(toNumber, message, lessorCode, pdf, $"{fileNo}.pdf");
                 };
                 return true;
             }
-
             return false;
         }
-        private Dictionary<string, string> GetPdfDictionary(string culture, string Invoice, string Receipt, decimal amountPaid)
+        private Dictionary<string, string> GetPdfDictionaryWithPath(string Invoice, string Receipt, decimal amountPaid)
+        {
+            var pdfDictionary = new Dictionary<string, string>();
+            pdfDictionary = new Dictionary<string, string> { { Invoice, "Invoice" } };
+            if (amountPaid > 0) pdfDictionary.Add(Receipt, "Receipt");
+            return pdfDictionary;
+        }
+        private Dictionary<string, string> GetPdfDictionaryBase64(string Invoice, string Receipt, decimal amountPaid)
         {
             var pdfDictionary = new Dictionary<string, string>();
             pdfDictionary = new Dictionary<string, string> { { Invoice, "Invoice" } };

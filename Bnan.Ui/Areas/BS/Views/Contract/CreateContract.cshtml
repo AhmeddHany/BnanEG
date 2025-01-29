@@ -27,7 +27,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <!--Pdf-->
-<link rel="stylesheet" href="~/PdfJS/CatchReceipt/style/style.css">
+<link rel="stylesheet" href="~/PdfJS/style/style/style.css">
 <!--Pdf-->
 @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
 {
@@ -2288,8 +2288,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" integrity="sha512-u3fPA7V8qQmhBPNT5quvaXVa1mnnLSXUep5PS1qo5NRzHwG19aHmNJnj1Q8hpA/nBWZtZD4r4AX6YOt5ynLN2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="~/js/toastr.js"></script>
     <!--Pdf-->
-    <script src="~/PdfJS/CatchReceipt/ReceiptCatchJS/Receipt.js"></script>
-    <script src="~/PdfJS/Invoice/ProformaInvoice/js/ProformaInvoice.js"></script>
+    <script src="~/PdfJS/Receipts/Receipt.js"></script>
+    <script src="~/PdfJS/Invoices/ProformaInvoice.js"></script>
+    <script src="~/PdfJS/Card/Card.js"></script>
+    <script src="~/PdfJS/PdfAndImages.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
     <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
     <!--Pdf-->
@@ -5830,7 +5832,95 @@
             })
         });
     </script>
+    <!--Create Card Contract PDf-->
+    <script>
+        const CreateCardContract = async () => {
+         try {
+           const contractNo ="@ViewBag.ContractNo";
+           const canvas = document.getElementById("myCanvas");
+           var dates = getDates();
+           const dynamicData = {
+              CARD_TITLE_AR: "عقد إيجار سيارة",
+              CARD_TITLE_EN: "Car Rental Contract",
+              RENTAR_NAME_AR: RenterInformation.personalArName,
+              RENTAR_NAME_EN: RenterInformation.personalEnName,
+              CAR_NAME_AR: CarInformation.carInformation.crCasCarInformationConcatenateArName,
+              CAR_NAME_EN: CarInformation.carInformation.crCasCarInformationConcatenateEnName,
+              CONTRACT_DATE_AR: dates.start.startHijri,
+              CONTRACT_DATE_EN: dates.start.startMiladi,
+              CONTRACT_END_DATE_AR: dates.end.endHijri,
+              CONTRACT_END_DATE_EN: dates.end.endMiladi,
+              ADDRESS: '@Html.Raw(Model.CrCasBranchInformation?.CrCasBranchPost?.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateArName)' + ' - ' + '@Html.Raw(Model.CrCasBranchInformation?.CrCasBranchInformationArShortName)',
+              CONTRACT_NUMBER: contractNo,
+               images: {
+                   background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractCard)",
+                   QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+               },
+           };
 
+           const loadedImages = await loadDynamicImages(dynamicData.images);
+           const dataWithImages = { ...dynamicData, images: loadedImages };
+           console.log("dataWithImages", dataWithImages);
+
+           await drawCard(canvas, dataWithImages);
+           // حفظ الصورة كـ Base64
+           const base64Image = canvas.toDataURL("image/png");
+
+           // تخزين Base64 في input
+           const inputPdf = document.getElementById("StaticContractCardImg");
+           inputPdf.value = base64Image;
+           console.log("Base64 Image:", base64Image);
+          }
+              catch (error) {
+                  console.error("خطأ في إنشاء الفاتورة:", error);
+              }
+          }
+           function getDates() {
+               // تحديد خيارات التنسيق
+               var options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+
+               // تنسيق التاريخ الميلادي باستخدام البيانات من الـ Model (تأكد من مرور التاريخ من الـ Razor بشكل صحيح)
+               var formattedStartDate = "@Model.ExtensionContract?.CrCasRenterContractBasicExpectedStartDate?.ToString("yyyy/MM/dd HH:mm", CultureInfo.InvariantCulture)";
+               var startDate = new Date(formattedStartDate);  // تحويل النص إلى كائن Date
+
+               // التحقق إذا كانت القيمة صالحة
+               if (isNaN(startDate)) {
+                 console.error('تاريخ البدء غير صالح');
+                 startDate = new Date();  // تعيين تاريخ افتراضي في حال حدوث خطأ
+               }
+
+               // تحويل التاريخ الهجري باستخدام دالة formatHijriDate
+                const startHijriDate = formatHijriDate(startDate,"ar");
+
+               // الحصول على تاريخ النهاية من الـ DOM (افترض أن #EndDate هو عنصر يحتوي على التاريخ)
+               var endDateInput = $("#EndDate").text();
+               var endDate = new Date(endDateInput);  // تحويل النص إلى كائن Date
+
+               // التحقق إذا كانت القيمة صالحة
+               if (isNaN(endDate)) {
+                 console.error('تاريخ الانتهاء غير صالح');
+                 endDate = new Date();  // تعيين تاريخ افتراضي في حال حدوث خطأ
+               }
+
+               // تنسيق التاريخ الميلادي لآخر تاريخ
+               var formattedEndDate = endDate.toLocaleDateString('ja-JP', options);
+
+               // تحويل التاريخ الهجري باستخدام دالة formatHijriDate
+               const endHijriDate = formatHijriDate(endDate,"ar");
+
+               // إرجاع التواريخ بالميلادي والهجري
+               return {
+                 start: {
+                   startMiladi: formattedStartDate,
+                   startHijri: startHijriDate,
+                 },
+                 end: {
+                   endMiladi: formattedEndDate,
+                   endHijri: endHijriDate,
+                 },
+               };
+         }
+    </script>
     <!--Create Receipt PDf-->
     <script>
         async function CreateReceiptPdf() {
@@ -5871,7 +5961,7 @@
                 const dataWithImages = { ...dynamicData, images: loadedImages };
                 console.log("dataWithImages",dataWithImages);
                 await drawReceipt(canvas, dataWithImages);
-                createPdf(accountReceiptNo, canvas, "SavePdfReceipt", "Contract_AccountReceiptNo");
+                await createPdf(accountReceiptNo, canvas, "SavePdfReceipt", "Contract_AccountReceiptNo");
         };
         function getSelectedOptionDataPaymentMethod() {
                 var selectElement = document.getElementById("Contract_PaymentMethod");
@@ -5971,6 +6061,14 @@
                     vat: taxPercent,
                 },
                 {
+                    arabic: "السائق الخاص",
+                    english: "Private Driver",
+                    value: privateDriverValue,
+                    number: 1,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
                     arabic: "الخيارات",
                     english: "Choices",
                     value: choicesValue,
@@ -6019,11 +6117,11 @@
                 Totalitems: processedData.Totalitems,
             };
 
-            const loadedImages = await loadDynamicImagesInvoice(dynamicData.images);
+            const loadedImages = await loadDynamicImages(dynamicData.images);
             const dataWithImages = { ...dynamicData, images: loadedImages };
             console.log("dataWithImages", dataWithImages);
             await drawInvoice(canvas, dataWithImages);
-            createPdfInvoice(accountInvoiceNo, canvas, "SavePdfInvoice", "Contract_InitialInvoiceNo");
+            await createPdf(accountInvoiceNo, canvas, "SavePdfInvoice", "Contract_InitialInvoiceNo");
         }
         function generateInvoiceItems(itemsData) {
             const processedItems = itemsData

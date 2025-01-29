@@ -1,28 +1,4 @@
 ﻿
-//  لتحميل الصور
-const loadDynamicImagesInvoice = async (images) => {
-    const loadedImages = {};
-    for (const [key, src] of Object.entries(images)) {
-        try {
-            loadedImages[key] = await loadImageInvoice(src);
-        } catch (error) {
-            console.warn(`استخدام النسخة الاحتياطية لـ: ${key}`);
-            loadedImages[key] = null;
-        }
-    }
-    return loadedImages;
-};
-const loadImageInvoice = (src) => {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = (error) => {
-            console.error(`فشل تحميل الصورة: ${src}`, error);
-            reject(error);
-        };
-        img.src = src;
-    });
-};
 //  لرسم الإيصال على الصورة
 const drawInvoice = async (canvas, data) => {
     console.log("بدء رسم الفاتورة");
@@ -156,28 +132,5 @@ const drawInvoice = async (canvas, data) => {
     drawItems(data.AfterDiscountitems, canvas.width - 1640, startYForNumbers, "center");
     drawItems(data.VATitems, canvas.width - 1930, startYForNumbers, "center");
     drawItems(data.Totalitems, canvas.width - 2220, startYForNumbers, "center");
-};
-// تحويل الصورة إلى PDF
-const createPdfInvoice = (PdfNo, canvas, InputPdf, InputHaveNo) => {
-    const doc = new jsPDF("p", "pt", "a4", true);
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-
-    canvas.toBlob((blob) => {
-        const reader = new FileReader();
-        reader.onload = function () {
-            const imageDataUrl = reader.result;
-            doc.addImage(imageDataUrl, "PNG", 0, 0, pageWidth, pageHeight, "", "FAST");
-            doc.save(`${PdfNo}.pdf`);
-            const pdfBlob = doc.output("blob");
-            const pdfBase64 = doc.output("datauristring");
-            // مدخلات لتخزين الملف ورقم السند
-            document.getElementById(InputPdf).value = pdfBase64;
-            document.getElementById(InputHaveNo).value = PdfNo;
-            console.log("pdfBase64", pdfBase64);
-            console.log("PdfNo", PdfNo);
-        };
-        reader.readAsDataURL(blob);
-    });
 };
 
