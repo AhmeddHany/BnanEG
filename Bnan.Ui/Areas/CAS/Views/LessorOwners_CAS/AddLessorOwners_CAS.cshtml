@@ -1,0 +1,295 @@
+﻿@using Bnan.Ui.ViewModels.CAS
+@model CASContractSourceVM
+
+@inject IViewLocalizer localizer
+
+@{
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form asp-area="CAS" asp-controller="LessorOwners_CAS" asp-action="AddLessorOwners_CAS" class="needs-validation" novalidate>
+            <input hidden asp-for="CrCasOwnersCode" />
+            <input hidden asp-for="CrCasOwnersLessorCode" />
+            <input hidden asp-for="CrCasOwnersSendContractByWhatsUp" id="status_radio_asp" />
+            <div class="row  mt-3 g-3">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        <div class="row g-3 my-2">
+                            <div class="col">
+                                <h3>@localizer["add_LessorOwners_CAS_PageTitle"]</h3>
+                            </div>
+                            <div class="col-md-auto save-col">
+                                <button type="submit" class="custom-img-btn"> <img src="~/MasSystem/images/save.svg" /> </button>
+                                <button type="button" class="custom-img-btn"> <a href="/CAS/LessorOwners_CAS/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a></button>
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="row mt-3 g-3">
+
+                                <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <p>@localizer["RenterIdtypeName_view"] </p>
+                                        </div>
+                                        <div class=" col-md-auto Saved-data">
+                                            <p> @Model.CrCasOwnersCode </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+
+                                    <button type="button" class="btn modal-btn"
+                                            data-bs-toggle="modal"
+                                            href="#Doc-photo-modal">
+                                        <div class="row align-items-center">
+                                            <div class="col">@localizer["RenterIdPhoto"] </div>
+                                            <div class="col-auto">
+                                                <div class="systems-check">
+                                                    <i class="fa-solid fa-check text-white"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="owner-name-ar"
+                                                   class="form-label">
+                                                @localizer["LessorOwners_CAS_ArName"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" 
+                                                   class="form-control inputs arabic-input"
+                                                   asp-for="CrCasOwnersArName" maxlength="100" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s\/\.\-0-9]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger" asp-validation-for="CrCasOwnersArName"></span>
+                                                    <span class="text-danger" id="CrCasOwnersArName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="owner-name-en"
+                                                   class="form-label">
+                                                @localizer["LessorOwners_CAS_EnName"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text"
+                                                   class="form-control inputs english-input"
+                                                   asp-for="CrCasOwnersEnName" maxlength="100" oninput="this.value = this.value.replace(/[^a-zA-Z\s\/\.\-0-9]/g, '')" autoComplete="off" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger" asp-validation-for="CrCasOwnersEnName"></span>
+                                                    <span class="text-danger" id="CrCasOwnersEnName-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+
+                                        <div class="col-md-6">
+                                            <label for="phone2" class="form-label">
+                                                @localizer["LessorMarketingMobile"]
+                                            </label>
+                                            <div class="input-group">
+
+                                                @*<input type="text" class="form-control inputs tel-input" id="text_mob" asp-for="mob" onchange="edit_mob()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="20" required>*@
+                                                <input type="text" class="form-control inputs tel-input" id="phone2" asp-for="CrCasOwnersMobile" onchange="edit_mob()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="20" required>
+                                                <select class="input-group-text select-style counterCode" id="key_country" asp-for="CrCasOwnersCountryKey" onchange="changed_key()">
+
+                                                    <option value=""></option>
+                                                    @foreach (var single in Model.keys)
+                                                    {
+                                                        <option value="@single.CrMasSysCallingKeysNo" id="@single.CrMasSysCallingKeysNo">+@single.CrMasSysCallingKeysNo</option>
+                                                    }
+                                                </select>
+                                                <div class="invaild">
+                                                    <div class="invalid-feedback">
+                                                        <span class="text-danger" asp-validation-for="CrCasOwnersMobile"></span>
+                                                        <span class="text-danger" id="CrCasOwnersMobile-Error"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="email"
+                                                   class="form-label">@localizer["LessorMarketingEmail"] </label>
+                                            <input type="email" id="email"
+                                                   class="form-control inputs english-input"
+                                                   id="email" asp-for="CrCasOwnersEmail">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger" asp-validation-for="CrCasOwnersEmail"></span>
+                                                    <span class="text-danger" id="CrCasOwnersEmail-Error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex gap-3 align-items-center">
+                                        <input class="form-check-input checkbox" type="checkbox" value="checked" id="sendContract" name="sendContract">
+                                        <label class="form-check-label" for="sendContract">@localizer["Send_contract"]</label>
+                                    </div>
+                                    <div class="mt-3 d-flex gap-3 align-items-center">
+                                        <div>
+                                            <input class="form-check-input" type="radio" name="sendWay" value="email" disabled id="sendEmail">
+                                            <label class="form-check-label" for="sendEmail">@localizer["mail_owner"]</label>
+                                        </div>
+                                        <div>
+                                            <input class="form-check-input" type="radio" name="sendWay" value="whatsup" disabled id="sendWhatsup">
+                                            <label class="form-check-label" for="sendWhatsup">@localizer["whatsapp_owner"] </label>
+                                        </div>
+                                        <div>
+                                            <input class="form-check-input" type="radio" name="sendWay" value="sms" disabled id="sendSms">
+                                            <label class="form-check-label" for="sendSms">@localizer["sms_owner"]</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row align-items-center mt-3 ">
+                                        <div class="col-md-10">
+                                            <label>@localizer["Reason_s"]</label>
+                                            <textarea class=" form-control textarea-inputs"
+                                                      rows="1" maxlength="100" name="notes"
+                                                      type="text" asp-for="CrCasOwnersReasons"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
+    <script>
+        // الحصول على الـ checkbox والـ radio buttons
+        const checkbox = document.getElementById('sendContract');
+        const radioButtons = document.querySelectorAll('input[name="sendWay"]');
+
+        // الاستماع لتغيير الـ checkbox
+        checkbox.addEventListener('change', function () {
+            if (checkbox.checked) {
+                // تفعيل الـ radio buttons إذا كان الـ checkbox مفعلًا
+                radioButtons.forEach(radio => radio.disabled = false);
+                // إزالة التحديد من الـ radio button
+                radioButtons.forEach((radio) => { radio.checked = false; });
+            } else {
+                // تعطيل الـ radio buttons إذا كان الـ checkbox غير مفعل
+                radioButtons.forEach(radio => radio.disabled = true);
+                $("#status_radio_asp").val("0");
+                console.log('تم اختيار: ' + $("#status_radio_asp").val());
+            }
+        });
+
+        // الاستماع لتغيير قيمة الـ radio buttons
+        radioButtons.forEach((radio) => {
+            radio.addEventListener('change', function () {
+                // عندما يتغير الاختيار، قم بعرض القيمة المختارة
+                console.log('تم اختيار: ' + this.value);
+                if (this.value == "email") {
+                    $("#status_radio_asp").val("1");
+                }
+                else if (this.value == "whatsup") {
+                    $("#status_radio_asp").val("2");
+                }
+                else if (this.value == "sms") {
+                    $("#status_radio_asp").val("3");
+                }
+                else {
+                    $("#status_radio_asp").val("0");
+                }
+                console.log('تم اختيار: ' + $("#status_radio_asp").val());
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            // This To Focus On input when page load
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                $("#CrCasOwnersEnName").focus();
+            }
+            else {
+                $("#CrCasOwnersArName").focus();
+            }
+            //////////////////////////////////////////
+
+
+            function Check_onChange_input(existName, dataField) {
+                $.ajax({
+                    type: "GET",
+                    url: "/CAS/LessorOwners_CAS/CheckChangedField",
+                    data: { existName: existName, dataField: dataField },
+                    success: function (result) {
+                        console.log("feedback", result);
+                        // Hide all previous error messages
+                        $('.invalid-feedback').show();
+
+                        // Show new error messages if they exist
+                        if (result.errors && result.errors.length > 0) {
+                            result.errors.forEach(function (error) {
+                                // Use the ID from the error object to find the correct element
+                                $(`#${error.field}-Error`).text(error.message).show();
+                            });
+                        } else {
+                            // Hide the error message if no errors
+                            $(`#${existName}-Error`).text("");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+
+            $('#CrCasOwnersArName').on('change', function () {
+                var newValue = $(this).val();
+                console.log("newValue", newValue)
+                Check_onChange_input('CrCasOwnersArName', newValue);
+            });
+
+            $('#CrCasOwnersEnName').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrCasOwnersEnName', newValue);
+            });
+            $('#CrCasOwnersEmail').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrCasOwnersEmail', newValue);
+            });
+            $('#CrCasOwnersMobile').on('change', function () {
+                var newValue = $(this).val();
+                Check_onChange_input('CrCasOwnersMobile', newValue);
+            });
+        });
+
+    </script>
+}

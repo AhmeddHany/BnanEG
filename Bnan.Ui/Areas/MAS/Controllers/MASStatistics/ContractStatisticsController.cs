@@ -79,7 +79,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var listmaxDate = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
             predicate: null,
-            selectProjection: query => query.Select(x => new Date_ReportClosedContractVM
+            selectProjection: query => query.Select(x => new Date_ReportClosedContract_MAS_VM
             {
                 dates = x.CrCasRenterContractStatisticsDate,
             }));
@@ -105,7 +105,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
               var all_Contract_Days = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
               }));
@@ -142,7 +142,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_Days = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsDayCreate,
@@ -244,7 +244,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_Time = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsTimeCreate,
@@ -351,7 +351,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_DayCount = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsDayCount,
@@ -456,7 +456,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_HigritsMonths = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsHmonthCreate,
@@ -577,7 +577,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_GregorianMonths = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsGmonthCreate,
@@ -698,7 +698,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_ValueNo = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsValueNo,
@@ -804,7 +804,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_KM = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsKm,

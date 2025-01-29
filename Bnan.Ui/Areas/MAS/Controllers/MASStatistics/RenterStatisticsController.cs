@@ -80,7 +80,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Renter_Nationality = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
-              selectProjection: query => query.Select(x => new Renter_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Renter_TypeVM
               {
                   Renter_Code = x.CrMasRenterInformationId,
                   Type_Id = x.CrMasRenterInformationNationality,
@@ -174,7 +174,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
             var x = true;
-            for (var i = 0; x == true; i++)
+            for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
             {
 
                 if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -228,7 +228,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Renter_Profession = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
-              selectProjection: query => query.Select(x => new Renter_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Renter_TypeVM
               {
                   Renter_Code = x.CrMasRenterInformationId,
                   Type_Id = x.CrMasRenterInformationProfession,
@@ -296,7 +296,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
             var x = true;
-            for (var i = 0; x == true; i++)
+            for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
             {
 
                 if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -366,7 +366,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Renter_City = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
-              selectProjection: query => query.Select(x => new Renter_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Renter_TypeVM
               {
                   Renter_Code = x.CrCasRenterLessorId,
                   Type_Id = x.CrCasRenterLessorStatisticsCity,
@@ -433,7 +433,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
             var x = true;
-            for (var i = 0; x == true; i++)
+            for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
             {
 
                 if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -485,7 +485,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Renter_Region = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
-              selectProjection: query => query.Select(x => new Renter_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Renter_TypeVM
               {
                   Renter_Code = x.CrCasRenterLessorId,
                   Type_Id = x.CrCasRenterLessorStatisticsRegions,
@@ -552,7 +552,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
             var x = true;
-            for (var i = 0; x == true; i++)
+            for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
             {
 
                 if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -601,7 +601,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Renter_Age = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
-              selectProjection: query => query.Select(x => new Renter_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Renter_TypeVM
               {
                   Renter_Code = x.CrCasRenterLessorId,
                   Type_Id = x.CrCasRenterLessorStatisticsAge,

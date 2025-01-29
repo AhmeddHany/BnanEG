@@ -1,0 +1,531 @@
+﻿
+
+@using Bnan.Ui.ViewModels.CAS
+@using Bnan.Core.Extensions
+@model listReportFTPemployeeVM
+@inject IViewLocalizer localizer
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+@{
+    ViewData["Page-title"] = localizer["Edit RenterInformations Data"];
+    ViewData["Page-Hint"] = localizer["Edit RenterInformations Hint"];
+}
+
+
+            <div class="col d-flex align-items-center justify-content-center">
+    <input hidden asp-for="UserId" id="UserId000" />
+                    <div class="container main-container">
+                    <form action="" >
+                            @*<div class="row g-3 ">
+                                <div class="col">
+                                    <div class="row g-3 my-2">  
+                                        <div class="col-md-6">
+                                <h3>@localizer["Edit FinancialTransactionOfEmployee Data"]</h3>
+                                    </div>
+                                    <div class="col-md-6 save-col">
+                            <a href="/CAS/ReportFTPemployee/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a>
+                                    </div>
+                                  </div>
+                                </div>*@
+                              @*<div class="row gap-lg-3 g-2">
+
+                    <h5 class="subtitle">
+                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.ThisUserData?.CrMasUserInformationEnName : Model.ThisUserData?.CrMasUserInformationArName)
+                    </h5> 
+                                    <div class="col-lg-12 col-xl-8">
+                                        <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
+                                            <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                                <label for="start-date">@localizer["From_n"]</label>
+                                                <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required>
+                                            </div>
+                                          <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                           <label for="end-date">@localizer["To_n"]</label>
+                                           <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required>
+                                          </div>
+                                           
+                                            <button type="button" id="btn_view" name="btn_view" class="btn btn-standard">@localizer["View_n"]</button>
+                                        </div>
+                                    </div>*@
+
+
+                    <div class="row g-3 ">
+                        <div class="col">
+                            <div class="row g-3 my-2">
+                                <div class="col">
+                                    <h3>@localizer["Edit FinancialTransactionOfEmployee Data"]</h3>
+                                </div>
+                                <div class="col-auto save-col">
+                                    <a href="/CAS/ReportFTPemployee/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row gap-lg-3 g-2">
+                            <div class="col-12 px-2">
+                                <h5 class="subtitle">
+                                    @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.ThisUserData?.CrMasUserInformationEnName : Model.ThisUserData?.CrMasUserInformationArName)
+                                </h5>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
+                                    <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                        <label for="start-date">@localizer["From_n"]</label>
+                                        <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required>
+                                    </div>
+                                    <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                        <label for="end-date">@localizer["To_n"]</label>
+                                        <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required>
+                                    </div>
+
+                                    <button type="button" id="btn_view" name="btn_view" class="btn btn-standard">@localizer["View_n"]</button>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="row mt-2">
+
+                                    <div class="col-md-auto col-lg-7 col-xl-8">
+                                        <div class="row">
+                                            <div class="col-auto col-xl-4">
+                                                <div class="row" >
+                                                    <div class="col-auto">
+                                                        <p>@localizer["FTR_TotalCreditor"]</p>
+                                                    </div>
+                                                    <div class=" col-auto Saved-data">
+                                                <p id="p_credit">@Model.summition?.Creditor_Total?.ToString("N2",CultureInfo.InvariantCulture)</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <p>@localizer["FTR_TotalDebitor"]</p>
+                                                    </div>
+                                                    <div class=" col-auto Saved-data">
+                                                        <p id="p_debit">@Model.summition?.Debitor_Total?.ToString("N2",CultureInfo.InvariantCulture)</p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-auto  col-lg-5 col-xl-4 filters-col ">
+                                        <div class="filters-custom-order">
+
+                                            <label class="form-check-label" for="all">@localizer["All_n"]</label>
+                                            <input class="form-check-input custom" type="radio" name="customRadio"
+                                                   id="all" value="All" checked />
+                                        </div>
+
+                                        <div class="filters-custom-order">
+
+                                            <label class="form-check-label filter2" for="Custody">@localizer["FTE_status_Custody"]</label>
+                                            <input class="form-check-input custom" type="radio" name="customRadio"
+                                                   id="Custody" value="1" />
+                                        </div>
+
+                                        <div class="filters-custom-order">
+
+                                            <label class="form-check-label  filter1"
+                                                   for="detained">@localizer["FTE_status_Reserved"]</label>
+                                            <input class="form-check-input custom" type="radio" name="customRadio"
+                                                   id="detained" value="2" />
+                                        </div>
+                                        <div class="filters-custom-order">
+
+                                            <label class="form-check-label filter3" for="deported">@localizer["FTE_status_deported"]</label>
+                                            <input class="form-check-input custom" type="radio" name="customRadio"
+                                                   id="deported" value="3" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+            <div class="row table-row px-3">
+                <div class="dataTable22">
+                    <partial name="_EditpartDataTableReportFTPemployee" />
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" aria-labelledby="DataModal" aria-hidden="true" id="myModal">
+            <div class="modal-dialog modal-dialog-centered ">
+                <div class="modal-content reports-modal-content">
+                    <div class="modal-header flex-row-reverse border-0">
+                        <button type="button" class="Close modalClose" data-bs-dismiss="modal">&times;</button>
+
+                        <h5 class="modal-title card-title m-auto">@localizer["DetailsOfContract"]</h5>
+                    </div>
+                    <div class="modal-body p-0">
+                        <div class="data-details">
+                            <div class="row ">
+                                <div class="col-auto ">
+                                    <p>@localizer["ReceiptNo"]</p>
+                                </div>
+                                <div class="col-auto Saved-data p-0">
+                                    <p id="ReceiptNo"></p>
+                                </div>
+                            </div>
+
+
+                            <div class="row ">
+                                <div class="col-md-7 ">
+                                    <div class="row">
+                                        <div class="col-auto ">
+                                            <P>@localizer["AccountBankCode"]</P>
+                                        </div>
+                                        <div class="col-auto Saved-data p-0">
+                                            <p id="AccountBankCode"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-auto  ">
+                                    <div class="row">
+                                        <div class="col-auto ">
+                                            <P> @localizer["Bank"]</P>
+                                        </div>
+                                        <div class="col-auto Saved-data p-0">
+                                            <p id="Bank"></P>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row ">
+                                <div class="col-md-12 ">
+                                    <div class="row">
+                                        <div class="col-auto ">
+                                            <p>@localizer["CustodyNo"]</p>
+                                        </div>
+                                        <div class="col-auto Saved-data p-0">
+                                            <p  id="CustodyNo"></P>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row ">
+                                <div class="col-md-7  ">
+                                    <div class="row">
+                                        <div class="col-auto ">
+                                            <p> @localizer["UserReceived"]</p>
+                                        </div>
+                                        <div class="col-auto Saved-data p-0">
+                                            <p id="UserReceived"></P>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-auto  ">
+                                    <div class="row">
+                                        <div class="col-auto ">
+                                           <P>@localizer["ReceivedDate"]</P>
+                                        </div>
+                                        <div class="col-auto Saved-data p-0">
+                                             <p id="ReceivedDate"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row ">
+                                <div class="col-md-12 d-flex  flex-wrap">
+                                    <div class="row">
+                                        <div class="col-auto  text-end">
+                                            <p> @localizer["reasons"]</p>
+                                        </div>
+                                        <div class="col-auto Saved-data p-0">
+                                            <div class="notes_box">
+                                                 <p id="reasons"></P>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div> 
+    </div>
+
+
+
+@section Scripts{
+    <!-- تحميل مكتبة jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- تحميل مكتبة DataTables -->
+    <script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    @*    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+    // تهيئة flatpickr مع التنسيق المطلوب
+    flatpickr("#start_date", {
+        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
+    });
+        // تهيئة flatpickr مع التنسيق المطلوب
+    flatpickr("#end_date", {
+        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
+    });
+</script>*@
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    @*<script src="~/MasSystem/scripts/Scripts.js"></script>*@
+@*
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var table = document.getElementById("table");
+            var rows = table.getElementsByTagName("tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName("td");
+
+                for (var j = 1; j < cells.length; j++) {
+                    cells[j].addEventListener("click", function () {
+                        var modal = new bootstrap.Modal(document.getElementById("DataModal"));
+                        modal.show();
+                    });
+                }
+            }
+        });
+    </script>
+*@
+    <script>
+        $(document).ready(function () {
+            $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
+            $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
+
+            // لجعل الحالة حسب ما هي جاية من index نشط او الكل
+            //$("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+
+            // Close modal when close button is clicked
+            $('.close').click(function () {
+                $('#myModal').modal('hide');
+            });
+
+            //var today = new Date();
+            //$("#start_date").datepicker({
+            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
+            //    maxDate: today,
+            //});
+            //$("#end_date").datepicker({
+            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
+            //    maxDate: today,
+            //});
+
+
+            ///////
+            // تهيئة DataTable
+            var table2 = $('#Table').DataTable({
+                ordering: false, // تعطيل الترتيب التلقائي للصفوف
+                stateSave: true,   // حفظ حالة الجدول
+            });
+            end_init_ShowDatatable();
+        });
+
+        function end_init_ShowDatatable() {
+            $(".LoaderRun_Center_div").css("display", "none");
+            $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+            //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
+            $("select[name='Table_length']").val('10000').change();
+            $("#Table_info").css("display", "none");
+            $("#Table_previous").css("display", "none");
+            $("#Table_next").css("display", "none");
+            $("#Table_length").css("display", "none");
+            $("#Table_filter").css("display", "none");
+            $(".paginate_button").css("display", "none");
+            $(".ellipsis").css("display", "none");
+            $("select[name='Table_length'] option[value='10000']").prop("selected", true);
+        }
+
+        // دالة للبحث عن كلمة في جميع الصفوف
+        function searchRows() {
+            var table = $('#Table').DataTable();
+            end_init_ShowDatatable();
+            var keyword = $('#search2').val().toLowerCase(); // الكلمة المدخلة للبحث (تحويلها إلى حروف صغيرة)
+
+            // إخفاء كل الصفوف أولاً
+            table.rows().every(function () {
+                this.nodes().to$().hide(); // إخفاء الصف
+            });
+
+            // التكرار عبر كل الصفوف
+            table.rows().every(function () {
+                var row = this.data();
+                var found = false;
+
+                // التكرار عبر كل الخلايا في الصف
+                row.forEach(function (cell) {
+                    if (cell.toString().toLowerCase().includes(keyword)) {
+                        found = true; // إذا تم العثور على الكلمة في أي خلية
+                    }
+                });
+
+                // إذا تم العثور على الكلمة في الصف، نظهره
+                if (found) {
+                    this.nodes().to$().show();
+                }
+            });
+            //$("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+        }
+
+        // يمكن إضافة وظيفة البحث تلقائيًا عند كتابة النص
+        $('#search2').on('keyup', function () {
+            searchRows();
+        });
+
+    </script>
+    <script>
+        //get ReportFTPemployee By Status function
+        function GetContractsByStatusFitler(status,start, end) {
+            var id = $("#UserId000").val();
+            $.ajax({
+                type: "GET",
+                data: {
+                    status: status, id: id, start: start, end: end
+                },
+                url: "@Url.Action("GetContractsByStatus", "ReportFTPemployee", new { Area = "CAS" })",
+                success: function (response) {
+                    $(".dataTable22").html(response);
+                    console.log(response);
+                    //$('#Table').DataTable();
+                    var credit1=$("#in_credit").val();
+                    var debit1=$("#in_debit").val();
+                    $("#p_credit").text(credit1);
+                    $("#p_debit").text(debit1);
+                    $(".LoaderRun_Center_div").css("display", "none");
+
+                },
+            })
+        }
+
+        $("input[name='customRadio']").on("click", function () {
+            const status = $(this).val();
+            const start = $("#start_date").val(); // الحصول على قيمة البداية
+            const end = $("#end_date").val(); // الحصول على قيمة النهاية
+
+            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
+            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var start = formattedDate1;// الحصول على قيمة النهاية
+            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
+            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var end = formattedDate2;// الحصول على قيمة النهاية
+
+            $(".LoaderRun_Center_div").css("display", "flex");
+            //$("#search2").val("");
+            GetContractsByStatusFitler(status, start, end);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#btn_view").on("click", function () {
+            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+            const start = $("#start_date").val(); // الحصول على قيمة البداية
+            const end = $("#end_date").val(); // الحصول على قيمة النهاية
+
+            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
+            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var start = formattedDate1;// الحصول على قيمة النهاية
+            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
+            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var end = formattedDate2;// الحصول على قيمة النهاية
+
+            $(".LoaderRun_Center_div").css("display", "flex");
+            //$("#search2").val("");
+            GetContractsByStatusFitler(status,start, end);
+        });
+    </script>
+
+    <script>
+        function getDetails(ReceiptNo) {
+            //console.log("Mazzen1")
+            if (ReceiptNo != null && ReceiptNo != "" & ReceiptNo != undefined) {
+                //console.log("Mazzen2")
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        ReceiptNo: ReceiptNo,
+                    },
+                    url: "@Url.Action("GetReceiptDetails", "ReportFTPemployee", new { Area = "CAS" })",
+                    success: function (response) {
+                        if (response != null) {
+                            console.log(response)
+                            $("#ReceiptNo").text(response.receiptNo);
+                            $("#Date").text(response.date);
+                            $("#Creditor").text(response.creditor);
+                            $("#Debit").text(response.debit);
+                            $("#ReferenceNo").text(response.referenceNo);
+                            $("#AccountBankCode").text(response.accountBankCode);
+                            $("#Reasons").text(response.reasons);
+
+                            if ("@requestCulture?.RequestCulture.UICulture.Name" == "ar-EG") {
+                                $("#ReferenceType").text(response.referenceTypeAr);
+                                $("#Bank").text(response.bankAr);
+                                $("#UserReceived").text(response.userReceivedAr);
+                            }
+                            else {
+                                $("#ReferenceType").text(response.referenceTypeEn);
+                                $("#Bank").text(response.bankEn);
+                                $("#UserReceived").text(response.userReceivedEn);
+                            }
+
+                            $("#ReceivedDate").text(response.receivedDate);
+                            $("#CustodyNo").text(response.custodyNo);
+                            if (response.statusReceipt == @Status.Custody) {
+                                $("#StatusReceipt").text('@localizer["Custody"]');
+                            }
+                            else if (response.statusReceipt == @Status.Booked) {
+                                $("#StatusReceipt").text('@localizer["booked"]');
+                            }
+                            else if (response.statusReceipt == @Status.Transfer) {
+                                $("#StatusReceipt").text('@localizer["Transfer"]');
+                            }
+                            else if (response.statusReceipt == @Status.Change) {
+                                $("#StatusReceipt").text('@localizer["TransferAuto"]');
+                            }
+                        }
+                        $('#myModal').modal('show');
+                    },
+                });
+            }
+        }
+
+    </script>
+
+    <script>
+        var CloseMe = function PdfClicked()
+        {
+            console.log("PdfClicked");
+            $('#myModal').modal('hide');
+        };
+
+        function PdfClicked()
+        {
+            console.log("PdfClicked");
+            $('#myModal').modal('hide');
+            //console.log('I will run after 1.3 seconds');
+            setTimeout(CloseMe, 1300);
+        }
+
+    </script>
+}

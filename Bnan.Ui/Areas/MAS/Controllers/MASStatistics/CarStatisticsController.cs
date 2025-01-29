@@ -79,7 +79,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Car_Region = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Car_TypeVM
               {
                   Car_Code = x.CrCasCarInformationSerailNo,
                   Type_Id = x.CrCasCarInformationRegion,
@@ -139,7 +139,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
             var x = true;
-            for (var i = 0; x == true; i++)
+            for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
             {
 
                 if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -192,7 +192,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Car_Region = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Car_TypeVM
               {
                   Car_Code = x.CrCasCarInformationSerailNo,
                   Type_Id = x.CrCasCarInformationRegion,
@@ -259,7 +259,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
             var x = true;
-            for (var i = 0; x == true; i++)
+            for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
             {
 
                 if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -312,7 +312,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Car_City = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Car_TypeVM
               {
                   Car_Code = x.CrCasCarInformationSerailNo,
                   Type_Id = x.CrCasCarInformationCity,
@@ -380,7 +380,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
             var x = true;
-            for (var i = 0; x == true; i++)
+            for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
             {
 
                 if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -432,7 +432,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Car_Brand = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Car_TypeVM
               {
                   Car_Code = x.CrCasCarInformationSerailNo,
                   Type_Id = x.CrCasCarInformationBrand,
@@ -500,7 +500,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
             var x = true;
-            for (var i = 0; x == true; i++)
+            for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
             {
 
                 if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -570,7 +570,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Car_Model = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Car_TypeVM
               {
                   Car_Code = x.CrCasCarInformationSerailNo,
                   Type_Id = x.CrCasCarInformationModel,
@@ -638,7 +638,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
             var x = true;
-            for (var i = 0; x == true; i++)
+            for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
             {
 
                 if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -704,7 +704,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Car_Category = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Car_TypeVM
               {
                   Car_Code = x.CrCasCarInformationSerailNo,
                   Type_Id = x.CrCasCarInformationCategory,
@@ -771,7 +771,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
             var x = true;
-            for (var i = 0; x == true; i++)
+            for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
             {
 
                 if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -819,7 +819,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var all_Car_Year = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold,
-              selectProjection: query => query.Select(x => new Car_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Car_TypeVM
               {
                   Car_Code = x.CrCasCarInformationSerailNo,
                   Type_Id = x.CrCasCarInformationYear,
@@ -875,7 +875,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
             //var x = true;
-            //for (var i = 0; x == true; i++)
+            //for (var i = 0; i < listMaschartBranchData22VM.Count; i++)
             //{
 
             //    if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))

@@ -1,0 +1,119 @@
+﻿
+
+@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS;
+@model listReportEmployeeContract_CAS_VM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["DaysNo"]</th>
+            <th>@localizer["UserContract_closedCountContracts"]</th>
+            <th>@localizer["UserContract_OpenCountContracts"]</th>
+            <th>@localizer["Contract_s_Value"]</th>
+            <th>@localizer["DateLast_Contract"]</th>
+            <th class="DifferAlign" style="max-width:450px;"> @localizer["UserName_view"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var no = 1;
+        }
+        @foreach (var item in Model.all_UserData)
+        {
+            var imageProfile = "/MasSystem/images/pic (3).svg";
+            var imageProfile_blank = "";
+            if (item.CrMasUserInformationPicture != null && item.CrMasUserInformationPicture != "") { imageProfile = item.CrMasUserInformationPicture?.ToString().Replace("~", ""); imageProfile_blank = "_blank"; }
+
+
+            <tr onclick="location.href='@Url.Action("Edit", "ReportEmployeeContract_cas", new { id = item.CrMasUserInformationCode})'">
+                <td><p>@item.DaysCount?.ToString("N0",CultureInfo.InvariantCulture)</p></td>
+                <td><p>@item.close?.ToString("N0",CultureInfo.InvariantCulture)</p></td>
+                <td><p>@item.open?.ToString("N0",CultureInfo.InvariantCulture)</p></td>
+                <td><p>@item.RentValue</p></td>
+                <td><p>@item.LastDate</p></td>
+
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+
+                    <td class="DifferAlign">
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="col">
+                                <p class="FirstLineP">@item.CrMasUserInformationEnName</p>
+                            </div>
+                            <div class="col-auto d-flex justify-content-end">
+                                <div class="employee">
+                                    <img src="@imageProfile"
+                                         class="employee border-0 w-100 h-100">
+                                    @if (item.CrMasUserInformationOperationStatus == true)
+                                    {
+                                        <div class="active_statue " style="background-color:limegreen"></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="active_statue bg-danger"></div>
+                                    }
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </td>
+             
+                }
+                else
+                {
+
+                    <td class="DifferAlign">
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="col">
+                                <p class="FirstLineP">@item.CrMasUserInformationArName</p>
+                            </div>
+                            <div class="col-auto d-flex justify-content-end">
+                                <div class="employee">
+                                    <img src="@imageProfile"
+                                         class="employee border-0 w-100 h-100">
+                                    @if (item.CrMasUserInformationOperationStatus == true)
+                                    {
+                                        <div class="active_statue " style="background-color:limegreen"></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="active_statue bg-danger"></div>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+                    </td>
+
+                }
+                <td>@no</td>
+                @*<td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            var filterStyleColor = "";
+                            if (item.CrCasRenterContractBasicStatus == Status.Active) { filterColor = "filter3-div"; filterStyleColor = "background-color:#22B14C"; }
+                            else if (item.CrCasRenterContractBasicStatus == Status.Expire) filterColor = "filter3-div";
+                            //else if (item.CrCasRenterContractBasicStatus == Status.Closed) filterColor = "filter2-div";
+                        }
+                        <div class="filters @filterColor" style="@filterStyleColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>*@
+            </tr>
+            no++;
+        }
+
+    </tbody>
+
+</table>

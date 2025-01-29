@@ -1,0 +1,1049 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.CAS;
+@using Microsoft.AspNetCore.Identity;
+@using Newtonsoft.Json;
+﻿@using Microsoft.AspNetCore.Builder;
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Http.Features;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.EntityFrameworkCore;
+@using Microsoft.Extensions.Options;
+@using System.Globalization;
+@model CasStatistics_CarsVM
+@inject UserManager<CrMasUserInformation> userManager
+@inject SignInManager<CrMasUserInformation> signinManager
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    ViewData["Page-title"] = @localizer["CarStatistics Data"];
+    ViewData["Page-Hint"] = @localizer["CarStatistics Hint"];
+}
+<style>
+
+    /* العنصر الذي سيتم محاذاته */
+    .LoaderRun_Center_div {
+        width: 2200px;
+        height: 550px;
+        /*background-color: #3498db;*/
+        text-align: center;
+        /*color: white;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        z-index: 4;
+    }
+</style>
+
+<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
+    <div class="content LoaderRun_Center_div">
+        <div class="loader"></div>
+    </div>
+    <div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <div class="row g-3 my-3">
+                    <div class="col-md-12">
+                        <h3>@localizer["CarStatistics_Statistics_Cars_n"]</h3>
+                    </div>
+                    <div class="col-md-12 ">
+                        <p class="d-inline-block headLines">@localizer["CarStatistics_count_Cars"] : </p>
+                        @*<p class="d-inline-block Saved-data headLines">@(Model.Cars_Count?.ToString("0") ?? "0") @localizer["CarStatistics_Car"]</p>*@
+                        <p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Cars_Count?.ToString("0") ?? "0")</p>
+
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row mt-3 g-2 justify-content-between">
+                            <div class="col-lg-3">
+                                <p class="headLines">@localizer["RenterStatistics_Type_n"]</p>
+                                <div class="row">
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn active-stat-btn"
+                                                onclick="handleButtonClick(this, branchesChart)">
+                                            @localizer["CarStatistics_Branches"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, areaChart)">
+                                            @localizer["CarStatistics_Rigon"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, cityChart)">
+                                            @localizer["CarStatistics_City"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, brandChart)">
+                                            @localizer["CarStatistics_Brand"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, modelChart)">
+                                            @localizer["CarStatistics_Model"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, categoryChart)">
+                                            @localizer["CarStatistics_Category"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, yearChart)">
+                                            @localizer["CarStatistics_year"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, statusChart)">
+                                            @localizer["CarStatistics_Status"]
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-9 text-center charts-border">
+                                <canvas id="myChart"></canvas>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <a href="~/CasSys/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
+           class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
+    </div>
+</div>
+</div>
+
+
+
+
+@section Scripts {
+
+
+    <!--- @*<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>*@ --->
+    <script src="~/CasSys/scripts/chart.js"></script>
+            
+<!---@*    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="~/CasSys/scripts/Scripts.js"></script>>*@--->
+    <script>
+        window.addEventListener('load', function () {
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            branchesChart()
+        })
+    </script>
+
+    <script>
+        let chartInstance = null;
+
+        function handleButtonClick(button, chartFunction) {
+            document.querySelectorAll('.stat-btn').forEach(btn => btn.classList.remove('active-stat-btn'));
+
+            button.classList.add('active-stat-btn');
+
+            chartFunction();
+        }
+        function createChart(chartType, chartData, chartOptions) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: chartType,
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+        async function GetAllBy_Branches() {
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetAllBy_Branches", "CasStatistics_Cars", new { Area = "CAS" })",
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Profession() {
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+
+            $.ajax({
+                type: "GET",
+                //data: {
+                //    start: start, end: end
+                //},
+                url: "@Url.Action("GetAllBy_Profession", "CasStatistics_Cars", new { Area = "CAS" })",
+                success: function (response) {
+                    $(".LoaderRun_Center_div").css("display", "none");
+                    console.log(response.list_chartBranchDataVM);
+                    //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                    $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                    resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                },
+                error: function (error) {
+                    reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                }
+            });
+            });
+        }
+
+        async function GetAllBy_City() {
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetAllBy_City", "CasStatistics_Cars", new { Area = "CAS" })",
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Region() {
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetAllBy_Region", "CasStatistics_Cars", new { Area = "CAS" })",
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Brand() {
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetAllBy_Brand", "CasStatistics_Cars", new { Area = "CAS" })",
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Model() {
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetAllBy_Model", "CasStatistics_Cars", new { Area = "CAS" })",
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Category() {
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetAllBy_Category", "CasStatistics_Cars", new { Area = "CAS" })",
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Year() {
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetAllBy_Year", "CasStatistics_Cars", new { Area = "CAS" })",
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_status() {
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetAllBy_status", "CasStatistics_Cars", new { Area = "CAS" })",
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function branchesChart() {
+            let listBranchData = await GetAllBy_Branches();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            createChart('scatter', {
+                datasets: labelsBranch2
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                    x: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    },
+                    y: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Car_inChart_branch"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        //labels: ['هيونداي', 'فورد', 'تويوتا', 'نيسان', 'كيا', 'شيفروليه', 'بيجو', 'أخرى'], // for check on lables
+                        labels: labelsBranch,
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+
+        async function areaChart() {
+            let listBranchData = await GetAllBy_Region();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = listBranchData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('bar', {
+                //labels: ['الشرقية', 'مكة المكرمة', 'الرياض', 'عسير', 'جازان', 'المدينة المنورة'],
+                labels: labelsBranch,
+                
+                datasets: [{
+                    barThickness: 40,
+                    minBarLength: 2,
+                    //data: [15, 20, 25, 30, 60, 90],
+                    data: dataValues,
+                    
+                    backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99'],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Car_inChart_Region"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        async function cityChart() {
+            let listBranchData = await GetAllBy_City();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = listBranchData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('bar', {
+                labels: labelsBranch,
+                datasets: [{
+                    barThickness: 40,
+                    minBarLength: 2,
+                    data: dataValues,
+                    backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99', '#F1F2F3'],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+                        '#C9CBCF'
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Car_inChart_City"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        async function brandChart() {
+            let listBranchData = await GetAllBy_Brand();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            createChart('scatter', {
+                datasets: labelsBranch2
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                    x: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    },
+                    y: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Car_inChart_Brand"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        //labels: ['هيونداي', 'فورد', 'تويوتا', 'نيسان', 'كيا', 'شيفروليه', 'بيجو', 'أخرى'], // for check on lables
+                        labels: labelsBranch,
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+        async function modelChart() {
+            let listBranchData = await GetAllBy_Model();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            createChart('scatter', {
+                datasets: labelsBranch2
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                    x: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    },
+                    y: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Car_inChart_Model"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        //labels: ['إسكورت', 'تورس', 'يارس', 'النترا', 'سبارك ال اس', 'أزيرا', 'نيرو', 'سوناتا', 'أكسنت', 'ترافيلر', 'كورولا', 'أخرى'],
+                        labels: labelsBranch,                      
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+        async function categoryChart() {
+            let listBranchData = await GetAllBy_Category();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = listBranchData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('bar', {
+                labels: labelsBranch,
+                datasets: [{
+                    barThickness: 40,
+                    minBarLength: 2,
+                    data: dataValues,
+                    backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99'],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Car_inChart_Category"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        async function yearChart() {
+            let listBranchData = await GetAllBy_Year();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = listBranchData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('polarArea', {
+                //labels: ['سعودي', 'مصري', 'أخرى'],
+                labels: labelsBranch,
+                datasets: [{
+                    //data: [345, 71, 169],
+                    data: dataValues,
+                    backgroundColor: [
+                        "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(75, 192, 192, 0.6)", "rgba(255, 206, 86, 0.6)",
+                        "rgba(153, 102, 255, 0.6)", "#F1F2F3", "#FFCC99", "#B3C2E5", "#B4E4C8", "#FF999B", "#CCCCCC", "#DAA1F7",
+                    ],
+                    borderColor: [
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                scales: {
+                    r: {
+                        pointLabels: {
+                            display: false, // إخفاء النقاط التي تُعرض عليها التسميات داخل المحاور القطبية
+                            //display: true,
+                            centerPointLabels: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        //display: false,  // إخفاء التسمية الخاصة بالصورة داخلياً
+                        position: 'left',
+                        labels: {
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Car_inChart_Year"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                }
+            });
+        }
+        async function statusChart() {
+            let listBranchData = await GetAllBy_status();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = listBranchData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('polarArea', {
+                //labels: ['سعودي', 'مصري', 'أخرى'],
+                labels: labelsBranch,
+                datasets: [{
+                    //data: [345, 71, 169],
+                    data: dataValues,
+                    backgroundColor: [
+                        "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(75, 192, 192, 0.6)", "rgba(255, 206, 86, 0.6)",
+                        "rgba(153, 102, 255, 0.6)", "#F1F2F3", "#FFCC99", "#B3C2E5", "#B4E4C8", "#FF999B", "#CCCCCC", "#DAA1F7",
+                    ],
+                    borderColor: [
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                scales: {
+                    r: {
+                        pointLabels: {
+                            display: false, // إخفاء النقاط التي تُعرض عليها التسميات داخل المحاور القطبية
+                            //display: true,
+                            centerPointLabels: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        //display: false,  // إخفاء التسمية الخاصة بالصورة داخلياً
+                        position: 'left',
+                        labels: {
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Car_inChart_status"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                }
+            });
+        }
+
+
+    </script>
+    
+}
+

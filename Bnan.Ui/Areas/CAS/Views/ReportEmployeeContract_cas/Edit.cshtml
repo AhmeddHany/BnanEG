@@ -1,0 +1,344 @@
+﻿
+
+@using Bnan.Ui.ViewModels.CAS;
+@using Bnan.Core.Extensions
+@model listReportEmployeeContract_CAS_VM
+@inject IViewLocalizer localizer
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+@{
+    ViewData["Page-title"] = localizer["Edit RenterInformations Data"];
+    ViewData["Page-Hint"] = localizer["Edit RenterInformations Hint"];
+}
+@{
+    var imageProfile = "~/CasSys/images/pic (3).svg";
+    var imageProfile_blank = "";
+    if (Model.ThisUserData?.FirstOrDefault()?.CrMasUserInformationPicture != null && Model.ThisUserData?.FirstOrDefault()?.CrMasUserInformationPicture != "") { imageProfile = Model.ThisUserData?.FirstOrDefault()?.CrMasUserInformationPicture?.ToString().Replace("~", ""); imageProfile_blank = "_blank"; }
+}
+
+<div class="col d-flex align-items-center justify-content-center">
+    <input hidden asp-for="UserInsert" id="CrCasRenterContractBasicUserInsert00" />
+                    <div class="container main-container">
+                    <form action="" >
+                            <div class="row g-3 ">
+                                <div class="col">
+                                    <div class="row g-3 my-2">  
+                                        <div class="col">
+                                    <h3>@localizer["ReportEmployeeContract_one_Data"]</h3>
+                                    </div>
+                                    <div class="col-md-6 save-col">
+                            <a href="/CAS/ReportEmployeeContract_cas/Index"><img class="Chevron" src="~/CasSys/images/Chevron_Left.svg" /></a>
+                                    </div>
+                                  </div>
+                                </div>
+
+                    <div class="row gap-lg-3 g-2">
+                        <div class="col-12">
+                            <div class="row align-items-center">
+                                <div class="col-auto d-flex justify-content-end">
+                                    <div class="employee">
+                                    <img src="@imageProfile"
+                                             alt="empolyee-photo" class="employee border-0 w-100 h-100">
+                                    @if (Model.ThisUserData?.FirstOrDefault()?.CrMasUserInformationOperationStatus == true)
+                                    {
+                                        <div class="active_statue " style="background-color:limegreen"></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="active_statue bg-danger"></div>
+                                    }
+                                    </div>
+                                </div>
+                                <div class="col"> <h5 class="subtitle">
+                                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.ThisUserData?.FirstOrDefault()?.CrMasUserInformationEnName : Model.ThisUserData?.FirstOrDefault()?.CrMasUserInformationArName)   <div class="CarColor" style="background: #636C14;"></div>
+                                </h5></div>
+
+                            </div>
+                        </div>
+                    
+                    <div class="col-lg-12 col-xl-8">
+                            <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
+                                <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                    <label for="start-date">@localizer["From_n"]</label>
+                                    <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required>
+                                </div>
+                                <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                <label for="end-date">@localizer["To_n"]</label>
+                                <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required>
+                                </div>
+                                           
+                                <button type="button" id="btn_view" name="btn_view" class="btn btn-standard">@localizer["View_n"]</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                <div class="col-lg-12 col-xl-8 ">
+                    <div class="row">
+                        <div class="col-md-auto col-lg-4">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p>@localizer["Contract_s_Value"]</p>
+                                </div>
+                                <div class=" col-auto Saved-data">
+                                    <p id="contract_Values_Total">@Model.summition?.contract_Values_Total?.ToString("N2",CultureInfo.InvariantCulture)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-auto col-lg-8">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p>@localizer["RentalDay_sss"]</p>
+                                </div>
+                                <div class=" col-auto Saved-data">
+                                    <p id="Days_Count">@Model.summition?.Days_Count?.ToString("N0",CultureInfo.InvariantCulture)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-auto col-lg-4">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p>@localizer["ContractCount_s"]</p>
+                                </div>
+                                <div class=" col-auto Saved-data">
+                                    <p id="Contracts_Count">@Model.summition?.Contracts_Count?.ToString("0")</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p>@localizer["the_KM_Cut_n"]</p>
+                                </div>
+                                <div class=" col-auto Saved-data">
+                                    <p id="km_Count">@Model.summition?.km_Count?.ToString("N2",CultureInfo.InvariantCulture)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+             <div class="row table-row px-3">
+                <div class="dataTable22">
+                    <partial name="_EditpartDataTableReportEmployeeContract_cas" />
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+<!-- signature modal -->
+<div class="modal fade" id="signature-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered d-flex justify-content-center">
+        <div class="modal-content signature-modal-content p-3">
+            <div class="modal-body Signature-modal-body">
+                <div class="SignatureCard">
+                    <div class="image-main-container" id="removeSignatureImg"></div>
+                    <div class="upload-container">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/CasSys/images/signature/save.svg" class="w-100" id="save">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/CasSys/images/signature/Frame.svg" class="w-100" id="clear">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/CasSys/images/signature/file-signature_9795523 1.svg"
+                                 class="w-100" id="WriteSignature">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/CasSys/images/signature/Pic.svg" class="w-100"
+                                 id="UploadSigntaurePic">
+                            <input type="file" id="imageUpload" accept="image/*"
+                                   style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <!-- تحميل مكتبة jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- تحميل مكتبة DataTables -->
+    <script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    @*    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+    // تهيئة flatpickr مع التنسيق المطلوب
+    flatpickr("#start_date", {
+        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
+    });
+        // تهيئة flatpickr مع التنسيق المطلوب
+    flatpickr("#end_date", {
+        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
+    });
+</script>*@
+
+    <script>
+        $(document).ready(function () {
+            $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
+            $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
+
+            // لجعل الحالة حسب ما هي جاية من index نشط او الكل
+            //$("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+
+            //var today = new Date();
+            //$("#start_date").datepicker({
+            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
+            //    maxDate: today,
+            //});
+            //$("#end_date").datepicker({
+            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
+            //    maxDate: today,
+            //});
+
+
+            ///////
+            // تهيئة DataTable
+            var table2 = $('#Table').DataTable({
+                ordering: false, // تعطيل الترتيب التلقائي للصفوف
+                stateSave: true,   // حفظ حالة الجدول
+            });
+            end_init_ShowDatatable();
+        });
+
+        function end_init_ShowDatatable() {
+            $(".LoaderRun_Center_div").css("display", "none");
+            $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+            //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
+            $("select[name='Table_length']").val('10000').change();
+            $("#Table_info").css("display", "none");
+            $("#Table_previous").css("display", "none");
+            $("#Table_next").css("display", "none");
+            $("#Table_length").css("display", "none");
+            $("#Table_filter").css("display", "none");
+            $(".paginate_button").css("display", "none");
+            $(".ellipsis").css("display", "none");
+            $("select[name='Table_length'] option[value='10000']").prop("selected", true);
+        }
+
+        // دالة للبحث عن كلمة في جميع الصفوف
+        function searchRows() {
+            var table = $('#Table').DataTable();
+            end_init_ShowDatatable();
+            var keyword = $('#search2').val().toLowerCase(); // الكلمة المدخلة للبحث (تحويلها إلى حروف صغيرة)
+
+            // إخفاء كل الصفوف أولاً
+            table.rows().every(function () {
+                this.nodes().to$().hide(); // إخفاء الصف
+            });
+
+            // التكرار عبر كل الصفوف
+            table.rows().every(function () {
+                var row = this.data();
+                var found = false;
+
+                // التكرار عبر كل الخلايا في الصف
+                row.forEach(function (cell) {
+                    if (cell.toString().toLowerCase().includes(keyword)) {
+                        found = true; // إذا تم العثور على الكلمة في أي خلية
+                    }
+                });
+
+                // إذا تم العثور على الكلمة في الصف، نظهره
+                if (found) {
+                    this.nodes().to$().show();
+                }
+            });
+            //$("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+        }
+
+        // يمكن إضافة وظيفة البحث تلقائيًا عند كتابة النص
+        $('#search2').on('keyup', function () {
+            searchRows();
+        });
+
+    </script>
+    <script>
+        //get ReportEmployeeContract By Status function
+        function GetContractsByStatusFitler(start, end) {
+            var id = $("#CrCasRenterContractBasicUserInsert00").val();
+            $.ajax({
+                type: "GET",
+                data: {
+                    id:id, start: start, end: end
+                },
+                url: "@Url.Action("GetContractsByStatus", "ReportEmployeeContract_cas", new { Area = "CAS" })",
+                success: function (response) {
+                    $(".LoaderRun_Center_div").css("display", "none");
+                    $(".dataTable22").html(response);
+                    var contract_Values_Total1 = $("#contract_Values_Total1").text();
+                    var Contracts_Count1 = $("#Contracts_Count1").text();
+                    var Days_Count1 = $("#Days_Count1").text();
+                    var km_Count1 = $("#km_Count1").text();
+                    $("#contract_Values_Total").text(contract_Values_Total1);
+                    $("#Contracts_Count").text(Contracts_Count1);
+                    $("#Days_Count").text(Days_Count1);
+                    $("#km_Count").text(km_Count1);
+                },
+            })
+        }
+
+        $("input[name='customRadio']").on("click", function () {
+            //const status = $(this).val();
+            const start = $("#start_date").val(); // الحصول على قيمة البداية
+            const end = $("#end_date").val(); // الحصول على قيمة النهاية
+
+            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
+            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var start = formattedDate1;// الحصول على قيمة النهاية
+            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
+            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var end = formattedDate2;// الحصول على قيمة النهاية
+
+            $(".LoaderRun_Center_div").css("display", "flex");
+            //$("#search2").val("");
+            GetContractsByStatusFitler(start, end);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#btn_view").on("click", function () {
+            //const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+            const start = $("#start_date").val(); // الحصول على قيمة البداية
+            const end = $("#end_date").val(); // الحصول على قيمة النهاية
+
+            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
+            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var start = formattedDate1;// الحصول على قيمة النهاية
+            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
+            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var end = formattedDate2;// الحصول على قيمة النهاية
+
+            $(".LoaderRun_Center_div").css("display", "flex");
+            //$("#search2").val("");
+            GetContractsByStatusFitler(start, end);
+        });
+    </script>
+}

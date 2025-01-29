@@ -1,0 +1,1169 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.CAS;
+@using Microsoft.AspNetCore.Identity;
+@using Newtonsoft.Json;
+﻿@using Microsoft.AspNetCore.Builder;
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Http.Features;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.EntityFrameworkCore;
+@using Microsoft.Extensions.Options;
+@using System.Globalization;
+@model CasStatistics_ContractsVM
+@inject UserManager<CrMasUserInformation> userManager
+@inject SignInManager<CrMasUserInformation> signinManager
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    ViewData["Page-title"] = @localizer["ContractStatistics Data"];
+    ViewData["Page-Hint"] = @localizer["ContractStatistics Hint"];
+}
+<style>
+
+    /* العنصر الذي سيتم محاذاته */
+    .LoaderRun_Center_div {
+        width: 2200px;
+        height: 650px;
+        /*background-color: #3498db;*/
+        text-align: center;
+        /*color: white;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        z-index: 4;
+    }
+</style>
+
+<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
+    <div class="content LoaderRun_Center_div">
+        <div class="loader"></div>
+    </div>
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <div class="row g-3 my-3">
+                    <div class="col-md-12">
+                        <input type="text" asp-for="thisFunctionRunned" id="thisFunctionRunned" hidden />
+                        <h3>@localizer["ContractStatistics_Statistics_Contracts_n"]</h3>
+                    </div>
+                    <div class="col-md-12 ">
+                        <p class="d-inline-block headLines">@localizer["ContractStatistics_count_Contracts"] : </p>
+                        @*<p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("0") ?? "0") @localizer["ContractStatistics_Contract"]</p>*@
+                        <p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("0") ?? "0")</p>
+
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-lg-8">
+                            <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
+                                <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                    <label for="start-date">@localizer["From_n"]</label>
+                                    <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required/>
+                                </div>
+                                <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                    <label for="end-date">@localizer["To_n"]</label>
+                                    <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required/>
+                                </div>
+
+                                <button type="button" class="btn btn-standard" id="btn_view" name="btn_view" onclick="btn_view_clicked()">@localizer["View_n"]</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row mt-3 g-2 justify-content-between">
+                            <div class="col-lg-3">
+                                <p class="headLines">@localizer["RenterStatistics_Type_n"]</p>
+                                <div class="row">
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn active-stat-btn"
+                                            onclick="handleButtonClick(this, branchChart)">
+                                            @localizer["ContractStatistics_Branch"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, DaysChart)">
+                                           @localizer["ContractStatistics_Day_Create"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, TimeChart)">
+                                           @localizer["ContractStatistics_Time_Create"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, PeriodsChart)">
+                                          @localizer["ContractStatistics_Day_Count"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, HigiraChart)">
+                                          @localizer["ContractStatistics_Hmonth_Create"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, GregorianMonthChart)">
+                                            @localizer["ContractStatistics_Gmonth_Create"]
+                                        </button>
+                                    </div>
+
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, ValueChart)">
+                                            @localizer["ContractStatistics_Value_No"]
+                                        </button>
+                                    </div>
+                                    @*<div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, KilometersChart)">
+                                            @localizer["ContractStatistics_KM"]
+                                        </button>
+                                    </div>*@
+                                </div>
+                            </div>
+                            <div class="col-lg-9 text-center charts-border">
+                                <canvas id="myChart"></canvas>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <a href="~/CasSys/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
+           class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
+    </div>
+</div>
+</div>
+
+
+
+
+@section Scripts {
+
+
+    <!--- @*<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>*@ --->
+    <script src="~/CasSys/scripts/chart.js"></script>
+            
+<!---@*    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="~/CasSys/scripts/Scripts.js"></script>>*@--->
+    <script>
+
+        $(document).ready(function () {
+        $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
+        $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
+
+        $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+
+        });
+    </script>
+
+    <script>
+        function btn_view_clicked(){
+            var thisFunctionNow = $("#thisFunctionRunned").val();
+            if (thisFunctionNow == "branchChart") {
+                branchChart();
+            }
+            else if (thisFunctionNow == "DaysChart") {
+                DaysChart();
+            }
+            else if (thisFunctionNow == "TimeChart") {
+                TimeChart();
+            }
+            else if (thisFunctionNow == "PeriodsChart") {
+                PeriodsChart();
+            }
+            else if (thisFunctionNow == "HigiraChart") {
+                HigiraChart();
+            }
+            else if (thisFunctionNow == "GregorianMonthChart") {
+                GregorianMonthChart();
+            }
+            else if (thisFunctionNow == "ValueChart") {
+                ValueChart();
+            }
+            else if (thisFunctionNow == "KilometersChart") {
+                KilometersChart();
+            }
+            
+        }
+        window.addEventListener('load', function () {
+            branchChart()
+            $("#thisFunctionRunned").val("branchChart");
+        })
+    </script>
+
+    <script>
+        async function GetAllBy_Branches() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Branches", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("branchChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Days() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Days", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("DaysChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Time() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Time", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("TimeChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_ContractLimit() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_ContractLimit", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("PeriodsChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_HigritsMonths() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_HigritsMonths", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("HigiraChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_GregorianMonths() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_GregorianMonths", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("GregorianMonthChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_ValueNo() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_ValueNo", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("ValueChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_KM() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_KM", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("KilometersChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+   
+        
+        let chartInstance = null;
+
+        function handleButtonClick(button, chartFunction) {
+            document.querySelectorAll('.stat-btn').forEach(btn => btn.classList.remove('active-stat-btn'));
+
+            button.classList.add('active-stat-btn');
+
+            chartFunction();
+        }
+        function createChart(chartType, chartData, chartOptions) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: chartType,
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+
+        async function branchChart() {
+            let listBranchData = await GetAllBy_Branches();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+
+            createChart('scatter', {
+                datasets: labelsBranch2
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                    x: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    },
+                    y: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Contract_inChart_branches"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        //labels: ['02:59 - 00.00', '05:59 - 03:00', '08:59 - 06:00', '11:59 - 09:00', '14:59 - 12:00', '17:59 - 15:00', '20:59 - 18:00', '23:59 - 21:00'],
+                        labels: labelsBranch,
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+
+        async function DaysChart() {
+            //let list_ChartData = @Html.Raw(Json.Serialize(Model.listCasChartdataVM));
+            let list_ChartData = await GetAllBy_Days();
+            
+            //console.log(list_ChartData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = list_ChartData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('polarArea', {
+                //labels: ['السبت', 'الأحد', 'الأثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+                labels: labelsBranch,            
+                datasets: [{
+                    //data: [70, 20, 30, 100, 60, 102, 133],
+                    data: dataValues,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)',
+                        'rgba(201, 203, 207, 0.7)',
+                        'rgba(255, 182, 193, 0.7)',
+                    ],
+                    borderColor: [
+
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+
+                scales: {
+                    r: {
+                        pointLabels: {
+                            display: false, // إخفاء النقاط التي تُعرض عليها التسميات داخل المحاور القطبية
+                            //display: true,
+                            centerPointLabels: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'left',
+                        labels: {
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Contract_inChart_Days"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                }
+            });
+        }
+
+        async function TimeChart() {
+            let listBranchData = await GetAllBy_Time();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+
+            createChart('scatter', {
+                datasets: labelsBranch2
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                    x: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    },
+                    y: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Contract_inChart_Time"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        //labels: ['02:59 - 00.00', '05:59 - 03:00', '08:59 - 06:00', '11:59 - 09:00', '14:59 - 12:00', '17:59 - 15:00', '20:59 - 18:00', '23:59 - 21:00'],
+                        labels: labelsBranch,
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+
+        async function PeriodsChart() {
+            let listBranchData = await GetAllBy_ContractLimit();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            
+            createChart('scatter', {
+                datasets: labelsBranch2
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                    x: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    },
+                    y: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Contract_inChart_Limits"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        labels: labelsBranch,
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+
+        async function HigiraChart() {
+            let list_ChartData = await GetAllBy_HigritsMonths();
+
+            //console.log(list_ChartData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = list_ChartData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+
+            createChart('bar', {
+                labels: labelsBranch,
+                datasets: [{
+                    barThickness: 40,
+                    minBarLength: 2,
+                    data: dataValues,
+                    backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99'],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Contract_inChart_HigiritsMonths"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        async function GregorianMonthChart() {
+            let list_ChartData = await GetAllBy_GregorianMonths();
+
+            //console.log(list_ChartData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = list_ChartData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+
+            createChart('bar', {
+                labels: labelsBranch,
+                datasets: [{
+                    barThickness: 40,
+                    minBarLength: 2,
+                    data: dataValues,
+                    backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99'],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Contract_inChart_GeneralMonths"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        async function ValueChart() {
+            let listBranchData = await GetAllBy_ValueNo();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = listBranchData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            createChart('scatter', {
+                datasets: labelsBranch2
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                    x: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    },
+                    y: {
+                        type: 'number',
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Contract_inChart_Value"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        labels: labelsBranch,
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+        async function KilometersChart() {
+            let listBranchData = await GetAllBy_KM();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = listBranchData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = listBranchData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+
+            createChart('polarArea', {
+                labels: labelsBranch,
+                datasets: [{
+                    data: dataValues,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)',
+                    ],
+                    borderColor: [
+                        'rgb(255, 255, 255)',
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+
+                scales: {
+                    r: {
+                        pointLabels: {
+                            display: false, // لإخفاء الاسماء من داخل الرسمة الدائرية
+                            centerPointLabels: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'left',
+                        labels: {
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["Contract_inChart_KM"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                }
+            });
+        }
+
+    </script>
+    
+}
+

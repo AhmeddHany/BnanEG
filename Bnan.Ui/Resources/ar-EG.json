@@ -487,10 +487,13 @@
     "the_Car_and_Renter": "المستأجر والسيارة",
     "RenterContract_Data": "عقود المستأجرين",
     "CarContract_Data": "عقود السيارات",
+    "EmployeeContract_Data": "عقود الموظفين",
     "RenterContract_one_Data": "بيانات عقود المستأجرين",
-    "ReportCarContract_one_Data": "البيانات التفصيلية لعقود السيارات",
+    "ReportCarContract_one_Data": "البيانات التفصيلية لعقود سيارة",
+    "ReportEmployeeContract_one_Data": "البيانات التفصيلية لعقود موظف",
     // Mas Renter Contract
     "ReportActiveContract_Data": "العقود القائمة",
+    "ReportActiveContract_Cas_Data": "العقود القائمة",
     "ReportClosedContract_Data": "العقود المغلقة",
     "ReportSaved_CanceledContract_Data": "العقود المحفوظة والملغاه",
     "the_Contract_n": "العقد",
@@ -533,18 +536,23 @@
     "ContractStatistics_Contract": "عقد",
 
     "Renter_inChart_Nationality": "المؤشر الإحصائي لجنسيات المستأجرين",
+    "Renter_inChart_Membership": "المؤشر الإحصائي لعضويات المستأجرين",
     "Renter_inChart_Profession": "المؤشر الإحصائي لمهن المستأجرين",
     "Renter_inChart_Region": "المؤشر الإحصائي لمناطق المستأجرين",
     "Renter_inChart_City": "المؤشر الإحصائي لمدن المستأجرين",
     "Renter_inChart_Age": "المؤشر الإحصائي لأعمار المستأجرين",
+    "Renter_inChart_Rates": "المؤشر الإحصائي لتقييم المستأجرين",
 
+    "Car_inChart_branch": "المؤشر الإحصائي لتوزيع السيارات في الفروع",
     "Car_inChart_Region": "المؤشر الإحصائي لتوزيع السيارات في المناطق",
     "Car_inChart_City": "المؤشر الإحصائي لتوزيع السيارات في المدن",
     "Car_inChart_Brand": "المؤشر الإحصائي لماركات السيارات",
     "Car_inChart_Model": "المؤشر الإحصائي لطراز السيارات",
     "Car_inChart_Category": "المؤشر الإحصائي لفئات السيارات",
     "Car_inChart_Year": "المؤشر الإحصائي لسنوات صنع السيارات",
+    "Car_inChart_status": "المؤشر الإحصائي لحالات السيارات",
 
+    "Contract_inChart_branches": "المؤشر الإحصائي لفروع العقود",
     "Contract_inChart_Days": "المؤشر الإحصائي لأيام العقود",
     "Contract_inChart_Time": "المؤشر الإحصائي لأوقات العقود",
     "Contract_inChart_Limits": "المؤشر الإحصائي لمدة العقود",
@@ -554,6 +562,7 @@
     "Contract_inChart_KM": "المؤشر الإحصائي للكيلوات المقطوعة في العقود",
 
     "RenterContract_inChart_Nationality": "المؤشر الإحصائي لجنسيات عقود المستأجرين",
+    "RenterContract_inChart_Membership": "المؤشر الإحصائي لعضويات عقود المستأجرين",
     "RenterContract_inChart_Profession": "المؤشر الإحصائي لمهن عقود المستأجرين",
     "RenterContract_inChart_Region": "المؤشر الإحصائي لمناطق عقود المستأجرين",
     "RenterContract_inChart_City": "المؤشر الإحصائي لمدن عقود المستأجرين",
@@ -659,6 +668,17 @@
     "FTR_All_Total_Money_Transaction": "المبالغ المتداولة",
     "FTR_Count_Receipt_Bonds": "سندات القبض",
     "FTR_Count_Receipt_Exchanges": "سندات الصرف",
+
+    // CAS owners
+    "Edit_LessorOwners_CAS_PageTitle": "تحديث بيانات المالك",
+    "View_LessorOwners_CAS_PageTitle": "الملاك",
+    "add_LessorOwners_CAS_PageTitle": "إضافة مالك",
+    "LessorOwners_CAS_ArName": "اسم المالك عربي",
+    "LessorOwners_CAS_EnName": "اسم المالك إنجليزي",
+    "Send_contract": "ارسال العقد",
+    "mail_owner": "البريد",
+    "whatsapp_owner": "واتساب",
+    "sms_owner": "رسالة نصية",
 
     //RenterInformations------
     "RenterInformations Hint": "تمكنك هذه الصفحة من عرض والبحث عن بيانات المستأجرين والدخول الى البيانات التفصيلية للمستأجر",
@@ -1085,7 +1105,11 @@
     "Whatsup": "واتساب",
     "DeviceName": "اسم الجهاز",
     "DeviceType": "نوع الجهاز",
-    "WhatsupPhone": "رقم الجوال"
+    "WhatsupPhone": "رقم الجوال",
+
+    // Cas Report ClosedContract
+    "ReportClosedContract_Cas_Data": "العقود المغلقة",
+    "ReportClosedContract_Cas_Details": "بيانات إضافية"
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 
@@ -1822,7 +1846,7 @@
   "proforma_Invoice_New": "الأولية",
   "taxation_Invoice_New": "الضريبية",
   "Contract_pdf_New": "العقد",
-
+  "Daily_Report": "اليومية",
 
   "Exist_contract_Branch": "الفرع",
   "Exist_contract_StartDate": "بدايته",
@@ -2958,6 +2982,7 @@
   "Amountstraded": "المبالغ المتداولة",
   "Condition": "الشرط",
   "Kilotraveled": "الكيلوات المقطوعة",
+  "additionalHours": "الساعات الاضافية",
   "ContractsCount": "عدد العقود",
   "ActiveContractsCount": "العقود القائمة",
   "ClosedContractsCount": "العقود المغلقة",
@@ -3247,6 +3272,7 @@
   "CompensationValue": "قيمة التعويضات",
   "CompensationStatement": "بيان التعويضات",
   "ExpenseValue": "قيمة المصروفات",
+  "TotalContractValue": "قيمة العقود",
   "ExpenseStatement": " بيان المصروفات",
   "ExtraHoursValue": "قيمة الساعات الاضافية",
   "ExtraHours": "ساعات اضافية",

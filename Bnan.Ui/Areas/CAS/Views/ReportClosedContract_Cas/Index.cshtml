@@ -1,0 +1,555 @@
+﻿
+
+@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS;
+@* @model IEnumerable<CrMasRenterInformation>
+*@
+@model listReportClosedContract_CasVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
+    ViewData["Page-title"] = @localizer["RenterInformations Data"];
+    ViewData["Page-Hint"] = @localizer["RenterInformations Hint"];
+}
+<style>
+
+    /* العنصر الذي سيتم محاذاته */
+    .LoaderRun_Center_div {
+        width: 1900px;
+        height: 850px;
+        /*background-color: #3498db;*/
+        text-align: center;
+        /*color: white;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position:fixed;
+        z-index: 4;
+    }
+
+</style>
+
+@*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
+
+<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
+    <div class="content LoaderRun_Center_div">
+        <div class="loader"></div>
+    </div>
+
+<div class="col d-flex align-items-center justify-content-center" style=" z-index:2;">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3">
+                <div class="col">
+                        <h3> @localizer["ReportClosedContract_Cas_Data"]  </h3>
+                </div>
+                <div class="row g-2">
+
+
+                    <div class="col-lg-8">
+                        <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
+                            <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                <label for="start_date">@localizer["From_n"]</label>
+                                <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required>
+                            </div>
+                            <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                <label for="end_date">@localizer["To_n"]</label>
+                                    <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required>
+                                @*<input type="text" class="form-control inputs custom-date-input" id="end_date" name="end_date" required="" autocomplete="off">*@
+
+                            </div>
+
+                                <button type="button" id="btn_view" name="btn_view" class="btn btn-standard">@localizer["View_n"]</button>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-lg-4 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search2" class="form-control inputs search-input"  aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
+
+                   
+                        <div class="col-lg-8 ">
+                            <div class="row mt-3">
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <p>@localizer["TotalContractValue"]</p>
+                                        </div>
+                                        <div class=" col-auto Saved-data">
+                                            <p id="Sum_ContractsValue">@Model.Sum_ContractsValue</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <p> @localizer["ExpenseValue"]</p>
+                                        </div>
+                                        <div class=" col-auto Saved-data">
+                                            <p id="Sum_ExpensesValue">@Model.Sum_ExpensesValue</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <p>@localizer["CompensationValue"]</p>
+                                        </div>
+                                        <div class=" col-auto Saved-data">
+                                            <p id="Sum_CompensationsValue">@Model.Sum_CompensationsValue</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row table-row px-3">
+                <div class="col  scroll-table-div filter-search-reportTable table-responsive-sm w-100 dataTable">
+                    <partial name="_DataTableReportClosedContract_Cas" />
+                </div>
+            </div>
+        </form>
+        <a href="~/MasSystem/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="new-Page-icon">
+            <img src="~/MasSystem/images/back to main.svg" alt="man">
+        </a>
+    </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="DataModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="DataModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content reports-modal-content">
+            <div class="modal-header flex-row-reverse border-0">
+                <button type="button" id="close" class="modalClose" data-bs-dismiss="modal">&times;</button>
+
+                <h5 class="modal-title card-title m-auto">@localizer["ReportClosedContract_Cas_Details"]</h5>
+            </div>
+            <div class="modal-body p-0">
+                <div class="data-details">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p>@localizer["ContractNo"] </p>
+                                </div>
+                                <div class=" col-auto Saved-data">
+                                    <p id="mod_ContractId"> 24-1401-4001104-000067  </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p> @localizer["Closed_contract_Paid_value"] </p>
+                                </div>
+                                <div class=" col-auto Saved-data">
+                                    <p id="mod_Paid"> 15.839 </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p> @localizer["Closed_contract_Remain_value"] </p>
+                                </div>
+                                <div class=" col-auto Saved-data">
+                                    <p id="mod_Remain"> 1000.02  </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p> @localizer["KM_New"] </p>
+                                </div>
+                                <div class=" col-auto Saved-data">
+                                    <p id="mod_KM"> 12,000  </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p> @localizer["additionalHours"] </p>
+                                </div>
+                                <div class=" col-auto Saved-data">
+                                    <p id="mod_additionHours"> 3  </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p> @localizer["FTR_Reasons"] </p>
+                                </div>
+                                <div class=" col-auto Saved-data">
+                                    <p id="mod_Reasons"> ملاحظات  </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-auto">
+                            <div class="row">
+
+                                <div class=" col-auto Saved-data">
+                                    <a href="http://system.ghyum.sa/images/Company/4004/Branches/106/Arabic%20Receipt/24-1301-4004106-000485.pdf" id="reciptPdf" target="_blank"> <img class="pdf-icons" src="~/CasSys/images/Invoice.svg"></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-auto">
+                            <div class="row">
+
+                                <div class=" col-auto Saved-data">
+                                    <a href="" target="_blank" id="ContractPdf"> <img class="pdf-icons" src="~/CasSys/images/contract.svg"></a>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-auto">
+                            <div class="row">
+
+                                <div class=" col-auto Saved-data">
+                                    <a href="" target="_blank" id="TGAPdf"> <img class="pdf-icons" src="~/CasSys/images/naql.svg"></a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*////////////////////////////*@@*////////////////////////////*@@*////////////////////////////*@
+@*////////////////////////////*@@*////////////////////////////*@@*////////////////////////////*@
+
+
+    @section Scripts{
+    <!-- تحميل مكتبة jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- تحميل مكتبة DataTables -->
+    <script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+@*    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+    // تهيئة flatpickr مع التنسيق المطلوب
+    flatpickr("#start_date", {
+        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
+    });
+        // تهيئة flatpickr مع التنسيق المطلوب
+    flatpickr("#end_date", {
+        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
+    });
+</script>*@
+
+<script>
+        $(document).ready(function () {
+            $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
+            $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
+
+            // لجعل الحالة حسب ما هي جاية من index نشط او الكل
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+                        
+            //var today = new Date();
+            //$("#start_date").datepicker({
+            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
+            //    maxDate: today,
+            //});
+            //$("#end_date").datepicker({
+            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
+            //    maxDate: today,
+            //});
+
+            // Close modal when close button is clicked
+            $('.close').click(function () {
+                $('#DataModal').modal('hide');
+            });
+
+            ///////
+            // تهيئة DataTable
+            var table2 = $('#Table').DataTable({
+                ordering: false, // تعطيل الترتيب التلقائي للصفوف
+                stateSave: true,   // حفظ حالة الجدول
+            });
+            end_init_ShowDatatable();
+        });
+
+        function end_init_ShowDatatable(){
+            $(".LoaderRun_Center_div").css("display", "none");
+            $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+            //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
+            $("select[name='Table_length']").val('10000').change();
+            $("#Table_info").css("display", "none");
+            $("#Table_previous").css("display", "none");
+            $("#Table_next").css("display", "none");
+            $("#Table_length").css("display", "none");
+            $("#Table_filter").css("display", "none");
+            $(".paginate_button").css("display", "none");
+            $(".ellipsis").css("display", "none");
+            $("select[name='Table_length'] option[value='10000']").prop("selected", true);
+        }
+
+        // دالة للبحث عن كلمة في جميع الصفوف
+        function searchRows() {
+            $(".LoaderRun_Center_div").css("display", "flex");// اظهار loader تحميل
+
+            var table = $('#Table').DataTable();
+            end_init_ShowDatatable();
+            var keyword = $('#search2').val().toLowerCase(); // الكلمة المدخلة للبحث (تحويلها إلى حروف صغيرة)
+
+            var totalSum_Contracts = 0; // المتغير لحفظ مجموع القيم
+            var totalSum_Expenses = 0; // المتغير لحفظ مجموع القيم
+            var totalSum_Compensations = 0; // المتغير لحفظ مجموع القيم
+
+            // إخفاء كل الصفوف أولاً
+            table.rows().every(function () {
+                this.nodes().to$().hide(); // إخفاء الصف
+            });
+
+            // التكرار عبر كل الصفوف
+            table.rows().every(function () {
+                var row = this.data();
+                var found = false;
+
+                // التكرار عبر كل الخلايا في الصف
+                row.forEach(function (cell) {
+                    if (cell.toString().toLowerCase().includes(keyword)) {
+                        found = true; // إذا تم العثور على الكلمة في أي خلية
+                    }
+                });
+
+            // إذا تم العثور على الكلمة في الصف، نظهره
+            if (found) {
+                this.nodes().to$().show();
+
+                // جمع القيم من العمود المحدد (مثلاً العمود الثاني)
+                    var columnValue3 = parseFloat($(row[3]).text().replace(/,/g, '').trim()); // تغيير الفهرس 1 إلى رقم العمود الذي تريد جمعه
+                    //console.log(columnValue);
+                    //console.log(row[3]);
+                    if (!isNaN(columnValue3)) {
+                    totalSum_Contracts += columnValue3; // إضافة القيمة إلى المجموع
+                    }
+                    // جمع القيم من العمود المحدد (مثلاً العمود الثاني)
+                    var columnValue2 = parseFloat($(row[2]).text().replace(/,/g, '').trim()); // تغيير الفهرس 1 إلى رقم العمود الذي تريد جمعه
+                    //console.log(columnValue);
+                    //console.log(row[3]);
+                    if (!isNaN(columnValue2)) {
+                        totalSum_Expenses += columnValue2; // إضافة القيمة إلى المجموع
+                    }
+                    // جمع القيم من العمود المحدد (مثلاً العمود الثاني)
+                    var columnValue1 = parseFloat($(row[1]).text().replace(/,/g, '').trim()); // تغيير الفهرس 1 إلى رقم العمود الذي تريد جمعه
+                    //console.log(columnValue);
+                    //console.log(row[3]);
+                    if (!isNaN(columnValue1)) {
+                        totalSum_Compensations += columnValue1; // إضافة القيمة إلى المجموع
+                    }
+            }
+        });
+
+            // استخدام toLocaleString لتنسيق الرقم وإضافة الفواصل
+            var formattedNumber_Sum_Contracts = totalSum_Contracts.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+             // استخدام toLocaleString لتنسيق الرقم وإضافة الفواصل
+            var formattedNumber_Sum_Expenses = totalSum_Expenses.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            // استخدام toLocaleString لتنسيق الرقم وإضافة الفواصل
+            var formattedNumber_Sum_Compensations = totalSum_Compensations.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        // عرض المجموع في مكان معين (على سبيل المثال في div أو span)
+            //$('#Sum_ContractsValue').text('مجموع العمود: ' + formattedNumber_Sum_Contracts); // N2  546,767.77
+            //$('#Sum_ExpensesValue').text('مجموع العمود: ' + formattedNumber_Sum_Expenses); // N2  546,767.77
+            //$('#Sum_CompensationsValue').text('مجموع العمود: ' + formattedNumber_Sum_Compensations); // N2  546,767.77
+            $('#Sum_ContractsValue').text(formattedNumber_Sum_Contracts); // N2  546,767.77
+            $('#Sum_ExpensesValue').text(formattedNumber_Sum_Expenses); // N2  546,767.77
+            $('#Sum_CompensationsValue').text(formattedNumber_Sum_Compensations); // N2  546,767.77
+
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            //$("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+        }
+
+
+        // يمكن إضافة وظيفة البحث تلقائيًا عند كتابة النص
+        $('#search2').on('keyup', function () {
+            $(".LoaderRun_Center_div").css("display", "flex");
+            searchRows();
+            $(".LoaderRun_Center_div").css("display", "none");
+        });
+
+</script>
+    <script>
+        //get ReportClosedContract_Cas By Status function
+        function GetContractsByStatusFitler(start, end) {
+            $.ajax({
+                type: "GET",
+                data: {
+                     start: start, end: end
+                },
+                url: "@Url.Action("GetContractsByStatus", "ReportClosedContract_Cas", new { Area = "CAS" })",
+                success: function (response) {
+                    console.log(response);
+                    $(".LoaderRun_Center_div").css("display", "none");
+                    $(".dataTable").html(response);
+                    $("#max").css("max-width","270px");
+                    var sum_ContractsValue = $("#Sum_ContractsValue2").val();
+                    var sum_CompensationsValue = $("#Sum_CompensationsValue2").val();
+                    var sum_ExpensesValue = $("#Sum_ExpensesValue2").val();
+                    $("#Sum_ContractsValue").text(sum_ContractsValue);
+                    $("#Sum_ExpensesValue").text(sum_ExpensesValue);
+                    $("#Sum_CompensationsValue").text(sum_CompensationsValue);
+
+                },
+            })
+        }
+
+        function GetContractDetails(id) {
+            const start = $("#start_date").val(); // الحصول على قيمة البداية
+            const end = $("#end_date").val(); // الحصول على قيمة النهاية
+            console.log("Mazzen1")
+            if (id != null && id != "" & id != undefined) {
+                console.log("Mazzen2")
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        contractId: id, start: start, end: end
+                    },
+                    url: "@Url.Action("GetContractsData", "ReportClosedContract_Cas", new { Area = "CAS" })",
+                    success: function (response) {
+                        if (response != null) {
+                            console.log(response)
+                            $("#mod_ContractId").text(response.mod_ContractId);
+                            $("#mod_Paid").text(response.mod_Paid);
+                            $("#mod_Remain").text(response.mod_Remain);
+                            $("#mod_KM").text(response.mod_KM);
+                            $("#mod_additionHours").text(response.mod_additionHours);
+                            $("#mod_Reasons").text(response.mod_Reasons);
+                            $("#reciptPdf").attr("href", response.reciptPdf_href);   // تغيير رابط الـ href
+                            $("#reciptPdf").attr("target", response.reciptPdf_target);   // تغيير قيمة الـ target
+                            $("#ContractPdf").attr("href", response.contractPdf_href);   // تغيير رابط الـ href
+                            $("#ContractPdf").attr("target", response.contractPdf_target);   // تغيير قيمة الـ target
+                            $("#TGAPdf").attr("href", response.tGAPdf_href);   // تغيير رابط الـ href
+                            $("#TGAPdf").attr("target", response.tGAPdf_target);   // تغيير قيمة الـ target
+
+
+                            //@*if ("@requestCulture?.RequestCulture.UICulture.Name" == "ar-EG") {
+                            //    $("#ReferenceType").text(response.referenceTypeAr);
+                            //    $("#Bank").text(response.bankAr);
+                            //    $("#SalesPoint").text(response.salesPointAr);
+                            //    $("#PaymentMethod").text(response.paymentMethodAr);
+                            //    $("#UserReceived").text(response.userReceivedAr);
+                            //}
+                            //else {
+                            //    $("#ReferenceType").text(response.referenceTypeEn);
+                            //    $("#Bank").text(response.bankEn);
+                            //    $("#SalesPoint").text(response.salesPointEn);
+                            //    $("#PaymentMethod").text(response.paymentMethodEn);
+                            //    $("#UserReceived").text(response.userReceivedEn);
+                            //}
+
+                            //$("#ReceivedDate").text(response.receivedDate);
+                            //$("#CustodyNo").text(response.custodyNo);
+                            //if (response.statusReceipt == @Status.Custody) {
+                            //    $("#StatusReceipt").text('@localizer["Custody"]');
+                            //}
+                            //else if (response.statusReceipt == @Status.Booked) {
+                            //    $("#StatusReceipt").text('@localizer["booked"]');
+                            //}
+                            //else if (response.statusReceipt == @Status.Transfer) {
+                            //    $("#StatusReceipt").text('@localizer["Transfer"]');
+                            //}
+                            //else if (response.statusReceipt == @Status.Change) {
+                            //    $("#StatusReceipt").text('@localizer["TransferAuto"]');
+                            //}*@
+                        }
+                        $('#DataModal').modal('show');
+                    },
+                });
+            }
+        }
+
+
+        $("input[name='customRadio']").on("click", function () {
+            const start = $("#start_date").val(); // الحصول على قيمة البداية
+            const end = $("#end_date").val(); // الحصول على قيمة النهاية
+
+            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
+            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var start = formattedDate1;// الحصول على قيمة النهاية
+            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
+            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var end = formattedDate2;// الحصول على قيمة النهاية
+            
+            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#search2").val("");
+            GetContractsByStatusFitler(start, end);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#btn_view").on("click", function () {
+            const start = $("#start_date").val(); // الحصول على قيمة البداية
+            const end = $("#end_date").val(); // الحصول على قيمة النهاية
+
+            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
+            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var start = formattedDate1;// الحصول على قيمة النهاية
+            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
+            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var end = formattedDate2;// الحصول على قيمة النهاية
+            
+            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#search2").val("");
+            GetContractsByStatusFitler(start, end);
+        });
+    </script>
+
+    <script>
+        var CloseMe = function PdfClicked() {
+            console.log("PdfClicked");
+            $('#DataModal').modal('hide');
+        };
+
+        function PdfClicked() {
+            console.log("PdfClicked");
+            $('#DataModal').modal('hide');
+            //console.log('I will run after 1.6 seconds');
+            setTimeout(CloseMe, 1600);
+        }
+
+    </script>
+}

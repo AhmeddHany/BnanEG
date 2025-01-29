@@ -220,7 +220,7 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                         {
                                             ("2201001", "#", "#"),
                                             ("2201002", "#", "#"),
-                                            ("2201003", "#", "#"),
+                                            ("2201003", "LessorOwners_CAS", "Index"),
                                         }),
                                         ("202", "/CasSys/images/cars.svg", "cars-items", new List<(string, string, string)>
                                         {
@@ -253,25 +253,25 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                         ("205", "/CasSys/images/reports.svg", "reports-items", new List<(string, string, string)>
                                         {
                                             ("2205001", "#", "#"),
-                                            ("2205002", "#", "#"),
-                                            ("2205003", "#", "#"),
-                                            ("2205004", "#", "#"),
-                                            ("2205005", "#", "#"),
+                                            ("2205002", "DailyReport", "Index"),
+                                            ("2205003", "ReportActiveContract_Cas", "Index"),
+                                            ("2205004", "ReportClosedContract_Cas", "Index"),
+                                            ("2205005", "ReportSaved_CanceledContract_Cas", "Index"),
                                             ("2205006", "#", "#"),
-                                            ("2205007", "#", "#"),
-                                            ("2205008", "#", "#"),
+                                            ("2205007", "ReportCarContract_cas", "Index"),
+                                            ("2205008", "ReportEmployeeContract_cas", "Index"),
                                             ("2205009", "#", "#"),
-                                            ("2205010", "#", "#"),
-                                            ("2205011", "#", "#"),
-                                            ("2205012", "#", "#"),
+                                            ("2205010", "ReportFTPemployee", "Index"),
+                                            ("2205011", "ReportFTPRenter", "Index"),
+                                            ("2205012", "ReportFTPsalesPoint", "Index"),
                                         }),
                                         ("206", "/CasSys/images/statics.svg", "statics-items", new List<(string, string, string)>
                                         {
-                                            ("2206001", "#", "#"),
-                                            ("2206002", "#", "#"),
-                                            ("2206003", "#", "#"),
-                                            ("2206004", "#", "#"),
-                                            ("2206005", "#", "#"),
+                                            ("2206001", "CasStatistics_Cars", "Index"),
+                                            ("2206002", "CasStatistics_Renters", "Index"),
+                                            ("2206003", "CasStatistics_Contracts", "Index"),
+                                            ("2206004", "CasStatistics_CarContracts", "Index"),
+                                            ("2206005", "CasStatistics_RenterContracts", "Index"),
                                         }),
                                         ("207", "/CasSys/images/employees.svg", "employees-items", new List<(string, string, string)>
                                         {

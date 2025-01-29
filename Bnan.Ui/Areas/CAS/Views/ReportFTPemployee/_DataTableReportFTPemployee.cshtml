@@ -1,0 +1,123 @@
+﻿
+
+@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS;
+@model listReportFTPemployeeVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["FTR_Count_Receipt_Exchanges"]</th>
+            <th>@localizer["FTR_Count_Receipt_Bonds"]</th>
+            <th>@localizer["FTR_Reserved_Balance"]</th>
+            <th>@localizer["FTR_Avilable_Balance"]</th>
+            <th>@localizer["FTR_Balance"]</th>
+            <th class="DifferAlign" style="max-width:310px;"> @localizer["FTR_User_Transector"]  </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var no = 1;
+        }
+        @foreach (var item in Model.all_usersinfo)
+        {
+            var imageProfile = "/MasSystem/images/pic (3).svg";
+            var imageProfile_blank = "";
+            if (item.CrMasUserInformationPicture != null && item.CrMasUserInformationPicture != "") { imageProfile = item.CrMasUserInformationPicture?.ToString().Replace("~", ""); imageProfile_blank = "_blank"; }
+
+
+            //var LastDate = item.CrCasCarInformationLastContractDate;
+
+            <tr onclick="location.href='@Url.Action("Edit", "ReportFTPemployee", new { id = item.CrMasUserInformationCode})'">
+
+                <td>
+                    <div class="row">
+                        <div class="col-12">@(Model.all_exchanges?.Find(x => x.Column.ToString().Trim() == item.CrMasUserInformationCode)?.RowCount.ToString("N0") ?? "0")</div>
+                    </div>
+                </td>
+                <td>
+                    @(Model.all_bonds?.Find(x => x.Column.ToString().Trim() == item.CrMasUserInformationCode)?.RowCount.ToString("N0") ?? "0")
+                </td>
+
+                <td>
+                    <p>@item.CrMasUserInformationReservedBalance?.ToString("N2")</p>
+                </td>
+                <td>
+                    <p>@item.CrMasUserInformationAvailableBalance?.ToString("N2")</p>
+                </td>
+                <td>
+                    <p>@item.CrMasUserInformationTotalBalance?.ToString("N2")</p>
+                </td>
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+                    <td class="DifferAlign">
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="col">
+                                <p class="FirstLineP">@item.CrMasUserInformationEnName</p>
+                            </div>
+                            <div class="col-auto d-flex justify-content-end">
+                                <div class="employee">
+                                    <img src="@imageProfile"
+                                         alt="empolyee-photo" class="employee border-0 w-100 h-100">
+                                    @if (item.CrMasUserInformationOperationStatus == true)
+                                    {
+                                        <div class="active_statue " style="background-color:limegreen"></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="active_statue bg-danger"></div>
+                                    }
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </td>
+                }
+                else
+                {
+                    <td class="DifferAlign">
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="col">
+                                <p class="FirstLineP">@item.CrMasUserInformationArName</p>
+                            </div>
+                            <div class="col-auto d-flex justify-content-end">
+                                <div class="employee">
+                                    <img src="@imageProfile"
+                                         alt="empolyee-photo" class="employee border-0 w-100 h-100">
+                                    @if (item.CrMasUserInformationOperationStatus == true)
+                                    {
+                                        <div class="active_statue " style="background-color:limegreen"></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="active_statue bg-danger" ></div>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+                    </td>
+                }
+                
+                <td>
+                    @no
+                </td>
+
+                
+                
+            </tr>
+            no++;
+        }
+
+    </tbody>
+
+</table>

@@ -4,6 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Bnan.Ui.ViewModels.MAS
 {
+    public class Date_ReportClosedContract_MAS_VM
+    {
+        public DateTime? dates { get; set; }
+    }
     public class list_String_4
     {
         public string? id_key { get; set; }

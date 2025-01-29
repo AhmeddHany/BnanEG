@@ -1,0 +1,86 @@
+﻿
+
+@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS;
+@model listReportFTPsalesPointVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+
+            <th>@localizer["FTR_Reserved_Balance"]</th>
+            <th>@localizer["FTR_Avilable_Balance"]</th>
+            <th>@localizer["FTR_Balance"]</th>
+            <th class="DifferAlign" style="max-width:230px;">@localizer["AccountBank_new"]</th>
+            <th class="DifferAlign" style="max-width:140px;">@localizer["Branch"]</th>
+            <th class="DifferAlign" style="max-width:220px;"> @localizer["FTS_Name"]</th>
+            <th></th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var no = 1;
+        }
+        @foreach (var item in Model.all_Recipt_Info)
+        {
+            var branch = " ";
+            var SalesPoint = " ";
+            var bank = " ";
+            var Account = " ";
+            if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+            {
+                branch = item.branch_En;
+                SalesPoint = item.SalesPoint_En;
+                bank = item.bank_En;
+                Account = item.Account_En;
+            }
+            else
+            {
+                branch = item.branch_Ar;
+                SalesPoint = item.SalesPoint_Ar;
+                bank = item.bank_Ar;
+                Account = item.Account_Ar;
+            }
+            //var LastDate = item.CrCasCarInformationLastContractDate;
+
+            <tr onclick="location.href='@Url.Action("Edit", "ReportFTPsalesPoint", new { id = item.CrCasAccountReceiptSalesPoint})'">
+
+                <td>
+                    @((item.ReservedBalance??0.0m).ToString("N2"))
+                </td>
+                <td>
+                    @((item.AvailableBalance ?? 0.0m).ToString("N2"))
+                </td>
+                <td>
+                    @((item.TotalBalance ?? 0.0m).ToString("N2"))
+                </td>
+
+                <td class="DifferAlign">
+                    <p>@Account</p>
+                </td>
+                <td class="DifferAlign">
+                    <p>@branch</p>
+                </td>
+                <td class="DifferAlign">
+                    <p class="FirstLineP">@SalesPoint </p>
+                    <p class="secondLineP">@bank</p>
+                </td>
+                <td>
+                    @no
+                </td>
+                                    
+            </tr>
+            no++;
+        }
+
+    </tbody>
+
+</table>

@@ -449,17 +449,19 @@
     "the_Car_and_Renter": "Renter & Car",
     "RenterContract_Data": "Renter's Contracts",
     "CarContract_Data": "Car's Contracts",
+    "EmployeeContract_Data": "Employee's Contracts",
     "RenterContract_one_Data": "Renter's Contracts Data",
     "ReportCarContract_one_Data": "Details Data of Car's Contracts",
-
+    "ReportEmployeeContract_one_Data": "Details Data of Employee's Contracts",
 
     // Mas Renter Contract
     "ReportActiveContract_Data": "Existing Contracts",
+    "ReportActiveContract_Cas_Data": "Existing Contracts",
     "ReportClosedContract_Data": "Closed Contracts",
     "ReportSaved_CanceledContract_Data": "Saved & Canceled Contracts",
     "the_Contract_n": "Contract",
     "the_Invoice_n": "Invoice",
-    "the_TGA_n": "Unified Contract",
+    "the_TGA_n": "Tajeer Contract",
     "the_KM_Cut_n": "Kilo Meters Cut",
     "the_DaysCount_n": "Rental Days",
     "the_Rental_Value_n": "Rental Value",
@@ -546,19 +548,23 @@
     "RenterContractStatistics_Statistics_Contracts_n": "Renters' Contracts' Statistics",
 
     "Renter_inChart_Nationality": "Statistical indicator of Renters' Nationalities",
+    "Renter_inChart_Membership": "Statistical indicator of Renters' Memberships",
     "Renter_inChart_Profession": "Statistical indicator of Renters' Proffessions",
     "Renter_inChart_Region": "Statistical indicator of Renters' Regions",
     "Renter_inChart_City": "Statistical indicator of Renters' Cities",
     "Renter_inChart_Age": "Statistical indicator of Renters' Ages",
+    "Renter_inChart_Rates": "Statistical indicator of Renters' Rates",
 
+    "Car_inChart_branch": "Statistical indicator of Car distribution in Branches",
     "Car_inChart_Region": "Statistical indicator of Car distribution in Regions",
     "Car_inChart_City": "Statistical indicator of Car distribution in Cities",
     "Car_inChart_Brand": "Statistical indicator of Car Brands",
     "Car_inChart_Model": "Statistical indicator of Car Models",
     "Car_inChart_Category": "Statistical indicator of Car Categories",
     "Car_inChart_Year": "Statistical indicator of Car Made Years",
+    "Car_inChart_status": "Statistical indicator of Cars' Status",
 
-
+    "Contract_inChart_branches": "Statistical indicator of Contract Branches",
     "Contract_inChart_Days": "Statistical indicator of contract days",
     "Contract_inChart_Time": "Statistical indicator of contract Time",
     "Contract_inChart_Limits": "Statistical indicator for duration of contracts",
@@ -568,7 +574,8 @@
     "Contract_inChart_KM": "Statistical indicator of contract kM",
 
     "RenterContract_inChart_Nationality": "Statistical indicator of Renters' Contracts' Nationalities",
-    "RenterContract_inChart_Profession": "Statistical indicator of Renters' Contracts' Proffessions",
+    "RenterContract_inChart_Membership": "Statistical indicator of Renters' Contracts' Memberships",
+    "RenterContract_inChart_Profession": "Statistical indicator of Renters' Contracts' Professions",
     "RenterContract_inChart_Region": "Statistical indicator of Renters' Contracts' Regions",
     "RenterContract_inChart_City": "Statistical indicator of Renters' Contracts' Cities",
     "RenterContract_inChart_Age": "Statistical indicator of Renters' Contracts' Ages",
@@ -615,6 +622,7 @@
     "proforma_Invoice_New": "proforma",
     "taxation_Invoice_New": "taxation",
     "Contract_pdf_New": "The Contract",
+    "Daily_Report": "Daily Report",
 
 
 
@@ -1133,7 +1141,11 @@
     "Whatsup": "Whatsup",
     "DeviceName": "Device Name",
     "DeviceType": "Device Type",
-    "WhatsupPhone": "Phone"
+    "WhatsupPhone": "Phone",
+
+    // Cas Report ClosedContract
+    "ReportClosedContract_Cas_Data": "Closed Contract",
+    "ReportClosedContract_Cas_Details": "Additional Details"
   },
   "ModalAutoLogout": "Your session is about to end!",
   "Arabic": "Arabic",
@@ -1151,6 +1163,17 @@
   "Contracts": "Contracts",
   "Owner": "Owner",
   "CasSystem": "Administration",
+
+  // CAS owners
+  "Edit_LessorOwners_CAS_PageTitle": "Update Owner's Data",
+  "View_LessorOwners_CAS_PageTitle": "Owners",
+  "add_LessorOwners_CAS_PageTitle": "Add Owner",
+  "LessorOwners_CAS_ArName": "Arabic Owner Name",
+  "LessorOwners_CAS_EnName": "English Owner Name",
+  "Send_contract": "Send Contract",
+  "mail_owner": "Email",
+  "whatsapp_owner": "Whatsapp",
+  "sms_owner": "SMS",
 
   //cars
   "Cars": "Cars",
@@ -2984,6 +3007,7 @@
   "Condition": "Condition",
   "Amountstraded": "Amounts Traded",
   "Kilotraveled": "Kilometers Traveled",
+  "additionalHours": "Extra Hours",
   "ContractsCount": "Number Of Contracts",
   "ActiveContractsCount": "Active Contracts",
   "ClosedContractsCount": "Closed Contracts",
@@ -3276,6 +3300,7 @@
   "AgainstOthers": "Against Others",
   "CompensationValue": "Compensation Value",
   "ExpenseValue": "Expense Value",
+  "TotalContractValue": "Contracts Value",
   "CompensationStatement": "Compensation statement",
   "ExpenseStatement": "Expenses statement",
   "ExtraHoursValue": "Additional KMs Value",

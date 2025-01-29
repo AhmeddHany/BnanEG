@@ -20,6 +20,27 @@
     ViewData["Page-title"] = @localizer["ContractStatistics Data"];
     ViewData["Page-Hint"] = @localizer["ContractStatistics Hint"];
 }
+<style>
+
+    /* العنصر الذي سيتم محاذاته */
+    .LoaderRun_Center_div {
+        width: 2200px;
+        height: 650px;
+        /*background-color: #3498db;*/
+        text-align: center;
+        /*color: white;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        z-index: 4;
+    }
+</style>
+
+<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
+    <div class="content LoaderRun_Center_div">
+        <div class="loader"></div>
+    </div>
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
         <div class="row justify-content-center">
@@ -31,7 +52,8 @@
                     </div>
                     <div class="col-md-12 ">
                         <p class="d-inline-block headLines">@localizer["ContractStatistics_count_Contracts"] : </p>
-                        <p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("0") ?? "0") @localizer["ContractStatistics_Contract"]</p>
+                        @*<p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("0") ?? "0") @localizer["ContractStatistics_Contract"]</p>*@
+                        <p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("0") ?? "0") </p>
 
                     </div>
                     <div class="col-md-12">
@@ -106,6 +128,7 @@
            class="new-Page-icon"><img src="~/MasSystem/images/back to main.svg" alt="man"></a>
     </div>
 </div>
+</div>
 
 
 
@@ -127,7 +150,7 @@
         $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
         $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
 
-        //$(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+        $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
 
         });
     </script>
@@ -162,6 +185,7 @@
 
     <script>
         async function GetAllBy_Nationality() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -172,10 +196,11 @@
                     },
                     url: "@Url.Action("GetAllBy_Nationality", "RenterContractStatistics", new { Area = "MAS" })", // -- 2
                     success: function (response) {
-                        //$(".LoaderRun_Center_div").css("display", "none");
+                        $(".LoaderRun_Center_div").css("display", "none");
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
-                        $("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
                         $("#thisFunctionRunned").val("NationalityChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
                         resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
                     },
@@ -187,6 +212,7 @@
         }
 
         async function GetAllBy_Profession() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -197,10 +223,11 @@
                     },
                     url: "@Url.Action("GetAllBy_Profession", "RenterContractStatistics", new { Area = "MAS" })", // -- 2
                     success: function (response) {
-                        //$(".LoaderRun_Center_div").css("display", "none");
+                        $(".LoaderRun_Center_div").css("display", "none");
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
-                        $("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
                         $("#thisFunctionRunned").val("ProfessionChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
                         resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
                     },
@@ -212,6 +239,7 @@
         }
 
         async function GetAllBy_Region() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -222,10 +250,11 @@
                     },
                     url: "@Url.Action("GetAllBy_Region", "RenterContractStatistics", new { Area = "MAS" })", // -- 2
                     success: function (response) {
-                        //$(".LoaderRun_Center_div").css("display", "none");
+                        $(".LoaderRun_Center_div").css("display", "none");
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
-                        $("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
                         $("#thisFunctionRunned").val("AreaChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
                         resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
                     },
@@ -237,6 +266,7 @@
         }
 
         async function GetAllBy_City() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -247,10 +277,11 @@
                     },
                     url: "@Url.Action("GetAllBy_City", "RenterContractStatistics", new { Area = "MAS" })", // -- 2
                     success: function (response) {
-                        //$(".LoaderRun_Center_div").css("display", "none");
+                        $(".LoaderRun_Center_div").css("display", "none");
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
-                        $("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
                         $("#thisFunctionRunned").val("CityChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
                         resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
                     },
@@ -262,6 +293,7 @@
         }
 
         async function GetAllBy_Age() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -272,10 +304,11 @@
                     },
                     url: "@Url.Action("GetAllBy_Age", "RenterContractStatistics", new { Area = "MAS" })", // -- 2
                     success: function (response) {
-                        //$(".LoaderRun_Center_div").css("display", "none");
+                        $(".LoaderRun_Center_div").css("display", "none");
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
-                        $("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
                         $("#thisFunctionRunned").val("AgeChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
                         resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
                     },
