@@ -9,9 +9,9 @@ namespace Bnan.Core.Interfaces
 {
     public interface IContract
     {
-        
+
         // New System
-        Task<CrMasRenterInformation> AddRenterToMASRenterInformation(CrMasRenterInformation model, string EmployerName);
+        Task<CrMasRenterInformation> AddRenterToMASRenterInformation(CrMasRenterInformation model, string EmployerName, string day, string month, string year);
         Task<CrMasRenterPost> AddRenterForMASRenterPost(string RenterId, string cityCode, string arAdress, string enAdress);
         Task<CrCasRenterLessor> AddRenterToCasRenterLessor(string LessorCode, CrMasRenterInformation crMasRenterInformation, CrMasRenterPost crMasRenterPost);
         Task<CrMasRenterInformation> UpdateRenterToMASRenterInformation(CrMasRenterInformation model, string EmployerName,string personalType);

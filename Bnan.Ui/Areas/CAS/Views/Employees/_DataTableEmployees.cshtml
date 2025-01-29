@@ -28,11 +28,11 @@
         {
             <tr onclick="location.href='@Url.Action("Edit", "Employees", new { id = item.CrMasUserInformationCode })'">
                 <td>
-                    <p class="FirstLineP">@item.CrMasUserInformationLastActionDate?.ToString("yyyy/MM/dd")</p>
+                    <p class="FirstLineP">@item.CrMasUserInformationLastActionDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</p>
                     <p class="secondLineP">@item.CrMasUserInformationLastActionDate?.ToString("HH:mm")</p>
                 </td>
                 <td>
-                    <p class="FirstLineP">@item.CrMasUserInformationChangePassWordLastDate?.ToString("yyyy/MM/dd")</p>
+                    <p class="FirstLineP">@item.CrMasUserInformationChangePassWordLastDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</p>
                     <p class="secondLineP">@item.CrMasUserInformationChangePassWordLastDate?.ToString("HH:mm")</p>
                 </td>
                 <td>

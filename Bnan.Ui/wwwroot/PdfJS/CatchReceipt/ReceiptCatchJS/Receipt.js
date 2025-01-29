@@ -104,24 +104,14 @@ const createPdf = (PdfNo, canvas, InputPdf, InputHaveNo) => {
         reader.onload = function () {
             const imageDataUrl = reader.result;
             doc.addImage(imageDataUrl, "PNG", 0, 0, pageWidth, pageHeight, "", "FAST");
-
             const pdfBlob = doc.output("blob");
             const pdfBase64 = doc.output("datauristring");
-
-            // مدخلات لتخزين الملف ورقم السند
+            // مدخلات لتخزين  ورقم السند
             document.getElementById(InputPdf).value = pdfBase64;
             document.getElementById(InputHaveNo).value = PdfNo;
             console.log("pdfBase64", pdfBase64);
             console.log("PdfNo", PdfNo);
-
             // تحميل الملف
-            const blobUrl = URL.createObjectURL(pdfBlob);
-            const a = document.createElement("a");
-            a.href = blobUrl;
-            a.download = `receipt_${PdfNo}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
         };
         reader.readAsDataURL(blob);
     });

@@ -14,14 +14,16 @@ namespace Bnan.Inferastructure.Repository
             _unitOfWork = unitOfWork;
         }
         // For New System
-        public async Task<CrMasRenterInformation> AddRenterToMASRenterInformation(CrMasRenterInformation model, string EmployerName)
+        public async Task<CrMasRenterInformation> AddRenterToMASRenterInformation(CrMasRenterInformation model, string EmployerName, string day, string month, string year)
         {
+
             if (model == null) return null;
+
             var firstChar = model.CrMasRenterInformationId.Substring(0, 1);
             var sectorCode = GetSector(firstChar, "");
+            var birthDate = GetBirthDateMiladiOrHijri(day, month, year, model?.CrMasRenterInformationId);
 
-
-
+            model.CrMasRenterInformationBirthDate = birthDate;
             model.CrMasRenterInformationStatus = "A";
             model.CrMasRenterInformationCommunicationLanguage = "1";
             model.CrMasRenterInformationSector = "1";
@@ -1371,6 +1373,30 @@ namespace Bnan.Inferastructure.Repository
             evaluation.CrCasRenterContractEvaluationDate = DateTime.Now;
             if (await _unitOfWork.CrCasRenterContractEvaluation.AddAsync(evaluation) != null) return true;
             return false;
+        }
+        private DateTime GetBirthDateMiladiOrHijri(string day, string month, string year, string renterId)
+        {
+            DateTime birthDate;
+
+            // Check if renterId starts with '1' (indicating Hijri)
+            if (renterId.StartsWith("1"))
+            {
+                // Convert Hijri date to Gregorian date
+                HijriCalendar hijriCalendar = new HijriCalendar();
+                int dayInt = int.Parse(day);
+                int monthInt = int.Parse(month);
+                int yearInt = int.Parse(year);
+
+                // Get the birth date from the Hijri date
+                birthDate = hijriCalendar.ToDateTime(yearInt, monthInt, dayInt, 0, 0, 0, 0);
+            }
+            else
+            {
+                // Treat as Gregorian date
+                birthDate = new DateTime(int.Parse(year), int.Parse(month), int.Parse(day));
+            }
+
+            return birthDate; // Return the DateTime object
         }
     }
 }

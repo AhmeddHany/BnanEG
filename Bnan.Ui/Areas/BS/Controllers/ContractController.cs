@@ -90,7 +90,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 text = isArabic ? c.CrMasSupRenterNationalitiesArName : c.CrMasSupRenterNationalitiesEnName, // الاسم العربي أو الإنجليزي
                 value = c.CrMasSupRenterNationalitiesCode, // كود الجنسية
                 naqlGCC = c.CrMasSupRenterNationalitiesNaqlGcc // إضافة العمود الإضافي (مثلاً CrMasSupRenterNationalitiesNaqlGcc)
-            }).ToList(); var citiesArray = Cities.Select(c => new { text = isArabic ? c.CrMasSupPostCityConcatenateArName : c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode }).ToList();
+            }).ToList();
+            var citiesArray = Cities.Select(c => new { text = isArabic ? c.CrMasSupPostCityConcatenateArName : c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode }).ToList();
             var workplacesArray = Workplaces.Select(c => new { text = isArabic ? c.CrMasSupRenterEmployerArName : c.CrMasSupRenterEmployerEnName, value = c.CrMasSupRenterEmployerCode }).ToList();
 
             DateTime year = DateTime.Now;
@@ -188,7 +189,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             //Receipt
             var checkAccountReceipt = new CrCasAccountReceipt();
             var amountPaid = (decimal)basicContract.CrCasRenterContractBasicAmountPaidAdvance;
-            var pdfReceipt = "";
+            var pdfReceiptPath = "";
             if (amountPaid > 0)
             {
                 SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
@@ -198,8 +199,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ السند", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return RedirectToAction("Index", "Home");
                 }
-                pdfReceipt = await SavePdfIfNotEmptyAsync(SavePdfReceipt, lessorCode, branch.CrCasBranchInformationCode, contractInfo.AccountReceiptNo, "Receipt", amountPaid > 0);
-                checkAccountReceipt = await AddAccountReceiptAsync(basicContract, lessorCode, sectorCodeForRenter, branch, contractInfo, userLogin, amountPaid, pdfReceipt);
+                pdfReceiptPath = await SavePdfIfNotEmptyAsync(SavePdfReceipt, lessorCode, branch.CrCasBranchInformationCode, contractInfo.AccountReceiptNo, "Receipt", amountPaid > 0);
+                checkAccountReceipt = await AddAccountReceiptAsync(basicContract, lessorCode, sectorCodeForRenter, branch, contractInfo, userLogin, amountPaid, pdfReceiptPath);
             }
 
 
@@ -209,25 +210,25 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
 
 
-            //SavePdfInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfInvoice);
-            //if (string.IsNullOrEmpty(SavePdfInvoice))
-            //{
-            //    await RemovePdfs(new[] { pdfContract, SavePdfReceipt });
-            //    _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ الفاتورة", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-            //    return RedirectToAction("Index", "Home");
-            //}
-            //var pdfInvoice = await SavePdfAsync(SavePdfInvoice, lessorCode, branch.CrCasBranchInformationCode, contractInfo.InitialInvoiceNo, "ar", "Invoice");
+            SavePdfInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfInvoice);
+            if (string.IsNullOrEmpty(SavePdfInvoice))
+            {
+                await RemovePdfs(new[] { SavePdfReceipt });
+                _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ الفاتورة", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Home");
+            }
+            var pdfInvoicePath = await SavePdfAsync(SavePdfInvoice, lessorCode, branch.CrCasBranchInformationCode, contractInfo.InitialInvoiceNo, "Invoice");
 
-            var checkAccountInvoice = await AddAccountInvoiceAsync(basicContract, checkAccountReceipt, sectorCodeForRenter, /*pdfInvoice*/"");
+            var checkAccountInvoice = await AddAccountInvoiceAsync(basicContract, checkAccountReceipt, sectorCodeForRenter, pdfInvoicePath);
 
             var checks = await PerformAdditionalChecksAsync(basicContract, lessorCode, contractInfo, ChoicesList, AdditionalsList, CheckupDetails);
 
-            //var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, /*pdfContract*/"", /*pdfInvoice*/"", /*pdfReceipt*/"", amountPaid);
+            var pdfDictionaryPaths = GetPdfDictionaryWithPath(CultureInfo.CurrentCulture.Name, /*pdfContract*/"", pdfInvoicePath, pdfReceiptPath, amountPaid);
 
             //bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
             if (/*!checkPdf ||*/ !checks || !checkAccountInvoice)
             {
-                //await RemovePdfs(pdfDictionary.Keys.ToArray());
+                await RemovePdfs(pdfDictionaryPaths.Keys.ToArray());
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
@@ -235,7 +236,9 @@ namespace Bnan.Ui.Areas.BS.Controllers
             if (await _unitOfWork.CompleteAsync() > 0)
             {
                 //if (StaticContractCardImg != null) await WhatsupExtension.SendBase64StringAsImageToWhatsUp(StaticContractCardImg, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ");
-                //await SendPdfsToWhatsAppAsync(pdfDictionary, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, contractInfo.RenterInfo.CrMasRenterInformationArName, contractInfo.RenterInfo.CrMasRenterInformationEnName);
+                var pdfDictionaryBase64 = GetPdfDictionaryBase64(CultureInfo.CurrentCulture.Name, /*SavePdfContract*/"", SavePdfInvoice, SavePdfReceipt, amountPaid);
+                await SendPdfsToWhatsAppAsync(pdfDictionaryBase64, lessorCode,contractInfo.AccountReceiptNo,contractInfo.InitialInvoiceNo, basicContract.CrCasRenterContractBasicNo,
+                                              userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, contractInfo.RenterInfo.CrMasRenterInformationArName, contractInfo.RenterInfo.CrMasRenterInformationEnName);
                 _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
@@ -270,22 +273,33 @@ namespace Bnan.Ui.Areas.BS.Controllers
             return condition ? await SavePdfAsync(savePdf, lessorCode, branchCode, receiptNo, type) : string.Empty;
         }
 
-        private async Task<bool> SendPdfsToWhatsAppAsync(Dictionary<string, string> pdfDictionary, string toNumber, string renterArName, string renterEnName)
+        private async Task<bool> SendPdfsToWhatsAppAsync(Dictionary<string, string> pdfDictionary,string lessorCode ,string receiptNo, string invoiceNo,string contractNo, string toNumber, string renterArName, string renterEnName)
         {
             if (pdfDictionary != null)
             {
                 foreach (var kvp in pdfDictionary)
                 {
+                    var fileNo = "";
                     string pdf = kvp.Key;
                     string documentType = kvp.Value;
                     string message = WhatsupExtension.GetMessage(documentType, renterArName, renterEnName);
-                    await WhatsupExtension.SendFile(_hostingEnvironment, pdf, toNumber, message);
+                    if (documentType == "Receipt" && !string.IsNullOrEmpty(pdf)) fileNo = receiptNo;
+                    else if (documentType == "Invoice" && !string.IsNullOrEmpty(pdf)) fileNo = invoiceNo;
+                    else if (documentType == "Contract"&&!string.IsNullOrEmpty(pdf)) fileNo = contractNo;
+                    if (!string.IsNullOrEmpty(fileNo)) await WhatsAppServicesExtension.SendMediaAsync(toNumber, message, lessorCode, pdf, $"{fileNo}.pdf");
                 };
                 return true;
             }
             return false;
         }
-        private Dictionary<string, string> GetPdfDictionary(string culture, string Contract, string Invoice, string Receipt, decimal amountPaid)
+        private Dictionary<string, string> GetPdfDictionaryWithPath(string culture, string Contract, string Invoice, string Receipt, decimal amountPaid)
+        {
+            var pdfDictionary = new Dictionary<string, string>();
+            pdfDictionary = new Dictionary<string, string> { { Contract, "Contract" }, { Invoice, "Invoice" } };
+            if (amountPaid > 0) pdfDictionary.Add(Receipt, "Receipt");
+            return pdfDictionary;
+        }
+        private Dictionary<string, string> GetPdfDictionaryBase64(string culture, string Contract, string Invoice, string Receipt, decimal amountPaid)
         {
             var pdfDictionary = new Dictionary<string, string>();
             pdfDictionary = new Dictionary<string, string> { { Contract, "Contract" }, { Invoice, "Invoice" } };
@@ -714,7 +728,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             // Map and save renter information
             var renterModel = _mapper.Map<CrMasRenterInformation>(renterVM);
-            var renterAfterSaved = await _ContractServices.AddRenterToMASRenterInformation(renterModel, renterVM.CrMasRenterInformationEmployerName);
+            var renterAfterSaved = await _ContractServices.AddRenterToMASRenterInformation(renterModel, renterVM.CrMasRenterInformationEmployerName, renterVM.DayDate, renterVM.MonthDate, renterVM.YearDate);
 
             if (renterAfterSaved == null)
             {

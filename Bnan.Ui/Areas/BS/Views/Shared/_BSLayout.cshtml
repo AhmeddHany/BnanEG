@@ -15,16 +15,26 @@
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var user = await userManager.GetUserAsync(User);
-    var lessorInfo = await userManager.Users.Include(l => l.CrMasUserInformationLessorNavigation).ThenInclude(l => l.CrMasLessorImage).FirstOrDefaultAsync(x => x.UserName == user.UserName);
-    var lessorCompanyContract = await userManager.Users.Include(l => l.CrMasUserInformationLessorNavigation).ThenInclude(l => l.CrMasContractCompanies).FirstOrDefaultAsync(x => x.UserName == user.UserName);
+
+    // دمج كل الاستعلامات في استعلام واحد فقط
     var userInfo = await userManager.Users
-          .Include(l => l.CrMasUserMainValidations)
-          .Include(l => l.CrMasUserSubValidations)
-          .Include(l => l.CrMasUserInformationLessorNavigation)
-          .FirstOrDefaultAsync(l => l.UserName == user.UserName);
+        .Include(l => l.CrMasUserMainValidations)
+        .Include(l => l.CrMasUserSubValidations)
+        .Include(l => l.CrMasUserInformationLessorNavigation)
+            .ThenInclude(l => l.CrMasLessorImage) // تحميل صورة المؤجر
+        .Include(l => l.CrMasUserInformationLessorNavigation)
+            .ThenInclude(l => l.CrMasContractCompanies) // تحميل العقود
+        .FirstOrDefaultAsync(l => l.UserName == user.UserName);
+
+    // تعيين البيانات إلى متغيرات منفصلة لاستخدامها في الـ Layout
+    var lessorInfo = userInfo?.CrMasUserInformationLessorNavigation;
+    var lessorCompanyContract = lessorInfo?.CrMasContractCompanies;
+
+    // مسارات الـ URL
     string url = Context.Request.Path;
     string urlhost = Context.Request.Host.Value;
     string full = urlhost + url;
+
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     var returnUrl = ViewData["returnUrl"];
 }
@@ -362,7 +372,7 @@
                         }
                     </li>
                 </ul>
-                @if (lessorInfo.CrMasUserInformationLessorNavigation.CrMasLessorInformationStatus == Status.Hold)
+                @if (userInfo.CrMasUserInformationLessorNavigation.CrMasLessorInformationStatus == Status.Hold)
                 {
                     <div class=" d-flex align-items-center on-mobile" style="color:red; font-weight: bold;font-size:14px;margin-top: 3%;">
                         @localizer["CompanyIsHoldInSystems"]
@@ -374,17 +384,17 @@
                         @localizer["EmployeeHoldedInBS"]
                     </div>
                 }
-                else if (lessorCompanyContract?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == lessorInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.Renewed)
+                else if (userInfo?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == userInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.Renewed)
                 {
                     <div style="color:red;font-weight:500" id="dangerMessage">@localizer["ContractNewDanger"]</div>
 
                 }
-                else if (lessorCompanyContract?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == lessorInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.Expire)
+                else if (userInfo?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == userInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.Expire)
                 {
                     <div style="color:red;font-weight:500" id="dangerMessage">@localizer["ContractExpireDanger"]</div>
 
                 }
-                else if (lessorCompanyContract?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == lessorInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.AboutToExpire)
+                else if (userInfo?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == userInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.AboutToExpire)
                 {
                     <div style="color:red;font-weight:500" id="dangerMessage">@localizer["ContractAboutExpireDanger"]</div>
                 }
@@ -396,11 +406,11 @@
                             {
                                 @if (requestCulture.RequestCulture.UICulture.Name != "en-US")
                                 {
-                                    @Html.Raw(lessorInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationArLongName)
+                                    @Html.Raw(userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationArLongName)
                                 }
                                 else
                                 {
-                                    @Html.Raw(lessorInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEnLongName)
+                                    @Html.Raw(userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEnLongName)
                                 }
                             }
                         </h1>
@@ -419,7 +429,7 @@
                             }
                         </p>
                     </div>
-                    <img class="extra-small-mobile " src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" style="height: 60px;">
+                    <img class="extra-small-mobile " src="@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" style="height: 60px;">
                 </div>
             </nav>
         </div>

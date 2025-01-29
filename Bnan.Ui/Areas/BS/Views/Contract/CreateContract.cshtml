@@ -11,17 +11,14 @@
     var user = await userManager.GetUserAsync(User);
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+
     var userInfo = await userManager.Users
-          .Include(l => l.CrMasUserMainValidations)
-          .Include(l => l.CrMasUserSubValidations)
-          .Include(l => l.CrMasUserInformationLessorNavigation)
-          .Include(l => l.CrMasUserContractValidity)
-          .FirstOrDefaultAsync(l => l.UserName == user.UserName);
-    var lessorInfo = await userManager.Users
+        .Include(l => l.CrMasUserMainValidations)
+        .Include(l => l.CrMasUserSubValidations)
         .Include(l => l.CrMasUserInformationLessorNavigation)
-        .Include(l => l.CrMasUserInformationLessorNavigation)
-            .ThenInclude(l => l.CrMasLessorImage) // Second related entity
-        .FirstOrDefaultAsync(x => x.UserName == user.UserName);
+            .ThenInclude(l => l.CrMasLessorImage) // دمج استعلام المؤجر
+        .Include(l => l.CrMasUserContractValidity)
+        .FirstOrDefaultAsync(l => l.UserName == user.UserName);
 }
 @* <link href="~/BranchSys/CreateContract/sb-admin-2.min.css" rel="stylesheet">
  *@
@@ -29,10 +26,9 @@
 <link rel="stylesheet" href="~/css/toastr.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <!--Pdf-->
+<!--Pdf-->
 <link rel="stylesheet" href="~/PdfJS/CatchReceipt/style/style.css">
-    <!--Pdf-->
-
+<!--Pdf-->
 @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
 {
     <link href="~/BranchSys/CreateContract/css/english-style.css" rel="styleSheet">
@@ -298,7 +294,7 @@
                                                     </div>
                                                     <div class="col">
                                                         <div class="row  justify-content-start flex-row-reverse align-items-center" style="display:none" id="RenterIsdriverDiv">
-                                                           
+
                                                             <div class="col-auto">
                                                                 <div class="form-check">
                                                                     <label class="form-check-label" for="RenterIsdriver"> @localizer["TheRenterIsAdriver"]</label>
@@ -556,7 +552,7 @@
                                             <div class=" col-lg-auto car-catogeries my-3 " id="scrollContainer">
                                                 <input asp-for="Contract.SerialNo" hidden />
                                                 <input asp-for="Contract.PriceNo" hidden />
-                                                
+
                                                 <div class="row d-flex car-catogeries-div px-2 ">
                                                     <button type="button" class="btn customized-button" onclick="GetCodeCategory(`3400000000`)">@localizer["All"]</button>
                                                     @foreach (var category in Model.CarCategories)
@@ -2093,7 +2089,7 @@
                                          style="padding: 6px 7px 0px 20px;">
                                         <div class="payment-button-card button-card  gap-2">
                                             <input id="SaveContractBtn" type="button" class=" check-btn payment-button" value="@localizer["SaveContract"]">
-                                           
+
                                             <button type="button" class="btn check-btn check-btn-load payment-button signature-button" id="check_btn_load_Signture" data-bs-toggle="modal" href="#PicsignatureModal">
                                                 <div class="row align-items-center">
                                                     <div class="col-auto">
@@ -2267,7 +2263,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TechnicalCheckUp %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->               
+                <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TechnicalCheckUp %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
             </div>
         </div>
     </section>
@@ -2293,10 +2289,10 @@
     <script src="~/js/toastr.js"></script>
     <!--Pdf-->
     <script src="~/PdfJS/CatchReceipt/ReceiptCatchJS/Receipt.js"></script>
+    <script src="~/PdfJS/Invoice/ProformaInvoice/js/ProformaInvoice.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
     <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
-     <!--Pdf-->
-
+    <!--Pdf-->
     <script>
         $(document).ready(function () {
             // "Check All" checkbox functionality
@@ -5834,2797 +5830,348 @@
             })
         });
     </script>
-    <script>
-        // Function to send a static image file to WhatsApp
-        // async function sendStaticImageToWhatsApp() {
-        //     const imageLessor = "user.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractCard";
-        //     const imagePath = imageLessor.replace('~', '');
-        //     const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJudW1iZXIiOiJKYXNlcjExIiwic2VyaWFsIjoiMTk5ZmUzYjFlYjc2MjNlIiwiaWF0IjoxNzA3NzMxNjI4LCJleHAiOjE3OTQxMzE2Mjh9.O_4RW4vYAays1ZL7D-OlOQh6C5P5xVYrT3pZ2Oi9Yak"; // Your WhatsApp API token
-        //     const callingKey = '@user.CrMasUserInformationCallingKey'; // Assuming this variable contains the calling key
-        //     const mobileNo = '@user.CrMasUserInformationMobileNo'; // Assuming this variable contains the mobile number
-        //     const phoneNumber = callingKey + mobileNo;
-        //     const messageText = " "; // Replace with your message
-        //     const contractNo = "@ViewBag.ContractNo";
 
-        //     try {
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         // Prepare form data
-        //         const formData = new FormData();
-        //         formData.append("number", phoneNumber); // Append the recipient's phone number
-        //         formData.append("message", messageText); // Append the message
-
-        //         // Create a canvas element
-        //         const canvas = document.createElement('canvas');
-        //         const ctx = canvas.getContext('2d');
-
-        //         // Create an image element
-        //         const img = new Image();
-
-        //         // When the image is loaded, draw it on the canvas
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-        //             ctx.drawImage(img, 0, 0);
-
-        //             const CarEn = CarInformation.carInformation.crCasCarInformationConcatenateEnName;
-        //             const CarAr = CarInformation.carInformation.crCasCarInformationConcatenateArName;
-        //             var daysNo = parseInt(document.getElementById('dayNo').value);
-        //             var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
-        //             var startDate = new Date(dateTimeNow);
-        //             var endDate = new Date(startDate);
-        //             endDate.setDate(endDate.getDate() + daysNo);
-        //             const startHijriDate = formatHijriDate(startDate);
-        //             const endHijriDate = formatHijriDate(endDate);
-        //             const branch = '@Html.Raw(Model.CrCasBranchInformation?.CrCasBranchPost.CrCasBranchPostCityNavigation.CrMasSupPostCityConcatenateArName)' + ' - ' + '@Html.Raw(Model.CrCasBranchInformation?.CrCasBranchInformationArShortName)';
-        //             // Define text properties
-        //             ctx.font = "bold 25px serif";
-        //             ctx.textAlign = "right";
-        //             ctx.fillStyle = "black";
-        //             ctx.fillText(RenterInformation.personalArName, canvas.width - 75, 170);
-        //             ctx.fillText(CarAr, canvas.width - 75, 205);
-        //             ctx.fillText(startHijriDate, canvas.width - 190, 358);
-        //             ctx.fillText(endHijriDate, canvas.width - 190, 395);
-        //             ctx.fillText(branch, canvas.width - 75, 450);
-
-        //             ctx.textAlign = "left";
-        //             ctx.fillText(RenterInformation.personalEnName, canvas.width - 960, 270);
-        //             ctx.fillText(CarEn, canvas.width - 960, 305);
-        //             ctx.fillText($("#StartDate").text(), canvas.width - 850, 358);
-        //             ctx.fillText($("#EndDate").text(), canvas.width - 850, 395);
-        //             ctx.fillText($("#ContractNo").val(), canvas.width - 960, 585);
-        //             canvas.toBlob(async function (blob) {
-        //                 const base64String = await blobToBase64(blob);
-        //                 document.getElementById("StaticContractCardImg").value = base64String;
-        //             }, 'image/png');
-        //         };
-        //         img.src = URL.createObjectURL(blob);
-        //     } catch (error) {
-        //         console.log('SendImageError', error);
-        //     }
-        // };
-        // function blobToBase64(blob) {
-        //     return new Promise((resolve, reject) => {
-        //         const reader = new FileReader();
-        //         reader.onload = () => {
-        //             resolve(reader.result);
-        //         };
-        //         reader.onerror = error => reject(error);
-        //         reader.readAsDataURL(blob);
-        //     });
-        // }
-        // // Function to send an image and Ar PDF to WhatsApp
-        // async function sendArInvoiceToWhatsApp() {
-        //     try {
-        //         const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArInitialInvoice";
-        //         const imagePath = imageLessor.replace('~', '');
-        //         const dates = getFormattedDatesMiliadiAndHijri("ar");
-        //         const miladiDateString = dates.miladiDate;
-        //         const hijriDateString = dates.hijriDate;
-        //         // First In Page
-        //         const contractNo = "@ViewBag.ContractNo";
-        //         const InvoiceAccountNo = "@ViewBag.InvoiceAccount";
-        //         const referenceType = "انشاء عقد";
-        //         const CarName = CarInformation.carInformation.crCasCarInformationConcatenateArName;
-        //         // last in page
-        //         var DiscountInput = document.getElementById("Discount_Input").value;
-        //         const discountRate = parseFloat(DiscountInput).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        //         const TaxPercent = parseFloat(CarInformation.carPrice.crCasPriceCarBasicRentalTaxRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-        //         const balance = RenterInformation.availableBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        //         const AmountRequired = TotalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-        //         var AmountPayedInput = document.getElementById("AmountPayed").value;
-        //         let AmountPayed = parseFloat(AmountPayedInput);
-
-        //         // Check if AmountPayed is null, NaN, or empty
-        //         if (isNaN(AmountPayed) || !AmountPayedInput.trim()) {
-        //             AmountPayed = "0.00"; // Setting it as a string
-        //         } else {
-        //             // Convert to formatted string with 2 decimal places
-        //             AmountPayed = AmountPayed.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        //         }
-        //         var selectElement = document.getElementById("Contract_PaymentMethod");
-        //         var selectedOption = selectElement.options[selectElement.selectedIndex];
-        //         // Get the text of the selected option
-        //         var selectedArabicName = selectedOption.dataset.ar;
-        //         if (selectedArabicName == "" || selectedArabicName == undefined || selectedArabicName == NaN) {
-        //             selectedArabicName = "";
-        //         }
-        //         var reasonPayment = document.getElementById("FormControl-last-Textarea").value;
-        //         // // Signture Image
-        //         const namesAndsignatures = await loadArSignatures();
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-
-        //             ctx.drawImage(img, 0, 0);
-        //             ctx.font = "bold 50px serif";
-        //             ctx.textAlign = "right";
-        //             ctx.fillStyle = "black";
-        //             // Receipt and type and renter and car name
-        //             ctx.fillText(InvoiceAccountNo, canvas.width - 110, 610);
-        //             ctx.fillText(namesAndsignatures.renterName, canvas.width - 125, 1075);
-        //             ctx.fillText(CarName, canvas.width - 125, 1175);
-
-        //             ctx.font = "bold 42px serif";
-        //             ctx.fillText(referenceType, canvas.width - 250, 895);
-        //             ctx.fillText(contractNo, canvas.width - 320, 985);
-        //             // The Table
-        //             var YHeight = 1380;
-        //             var DiscountInput = document.getElementById("Discount_Input").value;
-        //             var daysNo = document.getElementById('dayNo').value;
-        //             var TaxPercent = parseInt(CarInformation.carPrice.crCasPriceCarBasicRentalTaxRate);
-        //             // The payed Information
-        //             const discountText = '%' + DiscountInput.toString();
-        //             const taxText = '%' + TaxPercent.toString();
-
-        //             ctx.fillText(balance, canvas.width - 330, 2392);
-        //             ctx.fillText(discountText, canvas.width - 360, 2485);
-        //             ctx.fillText(taxText, canvas.width - 367, 2573);
-        //             ctx.fillText(AmountRequired, canvas.width - 360, 2660);
-        //             ctx.fillText(AmountPayed, canvas.width - 360, 2750);
-        //             ctx.fillText(selectedArabicName, canvas.width - 360, 2840);
-        //             ctx.fillText(reasonPayment, canvas.width - 360, 2930);
-        //             ctx.font = "bold 35px serif";
-        //             //Date and contract no
-        //             ctx.fillText(hijriDateString, canvas.width - 228, 668);
-        //             ctx.fillText(miladiDateString, canvas.width - 228, 722);
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Rent
-        //             if (parseFloat(CarInformation.carPrice.crCasPriceCarBasicDailyRent) > 0) {
-        //                 YHeight = calculateAndDrawAr(ctx, canvas, "الايجار", CarInformation.carPrice.crCasPriceCarBasicDailyRent, daysNo, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Rent
-
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Auth
-        //             var InFeesTamm = CarInformation.carPrice.crCasCarPriceBasicInFeesTamm;
-        //             var OutFeesTamm = CarInformation.carPrice.crCasCarPriceBasicOutFeesTamm;
-        //             var OutFeesTammInput = document.getElementById('Delegate-out');
-        //             var FeesTammValue = 0;
-        //             if (OutFeesTammInput.checked) {
-        //                 if (parseFloat(OutFeesTamm) != null) {
-        //                     FeesTammValue = parseFloat(OutFeesTamm);
-        //                 }
-        //                 else {
-        //                     FeesTammValue = 0;
-        //                 }
-        //             }
-        //             else {
-        //                 if (parseFloat(InFeesTamm) != null) {
-        //                     FeesTammValue = parseFloat(InFeesTamm);
-        //                 }
-        //                 else {
-        //                     FeesTammValue = 0;
-        //                 }
-        //             }
-        //             if (parseFloat(FeesTammValue) > 0) {
-        //                 YHeight = calculateAndDrawAr(ctx, canvas, "التفويض", FeesTammValue, 1, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Auth
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Advantages
-        //             if (parseFloat(AdvantagesValue) > 0) {
-        //                 YHeight = calculateAndDrawAr(ctx, canvas, "المميزات الاضافية", AdvantagesValue, daysNo, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Advantages
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Additional Driver
-        //             var additionalDriver = document.getElementById("addational-driver");
-        //             var additionalDriverValue = 0;
-        //             if (additionalDriver.checked) {
-        //                 var AddDriverValue = CarInformation.carPrice.crCasPriceCarBasicAdditionalDriverValue;
-        //                 if (parseInt(AddDriverValue) != null) {
-        //                     additionalDriverValue = parseFloat(AddDriverValue);
-        //                 }
-        //                 else {
-        //                     additionalDriverValue = 0;
-        //                 }
-        //             }
-        //             if (additionalDriverValue > 0) {
-        //                 YHeight = calculateAndDrawAr(ctx, canvas, "سائق اضافي", additionalDriverValue, 1, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Additional Driver
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Private Driver
-        //             var privateDriverRadio1 = document.getElementById("PrivateDriver");
-        //             var privateDriverID = $("#Private-Driver-selectt").val();
-        //             var privateDriverValue = 0;
-        //             if (privateDriverRadio1.checked && privateDriverID != null) {
-        //                 var privateDriver = CarInformation.carPrice.crCasPriceCarBasicPrivateDriverValue;
-        //                 if (privateDriver != null) {
-        //                     privateDriverValue = parseFloat(privateDriver);
-        //                 }
-        //                 else {
-        //                     privateDriverValue = 0;
-        //                 }
-        //             }
-        //             else {
-        //                 privateDriverValue = 0;
-        //             }
-        //             if (privateDriverValue > 0) {
-        //                 YHeight = calculateAndDrawAr(ctx, canvas, "سائق خاص", privateDriverValue, daysNo, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Private Driver
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// TotalChoices
-        //             var TotalChoices = $("#TotalChoices").text();
-        //             var choicesValue = 0;
-        //             if (TotalChoices != null && TotalChoices != 0 && TotalChoices != "" && TotalChoices != undefined) {
-        //                 choicesValue = parseFloat(TotalChoices);
-        //             }
-        //             else {
-        //                 choicesValue = 0;
-        //             }
-        //             if (choicesValue > 0) {
-        //                 YHeight = calculateAndDrawAr(ctx, canvas, "الخيارات", choicesValue, daysNo, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////TotalChoices
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// TotalAdditional
-
-        //             var TotalAdditionals = $("#TotalAdditionals").text();
-        //             var additionalValue = 0;
-        //             if (TotalAdditionals != null && TotalAdditionals != 0 && TotalAdditionals != "" && TotalAdditionals != undefined) {
-        //                 additionalValue = parseFloat(TotalAdditionals);
-        //             }
-        //             else {
-        //                 additionalValue = 0;
-        //             }
-        //             if (additionalValue > 0) {
-        //                 YHeight = calculateAndDrawAr(ctx, canvas, "الاضافات", additionalValue, 1, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// TotalAdditional
-
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total
-        //             var tTotal = calculateTotalAmountPerDay(parseFloat(CarInformation.carPrice.crCasPriceCarBasicDailyRent), parseFloat(FeesTammValue), parseFloat(AdvantagesValue), parseFloat(privateDriverValue), parseFloat(additionalDriverValue), parseFloat(additionalValue), parseFloat(choicesValue), daysNo);
-        //             var tTotalDiscount = calculateTotalDiscountAmount(tTotal, DiscountInput);
-        //             var tTotalAfterDiscount = tTotal - tTotalDiscount;
-        //             var tTotalTax = (tTotalAfterDiscount) * (TaxPercent / 100);
-        //             var TotalAmount = parseFloat(TotalActualContract)
-        //             // // الاجمالي
-        //             ctx.fillText(tTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 970, 2250);
-        //             ctx.fillText(tTotalDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1270, 2250);
-        //             ctx.fillText(tTotalAfterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1560, 2250);
-        //             ctx.fillText(tTotalTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1880, 2250);
-        //             ctx.fillText(TotalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 2180, 2250);
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total
-
-        //             // director and renter and user
-        //             ctx.fillText(namesAndsignatures.directorOfLessor, canvas.width - 340, 3050);
-        //             ctx.fillText(namesAndsignatures.userName, canvas.width - 1140, 3050);
-        //             ctx.fillText(namesAndsignatures.directorOfBranch, canvas.width - 340, 3190);
-        //             ctx.fillText(namesAndsignatures.renterName, canvas.width - 1140, 3200);
-        //             if (namesAndsignatures.signatureImg4) {
-        //                 ctx.drawImage(namesAndsignatures.signatureImg4, canvas.width - 1350, 3125, 200, 100);
-        //             }
-
-        //             canvas.toBlob(async function (blob) {
-        //                 createPdfAndSendToWhatsApp(null, InvoiceAccountNo, blob, "SavePdfArInvoice", "ar");
-        //             }, 'image/png');
-        //         };
-        //         img.src = URL.createObjectURL(blob);
-        //     } catch (error) {
-        //         console.error("Error creating Arabic Invoice contract:", error);
-        //         window.location.href = "/BS/Contract/FailedToast?type=arinvoice";
-        //     }
-        // };
-        // function calculateAndDrawAr(ctx, canvas, itemName, itemValue, days, discountInput, taxPercent, yHeight) {
-        //     var itemTotal = parseFloat(itemValue) * parseInt(days);
-        //     var discountValue = itemTotal * (parseFloat(discountInput) / 100);
-        //     var totalAfterDiscount = itemTotal - discountValue;
-        //     var taxValue = totalAfterDiscount * (taxPercent / 100);
-        //     var totalActual = parseFloat(totalAfterDiscount) + parseFloat(taxValue);
-        //     ctx.fillText(itemName, canvas.width - 230, yHeight);
-        //     ctx.fillText(itemValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 540, yHeight);
-        //     ctx.fillText(days, canvas.width - 775, yHeight);
-        //     ctx.fillText(itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 970, yHeight);
-        //     ctx.fillText(discountValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1270, yHeight);
-        //     ctx.fillText(totalAfterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1560, yHeight);
-        //     ctx.fillText(taxValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1880, yHeight);
-        //     ctx.fillText(totalActual.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 2180, yHeight);
-
-        //     return yHeight + 88; // Update yHeight for the next item
-        // }
-        // // Function to send an image and En PDF to WhatsApp
-        // async function sendEnInvoiceToWhatsApp() {
-        //     try {
-        //         const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnInitialInvoice";
-        //         const imagePath = imageLessor.replace('~', '');
-        //         const dates = getFormattedDatesMiliadiAndHijri("en");
-        //         const miladiDateString = dates.miladiDate;
-        //         const hijriDateString = dates.hijriDate;
-        //         // First In Page
-        //         const contractNo = "@ViewBag.ContractNo";
-        //         const InvoiceAccountNo = "@ViewBag.InvoiceAccount";
-        //         const referenceType = "Create Contract";
-        //         const CarName = CarInformation.carInformation.crCasCarInformationConcatenateEnName;
-        //         // last in page
-        //         const balance = RenterInformation.availableBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        //         var DiscountInput = document.getElementById("Discount_Input").value;
-        //         const discountRate = parseFloat(DiscountInput).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        //         const TaxPercent = parseFloat(CarInformation.carPrice.crCasPriceCarBasicRentalTaxRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        //         const AmountRequired = TotalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        //         var AmountPayedInput = document.getElementById("AmountPayed").value;
-        //         let AmountPayed = parseFloat(AmountPayedInput);
-
-        //         // Check if AmountPayed is null, NaN, or empty
-        //         if (isNaN(AmountPayed) || !AmountPayedInput.trim()) {
-        //             AmountPayed = "0.00"; // Setting it as a string
-        //         } else {
-        //             // Convert to formatted string with 2 decimal places
-        //             AmountPayed = AmountPayed.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        //         }
-        //         var selectElement = document.getElementById("Contract_PaymentMethod");
-        //         var selectedOption = selectElement.options[selectElement.selectedIndex];
-        //         // Get the text of the selected option
-        //         var selectedText = selectedOption.textContent || selectedOption.innerText;
-        //         var selectedEnglishName = selectedOption.dataset.en;
-        //         if (selectedEnglishName == "" || selectedEnglishName == undefined || selectedEnglishName == NaN) {
-        //             selectedEnglishName = "";
-        //         }
-        //         var reasonPayment = document.getElementById("FormControl-last-Textarea").value;
-        //         // Signture Image
-        //         const namesAndsignatures = await loadEnSignatures();
-
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-
-        //             ctx.drawImage(img, 0, 0);
-        //             ctx.font = "bold 50px serif";
-        //             ctx.textAlign = "left";
-        //             ctx.fillStyle = "black";
-        //             // Receipt and type and renter and car name
-        //             ctx.fillText(InvoiceAccountNo, canvas.width - 2370, 610);
-        //             ctx.fillText(namesAndsignatures.renterName, canvas.width - 2360, 1070);
-        //             ctx.fillText(CarName, canvas.width - 2360, 1180);
-
-        //             ctx.font = "bold 42px serif";
-        //             ctx.fillText(referenceType, canvas.width - 2160, 895);
-        //             ctx.fillText(contractNo, canvas.width - 2000, 980);
-        //             // The Table
-        //             var YHeight = 1380;
-        //             var DiscountInput = document.getElementById("Discount_Input").value;
-        //             var daysNo = document.getElementById('dayNo').value;
-        //             var TaxPercent = parseInt(CarInformation.carPrice.crCasPriceCarBasicRentalTaxRate);
-        //             // The payed Information
-        //             const discountText = '%' + DiscountInput.toString();
-        //             const taxText = '%' + TaxPercent.toString();
-
-        //             ctx.fillText(balance, canvas.width - 2040, 2392);
-        //             ctx.fillText(discountText, canvas.width - 2090, 2485);
-        //             ctx.fillText(taxText, canvas.width - 2180, 2573);
-        //             ctx.fillText(AmountRequired, canvas.width - 2020, 2660);
-        //             ctx.fillText(AmountPayed, canvas.width - 2100, 2750);
-        //             ctx.fillText(selectedEnglishName, canvas.width - 2010, 2840);
-        //             ctx.fillText(reasonPayment, canvas.width - 2170, 2920);
-        //             ctx.font = "bold 35px serif";
-        //             //Date and contract no
-        //             ctx.fillText(hijriDateString, canvas.width - 2300, 668);
-        //             ctx.fillText(miladiDateString, canvas.width - 2270, 722);
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Rent
-        //             if (parseFloat(CarInformation.carPrice.crCasPriceCarBasicDailyRent) > 0) {
-        //                 YHeight = calculateAndDrawEn(ctx, canvas, "Rent", CarInformation.carPrice.crCasPriceCarBasicDailyRent, daysNo, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Rent
-
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Auth
-        //             var InFeesTamm = CarInformation.carPrice.crCasCarPriceBasicInFeesTamm;
-        //             var OutFeesTamm = CarInformation.carPrice.crCasCarPriceBasicOutFeesTamm;
-        //             var OutFeesTammInput = document.getElementById('Delegate-out');
-        //             var FeesTammValue = 0;
-        //             if (OutFeesTammInput.checked) {
-        //                 if (parseFloat(OutFeesTamm) != null) {
-        //                     FeesTammValue = parseFloat(OutFeesTamm);
-        //                 }
-        //                 else {
-        //                     FeesTammValue = 0;
-        //                 }
-        //             }
-        //             else {
-        //                 if (parseFloat(InFeesTamm) != null) {
-        //                     FeesTammValue = parseFloat(InFeesTamm);
-        //                 }
-        //                 else {
-        //                     FeesTammValue = 0;
-        //                 }
-        //             }
-        //             if (parseFloat(FeesTammValue) > 0) {
-        //                 YHeight = calculateAndDrawEn(ctx, canvas, "Delegation", FeesTammValue, 1, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Auth
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Advantages
-        //             if (parseFloat(AdvantagesValue) > 0) {
-        //                 YHeight = calculateAndDrawEn(ctx, canvas, "Features", AdvantagesValue, daysNo, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Advantages
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Additional Driver
-        //             var additionalDriver = document.getElementById("addational-driver");
-        //             var additionalDriverValue = 0;
-        //             if (additionalDriver.checked) {
-        //                 var AddDriverValue = CarInformation.carPrice.crCasPriceCarBasicAdditionalDriverValue;
-        //                 if (parseInt(AddDriverValue) != null) {
-        //                     additionalDriverValue = parseFloat(AddDriverValue);
-        //                 }
-        //                 else {
-        //                     additionalDriverValue = 0;
-        //                 }
-        //             }
-        //             if (additionalDriverValue > 0) {
-        //                 YHeight = calculateAndDrawEn(ctx, canvas, "Add Driver", additionalDriverValue, 1, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Additional Driver
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Private Driver
-        //             var privateDriverRadio1 = document.getElementById("PrivateDriver");
-        //             var privateDriverID = $("#Private-Driver-selectt").val();
-        //             var privateDriverValue = 0;
-        //             if (privateDriverRadio1.checked && privateDriverID != null) {
-        //                 var privateDriver = CarInformation.carPrice.crCasPriceCarBasicPrivateDriverValue;
-        //                 if (privateDriver != null) {
-        //                     privateDriverValue = parseFloat(privateDriver);
-        //                 }
-        //                 else {
-        //                     privateDriverValue = 0;
-        //                 }
-        //             }
-        //             else {
-        //                 privateDriverValue = 0;
-        //             }
-        //             if (privateDriverValue > 0) {
-        //                 YHeight = calculateAndDrawEn(ctx, canvas, "Private Driver", privateDriverValue, daysNo, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Private Driver
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// TotalChoices
-        //             var TotalChoices = $("#TotalChoices").text();
-        //             var choicesValue = 0;
-        //             if (TotalChoices != null && TotalChoices != 0 && TotalChoices != "" && TotalChoices != undefined) {
-        //                 choicesValue = parseFloat(TotalChoices);
-        //             }
-        //             else {
-        //                 choicesValue = 0;
-        //             }
-        //             if (choicesValue > 0) {
-        //                 YHeight = calculateAndDrawEn(ctx, canvas, "Options", choicesValue, daysNo, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////TotalChoices
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// TotalAdditional
-
-        //             var TotalAdditionals = $("#TotalAdditionals").text();
-        //             var additionalValue = 0;
-        //             if (TotalAdditionals != null && TotalAdditionals != 0 && TotalAdditionals != "" && TotalAdditionals != undefined) {
-        //                 additionalValue = parseFloat(TotalAdditionals);
-        //             }
-        //             else {
-        //                 additionalValue = 0;
-        //             }
-        //             if (additionalValue > 0) {
-        //                 YHeight = calculateAndDrawEn(ctx, canvas, "Additionals", additionalValue, 1, DiscountInput, TaxPercent, YHeight);
-        //             }
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// TotalAdditional
-
-
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total
-        //             var tTotal = calculateTotalAmountPerDay(parseFloat(CarInformation.carPrice.crCasPriceCarBasicDailyRent), parseFloat(FeesTammValue), parseFloat(AdvantagesValue), parseFloat(privateDriverValue), parseFloat(additionalDriverValue), parseFloat(additionalValue), parseFloat(choicesValue), daysNo);
-        //             var tTotalDiscount = calculateTotalDiscountAmount(tTotal, DiscountInput);
-        //             var tTotalAfterDiscount = tTotal - tTotalDiscount;
-        //             var tTotalTax = (tTotalAfterDiscount) * (TaxPercent / 100);
-        //             var TotalAmount = parseFloat(TotalActualContract)
-        //             // // الاجمالي
-        //             ctx.fillText(tTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1510, 2250);
-        //             ctx.fillText(tTotalDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1200, 2250);
-        //             ctx.fillText(tTotalAfterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 910, 2250);
-        //             ctx.fillText(tTotalTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 620, 2250);
-        //             ctx.fillText(TotalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 310, 2250);
-        //             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////// Total
-
-
-
-
-
-        //             // director and renter and user
-        //             ctx.fillText(namesAndsignatures.directorOfLessor, canvas.width - 1980, 3050);
-        //             ctx.fillText(namesAndsignatures.directorOfBranch, canvas.width - 2020, 3180);
-        //             ctx.fillText(namesAndsignatures.userName, canvas.width - 1275, 3050);
-        //             ctx.fillText(namesAndsignatures.renterName, canvas.width - 1275, 3180);
-        //             if (namesAndsignatures.signatureImg4) {
-        //                 ctx.drawImage(namesAndsignatures.signatureImg4, canvas.width - 1250, 3125, 200, 100);
-        //             }
-        //             canvas.toBlob(async function (blob) {
-        //                 createPdfAndSendToWhatsApp(null, InvoiceAccountNo, blob, "SavePdfEnInvoice", "en");
-        //             }, 'image/png');
-        //         };
-        //         img.src = URL.createObjectURL(blob);
-        //     } catch (error) {
-        //         console.error("Error creating English Invoice:", error);
-        //         window.location.href = "/BS/Contract/FailedToast?type=eninvoice";
-        //     }
-        // };
-
-        // function calculateAndDrawEn(ctx, canvas, itemName, itemValue, days, discountInput, taxPercent, yHeight) {
-        //     var itemTotal = parseFloat(itemValue) * parseInt(days);
-        //     var discountValue = itemTotal * (parseFloat(discountInput) / 100);
-        //     var totalAfterDiscount = itemTotal - discountValue;
-        //     var taxValue = totalAfterDiscount * (taxPercent / 100);
-        //     var totalActual = parseFloat(totalAfterDiscount) + parseFloat(taxValue);
-        //     ctx.fillText(itemName, canvas.width - 2300, yHeight);
-        //     ctx.fillText(itemValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1950, yHeight);
-        //     ctx.fillText(days, canvas.width - 1700, yHeight);
-        //     ctx.fillText(itemTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1510, yHeight);
-        //     ctx.fillText(discountValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 1200, yHeight);
-        //     ctx.fillText(totalAfterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 910, yHeight);
-        //     ctx.fillText(taxValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 620, yHeight);
-        //     ctx.fillText(totalActual.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 310, yHeight);
-
-        //     return yHeight + 88; // Update yHeight for the next item
-        // }
-
-        // async function sendArReceiptToWhatsApp() {
-        //     try {
-        //         const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalCatchReceipt";
-        //         const imagePath = imageLessor.replace('~', '');
-        //         const dates = getFormattedDatesMiliadiAndHijri("ar");
-        //         const miladiDateString = dates.miladiDate;
-        //         const hijriDateString = dates.hijriDate;
-        //         // First In Page
-        //         const contractNo = "@ViewBag.ContractNo";
-        //         const accountReceiptNo = "@ViewBag.AccountReceiptNo";
-        //         var selectElement = document.getElementById("Contract_PaymentMethod");
-        //         var selectedOption = selectElement.options[selectElement.selectedIndex];
-        //         // Get the text of the selected option
-        //         const selectedText = selectedOption.textContent || selectedOption.innerText;
-        //         var selectedArabicName = selectedOption.dataset.ar;
-        //         //get Data Director lessor and branch and get renter and user
-        //         var reasonPayment = document.getElementById("FormControl-last-Textarea").value;
-        //         var AmountPayedInput = document.getElementById("AmountPayed").value;
-        //         const AmountPayed = parseFloat(AmountPayedInput).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        //         const [beforeDecimal, afterDecimal] = splitNumberbeforeAndafterDecimal(AmountPayed);
-        //         const numberToText = await dataChanged(AmountPayed);
-        //         const [firstHalf, secondHalf] = splitTextInHalf(numberToText.ar_concatenate)
-        //         var phaseFor = `${contractNo}  دفعة تحت الحساب لعقد ايجار السيارة لعقد`;
-
-        //         // Signture Image
-
-        //         const namesAndsignatures = await loadArSignatures();
-
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         let canvas_width = 2481;
-        //         let texts = [
-        //             { content: accountReceiptNo, x: canvas_width - 1860, y: 624 },
-        //             { content: hijriDateString, x: canvas_width - 300, y: 624 },
-        //             { content: miladiDateString, x: canvas_width - 305, y: 685 },
-        //             { content: beforeDecimal, x: canvas_width - 2005, y: 720 },
-        //             { content: afterDecimal, x: canvas_width - 1940, y: 720 },
-        //             { content: namesAndsignatures.renterName, x: canvas_width - 480, y: 905 },
-        //             { content: firstHalf, x: canvas_width - 380, y: 1005 },
-        //             { content: secondHalf, x: canvas_width - 380, y: 1070 },
-        //             { content: selectedArabicName, x: canvas_width - 400, y: 1185 },
-        //             { content: phaseFor, x: canvas_width - 390, y: 1285 },
-        //             { content: reasonPayment, x: canvas_width - 350, y: 1385 },
-
-        //             { content: namesAndsignatures.directorOfLessor, x: canvas_width - 320, y: 1568 },
-        //             { content: namesAndsignatures.userName, x: canvas_width - 1120, y: 1568 },
-        //             { content: namesAndsignatures.directorOfBranch, x: canvas_width - 290, y: 1705 },
-        //             { content: namesAndsignatures.renterName, x: canvas_width - 1120, y: 1705 },
-
-        //         ];
-        //         let signatures = [
-        //             { content: namesAndsignatures.signatureImg1, x: canvas_width - 400, y: 1495, width: 200, height: 100 },
-        //             { content: namesAndsignatures.signatureImg2, x: canvas_width - 1170, y: 1495, width: 200, height: 100 },
-        //             { content: namesAndsignatures.signatureImg3, x: canvas_width - 400, y: 1630, width: 200, height: 100 },
-        //             { content: namesAndsignatures.signatureImg4, x: canvas_width - 1170, y: 1630, width: 200, height: 100 }
-        //         ];
-        //         let textStyleOptions = {
-        //             fontWeight: "bold",
-        //             fontSize: 37,
-        //             fontFamily: "serif",
-        //             textColor: "rgba(0, 0, 0)",
-        //             textAlign: "right"
-        //         };
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         let canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             let loadedImageWidth = img.width;
-        //             let loadedImageHeight = img.height;
-
-        //             canvas.width = loadedImageWidth;
-        //             canvas_width = loadedImageWidth;
-        //             canvas.height = loadedImageHeight;
-
-        //             ctx.drawImage(img, 0, 0);
-
-        //             texts.forEach(text => {
-        //                 ctx.font = `${textStyleOptions.fontWeight} ${textStyleOptions.fontSize}px ${textStyleOptions.fontFamily}`;
-        //                 ctx.fillStyle = textStyleOptions.textColor;
-
-        //                 let textWidth = ctx.measureText(text.content).width;
-
-        //                 let x = text.x;
-        //                 if (textStyleOptions.textAlign === "right") {
-        //                     x -= textWidth;
-        //                 } else if (textStyleOptions.textAlign === "center") {
-        //                     x -= textWidth / 2;
-        //                 }
-
-        //                 ctx.fillText(text.content, x, text.y);
-
-        //             });
-
-        //             signatures.forEach(signature => {
-        //                 let signatureWidth = ctx.measureText(signature.content).width;
-        //                 let x = signature.x;
-        //                 if (textStyleOptions.textAlign === "right") {
-        //                     x -= signatureWidth;
-        //                 } else if (textStyleOptions.textAlign === "center") {
-        //                     x -= signatureWidth / 2;
-        //                 }
-        //                 if (signature.content) {
-        //                     ctx.drawImage(signature.content, x, signature.y, signature.width, signature.height);
-        //                 }
-        //             });
-
-        //             canvas.toBlob(async function (blob) {
-        //                 createPdfAndSendToWhatsApp(accountReceiptNo, null, blob, "SavePdfArReceipt", "ar");
-        //             }, 'image/png');
-        //         };
-        //         img.src = URL.createObjectURL(blob);
-        //     } catch (error) {
-        //         console.error("Error creating Arabic Receipt:", error);
-        //         window.location.href = "/BS/Contract/FailedToast?type=arreceipt";
-        //     }
-        // };
-        // async function sendEnReceiptToWhatsApp() {
-        //     try {
-        //         const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnExternalCatchReceipt";
-        //         const imagePath = imageLessor.replace('~', '');
-        //         const dates = getFormattedDatesMiliadiAndHijri("en");
-        //         const miladiDateString = dates.miladiDate;
-        //         const hijriDateString = dates.hijriDate;
-        //         // First In Page
-        //         const contractNo = "@ViewBag.ContractNo";
-        //         const accountReceiptNo = "@ViewBag.AccountReceiptNo";
-
-        //         var selectElement = document.getElementById("Contract_PaymentMethod");
-        //         var selectedOption = selectElement.options[selectElement.selectedIndex];
-        //         // Get the text of the selected option
-        //         const selectedText = selectedOption.textContent || selectedOption.innerText;
-        //         var selectedEnglishName = selectedOption.dataset.en;
-        //         //get Data Director lessor and branch and get renter and user
-        //         var reasonPayment = document.getElementById("FormControl-last-Textarea").value;
-        //         var AmountPayedInput = document.getElementById("AmountPayed").value;
-        //         const AmountPayed = parseFloat(AmountPayedInput).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        //         const numberToText = await dataChanged(AmountPayed);
-        //         // Signture Image
-        //         const namesAndsignatures = await loadEnSignatures();
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-
-        //             ctx.drawImage(img, 0, 0);
-        //             ctx.font = "bold 33px serif";
-        //             ctx.textAlign = "left";
-        //             ctx.fillStyle = "black";
-
-
-        //             ctx.fillText(miladiDateString, canvas.width - 2215, 700);
-        //             ctx.fillText(hijriDateString, canvas.width - 2235, 630);
-
-        //             ctx.font = "bold 37px serif";
-        //             ctx.fillText(accountReceiptNo, canvas.width - 620, 625);
-
-        //             var [beforeDecimalNumber, afterDecimalNumber] = splitNumberbeforeAndafterDecimal(AmountPayed);
-
-        //             // Assuming `ctx` is your canvas context
-        //             ctx.fillText(beforeDecimalNumber, canvas.width - 450, 720);
-        //             ctx.fillText(afterDecimalNumber, canvas.width - 270, 720);
-
-        //             ctx.fillText(namesAndsignatures.renterName, canvas.width - 2050, 900);
-        //             ctx.fillText(numberToText.en_concatenate, canvas.width - 2100, 1013);
-        //             ctx.fillText(selectedEnglishName, canvas.width - 2000, 1200);
-
-        //             // //Total
-        //             var phaseFor = `Payment to extend the car rental contract ${contractNo}`;
-        //             ctx.fillText(phaseFor, canvas.width - 2250, 1310);
-        //             ctx.fillText(reasonPayment, canvas.width - 2050, 1420);
-        //             ctx.font = "bold 37px serif";
-
-        //             // Draw director of lessor
-        //             ctx.fillText(namesAndsignatures.directorOfLessor, canvas.width - 1990, 1560);
-        //             if (namesAndsignatures.signatureImg1) {
-        //                 ctx.drawImage(namesAndsignatures.signatureImg1, canvas.width - 1700, 1505, 200, 100);
-        //             }
-
-        //             // Draw user
-        //             ctx.fillText(namesAndsignatures.userName, canvas.width - 1300, 1560);
-        //             if (namesAndsignatures.signatureImg2) {
-        //                 ctx.drawImage(namesAndsignatures.signatureImg2, canvas.width - 900, 1505, 200, 100);
-        //             }
-
-        //             // Draw director of branch
-        //             ctx.fillText(namesAndsignatures.directorOfBranch, canvas.width - 2020, 1690);
-        //             if (namesAndsignatures.signatureImg3) {
-        //                 ctx.drawImage(namesAndsignatures.signatureImg3, canvas.width - 1700, 1630, 200, 100);
-        //             }
-
-        //             // Draw renter
-        //             ctx.fillText(namesAndsignatures.renterName, canvas.width - 1300, 1690);
-        //             if (namesAndsignatures.signatureImg4) {
-        //                 ctx.drawImage(namesAndsignatures.signatureImg4, canvas.width - 900, 1630, 200, 100);
-        //             }
-
-        //             canvas.toBlob(async function (blob) {
-        //                 createPdfAndSendToWhatsApp(accountReceiptNo, null, blob, "SavePdfEnReceipt", "en");
-        //             }, 'image/png');
-        //         };
-        //         img.src = URL.createObjectURL(blob);
-        //     } catch (error) {
-        //         console.error("Error creating English Receipt:", error);
-        //         window.location.href = "/BS/Contract/FailedToast?type=enreceipt";
-        //     }
-        // };
-        // function calculateTotalAmountPerDay(rent, auth, feature, privateDriver, additionalDriver, additionals, choices, days) {
-        //     var daysNo = parseInt(days);
-        //     var total = (rent * daysNo) + (auth) + (feature * daysNo) + (additionalDriver) + (privateDriver * daysNo) + (additionals) + (choices * daysNo);
-        //     return total;
-        // }
-        // function calculateTotalDiscountAmount(total, discount) {
-        //     var discountValue = parseFloat(discount) / 100;
-        //     var totalDiscount = total * discountValue;
-        //     return totalDiscount;
-        // }
-
-    </script>
     <!--Create Receipt PDf-->
     <script>
-    async function CreateReceiptPdf() {
-            const accountReceiptNo = "@ViewBag.AccountReceiptNo";
-            const canvas = document.getElementById("myCanvas");
-            const dates = getFormattedDatesMiliadiAndHijri();
-            var namesOfPaymentMethod = getSelectedOptionDataPaymentMethod();
-            var getAfterAndBeforeDecimalAmountPayed =await getFormattedAmount();
-		    console.log("getAfterAndBeforeDecimalAmountPayed",getAfterAndBeforeDecimalAmountPayed);
-            const contractNo = "@ViewBag.ContractNo";
-            const dynamicData = {
-                DATE_AR:dates.hijriDate.ar,
-                DATE_EN: dates.miladiDate.en,
-                HIJRI_DATE_AR: dates.hijriDate.en,
-                HIJRI_DATE_EN: dates.miladiDate.ar ,
-                CONTRACT_NUMBER: accountReceiptNo,
-                AMOUNT: getAfterAndBeforeDecimalAmountPayed.beforeDecimal,
-                HALALAS: getAfterAndBeforeDecimalAmountPayed.afterDecimal,
-                TENANT_NAME_AR: RenterInformation.personalArName,
-                TENANT_NAME_EN: RenterInformation.personalEnName,
-                AMOUNT_AR: getAfterAndBeforeDecimalAmountPayed.arabicText,
-                AMOUNT_EN: getAfterAndBeforeDecimalAmountPayed.englishText,
-                PAYMENT_METHOD_AR: namesOfPaymentMethod.ar,
-                PAYMENT_METHOD_EN: namesOfPaymentMethod.en,
-                PAYMENT_DESC_AR: `${contractNo}  دفعة تحت الحساب لعقد ايجار السيارة لعقد`,
-                PAYMENT_DESC_EN: `Payment to extend the car rental contract ${contractNo}`,
-                NOTES_AR: document.getElementById("FormControl-last-Textarea").value,
-                APPROVER_NAME_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
-                APPROVER_NAME_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
-                images: {
-                    background: "@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageReceipt)",
-                    signature: "@Url.Content(user?.CrMasUserInformationSignature)",
-                    qr: "@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
-                    stamp: "@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
-                },
-            };
-            const loadedImages = await loadDynamicImages(dynamicData.images);
-            const dataWithImages = { ...dynamicData, images: loadedImages };
-            console.log("dataWithImages",dataWithImages);
-            await drawReceipt(canvas, dataWithImages);
-            createPdf(accountReceiptNo, canvas, "SavePdfReceipt", "Contract_AccountReceiptNo");
-    };
-    function getSelectedOptionDataPaymentMethod() {
-            var selectElement = document.getElementById("Contract_PaymentMethod");
-            var selectedOption = selectElement.options[selectElement.selectedIndex];
+        async function CreateReceiptPdf() {
+                const accountReceiptNo = "@ViewBag.AccountReceiptNo";
+                const canvas = document.getElementById("myCanvas");
+                const dates = getFormattedDatesMiliadiAndHijri();
+                var namesOfPaymentMethod = getSelectedOptionDataPaymentMethod();
+                var getAfterAndBeforeDecimalAmountPayed =await getFormattedAmount();
+                console.log("getAfterAndBeforeDecimalAmountPayed",getAfterAndBeforeDecimalAmountPayed);
+                const contractNo = "@ViewBag.ContractNo";
+                const dynamicData = {
+                    DATE_AR:dates.hijriDate.ar,
+                    DATE_EN: dates.miladiDate.en,
+                    HIJRI_DATE_AR: dates.hijriDate.en,
+                    HIJRI_DATE_EN: dates.miladiDate.ar ,
+                    CONTRACT_NUMBER: accountReceiptNo,
+                    AMOUNT: getAfterAndBeforeDecimalAmountPayed.beforeDecimal,
+                    HALALAS: getAfterAndBeforeDecimalAmountPayed.afterDecimal,
+                    TENANT_NAME_AR: RenterInformation.personalArName,
+                    TENANT_NAME_EN: RenterInformation.personalEnName,
+                    AMOUNT_AR: getAfterAndBeforeDecimalAmountPayed.arabicText,
+                    AMOUNT_EN: getAfterAndBeforeDecimalAmountPayed.englishText,
+                    PAYMENT_METHOD_AR: namesOfPaymentMethod.ar,
+                    PAYMENT_METHOD_EN: namesOfPaymentMethod.en,
+                    PAYMENT_DESC_AR: `${contractNo}  دفعة تحت الحساب لعقد ايجار السيارة لعقد`,
+                    PAYMENT_DESC_EN: `Payment to extend the car rental contract ${contractNo}`,
+                    NOTES_AR: document.getElementById("FormControl-last-Textarea").value,
+                    APPROVER_NAME_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                    APPROVER_NAME_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                    images: {
+                        background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageReceipt)",
+                        signature: "@Url.Content(user?.CrMasUserInformationSignature)",
+                        qr: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                        stamp: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                    },
+                };
+                const loadedImages = await loadDynamicImages(dynamicData.images);
+                const dataWithImages = { ...dynamicData, images: loadedImages };
+                console.log("dataWithImages",dataWithImages);
+                await drawReceipt(canvas, dataWithImages);
+                createPdf(accountReceiptNo, canvas, "SavePdfReceipt", "Contract_AccountReceiptNo");
+        };
+        function getSelectedOptionDataPaymentMethod() {
+                var selectElement = document.getElementById("Contract_PaymentMethod");
+                var selectedOption = selectElement.options[selectElement.selectedIndex];
 
-            // Get the text of the selected option
-            const selectedText = selectedOption.textContent || selectedOption.innerText;
-    
-            // Get the Arabic and English names from data attributes
-            var selectedArabicName = selectedOption.dataset.ar;
-            var selectedEnglishName = selectedOption.dataset.en;
-    
-            // Return the data as an object
-            return {
-                ar: selectedArabicName,
-                en: selectedEnglishName,
-            };
-    }
-    async function getFormattedAmount() {
-                    // الحصول على قيمة الإدخال من العنصر
-        var AmountPayedInput = document.getElementById("AmountPayed").value;
+                // Get the text of the selected option
+                const selectedText = selectedOption.textContent || selectedOption.innerText;
 
-        // تحويل القيمة إلى رقم والتأكد من وجود خانتين عشريتين
-        const rawAmountPayed = parseFloat(AmountPayedInput).toFixed(2);
+                // Get the Arabic and English names from data attributes
+                var selectedArabicName = selectedOption.dataset.ar;
+                var selectedEnglishName = selectedOption.dataset.en;
 
-        // تقسيم الرقم إلى جزأين: الجزء الصحيح والجزء العشري
-        const [beforeDecimalll, afterDecimal] = rawAmountPayed.split(".");
-
-        // تنسيق الجزء الصحيح ليشمل فاصلة الآلاف
-            const beforeDecimal = parseInt(beforeDecimalll).toLocaleString('en-US');
-
-                // استدعاء البيانات لتغيير الرقم إلى نص
-                    const numberToText = await dataChanged(rawAmountPayed);
-
-                // النص بالعربية والإنجليزية
-                const arabicText = numberToText.ar_concatenate;
-                const englishText = numberToText.en_concatenate;
-
-                // إرجاع النتيجة
+                // Return the data as an object
                 return {
-                    beforeDecimal,
-                    afterDecimal,
-                    arabicText,
-                    englishText
+                    ar: selectedArabicName,
+                    en: selectedEnglishName,
                 };
         }
+        async function getFormattedAmount() {
+                        // الحصول على قيمة الإدخال من العنصر
+            var AmountPayedInput = document.getElementById("AmountPayed").value;
+
+            // تحويل القيمة إلى رقم والتأكد من وجود خانتين عشريتين
+            const rawAmountPayed = parseFloat(AmountPayedInput).toFixed(2);
+
+            // تقسيم الرقم إلى جزأين: الجزء الصحيح والجزء العشري
+            const [beforeDecimalll, afterDecimal] = rawAmountPayed.split(".");
+
+            // تنسيق الجزء الصحيح ليشمل فاصلة الآلاف
+                const beforeDecimal = parseInt(beforeDecimalll).toLocaleString('en-US');
+
+                    // استدعاء البيانات لتغيير الرقم إلى نص
+                        const numberToText = await dataChanged(rawAmountPayed);
+
+                    // النص بالعربية والإنجليزية
+                    const arabicText = numberToText.ar_concatenate;
+                    const englishText = numberToText.en_concatenate;
+
+                    // إرجاع النتيجة
+                    return {
+                        beforeDecimal,
+                        afterDecimal,
+                        arabicText,
+                        englishText
+                    };
+            }
     </script>
-    <!--Create Ar Contract Pdf-->
+    <!--Create invoice -->
     <script>
-        // function loadImage(src) {
-        //     return new Promise((resolve) => {
-        //         const img = new Image();
-        //         img.onload = () => resolve(img); // Resolve with the loaded image
-        //         img.onerror = () => resolve(); // Resolve with an empty string if loading fails
-        //         img.src = src;
-        //     });
-        // }
+        async function CreateInvoicePdf() {
+            const accountInvoiceNo = "@ViewBag.InvoiceAccount";
+            const canvas = document.getElementById("myCanvas");
+             const dates = getFormattedDatesMiliadiAndHijri();
+            var rentDailyValue= GetRentDailyValue();
+            var delegationValue= GetDelegationValue();
+            var addDriverValue = GetAddDriverValue();
+            var privateDriverValue = GetPrivateDriverValue();
+            var choicesValue = GetChoicesValue();
+            var additionalsValue = GetAdditionalsValue();
 
-        // async function loadArSignatures() {
-        //     console.log("RenterInformation.signture", RenterInformation.signture);
+            var discountInput = parseFloat(document.getElementById("Discount_Input").value) || 0;
+            var daysNo =parseInt(document.getElementById('dayNo').value) || 0;
+            var taxPercent = parseFloat(CarInformation.carPrice.crCasPriceCarBasicRentalTaxRate) || 0;
+            var advantagesValue = parseFloat(AdvantagesValue) || 0;
 
-        //     var renterName = RenterInformation.personalArName;
-        //     var renterSignature = RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null;
+            const itemsData = [
+                {
+                    arabic: "الإيجار",
+                    english: "Rent",
+                    value: rentDailyValue,
+                    number: daysNo,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "التفويض",
+                    english: "Delegation",
+                    value: delegationValue,
+                    number: 1,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "المميزات",
+                    english: "Features",
+                    value: advantagesValue,
+                    number: daysNo,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "السائق الاضافي",
+                    english: "Add Driver",
+                    value: addDriverValue,
+                    number: 1,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "الخيارات",
+                    english: "Choices",
+                    value: choicesValue,
+                    number: daysNo,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "الاضافات",
+                    english: "Additionals",
+                    value: additionalsValue,
+                    number: 1,
+                    discount: discountInput,
+                    vat: taxPercent,
+                }
+            ];
 
-        //     var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
-        //     var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature") ? decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '') : null;
+            const processedData = generateInvoiceItems(itemsData);
 
-        //     var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorArName");
-        //     var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector")
-        //         ? decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '')
-        //         : null;
+            const dynamicData = {
+                CONTRACT_NUMBER: accountInvoiceNo,
+                DATE_AR:dates.hijriDate.ar,
+                DATE_EN: dates.miladiDate.en,
+                DATE_EN_LONG: dates.hijriDate.en,
+                CONTRACT_CREATE_AR: "إنشاء عقد",
+                CONTRACT_CREATE_EN: "Create Contract",
+                TENANT_NAME_AR: RenterInformation.personalArName,
+                TENANT_NAME_EN: RenterInformation.personalEnName,
+                CAR_DESCRIPTION_AR: CarInformation.carInformation.crCasCarInformationConcatenateArName,
+                CAR_DESCRIPTION_EN: CarInformation.carInformation.crCasCarInformationConcatenateEnName,
+                EMPLOYEE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                EMPLOYEE_EN:decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                images: {
+                    background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageTaxInvoice)",
+                    signature: "@Url.Content(user?.CrMasUserInformationSignature)",
+                    qr: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                    stamp: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                },
+                Serviceitems: processedData.Serviceitems,
+                Valueitems: processedData.Valueitems,
+                Numberitems: processedData.Numberitems,
+                Amountitems: processedData.Amountitems,
+                Discountitems: processedData.Discountitems,
+                AfterDiscountitems: processedData.AfterDiscountitems,
+                VATitems: processedData.VATitems,
+                Totalitems: processedData.Totalitems,
+            };
 
-        //     var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
-        //     var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature")
-        //         ? decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '')
-        //         : null;
+            const loadedImages = await loadDynamicImagesInvoice(dynamicData.images);
+            const dataWithImages = { ...dynamicData, images: loadedImages };
+            console.log("dataWithImages", dataWithImages);
+            await drawInvoice(canvas, dataWithImages);
+            createPdfInvoice(accountInvoiceNo, canvas, "SavePdfInvoice", "Contract_InitialInvoiceNo");
+        }
+        function generateInvoiceItems(itemsData) {
+            const processedItems = itemsData
+                .filter(item => item.value > 0 && item.number > 0) // تصفية القيم الصفرية
+                .map(item => {
+                    const totalBeforeDiscount = item.value * item.number; // إجمالي السعر قبل الخصم
+                    const discountAmount = (item.discount / 100) * totalBeforeDiscount; // قيمة الخصم
+                    const afterDiscount = totalBeforeDiscount - discountAmount; // القيمة بعد الخصم
+                    const vatAmount = (item.vat / 100) * afterDiscount; // الضريبة
+                    const totalAfterVAT = afterDiscount + vatAmount; // الإجمالي بعد الضريبة
 
-        //     const promises = [];
+                    return {
+                        arabic: item.arabic,
+                        english: item.english,
+                        value: item.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // قيمة الوحدة
+                        number: item.number, // العدد
+                        amount: totalBeforeDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // إجمالي السعر قبل الخصم
+                        discount: discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // قيمة الخصم
+                        afterDiscount: afterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // القيمة بعد الخصم
+                        vat: vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // الضريبة
+                        total: totalAfterVAT.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // الإجمالي بعد الضريبة
+                    };
+                });
 
-        //     // Check each signature and push to promises if it exists
-        //     if (directorOfLessorSignature) {
-        //         promises.push(loadImage(directorOfLessorSignature));
-        //     }
+            // حساب المجموع لكل عمود
+            const sumColumn = (key) =>
+                processedItems.reduce((sum, item) => sum + parseFloat(item[key]), 0).toFixed(2);
 
-        //     if (userSignature) {
-        //         promises.push(loadImage(userSignature));
-        //     }
-
-        //     if (directorOfBranchSignature) {
-        //         promises.push(loadImage(directorOfBranchSignature));
-        //     }
-
-        //     if (renterSignature) {
-        //         promises.push(loadImage(renterSignature));
-        //     }
-
-        //     // Wait for all valid signatures to load
-        //     const signatureImages = await Promise.all(promises);
-
-        //     return {
-        //         renterName: renterName,
-        //         userName: userName,
-        //         directorOfLessor: directorOfLessor,
-        //         directorOfBranch: directorOfBranch,
-        //         signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
-        //         signatureImg2: signatureImages[1] || '',
-        //         signatureImg3: signatureImages[2] || '',
-        //         signatureImg4: signatureImages[3] || ''
-        //     };
-        // }
-        // function DrawArNameAndSignture(signatures, ctx, canvas) {
-        //     // Draw director of lessor
-        //     ctx.fillText(signatures.directorOfLessor, canvas.width - 315, 3055);
-        //     if (signatures.signatureImg1) {
-        //         ctx.drawImage(signatures.signatureImg1, canvas.width - 820, 2980, 200, 100);
-        //     }
-
-        //     // Draw user
-        //     ctx.fillText(signatures.userName, canvas.width - 1120, 3055);
-        //     if (signatures.signatureImg2) {
-        //         ctx.drawImage(signatures.signatureImg2, canvas.width - 1620, 2980, 200, 100);
-        //     }
-
-        //     // Draw director of branch
-        //     ctx.fillText(signatures.directorOfBranch, canvas.width - 280, 3190);
-        //     if (signatures.signatureImg3) {
-        //         ctx.drawImage(signatures.signatureImg3, canvas.width - 820, 3120, 200, 100);
-        //     }
-
-        //     // Draw renter
-        //     ctx.fillText(signatures.renterName, canvas.width - 1140, 3190);
-        //     if (signatures.signatureImg4) {
-        //         ctx.drawImage(signatures.signatureImg4, canvas.width - 1620, 3120, 200, 100);
-        //     }
-        // }
-
-        // //Page1
-        // const getArDataOfPage1 = () => {
-        //     // Contract Info
-        //     const contractNo = "@ViewBag.ContractNo";
-        //     var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
-        //     var startDate = new Date(dateTimeNow);
-        //     var daysNo = parseInt(document.getElementById('dayNo').value);
-        //     var endDate = new Date(startDate);
-        //     endDate.setDate(endDate.getDate() + daysNo);
-        //     const miladiDate = new Date(dateTimeNow);
-        //     return {
-        //         contractNo: "@ViewBag.ContractNo" || "",
-        //         miladiDateString: getFormatDate(miladiDate) || "",
-        //         startMiladiDate: getFormatDate(startDate) || "",
-        //         endMiladiDate: getFormatDate(endDate) || "",
-        //         currentHijriDate: formatHijriDate(miladiDate) || "",
-        //         startHijriDate: formatHijriDate(startDate) || "",
-        //         endHijriDate: formatHijriDate(endDate) || "",
-        //         status: "جديد",
-        //         branchName: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationArName") || "",
-        //         branchPhone: (decodeHTMLEntities("@Model.CrCasBranchInformation.CrMasBranchInformationTeleKey") + decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationTelephone")) || "",
-        //         branchMobile: (decodeHTMLEntities("@Model.CrCasBranchInformation.CrMasBranchInformationMobileKey") + decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationMobile")) || "",
-        //         branchEmail: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationLessorNavigation.CrMasLessorInformationEmail") || "",
-        //         branchPost: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchPost.CrCasBranchPostArConcatenate") || "",
-        //         CarName: CarInformationForContract.crCasCarInformationConcatenateArName || "",
-        //         CarSerialNo: CarInformationForContract.crCasCarInformationSerailNo || "",
-        //         CarRegistration: CarInformationForContract.registerationAr || "",
-        //         CarFuel: CarInformationForContract.fuelAr || "",
-        //         CarCVT: CarInformationForContract.cvtAr || "",
-        //         RunningCardNo: CarInformationForContract.runningCardNo || "",
-        //         RunningCardEndDate: CarInformationForContract.runningCardEndDate || "",
-        //         InsurancePolicyNo: CarInformationForContract.insurancePolicyNo || "",
-        //         InsurancePolicyEndDate: CarInformationForContract.insurancePolicyEndDate || "",
-        //         PeriodicInspectionNo: CarInformationForContract.periodicInspectionNo || "",
-        //         RenterName: RenterInformation.personalArName || "",
-        //         RenterId: RenterInformation.renterID || "",
-        //         RenterMembership: RenterInformation.arMembership || "",
-        //         RenterEmail: RenterInformation.personalEmail || "",
-        //         RenterPost: RenterInformation.postArNameConcenate || "",
-        //         RenterReasons: $("#Contract_RenterReasons").val() || ""
-        //     };
-        // };
-        // const CreateArPageContract1 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         try {
-        //             console.log("RenterInformation FirstPage", RenterInformation);
-        //             var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage1";
-        //             var imagePath = image.replace('~', '');
-        //             // Contract Info
-        //             const contractNo = "@ViewBag.ContractNo";
-        //             // get data For Page 1
-        //             var Data = getArDataOfPage1();
-        //             var signtures = await loadArSignatures();
-        //             const responseImage = await fetch(imagePath);
-        //             const blob = await responseImage.blob();
-        //             var canvas = document.createElement("canvas");
-        //             var ctx = canvas.getContext("2d");
-        //             var url;
-        //             var img = new Image();
-        //             img.crossOrigin = "Anonymous";
-        //             img.onload = function () {
-        //                 canvas.width = img.width;
-        //                 canvas.height = img.height;
-
-        //                 ctx.drawImage(img, 0, 0);
-
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.textAlign = "right";
-        //                 ctx.fillStyle = "black";
-        //                 //Contract
-        //                 ctx.fillText(Data.contractNo, canvas.width - 380, 790);
-        //                 ctx.fillText(Data.currentHijriDate, canvas.width - 300, 870);
-        //                 ctx.fillText(Data.miladiDateString, canvas.width - 1120, 870);
-        //                 ctx.fillText(Data.startHijriDate, canvas.width - 390, 945);
-        //                 ctx.fillText(Data.startMiladiDate, canvas.width - 1120, 945);
-        //                 ctx.fillText(Data.endHijriDate, canvas.width - 430, 1025);
-        //                 ctx.fillText(Data.endMiladiDate, canvas.width - 1120, 1025);
-        //                 ctx.fillText(Data.status, canvas.width - 390, 1105);
-        //                 //Branch
-        //                 ctx.font = "bold 50px serif";
-        //                 ctx.fillText(Data.branchName, canvas.width - 175, 1275);
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.fillText(Data.branchMobile, canvas.width - 325, 1390);
-        //                 ctx.fillText(Data.branchPhone, canvas.width - 1090, 1390);
-        //                 ctx.fillText(Data.branchEmail, canvas.width - 460, 1475);
-        //                 ctx.fillText(Data.branchPost, canvas.width - 330, 1560);
-        //                 //Car
-        //                 ctx.font = "bold 50px serif";
-        //                 ctx.fillText(Data.CarName, canvas.width - 175, 1750);
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.fillText(Data.CarSerialNo, canvas.width - 455, 1870);
-        //                 ctx.fillText(Data.CarRegistration, canvas.width - 360, 1955);
-        //                 ctx.fillText(Data.CarFuel, canvas.width - 1150, 1955);
-        //                 ctx.fillText(Data.CarCVT, canvas.width - 1685, 1955);
-        //                 ctx.fillText(Data.PeriodicInspectionNo, canvas.width - 470, 2040);
-        //                 ctx.fillText(Data.RunningCardNo, canvas.width - 455, 2122)
-        //                 ctx.fillText(Data.RunningCardEndDate, canvas.width - 1630, 2122);
-        //                 ctx.fillText(Data.InsurancePolicyNo, canvas.width - 420, 2207);
-        //                 ctx.fillText("", canvas.width - 1160, 2207);
-        //                 ctx.fillText(Data.InsurancePolicyEndDate, canvas.width - 1630, 2207);
-        //                 // Renter
-        //                 ctx.font = "bold 50px serif";
-        //                 ctx.fillText(Data.RenterName, canvas.width - 175, 2390);
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.fillText(Data.RenterId, canvas.width - 300, 2505);
-        //                 ctx.fillText("", canvas.width - 420, 2590);
-        //                 ctx.fillText(Data.RenterMembership, canvas.width - 1160, 2590);
-        //                 ctx.fillText(Data.RenterEmail, canvas.width - 460, 2675);
-        //                 ctx.fillText(Data.RenterPost, canvas.width - 330, 2770);
-        //                 ctx.fillText(Data.RenterReasons, canvas.width - 355, 2850);
-        //                 // Last
-        //                 DrawArNameAndSignture(signtures, ctx, canvas);
-        //                 canvas.toBlob(async function (blob) {
-        //                     // Return the blob
-
-        //                     resolve(blob);
-        //                 }, "image/png");
-        //             };
-        //             img.src = imagePath;
-        //         } catch (error) {
-        //             reject(error);
-        //         }
-        //     });
-        // };
-        // //Page2
-        // const getDataOfPage2 = () => {
-        //     const getFormattedDate = (date) => date ? getFormatDate(date) : "";
-        //     return {
-        //         DriverName: DriverInformation?.personalArName || "",
-        //         DriverId: DriverInformation?.renterID || "",
-        //         DriverBirthDate: getFormattedDate(DriverInformation?.birthDate),
-        //         DriverGender: DriverInformation?.personalArGender || "",
-        //         DriverNationality: DriverInformation?.personalArNationality || "",
-        //         DriverLicense: DriverInformation?.licenseArName || "",
-        //         DriverLicenseNo: DriverInformation?.licenseCode || "",
-        //         DriverLicenseExpiryDate: getFormattedDate(DriverInformation?.licenseExpiryDate),
-        //         DriverEmployerName: DriverInformation?.employerArName || "",
-        //         DriverMembership: DriverInformation?.arMembership || "",
-        //         DriverPersonalProfessions: DriverInformation?.personalArProfessions || "",
-        //         DriverPersonalEmail: DriverInformation?.personalEmail || "",
-        //         DriverPostNameConcenate: DriverInformation?.postArNameConcenate || "",
-        //         DriverReasons: $("#Contract_DriverReasons").val() || "",
-
-        //         AddDriverName: AddDriverInformation?.personalArName || "",
-        //         AddDriverId: AddDriverInformation?.renterID || "",
-        //         AddDriverBirthDate: getFormattedDate(AddDriverInformation?.birthDate),
-        //         AddDriverGender: AddDriverInformation?.personalArGender || "",
-        //         AddDriverNationality: AddDriverInformation?.personalArNationality || "",
-        //         AddDriverLicense: AddDriverInformation?.licenseArName || "",
-        //         AddDriverLicenseNo: AddDriverInformation?.licenseCode || "",
-        //         AddDriverLicenseExpiryDate: getFormattedDate(AddDriverInformation?.licenseExpiryDate),
-        //         AddDriverEmployerName: AddDriverInformation?.employerArName || "",
-        //         AddDriverMembership: AddDriverInformation?.arMembership || "",
-        //         AddDriverPersonalProfessions: AddDriverInformation?.personalArProfessions || "",
-        //         AddDriverPersonalEmail: AddDriverInformation?.personalEmail || "",
-        //         AddDriverPostNameConcenate: AddDriverInformation?.postArNameConcenate || "",
-        //         AddDriverReasons: $("#Contract_AddDriverReasons").val() || "",
-
-        //         PrivateDriverName: PrivateDriverInformation?.personalArName || "",
-        //         PrivateDriverId: PrivateDriverInformation?.renterID || "",
-        //         PrivateDriverBirthDate: getFormattedDate(PrivateDriverInformation?.birthDate),
-        //         PrivateDriverGender: PrivateDriverInformation?.personalArGender || "",
-        //         PrivateDriverNationality: PrivateDriverInformation?.personalArNationality || "",
-        //         PrivateDriverLicense: PrivateDriverInformation?.licenseArName || "",
-        //         PrivateDriverLicenseNo: PrivateDriverInformation?.licenseCode || "",
-        //         PrivateDriverLicenseExpiryDate: getFormattedDate(PrivateDriverInformation?.licenseExpiryDate),
-        //         PrivateDriverEmployerName: PrivateDriverInformation?.employerArName || "",
-        //         PrivateDriverPersonalProfessions: PrivateDriverInformation?.personalArProfessions || "",
-        //         PrivateDriverPersonalEmail: PrivateDriverInformation?.personalEmail || "",
-        //         PrivateDriverPostNameConcenate: PrivateDriverInformation?.postArNameConcenate || "",
-        //     };
-        // };
-        // const CreateArPageContract2 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         try {
-        //             var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage2";
-        //             var imagePath = image.replace('~', '');
-        //             // Get ALl Date for Page 2
-        //             const Data = getDataOfPage2();
-        //             var signtures = await loadArSignatures();
-
-        //             // Last Director and manger and user and renter with signture
-
-        //             // Text on Image
-        //             // Get Image And Text On
-        //             // Read the image file as a Blob
-        //             const responseImage = await fetch(imagePath);
-        //             const blob = await responseImage.blob();
-        //             var canvas = document.createElement("canvas");
-        //             var ctx = canvas.getContext("2d");
-        //             var url;
-        //             var img = new Image();
-        //             img.crossOrigin = "Anonymous";
-        //             img.onload = function () {
-        //                 canvas.width = img.width;
-        //                 canvas.height = img.height;
-
-        //                 ctx.drawImage(img, 0, 0);
-
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.textAlign = "right";
-        //                 ctx.fillStyle = "black";
-        //                 // Driver
-        //                 ctx.font = "bold 50px serif";
-        //                 ctx.fillText(Data.DriverName, canvas.width - 220, 680);
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.fillText(Data.DriverId, canvas.width - 405, 790);
-        //                 ctx.fillText(Data.DriverBirthDate, canvas.width - 420, 870);
-        //                 ctx.fillText(Data.DriverGender, canvas.width - 1140, 870);
-        //                 ctx.fillText(Data.DriverNationality, canvas.width - 1690, 865);
-        //                 ctx.fillText(Data.DriverLicense, canvas.width - 470, 955);
-        //                 ctx.fillText(Data.DriverLicenseNo, canvas.width - 1120, 952);
-        //                 ctx.fillText(Data.DriverLicenseExpiryDate, canvas.width - 1655, 952);
-        //                 ctx.fillText(Data.DriverPersonalProfessions, canvas.width - 340, 1040);
-        //                 ctx.fillText(Data.DriverMembership, canvas.width - 1155, 1040);
-        //                 ctx.fillText(Data.DriverEmployerName, canvas.width - 405, 1125);
-        //                 ctx.fillText(Data.DriverPersonalEmail, canvas.width - 500, 1200);
-        //                 ctx.fillText(Data.DriverPostNameConcenate, canvas.width - 370, 1290);
-        //                 ctx.fillText(Data.DriverReasons, canvas.width - 410, 1375);
-        //                 // Add Driver
-        //                 ctx.font = "bold 50px serif";
-        //                 ctx.fillText(Data.AddDriverName, canvas.width - 225, 1555);
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.fillText(Data.AddDriverId, canvas.width - 410, 1655);
-        //                 ctx.fillText(Data.AddDriverBirthDate, canvas.width - 420, 1740);
-        //                 ctx.fillText(Data.AddDriverGender, canvas.width - 1140, 1740);
-        //                 ctx.fillText(Data.AddDriverNationality, canvas.width - 1690, 1735);
-        //                 ctx.fillText(Data.AddDriverLicense, canvas.width - 470, 1820);
-        //                 ctx.fillText(Data.AddDriverLicenseNo, canvas.width - 1110, 1820);
-        //                 ctx.fillText(Data.AddDriverLicenseExpiryDate, canvas.width - 1640, 1820);
-        //                 ctx.fillText(Data.AddDriverPersonalProfessions, canvas.width - 340, 1905);
-        //                 ctx.fillText(Data.AddDriverMembership, canvas.width - 1150, 1905);
-        //                 ctx.fillText(Data.AddDriverEmployerName, canvas.width - 430, 1990);
-        //                 ctx.fillText(Data.AddDriverPersonalEmail, canvas.width - 500, 2070);
-        //                 ctx.fillText(Data.AddDriverPostNameConcenate, canvas.width - 350, 2160);
-        //                 ctx.fillText(Data.AddDriverReasons, canvas.width - 410, 2240);
-        //                 // Private Driver
-        //                 ctx.font = "bold 50px serif";
-        //                 ctx.fillText(Data.PrivateDriverName, canvas.width - 220, 2410);
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.fillText(Data.PrivateDriverId, canvas.width - 400, 2510);
-        //                 ctx.fillText(Data.PrivateDriverBirthDate, canvas.width - 420, 2590);
-        //                 ctx.fillText(Data.PrivateDriverGender, canvas.width - 1140, 2595);
-        //                 ctx.fillText(Data.PrivateDriverNationality, canvas.width - 1690, 2595);
-        //                 ctx.fillText(Data.PrivateDriverLicense, canvas.width - 470, 2680);
-        //                 ctx.fillText(Data.PrivateDriverLicenseNo, canvas.width - 1115, 2680);
-        //                 ctx.fillText(Data.PrivateDriverLicenseExpiryDate, canvas.width - 1655, 2680);
-        //                 ctx.fillText(Data.PrivateDriverPersonalEmail, canvas.width - 500, 2770);
-        //                 // Last
-        //                 DrawArNameAndSignture(signtures, ctx, canvas);
-        //                 canvas.toBlob(async function (blob) {
-        //                     // Return the blob
-
-        //                     resolve(blob);
-        //                 }, "image/png");
-        //             };
-        //             img.src = imagePath;
-        //         } catch (error) {
-        //             reject(error);
-        //         }
-        //     });
-        // };
-        // //Page3
-        // const getDataOfPage3 = () => {
-        //     const contractNo = "@ViewBag.ContractNo";
-        //     const fromBranchName = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationArShortName") || "";
-        //     var selectedOptionBrn = $("#Receiving-branch-dropdown option:selected");
-        //     const toBranchName = selectedOptionBrn.data('ar') || '';
-        //     const geographicDistict = document.getElementById('Delegate-out').checked ? "خارج المملكة" : "داخل المملكة";
-        //     const freeHours = CarInformation.carPrice.crCasPriceCarBasicFreeAdditionalHours || "";
-        //     const freeKM = CarInformation.carPrice.crCasPriceCarBasicNoDailyFreeKm || "";
-        //     const age = `${CarInformation?.carPrice?.crCasPriceCarBasicMinAge || ""} - ${CarInformation?.carPrice?.crCasPriceCarBasicMaxAge || ""}`;
-        //     var rentDaily = CarInformation.carPrice.crCasPriceCarBasicDailyRent || "";
-        //     var maxHourValue = CarInformation.carPrice.crCasPriceCarBasicExtraHourValue || "";
-        //     var addKmValue = CarInformation.carPrice.crCasPriceCarBasicAdditionalKmValue || "";
-        //     var advatagesValue = $("#AdvatagesValue").text() || "";
-        //     var choicesValue = $("#ChoicesValue").text() || "";
-        //     var additionalValue = $("#AdditionalValue").text() || "";
-        //     var addDriverValue = CarInformation.carPrice.crCasPriceCarBasicAdditionalDriverValue || "";
-        //     var privateDriverValue = CarInformation.carPrice.crCasPriceCarBasicPrivateDriverValue || "";
-        //     var compensationAccident = CarInformation.carPrice.crCasPriceCarBasicCompensationAccident || "";
-        //     var compensationTheft = CarInformation.carPrice.crCasPriceCarBasicCompensationTheft || "";
-        //     var compensationFire = CarInformation.carPrice.crCasPriceCarBasicCompensationFire || "";
-        //     var compensationDrowning = CarInformation.carPrice.crCasPriceCarBasicCompensationDrowning || "";
-
-        //     return {
-        //         contractNo,
-        //         fromBranchName,
-        //         toBranchName,
-        //         geographicDistict,
-        //         freeHours,
-        //         freeKM,
-        //         age,
-        //         rentDaily,
-        //         maxHourValue,
-        //         addKmValue,
-        //         advatagesValue,
-        //         choicesValue,
-        //         additionalValue,
-        //         addDriverValue,
-        //         privateDriverValue,
-        //         compensationAccident,
-        //         compensationTheft,
-        //         compensationFire,
-        //         compensationDrowning
-        //     };
-        // };
-        // function getAdditionalData(ctx, canvas) {
-        //     var yOffset = 1840; // Initial y-offset for name
-        //     var valueXOffset = canvas.width - 1460; // X-offset for value
-        //     var nameXOffset = canvas.width - 950; // X-offset for name
-        //     AdditionalsItems.forEach(function (item, index) {
-        //         var nameText = item.arName.trim();
-        //         var valueText = item.value;
-        //         // Set fillText for name
-        //         ctx.fillText(nameText, nameXOffset, yOffset + (index * 70));
-        //         // Set fillText for value
-        //         ctx.fillText(valueText, valueXOffset, yOffset + (index * 70));
-        //     });
-        // };
-        // function getChoicesData(ctx, canvas) {
-        //     var yOffset = 1840; // Initial y-offset for name
-        //     var valueXOffset = canvas.width - 700; // X-offset for value
-        //     var nameXOffset = canvas.width - 250; // X-offset for name
-        //     ChoiceItems.forEach(function (item, index) {
-        //         var nameText = item.arName.trim();
-        //         var valueText = item.value;
-        //         // Set fillText for name
-        //         ctx.fillText(nameText, nameXOffset, yOffset + (index * 70));
-        //         // Set fillText for value
-        //         ctx.fillText(valueText, valueXOffset, yOffset + (index * 70));
-        //     });
-        // };
-        // function getAdvantagesData(ctx, canvas) {
-        //     var yOffset = 1840; // Initial y-offset for name
-        //     var valueXOffset = canvas.width - 2220; // X-offset for value
-        //     var nameXOffset = canvas.width - 1700; // X-offset for name
-        //     CarAdvantages.forEach(function (item, index) {
-        //         var nameText = item.arName;
-        //         var valueText = item.advantagesValue;
-        //         // Set fillText for name
-        //         ctx.fillText(nameText, nameXOffset, yOffset + (index * 70));
-        //         // Set fillText for value
-        //         ctx.fillText(valueText, valueXOffset, yOffset + (index * 70));
-        //     });
-        // }
-        // const CreateArPageContract3 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         try {
-        //             var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage3";
-        //             var imagePath = image.replace('~', '');
-        //             // Get ALl Date for Page 2
-        //             var Data = getDataOfPage3();
-        //             var signtures = await loadArSignatures();
-        //             // Last Director and manger and user and renter with signture
-        //             // Text on Image
-        //             // Get Image And Text On
-        //             // Read the image file as a Blob
-        //             const responseImage = await fetch(imagePath);
-        //             const blob = await responseImage.blob();
-        //             var canvas = document.createElement("canvas");
-        //             var ctx = canvas.getContext("2d");
-        //             var url;
-        //             var img = new Image();
-        //             img.crossOrigin = "Anonymous";
-        //             img.onload = function () {
-        //                 canvas.width = img.width;
-        //                 canvas.height = img.height;
-
-        //                 ctx.drawImage(img, 0, 0);
-
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.textAlign = "right";
-        //                 ctx.fillStyle = "black";
-        //                 //
-        //                 ctx.fillText(Data.fromBranchName, canvas.width - 365, 770);
-        //                 ctx.fillText(Data.toBranchName, canvas.width - 1250, 770);
-        //                 ctx.fillText(Data.geographicDistict, canvas.width - 485, 860);
-        //                 ctx.fillText(Data.freeHours, canvas.width - 1305, 860);
-        //                 ctx.fillText(Data.freeKM, canvas.width - 430, 953);
-        //                 ctx.fillText(Data.age, canvas.width - 1155, 953);
-        //                 ctx.fillText(Data.rentDaily, canvas.width - 410, 1045);
-        //                 ctx.fillText(Data.advatagesValue, canvas.width - 1340, 1045);
-        //                 ctx.fillText(Data.maxHourValue, canvas.width - 465, 1138);
-        //                 ctx.fillText(Data.addKmValue, canvas.width - 1280, 1138);
-        //                 ctx.fillText(Data.choicesValue, canvas.width - 335, 1230);
-        //                 ctx.fillText(Data.additionalValue, canvas.width - 1220, 1230);
-        //                 ctx.fillText(Data.addDriverValue, canvas.width - 435, 1325);
-        //                 ctx.fillText(Data.privateDriverValue, canvas.width - 1300, 1325);
-        //                 ctx.fillText(Data.compensationAccident, canvas.width - 1290, 1415);
-        //                 ctx.fillText(Data.compensationTheft, canvas.width - 420, 1415);
-        //                 ctx.fillText(Data.compensationFire, canvas.width - 410, 1515);
-        //                 ctx.fillText(Data.compensationDrowning, canvas.width - 1280, 1515);
-        //                 // Additonals
-        //                 if (AdditionalsItems != null && AdditionalsItems.length != 0) {
-        //                     getAdditionalData(ctx, canvas);
-        //                 }
-        //                 //Choices
-        //                 if (ChoiceItems != null && ChoiceItems.length != 0) {
-        //                     getChoicesData(ctx, canvas);
-        //                 }
-        //                 //AdvantagesData
-        //                 if (CarAdvantages != null && CarAdvantages.length != 0) {
-        //                     getAdvantagesData(ctx, canvas);
-        //                 }
-        //                 // Last
-        //                 DrawArNameAndSignture(signtures, ctx, canvas);
-        //                 canvas.toBlob(async function (blob) {
-        //                     // Return the blob
-
-        //                     resolve(blob);
-        //                 }, "image/png");
-        //             };
-        //             img.src = imagePath;
-        //         } catch (error) {
-        //             reject(error);
-        //         }
-        //     });
-        // };
-        // // Page4
-        // function GetCheckUpItems(ctx, canvas) {
-        //     GetCheckUp();
-        //     var yOffset = 885; // Initial y-offset for name
-        //     var valueXOffset = canvas.width - 1050; // X-offset for value
-        //     var nameXOffset = canvas.width - 500; // X-offset for name
-        //     if (CarCheckUp != null && CarCheckUp.length > 0) {
-        //         CarCheckUp.forEach(function (item, index) {
-        //             var nameText = item.arName;
-        //             var checkupReason = item.reasonCheckName + (item.reason ? " - " + item.reason : "");
-        //             // Set fillText for name
-        //             ctx.fillText(nameText, nameXOffset, yOffset + (index * 70));
-        //             // Set fillText for value
-        //             ctx.fillText(checkupReason, valueXOffset, yOffset + (index * 70));
-        //         });
-        //     }
-        // }
-        // const CreateArPageContract4 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         try {
-        //             var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage4";
-        //             var imagePath = image.replace('~', '');                    // Get ALl Date for Page 4
-        //             // Last Director and manger and user and renter with signture
-        //             var signtures = await loadArSignatures();
-        //             ///////////////////////////////////////////////////////
-        //             // Text on Image
-        //             // Get Image And Text On
-        //             // Read the image file as a Blob
-        //             const responseImage = await fetch(imagePath);
-        //             const blob = await responseImage.blob();
-        //             var canvas = document.createElement("canvas");
-        //             var ctx = canvas.getContext("2d");
-        //             var url;
-        //             var img = new Image();
-        //             img.crossOrigin = "Anonymous";
-        //             img.onload = function () {
-        //                 canvas.width = img.width;
-        //                 canvas.height = img.height;
-
-        //                 ctx.drawImage(img, 0, 0);
-
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.textAlign = "right";
-        //                 ctx.fillStyle = "black";
-
-        //                 GetCheckUpItems(ctx, canvas);
-
-        //                 // Last
-        //                 DrawArNameAndSignture(signtures, ctx, canvas);
-        //                 canvas.toBlob(async function (blob) {
-        //                     // Return the blob
-
-        //                     resolve(blob);
-        //                 }, "image/png");
-        //             };
-        //             img.src = imagePath;
-        //         } catch (error) {
-        //             reject(error);
-        //         }
-        //     });
-        // };
-        // // Page5
-        // async function GetCheckUpPicture() {
-        //     // Array to store the Image objects
-        //     const images = [];
-        //     // Iterate over the CheckUpImages list
-        //     imgCheckUpArray.forEach(file => {
-        //         // Create a new Image object
-        //         const img = new Image();
-
-        //         // Set the src attribute of the Image object to the file URL
-        //         img.src = URL.createObjectURL(file.f);
-
-        //         // Push the Image object to the images array
-        //         images.push(img);
-        //     });
-        //     // Return the array of Image objects
-        //     return images;
-        // }
-        // const CreateArPageContract5 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         try {
-        //             var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage5";
-        //             var imagePath = image.replace('~', '');
-        //             // Get ALl Date for Page 5
-        //             var pictures = await GetCheckUpPicture();
-        //             // Last Director and manger and user and renter with signture
-        //             var signtures = await loadArSignatures();
-        //             ///////////////////////////////////////////////////////
-        //             // Text on Image
-        //             // Get Image And Text On
-        //             // Read the image file as a Blob
-        //             const responseImage = await fetch(imagePath);
-        //             const blob = await responseImage.blob();
-        //             var canvas = document.createElement("canvas");
-        //             var ctx = canvas.getContext("2d");
-        //             var url;
-        //             var img = new Image();
-        //             img.crossOrigin = "Anonymous";
-        //             img.onload = function () {
-        //                 canvas.width = img.width;
-        //                 canvas.height = img.height;
-
-        //                 ctx.drawImage(img, 0, 0);
-
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.textAlign = "right";
-        //                 ctx.fillStyle = "black";
-        //                 //
-        //                 if (pictures[0]) {
-        //                     ctx.drawImage(pictures[0], canvas.width - 1015, 750, 650, 650);
-        //                 }
-        //                 if (pictures[1]) {
-        //                     ctx.drawImage(pictures[1], canvas.width - 1015, 1470, 650, 650);
-        //                 }
-        //                 if (pictures[2]) {
-        //                     ctx.drawImage(pictures[2], canvas.width - 1015, 2185, 650, 650);
-        //                 }
-        //                 if (pictures[3]) {
-        //                     ctx.drawImage(pictures[3], canvas.width - 2015, 750, 650, 650);
-        //                 }
-        //                 if (pictures[4]) {
-        //                     ctx.drawImage(pictures[4], canvas.width - 2015, 1470, 650, 650);
-        //                 }
-        //                 if (pictures[5]) {
-        //                     ctx.drawImage(pictures[5], canvas.width - 2015, 2185, 650, 650);
-        //                 }
-        //                 // Last
-        //                 DrawArNameAndSignture(signtures, ctx, canvas);
-        //                 canvas.toBlob(async function (blob) {
-        //                     // Return the blob
-
-        //                     resolve(blob);
-        //                 }, "image/png");
-        //             };
-        //             img.src = imagePath;
-        //         } catch (error) {
-        //             reject(error);
-        //         }
-        //     });
-        // };
-        // // Page6
-        // const CreateArPageContract6 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         try {
-        //             var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage6";
-        //             var imagePath = image.replace('~', '');
-        //             // Get ALl Date for Page 6
-        //             var pictures = await GetCheckUpPicture();
-        //             // Last Director and manger and user and renter with signture
-        //             var signtures = await loadArSignatures();
-        //             ///////////////////////////////////////////////////////
-        //             // Text on Image
-        //             // Get Image And Text On
-        //             // Read the image file as a Blob
-        //             const responseImage = await fetch(imagePath);
-        //             const blob = await responseImage.blob();
-        //             var canvas = document.createElement("canvas");
-        //             var ctx = canvas.getContext("2d");
-        //             var url;
-        //             var img = new Image();
-        //             img.crossOrigin = "Anonymous";
-        //             img.onload = function () {
-        //                 canvas.width = img.width;
-        //                 canvas.height = img.height;
-
-        //                 ctx.drawImage(img, 0, 0);
-
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.textAlign = "right";
-        //                 ctx.fillStyle = "black";
-        //                 ////////////
-        //                 if (pictures[6]) {
-        //                     ctx.drawImage(pictures[6], canvas.width - 1015, 750, 650, 650);
-        //                 }
-        //                 if (pictures[7]) {
-        //                     ctx.drawImage(pictures[7], canvas.width - 1015, 1470, 650, 650);
-        //                 }
-        //                 if (pictures[8]) {
-        //                     ctx.drawImage(pictures[8], canvas.width - 1015, 2185, 650, 650);
-        //                 }
-        //                 if (pictures[9]) {
-        //                     ctx.drawImage(pictures[9], canvas.width - 2015, 750, 650, 650);
-        //                 }
-        //                 if (pictures[10]) {
-        //                     ctx.drawImage(pictures[10], canvas.width - 2015, 1470, 650, 650);
-        //                 }
-        //                 if (pictures[11]) {
-        //                     ctx.drawImage(pictures[11], canvas.width - 2015, 2185, 650, 650);
-        //                 }
-        //                 // Last
-        //                 DrawArNameAndSignture(signtures, ctx, canvas);
-        //                 canvas.toBlob(async function (blob) {
-        //                     // Return the blob
-
-        //                     resolve(blob);
-        //                 }, "image/png");
-        //             };
-        //             img.src = imagePath;
-        //         } catch (error) {
-        //             reject(error);
-        //         }
-        //     });
-        // };
-        // // Page7
-        // async function getContractConditionPic1() {
-        //     const mainImg = new Image();
-        //     var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms1";
-        //     var imagePath = image.replace('~', '');
-        //     mainImg.src = imagePath;
-        //     return mainImg;
-        // }
-        // const CreateArPageContract7 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         try {
-        //             var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage7";
-        //             var imagePath = image.replace('~', '');
-        //             // Last Director and manger and user and renter with signture
-        //             //Get Pic
-        //             // var mainImg = await getContractConditionPic1();
-        //             var signtures = await loadArSignatures();
-        //             ///////////////////////////////////////////////////////
-        //             // Text on Image
-        //             // Get Image And Text On
-        //             // Read the image file as a Blob
-        //             const responseImage = await fetch(imagePath);
-        //             const blob = await responseImage.blob();
-        //             var canvas = document.createElement("canvas");
-        //             var ctx = canvas.getContext("2d");
-        //             var url;
-        //             var img = new Image();
-        //             img.crossOrigin = "Anonymous";
-        //             img.onload = function () {
-        //                 canvas.width = img.width;
-        //                 canvas.height = img.height;
-
-        //                 ctx.drawImage(img, 0, 0);
-
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.textAlign = "right";
-        //                 ctx.fillStyle = "black";
-        //                 // //Get Pic
-        //                 // ctx.drawImage(mainImg, canvas.width - 2190, 720, 1900, 2120);
-        //                 // // Last
-        //                 DrawArNameAndSignture(signtures, ctx, canvas);
-        //                 canvas.toBlob(async function (blob) {
-        //                     // Return the blob
-
-        //                     resolve(blob);
-        //                 }, "image/png");
-        //             };
-        //             img.src = imagePath;
-        //         } catch (error) {
-        //             reject(error);
-        //         }
-        //     });
-        // };
-        // // Page8
-        // async function getContractConditionPic2() {
-        //     const mainImg = new Image();
-        //     var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms2";
-        //     var imagePath = image.replace('~', '');
-        //     mainImg.src = imagePath;
-        //     return mainImg;
-        // }
-        // const CreateArPageContract8 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         try {
-        //             var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage8";
-        //             var imagePath = image.replace('~', '');
-        //             // Last Director and manger and user and renter with signture
-        //             //Get Pic
-        //             // var mainImg = await getContractConditionPic2();
-        //             var signtures = await loadArSignatures();
-        //             // Text on Image
-        //             // Get Image And Text On
-        //             // Read the image file as a Blob
-        //             const responseImage = await fetch(imagePath);
-        //             const blob = await responseImage.blob();
-        //             var canvas = document.createElement("canvas");
-        //             var ctx = canvas.getContext("2d");
-        //             var url;
-        //             var img = new Image();
-        //             img.crossOrigin = "Anonymous";
-        //             img.onload = function () {
-        //                 canvas.width = img.width;
-        //                 canvas.height = img.height;
-
-        //                 ctx.drawImage(img, 0, 0);
-
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.textAlign = "right";
-        //                 ctx.fillStyle = "black";
-
-        //                 // ctx.drawImage(mainImg, canvas.width - 2190, 720, 1900, 2120);
-        //                 // Last
-        //                 DrawArNameAndSignture(signtures, ctx, canvas);
-        //                 canvas.toBlob(async function (blob) {
-        //                     // Return the blob
-
-        //                     resolve(blob);
-        //                 }, "image/png");
-        //             };
-        //             img.src = imagePath;
-        //         } catch (error) {
-        //             reject(error);
-        //         }
-        //     });
-        // };
-        // // Page9
-        // async function getContractConditionPic3() {
-        //     const mainImg = new Image();
-        //     var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms3";
-        //     var imagePath = image.replace('~', '');
-        //     mainImg.src = imagePath;
-        //     return mainImg;
-        // }
-        // const CreateArPageContract9 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         try {
-        //             var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage9";
-        //             var imagePath = image.replace('~', '');
-        //             // Get ALl Date for Page 9
-        //             // var mainImg = await getContractConditionPic3();
-        //             var signtures = await loadArSignatures();
-        //             // Last Director and manger and user and renter with signture
-        //             // Text on Image
-        //             // Get Image And Text On
-        //             // Read the image file as a Blob
-        //             const responseImage = await fetch(imagePath);
-        //             const blob = await responseImage.blob();
-        //             var canvas = document.createElement("canvas");
-        //             var ctx = canvas.getContext("2d");
-        //             var url;
-        //             var img = new Image();
-        //             img.crossOrigin = "Anonymous";
-        //             img.onload = function () {
-        //                 canvas.width = img.width;
-        //                 canvas.height = img.height;
-
-        //                 ctx.drawImage(img, 0, 0);
-
-        //                 ctx.font = "bold 35px serif";
-        //                 ctx.textAlign = "right";
-        //                 ctx.fillStyle = "black";
-        //                 // //Get Pic
-        //                 // ctx.drawImage(mainImg, canvas.width - 2190, 720, 1900, 2120);
-        //                 // // Last
-        //                 DrawArNameAndSignture(signtures, ctx, canvas);
-        //                 canvas.toBlob(async function (blob) {
-        //                     // Return the blob
-
-        //                     resolve(blob);
-        //                 }, "image/png");
-        //             };
-        //             img.src = imagePath;
-        //         } catch (error) {
-        //             reject(error);
-        //         }
-        //     });
-        // };
-        // async function getPictureAndCreateArPdfContract() {
-        //     try {
-        //         console.log("Starting getPictureAndCreateArPdfContract");
-        //         // Function to check if the image exists
-        //         async function imageExists(imagePath) {
-        //             try {
-        //                 const response = await fetch(imagePath);
-        //                 return response.ok;
-        //             } catch (error) {
-        //                 console.error(`Error checking image at ${imagePath}:`, error);
-        //                 return false;
-        //             }
-        //         }
-        //         const createPageFunctions = [
-        //             { func: CreateArPageContract1, order: 1 },
-        //             { func: CreateArPageContract2, order: 2 },
-        //             { func: CreateArPageContract3, order: 3 },
-        //             { func: CreateArPageContract4, order: 4 },
-        //             { func: CreateArPageContract5, order: 5 },
-        //         ];
-
-        //         if (imgCheckUpArray.length > 6) {
-        //             createPageFunctions.push({ func: CreateArPageContract6, order: 6 });
-        //         }
-        //         // Paths to the terms images
-        //         // const termsImagePaths = [
-        //         //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms1",
-        //         //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms2",
-        //         //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractTerms3"
-        //         // ];
-
-        //         // Corresponding create page functions for termsImagePaths
-        //         const termsCreatePageFunctions = [
-        //             CreateArPageContract7,
-        //             CreateArPageContract8,
-        //             CreateArPageContract9
-        //         ];
-
-        //         // Paths to the pages images
-        //         const pageImagePaths = [
-        //             "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage7",
-        //             "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage8",
-        //             "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArContractPage9"
-        //         ];
-
-        //         // Check if the terms images exist and add corresponding functions
-        //         for (let i = 0; i < pageImagePaths.length; i++) {
-        //             const pageImagePath = pageImagePaths[i];
-        //             if (pageImagePath && pageImagePath.trim() !== "") {
-        //                 const pageExists = await imageExists(pageImagePath);
-        //                 if (pageExists) {
-        //                     createPageFunctions.push({ func: termsCreatePageFunctions[i], order: 7 + i });
-        //                 }
-        //             }
-        //         }
-
-        //         createPageFunctions.sort((a, b) => a.order - b.order);
-        //         console.log("Sorted createPageFunctions:", createPageFunctions);
-        //         const imageBlobs = [];
-        //         for (const { func, order } of createPageFunctions) {
-        //             console.log(`Executing ${func.name} (order ${order})`);
-        //             // Wait for a specified delay before executing the function
-        //             try {
-        //                 const blob = await func();
-        //                 imageBlobs.push(blob);
-        //                 console.log(`Successfully executed ${func.name} (order ${order})`);
-        //             } catch (error) {
-        //                 console.error(`Error executing ${func.name} (order ${order}):`, error);
-        //                 throw error;
-        //             }
-        //         }
-        //         // التأكد من عدد الصفحات
-        //         const pageCount = imageBlobs.length;
-        //         console.log("pageCount", pageCount);
-        //         // if (pageCount < 8 || pageCount > 9) {
-        //         //     throw new Error(`Invalid number of pages: ${pageCount}. Expected 8 or 9 pages.`);
-        //         // }
-        //         // إنشاء عقد PDF باستخدام الصور المجمعة
-        //         await createPdfContract(imageBlobs, "SavePdfArContract");
-        //     } catch (error) {
-        //         console.error("Error creating Arabic PDF contract:", error);
-        //         // window.location.href = "/BS/Contract/FailedToast?type=arcontract";
-        //     }
-        // }
-
+            return {
+                Serviceitems: [
+                    ...processedItems.map(item => ({
+                        arabic: item.arabic,
+                        english: item.english,
+                        textAlign: "center",
+                    }))
+                ],
+                Valueitems: [
+                    ...processedItems.map(item => ({ content: item.value })),
+                    { sum: sumColumn("value") }
+                ],
+                Numberitems: [
+                    ...processedItems.map(item => ({ content: item.number })),
+                    { sum: "-" }
+                ],
+                Amountitems: [
+                    ...processedItems.map(item => ({ content: item.amount })),
+                    { sum: sumColumn("amount") }
+                ],
+                Discountitems: [
+                    ...processedItems.map(item => ({ content: item.discount })),
+                    { sum: sumColumn("discount") }
+                ],
+                AfterDiscountitems: [
+                    ...processedItems.map(item => ({ content: item.afterDiscount })),
+                    { sum: sumColumn("afterDiscount") }
+                ],
+                VATitems: [
+                    ...processedItems.map(item => ({ content: item.vat })),
+                    { sum: sumColumn("vat") }
+                ],
+                Totalitems: [
+                    ...processedItems.map(item => ({ content: item.total })),
+                    { sum: sumColumn("total") }
+                ],
+            };
+        }
+        function GetDelegationValue(){
+             var InFeesTamm = CarInformation.carPrice.crCasCarPriceBasicInFeesTamm;
+             var OutFeesTamm = CarInformation.carPrice.crCasCarPriceBasicOutFeesTamm;
+             var OutFeesTammInput = document.getElementById('Delegate-out');
+             var FeesTammValue = 0;
+             if (OutFeesTammInput.checked) {
+                 if (parseFloat(OutFeesTamm) != null) {
+                     FeesTammValue = parseFloat(OutFeesTamm);
+                 }
+                 else {
+                     FeesTammValue = 0;
+                 }
+             }
+             else {
+                 if (parseFloat(InFeesTamm) != null) {
+                     FeesTammValue = parseFloat(InFeesTamm);
+                 }
+                 else {
+                     FeesTammValue = 0;
+                 }
+             }
+             return FeesTammValue;
+        }
+        function GetRentDailyValue(){
+            return parseFloat(CarInformation.carPrice.crCasPriceCarBasicDailyRent) ||0;
+        }
+        function GetAddDriverValue(){
+            var additionalDriver = document.getElementById("addational-driver");
+            var additionalDriverValue = 0;
+            if (additionalDriver.checked) {
+                var AddDriverValue = CarInformation.carPrice.crCasPriceCarBasicAdditionalDriverValue;
+                if (parseInt(AddDriverValue) != null) {
+                    additionalDriverValue = parseFloat(AddDriverValue);
+                }
+                else {
+                    additionalDriverValue = 0;
+                }
+            }
+            return additionalDriverValue;
+        }
+        function GetPrivateDriverValue(){
+            var privateDriverRadio1 = document.getElementById("PrivateDriver");
+            var privateDriverID = $("#Private-Driver-selectt").val();
+            var privateDriverValue = 0;
+            if (privateDriverRadio1.checked && privateDriverID != null) {
+                var privateDriver = CarInformation.carPrice.crCasPriceCarBasicPrivateDriverValue;
+                if (privateDriver != null) {
+                    privateDriverValue = parseFloat(privateDriver);
+                }
+                else {
+                    privateDriverValue = 0;
+                }
+            }
+            else {
+                privateDriverValue = 0;
+            }
+            return privateDriverValue;
+        }
+        function GetChoicesValue(){
+             var TotalChoices = $("#TotalChoices").text();
+             var choicesValue = 0;
+             if (TotalChoices != null && TotalChoices != 0 && TotalChoices != "" && TotalChoices != undefined) {
+                 choicesValue = parseFloat(TotalChoices);
+             }
+             else {
+                 choicesValue = 0;
+             }
+             return choicesValue;
+        }
+        function GetAdditionalsValue(){
+            var TotalAdditionals = $("#TotalAdditionals").text();
+            var additionalValue = 0;
+            if (TotalAdditionals != null && TotalAdditionals != 0 && TotalAdditionals != "" && TotalAdditionals != undefined) {
+                additionalValue = parseFloat(TotalAdditionals);
+            }
+            else {
+                additionalValue = 0;
+            }
+            return additionalValue;
+        }
     </script>
-    <!--Create En Contract Pdf-->
-    <script>
-        // async function loadEnSignatures() {
-        //     console.log("RenterInformation.signture", RenterInformation.signture)
-        //     var renterName = RenterInformation.personalEnName;
-        //     var renterSignature = RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null;
 
-        //     var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
-        //     var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature") ? decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '') : null;
-
-        //     var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorEnName");
-        //     var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector")
-        //         ? decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '')
-        //         : null;
-
-        //     var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorEnName");
-        //     var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature")
-        //         ? decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '')
-        //         : null;
-        //     // Adding console logs for debugging
-        //     console.log("Loading signatures...");
-        //     const promises = [];
-
-        //     // Check each signature and push to promises if it exists
-        //     if (directorOfLessorSignature) {
-        //         promises.push(loadImage(directorOfLessorSignature));
-        //     }
-
-        //     if (userSignature) {
-        //         promises.push(loadImage(userSignature));
-        //     }
-
-        //     if (directorOfBranchSignature) {
-        //         promises.push(loadImage(directorOfBranchSignature));
-        //     }
-
-        //     if (renterSignature) {
-        //         promises.push(loadImage(renterSignature));
-        //     }
-
-        //     // Wait for all valid signatures to load
-        //     const signatureImages = await Promise.all(promises);
-
-        //     return {
-        //         renterName: renterName,
-        //         userName: userName,
-        //         directorOfLessor: directorOfLessor,
-        //         directorOfBranch: directorOfBranch,
-        //         signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
-        //         signatureImg2: signatureImages[1] || '',
-        //         signatureImg3: signatureImages[2] || '',
-        //         signatureImg4: signatureImages[3] || ''
-        //     };
-        // }
-        // function DrawEnNameAndSignture(signatures, ctx, canvas) {
-        //     // Draw director of lessor
-        //     ctx.fillText(signatures.directorOfLessor, canvas.width - 2000, 3055);
-        //     if (signatures.signatureImg1) {
-        //         ctx.drawImage(signatures.signatureImg1, canvas.width - 1700, 2980, 200, 100);
-        //     }
-
-        //     // Draw user
-        //     ctx.fillText(signatures.userName, canvas.width - 1300, 3055);
-        //     if (signatures.signatureImg2) {
-        //         ctx.drawImage(signatures.signatureImg2, canvas.width - 900, 2980, 200, 100);
-        //     }
-
-        //     // Draw director of branch
-        //     ctx.fillText(signatures.directorOfBranch, canvas.width - 2000, 3190);
-        //     if (signatures.signatureImg3) {
-        //         ctx.drawImage(signatures.signatureImg3, canvas.width - 1700, 3120, 200, 100);
-        //     }
-
-        //     // Draw renter
-        //     ctx.fillText(signatures.renterName, canvas.width - 1300, 3190);
-        //     if (signatures.signatureImg4) {
-        //         ctx.drawImage(signatures.signatureImg4, canvas.width - 900, 3120, 200, 100);
-        //     }
-        // }
-        // //Page1
-        // const getEnDataOfPage1 = () => {
-        //     // Contract Info
-        //     const contractNo = "@ViewBag.ContractNo";
-        //     var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
-        //     var startDate = new Date(dateTimeNow);
-        //     var daysNo = parseInt(document.getElementById('dayNo').value);
-        //     var endDate = new Date(startDate);
-        //     endDate.setDate(endDate.getDate() + daysNo);
-        //     const miladiDate = new Date(dateTimeNow);
-        //     return {
-        //         contractNo: "@ViewBag.ContractNo" || "",
-        //         miladiDateString: getFormatDate(miladiDate) || "",
-        //         startMiladiDate: getFormatDate(startDate) || "",
-        //         endMiladiDate: getFormatDate(endDate) || "",
-        //         currentHijriDate: formatHijriEnDate(miladiDate) || "",
-        //         startHijriDate: formatHijriEnDate(startDate) || "",
-        //         endHijriDate: formatHijriEnDate(endDate) || "",
-        //         status: "New",
-        //         branchName: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationEnName") || "",
-        //         branchPhone: (decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationTelephone") + decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationTelephone")) || "",
-        //         branchMobile: (decodeHTMLEntities("@Model.CrCasBranchInformation.CrMasBranchInformationMobileKey") + decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationMobile")) || "",
-        //         branchEmail: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationLessorNavigation.CrMasLessorInformationEmail") || "",
-        //         branchPost: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchPost.CrCasBranchPostEnConcatenate") || "",
-        //         CarName: CarInformationForContract.crCasCarInformationConcatenateEnName || "",
-        //         CarSerialNo: CarInformationForContract.crCasCarInformationSerailNo || "",
-        //         CarRegistration: CarInformationForContract.registerationEn || "",
-        //         CarFuel: CarInformationForContract.fuelEn || "",
-        //         CarCVT: CarInformationForContract.cvtEn || "",
-        //         RunningCardNo: CarInformationForContract.runningCardNo || "",
-        //         RunningCardEndDate: CarInformationForContract.runningCardEndDate || "",
-        //         InsurancePolicyNo: CarInformationForContract.insurancePolicyNo || "",
-        //         InsurancePolicyEndDate: CarInformationForContract.insurancePolicyEndDate || "",
-        //         PeriodicInspectionNo: CarInformationForContract.periodicInspectionNo || "",
-        //         RenterName: RenterInformation.personalEnName || "",
-        //         RenterId: RenterInformation.renterID || "",
-        //         RenterMembership: RenterInformation.enMembership || "",
-        //         RenterEmail: RenterInformation.personalEmail || "",
-        //         RenterPost: RenterInformation.postEnNameConcenate || "",
-        //         RenterReasons: $("#Contract_RenterReasons").val() || ""
-        //     };
-        // };
-        // const CreateEnPageContract1 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage1";
-        //         var imagePath = image.replace('~', '');
-        //         // Contract Info
-        //         const contractNo = "@ViewBag.ContractNo";
-        //         // get data For Page 1
-        //         var Data = getEnDataOfPage1();
-        //         var signtures = await loadEnSignatures();
-        //         // Last Director and manger and user and renter with signture
-        //         // Text on Image
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var url;
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-
-        //             ctx.drawImage(img, 0, 0);
-
-        //             ctx.font = "bold 35px serif";
-        //             ctx.textAlign = "left";
-        //             ctx.fillStyle = "black";
-        //             //Contract
-        //             ctx.fillText(Data.contractNo, canvas.width - 1990, 790);
-        //             ctx.fillText(Data.currentHijriDate, canvas.width - 2200, 870);
-        //             ctx.fillText(Data.miladiDateString, canvas.width - 1300, 870);
-        //             ctx.fillText(Data.startHijriDate, canvas.width - 2100, 945);
-        //             ctx.fillText(Data.startMiladiDate, canvas.width - 1300, 945);
-        //             ctx.fillText(Data.endHijriDate, canvas.width - 2100, 1025);
-        //             ctx.fillText(Data.endMiladiDate, canvas.width - 1300, 1025);
-        //             ctx.fillText(Data.status, canvas.width - 2030, 1105);
-        //             //Branch
-        //             ctx.font = "bold 50px serif";
-        //             ctx.fillText(Data.branchName, canvas.width - 2310, 1275);
-        //             ctx.font = "bold 35px serif";
-        //             ctx.fillText(Data.branchMobile, canvas.width - 2110, 1388);
-        //             ctx.fillText(Data.branchPhone, canvas.width - 1220, 1388);
-        //             ctx.fillText(Data.branchEmail, canvas.width - 2182, 1472);
-        //             ctx.fillText(Data.branchPost, canvas.width - 2150, 1558);
-        //             //Car
-        //             ctx.font = "bold 50px serif";
-        //             ctx.fillText(Data.CarName, canvas.width - 2310, 1750);
-        //             ctx.font = "bold 35px serif";
-        //             ctx.fillText(Data.CarSerialNo, canvas.width - 2120, 1870);
-        //             ctx.fillText(Data.CarRegistration, canvas.width - 2140, 1955);
-        //             ctx.fillText(Data.CarFuel, canvas.width - 1235, 1955);
-        //             ctx.fillText(Data.CarCVT, canvas.width - 660, 1955);
-        //             ctx.fillText(Data.PeriodicInspectionNo, canvas.width - 1950, 2040);
-
-        //             ctx.fillText(Data.RunningCardNo, canvas.width - 2020, 2122)
-        //             ctx.fillText(Data.RunningCardEndDate, canvas.width - 740, 2122);
-
-        //             ctx.fillText(Data.InsurancePolicyNo, canvas.width - 1920, 2207);
-        //             ctx.fillText(Data.InsurancePolicyEndDate, canvas.width - 740, 2207);
-
-        //             // Renter
-        //             ctx.font = "bold 50px serif";
-        //             ctx.fillText(Data.RenterName, canvas.width - 2310, 2390);
-        //             ctx.font = "bold 35px serif";
-        //             ctx.fillText(Data.RenterId, canvas.width - 2150, 2505);
-        //             ctx.fillText("", canvas.width - 2150, 2590);
-        //             ctx.fillText(Data.RenterMembership, canvas.width - 1175, 2588);
-        //             ctx.fillText(Data.RenterEmail, canvas.width - 2182, 2675);
-        //             ctx.fillText(Data.RenterPost, canvas.width - 2150, 2768);
-        //             ctx.fillText(Data.RenterReasons, canvas.width - 2150, 2850);
-        //             // Last
-        //             DrawEnNameAndSignture(signtures, ctx, canvas);
-        //             canvas.toBlob(async function (blob) {
-        //                 // Return the blob
-        //                 resolve(blob);
-        //             }, "image/png");
-        //         };
-        //         img.src = imagePath;
-        //     });
-        // };
-        // //Page2
-        // const getEnDataOfPage2 = () => {
-        //     const getFormattedDate = (date) => date ? getFormatDate(date) : "";
-        //     return {
-        //         DriverName: DriverInformation?.personalEnName || "",
-        //         DriverId: DriverInformation?.renterID || "",
-        //         DriverBirthDate: getFormattedDate(DriverInformation?.birthDate),
-        //         DriverGender: DriverInformation?.personalEnGender || "",
-        //         DriverNationality: DriverInformation?.personalEnNationality || "",
-        //         DriverLicense: DriverInformation?.licenseEnName || "",
-        //         DriverLicenseNo: DriverInformation?.licenseCode || "",
-        //         DriverLicenseExpiryDate: getFormattedDate(DriverInformation?.licenseExpiryDate),
-        //         DriverEmployerName: DriverInformation?.employerEnName || "",
-        //         DriverMembership: DriverInformation?.enMembership || "",
-        //         DriverPersonalProfessions: DriverInformation?.personalEnProfessions || "",
-        //         DriverPersonalEmail: DriverInformation?.personalEmail || "",
-        //         DriverPostNameConcenate: DriverInformation?.postEnNameConcenate || "",
-        //         DriverReasons: $("#Contract_DriverReasons").val() || "",
-
-        //         AddDriverName: AddDriverInformation?.personalEnName || "",
-        //         AddDriverId: AddDriverInformation?.renterID || "",
-        //         AddDriverBirthDate: getFormattedDate(AddDriverInformation?.birthDate),
-        //         AddDriverGender: AddDriverInformation?.personalEnGender || "",
-        //         AddDriverNationality: AddDriverInformation?.personalEnNationality || "",
-        //         AddDriverLicense: AddDriverInformation?.licenseEnName || "",
-        //         AddDriverLicenseNo: AddDriverInformation?.licenseCode || "",
-        //         AddDriverLicenseExpiryDate: getFormattedDate(AddDriverInformation?.licenseExpiryDate),
-        //         AddDriverEmployerName: AddDriverInformation?.employerEnName || "",
-        //         AddDriverMembership: AddDriverInformation?.enMembership || "",
-        //         AddDriverPersonalProfessions: AddDriverInformation?.personalEnProfessions || "",
-        //         AddDriverPersonalEmail: AddDriverInformation?.personalEmail || "",
-        //         AddDriverPostNameConcenate: AddDriverInformation?.postEnNameConcenate || "",
-        //         AddDriverReasons: $("#Contract_AddDriverReasons").val() || "",
-
-        //         PrivateDriverName: PrivateDriverInformation?.personalEnName || "",
-        //         PrivateDriverId: PrivateDriverInformation?.renterID || "",
-        //         PrivateDriverBirthDate: getFormattedDate(PrivateDriverInformation?.birthDate),
-        //         PrivateDriverGender: PrivateDriverInformation?.personalEnGender || "",
-        //         PrivateDriverNationality: PrivateDriverInformation?.personalEnNationality || "",
-        //         PrivateDriverLicense: PrivateDriverInformation?.licenseEnName || "",
-        //         PrivateDriverLicenseNo: PrivateDriverInformation?.licenseCode || "",
-        //         PrivateDriverLicenseExpiryDate: getFormattedDate(PrivateDriverInformation?.licenseExpiryDate),
-        //         PrivateDriverEmployerName: PrivateDriverInformation?.employerEnName || "",
-        //         PrivateDriverPersonalProfessions: PrivateDriverInformation?.personalEnProfessions || "",
-        //         PrivateDriverPersonalEmail: PrivateDriverInformation?.personalEmail || "",
-        //         PrivateDriverPostNameConcenate: PrivateDriverInformation?.postEnNameConcenate || "",
-        //     };
-        // };
-        // const CreateEnPageContract2 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage2";
-        //         var imagePath = image.replace('~', '');
-        //         // Get ALl Date for Page 2
-        //         const Data = getEnDataOfPage2();
-        //         var signtures = await loadEnSignatures();
-
-        //         // Last Director and manger and user and renter with signture
-
-        //         // Text on Image
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var url;
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-
-        //             ctx.drawImage(img, 0, 0);
-
-        //             ctx.font = "bold 35px serif";
-        //             ctx.textAlign = "left";
-        //             ctx.fillStyle = "black";
-        //             // Driver
-        //             ctx.font = "bold 50px serif";
-        //             ctx.fillText(Data.DriverName, canvas.width - 2300, 680);
-        //             ctx.font = "bold 35px serif";
-        //             ctx.fillText(Data.DriverId, canvas.width - 2090, 795);
-        //             ctx.fillText(Data.DriverBirthDate, canvas.width - 2050, 880);
-        //             ctx.fillText(Data.DriverGender, canvas.width - 1310, 880);
-        //             ctx.fillText(Data.DriverNationality, canvas.width - 650, 880);
-        //             ctx.fillText(Data.DriverLicense, canvas.width - 2010, 965);
-        //             ctx.fillText(Data.DriverLicenseNo, canvas.width - 1300, 965);
-        //             ctx.fillText(Data.DriverLicenseExpiryDate, canvas.width - 740, 965);
-        //             ctx.fillText(Data.DriverPersonalProfessions, canvas.width - 2080, 1045);
-        //             ctx.fillText(Data.DriverMembership, canvas.width - 1120, 1045);
-        //             ctx.fillText(Data.DriverEmployerName, canvas.width - 2130, 1130);
-        //             ctx.fillText(Data.DriverPersonalEmail, canvas.width - 2130, 1215);
-        //             ctx.fillText(Data.DriverPostNameConcenate, canvas.width - 2130, 1300);
-        //             ctx.fillText(Data.DriverReasons, canvas.width - 2130, 1375);
-        //             // Add Driver
-        //             ctx.font = "bold 50px serif";
-        //             ctx.fillText(Data.AddDriverName, canvas.width - 2300, 1555);
-        //             ctx.font = "bold 35px serif";
-        //             ctx.fillText(Data.AddDriverId, canvas.width - 2070, 1655);
-        //             ctx.fillText(Data.AddDriverBirthDate, canvas.width - 2050, 1740);
-        //             ctx.fillText(Data.AddDriverGender, canvas.width - 1310, 1740);
-        //             ctx.fillText(Data.AddDriverNationality, canvas.width - 650, 1740);
-        //             ctx.fillText(Data.AddDriverLicense, canvas.width - 2010, 1820);
-        //             ctx.fillText(Data.AddDriverLicenseNo, canvas.width - 1300, 1820);
-        //             ctx.fillText(Data.AddDriverLicenseExpiryDate, canvas.width - 740, 1820);
-        //             ctx.fillText(Data.AddDriverPersonalProfessions, canvas.width - 2080, 1905);
-        //             ctx.fillText(Data.AddDriverMembership, canvas.width - 1120, 1905);
-        //             ctx.fillText(Data.AddDriverEmployerName, canvas.width - 2130, 1990);
-        //             ctx.fillText(Data.AddDriverPersonalEmail, canvas.width - 2130, 2070);
-        //             ctx.fillText(Data.AddDriverPostNameConcenate, canvas.width - 2130, 2160);
-        //             ctx.fillText(Data.AddDriverReasons, canvas.width - 2130, 2240);
-        //             // Private Driver
-        //             ctx.font = "bold 50px serif";
-        //             ctx.fillText(Data.PrivateDriverName, canvas.width - 2300, 2410);
-        //             ctx.font = "bold 35px serif";
-        //             ctx.fillText(Data.PrivateDriverId, canvas.width - 2070, 2525);
-        //             ctx.fillText(Data.PrivateDriverBirthDate, canvas.width - 2050, 2610);
-        //             ctx.fillText(Data.PrivateDriverGender, canvas.width - 1310, 2610);
-        //             ctx.fillText(Data.PrivateDriverNationality, canvas.width - 650, 2610);
-
-        //             ctx.fillText(Data.PrivateDriverLicense, canvas.width - 2010, 2700);
-        //             ctx.fillText(Data.PrivateDriverLicenseNo, canvas.width - 1300, 2700);
-        //             ctx.fillText(Data.PrivateDriverLicenseExpiryDate, canvas.width - 740, 2700);
-        //             ctx.fillText(Data.PrivateDriverPersonalEmail, canvas.width - 2130, 2785);
-        //             // Last
-        //             DrawEnNameAndSignture(signtures, ctx, canvas);
-        //             canvas.toBlob(async function (blob) {
-        //                 // Return the blob
-        //                 resolve(blob);
-        //             }, "image/png");
-        //         };
-        //         img.src = imagePath;
-        //     });
-        // };
-        // //Page3
-        // const getEnDataOfPage3 = () => {
-        //     const contractNo = "@ViewBag.ContractNo";
-        //     const fromBranchName = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationEnShortName") || "";
-        //     var selectedOptionBrn = $("#Receiving-branch-dropdown option:selected");
-        //     const toBranchName = selectedOptionBrn.data('en') || '';
-        //     const geographicDistict = document.getElementById('Delegate-out').checked ? "Outside the kingdom" : "Inside the kingdom";
-        //     const freeHours = CarInformation.carPrice.crCasPriceCarBasicFreeAdditionalHours || "";
-        //     const freeKM = CarInformation.carPrice.crCasPriceCarBasicNoDailyFreeKm || "";
-        //     const age = `${CarInformation?.carPrice?.crCasPriceCarBasicMinAge || ""} - ${CarInformation?.carPrice?.crCasPriceCarBasicMaxAge || ""}`;
-        //     var rentDaily = CarInformation.carPrice.crCasPriceCarBasicDailyRent || "";
-        //     var maxHourValue = CarInformation.carPrice.crCasPriceCarBasicExtraHourValue || "";
-        //     var addKmValue = CarInformation.carPrice.crCasPriceCarBasicAdditionalKmValue || "";
-        //     var advatagesValue = $("#AdvatagesValue").text() || "";
-        //     var choicesValue = $("#ChoicesValue").text() || "";
-        //     var additionalValue = $("#AdditionalValue").text() || "";
-        //     var addDriverValue = CarInformation.carPrice.crCasPriceCarBasicAdditionalDriverValue || "";
-        //     var privateDriverValue = CarInformation.carPrice.crCasPriceCarBasicPrivateDriverValue || "";
-        //     var compensationAccident = CarInformation.carPrice.crCasPriceCarBasicCompensationAccident || "";
-        //     var compensationTheft = CarInformation.carPrice.crCasPriceCarBasicCompensationTheft || "";
-        //     var compensationFire = CarInformation.carPrice.crCasPriceCarBasicCompensationFire || "";
-        //     var compensationDrowning = CarInformation.carPrice.crCasPriceCarBasicCompensationDrowning || "";
-
-        //     return {
-        //         contractNo,
-        //         fromBranchName,
-        //         toBranchName,
-        //         geographicDistict,
-        //         freeHours,
-        //         freeKM,
-        //         age,
-        //         rentDaily,
-        //         maxHourValue,
-        //         addKmValue,
-        //         advatagesValue,
-        //         choicesValue,
-        //         additionalValue,
-        //         addDriverValue,
-        //         privateDriverValue,
-        //         compensationAccident,
-        //         compensationTheft,
-        //         compensationFire,
-        //         compensationDrowning
-        //     };
-        // };
-        // function getEnAdditionalData(ctx, canvas) {
-        //     var yOffset = 1840; // Initial y-offset for name
-        //     var valueXOffset = canvas.width - 1020; // X-offset for value
-        //     var nameXOffset = canvas.width - 1500; // X-offset for name
-        //     AdditionalsItems.forEach(function (item, index) {
-        //         var nameText = item.enName.trim();
-        //         var valueText = item.value;
-        //         // Set fillText for name
-        //         ctx.fillText(nameText, nameXOffset, yOffset + (index * 70));
-        //         // Set fillText for value
-        //         ctx.fillText(valueText, valueXOffset, yOffset + (index * 70));
-        //     });
-        // };
-        // function getEnChoicesData(ctx, canvas) {
-        //     var yOffset = 1840; // Initial y-offset for name
-        //     var valueXOffset = canvas.width - 1780; // X-offset for value
-        //     var nameXOffset = canvas.width - 2260; // X-offset for name
-        //     ChoiceItems.forEach(function (item, index) {
-        //         var nameText = item.enName.trim();
-        //         var valueText = item.value;
-        //         // Set fillText for name
-        //         ctx.fillText(nameText, nameXOffset, yOffset + (index * 70));
-        //         // Set fillText for value
-        //         ctx.fillText(valueText, valueXOffset, yOffset + (index * 70));
-        //     });
-        // };
-        // function getEnAdvantagesData(ctx, canvas) {
-        //     var yOffset = 1840; // Initial y-offset for name
-        //     var valueXOffset = canvas.width - 250; // X-offset for value
-        //     var nameXOffset = canvas.width - 760; // X-offset for name
-        //     CarAdvantages.forEach(function (item, index) {
-        //         var nameText = item.enName;
-        //         var valueText = item.advantagesValue;
-        //         // Set fillText for name
-        //         ctx.fillText(nameText, nameXOffset, yOffset + (index * 70));
-        //         // Set fillText for value
-        //         ctx.fillText(valueText, valueXOffset, yOffset + (index * 70));
-        //     });
-        // }
-        // const CreateEnPageContract3 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage3";
-        //         var imagePath = image.replace('~', '');
-        //         // Get ALl Date for Page 2
-        //         var Data = getEnDataOfPage3();
-        //         var signtures = await loadEnSignatures();
-        //         // Last Director and manger and user and renter with signture
-        //         // Text on Image
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var url;
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-
-        //             ctx.drawImage(img, 0, 0);
-
-        //             ctx.font = "bold 35px serif";
-        //             ctx.textAlign = "left";
-        //             ctx.fillStyle = "black";
-        //             //
-        //             ctx.fillText(Data.fromBranchName, canvas.width - 2000, 770);
-        //             ctx.fillText(Data.toBranchName, canvas.width - 1140, 770);
-        //             ctx.fillText(Data.geographicDistict, canvas.width - 2000, 860);
-        //             ctx.fillText(Data.freeHours, canvas.width - 1250, 860);
-        //             ctx.fillText(Data.freeKM, canvas.width - 2100, 953);
-        //             ctx.fillText(Data.age, canvas.width - 1305, 953);
-        //             ctx.fillText(Data.rentDaily, canvas.width - 2100, 1045);
-        //             ctx.fillText(Data.advatagesValue, canvas.width - 1100, 1045);
-        //             ctx.fillText(Data.maxHourValue, canvas.width - 2080, 1138);
-        //             ctx.fillText(Data.addKmValue, canvas.width - 1270, 1138);
-        //             ctx.fillText(Data.choicesValue, canvas.width - 2150, 1230);
-        //             ctx.fillText(Data.additionalValue, canvas.width - 1300, 1230);
-        //             ctx.fillText(Data.addDriverValue, canvas.width - 1990, 1325);
-        //             ctx.fillText(Data.privateDriverValue, canvas.width - 1200, 1325);
-        //             ctx.fillText(Data.compensationAccident, canvas.width - 1990, 1415);
-        //             ctx.fillText(Data.compensationTheft, canvas.width - 1200, 1415);
-        //             ctx.fillText(Data.compensationFire, canvas.width - 1990, 1510);
-        //             ctx.fillText(Data.compensationDrowning, canvas.width - 1200, 1510);
-        //             // Additonals
-        //             if (AdditionalsItems != null && AdditionalsItems.length != 0) {
-        //                 getEnAdditionalData(ctx, canvas);
-        //             }
-        //             //Choices
-        //             if (ChoiceItems != null && ChoiceItems.length != 0) {
-        //                 getEnChoicesData(ctx, canvas);
-        //             }
-        //             //AdvantagesData
-        //             if (CarAdvantages != null && CarAdvantages.length != 0) {
-        //                 getEnAdvantagesData(ctx, canvas);
-        //             }
-        //             // Last
-        //             DrawEnNameAndSignture(signtures, ctx, canvas);
-        //             canvas.toBlob(async function (blob) {
-        //                 // Return the blob
-
-        //                 resolve(blob);
-        //             }, "image/png");
-        //         };
-        //         img.src = imagePath;
-        //     });
-        // };
-        // // Page4
-        // function GetEnCheckUpItems(ctx, canvas) {
-        //     GetCheckUp();
-        //     var yOffset = 885; // Initial y-offset for name
-        //     var valueXOffset = canvas.width - 1400; // X-offset for value
-        //     var nameXOffset = canvas.width - 2000; // X-offset for name
-        //     if (CarCheckUp != null && CarCheckUp.length > 0) {
-        //         CarCheckUp.forEach(function (item, index) {
-        //             var nameText = item.enName;
-        //             var checkupReason = item.reasonCheckName + (item.reason ? " - " + item.reason : "");
-        //             // Set fillText for name
-        //             ctx.fillText(nameText, nameXOffset, yOffset + (index * 70));
-        //             // Set fillText for value
-        //             ctx.fillText(checkupReason, valueXOffset, yOffset + (index * 70));
-        //         });
-        //     }
-        // }
-        // const CreateEnPageContract4 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage4";
-        //         var imagePath = image.replace('~', '');                    // Get ALl Date for Page 4
-        //         // Last Director and manger and user and renter with signture
-        //         var signtures = await loadEnSignatures();
-        //         ///////////////////////////////////////////////////////
-        //         // Text on Image
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var url;
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-        //             ctx.drawImage(img, 0, 0);
-        //             ctx.font = "bold 35px serif";
-        //             ctx.textAlign = "left";
-        //             ctx.fillStyle = "black";
-        //             GetEnCheckUpItems(ctx, canvas);
-        //             // Last
-        //             DrawEnNameAndSignture(signtures, ctx, canvas);
-        //             canvas.toBlob(async function (blob) {
-        //                 // Return the blob
-
-        //                 resolve(blob);
-        //             }, "image/png");
-        //         };
-        //         img.src = imagePath;
-        //     });
-        // };
-        // // Page5
-        // async function GetENCheckUpPicture() {
-        //     // Array to store the Image objects
-        //     const images = [];
-        //     imgCheckUpArray.forEach(file => {
-        //         const img = new Image();
-        //         img.src = URL.createObjectURL(file.f);
-        //         images.push(img);
-        //     });
-        //     return images;
-        // }
-        // const CreateEnPageContract5 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage5";
-        //         var imagePath = image.replace('~', '');
-        //         // Get ALl Date for Page 5
-        //         var pictures = await GetENCheckUpPicture();
-        //         // Last Director and manger and user and renter with signture
-        //         var signtures = await loadEnSignatures();
-        //         ///////////////////////////////////////////////////////
-        //         // Text on Image
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var url;
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-
-        //             ctx.drawImage(img, 0, 0);
-
-        //             ctx.font = "bold 35px serif";
-        //             ctx.textAlign = "left";
-        //             ctx.fillStyle = "black";
-        //             //
-        //             if (pictures[0]) {
-        //                 ctx.drawImage(pictures[0], canvas.width - 1015, 750, 650, 650);
-        //             }
-        //             if (pictures[1]) {
-        //                 ctx.drawImage(pictures[1], canvas.width - 1015, 1470, 650, 650);
-        //             }
-        //             if (pictures[2]) {
-        //                 ctx.drawImage(pictures[2], canvas.width - 1015, 2185, 650, 650);
-        //             }
-        //             if (pictures[3]) {
-        //                 ctx.drawImage(pictures[3], canvas.width - 2015, 750, 650, 650);
-        //             }
-        //             if (pictures[4]) {
-        //                 ctx.drawImage(pictures[4], canvas.width - 2015, 1470, 650, 650);
-        //             }
-        //             if (pictures[5]) {
-        //                 ctx.drawImage(pictures[5], canvas.width - 2015, 2185, 650, 650);
-        //             }
-        //             // Last
-        //             DrawEnNameAndSignture(signtures, ctx, canvas);
-        //             canvas.toBlob(async function (blob) {
-        //                 // Return the blob
-
-        //                 resolve(blob);
-        //             }, "image/png");
-        //         };
-        //         img.src = imagePath;
-        //     });
-        // };
-        // // Page6
-        // const CreateEnPageContract6 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage6";
-        //         var imagePath = image.replace('~', '');
-        //         // Get ALl Date for Page 6
-        //         var pictures = await GetENCheckUpPicture();
-        //         // Last Director and manger and user and renter with signture
-        //         var signtures = await loadEnSignatures();
-        //         ///////////////////////////////////////////////////////
-        //         // Text on Image
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var url;
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-
-        //             ctx.drawImage(img, 0, 0);
-
-        //             ctx.font = "bold 35px serif";
-        //             ctx.textAlign = "left";
-        //             ctx.fillStyle = "black";
-        //             ////////////
-        //             if (pictures[6]) {
-        //                 ctx.drawImage(pictures[6], canvas.width - 1015, 750, 650, 650);
-        //             }
-        //             if (pictures[7]) {
-        //                 ctx.drawImage(pictures[7], canvas.width - 1015, 1470, 650, 650);
-        //             }
-        //             if (pictures[8]) {
-        //                 ctx.drawImage(pictures[8], canvas.width - 1015, 2185, 650, 650);
-        //             }
-        //             if (pictures[9]) {
-        //                 ctx.drawImage(pictures[9], canvas.width - 2015, 750, 650, 650);
-        //             }
-        //             if (pictures[10]) {
-        //                 ctx.drawImage(pictures[10], canvas.width - 2015, 1470, 650, 650);
-        //             }
-        //             if (pictures[11]) {
-        //                 ctx.drawImage(pictures[11], canvas.width - 2015, 2185, 650, 650);
-        //             }
-        //             // Last
-        //             DrawEnNameAndSignture(signtures, ctx, canvas);
-        //             canvas.toBlob(async function (blob) {
-        //                 resolve(blob);
-        //             }, "image/png");
-        //         };
-        //         img.src = imagePath;
-
-        //     });
-        // };
-        // // Page 7
-        // async function getContractEnConditionPic1() {
-        //     var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms1";
-        //     var imagePath = image.replace('~', '');
-        //     try {
-        //         const mainImg = await loadImage(imagePath);
-        //         return mainImg;
-        //     } catch (error) {
-        //         console.error('Error loading contract image:', error);
-        //         throw error; // إعادة رمي الخطأ للتعامل معه في المتصل
-        //     }
-        // }
-        // const CreateEnPageContract7 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage7";
-        //         var imagePath = image.replace('~', '');
-        //         // Last Director and manger and user and renter with signture
-        //         //Get Pic
-        //         // var mainImg = await getContractEnConditionPic1();
-        //         var signtures = await loadEnSignatures();
-        //         ///////////////////////////////////////////////////////
-        //         // Text on Image
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var url;
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-
-        //             ctx.drawImage(img, 0, 0);
-
-        //             ctx.font = "bold 35px serif";
-        //             ctx.textAlign = "left";
-        //             ctx.fillStyle = "black";
-        //             // //Get Pic
-        //             // ctx.drawImage(mainImg, canvas.width - 2192, 720, 1900, 2120);
-        //             // Last
-        //             DrawEnNameAndSignture(signtures, ctx, canvas);
-        //             canvas.toBlob(async function (blob) {
-        //                 // Return the blob
-        //                 resolve(blob);
-        //             }, "image/png");
-        //         };
-        //         img.src = imagePath;
-        //     });
-        // };
-        // // Page 8
-        // async function getContractEnConditionPic2() {
-        //     var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms2";
-        //     var imagePath = image.replace('~', '');
-        //     try {
-        //         const mainImg = await loadImage(imagePath);
-        //         return mainImg;
-        //     } catch (error) {
-        //         console.error('Error loading contract image:', error);
-        //         throw error; // إعادة رمي الخطأ للتعامل معه في المتصل
-        //     }
-        // }
-        // const CreateEnPageContract8 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage8";
-        //         var imagePath = image.replace('~', '');
-        //         // Last Director and manger and user and renter with signture
-        //         //Get Pic
-        //         // var mainImg = await getContractEnConditionPic2();
-        //         var signtures = await loadEnSignatures();
-        //         ///////////////////////////////////////////////////////
-        //         // Text on Image
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var url;
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-
-        //             ctx.drawImage(img, 0, 0);
-
-        //             ctx.font = "bold 35px serif";
-        //             ctx.textAlign = "left";
-        //             ctx.fillStyle = "black";
-        //             // //Get Pic
-        //             // ctx.drawImage(mainImg, canvas.width - 2192, 720, 1900, 2120);
-        //             // Last
-        //             DrawEnNameAndSignture(signtures, ctx, canvas);
-        //             canvas.toBlob(async function (blob) {
-        //                 // Return the blob
-        //                 resolve(blob);
-        //             }, "image/png");
-        //         };
-        //         img.src = imagePath;
-        //     });
-        // };
-        // // Page 9
-        // async function getContractEnConditionPic3() {
-        //     var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms3";
-        //     var imagePath = image.replace('~', '');
-        //     try {
-        //         const mainImg = await loadImage(imagePath);
-        //         return mainImg;
-        //     } catch (error) {
-        //         console.error('Error loading contract image:', error);
-        //         throw error; // إعادة رمي الخطأ للتعامل معه في المتصل
-        //     }
-        // }
-        // const CreateEnPageContract9 = async () => {
-        //     return new Promise(async (resolve, reject) => {
-        //         var image = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage9";
-        //         var imagePath = image.replace('~', '');
-        //         // Last Director and manger and user and renter with signture
-        //         //Get Pic
-        //         // var mainImg = await getContractEnConditionPic3();
-        //         var signtures = await loadEnSignatures();
-        //         ///////////////////////////////////////////////////////
-        //         // Text on Image
-        //         // Get Image And Text On
-        //         // Read the image file as a Blob
-        //         const responseImage = await fetch(imagePath);
-        //         const blob = await responseImage.blob();
-        //         var canvas = document.createElement("canvas");
-        //         var ctx = canvas.getContext("2d");
-        //         var url;
-        //         var img = new Image();
-        //         img.crossOrigin = "Anonymous";
-        //         img.onload = function () {
-        //             canvas.width = img.width;
-        //             canvas.height = img.height;
-
-        //             ctx.drawImage(img, 0, 0);
-
-        //             ctx.font = "bold 35px serif";
-        //             ctx.textAlign = "left";
-        //             ctx.fillStyle = "black";
-        //             // //Get Pic
-        //             // ctx.drawImage(mainImg, canvas.width - 2192, 720, 1900, 2120);
-        //             // Last
-        //             DrawEnNameAndSignture(signtures, ctx, canvas);
-        //             canvas.toBlob(async function (blob) {
-        //                 // Return the blob
-        //                 resolve(blob);
-        //             }, "image/png");
-        //         };
-        //         img.src = imagePath;
-        //     });
-        // };
-        // async function getPictureAndCreateEnPdfContract() {
-        //     try {
-        //         console.log("Starting getPictureAndCreateEnPdfContract");
-        //         async function imageExists(imagePath) {
-        //             try {
-        //                 const response = await fetch(imagePath);
-        //                 return response.ok;
-        //             } catch (error) {
-        //                 console.error(`Error checking image at ${imagePath}:`, error);
-        //                 return false;
-        //             }
-        //         }
-        //         const createPageFunctions = [
-        //             { func: CreateEnPageContract1, order: 1 },
-        //             { func: CreateEnPageContract2, order: 2 },
-        //             { func: CreateEnPageContract3, order: 3 },
-        //             { func: CreateEnPageContract4, order: 4 },
-        //             { func: CreateEnPageContract5, order: 5 },
-        //         ];
-
-        //         if (imgCheckUpArray.length > 6) {
-        //             createPageFunctions.push({ func: CreateEnPageContract6, order: 6 });
-        //         }
-        //         // Paths to the terms images
-        //         // const termsImagePaths = [
-        //         //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms1",
-        //         //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms2",
-        //         //     "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractTerms3"
-        //         // ];
-
-        //         // Corresponding create page functions for termsImagePaths
-        //         const termsCreatePageFunctions = [
-        //             CreateEnPageContract7,
-        //             CreateEnPageContract8,
-        //             CreateEnPageContract9
-        //         ];
-
-        //         // Paths to the pages images
-        //         const pageImagePaths = [
-        //             "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage7",
-        //             "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage8",
-        //             "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnContractPage9"
-        //         ];
-
-        //         // Check if the terms images exist and add corresponding functions
-        //         for (let i = 0; i < pageImagePaths.length; i++) {
-        //             const pageImagePath = pageImagePaths[i];
-        //             if (pageImagePath && pageImagePath.trim() !== "") {
-        //                 const pageExists = await imageExists(pageImagePath);
-        //                 if (pageExists) {
-        //                     createPageFunctions.push({ func: termsCreatePageFunctions[i], order: 7 + i });
-        //                 }
-        //             }
-        //         }
-        //         // ترتيب الوظائف حسب ترتيبها
-        //         createPageFunctions.sort((a, b) => a.order - b.order);
-        //         console.log("Sorted createPageFunctions:", createPageFunctions);
-
-        //         // تنفيذ الوظائف بالترتيب وجمع الصور
-        //         const imageBlobs = [];
-        //         for (const { func, order } of createPageFunctions) {
-        //             console.log(`Executing ${func.name} (order ${order})`);
-        //             try {
-        //                 const blob = await func();
-        //                 imageBlobs.push(blob);
-        //                 console.log(`Successfully executed ${func.name} (order ${order})`);
-        //             } catch (error) {
-        //                 console.error(`Error executing ${func.name} (order ${order}):`, error);
-        //                 throw error; // إعادة الرمي للتعامل مع الخطأ في الـ try-catch الخارجي
-        //             }
-        //         }
-        //         console.log("Collected imageBlobs:", imageBlobs);
-        //         // التأكد من عدد الصفحات
-        //         const pageCount = imageBlobs.length;
-        //         // if (pageCount < 8 || pageCount > 9) {
-        //         //     throw new Error(`Invalid number of pages: ${pageCount}. Expected 8 or 9 pages.`);
-        //         // }
-        //         // إنشاء عقد PDF باستخدام الصور المجمعة
-        //         await createPdfContract(imageBlobs, "SavePdfEnContract");
-        //     } catch (error) {
-        //         console.error("Error creating English PDF contract:", error);
-        //         // إعادة التوجيه إلى صفحة الخطأ
-        //         window.location.href = "/BS/Contract/FailedToast?type=encontract";
-        //     }
-        // }
-    </script>
-    <script>
-        // // Create pdf with multi photo
-        // const createPdfContract = async (imageBlobs, InputPdf) => {
-        //     const doc = new jsPDF('p', 'pt', 'a4', true);
-        //     for (let imageIndex = 0; imageIndex < imageBlobs.length; imageIndex++) {
-        //         if (imageIndex > 0) {
-        //             doc.addPage();
-        //         }
-        //         doc.setPage(imageIndex + 1);
-
-        //         const pageWidth = doc.internal.pageSize.getWidth();
-        //         const pageHeight = doc.internal.pageSize.getHeight();
-
-        //         const blob = imageBlobs[imageIndex];
-        //         const img = await createImageFromBlob(blob);
-
-        //         const imgWidth = pageWidth;
-        //         const imgHeight = (pageWidth * img.height) / img.width;
-
-        //         // Calculate the position to center the image vertically
-        //         const imgYPos = (pageHeight - imgHeight) / 2;
-        //         const imgXPos = 0;
-        //         doc.addImage(img, 'JPEG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
-        //         // Convert the PDF to a blob
-        //         const pdfBase64 = doc.output('datauristring');
-        //         // Set the base64-encoded PDF to the hidden input field
-        //         document.getElementById(InputPdf).value = pdfBase64;
-        //     }
-        // };
-        // // Helper function to create an image element from a blob
-        // const createImageFromBlob = (blob) => {
-        //     return new Promise((resolve, reject) => {
-        //         const img = new Image();
-        //         img.onload = () => resolve(img);
-        //         img.onerror = reject;
-        //         img.src = URL.createObjectURL(blob);
-        //     });
-        // };
-    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('msform');
@@ -8651,11 +6198,15 @@
             try {
                 // Show loader
                 $("#ContainerLoader").show();
-                
+
                 if (parseFloat(AmountPayed) > 0) {
                      await CreateReceiptPdf();
                      console.log("receipt sent successfully.");
                 }
+
+                await CreateInvoicePdf();
+                console.log("Invoice sent successfully.");
+
                 await delay(2000);
                 $("#ContainerLoader").hide();
                 form.submit();
@@ -8667,53 +6218,7 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         };
     </script>
-    <script type="text/javascript">
-        // function createPdfAndSendToWhatsApp(receiptNo, invoiceNo, imageBlob, InputPdf, language) {
-        //     var doc = new jsPDF('p', 'pt', 'a4', true);
-        //     const pageWidth = doc.internal.pageSize.getWidth();
-        //     const pageHeight = doc.internal.pageSize.getHeight();
-        //     try {
-        //         // Convert the image blob to a base64 DataURL
-        //         const reader = new FileReader();
-        //         reader.onload = function () {
-        //             const imageDataUrl = reader.result;
-        //             // Add the image to the PDF
-        //             const imgWidth = pageWidth; // Width of the image in the PDF
-        //             const imgHeight = pageHeight; // Height of the image in the PDF
-        //             const imgXPos = 0; // X position of the image (left edge)
-        //             const imgYPos = 0; // Y position of the image (top edge)
-        //             doc.addImage(imageDataUrl, 'JPEG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
-        //             // Convert the PDF to a blob
-        //             const pdfBlob = doc.output('blob');
-        //             const blobUrl = URL.createObjectURL(pdfBlob);
-        //             const pdfBase64 = doc.output('datauristring');
-        //             // Set the base64-encoded PDF to the hidden input field
-        //             document.getElementById(InputPdf).value = pdfBase64;
 
-        //             // Prepare form data with PDF
-        //             if ("@requestCulture?.RequestCulture.UICulture.Name" == "en-US" && InputPdf != "" && InputPdf != null && language == "en") {
-        //                 if (InputPdf == "SavePdfEnInvoice") {
-        //                     document.getElementById('Contract_InitialInvoiceNo').value = invoiceNo;
-        //                 }
-        //                 else {
-        //                     document.getElementById('Contract_AccountReceiptNo').value = receiptNo;
-        //                 }
-        //             }
-        //             else if ("@requestCulture?.RequestCulture.UICulture.Name" == "ar-EG" && InputPdf != "" && InputPdf != null && language == "ar") {
-        //                 if (InputPdf == "SavePdfArInvoice") {
-        //                     document.getElementById('Contract_InitialInvoiceNo').value = invoiceNo;
-        //                 }
-        //                 else {
-        //                     document.getElementById('Contract_AccountReceiptNo').value = receiptNo;
-        //                 }
-        //             }
-        //         };
-        //         reader.readAsDataURL(imageBlob); // Start reading the image blob
-        //     } catch (error) {
-        //         console.error('Error adding image to PDF:', error);
-        //     }
-        // }
-    </script>
     <script>
         $(document).ready(function () {
             $("#Contract_PaymentMethod").change(function () {
@@ -8960,15 +6465,6 @@
     </script>
     <!--Controller to inputs-->
     <script>
-        // Phone No0 dont start with zero
-        // document.getElementById('CheckModal-PhoneInput').addEventListener('input', function () {
-        //     let inputValue = this.value;
-        //     inputValue = inputValue.replace(/\D/g, '');
-        //     if (inputValue.startsWith('0')) {
-        //         inputValue = inputValue.replace(/^0+/, '');
-        //     }
-        //     this.value = inputValue;
-        // });
         document.addEventListener('DOMContentLoaded', function () {
             // Get today's date in the format yyyy-mm-dd
             var today = new Date().toISOString().split('T')[0];
