@@ -20,8 +20,28 @@
     ViewData["Page-title"] = @localizer["RenterStatistics Data"];
     ViewData["Page-Hint"] = @localizer["RenterStatistics Hint"];
 }
-    
-<div class="col my-2 d-flex align-items-center justify-content-center">
+<style>
+
+    /* العنصر الذي سيتم محاذاته */
+    .LoaderRun_Center_div {
+        width: 2200px;
+        height: 550px;
+        /*background-color: #3498db;*/
+        text-align: center;
+        /*color: white;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        z-index: 4;
+    }
+</style>
+
+<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
+    <div class="content LoaderRun_Center_div">
+        <div class="loader"></div>
+    </div>
+    <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
         <div class="row justify-content-center">
             <div class="col-lg-11">
@@ -31,7 +51,8 @@
                     </div>
                     <div class="col-md-12 ">
                         <p class="d-inline-block headLines">@localizer["RenterStatistics_count_Renters"] : </p>
-                        <p class="d-inline-block Saved-data headLines">@(Model.Renters_Count?.ToString("0") ?? "0") @localizer["RenterStatistics_Renter"]</p>
+                        @*<p class="d-inline-block Saved-data headLines">@(Model.Renters_Count?.ToString("0") ?? "0") @localizer["RenterStatistics_Renter"]</p>*@
+                        <p class="d-inline-block Saved-data headLines">@(Model.Renters_Count?.ToString("0") ?? "0")</p>
 
                     </div>
                     <div class="col-md-12">
@@ -88,6 +109,7 @@
            class="new-Page-icon"><img src="~/MasSystem/images/back to main.svg" alt="man"></a>
     </div>
 </div>
+</div>
 
 
 
@@ -105,6 +127,7 @@
     <script src="~/MasSystem/scripts/Scripts.js"></script>>*@--->
     <script>
         window.addEventListener('load', function () {
+            $(".LoaderRun_Center_div").css("display", "none");
             NationalityChart()
         })
     </script>
@@ -134,6 +157,7 @@
         }
 
         async function GetAllBy_Profession() {
+            $(".LoaderRun_Center_div").css("display", "flex");
             return new Promise((resolve, reject) => {
 
             $.ajax({
@@ -143,7 +167,7 @@
                 //},
                 url: "@Url.Action("GetAllBy_Profession", "RenterStatistics", new { Area = "MAS" })",
                 success: function (response) {
-                    //$(".LoaderRun_Center_div").css("display", "none");
+                    $(".LoaderRun_Center_div").css("display", "none");
                     //$(".chart22").html(response);
                     console.log(response);
                     resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
@@ -156,13 +180,14 @@
         }
 
         async function GetAllBy_City() {
+            $(".LoaderRun_Center_div").css("display", "flex");
             return new Promise((resolve, reject) => {
 
                 $.ajax({
                     type: "GET",
                     url: "@Url.Action("GetAllBy_City", "RenterStatistics", new { Area = "MAS" })",
                     success: function (response) {
-                        //$(".LoaderRun_Center_div").css("display", "none");
+                        $(".LoaderRun_Center_div").css("display", "none");
                         console.log(response);
                         resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
                     },
@@ -174,13 +199,14 @@
         }
 
         async function GetAllBy_Region() {
+            $(".LoaderRun_Center_div").css("display", "flex");
             return new Promise((resolve, reject) => {
 
                 $.ajax({
                     type: "GET",
                     url: "@Url.Action("GetAllBy_Region", "RenterStatistics", new { Area = "MAS" })",
                     success: function (response) {
-                        //$(".LoaderRun_Center_div").css("display", "none");
+                        $(".LoaderRun_Center_div").css("display", "none");
                         console.log(response);
                         resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
                     },
@@ -192,13 +218,14 @@
         }
 
         async function GetAllBy_Age() {
+            $(".LoaderRun_Center_div").css("display", "flex");
             return new Promise((resolve, reject) => {
 
                 $.ajax({
                     type: "GET",
                     url: "@Url.Action("GetAllBy_Age", "RenterStatistics", new { Area = "MAS" })",
                     success: function (response) {
-                        //$(".LoaderRun_Center_div").css("display", "none");
+                        $(".LoaderRun_Center_div").css("display", "none");
                         console.log(response);
                         resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
                     },

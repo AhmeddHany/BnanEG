@@ -141,6 +141,9 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IBankService, BankService>();
             builder.Services.AddScoped<IMasAccountPaymentMethod, MasAccountPaymentMethod>();
             builder.Services.AddScoped<ICarDistribution, CarDistribution>();
+            
+            builder.Services.AddScoped<ILessorOwners_CAS, LessorOwners_CAS>();
+            
 
             builder.Services.AddScoped<IMasContractAdditional, MasContractAdditional>();
             builder.Services.AddScoped<IMasContractOptions, MasContractOptions>();

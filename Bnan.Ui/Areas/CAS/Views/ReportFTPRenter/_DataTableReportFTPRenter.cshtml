@@ -1,0 +1,75 @@
+﻿
+
+@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS;
+@model listReportFTPRenterVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+
+            <th>@localizer["Amountstraded"]</th>
+            <th>@localizer["FTR_Reserved_Balance"]</th>
+            <th>@localizer["FTR_Avilable_Balance"]</th>
+            <th>@localizer["FTR_Balance"]</th>
+            <th class="DifferAlign" style="max-width:220px;"> @localizer["Renter_Name"]</th>
+            <th></th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var no = 1;
+        }
+        @foreach (var item in Model.all_CasRenterLessor)
+        {
+            var Renter = " ";
+            if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+            {
+                Renter = item.Renter_En;
+
+            }
+            else
+            {
+                Renter = item.Renter_Ar;
+
+            }
+            //var LastDate = item.CrCasCarInformationLastContractDate;
+
+            <tr onclick="location.href='@Url.Action("Edit", "ReportFTPRenter", new { id = item.CrCasRenterLessorId})'">
+                <td>
+                    @((item.TradedAmount ?? 0.0m).ToString("N2"))
+                </td>
+                <td>
+                    @((item.ReservedBalance??0.0m).ToString("N2"))
+                </td>
+                <td>
+                    @((item.AvailableBalance ?? 0.0m).ToString("N2"))
+                </td>
+                <td>
+                    @((item.TotalBalance ?? 0.0m).ToString("N2"))
+                </td>
+
+
+                <td class="DifferAlign">
+                    <p class="FirstLineP">@Renter </p>
+                    <p class="secondLineP">@item.CrCasRenterLessorId</p>
+                </td>
+                <td>
+                    @no
+                </td>
+                                    
+            </tr>
+            no++;
+        }
+
+    </tbody>
+
+</table>

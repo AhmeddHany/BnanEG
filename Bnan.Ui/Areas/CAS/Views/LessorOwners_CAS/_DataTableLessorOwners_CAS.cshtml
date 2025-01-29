@@ -1,0 +1,62 @@
+﻿@using Bnan.Ui.ViewModels.CAS
+@using Bnan.Core.Extensions
+@model CASContractSourceVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            @*<th>@localizer["LessorOwners_CASCount"]</th>*@
+            <th> @localizer["NoOfCar"]</th>
+            <th class="DifferAlign"> @localizer["LessorMarketingMobile"]</th>
+            <th class="DifferAlign"> @localizer["LessorMarketingEmail"]</th>
+            <th class="DifferAlign"> @localizer["Owner_one_New"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.list_crCasOwner)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "LessorOwners_CAS", new { id = item.CrCasOwnersCode })'">
+
+                <td>
+                    <p>@(Model.all_CarsCount?.Find(x=>x.Column?.ToString()?.Trim() == item.CrCasOwnersCode)?.RowCount.ToString("N0") ?? "0")</p>
+                </td>
+                <td class="DifferAlign">
+                    <p>
+                        @(item.CrCasOwnersCountryKey+item.CrCasOwnersMobile)
+                    </p>
+                </td>
+                <td class="DifferAlign">
+                    <p>Mail</p>
+                </td>
+                <td class="DifferAlign">
+                    <p class="FirstLineP"> @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrCasOwnersEnName : item.CrCasOwnersArName)</p>
+                    <p class="secondLineP"> @item.CrCasOwnersCode </p>
+                </td>
+
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrCasOwnersStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrCasOwnersStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrCasOwnersStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+</table>

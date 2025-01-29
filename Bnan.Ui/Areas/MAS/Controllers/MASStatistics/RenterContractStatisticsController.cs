@@ -80,7 +80,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
             var listmaxDate = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
             predicate: null,
-            selectProjection: query => query.Select(x => new Date_ReportClosedContractVM
+            selectProjection: query => query.Select(x => new Date_ReportClosedContract_MAS_VM
             {
                 dates = x.CrCasRenterContractStatisticsDate,
             }));
@@ -106,7 +106,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
               var all_Contract_Days = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
               }));
@@ -143,7 +143,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_Nationalitys = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsNationalities,
@@ -217,7 +217,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
                 var x = true;
-                for (var i = 0; x == true; i++)
+                for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
                 {
 
                     if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -313,7 +313,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_Professions = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsJobs,
@@ -387,7 +387,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
                 var x = true;
-                for (var i = 0; x == true; i++)
+                for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
                 {
 
                     if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -483,7 +483,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_Regions = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsRenterRegions,
@@ -557,7 +557,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
                 var x = true;
-                for (var i = 0; x == true; i++)
+                for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
                 {
 
                     if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -634,7 +634,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_Citys = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsRenterCity,
@@ -708,7 +708,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
                 var x = true;
-                for (var i = 0; x == true; i++)
+                for (var i = 0; i < listMaschartBranchDataVM.Count; i++)
                 {
 
                     if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
@@ -785,7 +785,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
 
                 var all_Contract_Age = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterContractStatisticsDate > start_Date && x.CrCasRenterContractStatisticsDate <= end_Date,
-              selectProjection: query => query.Select(x => new Contract_TypeVM
+              selectProjection: query => query.Select(x => new MAS_Contract_TypeVM
               {
                   Contract_Code = x.CrCasRenterContractStatisticsNo,
                   Type_Id = x.CrCasRenterContractStatisticsAgeNo,

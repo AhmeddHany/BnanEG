@@ -111,7 +111,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 if (item.CrCasSysAdministrativeProceduresCode == "204")
                 {
                     // if 204 then it is Owners
-                    var owner = _unitOfWork.CrCasOwner.Find(x => x.CrCasOwnersCode == item.CrCasSysAdministrativeProceduresTargeted && x.CrCasOwnersLessorCode == lessorCode);
+                    var owner = _unitOfWork.CrCasOwners.Find(x => x.CrCasOwnersCode == item.CrCasSysAdministrativeProceduresTargeted && x.CrCasOwnersLessorCode == lessorCode);
                     if (owner != null)
                     {
                         item.NameOfTargetAr = $"{item.CrCasSysAdministrativeProceduresCodeNavigation.CrMasSysProceduresArName} ({owner.CrCasOwnersArName})";
@@ -285,8 +285,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 {
                     // if 216 then it is Car From branch To another
                     var car = _unitOfWork.CrCasCarInformation.Find(x => x.CrCasCarInformationSerailNo.Trim() == item.CrCasSysAdministrativeProceduresTargeted.Trim() && x.CrCasCarInformationLessor == lessorCode);
-                    var owner1 = _unitOfWork.CrCasOwner.Find(x => x.CrCasOwnersCode.Trim() == item.CrCasSysAdministrativeProceduresCarFrom.Trim());
-                    var owner2 = _unitOfWork.CrCasOwner.Find(x => x.CrCasOwnersCode.Trim() == item.CrCasSysAdministrativeProceduresCarTo.Trim());
+                    var owner1 = _unitOfWork.CrCasOwners.Find(x => x.CrCasOwnersCode.Trim() == item.CrCasSysAdministrativeProceduresCarFrom.Trim());
+                    var owner2 = _unitOfWork.CrCasOwners.Find(x => x.CrCasOwnersCode.Trim() == item.CrCasSysAdministrativeProceduresCarTo.Trim());
                     string[]? owner1_Ar = owner1?.CrCasOwnersArName?.Split(null);
                     string[]? owner1_En = owner1?.CrCasOwnersEnName?.Split(null);
                     string[]? owner2_Ar = owner2?.CrCasOwnersArName?.Split(null);
@@ -429,7 +429,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 if (item.CrCasSysAdministrativeProceduresCode == "204")
                 {
                     // if 204 then it is Owners
-                    var owner = _unitOfWork.CrCasOwner.Find(x => x.CrCasOwnersCode == item.CrCasSysAdministrativeProceduresTargeted);
+                    var owner = _unitOfWork.CrCasOwners.Find(x => x.CrCasOwnersCode == item.CrCasSysAdministrativeProceduresTargeted);
                     if (owner != null)
                     {
                         item.NameOfTargetAr = $"{item.CrCasSysAdministrativeProceduresCodeNavigation.CrMasSysProceduresArName} ({owner.CrCasOwnersArName})";
@@ -586,8 +586,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 {
                     // if 216 then it is Car From branch To another
                     var car = _unitOfWork.CrCasCarInformation.Find(x => x.CrCasCarInformationSerailNo.Trim() == item.CrCasSysAdministrativeProceduresTargeted.Trim() && x.CrCasCarInformationLessor == lessorCode);
-                    var owner1 = _unitOfWork.CrCasOwner.Find(x => x.CrCasOwnersCode.Trim() == item.CrCasSysAdministrativeProceduresCarFrom.Trim());
-                    var owner2 = _unitOfWork.CrCasOwner.Find(x => x.CrCasOwnersCode.Trim() == item.CrCasSysAdministrativeProceduresCarTo.Trim());
+                    var owner1 = _unitOfWork.CrCasOwners.Find(x => x.CrCasOwnersCode.Trim() == item.CrCasSysAdministrativeProceduresCarFrom.Trim());
+                    var owner2 = _unitOfWork.CrCasOwners.Find(x => x.CrCasOwnersCode.Trim() == item.CrCasSysAdministrativeProceduresCarTo.Trim());
                     string[]? owner1_Ar = owner1?.CrCasOwnersArName?.Split(null);
                     string[]? owner1_En = owner1?.CrCasOwnersEnName?.Split(null);
                     string[]? owner2_Ar = owner2?.CrCasOwnersArName?.Split(null);

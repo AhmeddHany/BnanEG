@@ -53,10 +53,8 @@ namespace Bnan.Ui.ViewModels.CAS
         public decimal? CrCasRenterContractBasicPreviousBalance { get; set; }
         public decimal? CrCasRenterContractBasicAmountRequired { get; set; }
         public decimal? CrCasRenterContractBasicAmountPaidAdvance { get; set; }
-        public string? CrCasRenterContractBasicArPdfFile { get; set; }
-        public string? CrCasRenterContractBasicEnPdfFile { get; set; }
-        public string? CrCasRenterContractBasicArTga { get; set; }
-        public string? CrCasRenterContractBasicEnTga { get; set; }
+        public string? CrCasRenterContractBasicPdfFile { get; set; }
+        public string? CrCasRenterContractBasicPdfTga { get; set; }
         public string? CrCasRenterContractPriceReference { get; set; }
         public string? CrCasRenterContractOffersReference { get; set; }
         public string? CrCasRenterContractUserReference { get; set; }

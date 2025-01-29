@@ -1,0 +1,233 @@
+﻿
+
+@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS;
+@* @model IEnumerable<CrMasRenterInformation>
+*@
+@model listReportCarContract_CAS_VM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+       ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
+    ViewData["Page-title"] = @localizer["RenterInformations Data"];
+    ViewData["Page-Hint"] = @localizer["RenterInformations Hint"];
+}
+<style>
+
+    /* العنصر الذي سيتم محاذاته */
+    .LoaderRun_Center_div {
+        width: 1900px;
+        height: 850px;
+        /*background-color: #3498db;*/
+        text-align: center;
+        /*color: white;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position:fixed;
+        z-index: 4;
+    }
+</style>
+
+@*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
+
+<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
+    <div class="content LoaderRun_Center_div">
+        <div class="loader"></div>
+    </div>
+<div class="col d-flex align-items-center justify-content-center" style=" z-index:2;">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3">
+                <div class="col">
+                        <h3> @localizer["CarContract_Data"]  </h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
+
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search2" class="form-control inputs search-input" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div filter-search-reportTable table-responsive-sm w-100 dataTable">
+                    <partial name="_DataTableReportCarContract_cas" />
+                </div>
+            </div>
+        </form>
+        <a href="~/CasSys/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="new-Page-icon">
+            <img src="~/CasSys/images/back to main.svg" alt="man">
+        </a>
+    </div>
+    </div>
+</div>
+@*////////////////////////////*@@*////////////////////////////*@@*////////////////////////////*@
+@*////////////////////////////*@@*////////////////////////////*@@*////////////////////////////*@
+
+
+</div>
+    @section Scripts{
+    <!-- تحميل مكتبة jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- تحميل مكتبة DataTables -->
+    <script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+@*    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+    // تهيئة flatpickr مع التنسيق المطلوب
+    flatpickr("#start_date", {
+        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
+    });
+        // تهيئة flatpickr مع التنسيق المطلوب
+    flatpickr("#end_date", {
+        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
+    });
+</script>*@
+
+<script>
+        $(document).ready(function () {
+            //$("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
+            //$("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
+
+            // لجعل الحالة حسب ما هي جاية من index نشط او الكل
+            //$("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+                        
+            //var today = new Date();
+            //$("#start_date").datepicker({
+            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
+            //    maxDate: today,
+            //});
+            //$("#end_date").datepicker({
+            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
+            //    maxDate: today,
+            //});
+
+ 
+            ///////
+            // تهيئة DataTable
+            var table2 = $('#Table').DataTable({
+                ordering: false, // تعطيل الترتيب التلقائي للصفوف
+                stateSave: true,   // حفظ حالة الجدول
+            });
+            end_init_ShowDatatable();
+        });
+
+        function end_init_ShowDatatable(){
+            $(".LoaderRun_Center_div").css("display", "none");
+            $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+            //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
+            $("select[name='Table_length']").val('10000').change();
+            $("#Table_info").css("display", "none");
+            $("#Table_previous").css("display", "none");
+            $("#Table_next").css("display", "none");
+            $("#Table_length").css("display", "none");
+            $("#Table_filter").css("display", "none");
+            $(".paginate_button").css("display", "none");
+            $(".ellipsis").css("display", "none");
+            $("select[name='Table_length'] option[value='10000']").prop("selected", true);
+        }
+
+        // دالة للبحث عن كلمة في جميع الصفوف
+        function searchRows() {
+            var table = $('#Table').DataTable();
+            end_init_ShowDatatable();
+            var keyword = $('#search2').val().toLowerCase(); // الكلمة المدخلة للبحث (تحويلها إلى حروف صغيرة)
+
+            // إخفاء كل الصفوف أولاً
+            table.rows().every(function () {
+                this.nodes().to$().hide(); // إخفاء الصف
+            });
+
+            // التكرار عبر كل الصفوف
+            table.rows().every(function () {
+                var row = this.data();
+                var found = false;
+
+                // التكرار عبر كل الخلايا في الصف
+                row.forEach(function (cell) {
+                    if (cell.toString().toLowerCase().includes(keyword)) {
+                        found = true; // إذا تم العثور على الكلمة في أي خلية
+                    }
+                });
+
+                // إذا تم العثور على الكلمة في الصف، نظهره
+                if (found) {
+                    this.nodes().to$().show();
+                }
+            });
+            //$("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+        }
+
+        // يمكن إضافة وظيفة البحث تلقائيًا عند كتابة النص
+        $('#search2').on('keyup', function () {
+            $(".LoaderRun_Center_div").css("display", "flex");
+            searchRows();
+            $(".LoaderRun_Center_div").css("display", "none");
+        });
+
+</script>
+    <script>
+        //get ReportCarContract By Status function
+        function GetContractsByStatusFitler(status, start, end) {
+            $.ajax({
+                type: "GET",
+                data: {
+                    status: status, start: start, end: end
+                },
+                url: "@Url.Action("GetContractsByStatus", "ReportCarContract_cas", new { Area = "CAS" })",
+                success: function (response) {
+                    $(".LoaderRun_Center_div").css("display", "none");
+                    $(".dataTable").html(response);
+                },
+            })
+        }
+
+        $("input[name='customRadio']").on("click", function () {
+            const status = $(this).val();
+            const start = $("#start_date").val(); // الحصول على قيمة البداية
+            const end = $("#end_date").val(); // الحصول على قيمة النهاية
+
+            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
+            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var start = formattedDate1;// الحصول على قيمة النهاية
+            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
+            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var end = formattedDate2;// الحصول على قيمة النهاية
+            
+            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#search2").val("");
+            GetContractsByStatusFitler(status, start, end);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#btn_view").on("click", function () {
+            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+            const start = $("#start_date").val(); // الحصول على قيمة البداية
+            const end = $("#end_date").val(); // الحصول على قيمة النهاية
+
+            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
+            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var start = formattedDate1;// الحصول على قيمة النهاية
+            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
+            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var end = formattedDate2;// الحصول على قيمة النهاية
+            
+            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#search2").val("");
+            GetContractsByStatusFitler(status, start, end);
+        });
+    </script>
+}

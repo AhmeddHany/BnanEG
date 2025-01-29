@@ -604,7 +604,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
             var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == serialNumber && x.CrCasCarInformationLessor == lessorCode, new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
                                                                                                                                "CrCasCarInformationCategoryNavigation", "CrCasCarInformation2"});
-            var Owners = _unitOfWork.CrCasOwner.FindAll(x => x.CrCasOwnersLessorCode == lessorCode && x.CrCasOwnersCode != car.CrCasCarInformationOwner && x.CrCasOwnersStatus == Status.Active);
+            var Owners = _unitOfWork.CrCasOwners.FindAll(x => x.CrCasOwnersLessorCode == lessorCode && x.CrCasOwnersCode != car.CrCasCarInformationOwner && x.CrCasOwnersStatus == Status.Active);
             ViewData["OwnersAr"] = Owners.Select(x => new SelectListItem { Value = x.CrCasOwnersCode.ToString(), Text = x.CrCasOwnersArName }).ToList();
             ViewData["OwnersEn"] = Owners.Select(x => new SelectListItem { Value = x.CrCasOwnersCode.ToString(), Text = x.CrCasOwnersEnName }).ToList();
             var carVM = _mapper.Map<CarsInforamtionVM>(car);
@@ -624,7 +624,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                                                                                                                                "CrCasCarInformationCategoryNavigation", "CrCasCarInformation2"});
 
             var oldOwnerCode = car.CrCasCarInformationOwner;
-            var owner = await _unitOfWork.CrCasOwner.FindAsync(x => x.CrCasOwnersCode == NewOwner && x.CrCasOwnersLessorCode == lessorCode);
+            var owner = await _unitOfWork.CrCasOwners.FindAsync(x => x.CrCasOwnersCode == NewOwner && x.CrCasOwnersLessorCode == lessorCode);
             if (car != null && owner != null)
             {
                 car.CrCasCarInformationOwner = owner.CrCasOwnersCode;
@@ -643,7 +643,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 return RedirectToAction("TransfersOwner", "CarsInformation");
             }
 
-            var Owners = _unitOfWork.CrCasOwner.FindAll(x => x.CrCasOwnersLessorCode == lessorCode && x.CrCasOwnersCode != car.CrCasCarInformationOwner);
+            var Owners = _unitOfWork.CrCasOwners.FindAll(x => x.CrCasOwnersLessorCode == lessorCode && x.CrCasOwnersCode != car.CrCasCarInformationOwner);
             ViewData["OwnersAr"] = Owners.Select(x => new SelectListItem { Value = x.CrCasOwnersCode.ToString(), Text = x.CrCasOwnersArName }).ToList();
             ViewData["OwnersEn"] = Owners.Select(x => new SelectListItem { Value = x.CrCasOwnersCode.ToString(), Text = x.CrCasOwnersEnName }).ToList();
             return View(model);

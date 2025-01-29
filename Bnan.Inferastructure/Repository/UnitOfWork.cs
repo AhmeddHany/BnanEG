@@ -21,7 +21,7 @@ namespace Bnan.Inferastructure.Repository
         public IGenric<CrMasSysCallingKey> CrMasSysCallingKeys { get; private set; }
         public IGenric<CrMasSysQuestionsAnswer> CrMasSysQuestionsAnswer { get; private set; }
         public IGenric<CrMasLessorImage> CrMasLessorImage { get; private set; }
-        public IGenric<CrCasOwner> CrCasOwner { get; private set; }
+        public IGenric<CrCasOwner> CrCasOwners { get; private set; }
         public IGenric<CrCasBeneficiary> CrCasBeneficiary { get; private set; }
         public IGenric<CrCasLessorMembership> CrCasLessorMembership { get; private set; }
         public IGenric<CrMasSupRenterMembership> CrMasSupRenterMembership { get; private set; }
@@ -126,7 +126,7 @@ namespace Bnan.Inferastructure.Repository
             CrMasSysCallingKeys = new BaseRepository<CrMasSysCallingKey>(_context);
             CrMasSysQuestionsAnswer = new BaseRepository<CrMasSysQuestionsAnswer>(_context);
             CrMasLessorImage = new BaseRepository<CrMasLessorImage>(_context);
-            CrCasOwner = new BaseRepository<CrCasOwner>(_context);
+            CrCasOwners = new BaseRepository<CrCasOwner>(_context);
             CrCasBeneficiary = new BaseRepository<CrCasBeneficiary>(_context);
             CrCasLessorMembership = new BaseRepository<CrCasLessorMembership>(_context);
             CrMasSupRenterMembership = new BaseRepository<CrMasSupRenterMembership>(_context);

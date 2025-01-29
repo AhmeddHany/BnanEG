@@ -113,9 +113,37 @@
         public static string CrMasUserContractValiditionsCAS { get; set; } = "2207003";
         public static string MyAccountCAS { get; set; } = "2207004";
         public static string ChangePasswordCAS { get; set; } = "2207005";
+
+        //CAS  Company
+        public static string Branches_CAS { get; set; } = "2201001";
+        public static string Documents_CAS { get; set; } = "2201002";
+        public static string Owners_CAS { get; set; } = "2201003";
+
         //MAS  Services
         public static string TechnicalConnectivityCAS { get; set; } = "2208004";
         //public static string CrMasUserInformationFromMASToCAS { get; set; } = "1106003";
+
+        // CAS Reports
+        public static string Administrative_procedures_Report_Cas { get; set; } = "2205001";
+        public static string Daily_Report_Cas { get; set; } = "2205002";
+        public static string Active_contracts_Report_Cas { get; set; } = "2205003";
+        public static string Closed_contracts_Report_Cas { get; set; } = "2205004";
+        public static string SavedAndCanceled_contracts_Report_Cas { get; set; } = "2205005";
+        public static string Shomoos_contracts_Report_Cas { get; set; } = "2205006";
+        public static string Car_contracts_Report_Cas { get; set; } = "2205007";
+        public static string Employers_contracts_Report_Cas { get; set; } = "2205008";
+        public static string Drivers_contracts_Report_Cas { get; set; } = "2205009";
+        public static string FT_Employers_Report_Cas { get; set; } = "2205010";
+        public static string FT_Renters_Report_Cas { get; set; } = "2205011";
+        public static string FT_SalesPoints_Report_Cas { get; set; } = "2205012";
+
+
+        // CAS Statistics
+        public static string CasStatistics_Cars{ get; set; } = "2206001";
+        public static string CasStatistics_Renters { get; set; } = "2206002";
+        public static string CasStatistics_Contracts { get; set; } = "2206003";
+        public static string CasStatistics_CarContracts { get; set; } = "2206004";
+        public static string CasStatistics_RenterContracts { get; set; } = "2206005";
     }
 }
 

@@ -1,0 +1,86 @@
+﻿
+
+@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS;
+@model listReportCarContract_CAS_VM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["Currentmeeters_s"]</th>
+            <th>@localizer["the_DaysCount_n"]</th>
+            <th>@localizer["ContractCount_s"]</th>
+            <th>@localizer["LastContract_s"]</th>
+            <th class="DifferAlign" style="max-width:450px;"> @localizer["the_Car_n"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var no = 1;
+        }
+        @foreach (var item in Model.all_CarContracts)
+        {
+
+            var LastDate = item.CrCasCarInformationLastContractDate;
+
+            <tr onclick="location.href='@Url.Action("Edit", "ReportCarContract_cas", new { id = item.CrCasCarInformationSerailNo})'">
+                <td><p>@item.CrCasCarInformationCurrentMeter?.ToString("N2",CultureInfo.InvariantCulture)</p></td>
+                <td><p>@item.CrCasCarInformationConractDaysNo?.ToString("N0",CultureInfo.InvariantCulture)</p></td>
+                <td><p>@item.CrCasCarInformationConractCount?.ToString("0")</p></td>
+                <td> @LastDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture)</td>
+
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+
+                    <td class="DifferAlign">
+                        <div class="car-name-color">
+                            <p class="FirstLineP">@item.CrCasCarInformationConcatenateEnName</p>
+                            <div class="CarColor" style="background: #000000;"></div>
+                        </div>
+
+                        <p class="secondLineP"> @item.CrCasCarInformationSerailNo </p>
+                    </td>
+             
+                }
+                else
+                {
+
+                    <td class="DifferAlign">
+                        <div class="car-name-color">
+                            <p class="FirstLineP">@item.CrCasCarInformationConcatenateArName</p>
+                            <div class="CarColor" style="background: #000000;"></div>
+                        </div>
+
+                        <p class="secondLineP"> @item.CrCasCarInformationSerailNo </p>
+                    </td>
+
+                }
+                <td>@no</td>
+                @*<td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            var filterStyleColor = "";
+                            if (item.CrCasRenterContractBasicStatus == Status.Active) { filterColor = "filter3-div"; filterStyleColor = "background-color:#22B14C"; }
+                            else if (item.CrCasRenterContractBasicStatus == Status.Expire) filterColor = "filter3-div";
+                            //else if (item.CrCasRenterContractBasicStatus == Status.Closed) filterColor = "filter2-div";
+                        }
+                        <div class="filters @filterColor" style="@filterStyleColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>*@
+            </tr>
+            no++;
+        }
+
+    </tbody>
+
+</table>

@@ -55,7 +55,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
             var user = await _userService.GetUserLessor(User);
             var lessor = await _unitOfWork.CrMasLessorInformation.FindAsync(x=>x.CrMasLessorInformationCode==user.CrMasUserInformationLessor);
-            var Owners = _unitOfWork.CrCasOwner.FindAll(l => l.CrCasOwnersLessorCode == user.CrMasUserInformationLessor &&l.CrCasOwnersCode!=lessor.CrMasLessorInformationGovernmentNo&&l.CrCasOwnersStatus==Status.Active, new[] { "CrCasOwnersLessorCodeNavigation", "CrCasCarInformations" }).ToList();
+            var Owners = _unitOfWork.CrCasOwners.FindAll(l => l.CrCasOwnersLessorCode == user.CrMasUserInformationLessor &&l.CrCasOwnersCode!=lessor.CrMasLessorInformationGovernmentNo&&l.CrCasOwnersStatus==Status.Active, new[] { "CrCasOwnersLessorCodeNavigation", "CrCasCarInformations" }).ToList();
             foreach (var item in Owners)
             {
                 item.CrCasCarInformations.Count();
@@ -73,7 +73,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             {
                 if (!string.IsNullOrEmpty(status))
                 {
-                    var OwnersbyStatusAll =  _unitOfWork.CrCasOwner.FindAll(l => l.CrCasOwnersLessorCode == userLessor.CrMasUserInformationLessor && l.CrCasOwnersCode != lessor.CrMasLessorInformationGovernmentNo, new[] { "CrCasOwnersLessorCodeNavigation", "CrCasCarInformations" }).ToList();
+                    var OwnersbyStatusAll =  _unitOfWork.CrCasOwners.FindAll(l => l.CrCasOwnersLessorCode == userLessor.CrMasUserInformationLessor && l.CrCasOwnersCode != lessor.CrMasLessorInformationGovernmentNo, new[] { "CrCasOwnersLessorCodeNavigation", "CrCasCarInformations" }).ToList();
                     if (status == Status.All.ToLower())
                     {
                         return PartialView("_DataTableOwners", OwnersbyStatusAll.Where(x=>x.CrCasOwnersStatus!=Status.Deleted));
@@ -100,9 +100,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         public async Task<IActionResult> AddOwner(OwnersVM ownersVM)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            bool OwnerIsExist  = _unitOfWork.CrCasOwner.FindAll(x => x.CrCasOwnersCode == ownersVM.CrCasOwnersCode && x.CrCasOwnersLessorCode == currentUser.CrMasUserInformationLessor).Count() > 0;
-            bool NameArIsExist = _unitOfWork.CrCasOwner.FindAll(x => x.CrCasOwnersArName == ownersVM.CrCasOwnersArName && x.CrCasOwnersLessorCode == currentUser.CrMasUserInformationLessor).Count() > 0;
-            bool NameEnIsExist = _unitOfWork.CrCasOwner.FindAll(x => x.CrCasOwnersEnName == ownersVM.CrCasOwnersEnName && x.CrCasOwnersLessorCode == currentUser.CrMasUserInformationLessor).Count() > 0;
+            bool OwnerIsExist  = _unitOfWork.CrCasOwners.FindAll(x => x.CrCasOwnersCode == ownersVM.CrCasOwnersCode && x.CrCasOwnersLessorCode == currentUser.CrMasUserInformationLessor).Count() > 0;
+            bool NameArIsExist = _unitOfWork.CrCasOwners.FindAll(x => x.CrCasOwnersArName == ownersVM.CrCasOwnersArName && x.CrCasOwnersLessorCode == currentUser.CrMasUserInformationLessor).Count() > 0;
+            bool NameEnIsExist = _unitOfWork.CrCasOwners.FindAll(x => x.CrCasOwnersEnName == ownersVM.CrCasOwnersEnName && x.CrCasOwnersLessorCode == currentUser.CrMasUserInformationLessor).Count() > 0;
             if (OwnerIsExist) ModelState.AddModelError("CrCasOwnersCode", _localizer["OwnerIsExist"]);
             if (NameArIsExist) ModelState.AddModelError("CrCasOwnersArName", _localizer["NameOwnerIsExist"]);
             if (NameEnIsExist) ModelState.AddModelError("CrCasOwnersEnName", _localizer["NameOwnerIsExist"]);
@@ -134,7 +134,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             //To Set Title !!!!!!!!!!!!!
             var titles = await setTitle("201", "2201004", "2");
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
-            var owner = await _unitOfWork.CrCasOwner.FindAsync(x => x.CrCasOwnersCode == id,
+            var owner = await _unitOfWork.CrCasOwners.FindAsync(x => x.CrCasOwnersCode == id,
                 new[] { "CrCasOwnersLessorCodeNavigation", "CrCasCarInformations" });           
             if (owner == null)
             {
@@ -149,7 +149,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         public async Task<IActionResult> Edit(OwnersVM ownersVM)
         {
            
-            var owner = await _unitOfWork.CrCasOwner.FindAsync(x => x.CrCasOwnersCode == ownersVM.CrCasOwnersCode,
+            var owner = await _unitOfWork.CrCasOwners.FindAsync(x => x.CrCasOwnersCode == ownersVM.CrCasOwnersCode,
                 new[] { "CrCasOwnersLessorCodeNavigation" });
             if (owner == null)
             {
@@ -181,7 +181,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             string sAr = "";
             string sEn = "";
 
-            var owner = await _unitOfWork.CrCasOwner.FindAsync(x => x.CrCasOwnersCode == code&&x.CrCasOwnersLessorCode==lessorCode);
+            var owner = await _unitOfWork.CrCasOwners.FindAsync(x => x.CrCasOwnersCode == code&&x.CrCasOwnersLessorCode==lessorCode);
 
             if (owner != null)
             {

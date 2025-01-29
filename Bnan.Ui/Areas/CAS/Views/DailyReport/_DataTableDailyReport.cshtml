@@ -1,0 +1,154 @@
+﻿
+
+@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS;
+@model listDailyReportVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+<div hidden>
+    <input value="@Model.summition?.Creditor_Total?.ToString("N2",CultureInfo.InvariantCulture)" id="in_credit" name="in_credit" hidden />
+    <input value="@Model.summition?.Debitor_Total?.ToString("N2",CultureInfo.InvariantCulture)" id="in_debit" name="in_debit" hidden />
+
+    <input value="@Model.summition?.balance?.ToString("N2",CultureInfo.InvariantCulture)" id="in_balance" name="in_balance" hidden />
+    <input value="@Model.summition?.avilableBalance?.ToString("N2",CultureInfo.InvariantCulture)" id="in_avilableBalance" name="in_avilableBalance" hidden />
+    <input value="@Model.summition?.reservedBalance?.ToString("N2",CultureInfo.InvariantCulture)" id="in_reservedBalance" name="in_reservedBalance" hidden />
+</div>
+
+
+<div class="row table-row px-3">
+        <div class="col  scroll-table-div scroll-extendreportTable-div  table-responsive-sm  w-100  ">
+            <table class=" tables-style table table-borderless report-tables-style" id="Table">
+                <thead class="sticky-top">
+                    <tr>
+
+                        <th>@localizer["FTR_bond_pdf_n"]</th>
+                        <th class="DifferAlign">@localizer["UserName_view"]</th>
+                        <th>@localizer["FTR_Debtor"]</th>
+                        <th> @localizer["FTR_Creditor"]</th>
+                        <th class="DifferAlign"> @localizer["FTR_PaymentMethod"]</th>
+                        <th class="DifferAlign"> @localizer["FTR_Reference_Type"]</th>
+                        <th class="DifferAlign"> @localizer["Exist_contract_Branch"]</th>
+                        <th class="DifferAlign">@localizer["FTR_Serial_No_n"]</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var no = 1;
+                    }
+                    @foreach (var item in Model.all_Recipts)
+                    {
+
+                        var credit = item.CrCasAccountReceiptPayment;
+                        var debit = item.CrCasAccountReceiptReceipt;
+                        var issuedDate = item.CrCasAccountReceiptDate;
+                        var paymentMethod = " ";
+                        var RefrenceType = " ";
+                        var salesPoint = " ";
+                        var branch = " ";
+                        var employerName = " ";
+                        
+
+                        var bond_pdf = "#";
+                        var bond_pdf_blank = "";
+                        if (item.CrCasAccountReceiptPdfFile != null && item.CrCasAccountReceiptPdfFile != "") { bond_pdf = item.CrCasAccountReceiptPdfFile?.ToString().Replace("~", ""); bond_pdf_blank = "_blank"; }
+
+                        if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                        {
+                            paymentMethod = item.PaymentMethod_En;
+                            RefrenceType = item.ReferanceType_En;
+                            salesPoint = item.Salespoint_En;
+                            branch = item.branch_En ?? " ";
+                            employerName = Model.all_UsersData?.Find(x => x.id_key == item.CrCasAccountReceiptUser)?.nameEn ?? " ";
+                        }
+                        else
+                        {
+                            paymentMethod = item.PaymentMethod_Ar;
+                            RefrenceType = item.ReferanceType_Ar;
+                            salesPoint = item.Salespoint_Ar;
+                            branch = item.branch_Ar ?? " ";
+                            employerName = Model.all_UsersData?.Find(x => x.id_key == item.CrCasAccountReceiptUser)?.nameAr ?? " ";
+                        }
+
+
+                        <tr onclick="getDetails('@item.CrCasAccountReceiptNo')" style="cursor:pointer;">
+                            <td><a href="@bond_pdf" target="@bond_pdf_blank" onclick="PdfClicked()"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
+                            <td>
+                                <p class="DifferAlign">@employerName</p>
+                            </td>
+                            <td>
+                                <p>@debit?.ToString("N2",CultureInfo.InvariantCulture)</p>
+                            </td>
+                            <td>
+                                <p>@credit?.ToString("N2",CultureInfo.InvariantCulture)</p>
+                            </td>
+                            <td class="DifferAlign">
+                                <p class="FirstLineP">@salesPoint</p>
+                                <p class="secondLineP">@paymentMethod</p>
+                            </td>
+                            <td class="DifferAlign">
+                                <p class="FirstLineP">@item.CrCasAccountReceiptReferenceNo</p>
+                                <p class="secondLineP">@RefrenceType</p>
+                            </td>
+                            <td>
+                                <p class="DifferAlign">@branch</p>
+                            </td>
+
+
+
+                            <td class="DifferAlign">
+                                <p class="FirstLineP"> @item.CrCasAccountReceiptNo</p>
+                                    <div class="d-flex justify-content-end gap-4">
+                                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US"){
+                                        <p class="secondLineP time">@issuedDate?.ToString("HH:mm ",CultureInfo.InvariantCulture)</p>
+                                        <p class="secondLineP">@issuedDate?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</p>
+                                        }
+                                        else
+                                        {
+                                        <p class="secondLineP">@issuedDate?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</p>
+                                        <p class="secondLineP time">@issuedDate?.ToString(" HH:mm",CultureInfo.InvariantCulture)</p>
+                                        }
+                                    </div>
+                            </td>
+                            <td>
+                                <div class="filter-number-td">
+                                    @if (item.CrCasAccountReceiptIsPassing == "1")
+                                    {
+                                        <div class="filters filter2-div"></div>
+                                    }
+                                    else if (item.CrCasAccountReceiptIsPassing == "2")
+                                    {
+                                        <div class="filters filter1-div"></div>
+                                    }
+                                    else if (item.CrCasAccountReceiptIsPassing == "3")
+                                    {
+                                        <div class="filters filter3-div"></div>
+                                    }
+                                    else if (item.CrCasAccountReceiptIsPassing == "4")
+                                    {
+                                        <div class="filters filter3-div"></div>
+                                    }
+
+
+                                    <div>@no</div>
+
+                                </div>
+                            </td>
+                            
+                            
+                        </tr>
+                        no++;
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+

@@ -7,7 +7,7 @@ namespace Bnan.Ui.ViewModels.MAS
     //{
     //    public DateTime? dates { get; set; }
     //}
-    public class Car_TypeVM
+    public class MAS_Car_TypeVM
     {
         public string? Car_Code { get; set; }
         public string? Type_Id { get; set; }
@@ -15,8 +15,8 @@ namespace Bnan.Ui.ViewModels.MAS
     public class MasStatistics_CarsVM
     {
 
-        public List<Car_TypeVM> all_Cars_Type = new List<Car_TypeVM>();
-        public List<Car_TypeVM> all_Cars_Type_distinct = new List<Car_TypeVM>();
+        public List<MAS_Car_TypeVM> all_Cars_Type = new List<MAS_Car_TypeVM>();
+        public List<MAS_Car_TypeVM> all_Cars_Type_distinct = new List<MAS_Car_TypeVM>();
 
         public List<MASChartBranchDataVM> listMasChartdataVM = new List<MASChartBranchDataVM>();
         public List<list_String_4> all_names = new List<list_String_4>();

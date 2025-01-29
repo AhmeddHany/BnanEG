@@ -9,10 +9,10 @@
 
 <div class="col-lg-12 col-xl-8 dataTable22">
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4 p-0">
             <div class="row">
                 <div class="col-auto">
-                    <p>@localizer["the_Rental_Value_n"]</p>
+                    <p>@localizer["Contract_s_Value"]</p>
                 </div>
                 <div class=" col-auto Saved-data">
                     <p>@Model.summition?.contract_Values_Total?.ToString("N2", CultureInfo.InvariantCulture)</p>
@@ -29,7 +29,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 p-0">
             <div class="row">
                 <div class="col-auto">
                     <p>@localizer["ContractCount_s"]</p>
@@ -113,7 +113,7 @@
                         }
 
                         <tr>
-                            <td><a href="@TGA_pdf" target="@TGA_pdf_blank"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
+                            <td><a href="@TGA_pdf" target="@TGA_pdf_blank"><img class="pdf-Tableicons" src="~/MasSystem/images/naql.svg"></a></td>
                             <td><a href="@Contract_pdf" target="@Contract_pdf_blank"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
                             <td><a href="@Invoice_pdf" target="@Invoice_pdf_blank"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
                             <td><p>@km?.ToString("N2", CultureInfo.InvariantCulture)</p></td>

@@ -1,0 +1,887 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.CAS;
+@using Microsoft.AspNetCore.Identity;
+@using Newtonsoft.Json;
+﻿@using Microsoft.AspNetCore.Builder;
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Http.Features;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.EntityFrameworkCore;
+@using Microsoft.Extensions.Options;
+@using System.Globalization;
+@model CasStatistics_ContractsVM
+@inject UserManager<CrMasUserInformation> userManager
+@inject SignInManager<CrMasUserInformation> signinManager
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    ViewData["Page-title"] = @localizer["ContractStatistics Data"];
+    ViewData["Page-Hint"] = @localizer["ContractStatistics Hint"];
+}
+<style>
+
+    /* العنصر الذي سيتم محاذاته */
+    .LoaderRun_Center_div {
+        width: 2200px;
+        height: 650px;
+        /*background-color: #3498db;*/
+        text-align: center;
+        /*color: white;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        z-index: 4;
+    }
+</style>
+
+<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
+    <div class="content LoaderRun_Center_div">
+        <div class="loader"></div>
+    </div>
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <div class="row g-3 my-3">
+                    <div class="col-md-12">
+                        <input type="text" asp-for="thisFunctionRunned" id="thisFunctionRunned" hidden />
+                        <h3>@localizer["RenterContractStatistics_Statistics_Contracts_n"]</h3>
+                    </div>
+                    <div class="col-md-12 ">
+                        <p class="d-inline-block headLines">@localizer["ContractStatistics_count_Contracts"] : </p>
+                        @*<p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("0") ?? "0") @localizer["ContractStatistics_Contract"]</p>*@
+                        <p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("0") ?? "0") </p>
+
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-lg-8">
+                            <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
+                                <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                    <label for="start-date">@localizer["From_n"]</label>
+                                    <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required/>
+                                </div>
+                                <div class="col-xl-4 d-flex  gap-3 align-items-center">
+                                    <label for="end-date">@localizer["To_n"]</label>
+                                    <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required/>
+                                </div>
+
+                                <button type="button" class="btn btn-standard" id="btn_view" name="btn_view" onclick="btn_view_clicked()">@localizer["View_n"]</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row mt-3 g-2 justify-content-between">
+                            <div class="col-lg-3">
+                                <p class="headLines">@localizer["RenterStatistics_Type_n"]</p>
+                                <div class="row">
+
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn active-stat-btn"
+                                                onclick="handleButtonClick(this, NationalityChart)">
+                                            @localizer["RenterStatistics_Nationality"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, MemberShipChart)">
+                                            @localizer["RenterStatistics_MemperShip"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, ProfessionChart)">
+                                            @localizer["RenterStatistics_profession"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, AreaChart)">
+                                            @localizer["RenterStatistics_Rigon"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, CityChart)">
+                                            @localizer["RenterStatistics_City"]
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-lg-9">
+                                        <button class="btn stat-btn"
+                                                onclick="handleButtonClick(this, AgeChart)">
+                                            @localizer["RenterStatistics_Age"]
+                                        </button>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-lg-9 text-center charts-border">
+                                <canvas id="myChart"></canvas>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <a href="~/CasSys/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
+           class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
+    </div>
+</div>
+</div>
+
+
+
+
+@section Scripts {
+
+
+    <!--- @*<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>*@ --->
+    <script src="~/CasSys/scripts/chart.js"></script>
+            
+<!---@*    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="~/CasSys/scripts/Scripts.js"></script>>*@--->
+    <script>
+
+        $(document).ready(function () {
+        $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
+        $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
+
+        $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+
+        });
+    </script>
+
+    <script>
+        function btn_view_clicked(){
+            var thisFunctionNow = $("#thisFunctionRunned").val();
+
+            if (thisFunctionNow == "NationalityChart") {
+                NationalityChart();
+            }
+            else if (thisFunctionNow == "MemberShipChart") {
+                MemberShipChart();
+            }
+            else if (thisFunctionNow == "ProfessionChart") {
+                ProfessionChart();
+            }
+            else if (thisFunctionNow == "AreaChart") {
+                AreaChart();
+            }
+            else if (thisFunctionNow == "CityChart") {
+                CityChart();
+            }
+            else if (thisFunctionNow == "AgeChart") {
+                AgeChart();
+            }
+           
+            
+        }
+        window.addEventListener('load', function () {
+            NationalityChart()
+            $("#thisFunctionRunned").val("NationalityChart");
+        })
+    </script>
+
+    <script>
+        async function GetAllBy_Nationality() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Nationality", "CasStatistics_RenterContracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("NationalityChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Membership() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Membership", "CasStatistics_RenterContracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("MemberShipChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Profession() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Profession", "CasStatistics_RenterContracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("ProfessionChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Region() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Region", "CasStatistics_RenterContracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("AreaChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_City() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_City", "CasStatistics_RenterContracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("CityChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        async function GetAllBy_Age() {  // -- 1
+            $(".LoaderRun_Center_div").css("display", "flex");
+            return new Promise((resolve, reject) => {
+                const start = $("#start_date").val(); // الحصول على قيمة البداية
+                const end = $("#end_date").val(); // الحصول على قيمة النهاية
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        start: start, end: end
+                    },
+                    url: "@Url.Action("GetAllBy_Age", "CasStatistics_RenterContracts", new { Area = "CAS" })", // -- 2
+                    success: function (response) {
+                        $(".LoaderRun_Center_div").css("display", "none");
+                        //$(".chart22").html(response);
+                        console.log(response.list_chartBranchDataVM);
+                        //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
+                        $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
+                        $("#thisFunctionRunned").val("AgeChart"); // لتحديث ان هذه اخر فانكشن معروضة   // -- 3
+                        resolve(response.list_chartBranchDataVM); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+
+        
+        let chartInstance = null;
+
+        function handleButtonClick(button, chartFunction) {
+            document.querySelectorAll('.stat-btn').forEach(btn => btn.classList.remove('active-stat-btn'));
+
+            button.classList.add('active-stat-btn');
+
+            chartFunction();
+        }
+        function createChart(chartType, chartData, chartOptions) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: chartType,
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+
+        async function NationalityChart() {
+            let list_ChartData = await GetAllBy_Nationality();
+            //console.log(list_ChartData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = list_ChartData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('polarArea', {
+                //labels: ['سعودي', 'مصري', 'أخرى'],
+                labels: labelsBranch,
+                datasets: [{
+                    //data: [345, 71, 169],
+                    data: dataValues,
+                    backgroundColor: [
+                        "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(75, 192, 192, 0.6)", "rgba(255, 206, 86, 0.6)",
+                        '#1A31F0', '#145656', '#F5A623', '#9B59B6', '#E74C3C', '#3498DB', '#2ECC71', '#F39C12',
+                        '#8E44AD', '#16A085', '#D35400', '#1ABC9C', '#9C27B0', '#FF5722', '#00BFFF',
+
+                    ],
+                    borderColor: [
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                scales: {
+                    r: {
+                        pointLabels: {
+                            display: false, // إخفاء النقاط التي تُعرض عليها التسميات داخل المحاور القطبية
+                            //display: true,
+                            centerPointLabels: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        //display: false,  // إخفاء التسمية الخاصة بالصورة داخلياً
+                        position: 'left',
+                        labels: {
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["RenterContract_inChart_Nationality"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                }
+            });
+        }
+
+        async function MemberShipChart() {
+            let list_ChartData = await GetAllBy_Membership();
+            //console.log(list_ChartData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = list_ChartData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('polarArea', {
+                //labels: ['سعودي', 'مصري', 'أخرى'],
+                labels: labelsBranch,
+                datasets: [{
+                    //data: [345, 71, 169],
+                    data: dataValues,
+                    backgroundColor: [
+                        "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(75, 192, 192, 0.6)", "rgba(255, 206, 86, 0.6)",
+                        '#1A31F0', '#145656', '#F5A623', '#9B59B6', '#E74C3C', '#3498DB', '#2ECC71', '#F39C12',
+                        '#8E44AD', '#16A085', '#D35400', '#1ABC9C', '#9C27B0', '#FF5722', '#00BFFF',
+
+                    ],
+                    borderColor: [
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+                        'rgb(255, 255, 255)',
+
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                scales: {
+                    r: {
+                        pointLabels: {
+                            display: false, // إخفاء النقاط التي تُعرض عليها التسميات داخل المحاور القطبية
+                            //display: true,
+                            centerPointLabels: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        //display: false,  // إخفاء التسمية الخاصة بالصورة داخلياً
+                        position: 'left',
+                        labels: {
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["RenterContract_inChart_Membership"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                }
+            });
+        }
+
+        async function ProfessionChart() {
+            let list_ChartData = await GetAllBy_Profession();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listCasChartdataVM));*@
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listCasChartdataVM));*@
+            //console.log(list_ChartData);
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = list_ChartData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = list_ChartData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+
+
+            createChart('scatter', {
+                datasets: labelsBranch2,
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["RenterContract_inChart_Profession"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        //labels: ['أقل من 20', '25 - 21', '30 - 26', '35 - 31', '40 - 36', '50 - 41', '60 - 51', 'أعلى من 60'],
+                        labels: labelsBranch,
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+
+
+        }
+        async function AreaChart() {
+            let list_ChartData = await GetAllBy_Region();
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listCasChartdataVM));*@
+            //console.log(list_ChartData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = list_ChartData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('bar', {
+                //labels: ['الشرقية', 'الرياض ', 'مكة المكرمة', 'القصيم ', 'المدينة المنورة', 'غير متوفرة', 'أخرى'],
+                labels: labelsBranch,
+                datasets: [{
+                    barThickness: 40,
+                    minBarLength: 2,
+                    //data: [15, 20, 30, 60, 90, 10, 4],
+                    data: dataValues,
+                    backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99', '#F1F2F3'],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+                        '#C9CBCF',
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["RenterContract_inChart_Region"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        async function CityChart() {
+            let list_ChartData = await GetAllBy_City();
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listCasChartdataVM));*@
+            //console.log(list_ChartData);
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+
+            let dataValues = list_ChartData.map(function (paymentMethod) {
+                return paymentMethod.value;
+            });
+            createChart('bar', {
+                //labels: ['الدمام', 'الرياض', 'مكة المكرمة', 'بريدة', 'المدينة المنورة', 'أخرى'],
+                labels: labelsBranch,
+                datasets: [{
+                    barThickness: 40,
+                    minBarLength: 2,
+                    //data: [15, 20, 30, 60, 90, 10],
+                    data: dataValues,
+                    backgroundColor: ['#FF99AF', '#8BC9F3', '#FFE199', '#8ED7D7', '#C9ADFF', '#FFCC99'],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+
+                    ],
+                    borderWidth: 2
+                }]
+            }, {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["RenterContract_inChart_City"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        async function AgeChart() {
+            let list_ChartData = await GetAllBy_Age();
+
+            let labelsBranch;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.enName;
+                });
+            }
+            else {
+                labelsBranch = list_ChartData.map(function (paymentMethod) {
+                    return paymentMethod.arName;
+                });
+            }
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listCasChartdataVM));*@
+            ////@*var list_ChartData = @Html.Raw(Json.Serialize(Model.listCasChartdataVM));*@
+            //console.log(list_ChartData);
+            let labelsBranch2;
+            if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = list_ChartData.map(item => ({
+                    data: [{ x: item.enName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            else {
+                // تحويل البيانات إلى تنسيق مناسب
+                labelsBranch2 = list_ChartData.map(item => ({
+                    data: [{ x: item.arName, y: item.value }],
+                    backgroundColor: item.backgroundColor,
+                    borderColor: item.borderColor,
+                    pointRadius: 5
+                }));
+            }
+            createChart('scatter', {
+                datasets: labelsBranch2
+            }, {
+                responsive: true,
+                animations: {
+                    radius: {
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        loop: true,
+                        from: 5,
+                        to: 8
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: "@localizer["RenterContract_inChart_Age"]",
+                        font: {
+                            family: "'Cairo', sans-serif",
+                            size: 15,
+                            weight: '600'
+                        },
+                        padding: {
+                            top: 20,
+                            bottom: 25
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        //labels: ['أقل من 20', '25 - 21', '30 - 26', '35 - 31', '40 - 36', '50 - 41', '60 - 51', 'أعلى من 60'],
+                        labels: labelsBranch,
+                        ticks: {
+                            display: true,
+                            font: {
+                                family: "'Cairo', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+
+
+    </script>
+    
+}
+

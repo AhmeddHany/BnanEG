@@ -1,0 +1,130 @@
+﻿
+
+@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS;
+@model listReportActiveContract_CasVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["the_TGA_n"]</th>
+            <th>@localizer["the_Contract_n"]</th>
+            <th>@localizer["the_Invoice_n"]</th>
+
+            <th>@localizer["Exist_contract_Paid_value"]</th>
+            <th>@localizer["Exist_contract_Expected_Value"]</th>
+            <th>@localizer["Exist_contract_DayCount"]</th>
+            <th class="DifferAlign"> @localizer["Exist_contract_Branch"]  </th>
+
+            <th class="DifferAlign" style="max-width:270px;">@localizer["the_Contract_n"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var no = 1;
+        }
+        @foreach (var item in Model.all_contractBasic)
+        {
+            var status_contract = Model.all_status?.Find(x => x.CrCasRenterContractAlertNo == item.CrCasRenterContractBasicNo)?.CrCasRenterContractAlertContractActiviteStatus ?? "";
+            var endDate = item.CrCasRenterContractBasicExpectedEndDate;
+            var RentalDays = item.CrCasRenterContractBasicExpectedRentalDays?.ToString("N0", CultureInfo.InvariantCulture) ?? "0";
+            var ExpectedTotal = item.CrCasRenterContractBasicExpectedTotal?.ToString("N2", CultureInfo.InvariantCulture) ?? "0.00";
+            var amountPaid = ((item.CrCasRenterContractBasicAmountPaidAdvance ?? 0) + (item.CrCasRenterContractBasicAmountPaid ?? 0)).ToString("N2", CultureInfo.InvariantCulture) ?? "0.00";
+            var branch = " ";
+            var Contract_pdf = "#";
+            var Contract_pdf_blank = "";
+            var Invoice_pdf = "#";
+            var Invoice_pdf_blank = "";
+            var TGA_pdf = "#";
+            var TGA_pdf_blank = "";
+            var invoce_ar = Model.all_Invoices?.Find(x => x.id_key == item.CrCasRenterContractBasicNo)?.nameAr ?? "";
+            var invoce_en = Model.all_Invoices?.Find(x => x.id_key == item.CrCasRenterContractBasicNo)?.nameEn ?? "";
+            if (item.CrCasRenterContractBasicPdfFile != null && item.CrCasRenterContractBasicPdfFile != "") { Contract_pdf = item.CrCasRenterContractBasicPdfFile?.ToString().Replace("~", ""); Contract_pdf_blank = "_blank"; }
+            if (item.CrCasRenterContractBasicPdfTga != null && item.CrCasRenterContractBasicPdfTga != "") { TGA_pdf = item.CrCasRenterContractBasicPdfTga?.ToString().Replace("~", ""); TGA_pdf_blank = "_blank"; }
+            if (invoce_ar != null && invoce_ar != "") { Invoice_pdf = invoce_ar?.ToString().Replace("~", ""); Invoice_pdf_blank = "_blank"; }
+
+            if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+            {
+                branch = item.branchEn;
+            }
+            else
+            {
+               branch = item.branchAr;
+            }
+@*            @if (item.CrCasRenterContractBasicStatus == Status.Closed)
+            {
+                endDate = item.CrCasRenterContractBasicActualCloseDateTime;
+            }*@
+
+            <tr>
+                <td><a href="@TGA_pdf" target="@TGA_pdf_blank"><img class="pdf-Tableicons" src="~/CasSys/images/naql.svg"></a></td>
+                <td><a href="@Contract_pdf" target="@Contract_pdf_blank"><img class="pdf-Tableicons" src="~/CasSys/images/contract.svg"></a></td>
+                <td><a href="@Invoice_pdf" target="@Invoice_pdf_blank"><img class="pdf-Tableicons" src="~/CasSys/images/Invoice.svg"></a></td>
+                <td><p> @amountPaid </p></td>
+                <td><p> @ExpectedTotal </p></td>
+                <td><p> @RentalDays </p></td>
+                <td class="DifferAlign"><p> @branch </p></td>
+
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+                     <td class="DifferAlign">
+                        @if (item.CrCasRenterContractBasicCopy > 0)
+                        {
+                            <p class="FirstLineP"> <span style="color:red">(@item.CrCasRenterContractBasicCopy)</span>  @item.CrCasRenterContractBasicNo </p>
+                        }
+                        else
+                        {
+                            <p class="FirstLineP"> @item.CrCasRenterContractBasicNo </p>
+                        }
+                        <div class="d-flex justify-content-end gap-1">
+                            <p class="secondLineP"> <span class="time">  @endDate?.ToString("HH:mm ",CultureInfo.InvariantCulture) </span> @endDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture) </p>
+                            <p class="secondLineP"> <span class="time">  @item.CrCasRenterContractBasicExpectedStartDate?.ToString("HH:mm ",CultureInfo.InvariantCulture) </span> @item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture)</p>
+                        </div>
+                    </td>
+                }
+                else
+                {
+                     <td class="DifferAlign">
+                        @if (item.CrCasRenterContractBasicCopy > 0)
+                        {
+                            <p class="FirstLineP"> <span style="color:red">(@item.CrCasRenterContractBasicCopy)</span>  @item.CrCasRenterContractBasicNo </p>
+                        }
+                        else
+                        {
+                            <p class="FirstLineP"> @item.CrCasRenterContractBasicNo </p>
+                        }
+                        <div class="d-flex justify-content-end gap-1">
+                            <p class="secondLineP">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture) <span class="time">  @item.CrCasRenterContractBasicExpectedStartDate?.ToString(" HH:mm",CultureInfo.InvariantCulture) </span></p>
+                            <p class="secondLineP">@endDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture) <span class="time"> @endDate?.ToString(" HH:mm",CultureInfo.InvariantCulture) </span></p>
+                        </div>
+                    </td>
+                }
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            var filterStyleColor = "";
+                            if (status_contract == "2") filterColor = "filter1-div";
+                            else if (status_contract == "1") filterColor = "filter2-div";
+                            else if (status_contract == "3") filterColor = "filter3-div";
+                            else if (status_contract == "0") filterColor = "filter4-div";
+                        }
+                        <div class="filters @filterColor" style="@filterStyleColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+        }
+
+    </tbody>
+
+</table>

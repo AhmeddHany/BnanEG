@@ -28,7 +28,7 @@ namespace Bnan.Inferastructure.Repository
                 CrCasOwnersEnName = lessor.CrMasLessorInformationEnLongName,
                 CrCasOwnersStatus = Status.Active
             };
-            await _unitOfWork.CrCasOwner.AddAsync(lessorOwner);
+            await _unitOfWork.CrCasOwners.AddAsync(lessorOwner);
             return true;
         }
 
@@ -44,7 +44,7 @@ namespace Bnan.Inferastructure.Repository
                 CrCasOwnersStatus=Status.Active,
                 CrCasOwnersReasons= model.CrCasOwnersReasons
             };
-            await _unitOfWork.CrCasOwner.AddAsync(crCasOwner);
+            await _unitOfWork.CrCasOwners.AddAsync(crCasOwner);
             await _unitOfWork.CompleteAsync();
             return true;
         }
@@ -52,12 +52,12 @@ namespace Bnan.Inferastructure.Repository
         public async Task<bool> UpdateOwnerInCas(CrCasOwner model)
         {
 
-            var crCasOwner = await _unitOfWork.CrCasOwner.FindAsync(x => x.CrCasOwnersCode == model.CrCasOwnersCode);
+            var crCasOwner = await _unitOfWork.CrCasOwners.FindAsync(x => x.CrCasOwnersCode == model.CrCasOwnersCode);
             crCasOwner.CrCasOwnersArName = model.CrCasOwnersArName;
             crCasOwner.CrCasOwnersEnName = model.CrCasOwnersEnName;
             crCasOwner.CrCasOwnersReasons = model.CrCasOwnersReasons;
             
-            _unitOfWork.CrCasOwner.Update(crCasOwner);
+            _unitOfWork.CrCasOwners.Update(crCasOwner);
             await _unitOfWork.CompleteAsync();
             return true;
         }

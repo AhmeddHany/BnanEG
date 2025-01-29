@@ -203,7 +203,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 var end_Date = DateTime.Parse(end).AddDays(1);
                 var AllContracts = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                     //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                    predicate: x => x.CrCasRenterContractBasicStatus != Status.Deleted
+                    predicate: x => x.CrCasRenterContractBasicStatus !=Status.Extension
                     && x.CrCasRenterContractBasicExpectedStartDate > start_Date && x.CrCasRenterContractBasicExpectedStartDate <= end_Date,
                     selectProjection: query => query.Select(x => new ReportActiveContractVM
                     {

@@ -52,7 +52,9 @@ namespace Bnan.Inferastructure
             CreateMap<CrMasSupContractCarCheckupDetail, ContractCarCheckupDetailsVM>().ReverseMap();
 
             CreateMap<CrCasAccountBank, AccountBankVM>().ReverseMap();
+            CreateMap<CrCasOwner, CASContractSourceVM>().ReverseMap();
 
+            
 
             CreateMap<CrCasRenterPrivateDriverInformation, RenterDriverVM>().ReverseMap();
 
