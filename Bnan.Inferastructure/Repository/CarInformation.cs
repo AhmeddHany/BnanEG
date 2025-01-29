@@ -24,7 +24,7 @@ namespace Bnan.Inferastructure.Repository
         {
             var lessor = _unitOfWork.CrMasLessorInformation.Find(x => x.CrMasLessorInformationCode == model.CrCasCarInformationLessor);
             var branch = _unitOfWork.CrCasBranchInformation.Find(x => x.CrCasBranchInformationLessor == model.CrCasCarInformationLessor && x.CrCasBranchInformationCode == "100", new[] { "CrCasBranchPost" });
-            var owner = _unitOfWork.CrCasOwner.Find(x => x.CrCasOwnersCode == lessor.CrMasLessorInformationGovernmentNo && x.CrCasOwnersLessorCode == lessor.CrMasLessorInformationCode);
+            var owner = _unitOfWork.CrCasOwners.Find(x => x.CrCasOwnersCode == lessor.CrMasLessorInformationGovernmentNo && x.CrCasOwnersLessorCode == lessor.CrMasLessorInformationCode);
             var benficty = _unitOfWork.CrCasBeneficiary.Find(x => x.CrCasBeneficiaryCode == lessor.CrMasLessorInformationGovernmentNo && x.CrCasBeneficiaryLessorCode == lessor.CrMasLessorInformationCode);
             var distribution = _unitOfWork.CrMasSupCarDistribution.Find(x => x.CrMasSupCarDistributionCode == model.CrCasCarInformationDistribution);
             var color = _unitOfWork.CrMasSupCarColor.Find(x => x.CrMasSupCarColorCode == model.CrCasCarInformationMainColor);

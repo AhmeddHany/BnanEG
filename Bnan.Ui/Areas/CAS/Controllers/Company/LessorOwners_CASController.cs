@@ -61,26 +61,26 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 return RedirectToAction("Index", "Home");
             }
             // Retrieve active driving licenses
-            var owners = await _unitOfWork.CrCasOwner
-                .FindAllAsNoTrackingAsync(x => x.CrCasOwnersLessorCode == user.CrMasUserInformationLessor && x.CrCasOwnersStatus == Status.Active);
+            var owners = _unitOfWork.CrCasOwners
+                .GetAll();
 
-            var all_CarsCount = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrCasAccountReceipt>(
+            var all_CarsCount = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrCasCarInformation>(
                predicate: x => x.CrCasCarInformationLessor == user.CrMasUserInformationLessor && (x.CrCasCarInformationStatus != Status.Deleted || x.CrCasCarInformationStatus != Status.ForSale) && x.CrCasCarInformationOwnerStatus != Status.Deleted,
                columnSelector: x => x.CrCasCarInformationOwner  // تحديد العمود الذي نريد التجميع بناءً عليه
                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                );
 
             // If no active licenses, retrieve all licenses
-            if (!owners.Any())
+            if (owners==null)
             {
-                owners = await _unitOfWork.CrCasOwner
-                    .FindAllAsNoTrackingAsync(x => x.CrCasOwnersLessorCode == user.CrMasUserInformationLessor && x.CrCasOwnersStatus == Status.Hold
+                owners = await _unitOfWork.CrCasOwners
+                    .FindAllAsync(x => x.CrCasOwnersLessorCode == user.CrMasUserInformationLessor && x.CrCasOwnersStatus == Status.Hold
                                               );
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
             CASContractSourceVM vm = new CASContractSourceVM();
-            vm.list_crCasOwner = owners;
+            vm.list_crCasOwner = owners?.ToList() ?? new List<CrCasOwner>();
             vm.all_CarsCount = all_CarsCount;
             return View(vm);
         }
@@ -92,10 +92,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             if (!string.IsNullOrEmpty(status))
             {
-                var LessorOwners_CASsAll = await _unitOfWork.CrCasOwner.FindAllAsNoTrackingAsync(x =>  x.CrCasOwnersLessorCode==user.CrMasUserInformationLessor && (x.CrCasOwnersStatus == Status.Active ||
+                var LessorOwners_CASsAll = await _unitOfWork.CrCasOwners.FindAllAsNoTrackingAsync(x =>  x.CrCasOwnersLessorCode==user.CrMasUserInformationLessor && (x.CrCasOwnersStatus == Status.Active ||
                                                                                                                             x.CrCasOwnersStatus == Status.Deleted ||
                                                                                                                             x.CrCasOwnersStatus == Status.Hold));
-                var all_CarsCount = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrCasAccountReceipt>(
+                var all_CarsCount = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrCasCarInformation>(
                    predicate: x => x.CrCasCarInformationLessor == user.CrMasUserInformationLessor && (x.CrCasCarInformationStatus != Status.Deleted || x.CrCasCarInformationStatus != Status.ForSale) && x.CrCasCarInformationOwnerStatus != Status.Deleted,
                    columnSelector: x => x.CrCasCarInformationOwner  // تحديد العمود الذي نريد التجميع بناءً عليه
                                                                     //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
@@ -208,7 +208,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 lessorMarketingVM.CrCasOwnersCode = await GenerateLicenseCodeAsync(user.CrMasUserInformationLessor);
                 // Set status and add the record
                 ownerEntity.CrCasOwnersStatus = "A";
-                await _unitOfWork.CrCasOwner.AddAsync(ownerEntity);
+                await _unitOfWork.CrCasOwners.AddAsync(ownerEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
 
@@ -228,7 +228,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             await SetPageTitleAsync(Status.Update, pageNumber);
 
-            var contract = await _unitOfWork.CrCasOwner.FindAsync(x => x.CrCasOwnersCode == id);
+            var contract = await _unitOfWork.CrCasOwners.FindAsync(x => x.CrCasOwnersCode == id);
             if (contract == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -292,7 +292,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     return View("Edit", lessorMarketingVM);
                 }
 
-                _unitOfWork.CrCasOwner.Update(ownerEntity);
+                _unitOfWork.CrCasOwners.Update(ownerEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
                 await SaveTracingForLicenseChange(user, ownerEntity, Status.Update);
@@ -312,7 +312,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
-            var licence = await _unitOfWork.CrCasOwner.FindAsync(x=>x.CrCasOwnersCode == code && x.CrCasOwnersLessorCode == user.CrMasUserInformationLessor );
+            var licence = await _unitOfWork.CrCasOwners.FindAsync(x=>x.CrCasOwnersCode == code && x.CrCasOwnersLessorCode == user.CrMasUserInformationLessor );
             if (licence == null) return "false";
 
             try
@@ -322,7 +322,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 if (status == Status.Deleted) { if (!await _LessorOwners_CAS.CheckIfCanDeleteIt(licence.CrCasOwnersCode)) return "udelete"; }
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 licence.CrCasOwnersStatus = status;
-                _unitOfWork.CrCasOwner.Update(licence);
+                _unitOfWork.CrCasOwners.Update(licence);
                 _unitOfWork.Complete();
                 await SaveTracingForLicenseChange(user, licence, status);
                 return "true";
@@ -360,7 +360,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         [HttpGet]
         public async Task<JsonResult> CheckChangedField(string existName, string dataField)
         {
-            var All_LessorOwners_CASs = await _unitOfWork.CrCasOwner.GetAllAsync();
+            var All_LessorOwners_CASs = await _unitOfWork.CrCasOwners.GetAllAsync();
             var errors = new List<ErrorResponse>();
 
             if (!string.IsNullOrEmpty(dataField) && All_LessorOwners_CASs != null)
@@ -393,7 +393,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         //Helper Methods 
         private async Task<string> GenerateLicenseCodeAsync(string lessorCode)
         {
-            var allLicenses = await _unitOfWork.CrCasOwner.FindAllAsync(x=>x.CrCasOwnersLessorCode == lessorCode);
+            var allLicenses = await _unitOfWork.CrCasOwners.FindAllAsync(x=>x.CrCasOwnersLessorCode == lessorCode);
             return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrCasOwnersCode) + 1).ToString() : "700400" + lessorCode.Substring(3) + "100";
         }
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrCasOwner licence, string status)

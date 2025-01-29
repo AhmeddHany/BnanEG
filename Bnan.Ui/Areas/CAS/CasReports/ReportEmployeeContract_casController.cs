@@ -194,10 +194,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                         CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
                         CrCasRenterContractBasicActualDays = x.CrCasRenterContractBasicActualDays,
                         CrCasRenterContractBasicActualTotal = x.CrCasRenterContractBasicActualTotal,
-                        CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                        CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                        CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                        CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                        CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                        CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                         CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
                         CrCasRenterContractBasicExpectedTotal = x.CrCasRenterContractBasicExpectedTotal,
                         CrCasRenterContractBasicExpectedRentalDays = x.CrCasRenterContractBasicExpectedRentalDays,
@@ -222,8 +220,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                     selectProjection: query => query.Select(x => new CrCasAccountInvoice
                     {
                         CrCasAccountInvoiceReferenceContract = x.CrCasAccountInvoiceReferenceContract,
-                        CrCasAccountInvoiceArPdfFile = x.CrCasAccountInvoiceArPdfFile,
-                        CrCasAccountInvoiceEnPdfFile = x.CrCasAccountInvoiceEnPdfFile,
+                        CrCasAccountInvoicePdfFile = x.CrCasAccountInvoicePdfFile,
                         CrCasAccountInvoiceUserCode = x.CrCasAccountInvoiceUserCode,
                     })
                     //,includes: new string[] { "" } 
@@ -340,10 +337,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                     CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
                     CrCasRenterContractBasicActualDays = x.CrCasRenterContractBasicActualDays,
                     CrCasRenterContractBasicActualTotal = x.CrCasRenterContractBasicActualTotal,
-                    CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                    CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                    CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                    CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                    CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                    CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                     CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
                     CrCasRenterContractBasicExpectedTotal = x.CrCasRenterContractBasicExpectedTotal,
                     CrCasRenterContractBasicExpectedRentalDays = x.CrCasRenterContractBasicExpectedRentalDays,
@@ -379,8 +374,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                 selectProjection: query => query.Select(x => new CrCasAccountInvoice
                 {
                     CrCasAccountInvoiceReferenceContract = x.CrCasAccountInvoiceReferenceContract,
-                    CrCasAccountInvoiceArPdfFile = x.CrCasAccountInvoiceArPdfFile,
-                    CrCasAccountInvoiceEnPdfFile = x.CrCasAccountInvoiceEnPdfFile,
+                    CrCasAccountInvoicePdfFile = x.CrCasAccountInvoicePdfFile,
                     CrCasAccountInvoiceUserCode = x.CrCasAccountInvoiceUserCode,
                 })
                 //,includes: new string[] { "" } 

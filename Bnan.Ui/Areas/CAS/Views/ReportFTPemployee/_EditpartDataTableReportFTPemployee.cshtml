@@ -53,10 +53,10 @@
 
                         var bond_pdf = "#";
                         var bond_pdf_blank = "";
+                        if (item.CrCasAccountReceiptPdfFile != null && item.CrCasAccountReceiptPdfFile != "") { bond_pdf = item.CrCasAccountReceiptPdfFile?.ToString().Replace("~", ""); bond_pdf_blank = "_blank"; }
 
                         if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                         {
-                            if (item.CrCasAccountReceiptEnPdfFile != null && item.CrCasAccountReceiptEnPdfFile != "") { bond_pdf = item.CrCasAccountReceiptEnPdfFile?.ToString().Replace("~", ""); bond_pdf_blank = "_blank"; }
                             paymentMethod = item.PaymentMethod_En;
                             RefrenceType = item.ReferanceType_En;
                             salesPoint = item.Salespoint_En;
@@ -64,7 +64,6 @@
                         }
                         else
                         {
-                            if (item.CrCasAccountReceiptArPdfFile != null && item.CrCasAccountReceiptArPdfFile != "") { bond_pdf = item.CrCasAccountReceiptArPdfFile?.ToString().Replace("~", ""); bond_pdf_blank = "_blank"; }
                             paymentMethod = item.PaymentMethod_Ar;
                             RefrenceType = item.ReferanceType_Ar;
                             salesPoint = item.Salespoint_Ar;

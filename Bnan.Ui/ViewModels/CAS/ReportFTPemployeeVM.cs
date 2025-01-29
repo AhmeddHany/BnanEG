@@ -95,8 +95,7 @@ namespace Bnan.Ui.ViewModels.CAS
         //public DateTime? CrCasAccountReceiptPassingDate { get; set; }
         public string? CrCasAccountReceiptPassingUser { get; set; }
         public string? CrCasAccountReceiptPassingReference { get; set; }
-        public string? CrCasAccountReceiptArPdfFile { get; set; }
-        public string? CrCasAccountReceiptEnPdfFile { get; set; }
+        public string? CrCasAccountReceiptPdfFile { get; set; }
         //public string? CrCasAccountReceiptReasons { get; set; }
 
         public string? PaymentMethod_Ar { get; set; }

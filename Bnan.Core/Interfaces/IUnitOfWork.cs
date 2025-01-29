@@ -17,7 +17,7 @@ namespace Bnan.Core.Interfaces
         public IGenric<CrMasSysCallingKey> CrMasSysCallingKeys { get; }
         public IGenric<CrMasSysQuestionsAnswer> CrMasSysQuestionsAnswer { get; }
         public IGenric<CrMasLessorImage> CrMasLessorImage { get; }
-        public IGenric<CrCasOwner> CrCasOwner { get; }
+        public IGenric<CrCasOwner> CrCasOwners { get; }
         public IGenric<CrCasBeneficiary> CrCasBeneficiary { get; }
         public IGenric<CrCasLessorMembership> CrCasLessorMembership { get; }
         public IGenric<CrMasSupRenterMembership> CrMasSupRenterMembership { get; }

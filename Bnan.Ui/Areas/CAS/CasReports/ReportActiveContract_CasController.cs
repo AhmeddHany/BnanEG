@@ -105,10 +105,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                     branchAr = x.CrCasRenterContractBasic1.CrCasBranchInformationArShortName,
                     branchEn = x.CrCasRenterContractBasic1.CrCasBranchInformationEnShortName,
                     CrCasRenterContractBasicAmountPaidAdvance = x.CrCasRenterContractBasicAmountPaidAdvance,
-                    CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                    CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                    CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                    CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                    CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                    CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                     //CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
                     //CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
                     CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -146,8 +144,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                 selectProjection: query => query.Select(x => new cas_list_String_4
                 {
                     id_key = x.CrCasAccountInvoiceReferenceContract,
-                    nameAr = x.CrCasAccountInvoiceArPdfFile,
-                    nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                    nameAr = x.CrCasAccountInvoicePdfFile,
                     str4 = x.CrCasAccountInvoiceUserCode,
                 })
                 //,includes: new string[] { "" } 
@@ -175,10 +172,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
             //        branchAr = x.CrCasRenterContractBasic1.CrCasBranchInformationArShortName,
             //        branchEn = x.CrCasRenterContractBasic1.CrCasBranchInformationEnShortName,
             //        CrCasRenterContractBasicAmountPaidAdvance = x.CrCasRenterContractBasicAmountPaidAdvance,
-            //        CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-            //        CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-            //        CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-            //        CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+            //        CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+            //        CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
             //        //CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
             //        //CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
             //        CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -239,10 +234,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                         branchAr = x.CrCasRenterContractBasic1.CrCasBranchInformationArShortName,
                         branchEn = x.CrCasRenterContractBasic1.CrCasBranchInformationEnShortName,
                         CrCasRenterContractBasicAmountPaidAdvance = x.CrCasRenterContractBasicAmountPaidAdvance,
-                        CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                        CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                        CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                        CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                        CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                        CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                         //CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
                         //CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
                         CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -278,8 +271,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                     selectProjection: query => query.Select(x => new cas_list_String_4
                     {
                         id_key = x.CrCasAccountInvoiceReferenceContract,
-                        nameAr = x.CrCasAccountInvoiceArPdfFile,
-                        nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                        nameAr = x.CrCasAccountInvoicePdfFile,
                         str4 = x.CrCasAccountInvoiceUserCode,
                     })
                     //,includes: new string[] { "" } 

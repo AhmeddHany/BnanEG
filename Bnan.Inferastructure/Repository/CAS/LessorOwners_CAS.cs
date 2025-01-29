@@ -17,13 +17,13 @@ namespace Bnan.Inferastructure.Repository.MAS
 
         public async Task<List<CrCasOwner>> GetAllAsync()
         {
-            var result = await _unitOfWork.CrCasOwner.GetAllAsyncAsNoTrackingAsync();
+            var result = await _unitOfWork.CrCasOwners.GetAllAsyncAsNoTrackingAsync();
             return result.ToList();
         }
 
         public async Task AddAsync(CrCasOwner entity)
         {
-            await _unitOfWork.CrCasOwner.AddAsync(entity);
+            await _unitOfWork.CrCasOwners.AddAsync(entity);
         }
 
         public async Task<bool> ExistsByDetailsAsync(CrCasOwner entity)
@@ -45,7 +45,7 @@ namespace Bnan.Inferastructure.Repository.MAS
         public async Task<bool> ExistsByArabicNameAsync(string arabicName, string code)
         {
             if (string.IsNullOrEmpty(arabicName)) return false;
-            return await _unitOfWork.CrCasOwner
+            return await _unitOfWork.CrCasOwners
                 .FindAsync(x => x.CrCasOwnersArName == arabicName && x.CrCasOwnersCode != code) != null;
         }
 

@@ -106,10 +106,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                     branchAr = x.CrCasRenterContractBasic1.CrCasBranchInformationArShortName,
                     branchEn = x.CrCasRenterContractBasic1.CrCasBranchInformationEnShortName,
                     CrCasRenterContractBasicAmountPaidAdvance = x.CrCasRenterContractBasicAmountPaidAdvance,
-                    CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                    CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                    CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                    CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                    CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                    CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                     //CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
                     //CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
                     CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -131,8 +129,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                 selectProjection: query => query.Select(x => new cas_list_String_4
                 {
                     id_key = x.CrCasAccountInvoiceReferenceContract,
-                    nameAr = x.CrCasAccountInvoiceArPdfFile,
-                    nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                    nameAr = x.CrCasAccountInvoicePdfFile,
                     str4 = x.CrCasAccountInvoiceUserCode,
                 })
                 //,includes: new string[] { "" } 
@@ -192,10 +189,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                         branchAr = x.CrCasRenterContractBasic1.CrCasBranchInformationArShortName,
                         branchEn = x.CrCasRenterContractBasic1.CrCasBranchInformationEnShortName,
                         CrCasRenterContractBasicAmountPaidAdvance = x.CrCasRenterContractBasicAmountPaidAdvance,
-                        CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                        CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                        CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                        CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                        CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                        CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                         //CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
                         //CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
                         CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -217,8 +212,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                     selectProjection: query => query.Select(x => new cas_list_String_4
                     {
                         id_key = x.CrCasAccountInvoiceReferenceContract,
-                        nameAr = x.CrCasAccountInvoiceArPdfFile,
-                        nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                        nameAr = x.CrCasAccountInvoicePdfFile,
                         str4 = x.CrCasAccountInvoiceUserCode,
                     })
                     //,includes: new string[] { "" } 
@@ -270,10 +264,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                         branchAr = x.CrCasRenterContractBasic1.CrCasBranchInformationArShortName,
                         branchEn = x.CrCasRenterContractBasic1.CrCasBranchInformationEnShortName,
                         CrCasRenterContractBasicAmountPaidAdvance = x.CrCasRenterContractBasicAmountPaidAdvance,
-                        CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                        CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                        CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                        CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                        CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                        CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                         //CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
                         //CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
                         CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -296,8 +288,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                     selectProjection: query => query.Select(x => new cas_list_String_4
                     {
                         id_key = x.CrCasAccountInvoiceReferenceContract,
-                        nameAr = x.CrCasAccountInvoiceArPdfFile,
-                        nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                        nameAr = x.CrCasAccountInvoicePdfFile,
                         str4 = x.CrCasAccountInvoiceUserCode,
                     })
                     //,includes: new string[] { "" } 
@@ -329,18 +320,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
             var TGA_pdf_blank = "";
             var invoce_ar = all_Invoices?.Find(x => x.id_key == contractId.Trim())?.nameAr ?? "";
             var invoce_en = all_Invoices?.Find(x => x.id_key == contractId.Trim())?.nameEn ?? "";
-            if (CultureInfo.CurrentCulture.Name == "en-US")
-            {
-                if (single.CrCasRenterContractBasicEnPdfFile != null && single.CrCasRenterContractBasicEnPdfFile != "") { Contract_pdf = single.CrCasRenterContractBasicEnPdfFile?.ToString().Replace("~", ""); Contract_pdf_blank = "_blank"; }
-                if (single.CrCasRenterContractBasicEnTga != null && single.CrCasRenterContractBasicEnTga != "") { TGA_pdf = single.CrCasRenterContractBasicEnTga?.ToString().Replace("~", ""); TGA_pdf_blank = "_blank"; }
-                if (invoce_en != null && invoce_en != "") { Invoice_pdf = invoce_en?.ToString().Replace("~", ""); Invoice_pdf_blank = "_blank"; }
-            }
-            else
-            {
-                if (single.CrCasRenterContractBasicArPdfFile != null && single.CrCasRenterContractBasicArPdfFile != "") { Contract_pdf = single.CrCasRenterContractBasicArPdfFile?.ToString().Replace("~", ""); Contract_pdf_blank = "_blank"; }
-                if (single.CrCasRenterContractBasicArTga != null && single.CrCasRenterContractBasicArTga != "") { TGA_pdf = single.CrCasRenterContractBasicArTga?.ToString().Replace("~", ""); TGA_pdf_blank = "_blank"; }
+
+                if (single.CrCasRenterContractBasicPdfFile != null && single.CrCasRenterContractBasicPdfFile != "") { Contract_pdf = single.CrCasRenterContractBasicPdfFile?.ToString().Replace("~", ""); Contract_pdf_blank = "_blank"; }
+                if (single.CrCasRenterContractBasicPdfTga != null && single.CrCasRenterContractBasicPdfTga != "") { TGA_pdf = single.CrCasRenterContractBasicPdfTga?.ToString().Replace("~", ""); TGA_pdf_blank = "_blank"; }
                 if (invoce_ar != null && invoce_ar != "") { Invoice_pdf = invoce_ar?.ToString().Replace("~", ""); Invoice_pdf_blank = "_blank"; }
-            }
 
             var response = new
                 {

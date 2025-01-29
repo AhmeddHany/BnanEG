@@ -56,20 +56,16 @@
             var TGA_pdf_blank = "";
             var invoce_ar = Model.all_Invoices?.Find(x => x.id_key == item.CrCasRenterContractBasicNo)?.nameAr ?? "";
             var invoce_en = Model.all_Invoices?.Find(x => x.id_key == item.CrCasRenterContractBasicNo)?.nameEn ?? "";*@
+            @*if (item.CrCasRenterContractBasicPdfFile != null && item.CrCasRenterContractBasicPdfFile != "") { Contract_pdf = item.CrCasRenterContractBasicPdfFile?.ToString().Replace("~", ""); Contract_pdf_blank = "_blank"; }
+            if (item.CrCasRenterContractBasicPdfTga != null && item.CrCasRenterContractBasicPdfTga != "") { TGA_pdf = item.CrCasRenterContractBasicPdfTga?.ToString().Replace("~", ""); TGA_pdf_blank = "_blank"; }
+            if (invoce_ar != null && invoce_ar != "") { Invoice_pdf = invoce_ar?.ToString().Replace("~", ""); Invoice_pdf_blank = "_blank"; }
+            *@
             if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
             {
-                @*if (item.CrCasRenterContractBasicEnPdfFile != null && item.CrCasRenterContractBasicEnPdfFile != "") { Contract_pdf = item.CrCasRenterContractBasicEnPdfFile?.ToString().Replace("~", ""); Contract_pdf_blank = "_blank"; }
-                if (item.CrCasRenterContractBasicEnTga != null && item.CrCasRenterContractBasicEnTga != "") { TGA_pdf = item.CrCasRenterContractBasicEnTga?.ToString().Replace("~", ""); TGA_pdf_blank = "_blank"; }
-                if (invoce_en != null && invoce_en != "") { Invoice_pdf = invoce_en?.ToString().Replace("~", ""); Invoice_pdf_blank = "_blank"; }
-                *@
                 branch = item.branchEn;
             }
             else
             {
-                @*if (item.CrCasRenterContractBasicArPdfFile != null && item.CrCasRenterContractBasicArPdfFile != "") { Contract_pdf = item.CrCasRenterContractBasicArPdfFile?.ToString().Replace("~", ""); Contract_pdf_blank = "_blank"; }
-                if (item.CrCasRenterContractBasicArTga != null && item.CrCasRenterContractBasicArTga != "") { TGA_pdf = item.CrCasRenterContractBasicArTga?.ToString().Replace("~", ""); TGA_pdf_blank = "_blank"; }
-                if (invoce_ar != null && invoce_ar != "") { Invoice_pdf = invoce_ar?.ToString().Replace("~", ""); Invoice_pdf_blank = "_blank"; }
-                *@
                 branch = item.branchAr;
             }
             @*            @if (item.CrCasRenterContractBasicStatus == Status.Closed)
