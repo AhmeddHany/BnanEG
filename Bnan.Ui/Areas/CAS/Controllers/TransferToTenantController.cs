@@ -101,7 +101,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             return View(RenterVM);
         }
         [HttpPost]
-        public async Task<IActionResult> TransferTo(RenterLessorVM renterLessorVM, string AccountReceiptNo, string SavePdfArReceipt, string SavePdfEnReceipt)
+        public async Task<IActionResult> TransferTo(RenterLessorVM renterLessorVM, string AccountReceiptNo, string SavePdfReceipt)
         {
 
             var userLogin = await _userManager.GetUserAsync(User);
@@ -119,12 +119,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var AddAdminstritive = await _tranferToRenter.SaveAdminstritiveTransferRenter(renterLessorVM.AdminstritiveNo, userLogin.CrMasUserInformationCode, "305", "30", lessorCode, Renter.CrCasRenterLessorId,
                                                                                             decimal.Parse(renterLessorVM.Amount, CultureInfo.InvariantCulture), 0, renterLessorVM.Reasons);
 
-            SavePdfArReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfArReceipt);
-            SavePdfEnReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfEnReceipt);
-            if (!string.IsNullOrEmpty(SavePdfArReceipt)) SavePdfArReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfArReceipt, lessorCode, "100", AccountReceiptNo, "ar", "Receipt");
-            if (!string.IsNullOrEmpty(SavePdfEnReceipt)) SavePdfEnReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfEnReceipt, lessorCode, "100", AccountReceiptNo, "en", "Receipt");
+            SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
+            if (!string.IsNullOrEmpty(SavePdfReceipt)) SavePdfReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfReceipt, lessorCode, "100", AccountReceiptNo, "Receipt");
             var CheckAddReceipt = await _tranferToRenter.AddAccountReceiptTransferToRenter(AccountReceiptNo, AddAdminstritive.CrCasSysAdministrativeProceduresNo, Renter.CrCasRenterLessorId, userLogin.CrMasUserInformationCode, "302", "17", lessorCode,
-                                                                                        renterLessorVM.FromBank, renterLessorVM.FromAccountBankSelected, renterLessorVM.Amount, "0", SavePdfArReceipt, SavePdfEnReceipt,
+                                                                                        renterLessorVM.FromBank, renterLessorVM.FromAccountBankSelected, renterLessorVM.Amount, "0", SavePdfReceipt,
                                                                                         renterLessorVM.Reasons);
             var CheckUpdateMasRenter = await _tranferToRenter.UpdateRenterInformation(Renter.CrCasRenterLessorId, renterLessorVM.RenterInformationIban, renterLessorVM.BankSelected);
             var CheckUpdateRenterLessor = await _tranferToRenter.UpdateCasRenterLessorTransferTo(Renter.CrCasRenterLessorId, lessorCode, renterLessorVM.Amount);

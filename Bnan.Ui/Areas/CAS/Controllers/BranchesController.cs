@@ -7,6 +7,7 @@ using Bnan.Inferastructure;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
+using Bnan.Ui.Areas.MAS.Controllers.Companies;
 using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;

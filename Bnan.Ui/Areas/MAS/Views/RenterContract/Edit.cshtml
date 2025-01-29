@@ -1,6 +1,4 @@
-﻿
-
-@using Bnan.Ui.ViewModels.MAS
+﻿@using Bnan.Ui.ViewModels.MAS
 @using Bnan.Core.Extensions
 @model Bnan.Ui.ViewModels.MAS.listRenterContractVM
 
@@ -59,8 +57,11 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @{var no = 1; }
-                                                @foreach(var item in Model.all_contractBasic){
+                                                @{
+                                                    var no = 1;
+                                                }
+                                                @foreach (var item in Model.all_contractBasic)
+                                                {
 
                                                     int? km = 0;
                                                     var days = item.CrCasRenterContractBasicExpectedRentalDays;
@@ -68,14 +69,10 @@
                                                     var endDate = item.CrCasRenterContractBasicExpectedEndDate;
                                                     var image_pdf = "#";
                                                     var image_pdf_blank = "";
-                                                    if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                                    {
-                                                        if (item.CrCasRenterContractBasicEnPdfFile != null && item.CrCasRenterContractBasicEnPdfFile != "") { image_pdf = item.CrCasRenterContractBasicEnPdfFile?.ToString().Replace("~", ""); image_pdf_blank = "_blank"; }
-                                                    }
-                                                    else
-                                                    {
-                                                        if (item.CrCasRenterContractBasicArPdfFile != null && item.CrCasRenterContractBasicArPdfFile != "") { image_pdf = item.CrCasRenterContractBasicArPdfFile?.ToString().Replace("~", ""); image_pdf_blank = "_blank"; }
-                                                    }
+
+                                                    if (item.CrCasRenterContractBasicPdfFile != null && item.CrCasRenterContractBasicPdfFile != "") { image_pdf = item.CrCasRenterContractBasicPdfFile?.ToString().Replace("~", ""); image_pdf_blank = "_blank"; }
+
+
                                                     @if (item.CrCasRenterContractBasicStatus == Status.Closed)
                                                     {
                                                         km = item.CrCasRenterContractBasicActualCurrentReadingMeter - item.CrCasRenterContractBasicCurrentReadingMeter;
@@ -83,43 +80,43 @@
                                                         contractValue = item.CrCasRenterContractBasicActualTotal;
                                                         endDate = item.CrCasRenterContractBasicActualCloseDateTime;
                                                     }
-                                                    
+
                                                     <tr>
                                                         <td><a href="@image_pdf" target="@image_pdf_blank"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
-                                                    <td><a href="#"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
-                                                        <td><p>@km?.ToString("N2",CultureInfo.InvariantCulture)</p></td>
-                                                    <td>
-                                                        <p>@days</p>
-                                                    </td>
-                                                    <td>
-                                                            <p>@contractValue?.ToString("N2",CultureInfo.InvariantCulture)</p>
-                                                    </td>
-                                                    @if(requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                                    {
-                                                        <td class="DifferAlign"><p>@item.CarEnName</p></td>
-                                                        <td class="DifferAlign"><p> @Model.all_lessors?.Find(x=>x.CrMasLessorInformationCode == item.CrCasRenterContractBasicLessor)?.CrMasLessorInformationEnShortName </p></td>
-                                                        <td class="DifferAlign">
-                                                            <p class="FirstLineP"> @item.CrCasRenterContractBasicNo </p>
-                                                            <div class="d-flex justify-content-end gap-2">
-                                                                    <p class="secondLineP-extra-small"> <span class="time">  @endDate?.ToString("HH:mm - ",CultureInfo.InvariantCulture) </span> @endDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture) </p>
-                                                                    <p class="secondLineP-extra-small"> <span class="time">  @item.CrCasRenterContractBasicExpectedStartDate?.ToString("HH:mm - ",CultureInfo.InvariantCulture) </span> @item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture)</p>
-                                                            </div>
+                                                        <td><a href="#"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
+                                                        <td><p>@km?.ToString("N2", CultureInfo.InvariantCulture)</p></td>
+                                                        <td>
+                                                            <p>@days</p>
                                                         </td>
-                                                    }
-                                                    else
-                                                    {
-                                                            <td class="DifferAlign"><p>@item.CarArName</p></td>
-                                                            <td class="DifferAlign"><p> @Model.all_lessors?.Find(x=>x.CrMasLessorInformationCode == item.CrCasRenterContractBasicLessor)?.CrMasLessorInformationArShortName </p></td>
+                                                        <td>
+                                                            <p>@contractValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                        </td>
+                                                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                                        {
+                                                            <td class="DifferAlign"><p>@item.CarEnName</p></td>
+                                                            <td class="DifferAlign"><p> @Model.all_lessors?.Find(x => x.CrMasLessorInformationCode == item.CrCasRenterContractBasicLessor)?.CrMasLessorInformationEnShortName </p></td>
                                                             <td class="DifferAlign">
                                                                 <p class="FirstLineP"> @item.CrCasRenterContractBasicNo </p>
                                                                 <div class="d-flex justify-content-end gap-2">
-                                                                    <p class="secondLineP-extra-small">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture) <span class="time">  @item.CrCasRenterContractBasicExpectedStartDate?.ToString(" - HH:mm",CultureInfo.InvariantCulture) </span></p>
-                                                                    <p class="secondLineP-extra-small">@endDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture) <span class="time"> @endDate?.ToString(" - HH:mm",CultureInfo.InvariantCulture) </span></p>
+                                                                    <p class="secondLineP-extra-small"> <span class="time">  @endDate?.ToString("HH:mm - ", CultureInfo.InvariantCulture) </span> @endDate?.ToString("dd/MM/yyyy ", CultureInfo.InvariantCulture) </p>
+                                                                    <p class="secondLineP-extra-small"> <span class="time">  @item.CrCasRenterContractBasicExpectedStartDate?.ToString("HH:mm - ", CultureInfo.InvariantCulture) </span> @item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy ", CultureInfo.InvariantCulture)</p>
                                                                 </div>
                                                             </td>
-                                                    }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="DifferAlign"><p>@item.CarArName</p></td>
+                                                            <td class="DifferAlign"><p> @Model.all_lessors?.Find(x => x.CrMasLessorInformationCode == item.CrCasRenterContractBasicLessor)?.CrMasLessorInformationArShortName </p></td>
+                                                            <td class="DifferAlign">
+                                                                <p class="FirstLineP"> @item.CrCasRenterContractBasicNo </p>
+                                                                <div class="d-flex justify-content-end gap-2">
+                                                                    <p class="secondLineP-extra-small">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy ", CultureInfo.InvariantCulture) <span class="time">  @item.CrCasRenterContractBasicExpectedStartDate?.ToString(" - HH:mm", CultureInfo.InvariantCulture) </span></p>
+                                                                    <p class="secondLineP-extra-small">@endDate?.ToString("dd/MM/yyyy ", CultureInfo.InvariantCulture) <span class="time"> @endDate?.ToString(" - HH:mm", CultureInfo.InvariantCulture) </span></p>
+                                                                </div>
+                                                            </td>
+                                                        }
                                                         <td>
-                                                    <div class="filter-number-td">
+                                                            <div class="filter-number-td">
                                                                 @{
                                                                     var filterColor = "";
                                                                     var filterStyleColor = "";
@@ -127,12 +124,12 @@
                                                                     else if (item.CrCasRenterContractBasicStatus == Status.Expire) filterColor = "filter3-div";
                                                                     else if (item.CrCasRenterContractBasicStatus == Status.Closed) filterColor = "filter2-div";
                                                                 }
-                                                    <div class="filters @filterColor" style="@filterStyleColor"></div>
-                                                    <div>@no</div>
-                                                    </div>
-                                                    </td>
-                                                </tr>
-                                                no++;
+                                                                <div class="filters @filterColor" style="@filterStyleColor"></div>
+                                                                <div>@no</div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    no++;
                                                 }
 
                                             </tbody>
@@ -193,7 +190,7 @@
 </div>
 
 
-@section Scripts{
+@section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

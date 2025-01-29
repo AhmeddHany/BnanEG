@@ -27,23 +27,18 @@ namespace Bnan.Inferastructure.Repository
             var TgaConnect = await _unitOfWork.CrCasLessorTgaConnect.FindAsync(x => x.CrMasLessorTgaConnectLessor == model.CrMasLessorTgaConnectLessor);
             if (TgaConnect != null) return false;
 
-            CrCasLessorTgaConnect crCasLessorTgaConnect = new CrCasLessorTgaConnect();
-            crCasLessorTgaConnect.CrMasLessorTgaConnectLessor = model.CrMasLessorTgaConnectLessor;
-            crCasLessorTgaConnect.CrMasLessorTgaConnectAppId = model.CrMasLessorTgaConnectAppId;
-            crCasLessorTgaConnect.CrMasLessorTgaConnectAuthorization = model.CrMasLessorTgaConnectAuthorization;
-            crCasLessorTgaConnect.CrMasLessorTgaConnectAppKey = model.CrMasLessorTgaConnectAppKey;
-            crCasLessorTgaConnect.CrMasLessorTgaConnectContentType = model.CrMasLessorTgaConnectContentType;
-            // Some Check and we delete it 
-            if (!string.IsNullOrWhiteSpace(crCasLessorTgaConnect.CrMasLessorTgaConnectAppId) &&
-               !string.IsNullOrWhiteSpace(crCasLessorTgaConnect.CrMasLessorTgaConnectAuthorization) &&
-               !string.IsNullOrWhiteSpace(crCasLessorTgaConnect.CrMasLessorTgaConnectAppKey) &&
-               !string.IsNullOrWhiteSpace(crCasLessorTgaConnect.CrMasLessorTgaConnectContentType))
-            {
-                crCasLessorTgaConnect.CrMasLessorTgaConnectStatus = Status.Active;
-            }
-            else crCasLessorTgaConnect.CrMasLessorTgaConnectStatus = Status.Renewed;
 
-            var result = _unitOfWork.CrCasLessorTgaConnect.Update(crCasLessorTgaConnect);
+            // Some Check and we delete it 
+            if (!string.IsNullOrWhiteSpace(model.CrMasLessorTgaConnectAppId) &&
+               !string.IsNullOrWhiteSpace(model.CrMasLessorTgaConnectAuthorization) &&
+               !string.IsNullOrWhiteSpace(model.CrMasLessorTgaConnectAppKey) &&
+               !string.IsNullOrWhiteSpace(model.CrMasLessorTgaConnectContentType))
+            {
+                model.CrMasLessorTgaConnectStatus = Status.Active;
+            }
+            else model.CrMasLessorTgaConnectStatus = Status.Renewed;
+
+            var result = await _unitOfWork.CrCasLessorTgaConnect.AddAsync(model);
             if (result != null) return true;
             return false;
         }

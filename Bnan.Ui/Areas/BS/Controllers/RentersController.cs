@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.Globalization;
 
 namespace Bnan.Ui.Areas.BS.Controllers
 {
@@ -31,13 +30,14 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             //To Set Title 
             var userLogin = await _userManager.GetUserAsync(User);
+            //To Set Title 
             var titles = await setTitle("506", "5506001", "5");
             await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bSLayoutVM = await GetBranchesAndLayout();
-            var RenterAll =await _unitOfWork.CrCasRenterLessor.FindAllAsNoTrackingAsync(x => x.CrCasRenterLessorCode == userLogin.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation" });
+            var RenterAll = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == userLogin.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation" }).OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();
             var mecahnizmEvaluations = _unitOfWork.CrMasSysEvaluation.FindAll(x => x.CrMasSysEvaluationsStatus == Status.Active).ToList();
-            bSLayoutVM.RentersLessor = RenterAll.OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();
+            bSLayoutVM.RentersLessor = RenterAll;
             bSLayoutVM.Evaluations = mecahnizmEvaluations;
             return View(bSLayoutVM);
         }
@@ -49,23 +49,24 @@ namespace Bnan.Ui.Areas.BS.Controllers
             BSLayoutVM bSLayoutVM = new BSLayoutVM();
             if (!string.IsNullOrEmpty(status))
             {
-                var RenterAll = await _unitOfWork.CrCasRenterLessor.FindAllAsNoTrackingAsync(
+                var RenterAll = _unitOfWork.CrCasRenterLessor.FindAll(
                     x => x.CrCasRenterLessorCode == userLogin.CrMasUserInformationLessor,
-                    new[] { "CrCasRenterLessorNavigation" });
+                    new[] { "CrCasRenterLessorNavigation" }
+                ).OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();
 
                 var mecahnizmEvaluations = _unitOfWork.CrMasSysEvaluation.FindAll(x => x.CrMasSysEvaluationsStatus == Status.Active).ToList();
                 bSLayoutVM.Evaluations = mecahnizmEvaluations;
 
                 if (status == Status.All)
                 {
-                    bSLayoutVM.RentersLessor = RenterAll.Where(x =>
+                    bSLayoutVM.RentersLessor = RenterAll.FindAll(x =>
                         x.CrCasRenterLessorId.Contains(search) ||
                         x.CrCasRenterLessorNavigation.CrMasRenterInformationArName.Contains(search) ||
                         x.CrCasRenterLessorNavigation.CrMasRenterInformationEnName.ToLower().Contains(search.ToLower()) ||
                         mecahnizmEvaluations.Any(e => e.CrMasSysEvaluationsCode == x.CrCasRenterLessorDealingMechanism &&
                                                       (e.CrMasSysEvaluationsArDescription.Contains(search) ||
                                                        e.CrMasSysEvaluationsEnDescription.ToLower().Contains(search.ToLower())))
-                    ).OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();
+                    ).ToList();
 
                     return PartialView("_RentersDataTable", bSLayoutVM);
                 }
@@ -79,7 +80,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                                                    (e.CrMasSysEvaluationsArDescription.Contains(search) ||
                                                     e.CrMasSysEvaluationsEnDescription.ToLower().Contains(search.ToLower())))
                     )
-                ).OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();
+                ).ToList();
 
                 return PartialView("_RentersDataTable", bSLayoutVM);
             }
@@ -89,8 +90,9 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
-            if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Branches", "Renters", "RenterInformation", "", "", userLogin.CrMasUserInformationEnName);
-            else await ViewData.SetPageTitleAsync("الفروع", "المستأجرين", "بيانات المستأجر", "", "", userLogin.CrMasUserInformationArName);
+            //To Set Title 
+            var titles = await setTitle("506", "5506001", "5");
+            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             var Renter = await _unitOfWork.CrCasRenterLessor.FindAsync(x => x.CrCasRenterLessorId == id && x.CrCasRenterLessorCode == lessorCode,
                                                                        new[] { "CrCasRenterLessorNavigation.CrMasRenterInformationEmployerNavigation",
                                                                                "CrCasRenterLessorNavigation.CrMasRenterInformationDrivingLicenseTypeNavigation",
@@ -122,8 +124,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     if (Contract.CrCasRenterContractBasicStatus == Status.Closed)
                     {
                         var invoice = invoices.FirstOrDefault(x => x.CrCasAccountInvoiceType == "309");
-                        Contract.InvoiceArReceipt = invoice?.CrCasAccountInvoiceArPdfFile;
-                        Contract.InvoiceEnReceipt = invoice?.CrCasAccountInvoiceEnPdfFile;
+                        Contract.Invoice = invoice?.CrCasAccountInvoicePdfFile;
                     }
                     else
                     {
@@ -133,14 +134,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
                             if (Contract == ContractsVM.Last())
                             {
                                 var invoice = invoices.OrderByDescending(x => x.CrCasAccountInvoiceDate).FirstOrDefault(); // Default to the first invoice
-                                Contract.InvoiceArReceipt = invoice?.CrCasAccountInvoiceArPdfFile;
-                                Contract.InvoiceEnReceipt = invoice?.CrCasAccountInvoiceEnPdfFile;
+                                Contract.Invoice = invoice?.CrCasAccountInvoicePdfFile;
                             }
                             else
                             {
                                 var invoice = invoices.Skip(copyValue).FirstOrDefault(); // Skip the appropriate number of invoices
-                                Contract.InvoiceArReceipt = invoice?.CrCasAccountInvoiceArPdfFile;
-                                Contract.InvoiceEnReceipt = invoice?.CrCasAccountInvoiceEnPdfFile;
+                                Contract.Invoice = invoice?.CrCasAccountInvoicePdfFile;
                             }
                         }
                         else
@@ -148,14 +147,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
                             if (ContractsVM.Count() == 1 && invoices.Count() == 2)
                             {
                                 var invoice = invoices.OrderByDescending(x => x.CrCasAccountInvoiceDate).FirstOrDefault(); // Default to the first invoice
-                                Contract.InvoiceArReceipt = invoice?.CrCasAccountInvoiceArPdfFile;
-                                Contract.InvoiceEnReceipt = invoice?.CrCasAccountInvoiceEnPdfFile;
+                                Contract.Invoice = invoice?.CrCasAccountInvoicePdfFile;
                             }
                             else
                             {
                                 var invoice = invoices.FirstOrDefault(); // Default to the first invoice
-                                Contract.InvoiceArReceipt = invoice?.CrCasAccountInvoiceArPdfFile;
-                                Contract.InvoiceEnReceipt = invoice?.CrCasAccountInvoiceEnPdfFile;
+                                Contract.Invoice = invoice?.CrCasAccountInvoicePdfFile;
                             }
                         }
                     }

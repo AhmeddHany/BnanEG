@@ -56,7 +56,7 @@
 
     div.scroll {
         /*        background-color: #fed9ff;
-                            width: 600px;*/
+                                width: 600px;*/
         /*height: 150px;*/
         overflow-x: hidden;
         overflow-y: auto;
@@ -298,11 +298,11 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
 
 
-    
+
     <script>
         // Payment Receipts
         const CreateArPaymentReceipt = async () => {
-            const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalBillExchangeReceipt";
+            const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalBillExchangeReceipt";
             const imagePath = imageLessor.replace('~', '');
             const miladiDate = new Date();
             const miladiOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -418,7 +418,7 @@
             img.src = URL.createObjectURL(blob);
         };
         const CreateEnPaymentReceipt = async () => {
-            const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnExternalBillExchangeReceipt";
+            const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnExternalBillExchangeReceipt";
             const imagePath = imageLessor.replace('~', '');
             const miladiDate = new Date();
             const miladiOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -552,8 +552,8 @@
             acceptButton.addEventListener('click', function () {
                 $('#Accept').prop('disabled', true);
                 // Set the status field value to 'z'
-                CreateArPaymentReceipt();
-                CreateEnPaymentReceipt();
+                // CreateArPaymentReceipt();
+                // CreateEnPaymentReceipt();
                 document.getElementById('status').value = '@Status.Accept';
                 // Submit the form
                 setTimeout(function () {
@@ -585,7 +585,7 @@
             var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
             var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
             var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation?.CrMasLessorInformationDirectorArName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
             var directorOfBranch = decodeHTMLEntities("@Model.BranchInformationNavigation?.CrCasBranchInformationDirectorArName");
             var directorOfBranchSignature = decodeHTMLEntities("@Model.BranchInformationNavigation?.CrCasBranchInformationDirectorSignature").replace('~', '');
 
@@ -628,7 +628,7 @@
             var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
             var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
             var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation?.CrMasLessorInformationDirectorEnName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
             var directorOfBranch = decodeHTMLEntities("@Model.BranchInformationNavigation?.CrCasBranchInformationDirectorEnName");
             var directorOfBranchSignature = decodeHTMLEntities("@Model.BranchInformationNavigation?.CrCasBranchInformationDirectorSignature").replace('~', '');
             const promises = [];

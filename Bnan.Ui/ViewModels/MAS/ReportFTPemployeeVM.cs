@@ -9,7 +9,7 @@ namespace Bnan.Ui.ViewModels.MAS
     }
     public class listReportFTPemployeeVM
     {
-        
+
         public sumitionofClass_FTPemployee_VM summition = new sumitionofClass_FTPemployee_VM();
         public List<userinfo_FTP_VM> all_usersinfo = new List<userinfo_FTP_VM>();
         public List<TResult2> all_bonds = new List<TResult2>();
@@ -34,10 +34,10 @@ namespace Bnan.Ui.ViewModels.MAS
     public class userinfo_FTP_VM
     {
         public string CrMasUserInformationCode { get; set; } = null!;
-      
+
         public string? CrMasUserInformationLessor { get; set; }
         //public string? CrMasUserInformationId { get; set; }
-     
+
         public string? CrMasUserInformationArName { get; set; }
         public string? CrMasUserInformationEnName { get; set; }
         //public string? CrMasUserInformationTasksArName { get; set; }
@@ -50,7 +50,7 @@ namespace Bnan.Ui.ViewModels.MAS
         //public string? CrMasUserInformationMobileNo { get; set; }
         //public string? CrMasUserInformationEmail { get; set; }
         //public DateTime? CrMasUserInformationChangePassWordLastDate { get; set; }
-       
+
         //public int? CrMasUserInformationCreditDaysLimit { get; set; }
         //public DateTime? CrMasUserInformationEntryLastDate { get; set; }
         //public TimeSpan? CrMasUserInformationEntryLastTime { get; set; }
@@ -92,8 +92,7 @@ namespace Bnan.Ui.ViewModels.MAS
         //public DateTime? CrCasAccountReceiptPassingDate { get; set; }
         public string? CrCasAccountReceiptPassingUser { get; set; }
         public string? CrCasAccountReceiptPassingReference { get; set; }
-        public string? CrCasAccountReceiptArPdfFile { get; set; }
-        public string? CrCasAccountReceiptEnPdfFile { get; set; }
+        public string? CrCasAccountReceiptPdfFile { get; set; }
         //public string? CrCasAccountReceiptReasons { get; set; }
 
         public string? PaymentMethod_Ar { get; set; }

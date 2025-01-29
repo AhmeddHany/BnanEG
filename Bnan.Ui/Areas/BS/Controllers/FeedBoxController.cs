@@ -55,7 +55,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             return View(bSLayoutVM);
         }
         [HttpPost]
-        public async Task<IActionResult> AcceptOrNot(string AdministrativeNo, string status, string branch, string reasons, string AccountReceiptNo, string SavePdfArReceipt, string SavePdfEnReceipt)
+        public async Task<IActionResult> AcceptOrNot(string AdministrativeNo, string status, string branch, string reasons, string AccountReceiptNo, string SavePdfReceipt)
         {
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
@@ -73,12 +73,10 @@ namespace Bnan.Ui.Areas.BS.Controllers
             CheckUpdateAdminstrive = await _feedBox.UpdateAdminstritive(adminstrive.CrCasSysAdministrativeProceduresNo, userLogin.CrMasUserInformationCode, status, reasons);
             if (status == Status.Accept)
             {
-                SavePdfArReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfArReceipt);
-                SavePdfEnReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfEnReceipt);
-                if (!string.IsNullOrEmpty(SavePdfArReceipt)) SavePdfArReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfArReceipt, lessorCode, branch, AccountReceiptNo, "ar", "Receipt");
-                if (!string.IsNullOrEmpty(SavePdfEnReceipt)) SavePdfEnReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfEnReceipt, lessorCode, branch, AccountReceiptNo, "en", "Receipt");
+                SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
+                if (!string.IsNullOrEmpty(SavePdfReceipt)) SavePdfReceipt = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfReceipt, lessorCode, branch, AccountReceiptNo, "Receipt");
                 CheckAddReceipt = await _feedBox.AddAccountReceipt(adminstrive.CrCasSysAdministrativeProceduresNo, lessorCode, userLogin.CrMasUserInformationCode,
-                                                                   userLogin.CrMasUserInformationDefaultBranch, (decimal)adminstrive.CrCasSysAdministrativeProceduresDebit, reasons, SavePdfArReceipt, SavePdfEnReceipt);
+                                                                   userLogin.CrMasUserInformationDefaultBranch, (decimal)adminstrive.CrCasSysAdministrativeProceduresDebit, reasons, SavePdfReceipt);
 
                 CheckUpdateUser = await _feedBox.UpdateUserInfo(userLogin.CrMasUserInformationCode, lessorCode, (decimal)adminstrive.CrCasSysAdministrativeProceduresDebit);
 

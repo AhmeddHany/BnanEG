@@ -6,23 +6,31 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Areas\CAS\Views\RenterStatistics22\**" />
-    <Compile Remove="FollowUpContract\**" />
+    <Compile Remove="Areas\MAS\Controllers\ViewComponents\**" />
+	<Compile Remove="Areas\CAS\Views\RenterStatistics22\**" />
+
+	<Compile Remove="FollowUpContract\**" />
     <Compile Remove="wwwroot\BranchSys\Renters\**" />
     <Compile Remove="wwwroot\BranchSys\ٌRenters\**" />
     <Compile Remove="wwwroot\pages\**" />
-    <Content Remove="Areas\CAS\Views\RenterStatistics22\**" />
-    <Content Remove="FollowUpContract\**" />
+    <Content Remove="Areas\MAS\Controllers\ViewComponents\**" />
+	<Content Remove="Areas\CAS\Views\RenterStatistics22\**" />
+
+	<Content Remove="FollowUpContract\**" />
     <Content Remove="wwwroot\BranchSys\Renters\**" />
     <Content Remove="wwwroot\BranchSys\ٌRenters\**" />
     <Content Remove="wwwroot\pages\**" />
+    <EmbeddedResource Remove="Areas\MAS\Controllers\ViewComponents\**" />
     <EmbeddedResource Remove="Areas\CAS\Views\RenterStatistics22\**" />
-    <EmbeddedResource Remove="FollowUpContract\**" />
+
+	<EmbeddedResource Remove="FollowUpContract\**" />
     <EmbeddedResource Remove="wwwroot\BranchSys\Renters\**" />
     <EmbeddedResource Remove="wwwroot\BranchSys\ٌRenters\**" />
     <EmbeddedResource Remove="wwwroot\pages\**" />
-    <None Remove="Areas\CAS\Views\RenterStatistics22\**" />
-    <None Remove="FollowUpContract\**" />
+    <None Remove="Areas\MAS\Controllers\ViewComponents\**" />
+	  <None Remove="Areas\CAS\Views\RenterStatistics22\**" />
+
+	  <None Remove="FollowUpContract\**" />
     <None Remove="wwwroot\BranchSys\Renters\**" />
     <None Remove="wwwroot\BranchSys\ٌRenters\**" />
     <None Remove="wwwroot\pages\**" />
@@ -406,7 +414,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\MAS\Controllers\ViewComponents\" />
     <Folder Include="wwwroot\images\Bnan\Models\" />
     <Folder Include="wwwroot\images\Company\" />
     <Folder Include="wwwroot\images\CAS\" />

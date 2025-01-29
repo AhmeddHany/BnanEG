@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Numerics;
-namespace Bnan.Ui.Areas.MAS.Controllers
+namespace Bnan.Ui.Areas.MAS.Controllers.Companies
 {
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
@@ -126,7 +126,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             }
             await SetPageTitleAsync(Status.Insert, pageNumber);
             // Check If code > 9 get error , because code is char(1)
-            if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
+            if (long.Parse(await GenerateLicenseCodeAsync()) > 99)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "LessorMarketing");
@@ -142,7 +142,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
             // Set Title 
             MASContractSourceVM lessorMarketingVM = new MASContractSourceVM();
             lessorMarketingVM.CrMasSupContractSourceCode = await GenerateLicenseCodeAsync();
-            lessorMarketingVM.keys= all_keys;
+            lessorMarketingVM.keys = all_keys;
             return View(lessorMarketingVM);
         }
 
@@ -181,7 +181,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                     return View("AddLessorMarketing", lessorMarketingVM);
                 }
                 // Check If code > 9 get error , because code is char(1)
-                if (Int64.Parse(await GenerateLicenseCodeAsync()) > 99)
+                if (long.Parse(await GenerateLicenseCodeAsync()) > 99)
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                     return View("AddLessorMarketing", lessorMarketingVM);
@@ -226,8 +226,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers
                 );
             var model = _mapper.Map<MASContractSourceVM>(contract);
             string[] parts = contract.CrMasSupContractSourceMobile?.ToString().Split('-');
-            model.keys= all_keys;
-            if(parts.Length ==2)
+            model.keys = all_keys;
+            if (parts.Length == 2)
             {
                 model.mob = parts[1];
                 model.key2 = parts[0];

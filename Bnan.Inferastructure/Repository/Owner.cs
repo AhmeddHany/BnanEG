@@ -24,7 +24,6 @@ namespace Bnan.Inferastructure.Repository
             {
                 CrCasOwnersCode = lessor.CrMasLessorInformationGovernmentNo,
                 CrCasOwnersLessorCode = lessor.CrMasLessorInformationCode,
-                CrCasOwnersSector = "2",
                 CrCasOwnersArName = lessor.CrMasLessorInformationArLongName,
                 CrCasOwnersEnName = lessor.CrMasLessorInformationEnLongName,
                 CrCasOwnersStatus = Status.Active
@@ -39,12 +38,10 @@ namespace Bnan.Inferastructure.Repository
             CrCasOwner crCasOwner = new CrCasOwner()
             {
                 CrCasOwnersCode=model.CrCasOwnersCode,
-                CrCasOwnersCommercialNo=model.CrCasOwnersCommercialNo,
                 CrCasOwnersLessorCode = model.CrCasOwnersLessorCode,
                 CrCasOwnersArName = model.CrCasOwnersArName,
                 CrCasOwnersEnName=model.CrCasOwnersEnName,
                 CrCasOwnersStatus=Status.Active,
-                CrCasOwnersSector = "2",
                 CrCasOwnersReasons= model.CrCasOwnersReasons
             };
             await _unitOfWork.CrCasOwner.AddAsync(crCasOwner);
@@ -56,7 +53,6 @@ namespace Bnan.Inferastructure.Repository
         {
 
             var crCasOwner = await _unitOfWork.CrCasOwner.FindAsync(x => x.CrCasOwnersCode == model.CrCasOwnersCode);
-            crCasOwner.CrCasOwnersCommercialNo = model.CrCasOwnersCommercialNo;
             crCasOwner.CrCasOwnersArName = model.CrCasOwnersArName;
             crCasOwner.CrCasOwnersEnName = model.CrCasOwnersEnName;
             crCasOwner.CrCasOwnersReasons = model.CrCasOwnersReasons;

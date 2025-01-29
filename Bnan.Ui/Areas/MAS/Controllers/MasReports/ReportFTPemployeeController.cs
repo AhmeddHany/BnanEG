@@ -68,7 +68,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
 
             var all_userInfo = await _unitOfWork.CrMasUserInformation.FindAllWithSelectAsNoTrackingAsync(
                 predicate: x => x.CrMasUserInformationStatus != Status.Deleted,
-                 //x.CrCasCarInformationLastContractDate > start && x.CrCasCarInformationLastContractDate <= end,
+                //x.CrCasCarInformationLastContractDate > start && x.CrCasCarInformationLastContractDate <= end,
                 selectProjection: query => query.Select(x => new userinfo_FTP_VM
                 {
                     CrMasUserInformationCode = x.CrMasUserInformationCode,
@@ -87,7 +87,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 //, includes: new string[] { "CrCasRenterContractBasicCarSerailNoNavigation" }
                 );
             var all_userIds_recipt = await _unitOfWork.CrCasAccountReceipt.FindAllWithSelectAsNoTrackingAsync(
-                predicate: x=>x.CrCasAccountReceiptType =="301" || x.CrCasAccountReceiptType == "302",
+                predicate: x => x.CrCasAccountReceiptType == "301" || x.CrCasAccountReceiptType == "302",
                 selectProjection: query => query.Select(x => new list_String_2
                 {
                     id_key = x.CrCasAccountReceiptUser,
@@ -97,18 +97,18 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             var all_bonds = await _unitOfWork.CrCasAccountReceipt.FindCountByColumnAsync<CrCasAccountReceipt>(
                    predicate: x => x.CrCasAccountReceiptType == "301",
                    columnSelector: x => x.CrCasAccountReceiptUser  // تحديد العمود الذي نريد التجميع بناءً عليه
-                    //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                                                                   //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                    );
             var all_exchanges = await _unitOfWork.CrCasAccountReceipt.FindCountByColumnAsync<CrCasAccountReceipt>(
                predicate: x => x.CrCasAccountReceiptType == "302",
                columnSelector: x => x.CrCasAccountReceiptUser  // تحديد العمود الذي نريد التجميع بناءً عليه
-                //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
+                                                               //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
                );
 
 
             for (int i = 0; i < all_userInfo.Count; i++)
             {
-                
+
                 var thisId = all_userIds_recipt.Find(x => x.id_key == all_userInfo[i]?.CrMasUserInformationCode)?.id_key;
                 if (string.IsNullOrEmpty(thisId))
                 {
@@ -128,7 +128,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 );
             if (all_exchanges?.Count == 0)
             {
-                var objSanad = new TResult2(){
+                var objSanad = new TResult2()
+                {
                     Column = "0",
                     RowCount = 0
                 };
@@ -156,7 +157,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
 
         [HttpGet]
         //[Route("/MAS/ReportFTPemployee/GetContractsByStatus")]
-        public async Task<PartialViewResult> GetContractsByStatus(string status,string id,string start, string end)
+        public async Task<PartialViewResult> GetContractsByStatus(string status, string id, string start, string end)
         {
             listReportFTPemployeeVM VM = new listReportFTPemployeeVM();
 
@@ -196,8 +197,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     CrCasAccountReceiptIsPassing = x.CrCasAccountReceiptIsPassing,
                     CrCasAccountReceiptPassingReference = x.CrCasAccountReceiptPassingReference,
                     CrCasAccountReceiptPassingUser = x.CrCasAccountReceiptPassingUser,
-                    CrCasAccountReceiptArPdfFile = x.CrCasAccountReceiptArPdfFile,
-                    CrCasAccountReceiptEnPdfFile = x.CrCasAccountReceiptEnPdfFile,
+                    CrCasAccountReceiptPdfFile = x.CrCasAccountReceiptPdfFile,
                     PaymentMethod_Ar = x.CrCasAccountReceiptPaymentMethodNavigation.CrMasSupAccountPaymentMethodArName,
                     PaymentMethod_En = x.CrCasAccountReceiptPaymentMethodNavigation.CrMasSupAccountPaymentMethodEnName,
                     ReferanceType_Ar = x.CrCasAccountReceiptReferenceTypeNavigation.CrMasSupAccountReceiptReferenceArName,
@@ -209,7 +209,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 , includes: new string[] { "CrCasAccountReceiptPaymentMethodNavigation", "CrCasAccountReceiptReferenceTypeNavigation", "CrCasAccountReceiptSalesPointNavigation" }
                 );
 
-                if (status=="1")
+                if (status == "1")
                 {
                     all_Recipts = all_Recipts.Where(x => x.CrCasAccountReceiptIsPassing == "1").ToList();
                 }
@@ -217,7 +217,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 {
                     all_Recipts = all_Recipts.Where(x => x.CrCasAccountReceiptIsPassing == "2").ToList();
                 }
-                else if(status == "3")
+                else if (status == "3")
                 {
                     all_Recipts = all_Recipts.Where(x => x.CrCasAccountReceiptIsPassing == "3" || x.CrCasAccountReceiptIsPassing == "4").ToList();
                 }
@@ -276,7 +276,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var listmaxDate = await _unitOfWork.CrCasAccountReceipt.FindAllWithSelectAsNoTrackingAsync(
-                    predicate: x=> x.CrCasAccountReceiptUser == id,
+                    predicate: x => x.CrCasAccountReceiptUser == id,
                     selectProjection: query => query.Select(x => new Date_ReportActiveContractVM
                     {
                         dates = x.CrCasAccountReceiptDate,
@@ -310,7 +310,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     CrCasAccountReceiptNo = x.CrCasAccountReceiptNo,
                     CrCasAccountReceiptType = x.CrCasAccountReceiptType,
                     CrCasAccountReceiptDate = x.CrCasAccountReceiptDate,
-                    CrCasAccountReceiptLessorCode=x.CrCasAccountReceiptLessorCode,
+                    CrCasAccountReceiptLessorCode = x.CrCasAccountReceiptLessorCode,
                     CrCasAccountReceiptReferenceType = x.CrCasAccountReceiptReferenceType,
                     CrCasAccountReceiptSalesPoint = x.CrCasAccountReceiptSalesPoint,
                     CrCasAccountReceiptReferenceNo = x.CrCasAccountReceiptReferenceNo,
@@ -321,8 +321,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     CrCasAccountReceiptIsPassing = x.CrCasAccountReceiptIsPassing,
                     CrCasAccountReceiptPassingReference = x.CrCasAccountReceiptPassingReference,
                     CrCasAccountReceiptPassingUser = x.CrCasAccountReceiptPassingUser,
-                    CrCasAccountReceiptArPdfFile = x.CrCasAccountReceiptArPdfFile,
-                    CrCasAccountReceiptEnPdfFile = x.CrCasAccountReceiptEnPdfFile,
+                    CrCasAccountReceiptPdfFile = x.CrCasAccountReceiptPdfFile,
                     PaymentMethod_Ar = x.CrCasAccountReceiptPaymentMethodNavigation.CrMasSupAccountPaymentMethodArName,
                     PaymentMethod_En = x.CrCasAccountReceiptPaymentMethodNavigation.CrMasSupAccountPaymentMethodEnName,
                     ReferanceType_Ar = x.CrCasAccountReceiptReferenceTypeNavigation.CrMasSupAccountReceiptReferenceArName,
@@ -368,9 +367,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "ReportFTPemployee");
             }
-            if (all_Recipts.Count > 0 )
+            if (all_Recipts.Count > 0)
             {
-                all_Recipts = all_Recipts.OrderBy(x=>x.CrCasAccountReceiptDate).ToList();
+                all_Recipts = all_Recipts.OrderBy(x => x.CrCasAccountReceiptDate).ToList();
             }
             VM.UserId = id;
             VM.ThisUserData = ThisUserData?.FirstOrDefault();

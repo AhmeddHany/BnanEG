@@ -109,14 +109,14 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 branch.ExpiredContractsCount = await _unitOfWork.CrCasRenterContractAlert.CountAsync(x => x.CrCasRenterContractAlertContractStatus == Status.Expire);
 
                 var docsCompany = await _unitOfWork.CrCasBranchDocument.FindAllAsNoTrackingAsync(x => x.CrCasBranchDocumentsLessor == lessorCode && x.CrCasBranchDocumentsBranch == branch.CrCasBranchInformationCode);
-                branch.DocsForCompanyExpireCount = docsCompany.Where(x => x.CrCasBranchDocumentsStatus == Status.Expire).Count();
+                branch.DocsForCompanyExpireCount = docsCompany.Where(x => x.CrCasBranchDocumentsStatus == Status.Expire|| x.CrCasBranchDocumentsStatus == Status.Renewed).Count();
                 branch.DocsForCompanyAboutExpireCount = docsCompany.Where(x => x.CrCasBranchDocumentsStatus == Status.AboutToExpire).Count();
 
                 var docsCar = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsNoTrackingAsync(x => x.CrCasCarDocumentsMaintenanceLessor == lessorCode &&
                                                                                                              x.CrCasCarDocumentsMaintenanceBranch == branch.CrCasBranchInformationCode);
-                branch.DocsForCarExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.Expire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12").Count();
+                branch.DocsForCarExpireCount = docsCar.Where(x => (x.CrCasCarDocumentsMaintenanceStatus == Status.Expire || x.CrCasCarDocumentsMaintenanceStatus == Status.Renewed) && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12").Count();
                 branch.DocsForCarAboutExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12").Count();
-                branch.MainForCarExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.Expire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").Count();
+                branch.MainForCarExpireCount = docsCar.Where(x =>( x.CrCasCarDocumentsMaintenanceStatus == Status.Expire || x.CrCasCarDocumentsMaintenanceStatus == Status.Renewed) && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").Count();
                 branch.MainForCarAboutExpireCount = docsCar.Where(x => x.CrCasCarDocumentsMaintenanceStatus == Status.AboutToExpire && x.CrCasCarDocumentsMaintenanceProceduresClassification == "13").Count();
                 branch.CarsCount = await _unitOfWork.CrCasCarInformation.CountAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == branch.CrCasBranchInformationCode &&
                                                                                                            x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationStatus != Status.Deleted);

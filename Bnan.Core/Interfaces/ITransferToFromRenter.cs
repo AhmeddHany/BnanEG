@@ -9,7 +9,8 @@ namespace Bnan.Core.Interfaces
 {
     public interface ITransferToFromRenter
     {
-        Task<bool> AddAccountReceiptTransferToRenter(string AccountReceiptNo,string AdmintritiveNo, string RenterId, string userCode,string ProcedureCode,string ReferenceType, string lessorCode, string BankNo, string AccountNo, string TotalAmountPayment,string TotalAmountReceipt, string SavePdfArReceipt, string SavePdfEnReceipt, string reasons);
+        Task<bool> AddAccountReceiptTransferToRenter(string AccountReceiptNo,string AdmintritiveNo, string RenterId, string userCode,string ProcedureCode,string ReferenceType,
+            string lessorCode, string BankNo, string AccountNo, string TotalAmountPayment,string TotalAmountReceipt, string SavePdfReceipt, string reasons);
         Task<bool> UpdateRenterInformation(string RenterId, string IBanNo, string BankNo);
         Task<bool> UpdateCasRenterLessorTransferFrom(string RenterId, string lessorCode, string Amount);
         Task<bool> UpdateCasRenterLessorTransferTo(string RenterId, string lessorCode, string Amount);

@@ -113,23 +113,23 @@
                             <td id="_Nc">@item.CrCasRenterContractBasicNo</td>
                         }
 
-                        <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy - HH:mm",CultureInfo.InvariantCulture)</td>
-                        <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("dd/MM/yyyy - HH:mm",CultureInfo.InvariantCulture)</td>
+                        <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("dd/MM/yyyy - HH:mm", CultureInfo.InvariantCulture)</td>
+                        <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("dd/MM/yyyy - HH:mm", CultureInfo.InvariantCulture)</td>
                         <td style="text-align:start">
                             @item.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation.CrMasRenterInformationEnName
                         </td>
 
                         <td id="_Nc">
-                            @item.CrCasRenterContractBasicExpectedTotal?.ToString("N2",CultureInfo.InvariantCulture)
+                            @item.CrCasRenterContractBasicExpectedTotal?.ToString("N2", CultureInfo.InvariantCulture)
                         </td>
 
-                        <td id="_Nc">@Model.ContractStatistics?.FindAll(x=>x.CrCasRenterContractStatisticsNo==item.CrCasRenterContractBasicNo)?.OrderByDescending(x=>x.CrCasRenterContractStatisticsDate)?.FirstOrDefault()?.CrCasRenterContractStatisicsDays?.ToString("N0",CultureInfo.InvariantCulture)</td>
+                        <td id="_Nc">@Model.ContractStatistics?.FindAll(x => x.CrCasRenterContractStatisticsNo == item.CrCasRenterContractBasicNo)?.OrderByDescending(x => x.CrCasRenterContractStatisticsDate)?.FirstOrDefault()?.CrCasRenterContractStatisicsDays?.ToString("N0", CultureInfo.InvariantCulture)</td>
                         @*<td id="_Nc">@item.CrCasRenterContractBasicKmValue?.ToString("N2",CultureInfo.InvariantCulture)</td>*@
 
                         @{
-                            var Link_pdf_proforma = Model.CrCasAccountInvoice_308?.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo)?.CrCasAccountInvoiceEnPdfFile;
-                            var Link_pdf_taxation = Model.CrCasAccountInvoice_309?.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo)?.CrCasAccountInvoiceEnPdfFile;
-                            var Link_pdf_Contract = item.CrCasRenterContractBasicEnPdfFile;
+                            var Link_pdf_proforma = Model.CrCasAccountInvoice_308?.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo)?.CrCasAccountInvoicePdfFile;
+                            var Link_pdf_taxation = Model.CrCasAccountInvoice_309?.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo)?.CrCasAccountInvoicePdfFile;
+                            var Link_pdf_Contract = item.CrCasRenterContractBasicPdfFile;
                             var Target_pdf = "#";
                             var Target_pdf_1 = "#";
                             var Target_pdf_2 = "#";
@@ -251,24 +251,24 @@ else
                             <td id="_Nc">@item.CrCasRenterContractBasicNo</td>
                         }
 
-                        <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("yyyy/MM/dd - HH:mm",CultureInfo.InvariantCulture)</td>
-                        <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("yyyy/MM/dd - HH:mm",CultureInfo.InvariantCulture)</td>
+                        <td style="text-align:start">@item.CrCasRenterContractBasicExpectedStartDate?.ToString("yyyy/MM/dd - HH:mm", CultureInfo.InvariantCulture)</td>
+                        <td style="text-align:start">@item.CrCasRenterContractBasicExpectedEndDate?.ToString("yyyy/MM/dd - HH:mm", CultureInfo.InvariantCulture)</td>
                         <td style="text-align:start">
                             @item.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation.CrMasRenterInformationArName
                         </td>
 
                         <td id="_Nc">
-                            @item.CrCasRenterContractBasicExpectedTotal?.ToString("N2",CultureInfo.InvariantCulture)
+                            @item.CrCasRenterContractBasicExpectedTotal?.ToString("N2", CultureInfo.InvariantCulture)
                         </td>
 
-                        <td id="_Nc">@Model.ContractStatistics?.FindAll(x=>x.CrCasRenterContractStatisticsNo==item.CrCasRenterContractBasicNo)?.OrderByDescending(x=>x.CrCasRenterContractStatisticsDate)?.FirstOrDefault()?.CrCasRenterContractStatisicsDays?.ToString("N0",CultureInfo.InvariantCulture)</td>
+                        <td id="_Nc">@Model.ContractStatistics?.FindAll(x => x.CrCasRenterContractStatisticsNo == item.CrCasRenterContractBasicNo)?.OrderByDescending(x => x.CrCasRenterContractStatisticsDate)?.FirstOrDefault()?.CrCasRenterContractStatisicsDays?.ToString("N0", CultureInfo.InvariantCulture)</td>
                         @*<td id="_Nc">@item.CrCasRenterContractBasicKmValue?.ToString("N2",CultureInfo.InvariantCulture)</td>*@
 
 
                         @{
-                            var Link_pdf_proforma = Model.CrCasAccountInvoice_308?.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo)?.CrCasAccountInvoiceArPdfFile;
-                            var Link_pdf_taxation = Model.CrCasAccountInvoice_309?.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo)?.CrCasAccountInvoiceArPdfFile;
-                            var Link_pdf_Contract = item.CrCasRenterContractBasicArPdfFile;
+                            var Link_pdf_proforma = Model.CrCasAccountInvoice_308?.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo)?.CrCasAccountInvoicePdfFile;
+                            var Link_pdf_taxation = Model.CrCasAccountInvoice_309?.Find(x => x.CrCasAccountInvoiceReferenceContract == item.CrCasRenterContractBasicNo)?.CrCasAccountInvoicePdfFile;
+                            var Link_pdf_Contract = item.CrCasRenterContractBasicPdfFile;
                             var Target_pdf = "#";
                             var Target_pdf_1 = "#";
                             var Target_pdf_2 = "#";
@@ -424,4 +424,4 @@ else
             GetUpdatedValues($(this).val());
         })
     </script>
-    }
+}

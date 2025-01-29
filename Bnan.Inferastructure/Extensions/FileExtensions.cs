@@ -71,7 +71,7 @@ namespace Bnan.Inferastructure.Extensions
             }
             return false;
         }
-        public static async Task<string?> SavePdf(this IWebHostEnvironment webHostEnvironment, string pdfFile, string lessor, string branch, string PdfNo, string language, string Type)
+        public static async Task<string?> SavePdf(this IWebHostEnvironment webHostEnvironment, string pdfFile, string lessor, string branch, string PdfNo, string Type)
         {
 
             byte[] pdfBytes = Convert.FromBase64String(pdfFile);
@@ -79,11 +79,12 @@ namespace Bnan.Inferastructure.Extensions
             string basePath = Path.Combine(webHostEnvironment.WebRootPath, "images", "Company", lessor, "Branches", branch);
 
             // Define the subfolder based on the document type and language
+            // Define the subfolder based on the document type
             string subfolder = Type switch
             {
-                "Receipt" => language == "ar" ? "Arabic Receipt" : "English Receipt",
-                "Contract" => language == "ar" ? "Arabic Contract" : "English Contract",
-                "Invoice" => language == "ar" ? "Arabic Invoice" : "English Invoice",
+                "Receipt" => "Receipts", // Always use "Receipts" regardless of language
+                "Contract" => "Contracts",
+                "Invoice" => "Invoices",
                 _ => throw new ArgumentException("Invalid document type", nameof(Type))
             };
 

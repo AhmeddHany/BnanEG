@@ -162,7 +162,7 @@
     <script>
         const ArReceipt = async () => {
             try {
-                const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalCatchReceipt";
+                const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalCatchReceipt";
                 console.log("imageLessor", imageLessor)
 
                 const imagePath = imageLessor.replace('~', '');
@@ -283,7 +283,7 @@
         };
         const EnReceipt = async () => {
             try {
-                const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnExternalCatchReceipt";
+                const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnExternalCatchReceipt";
                 console.log("imageLessor", imageLessor)
 
                 const imagePath = imageLessor.replace('~', '');
@@ -411,7 +411,7 @@
             var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
             var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
             var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorArName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
             var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
             var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
 
@@ -455,7 +455,7 @@
             var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
             var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
             var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation.CrMasLessorInformationDirectorEnName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+            var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
             var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorEnName");
             var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
             // Adding console logs for debugging

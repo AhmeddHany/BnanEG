@@ -177,3 +177,29 @@ direction: ltr;
 .techncal-connect-error{
     direction:ltr;
   }
+
+
+.marquee-content {
+    display: flex;
+    flex-wrap: nowrap;
+    animation: marquee 15s linear infinite;
+    white-space: nowrap;
+    gap: 5rem;
+    position: absolute;
+    min-width: 100%;
+}
+
+.marquee-xmark {
+    right: auto;
+    left: 5px
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}

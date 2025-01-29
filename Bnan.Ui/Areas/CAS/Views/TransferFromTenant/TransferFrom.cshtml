@@ -9,718 +9,668 @@
 @inject IViewLocalizer localizer
 
 @{
-    var user = await userManager.GetUserAsync(User);
-    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = localizer["TransferFromTenant Data"];
-    ViewData["Page-Hint"] = localizer["TransferFromTenant Edit Hint"];
-    var userInfo = await userManager.Users
-      .Include(l => l.CrMasUserMainValidations)
-      .Include(l => l.CrMasUserSubValidations)
-      .Include(l => l.CrMasUserInformationLessorNavigation)
-      .Include(l => l.CrMasUserContractValidity)
-      .FirstOrDefaultAsync(l => l.UserName == user.UserName);
-    var lessorInfo = await userManager.Users.Include(l => l.CrMasUserInformationLessorNavigation).ThenInclude(l => l.CrMasLessorImage).FirstOrDefaultAsync(x => x.UserName == user.UserName);
+	var user = await userManager.GetUserAsync(User);
+	var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+	ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+	ViewData["Page-title"] = localizer["TransferFromTenant Data"];
+	ViewData["Page-Hint"] = localizer["TransferFromTenant Edit Hint"];
+	var userInfo = await userManager.Users
+			.Include(l => l.CrMasUserMainValidations)
+			.Include(l => l.CrMasUserSubValidations)
+			.Include(l => l.CrMasUserInformationLessorNavigation)
+			.Include(l => l.CrMasUserContractValidity)
+			.FirstOrDefaultAsync(l => l.UserName == user.UserName);
+	var lessorInfo = await userManager.Users.Include(l => l.CrMasUserInformationLessorNavigation).ThenInclude(l => l.CrMasLessorImage).FirstOrDefaultAsync(x => x.UserName == user.UserName);
 }
 <div class="sub-container-form">
-    <form id="msform" class="needs-validation" novalidate asp-area="CAS" asp-controller="TransferFromTenant" asp-action="TransferFrom" enctype="multipart/form-data">
-        <input type="hidden" id="status" name="status" />
-        <input type="hidden" id="SavePdfArReceipt" name="SavePdfArReceipt" />
-        <input type="hidden" id="SavePdfEnReceipt" name="SavePdfEnReceipt" />
-        <input type="hidden" id="AccountReceiptNo" name="AccountReceiptNo" />
-        <div class="form-contain">
-            <div class="row">
-                <div class="col-md-1">
-                    <label class="form-label">@localizer["TransferNo"]</label>
-                </div>
-                <div class="col-md-3">
-                    <input type="text" asp-for="AdminstritiveNo" class="form-control" readonly />
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="row">
-                    <div class="col-md-1">
-                        <label class="form-label">@localizer["Id"]</label>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" asp-for="CrCasRenterLessorId" readonly />
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label">@localizer["Name"]</label>
-                </div>
-                <div class="col-md-5">
-                    @if (requestCulture.RequestCulture.UICulture.Name == "ar-EG")
-                    {
-                        <input type="text" class="form-control" asp-for="CrCasRenterLessorNavigation.CrMasRenterInformationArName" readonly />
-                    }
-                    else
-                    {
-                        <input type="text" class="form-control" asp-for="CrCasRenterLessorNavigation.CrMasRenterInformationEnName" readonly />
-                    }
-                </div>
+	<form id="msform" class="needs-validation" novalidate asp-area="CAS" asp-controller="TransferFromTenant" asp-action="TransferFrom" enctype="multipart/form-data">
+		<input type="hidden" id="status" name="status" />
+		<input type="hidden" id="SavePdfReceipt" name="SavePdfReceipt" />
+		<input type="hidden" id="AccountReceiptNo" name="AccountReceiptNo" />
+		<div class="form-contain">
+			<div class="row">
+				<div class="col-md-1">
+					<label class="form-label">@localizer["TransferNo"]</label>
+				</div>
+				<div class="col-md-3">
+					<input type="text" asp-for="AdminstritiveNo" class="form-control" readonly />
+				</div>
+			</div>
+			<div class="row mt-2">
+				<div class="row">
+					<div class="col-md-1">
+						<label class="form-label">@localizer["Id"]</label>
+					</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control" asp-for="CrCasRenterLessorId" readonly />
+					</div>
+				</div>
+			</div>
+			<div class="row mt-2">
+				<div class="col-md-1">
+					<label class="form-label">@localizer["Name"]</label>
+				</div>
+				<div class="col-md-5">
+					@if (requestCulture.RequestCulture.UICulture.Name == "ar-EG")
+					{
+						<input type="text" class="form-control" asp-for="CrCasRenterLessorNavigation.CrMasRenterInformationArName" readonly />
+					}
+					else
+					{
+						<input type="text" class="form-control" asp-for="CrCasRenterLessorNavigation.CrMasRenterInformationEnName" readonly />
+					}
+				</div>
 
-            </div>
-            <div class="row mt-2">
-                <div class="row">
-                    <div class="col-md-1">
-                        <label class="form-label" for="CrCasCarInformationSerailNo">@localizer["AccountNo"]</label>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" asp-for="RenterInformationIban" maxlength="50" oninput="this.value=this.value.replace(/[^a-zA-Z0-9]/g,'')" />
-                        <div style="margin-top:2px">
-                            <div style="height: 1.35em">
-                                <span asp-validation-for="@Model.RenterInformationIban" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="row">
-                    <div class="col-md-1">
-                        <label class="form-label" for="CrCasCarInformationDistribution">@localizer["Bank"]</label>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select valid" asp-for="BankSelected" required>
-                            <option selected disabled></option>
-                            @foreach (var item in Model.Banks)
-                            {
-                                if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
-                                {
-                                    <option class="text-right" value="@item.CrMasSupAccountBankCode">
-                                        @item.CrMasSupAccountBankArName
-                                    </option>
-                                }
-                                else
-                                {
-                                    <option class="text-left" value="@item.CrMasSupAccountBankCode">
-                                        @item.CrMasSupAccountBankEnName
-                                    </option>
-                                }
-                            }
-                        </select>
-                        <div style="margin-top:2px">
-                            <div style="height: 1.35em">
-                                <span asp-validation-for="@Model.BankSelected" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="row">
-                    <div class="col-md-1">
-                        <label class="form-label" for="CrCasCarInformationSerailNo">@localizer["Date"]</label>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="date" class="form-control" asp-for="TransferDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
-                        <div style="margin-top:2px">
-                            <div style="height: 1.35em">
-                                <span asp-validation-for="@Model.TransferDate" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="row">
-                    <div class="col-md-1">
-                        <label class="form-label" for="CrCasCarInformationDistribution">@localizer["ToAccount"]</label>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select valid" asp-for="FromAccountBankSelected" onchange="GetAccountNo()" required>
-                            <option selected disabled></option>
-                            @foreach (var item in Model.AccountBanks)
-                            {
-                                if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
-                                {
-                                    <option class="text-right" value="@item.CrCasAccountBankCode">
-                                        @item.CrCasAccountBankArName
-                                    </option>
-                                }
-                                else
-                                {
-                                    <option class="text-left" value="@item.CrCasAccountBankCode">
-                                        @item.CrCasAccountBankEnName
-                                    </option>
-                                }
-                            }
-                        </select>
-                        <div style="margin-top:2px">
-                            <div style="height: 1.35em">
-                                <span asp-validation-for="@Model.FromAccountBankSelected" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="row">
-                    <div class="col-md-1">
-                        <label class="form-label" for="CrCasCarInformationDistribution">@localizer["ToAccountNo"]</label>
-                    </div>
-                    <div class="col-md-5">
-                        <input type="text" class="form-control" id="FromAccountNo" name="FromAccountNo" readonly />
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="row">
-                    <div class="col-md-1">
-                        <label class="form-label" for="CrCasCarInformationDistribution">@localizer["Bank"]</label>
-                    </div>
-                    <div class="col-md-5">
-                        <input type="text" class="form-control" id="FromBankk" name="FromBankk" readonly />
-                        <input type="text" asp-for="FromBank" hidden />
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="row">
-                    <div class="col-md-1">
-                        <label class="form-label" for="CrCasCarInformationDistribution">@localizer["AmountTransfer"]</label>
-                    </div>
-                    <div class="col-md-1">
-                        <input type="text" class="form-control" id="Amount" asp-for="Amount" maxlength="10" oninput="handleAmountPayed(this)" style="width:120%" />
-                        <div style="margin-top:2px">
-                            <div style="height: 1.35em">
-                                <span asp-validation-for="@Model.Amount" id="AmountValidition" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="row">
-                    <div class="col-md-1">
-                        <label class="form-label" for="CrCasCarInformationSerailNo">@localizer["reasons"]</label>
-                    </div>
-                    <div class="col-md-5">
-                        <input type="text" class="form-control" asp-for="Reasons" maxlength="100" />
-                    </div>
-                </div>
-            </div>
+			</div>
+			<div class="row mt-2">
+				<div class="row">
+					<div class="col-md-1">
+						<label class="form-label" for="CrCasCarInformationSerailNo">@localizer["AccountNo"]</label>
+					</div>
+					<div class="col-md-2">
+						<input type="text" class="form-control" asp-for="RenterInformationIban" maxlength="50" oninput="this.value=this.value.replace(/[^a-zA-Z0-9]/g,'')" />
+						<div style="margin-top:2px">
+							<div style="height: 1.35em">
+								<span asp-validation-for="@Model.RenterInformationIban" class="text-danger"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row mt-2">
+				<div class="row">
+					<div class="col-md-1">
+						<label class="form-label" for="CrCasCarInformationDistribution">@localizer["Bank"]</label>
+					</div>
+					<div class="col-md-3">
+						<select class="form-select valid" asp-for="BankSelected" required>
+							<option selected disabled></option>
+							@foreach (var item in Model.Banks)
+							{
+								if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+								{
+									<option class="text-right" value="@item.CrMasSupAccountBankCode">
+										@item.CrMasSupAccountBankArName
+									</option>
+								}
+								else
+								{
+									<option class="text-left" value="@item.CrMasSupAccountBankCode">
+										@item.CrMasSupAccountBankEnName
+									</option>
+								}
+							}
+						</select>
+						<div style="margin-top:2px">
+							<div style="height: 1.35em">
+								<span asp-validation-for="@Model.BankSelected" class="text-danger"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row mt-2">
+				<div class="row">
+					<div class="col-md-1">
+						<label class="form-label" for="CrCasCarInformationSerailNo">@localizer["Date"]</label>
+					</div>
+					<div class="col-md-2">
+						<input type="date" class="form-control" asp-for="TransferDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+						<div style="margin-top:2px">
+							<div style="height: 1.35em">
+								<span asp-validation-for="@Model.TransferDate" class="text-danger"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row mt-2">
+				<div class="row">
+					<div class="col-md-1">
+						<label class="form-label" for="CrCasCarInformationDistribution">@localizer["ToAccount"]</label>
+					</div>
+					<div class="col-md-3">
+						<select class="form-select valid" asp-for="FromAccountBankSelected" onchange="GetAccountNo()" required>
+							<option selected disabled></option>
+							@foreach (var item in Model.AccountBanks)
+							{
+								if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+								{
+									<option class="text-right" value="@item.CrCasAccountBankCode">
+										@item.CrCasAccountBankArName
+									</option>
+								}
+								else
+								{
+									<option class="text-left" value="@item.CrCasAccountBankCode">
+										@item.CrCasAccountBankEnName
+									</option>
+								}
+							}
+						</select>
+						<div style="margin-top:2px">
+							<div style="height: 1.35em">
+								<span asp-validation-for="@Model.FromAccountBankSelected" class="text-danger"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row mt-2">
+				<div class="row">
+					<div class="col-md-1">
+						<label class="form-label" for="CrCasCarInformationDistribution">@localizer["ToAccountNo"]</label>
+					</div>
+					<div class="col-md-5">
+						<input type="text" class="form-control" id="FromAccountNo" name="FromAccountNo" readonly />
+					</div>
+				</div>
+			</div>
+			<div class="row mt-2">
+				<div class="row">
+					<div class="col-md-1">
+						<label class="form-label" for="CrCasCarInformationDistribution">@localizer["Bank"]</label>
+					</div>
+					<div class="col-md-5">
+						<input type="text" class="form-control" id="FromBankk" name="FromBankk" readonly />
+						<input type="text" asp-for="FromBank" hidden />
+					</div>
+				</div>
+			</div>
+			<div class="row mt-2">
+				<div class="row">
+					<div class="col-md-1">
+						<label class="form-label" for="CrCasCarInformationDistribution">@localizer["AmountTransfer"]</label>
+					</div>
+					<div class="col-md-1">
+						<input type="text" class="form-control" id="Amount" asp-for="Amount" maxlength="10" oninput="handleAmountPayed(this)" style="width:120%" />
+						<div style="margin-top:2px">
+							<div style="height: 1.35em">
+								<span asp-validation-for="@Model.Amount" id="AmountValidition" class="text-danger"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row mt-3">
+				<div class="row">
+					<div class="col-md-1">
+						<label class="form-label" for="CrCasCarInformationSerailNo">@localizer["reasons"]</label>
+					</div>
+					<div class="col-md-5">
+						<input type="text" class="form-control" asp-for="Reasons" maxlength="100" />
+					</div>
+				</div>
+			</div>
 
-        </div>
+		</div>
 
-        <div class="mt-4" id="buttonContainer">
-            <a class="btn btn-primary ms-1" id="submitForm">@localizer["Save"]</a>
-            <a type="button" class="btn btn-danger ms-2" asp-area="CAS" asp-controller="TransferFromTenant" asp-action="Index">
-                @localizer["Back"]
-            </a>
-        </div>
-    </form>
-    <div class="main" style="display:none;top: 50%;left: 50%;">
-        <div class="container1">
-            <div>   <img src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" class="logoLoader"></div>
-            <br>
-            <div class="container2">
-                <div class="dash uno"></div>
-                <div class="dash dos"></div>
-                <div class="dash tres"></div>
-                <div class="dash cuatro"></div>
-            </div>
-        </div>
-    </div>
+		<div class="mt-4" id="buttonContainer">
+			<a class="btn btn-primary ms-1" id="submitForm">@localizer["Save"]</a>
+			<a type="button" class="btn btn-danger ms-2" asp-area="CAS" asp-controller="TransferFromTenant" asp-action="Index">
+				@localizer["Back"]
+			</a>
+		</div>
+	</form>
+	<div class="main" style="display:none;top: 50%;left: 50%;">
+		<div class="container1">
+			<div>   <img src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" class="logoLoader"></div>
+			<br>
+			<div class="container2">
+				<div class="dash uno"></div>
+				<div class="dash dos"></div>
+				<div class="dash tres"></div>
+				<div class="dash cuatro"></div>
+			</div>
+		</div>
+	</div>
 </div>
+<canvas id="myCanvas" style="display: none;"></canvas>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+	<partial name="_ValidationScriptsPartial" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+	<script src="~/PdfJS/Receipt/Receipt.js"></script>
 
-    <script>
-        function GetAccountNo() {
-            var selectedBankCode = $("#FromAccountBankSelected").val();
-            console.log(selectedBankCode)
+	<script>
+		function GetAccountNo() {
+			var selectedBankCode = $("#FromAccountBankSelected").val();
+			console.log(selectedBankCode)
 
-            $.ajax({
-                type: "GET",
-                data: {
-                    AccountNo: selectedBankCode
-                },
-                url: "@Url.Action("GetAccountBankNo", "TransferFromTenant", new { Area = "CAS" })",
-                success: function (response) {
-                    console.log(response)
-                    $("#FromAccountNo").val(response.accountIban);
-                    if ("@requestCulture?.RequestCulture.UICulture.Name" == "ar-EG") {
-                        $("#FromBank").val(response.bankNo);
-                        $("#FromBankk").val(response.arBank);
-                    }
-                    else {
-                        $("#FromBank").val(response.bankNo);
-                        $("#FromBankk").val(response.arBank);
+			$.ajax({
+				type: "GET",
+				data: {
+					AccountNo: selectedBankCode
+				},
+				url: "@Url.Action("GetAccountBankNo", "TransferFromTenant", new { Area = "CAS" })",
+				success: function (response) {
+					console.log(response)
+					$("#FromAccountNo").val(response.accountIban);
+					if ("@requestCulture?.RequestCulture.UICulture.Name" == "ar-EG") {
+						$("#FromBank").val(response.bankNo);
+						$("#FromBankk").val(response.arBank);
+					}
+					else {
+						$("#FromBank").val(response.bankNo);
+						$("#FromBankk").val(response.arBank);
 
-                    }
-                },
-            })
-        }
-        function handleAmountPayed(input) {
-            // Remove non-digit characters and additional decimal points
-            input.value = input.value.replace(/[^0-9\.]/g, '');
-            const decimalIndex = input.value.indexOf('.');
+					}
+				},
+			})
+		}
+		function handleAmountPayed(input) {
+			// Remove non-digit characters and additional decimal points
+			input.value = input.value.replace(/[^0-9\.]/g, '');
+			const decimalIndex = input.value.indexOf('.');
 
-            // Limit to 9 digits before and after the decimal point
-            if (decimalIndex !== -1) {
-                const digitsBeforeDecimal = input.value.substring(0, decimalIndex);
-                const digitsAfterDecimal = input.value.substring(decimalIndex + 1);
+			// Limit to 9 digits before and after the decimal point
+			if (decimalIndex !== -1) {
+				const digitsBeforeDecimal = input.value.substring(0, decimalIndex);
+				const digitsAfterDecimal = input.value.substring(decimalIndex + 1);
 
-                // Limit to 2 digits after the decimal point
-                input.value = digitsBeforeDecimal.substr(0, 7) + '.' + digitsAfterDecimal.substr(0, 2);
+				// Limit to 2 digits after the decimal point
+				input.value = digitsBeforeDecimal.substr(0, 7) + '.' + digitsAfterDecimal.substr(0, 2);
 
-                // Remove additional decimal points
-                if (input.value.indexOf('.', decimalIndex + 1) !== -1) {
-                    const lastValidIndex = input.value.lastIndexOf('.');
-                    input.value = input.value.substring(0, lastValidIndex) + input.value.substring(lastValidIndex + 1);
-                }
-            } else {
-                // Limit to 7 digits before the decimal point
-                input.value = input.value.substr(0, 7);
-            }
-        }
-    </script>
-    <script>
-        const ArReceipt = async () => {
-            const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalCatchReceipt";
-            const imagePath = imageLessor.replace('~', '');
-            const dates = getFormattedDatesMiliadiAndHijri("ar");
-            const miladiDateString = dates.miladiDate;
-            const hijriDateString = dates.hijriDate;
-            // First In Page
-            const AccountCatchReceiptNo = "@Model.AccountReceiptNo";
-            const ReferenceNo = '@Model.AdminstritiveNo';
-            var reverseReferenceNo = reverseParts(ReferenceNo);
-            var selectedArabicName = "تحويل بنكي";
-            var reasonPayment = document.getElementById("Reasons").value;
-            var AmountPayedInput = document.getElementById("Amount").value;
-            const AmountPayed = parseFloat(AmountPayedInput).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            const [beforeDecimal, afterDecimal] = splitNumberbeforeAndafterDecimal(AmountPayed);
-            const numberToText = await dataChanged(AmountPayed);
-            const [firstHalf, secondHalf] = splitTextInHalf(numberToText.ar_concatenate)
-            var phaseFor = `تحويل من مستأجر , رقم المرجع ${reverseReferenceNo} `;
-            // Signture Image
-            var namesAndSignatures = await loadArSignatures();
+				// Remove additional decimal points
+				if (input.value.indexOf('.', decimalIndex + 1) !== -1) {
+					const lastValidIndex = input.value.lastIndexOf('.');
+					input.value = input.value.substring(0, lastValidIndex) + input.value.substring(lastValidIndex + 1);
+				}
+			} else {
+				// Limit to 7 digits before the decimal point
+				input.value = input.value.substr(0, 7);
+			}
+		}
+	</script>
+	<script>
+		const ArReceipt = async () => {
+			const imageLessor = "lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArExternalCatchReceipt";
+			const imagePath = imageLessor.replace('~', '');
+			const dates = getFormattedDatesMiliadiAndHijri("ar");
+			const miladiDateString = dates.miladiDate;
+			const hijriDateString = dates.hijriDate;
+			// First In Page
+			const AccountCatchReceiptNo = "@Model.AccountReceiptNo";
+			const ReferenceNo = '@Model.AdminstritiveNo';
+			var reverseReferenceNo = reverseParts(ReferenceNo);
+			var selectedArabicName = "تحويل بنكي";
+			var reasonPayment = document.getElementById("Reasons").value;
+			var AmountPayedInput = document.getElementById("Amount").value;
+			const AmountPayed = parseFloat(AmountPayedInput).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			const [beforeDecimal, afterDecimal] = splitNumberbeforeAndafterDecimal(AmountPayed);
+			const numberToText = await dataChanged(AmountPayed);
+			const [firstHalf, secondHalf] = splitTextInHalf(numberToText.ar_concatenate)
+			var phaseFor = `تحويل من مستأجر , رقم المرجع ${reverseReferenceNo} `;
+			// Signture Image
+			var namesAndSignatures = await loadArSignatures();
 
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////
-            let canvas_width = 2481;
-            let texts = [
-                { content: AccountCatchReceiptNo, x: canvas_width - 1860, y: 624 },
-                { content: hijriDateString, x: canvas_width - 300, y: 624 },
-                { content: miladiDateString, x: canvas_width - 305, y: 685 },
-                { content: beforeDecimal, x: canvas_width - 2005, y: 720 },
-                { content: afterDecimal, x: canvas_width - 1940, y: 720 },
-                { content: namesAndSignatures.renterName, x: canvas_width - 480, y: 905 },
-                { content: firstHalf, x: canvas_width - 380, y: 1005 },
-                { content: secondHalf, x: canvas_width - 380, y: 1070 },
-                { content: selectedArabicName, x: canvas_width - 400, y: 1185 },
-                { content: phaseFor, x: canvas_width - 390, y: 1285 },
-                { content: reasonPayment, x: canvas_width - 350, y: 1385 },
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////
+			let canvas_width = 2481;
+			let texts = [
+				{ content: AccountCatchReceiptNo, x: canvas_width - 1860, y: 624 },
+				{ content: hijriDateString, x: canvas_width - 300, y: 624 },
+				{ content: miladiDateString, x: canvas_width - 305, y: 685 },
+				{ content: beforeDecimal, x: canvas_width - 2005, y: 720 },
+				{ content: afterDecimal, x: canvas_width - 1940, y: 720 },
+				{ content: namesAndSignatures.renterName, x: canvas_width - 480, y: 905 },
+				{ content: firstHalf, x: canvas_width - 380, y: 1005 },
+				{ content: secondHalf, x: canvas_width - 380, y: 1070 },
+				{ content: selectedArabicName, x: canvas_width - 400, y: 1185 },
+				{ content: phaseFor, x: canvas_width - 390, y: 1285 },
+				{ content: reasonPayment, x: canvas_width - 350, y: 1385 },
 
-                { content: namesAndSignatures.directorOfLessor, x: canvas_width - 320, y: 1568 },
-                { content: namesAndSignatures.userName, x: canvas_width - 1120, y: 1568 },
-                { content: namesAndSignatures.directorOfBranch, x: canvas_width - 290, y: 1705 },
-                { content: namesAndSignatures.userName, x: canvas_width - 1120, y: 1705 },
+				{ content: namesAndSignatures.directorOfLessor, x: canvas_width - 320, y: 1568 },
+				{ content: namesAndSignatures.userName, x: canvas_width - 1120, y: 1568 },
+				{ content: namesAndSignatures.directorOfBranch, x: canvas_width - 290, y: 1705 },
+				{ content: namesAndSignatures.userName, x: canvas_width - 1120, y: 1705 },
 
-            ];
-            let signatures = [
-                { content: namesAndSignatures.signatureImg1, x: canvas_width - 400, y: 1495, width: 200, height: 100 },
-                { content: namesAndSignatures.signatureImg2, x: canvas_width - 1170, y: 1495, width: 200, height: 100 },
-                { content: namesAndSignatures.signatureImg3, x: canvas_width - 400, y: 1630, width: 200, height: 100 },
-                { content: namesAndSignatures.signatureImg4, x: canvas_width - 1170, y: 1630, width: 200, height: 100 },
-            ];
-            let textStyleOptions = {
-                fontWeight: "bold",
-                fontSize: 37,
-                fontFamily: "serif",
-                textColor: "rgba(0, 0, 0)",
-                textAlign: "right"
-            };
-            const responseImage = await fetch(imagePath);
-            const blob = await responseImage.blob();
-            let canvas = document.createElement("canvas");
-            var ctx = canvas.getContext("2d");
-            var img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.onload = function () {
-                let loadedImageWidth = img.width;
-                let loadedImageHeight = img.height;
+			];
+			let signatures = [
+				{ content: namesAndSignatures.signatureImg1, x: canvas_width - 400, y: 1495, width: 200, height: 100 },
+				{ content: namesAndSignatures.signatureImg2, x: canvas_width - 1170, y: 1495, width: 200, height: 100 },
+				{ content: namesAndSignatures.signatureImg3, x: canvas_width - 400, y: 1630, width: 200, height: 100 },
+				{ content: namesAndSignatures.signatureImg4, x: canvas_width - 1170, y: 1630, width: 200, height: 100 },
+			];
+			let textStyleOptions = {
+				fontWeight: "bold",
+				fontSize: 37,
+				fontFamily: "serif",
+				textColor: "rgba(0, 0, 0)",
+				textAlign: "right"
+			};
+			const responseImage = await fetch(imagePath);
+			const blob = await responseImage.blob();
+			let canvas = document.createElement("canvas");
+			var ctx = canvas.getContext("2d");
+			var img = new Image();
+			img.crossOrigin = "Anonymous";
+			img.onload = function () {
+				let loadedImageWidth = img.width;
+				let loadedImageHeight = img.height;
 
-                canvas.width = loadedImageWidth;
-                canvas_width = loadedImageWidth;
-                canvas.height = loadedImageHeight;
+				canvas.width = loadedImageWidth;
+				canvas_width = loadedImageWidth;
+				canvas.height = loadedImageHeight;
 
-                ctx.drawImage(img, 0, 0);
+				ctx.drawImage(img, 0, 0);
 
-                texts.forEach(text => {
-                    ctx.font = `${textStyleOptions.fontWeight} ${textStyleOptions.fontSize}px ${textStyleOptions.fontFamily}`;
-                    ctx.fillStyle = textStyleOptions.textColor;
+				texts.forEach(text => {
+					ctx.font = `${textStyleOptions.fontWeight} ${textStyleOptions.fontSize}px ${textStyleOptions.fontFamily}`;
+					ctx.fillStyle = textStyleOptions.textColor;
 
-                    let textWidth = ctx.measureText(text.content).width;
+					let textWidth = ctx.measureText(text.content).width;
 
-                    let x = text.x;
-                    if (textStyleOptions.textAlign === "right") {
-                        x -= textWidth;
-                    } else if (textStyleOptions.textAlign === "center") {
-                        x -= textWidth / 2;
-                    }
+					let x = text.x;
+					if (textStyleOptions.textAlign === "right") {
+						x -= textWidth;
+					} else if (textStyleOptions.textAlign === "center") {
+						x -= textWidth / 2;
+					}
 
-                    ctx.fillText(text.content, x, text.y);
+					ctx.fillText(text.content, x, text.y);
 
-                });
+				});
 
-                signatures.forEach(signature => {
-                    let signatureWidth = ctx.measureText(signature.content).width;
-                    let x = signature.x;
-                    if (textStyleOptions.textAlign === "right") {
-                        x -= signatureWidth;
-                    } else if (textStyleOptions.textAlign === "center") {
-                        x -= signatureWidth / 2;
-                    }
-                    if (signature.content) {
-                        ctx.drawImage(signature.content, x, signature.y, signature.width, signature.height);
-                    }
-                });
+				signatures.forEach(signature => {
+					let signatureWidth = ctx.measureText(signature.content).width;
+					let x = signature.x;
+					if (textStyleOptions.textAlign === "right") {
+						x -= signatureWidth;
+					} else if (textStyleOptions.textAlign === "center") {
+						x -= signatureWidth / 2;
+					}
+					if (signature.content) {
+						ctx.drawImage(signature.content, x, signature.y, signature.width, signature.height);
+					}
+				});
 
-                canvas.toBlob(async function (blob) {
-                    createPdf(AccountCatchReceiptNo, blob, "SavePdfArReceipt", "ar");
-                }, 'image/png');
-            };
-            img.src = URL.createObjectURL(blob);
-        };
-        const EnReceipt = async () => {
-            const imageLessor = "@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnExternalCatchReceipt";
-            const imagePath = imageLessor.replace('~', '');
-            const dates = getFormattedDatesMiliadiAndHijri("en");
-            const miladiDateString = dates.miladiDate;
-            const hijriDateString = dates.hijriDate;
-            // First In Page
-            const AccountCatchReceiptNo = "@Model.AccountReceiptNo";
-            const ReferenceNo = '@Model.AdminstritiveNo';
-            var reverseReferenceNo = reverseParts(ReferenceNo);
-            var selectedEnglishName = "Bank Transfer";
-            var reasonPayment = document.getElementById("Reasons").value;
-            var AmountPayedInput = document.getElementById("Amount").value;
-            const AmountPayed = parseFloat(AmountPayedInput).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            const [beforeDecimal, afterDecimal] = splitNumberbeforeAndafterDecimal(AmountPayed);
-            const numberToText = await dataChanged(AmountPayed);
-            const [firstHalf, secondHalf] = splitTextInHalf(numberToText.en_concatenate)
-            var phaseFor = `Transfer from renter , Referance No ${reverseReferenceNo} `;
-            // Signture Image
-            var namesAndSignatures = await loadEnSignatures();
-            // Get Image And Text On
-            // Read the image file as a Blob
-            const responseImage = await fetch(imagePath);
-            const blob = await responseImage.blob();
-            var canvas = document.createElement("canvas");
-            var ctx = canvas.getContext("2d");
-            var img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.onload = function () {
-                canvas.width = img.width;
-                canvas.height = img.height;
+				canvas.toBlob(async function (blob) {
+					createPdf(AccountCatchReceiptNo, blob, "SavePdfReceipt", "ar");
+				}, 'image/png');
+			};
+			img.src = URL.createObjectURL(blob);
+		};
+	</script>
+	<script>
+		const ReceiptPdf = async () => {
 
-                ctx.drawImage(img, 0, 0);
-                ctx.font = "bold 33px serif";
-                ctx.textAlign = "left";
-                ctx.fillStyle = "black";
+	    let canvas = document.createElement("canvas");
 
+			// البيانات المتغيرة
+			const dynamicData = {
+				DATE_AR: "الأحد ٨ جمادي الأولى ١٤٤٦",
+				DATE_EN: "11/10/2024",
+				HIJRI_DATE_EN: "Jumada I 8, 1446",
+				CONTRACT_NUMBER: "24-1301-4001105-000303",
+				AMOUNT: "5,560000",
+				HALALAS: "82",
+				TENANT_NAME_AR: "مبارك ظافر مصعب الشهراني",
+				TENANT_NAME_EN: "Mubarak Zafer Musab Al-Shahrani",
+				AMOUNT_AR: "خمسة الآلف و خمس مئة و ستون  ريالا و اثنان و ثمانون هللة",
+				AMOUNT_EN: "Five thousand five hundred and sixty riyals and eighty-two halalas",
+				PAYMENT_METHOD_AR: "ماستر كارد",
+				PAYMENT_METHOD_EN: "Master Card",
+				PAYMENT_DESC_AR: "دفعة تحت الحساب لعقد ايجار السيارة لعقد 26-1301-4001105-000303",
+				PAYMENT_DESC_EN: "Payment on account for car lease contract for contract 24-1301-4001105-000303",
+				NOTES_AR: "ملاحظات",
+				APPROVER_NAME_AR: "عيسي هاني مبروك عزام",
+				APPROVER_NAME_EN: "Issa Hani Mumrok Azzam",
+			};
 
-                ctx.fillText(miladiDateString, canvas.width - 2200, 700);
-                ctx.fillText(hijriDateString, canvas.width - 2220, 630);
+			document.fonts.load(`normal 46px "Sakkal Majalla Regular"`).then(() => {
+				drawReceipt(canvas, dynamicData);
+				canvas.toBlob(async function (blob) {
+					createPdf(AccountCatchReceiptNo, blob, "SavePdfReceipt");
+				}, 'image/png');
+			});
 
-                ctx.font = "bold 37px serif";
-                ctx.fillText(AccountCatchReceiptNo, canvas.width - 620, 625);
-                ctx.fillText(beforeDecimal, canvas.width - 450, 720);
-                ctx.fillText(afterDecimal, canvas.width - 270, 720);
-                ctx.fillText(namesAndSignatures.renterName, canvas.width - 2050, 900);
-                ctx.fillText(firstHalf, canvas.width - 2100, 1013);
-                ctx.fillText(secondHalf, canvas.width - 2100, 1085);
-                ctx.fillText(selectedEnglishName, canvas.width - 2000, 1200);
-                ctx.fillText(phaseFor, canvas.width - 2250, 1310);
-                ctx.fillText(reasonPayment, canvas.width - 2050, 1420);
+		}
+		function createPdf(receiptNo, imageBlob, InputPdf) {
+			var doc = new jsPDF('p', 'pt', 'a4', true);
+			const pageWidth = doc.internal.pageSize.getWidth();
+			const pageHeight = doc.internal.pageSize.getHeight();
+			try {
+				// Convert the image blob to a base64 DataURL
+				const reader = new FileReader();
+				reader.onload = function () {
+					const imageDataUrl = reader.result;
+					// Add the image to the PDF
+					const imgWidth = pageWidth; // Width of the image in the PDF
+					const imgHeight = pageHeight; // Height of the image in the PDF
+					const imgXPos = 0; // X position of the image (left edge)
+					const imgYPos = 0; // Y position of the image (top edge)
+					doc.addImage(imageDataUrl, 'PNG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
+					// Convert the PDF to a blob
+					const pdfBlob = doc.output('blob');
+					const blobUrl = URL.createObjectURL(pdfBlob);
+					const pdfBase64 = doc.output('datauristring');
+					// Set the base64-encoded PDF to the hidden input field
+					document.getElementById(InputPdf).value = pdfBase64;
+					document.getElementById('AccountReceiptNo').value = receiptNo;
+				};
+				reader.readAsDataURL(imageBlob); // Start reading the image blob
+			} catch (error) {
+				console.error('Error adding image to PDF:', error);
+			}
+		}
+	</script>
+	<script>
+		// submit Form
+		document.addEventListener('DOMContentLoaded', function () {
+			var form = document.getElementById('msform');
+			var submitButton = document.getElementById('submitForm');
+			submitButton.addEventListener('click', function (event) {
+				var input = document.getElementById("Amount").value;
+				event.preventDefault();
+				if ($("#msform").valid()) {
+					if (!input || parseFloat(input) === 0) {
+						$('#AmountValidition').text("@localizer["requiredFiled"]")
+						return;
+					}
+					else {
+						$('.main').show(); // Show the main container with fade effect
+						// ArReceipt();
+						// EnReceipt();
+						setTimeout(function () {
+							form.submit();
+						}, 5000);
+					}
+				}
+			});
+		});
+	</script>
+	<script>
+		function loadImage(src) {
+			return new Promise((resolve) => {
+				const img = new Image();
+				img.onload = () => resolve(img); // Resolve with the loaded image
+				img.onerror = () => resolve(); // Resolve with an empty string if loading fails
+				img.src = src;
+			});
+		}
+		async function loadArSignatures() {
+			var renterName = decodeHTMLEntities("@Model.CrCasRenterLessorNavigation.CrMasRenterInformationArName");
+			var renterSignature = decodeHTMLEntities("@Model.CrCasRenterLessorNavigation.CrMasRenterInformationSignature").replace('~', '');
+			var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
+			var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
+			var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation?.CrMasLessorInformationDirectorArName");
+			var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+			var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
+			var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
 
-                ctx.font = "bold 37px serif";
+			const promises = [];
 
-                // Draw director of lessor
-                ctx.fillText(namesAndSignatures.directorOfLessor, canvas.width - 1990, 1560);
-                if (namesAndSignatures.signatureImg1) {
-                    ctx.drawImage(namesAndSignatures.signatureImg1, canvas.width - 1700, 1505, 200, 100);
-                }
+			// Check each signature and push to promises if it exists
+			if (directorOfLessorSignature) {
+				promises.push(loadImage(directorOfLessorSignature));
+			}
 
-                // Draw user
-                ctx.fillText(namesAndSignatures.userName, canvas.width - 1300, 1560);
-                if (namesAndSignatures.signatureImg2) {
-                    ctx.drawImage(namesAndSignatures.signatureImg2, canvas.width - 900, 1505, 200, 100);
-                }
+			if (userSignature) {
+				promises.push(loadImage(userSignature));
+			}
 
-                // Draw director of branch
-                ctx.fillText(namesAndSignatures.directorOfBranch, canvas.width - 2020, 1690);
-                if (namesAndSignatures.signatureImg3) {
-                    ctx.drawImage(namesAndSignatures.signatureImg3, canvas.width - 1700, 1630, 200, 100);
-                }
+			if (directorOfBranchSignature) {
+				promises.push(loadImage(directorOfBranchSignature));
+			}
 
-                // Draw renter
-                ctx.fillText(namesAndSignatures.renterName, canvas.width - 1300, 1690);
-                if (namesAndSignatures.signatureImg4) {
-                    ctx.drawImage(namesAndSignatures.signatureImg4, canvas.width - 900, 1630, 200, 100);
-                }
+			if (renterSignature) {
+				promises.push(loadImage(renterSignature));
+			}
 
-                canvas.toBlob(async function (blob) {
-                    createPdf(AccountCatchReceiptNo, blob, "SavePdfEnReceipt", "en");
-                }, 'image/png');
-            };
-            img.src = URL.createObjectURL(blob);
-        };
-    </script>
-    <script>
-        function createPdf(receiptNo, imageBlob, InputPdf, language) {
-            var doc = new jsPDF('p', 'pt', 'a4', true);
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            try {
-                // Convert the image blob to a base64 DataURL
-                const reader = new FileReader();
-                reader.onload = function () {
-                    const imageDataUrl = reader.result;
-                    // Add the image to the PDF
-                    const imgWidth = pageWidth; // Width of the image in the PDF
-                    const imgHeight = pageHeight; // Height of the image in the PDF
-                    const imgXPos = 0; // X position of the image (left edge)
-                    const imgYPos = 0; // Y position of the image (top edge)
-                    doc.addImage(imageDataUrl, 'PNG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
-                    // Convert the PDF to a blob
-                    const pdfBlob = doc.output('blob');
-                    const blobUrl = URL.createObjectURL(pdfBlob);
-                    const pdfBase64 = doc.output('datauristring');
-                    // Set the base64-encoded PDF to the hidden input field
-                    document.getElementById(InputPdf).value = pdfBase64;
-                    document.getElementById('AccountReceiptNo').value = receiptNo;
-                };
-                reader.readAsDataURL(imageBlob); // Start reading the image blob
-            } catch (error) {
-                console.error('Error adding image to PDF:', error);
-            }
-        }
-    </script>
-    <script>
-        // submit Form
-        document.addEventListener('DOMContentLoaded', function () {
-            var form = document.getElementById('msform');
-            var submitButton = document.getElementById('submitForm');
-            submitButton.addEventListener('click', function (event) {
-                var input = document.getElementById("Amount").value;
-                event.preventDefault();
-                if ($("#msform").valid()) {
-                    if (!input || parseFloat(input) === 0) {
-                        $('#AmountValidition').text("@localizer["requiredFiled"]")
-                        return;
-                    }
-                    else {
-                        $('.main').show(); // Show the main container with fade effect
-                        ArReceipt();
-                        EnReceipt();
-                        setTimeout(function () {
-                            form.submit();
-                        }, 5000);
-                    }
-                }
-            });
-        });
-    </script>
-    <script>
-        function loadImage(src) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve(img); // Resolve with the loaded image
-                img.onerror = () => resolve(); // Resolve with an empty string if loading fails
-                img.src = src;
-            });
-        }
-        async function loadArSignatures() {
-            var renterName = decodeHTMLEntities("@Model.CrCasRenterLessorNavigation.CrMasRenterInformationArName");
-            var renterSignature = decodeHTMLEntities("@Model.CrCasRenterLessorNavigation.CrMasRenterInformationSignature").replace('~', '');
-            var userName = decodeHTMLEntities("@user.CrMasUserInformationArName");
-            var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
-            var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation?.CrMasLessorInformationDirectorArName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
-            var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorArName");
-            var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationDirectorSignature").replace('~', '');
+			// Wait for all valid signatures to load
+			const signatureImages = await Promise.all(promises);
 
-            const promises = [];
+			return {
+				renterName: renterName,
+				userName: userName,
+				directorOfLessor: directorOfLessor,
+				directorOfBranch: directorOfBranch,
+				signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
+				signatureImg2: signatureImages[1] || '',
+				signatureImg3: signatureImages[2] || '',
+				signatureImg4: signatureImages[3] || ''
+			};
+		}
+		async function loadEnSignatures() {
+			var renterName = decodeHTMLEntities("@Model.CrCasRenterLessorNavigation.CrMasRenterInformationEnName");
+			var renterSignature = decodeHTMLEntities("@Model.CrCasRenterLessorNavigation.CrMasRenterInformationSignature").replace('~', '');
+			var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
+			var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
+			var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation?.CrMasLessorInformationDirectorEnName");
+			var directorOfLessorSignature = decodeHTMLEntities("lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
+			var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationDirectorEnName");
+			var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationDirectorSignature").replace('~', '');
+			const promises = [];
 
-            // Check each signature and push to promises if it exists
-            if (directorOfLessorSignature) {
-                promises.push(loadImage(directorOfLessorSignature));
-            }
+			// Check each signature and push to promises if it exists
+			if (directorOfLessorSignature) {
+				promises.push(loadImage(directorOfLessorSignature));
+			}
 
-            if (userSignature) {
-                promises.push(loadImage(userSignature));
-            }
+			if (userSignature) {
+				promises.push(loadImage(userSignature));
+			}
 
-            if (directorOfBranchSignature) {
-                promises.push(loadImage(directorOfBranchSignature));
-            }
+			if (directorOfBranchSignature) {
+				promises.push(loadImage(directorOfBranchSignature));
+			}
 
-            if (renterSignature) {
-                promises.push(loadImage(renterSignature));
-            }
+			if (renterSignature) {
+				promises.push(loadImage(renterSignature));
+			}
 
-            // Wait for all valid signatures to load
-            const signatureImages = await Promise.all(promises);
+			// Wait for all valid signatures to load
+			const signatureImages = await Promise.all(promises);
 
-            return {
-                renterName: renterName,
-                userName: userName,
-                directorOfLessor: directorOfLessor,
-                directorOfBranch: directorOfBranch,
-                signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
-                signatureImg2: signatureImages[1] || '',
-                signatureImg3: signatureImages[2] || '',
-                signatureImg4: signatureImages[3] || ''
-            };
-        }
-        async function loadEnSignatures() {
-            var renterName = decodeHTMLEntities("@Model.CrCasRenterLessorNavigation.CrMasRenterInformationEnName");
-            var renterSignature = decodeHTMLEntities("@Model.CrCasRenterLessorNavigation.CrMasRenterInformationSignature").replace('~', '');
-            var userName = decodeHTMLEntities("@user.CrMasUserInformationEnName");
-            var userSignature = decodeHTMLEntities("@user.CrMasUserInformationSignature").replace('~', '');
-            var directorOfLessor = decodeHTMLEntities("@user.CrMasUserInformationLessorNavigation?.CrMasLessorInformationDirectorEnName");
-            var directorOfLessorSignature = decodeHTMLEntities("@lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageSignatureDirector").replace('~', '');
-            var directorOfBranch = decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationDirectorEnName");
-            var directorOfBranchSignature = decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationDirectorSignature").replace('~', '');
-            const promises = [];
+			return {
+				renterName: renterName,
+				userName: userName,
+				directorOfLessor: directorOfLessor,
+				directorOfBranch: directorOfBranch,
+				signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
+				signatureImg2: signatureImages[1] || '',
+				signatureImg3: signatureImages[2] || '',
+				signatureImg4: signatureImages[3] || ''
+			};
+		}
 
-            // Check each signature and push to promises if it exists
-            if (directorOfLessorSignature) {
-                promises.push(loadImage(directorOfLessorSignature));
-            }
+	</script>
+	<script>
+		// Function to format Hijri date
+		function formatHijriDate(date) {
+			const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long', calendar: 'islamic-umalqura' };
+			return date.toLocaleDateString('ar-SA', options).replace(/هـ/g, ''); // Remove "هـ" suffix
+		}
+		// To decode some string
+		function decodeHTMLEntities(text) {
+			var textArea = document.createElement("textarea");
+			textArea.innerHTML = text;
+			return textArea.value;
+		}
+		function formatHijriEnDate(date) {
+			const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long', calendar: 'islamic-umalqura' };
+			return date.toLocaleDateString('en-US-u-ca-islamic-umalqura', options).replace(/AH/g, ''); // Remove "AH" suffix
+		}
+		function reverseParts(input) {
+			let parts = input.split('-');
+			parts.reverse();
+			return parts.join("-");
+		}
+		function getFormattedDatesMiliadiAndHijri(language) {
+			// Get the current Miladi date from the server (assuming server provides the date in a specific format)
+			var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")'); // or "@DateTime.Now" if you prefer local server time
+			const miladiDate = new Date(dateTimeNow);
 
-            if (userSignature) {
-                promises.push(loadImage(userSignature));
-            }
+			// Format the Miladi date
+			const miladiOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+			const miladiDateString = miladiDate.toLocaleDateString('en-US', miladiOptions).split('/').join('/');
 
-            if (directorOfBranchSignature) {
-                promises.push(loadImage(directorOfBranchSignature));
-            }
+			// Initialize hijriDateString
+			let hijriDateString;
 
-            if (renterSignature) {
-                promises.push(loadImage(renterSignature));
-            }
+			// Format the Hijri date based on the language
+			if (language === "ar") {
+				hijriDateString = formatHijriDate(miladiDate);
+			} else {
+				hijriDateString = formatHijriEnDate(miladiDate);
+			}
 
-            // Wait for all valid signatures to load
-            const signatureImages = await Promise.all(promises);
+			return {
+				miladiDate: miladiDateString,
+				hijriDate: hijriDateString
+			};
+		}
+		function splitTextInHalf(text) {
+			// Check if text is null, empty, or less than or equal to 100 characters
+			if (text == null || text === "") {
+				return ["", ""];
+			}
 
-            return {
-                renterName: renterName,
-                userName: userName,
-                directorOfLessor: directorOfLessor,
-                directorOfBranch: directorOfBranch,
-                signatureImg1: signatureImages[0] || '', // Use an empty string if not a valid image
-                signatureImg2: signatureImages[1] || '',
-                signatureImg3: signatureImages[2] || '',
-                signatureImg4: signatureImages[3] || ''
-            };
-        }
+			if (text.length <= 100) {
+				return [text, ""];
+			}
 
-    </script>
-    <script>
-        // Function to format Hijri date
-        function formatHijriDate(date) {
-            const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long', calendar: 'islamic-umalqura' };
-            return date.toLocaleDateString('ar-SA', options).replace(/هـ/g, ''); // Remove "هـ" suffix
-        }
-        // To decode some string
-        function decodeHTMLEntities(text) {
-            var textArea = document.createElement("textarea");
-            textArea.innerHTML = text;
-            return textArea.value;
-        }
-        function formatHijriEnDate(date) {
-            const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long', calendar: 'islamic-umalqura' };
-            return date.toLocaleDateString('en-US-u-ca-islamic-umalqura', options).replace(/AH/g, ''); // Remove "AH" suffix
-        }
-        function reverseParts(input) {
-            let parts = input.split('-');
-            parts.reverse();
-            return parts.join("-");
-        }
-        function getFormattedDatesMiliadiAndHijri(language) {
-            // Get the current Miladi date from the server (assuming server provides the date in a specific format)
-            var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")'); // or "@DateTime.Now" if you prefer local server time
-            const miladiDate = new Date(dateTimeNow);
+			// Find the middle of the text
+			const middleIndex = Math.floor(text.length / 2);
 
-            // Format the Miladi date
-            const miladiOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
-            const miladiDateString = miladiDate.toLocaleDateString('en-US', miladiOptions).split('/').join('/');
+			// Find the closest space to the middle to avoid splitting words
+			const beforeMiddle = text.lastIndexOf(' ', middleIndex);
+			const afterMiddle = text.indexOf(' ', middleIndex + 1);
 
-            // Initialize hijriDateString
-            let hijriDateString;
+			// Determine the best split point
+			const splitIndex = (middleIndex - beforeMiddle < afterMiddle - middleIndex)
+				? beforeMiddle
+				: afterMiddle;
 
-            // Format the Hijri date based on the language
-            if (language === "ar") {
-                hijriDateString = formatHijriDate(miladiDate);
-            } else {
-                hijriDateString = formatHijriEnDate(miladiDate);
-            }
+			// Split the text into two parts
+			const firstHalf = text.slice(0, splitIndex).trim();
+			const secondHalf = text.slice(splitIndex).trim();
 
-            return {
-                miladiDate: miladiDateString,
-                hijriDate: hijriDateString
-            };
-        }
-        function splitTextInHalf(text) {
-            // Check if text is null, empty, or less than or equal to 100 characters
-            if (text == null || text === "") {
-                return ["", ""];
-            }
-
-            if (text.length <= 100) {
-                return [text, ""];
-            }
-
-            // Find the middle of the text
-            const middleIndex = Math.floor(text.length / 2);
-
-            // Find the closest space to the middle to avoid splitting words
-            const beforeMiddle = text.lastIndexOf(' ', middleIndex);
-            const afterMiddle = text.indexOf(' ', middleIndex + 1);
-
-            // Determine the best split point
-            const splitIndex = (middleIndex - beforeMiddle < afterMiddle - middleIndex)
-                ? beforeMiddle
-                : afterMiddle;
-
-            // Split the text into two parts
-            const firstHalf = text.slice(0, splitIndex).trim();
-            const secondHalf = text.slice(splitIndex).trim();
-
-            return [firstHalf, secondHalf];
-        }
-        function splitNumberbeforeAndafterDecimal(number) {
-            let cleanedValueString = number.replace(/,/g, "");
-            let parts = cleanedValueString.split('.');
-            let beforeDecimal = parts[0];
-            let afterDecimal = parts.length > 1 ? parts[1] : "00";
-            afterDecimal = afterDecimal.padEnd(2, '0');
-            // Add thousands separators to the before decimal part
-            beforeDecimal = beforeDecimal.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            return [beforeDecimal, afterDecimal];
-        }
-        async function dataChanged(number) {
-            try {
-                const response = await $.ajax({
-                    url: "/CAS/TransferFromTenant/Get_ConvertedNumber_Action",
-                    type: "GET",
-                    data: { our_No: number },
-                });
-                return response;
-            } catch (error) {
-                console.error("Error occurred: ", error);
-            }
-        }
-    </script>
+			return [firstHalf, secondHalf];
+		}
+		function splitNumberbeforeAndafterDecimal(number) {
+			let cleanedValueString = number.replace(/,/g, "");
+			let parts = cleanedValueString.split('.');
+			let beforeDecimal = parts[0];
+			let afterDecimal = parts.length > 1 ? parts[1] : "00";
+			afterDecimal = afterDecimal.padEnd(2, '0');
+			// Add thousands separators to the before decimal part
+			beforeDecimal = beforeDecimal.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+			return [beforeDecimal, afterDecimal];
+		}
+		async function dataChanged(number) {
+			try {
+				const response = await $.ajax({
+					url: "/CAS/TransferFromTenant/Get_ConvertedNumber_Action",
+					type: "GET",
+					data: { our_No: number },
+				});
+				return response;
+			} catch (error) {
+				console.error("Error occurred: ", error);
+			}
+		}
+	</script>
 
 }

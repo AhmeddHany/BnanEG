@@ -13,7 +13,7 @@ namespace Bnan.Ui.ViewModels.MAS
         public List<CrMasLessorInformation> all_lessors = new List<CrMasLessorInformation>();
         public List<CrMasRenterInformation> all_RentersMas = new List<CrMasRenterInformation>();
         public List<list_String_4> all_Invoices = new List<list_String_4>();
-        
+
         public string? start_Date { get; set; }
         public string? end_Date { get; set; }
 
@@ -23,13 +23,13 @@ namespace Bnan.Ui.ViewModels.MAS
     {
 
         public string CrMasRenterInformationId { get; set; } = null!;
-       
+
         [Required(ErrorMessage = "requiredFiled"), MaxLength(110, ErrorMessage = "requiredNoLengthFiled30")]
         public string? CrMasRenterInformationArName { get; set; }
 
         [Required(ErrorMessage = "requiredFiled"), MaxLength(110, ErrorMessage = "requiredNoLengthFiled30")]
         public string? CrMasRenterInformationEnName { get; set; }
-       
+
         public string? CrMasRenterInformationStatus { get; set; }
 
         public string CrCasRenterContractBasicNo { get; set; } = null!;
@@ -58,15 +58,13 @@ namespace Bnan.Ui.ViewModels.MAS
         public int? CrCasRenterContractBasicActualDays { get; set; }
         public int? CrCasRenterContractBasicActualCurrentReadingMeter { get; set; }
         public decimal? CrCasRenterContractBasicActualRentValue { get; set; }
-   
+
         public decimal? CrCasRenterContractBasicActualTotal { get; set; }
 
         public decimal? CrCasRenterContractBasicActualAmountRequired { get; set; }
         public decimal? CrCasRenterContractBasicAmountPaid { get; set; }
-        public string? CrCasRenterContractBasicArPdfFile { get; set; }
-        public string? CrCasRenterContractBasicEnPdfFile { get; set; }
-        public string? CrCasRenterContractBasicArTga { get; set; }
-        public string? CrCasRenterContractBasicEnTga { get; set; }
+        public string? CrCasRenterContractBasicPdfFile { get; set; }
+        public string? CrCasRenterContractBasicPdfTga { get; set; }
         public string? CrCasRenterContractBasicUserInsert { get; set; }
         public string? CrCasRenterContractBasicStatus { get; set; }
 

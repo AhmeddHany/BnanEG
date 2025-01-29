@@ -46,8 +46,8 @@ namespace Bnan.Inferastructure.Repository
             CrCasCarInformation casCarInformation = new CrCasCarInformation()
             {
                 CrCasCarInformationSerailNo = model.CrCasCarInformationSerailNo,
-                CrCasCarInformationConcatenateArName = $"{distribution.CrMasSupCarDistributionConcatenateArName} - {model.CrCasCarInformationPlateArNo} - {color.CrMasSupCarColorArName}",
-                CrCasCarInformationConcatenateEnName = $"{distribution.CrMasSupCarDistributionConcatenateEnName} - {model.CrCasCarInformationPlateEnNo} - {color.CrMasSupCarColorEnName}",
+                CrCasCarInformationConcatenateArName = $"{distribution.CrMasSupCarDistributionConcatenateArName}-{model.CrCasCarInformationPlateArNo}-{color.CrMasSupCarColorArName}",
+                CrCasCarInformationConcatenateEnName = $"{distribution.CrMasSupCarDistributionConcatenateEnName}-{model.CrCasCarInformationPlateEnNo}-{color.CrMasSupCarColorEnName}",
                 CrCasCarDocumentsMaintenances = model.CrCasCarDocumentsMaintenances,
                 CrCasCarAdvantages = model.CrCasCarAdvantages,
                 CrCasCarInformationCategory = distribution.CrMasSupCarDistributionCategory,

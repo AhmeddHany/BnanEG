@@ -98,33 +98,21 @@ namespace Bnan.Inferastructure.Extensions
         // Function to get the appropriate message based on PDF type
         public static string GetMessage(string pdfPath, string renterArName, string renterEnName)
         {
-            string fileName = Path.GetFileName(pdfPath);
             string message = "";
 
-            if (pdfPath == "ArContract")
+            if (pdfPath == "Contract")
             {
-                message = $"عزيزي / {renterArName} , يمكنك مراجعة العقد عن طريق تحميل الملف المرفق";
+                message = $"عزيزي / {renterArName} , يمكنك مراجعة العقد عن طريق تحميل الملف المرفق.\n\nDear {renterEnName}, you can review the contract by downloading the attached file.";
             }
-            else if (pdfPath == "EnContract")
+            else if (pdfPath == "Invoice")
             {
-                message = $"Dear {renterEnName}, you can review the contract by downloading the attached file.";
+                message = $"عزيزي / {renterArName} , يمكنك مراجعة الفاتورة عن طريق تحميل الملف المرفق.\n\nDear {renterEnName}, you can review the invoice by downloading the attached file.";
             }
-            else if (pdfPath == "ArInvoice")
+            else if (pdfPath == "Receipt")
             {
-                message = $"عزيزي / {renterArName} , يمكنك مراجعة الفاتورة عن طريق تحميل الملف المرفق";
+                message = $"عزيزي / {renterArName} , يمكنك مراجعة السند عن طريق تحميل الملف المرفق.\n\nDear {renterEnName}, you can review the receipt by downloading the attached file.";
             }
-            else if (pdfPath == "EnInvoice")
-            {
-                message = $"Dear {renterEnName}, you can review the invoice by downloading the attached file.";
-            }
-            else if (pdfPath == "ArReceipt")
-            {
-                message = $"عزيزي / {renterArName} , يمكنك مراجعة السند عن طريق تحميل الملف المرفق";
-            }
-            else if (pdfPath == "EnReceipt")
-            {
-                message = $"Dear {renterEnName}, you can review the receipt by downloading the attached file.";
-            }
+
             return message;
         }
     }

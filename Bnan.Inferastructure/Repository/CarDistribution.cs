@@ -17,8 +17,8 @@ namespace Bnan.Inferastructure.Repository
 
             var model = await _unitOfWork.CrMasSupCarModel.GetByIdAsync(crMasSupCarDistribution.CrMasSupCarDistributionModel);
             var Category = await _unitOfWork.CrMasSupCarCategory.GetByIdAsync(crMasSupCarDistribution.CrMasSupCarDistributionCategory);
-            var CarDistributionArConcat = $"{model.CrMasSupCarModelArConcatenateName} - {Category.CrMasSupCarCategoryArName} - {crMasSupCarDistribution.CrMasSupCarDistributionYear}";
-            var CarDistributionEnConcat = $"{model.CrMasSupCarModelConcatenateEnName} - {Category.CrMasSupCarCategoryEnName} - {crMasSupCarDistribution.CrMasSupCarDistributionYear}";
+            var CarDistributionArConcat = $"{model.CrMasSupCarModelArConcatenateName}-{Category.CrMasSupCarCategoryArName}-{crMasSupCarDistribution.CrMasSupCarDistributionYear}";
+            var CarDistributionEnConcat = $"{model.CrMasSupCarModelConcatenateEnName}-{Category.CrMasSupCarCategoryEnName}-{crMasSupCarDistribution.CrMasSupCarDistributionYear}";
 
             CrMasSupCarDistribution NewcrMasSupCarDistribution = new()
             {

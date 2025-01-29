@@ -13,13 +13,24 @@
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var user = await userManager.GetUserAsync(User);
-    var lessorInfo = await userManager.Users.Include(l => l.CrMasUserInformationLessorNavigation).ThenInclude(l => l.CrMasLessorImage).FirstOrDefaultAsync(x => x.UserName == user.UserName);
-    var lessorCompanyContract = await userManager.Users.Include(l => l.CrMasUserInformationLessorNavigation).ThenInclude(l => l.CrMasContractCompanies).FirstOrDefaultAsync(x => x.UserName == user.UserName);
     var userInfo = await userManager.Users
-          .Include(l => l.CrMasUserMainValidations)
-          .Include(l => l.CrMasUserSubValidations)
-          .Include(l => l.CrMasUserInformationLessorNavigation)
-          .FirstOrDefaultAsync(l => l.UserName == user.UserName);
+     .Where(l => l.UserName == user.UserName)
+     .Include(l => l.CrMasUserInformationLessorNavigation)
+         .ThenInclude(n => n.CrMasLessorImage)
+     .Include(l => l.CrMasUserInformationLessorNavigation)
+         .ThenInclude(n => n.CrMasContractCompanies)
+     .Include(l => l.CrMasUserInformationLessorNavigation)
+         .ThenInclude(n => n.CrCasLessorShomoosConnect)
+     .Include(l => l.CrMasUserInformationLessorNavigation)
+         .ThenInclude(n => n.CrCasLessorSmsConnect)
+     .Include(l => l.CrMasUserInformationLessorNavigation)
+         .ThenInclude(n => n.CrCasLessorTgaConnect)
+     .Include(l => l.CrMasUserInformationLessorNavigation)
+         .ThenInclude(n => n.CrCasLessorWhatsupConnects)
+     .Include(l => l.CrMasUserMainValidations)
+     .Include(l => l.CrMasUserSubValidations)
+     .FirstOrDefaultAsync();
+    var hasWarnings = WarningHelper.HasWarnings(userInfo);
     string url = Context.Request.Path;
     string urlhost = Context.Request.Host.Value;
     string full = urlhost + url;
@@ -57,17 +68,17 @@
             <div class="nav-container container-fluid">
                 <!-- Company Logo -->
                 <div class="navbar-brand d-flex align-items-end gap-4">
-                    <a href="#" class="Company-Logo"><img src="@Url.Content(lessorInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" alt="Company Logo" class="Company-Logo-img"></a>
+                    <a href="#" class="Company-Logo"><img src="@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage?.CrMasLessorImageLogo)" alt="Company Logo" class="Company-Logo-img"></a>
                     <p class="m-0 Company-name">
                         @if (signinManager.IsSignedIn(User))
                         {
                             @if (requestCulture.RequestCulture.UICulture.Name != "en-US")
                             {
-                                @Html.Raw(lessorInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationArLongName)
+                                @Html.Raw(userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationArLongName)
                             }
                             else
                             {
-                                @Html.Raw(lessorInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEnLongName)
+                                @Html.Raw(userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEnLongName)
 
                             }
                         }
@@ -138,34 +149,6 @@
 
             </div>
         </nav>
-        <!-- end of tobar -->
-        <nav class="wornings navbar-expand-lg navbar-light py-2 ">
-            @if (lessorCompanyContract.CrMasUserInformationLessorNavigation.CrMasLessorInformationStatus == Status.Hold)
-            {
-                <p>@localizer["CompanyIsHoldInSystems"]</p>
-            }
-            else if (user.CrMasUserInformationStatus == Status.Hold)
-            {
-                <p>@localizer["EmployeeHoldedInBS"]</p>
-            }
-            else if (lessorCompanyContract?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == lessorInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.Renewed)
-            {
-                <p>@localizer["ContractNewDanger"]</p>
-
-            }
-            else if (lessorCompanyContract?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == lessorInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.Expire)
-            {
-                <p>@localizer["ContractExpireDanger"]</p>
-
-            }
-            else if (lessorCompanyContract?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == lessorInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.AboutToExpire)
-            {
-                <p>@localizer["ContractAboutExpireDanger"]</p>
-            }
-            <p>@localizer["ContractAboutExpireDanger"]</p>
-            <p>aaaaaaaaaaaaaaaaaaaaaa</p>
-
-        </nav>
         <!-- end of alert bar -->
         <partial name="_ExpirationModal" />
 
@@ -184,7 +167,72 @@
                         </div>
                     </nav>
                 </div>
-                @RenderBody()
+                <!-- end of main sidebar -->
+                <div class="col my-2 home-wrapper1">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12 d-flex flex-column gap-1 w-100">
+                                @if (hasWarnings)
+                                {
+                                    <nav class="warnings navbar-expand-lg navbar-light py-2" id="warnings">
+                                        <div class="marquee">
+                                            <div class="marquee-content">
+                                                @if (userInfo.CrMasUserInformationLessorNavigation.CrMasLessorInformationStatus == Status.Hold)
+                                                {
+                                                    <p>@localizer["CompanyIsHoldInSystems"]</p>
+                                                }
+                                                else if (user.CrMasUserInformationStatus == Status.Hold)
+                                                {
+                                                    <p>@localizer["EmployeeHoldedInBS"]</p>
+                                                }
+                                                else if (userInfo?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == userInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.Renewed)
+                                                {
+                                                    <p>@localizer["ContractNewDanger"]</p>
+
+                                                }
+                                                else if (userInfo?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == userInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.Expire)
+                                                {
+                                                    <p>@localizer["ContractExpireDanger"]</p>
+
+                                                }
+                                                else if (userInfo?.CrMasUserInformationLessorNavigation?.CrMasContractCompanies.LastOrDefault(x => x.CrMasContractCompanyLessor == userInfo.CrMasUserInformationLessor && x.CrMasContractCompanyProcedures == "112")?.CrMasContractCompanyStatus == Status.AboutToExpire)
+                                                {
+                                                    <p>@localizer["ContractAboutExpireDanger"]</p>
+                                                }
+                                                @if (userInfo?.CrMasUserInformationLessorNavigation.CrCasLessorShomoosConnect == null ||
+                                               userInfo.CrMasUserInformationLessorNavigation.CrCasLessorShomoosConnect.CrMasLessorShomoosConnectStatus == Status.Renewed)
+                                                {
+                                                    <p>@localizer["ShomoosNotConnect"]</p>
+                                                }
+
+                                                @if (userInfo?.CrMasUserInformationLessorNavigation.CrCasLessorSmsConnect == null ||
+                                               userInfo.CrMasUserInformationLessorNavigation.CrCasLessorSmsConnect.CrMasLessorSmsConnectStatus == Status.Renewed)
+                                                {
+                                                    <p>@localizer["SMSNotConnect"]</p>
+                                                }
+
+                                                @if (userInfo?.CrMasUserInformationLessorNavigation.CrCasLessorTgaConnect == null ||
+                                               userInfo.CrMasUserInformationLessorNavigation.CrCasLessorTgaConnect.CrMasLessorTgaConnectStatus == Status.Renewed)
+                                                {
+                                                    <p>@localizer["TGANotConnect"]</p>
+                                                }
+
+                                                @if (userInfo?.CrMasUserInformationLessorNavigation.CrCasLessorWhatsupConnects.LastOrDefault() == null ||
+                                               userInfo.CrMasUserInformationLessorNavigation.CrCasLessorWhatsupConnects.LastOrDefault()?.CrCasLessorWhatsupConnectStatus == Status.Renewed)
+                                                {
+                                                    <p>@localizer["WhatsupNotConnect"]</p>
+                                                }
+
+                                            </div>
+                                        </div>
+                                        <i class="fa-regular fa-circle-xmark marquee-xmark" id="marquee-xmark"></i>
+                                    </nav>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    @RenderBody()
+                </div>
                 <!-- end of content -->
                 <!--Notification View-->
                 <div class="col-auto sidebar2-col close2">
@@ -216,6 +264,13 @@
             // Call the idle timeout handler function
             initializeIdleTimeoutHandler(exitUser);
         });
+
+        var MarqueeXmark = document.getElementById("marquee-xmark");
+        var warnings = document.getElementById("warnings");
+
+        MarqueeXmark.addEventListener('click', function () {
+            warnings.style.display = "none"
+        })
     </script>
 </body>
 

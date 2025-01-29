@@ -108,11 +108,14 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 bool resultSMS = existingSMSConnect == null ? await _smsConnect.AddNew(newSMSConnect) : await _smsConnect.Update(newSMSConnect);
 
 
-                if (resultTga && resultSMS && resultShomoos && await _unitOfWork.CompleteAsync() > 0)
+                if (resultTga && resultSMS && resultShomoos)
                 {
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    await SaveTracingForUserChange(Status.Update, pageNumber);
-                    return RedirectToAction("Index", "Home");
+                    if (await _unitOfWork.CompleteAsync() > 0)
+                    {
+                        _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                        await SaveTracingForUserChange(Status.Update, pageNumber);
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
 
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });

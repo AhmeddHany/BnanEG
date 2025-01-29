@@ -6,18 +6,18 @@ namespace Bnan.Inferastructure.Quartz
     {
         public static void ConfigureQuartz(IServiceCollectionQuartzConfigurator quartzConfigurator)
         {
-            // Add UpdateContract job
-            var updateJobKey = new JobKey("UpdateContractJob");
-            quartzConfigurator.AddJob<UpdateContractJob>(opts => opts.WithIdentity(updateJobKey));
+            //// Add UpdateContract job
+            //var updateJobKey = new JobKey("UpdateContractJob");
+            //quartzConfigurator.AddJob<UpdateContractJob>(opts => opts.WithIdentity(updateJobKey));
 
-            // Trigger for UpdateContractJob, configure as needed
-            quartzConfigurator.AddTrigger(opts => opts
-                .ForJob(updateJobKey)
-                .WithIdentity("UpdateContractJob-trigger")
-                .StartNow()  // Example: Start immediately
-                .WithSimpleSchedule(x => x
-                    .WithIntervalInMinutes(10)  // Repeat every 10 minutes
-                    .RepeatForever()));         // Repeat indefinitely or adjust as needed
+            //// Trigger for UpdateContractJob, configure as needed
+            //quartzConfigurator.AddTrigger(opts => opts
+            //    .ForJob(updateJobKey)
+            //    .WithIdentity("UpdateContractJob-trigger")
+            //    .StartNow()  // Example: Start immediately
+            //    .WithSimpleSchedule(x => x
+            //        .WithIntervalInMinutes(10)  // Repeat every 10 minutes
+            //        .RepeatForever()));         // Repeat indefinitely or adjust as needed
 
 
             ////Add RefreshLogin job

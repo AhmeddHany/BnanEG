@@ -18,7 +18,7 @@ using NToastNotify;
 using System.Globalization;
 
 
-namespace Bnan.Ui.Areas.CAS.Controllers
+namespace Bnan.Ui.Areas.MAS.Controllers.Companies
 {
     [Area("MAS")]
     [Authorize(Roles = "MAS")]
@@ -334,12 +334,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             {
                 //pass Classification Arabic
                 var ClassificationAr = _unitOfWork.CrCasLessorClassification.GetAll();
-                var ClassificationDropDownAr = ClassificationAr.Select(c => new SelectListItem { Value = c.CrCasLessorClassificationCode?.ToString(), Text = c.CrCasLessorClassificationArName, Selected = (c.CrCasLessorClassificationCode == lessorVM.CrMasLessorInformationClassification) }).ToList();
+                var ClassificationDropDownAr = ClassificationAr.Select(c => new SelectListItem { Value = c.CrCasLessorClassificationCode?.ToString(), Text = c.CrCasLessorClassificationArName, Selected = c.CrCasLessorClassificationCode == lessorVM.CrMasLessorInformationClassification }).ToList();
                 ViewData["ClassificationDropDownAr"] = ClassificationDropDownAr;
 
                 //pass Classification English
                 var ClassificationEn = _unitOfWork.CrCasLessorClassification.GetAll();
-                var ClassificationDropDownEn = ClassificationEn.Select(c => new SelectListItem { Value = c.CrCasLessorClassificationCode?.ToString(), Text = c.CrCasLessorClassificationEnName, Selected = (c.CrCasLessorClassificationCode == lessorVM.CrMasLessorInformationClassification) }).ToList();
+                var ClassificationDropDownEn = ClassificationEn.Select(c => new SelectListItem { Value = c.CrCasLessorClassificationCode?.ToString(), Text = c.CrCasLessorClassificationEnName, Selected = c.CrCasLessorClassificationCode == lessorVM.CrMasLessorInformationClassification }).ToList();
                 ViewData["ClassificationDropDownEn"] = ClassificationDropDownEn;
             }
             else
@@ -362,12 +362,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             {
                 // Pass the City Post Arabic key to the view 
                 var citiesAr = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityRegionsCode != "10" && l.CrMasSupPostCityRegionsCode != "11");
-                var CityDropDownAr = citiesAr.Select(c => new SelectListItem { Value = c.CrMasSupPostCityConcatenateArName?.ToString(), Text = c.CrMasSupPostCityConcatenateArName, Selected = (c.CrMasSupPostCityCode == lessorVM.BranchPostVM.CrCasBranchPostCity) }).ToList();
+                var CityDropDownAr = citiesAr.Select(c => new SelectListItem { Value = c.CrMasSupPostCityConcatenateArName?.ToString(), Text = c.CrMasSupPostCityConcatenateArName, Selected = c.CrMasSupPostCityCode == lessorVM.BranchPostVM.CrCasBranchPostCity }).ToList();
                 ViewData["CityDropDownAr"] = CityDropDownAr;
 
                 // Pass the City Post English key to the view 
                 var citiesEn = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityRegionsCode != "10" && l.CrMasSupPostCityRegionsCode != "11");
-                var CityDropDownEn = citiesEn.Select(c => new SelectListItem { Value = c.CrMasSupPostCityConcatenateEnName?.ToString(), Text = c.CrMasSupPostCityConcatenateEnName, Selected = (c.CrMasSupPostCityCode == lessorVM.BranchPostVM.CrCasBranchPostCity) }).ToList();
+                var CityDropDownEn = citiesEn.Select(c => new SelectListItem { Value = c.CrMasSupPostCityConcatenateEnName?.ToString(), Text = c.CrMasSupPostCityConcatenateEnName, Selected = c.CrMasSupPostCityCode == lessorVM.BranchPostVM.CrCasBranchPostCity }).ToList();
                 ViewData["CityDropDownEn"] = CityDropDownEn;
             }
             else

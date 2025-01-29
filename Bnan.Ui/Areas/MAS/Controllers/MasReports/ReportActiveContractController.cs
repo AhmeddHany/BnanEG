@@ -100,10 +100,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     CrCasRenterContractBasicCarSerailNo = x.CrCasRenterContractBasicCarSerailNo,
                     CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
                     CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
-                    CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                    CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                    CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                    CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                    CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                    CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                     CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
                     CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
                     CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -113,7 +111,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 );
             var allRenters = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: x=>x.CrMasRenterInformationStatus != Status.Deleted,
+                predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
                 selectProjection: query => query.Select(x => new CrMasRenterInformation
                 {
                     CrMasRenterInformationId = x.CrMasRenterInformationId,
@@ -139,8 +137,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 selectProjection: query => query.Select(x => new list_String_4
                 {
                     id_key = x.CrCasAccountInvoiceReferenceContract,
-                    nameAr = x.CrCasAccountInvoiceArPdfFile,
-                    nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                    nameAr = x.CrCasAccountInvoicePdfFile,
+                    nameEn = x.CrCasAccountInvoicePdfFile,
                     str4 = x.CrCasAccountInvoiceUserCode,
                 })
                 //,includes: new string[] { "" } 
@@ -162,10 +160,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                        CrCasRenterContractBasicCarSerailNo = x.CrCasRenterContractBasicCarSerailNo,
                        CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
                        CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
-                       CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                       CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                       CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                       CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                       CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                       CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                        CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
                        CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
                        CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -218,10 +214,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                         CrCasRenterContractBasicCarSerailNo = x.CrCasRenterContractBasicCarSerailNo,
                         CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
                         //CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
-                        CrCasRenterContractBasicArPdfFile = x.CrCasRenterContractBasicArPdfFile,
-                        CrCasRenterContractBasicArTga = x.CrCasRenterContractBasicArTga,
-                        CrCasRenterContractBasicEnPdfFile = x.CrCasRenterContractBasicEnPdfFile,
-                        CrCasRenterContractBasicEnTga = x.CrCasRenterContractBasicEnTga,
+                        CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                        CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                         CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
                         CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
                         CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
@@ -255,8 +249,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     selectProjection: query => query.Select(x => new list_String_4
                     {
                         id_key = x.CrCasAccountInvoiceReferenceContract,
-                        nameAr = x.CrCasAccountInvoiceArPdfFile,
-                        nameEn = x.CrCasAccountInvoiceEnPdfFile,
+                        nameAr = x.CrCasAccountInvoicePdfFile,
+                        nameEn = x.CrCasAccountInvoicePdfFile,
                         str4 = x.CrCasAccountInvoiceUserCode,
                     })
                     //,includes: new string[] { "" } 

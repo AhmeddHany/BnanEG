@@ -1,6 +1,4 @@
-﻿
-
-@using Bnan.Core.Extensions
+﻿@using Bnan.Core.Extensions
 @model listReportFTPrenterVM
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
@@ -14,7 +12,7 @@
     <input value="@Model.summition?.Debitor_Total?.ToString("N2",CultureInfo.InvariantCulture)" id="in_debit" name="in_debit" hidden />
 </div>
 
-                        
+
 
 <div class="col-md-12">
     <div class="row table-row px-3">
@@ -54,20 +52,20 @@
 
                         if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                         {
-                            if (item.CrCasAccountReceiptEnPdfFile != null && item.CrCasAccountReceiptEnPdfFile != "") { bond_pdf = item.CrCasAccountReceiptEnPdfFile?.ToString().Replace("~", ""); bond_pdf_blank = "_blank"; }
+                            if (item.CrCasAccountReceiptPdfFile != null && item.CrCasAccountReceiptPdfFile != "") { bond_pdf = item.CrCasAccountReceiptPdfFile?.ToString().Replace("~", ""); bond_pdf_blank = "_blank"; }
                             paymentMethod = item.PaymentMethod_En;
                             RefrenceType = item.ReferanceType_En;
                             salesPoint = item.Salespoint_En;
-                            lessor = Model.all_lessors?.Find(x=>x.id_key==item.CrCasAccountReceiptLessorCode)?.nameEn ??" ";
+                            lessor = Model.all_lessors?.Find(x => x.id_key == item.CrCasAccountReceiptLessorCode)?.nameEn ?? " ";
                             userName = Model.all_UsersData?.Find(x => x.id_key == item.CrCasAccountReceiptUser)?.nameEn ?? " ";
                         }
                         else
                         {
-                            if (item.CrCasAccountReceiptArPdfFile != null && item.CrCasAccountReceiptArPdfFile != "") { bond_pdf = item.CrCasAccountReceiptArPdfFile?.ToString().Replace("~", ""); bond_pdf_blank = "_blank"; }
+                            if (item.CrCasAccountReceiptPdfFile != null && item.CrCasAccountReceiptPdfFile != "") { bond_pdf = item.CrCasAccountReceiptPdfFile?.ToString().Replace("~", ""); bond_pdf_blank = "_blank"; }
                             paymentMethod = item.PaymentMethod_Ar;
                             RefrenceType = item.ReferanceType_Ar;
                             salesPoint = item.Salespoint_Ar;
-                            lessor = Model.all_lessors?.Find(x => x.id_key == item.CrCasAccountReceiptLessorCode)?.nameAr ??" ";
+                            lessor = Model.all_lessors?.Find(x => x.id_key == item.CrCasAccountReceiptLessorCode)?.nameAr ?? " ";
                             userName = Model.all_UsersData?.Find(x => x.id_key == item.CrCasAccountReceiptUser)?.nameAr ?? " ";
                         }
 
@@ -80,10 +78,10 @@
                                 <p class="secondLineP">@lessor</p>
                             </td>
                             <td>
-                                <p>@debit?.ToString("N2",CultureInfo.InvariantCulture)</p>
+                                <p>@debit?.ToString("N2", CultureInfo.InvariantCulture)</p>
                             </td>
                             <td>
-                                <p>@credit?.ToString("N2",CultureInfo.InvariantCulture)</p>
+                                <p>@credit?.ToString("N2", CultureInfo.InvariantCulture)</p>
                             </td>
                             <td class="DifferAlign">
                                 <p class="FirstLineP">@salesPoint</p>
@@ -98,15 +96,16 @@
                                 <p class="FirstLineP"> @item.CrCasAccountReceiptNo</p>
                                 <div class="d-flex justify-content-end gap-1 gap-md-5 flex-wrap">
                                     <div class="d-flex justify-content-end gap-1">
-                                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US"){
+                                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                                        {
                                             <p class="secondLineP">
-                                                <span class="time">@issuedDate?.ToString("HH:mm -",CultureInfo.InvariantCulture)</span>@issuedDate?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)
+                                                <span class="time">@issuedDate?.ToString("HH:mm -", CultureInfo.InvariantCulture)</span>@issuedDate?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
                                             </p>
                                         }
                                         else
                                         {
                                             <p class="secondLineP">
-                                                @issuedDate?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)<span class="time">@issuedDate?.ToString("- HH:mm",CultureInfo.InvariantCulture)</span>
+                                                @issuedDate?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)<span class="time">@issuedDate?.ToString("- HH:mm", CultureInfo.InvariantCulture)</span>
                                             </p>
                                         }
                                     </div>
@@ -114,13 +113,13 @@
                             </td>
                             <td>
                                 <div class="filter-number-td">
-                                   
+
                                     <div>@no</div>
 
                                 </div>
                             </td>
-                            
-                            
+
+
                         </tr>
                         no++;
                     }
