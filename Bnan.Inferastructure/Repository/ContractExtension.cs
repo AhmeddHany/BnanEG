@@ -118,7 +118,7 @@ namespace Bnan.Inferastructure.Repository
                 ContractAlert.CrCasRenterContractAlertStatus = "0";
                 ContractAlert.CrCasRenterContractAlertContractStatus = Status.Active;
                 if (Contract.CrCasRenterContractBasicExpectedRentalDays == 1) ContractAlert.CrCasRenterContractAlertContractActiviteStatus = "1";
-                else if (Contract.CrCasRenterContractBasicExpectedRentalDays >= 2) ContractAlert.CrCasRenterContractAlertContractActiviteStatus = "2";
+                else if (Contract.CrCasRenterContractBasicExpectedRentalDays >= 2) ContractAlert.CrCasRenterContractAlertContractActiviteStatus = "0";
                 if (_unitOfWork.CrCasRenterContractAlert.Update(ContractAlert) != null) return true;
             }
             return false;

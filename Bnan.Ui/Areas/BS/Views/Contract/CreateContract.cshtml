@@ -216,34 +216,25 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 requird-inputs-col">
-                                                        <label for="nationality-type" class="form-label">
-                                                            @localizer["UserIdType"]
-                                                        </label>
-                                                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                                        {
-                                                            <select class="form-select select-style AR-select" id="nationality-type" asp-for="Contract.RenterInfo.CrMasRenterInformationIdtype">
-                                                                <option selected></option>
-                                                                @foreach (var type in Model.RenterIdtypes)
-                                                                {
-                                                                    <option value="@type.CrMasSupRenterIdtypeCode">@type.CrMasSupRenterIdtypeEnName</option>
-                                                                }
-                                                            </select>
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <select class="form-select select-style AR-select text-right" id="nationality-type" asp-for="Contract.RenterInfo.CrMasRenterInformationIdtype">
-                                                                <option selected></option>
-                                                                @foreach (var type in Model.RenterIdtypes)
-                                                                {
-                                                                    <option value="@type.CrMasSupRenterIdtypeCode">@type.CrMasSupRenterIdtypeArName</option>
-                                                                }
-                                                            </select>
-                                                        }
+                                                        <label for="nationality-type" class="form-label">@localizer["UserIdType"]</label>
+                                                        <select class="form-select select-style AR-select @(requestCulture?.RequestCulture.UICulture.Name == "ar" ? "text-right" : "")" id="nationality-type" asp-for="Contract.RenterInfo.CrMasRenterInformationIdtype">
+                                                            <option selected></option>
+                                                            @foreach (var type in Model.RenterIdtypes)
+                                                            {
+                                                                <option value="@type.CrMasSupRenterIdtypeCode"
+                                                                        data-name-ar="@type.CrMasSupRenterIdtypeArName"
+                                                                        data-name-en="@type.CrMasSupRenterIdtypeEnName">
+                                                                    @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? type.CrMasSupRenterIdtypeEnName : type.CrMasSupRenterIdtypeArName)
+                                                                </option>
+                                                            }
+                                                        </select>
                                                         <div class="row requird-field-row">
                                                             <span class="requird-field" id="requird-field_RenterIDType" asp-validation-for="Contract.RenterInfo.CrMasRenterInformationIdtype"></span>
                                                         </div>
                                                     </div>
+
+
+
                                                     @* <div class="col-auto">
                                                     <button type="button" class="btn check-btn payment-button" id="UploadRenderIdPhoto" onclick="setupIDPhotoUpload('UploadRenderIdPhoto','RenterIdImg')">
                                                     <div class="row align-items-center">
@@ -422,27 +413,18 @@
                                                                 <label for="Profession-tenant" class="form-label">
                                                                     @localizer["RenterProfessionName"]
                                                                 </label>
-                                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                                                {
-                                                                    <select class="form-select select-style AR-select" id="Profession-tenant" asp-for="Contract.RenterInfo.CrMasRenterInformationProfession">
-                                                                        <option selected></option>
-                                                                        @foreach (var type in Model.RenterProfession)
-                                                                        {
-                                                                            <option value="@type.CrMasSupRenterProfessionsCode">@type.CrMasSupRenterProfessionsEnName</option>
-                                                                        }
-                                                                    </select>
+                                                                <select class="form-select select-style AR-select @(requestCulture?.RequestCulture.UICulture.Name == "ar" ? "text-right" : "")" id="Profession-tenant" asp-for="Contract.RenterInfo.CrMasRenterInformationProfession">
+                                                                    <option selected></option>
+                                                                    @foreach (var type in Model.RenterProfession)
+                                                                    {
+                                                                        <option value="@type.CrMasSupRenterProfessionsCode"
+                                                                                data-name-ar="@type.CrMasSupRenterProfessionsArName"
+                                                                                data-name-en="@type.CrMasSupRenterProfessionsEnName">
+                                                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? type.CrMasSupRenterProfessionsEnName : type.CrMasSupRenterProfessionsArName)
+                                                                        </option>
+                                                                    }
+                                                                </select>
 
-                                                                }
-                                                                else
-                                                                {
-                                                                    <select class="form-select select-style AR-select text-right" id="Profession-tenant" asp-for="Contract.RenterInfo.CrMasRenterInformationProfession">
-                                                                        <option selected></option>
-                                                                        @foreach (var type in Model.RenterProfession)
-                                                                        {
-                                                                            <option value="@type.CrMasSupRenterProfessionsCode">@type.CrMasSupRenterProfessionsArName</option>
-                                                                        }
-                                                                    </select>
-                                                                }
                                                                 <div class="row requird-field-row">
                                                                 </div>
                                                             </div>
@@ -711,27 +693,18 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 requird-inputs-col">
-                                                        <label for="nationality-type-driver" class="form-label"> @localizer["UserIdType"]</label>
-                                                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                                        {
-                                                            <select class="form-select select-style AR-select" id="nationality-type-driver" asp-for="Contract.DriverInfo.CrMasRenterInformationIdtype">
-                                                                <option selected></option>
-                                                                @foreach (var type in Model.RenterIdtypes.Where(x => x.CrMasSupRenterIdtypeCode == "1" || x.CrMasSupRenterIdtypeCode == "2"))
-                                                                {
-                                                                    <option value="@type.CrMasSupRenterIdtypeCode">@type.CrMasSupRenterIdtypeEnName</option>
-                                                                }
-                                                            </select>
-                                                        }
-                                                        else
-                                                        {
-                                                            <select class="form-select select-style AR-select text-right" id="nationality-type-driver" asp-for="Contract.DriverInfo.CrMasRenterInformationIdtype">
-                                                                <option selected></option>
-                                                                @foreach (var type in Model.RenterIdtypes.Where(x => x.CrMasSupRenterIdtypeCode == "1" || x.CrMasSupRenterIdtypeCode == "2"))
-                                                                {
-                                                                    <option value="@type.CrMasSupRenterIdtypeCode">@type.CrMasSupRenterIdtypeArName</option>
-                                                                }
-                                                            </select>
-                                                        }
+                                                        <label for="nationality-type-driver" class="form-label">@localizer["UserIdType"]</label>
+                                                        <select class="form-select select-style AR-select @(requestCulture?.RequestCulture.UICulture.Name == "ar" ? "text-right" : "")" id="nationality-type-driver" asp-for="Contract.DriverInfo.CrMasRenterInformationIdtype">
+                                                            <option selected></option>
+                                                            @foreach (var type in Model.RenterIdtypes.Where(x => x.CrMasSupRenterIdtypeCode == "1" || x.CrMasSupRenterIdtypeCode == "2"))
+                                                            {
+                                                                <option value="@type.CrMasSupRenterIdtypeCode"
+                                                                        data-name-ar="@type.CrMasSupRenterIdtypeArName"
+                                                                        data-name-en="@type.CrMasSupRenterIdtypeEnName">
+                                                                    @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? type.CrMasSupRenterIdtypeEnName : type.CrMasSupRenterIdtypeArName)
+                                                                </option>
+                                                            }
+                                                        </select>
                                                         <div class="row requird-field-row">
                                                             <span class="requird-field" id="requird-field_DriverIDType" asp-validation-for="Contract.DriverInfo.CrMasRenterInformationIdtype"></span>
                                                         </div>
@@ -873,27 +846,18 @@
                                                                        class="form-label">
                                                                     @localizer["RenterProfessionName"]
                                                                 </label>
-                                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                                                {
-                                                                    <select class="form-select select-style AR-select" id="Profession-driver" asp-for="Contract.DriverInfo.CrMasRenterInformationProfession">
-                                                                        <option selected></option>
-                                                                        @foreach (var type in Model.RenterProfession)
-                                                                        {
-                                                                            <option value="@type.CrMasSupRenterProfessionsCode">@type.CrMasSupRenterProfessionsEnName</option>
-                                                                        }
-                                                                    </select>
+                                                                <select class="form-select select-style AR-select @(requestCulture?.RequestCulture.UICulture.Name == "ar" ? "text-right" : "")" id="Profession-driver" asp-for="Contract.DriverInfo.CrMasRenterInformationProfession">
+                                                                    <option selected></option>
+                                                                    @foreach (var type in Model.RenterProfession)
+                                                                    {
+                                                                        <option value="@type.CrMasSupRenterProfessionsCode"
+                                                                                data-name-ar="@type.CrMasSupRenterProfessionsArName"
+                                                                                data-name-en="@type.CrMasSupRenterProfessionsEnName">
+                                                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? type.CrMasSupRenterProfessionsEnName : type.CrMasSupRenterProfessionsArName)
+                                                                        </option>
+                                                                    }
+                                                                </select>
 
-                                                                }
-                                                                else
-                                                                {
-                                                                    <select class="form-select select-style AR-select text-right" id="Profession-driver" asp-for="Contract.DriverInfo.CrMasRenterInformationProfession">
-                                                                        <option selected></option>
-                                                                        @foreach (var type in Model.RenterProfession)
-                                                                        {
-                                                                            <option value="@type.CrMasSupRenterProfessionsCode">@type.CrMasSupRenterProfessionsArName</option>
-                                                                        }
-                                                                    </select>
-                                                                }
                                                                 <div class="row requird-field-row">
                                                                 </div>
                                                             </div>
@@ -1199,27 +1163,18 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 requird-inputs-col">
-                                                        <label for="nationality-type-AddDriver" class="form-label"> @localizer["UserIdType"]</label>
-                                                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                                        {
-                                                            <select class="form-select select-style AR-select" id="nationality-type-addDriver" asp-for="Contract.AddDriverInfo.CrMasRenterInformationIdtype">
-                                                                <option selected></option>
-                                                                @foreach (var type in Model.RenterIdtypes.Where(x => x.CrMasSupRenterIdtypeCode == "1" || x.CrMasSupRenterIdtypeCode == "2"))
-                                                                {
-                                                                    <option value="@type.CrMasSupRenterIdtypeCode">@type.CrMasSupRenterIdtypeEnName</option>
-                                                                }
-                                                            </select>
-                                                        }
-                                                        else
-                                                        {
-                                                            <select class="form-select select-style AR-select text-right" id="nationality-type-addDriver" asp-for="Contract.AddDriverInfo.CrMasRenterInformationIdtype">
-                                                                <option selected></option>
-                                                                @foreach (var type in Model.RenterIdtypes.Where(x => x.CrMasSupRenterIdtypeCode == "1" || x.CrMasSupRenterIdtypeCode == "2"))
-                                                                {
-                                                                    <option value="@type.CrMasSupRenterIdtypeCode">@type.CrMasSupRenterIdtypeArName</option>
-                                                                }
-                                                            </select>
-                                                        }
+                                                        <label for="nationality-type-addDriver" class="form-label"> @localizer["UserIdType"]</label>
+                                                        <select class="form-select select-style AR-select" id="nationality-type-addDriver" asp-for="Contract.AddDriverInfo.CrMasRenterInformationIdtype">
+                                                            <option selected></option>
+                                                            @foreach (var type in Model.RenterIdtypes.Where(x => x.CrMasSupRenterIdtypeCode == "1" || x.CrMasSupRenterIdtypeCode == "2"))
+                                                            {
+                                                                <option value="@type.CrMasSupRenterIdtypeCode"
+                                                                        data-name-ar="@type.CrMasSupRenterIdtypeArName"
+                                                                        data-name-en="@type.CrMasSupRenterIdtypeEnName">
+                                                                    @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? type.CrMasSupRenterIdtypeEnName : type.CrMasSupRenterIdtypeArName)
+                                                                </option>
+                                                            }
+                                                        </select>
                                                         <div class="row requird-field-row">
                                                             <span class="requird-field" id="requird-field_AddDriverIDType" asp-validation-for="Contract.AddDriverInfo.CrMasRenterInformationIdtype"></span>
                                                         </div>
@@ -1356,27 +1311,17 @@
 
                                                             <div class="col-md-6">
                                                                 <label for="Profession-addDriver" class="form-label"> @localizer["RenterProfessionName"]</label>
-                                                                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                                                                {
-                                                                    <select class="form-select select-style AR-select" id="Profession-addDriver" asp-for="Contract.AddDriverInfo.CrMasRenterInformationProfession">
-                                                                        <option selected></option>
-                                                                        @foreach (var type in Model.RenterProfession)
-                                                                        {
-                                                                            <option value="@type.CrMasSupRenterProfessionsCode">@type.CrMasSupRenterProfessionsEnName</option>
-                                                                        }
-                                                                    </select>
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    <select class="form-select select-style AR-select text-right" id="Profession-addDriver" asp-for="Contract.AddDriverInfo.CrMasRenterInformationProfession">
-                                                                        <option selected></option>
-                                                                        @foreach (var type in Model.RenterProfession)
-                                                                        {
-                                                                            <option value="@type.CrMasSupRenterProfessionsCode">@type.CrMasSupRenterProfessionsArName</option>
-                                                                        }
-                                                                    </select>
-                                                                }
+                                                                <select class="form-select select-style AR-select @(requestCulture?.RequestCulture.UICulture.Name == "ar" ? "text-right" : "")" id="Profession-addDriver" asp-for="Contract.AddDriverInfo.CrMasRenterInformationProfession">
+                                                                    <option selected></option>
+                                                                    @foreach (var type in Model.RenterProfession)
+                                                                    {
+                                                                        <option value="@type.CrMasSupRenterProfessionsCode"
+                                                                                data-name-ar="@type.CrMasSupRenterProfessionsArName"
+                                                                                data-name-en="@type.CrMasSupRenterProfessionsEnName">
+                                                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? type.CrMasSupRenterProfessionsEnName : type.CrMasSupRenterProfessionsArName)
+                                                                        </option>
+                                                                    }
+                                                                </select>
                                                                 <div class="row requird-field-row">
                                                                 </div>
                                                             </div>
@@ -1746,7 +1691,7 @@
                                                     <p>@ViewBag.ContractNo</p>
                                                 </div>
                                             </div>
-                                            @* <div class="col-md-6 col-lg-4 d-flex payment-col">
+                                            <div class="col-md-6 col-lg-4 d-flex payment-col">
                                                 <div class="col-auto">
                                                     <p id="Receiving-branch">@localizer["Policy"] </p>
                                                 </div>
@@ -1755,16 +1700,17 @@
                                                         <select class="form-select-last form-select" id="PolicyCode" asp-for="Contract.PolicyCode">
                                                             <option selected disabled>
                                                             </option>
-                                                            <option value="35">35</option>
-                                                            <option value="10159">10159</option>
-                                                            <option value="10161">10161</option>
+                                                            @foreach (var policy in Model.Policies)
+                                                            {
+                                                             <option value="@policy.CrCasLessorPolicyCode">@policy.CrCasLessorPolicyShortName</option>
+                                                            }
                                                         </select>
                                                         <div class="row requird-field-row-last">
                                                             <span class="requird-field" asp-validation-for="@Model.Contract.PolicyCode"></span>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div> *@
+                                            </div>
                                         </div>
                                         <div class="row flex-row-reverse">
                                             <div class="col-md-6 col-lg-4 d-flex payment-col align-items-center">
@@ -2269,6 +2215,9 @@
     </section>
 </div>
 <canvas id="myCanvas" hidden></canvas>
+<canvas id="myCanvasPage1" hidden></canvas>
+<canvas id="myCanvasPage2" hidden></canvas>
+<canvas id="myCanvasPage3" hidden></canvas>
 <footer class="fixed-bottom-xl">
     <div class="before-footer-widget">
         <svg width: 100%; height:auto viewbox="0 0 2444 132">
@@ -2292,6 +2241,11 @@
     <script src="~/PdfJS/Invoices/ProformaInvoice.js"></script>
     <script src="~/PdfJS/Card/Card.js"></script>
     <script src="~/PdfJS/PdfAndImages.js"></script>
+    <!--Contract-->
+    <script src="~/PdfJS/Contract/page1.js"></script>
+    <script src="~/PdfJS/Contract/page2.js"></script>
+    <script src="~/PdfJS/Contract/page3.js"></script>
+    <!--Contract-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
     <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
     <!--Pdf-->
@@ -2323,7 +2277,10 @@
         const nationalities = @Html.Raw(Json.Serialize(ViewBag.RenterNationalities));
         const cities = @Html.Raw(Json.Serialize(ViewBag.RenterCities));
         const workPlaces = @Html.Raw(Json.Serialize(ViewBag.RenterWorkplaces));
+        const isArabic = "@requestCulture?.RequestCulture.UICulture.Name" != "en-US"; // أو قم بتمرير اللغة من الـ View
+
         console.log("nationalities",nationalities);
+        console.log("cities",cities);
         var listsIsTrueOrNotRenter = true;
         var listsIsTrueOrNotDriver = true;
         var listsIsTrueOrNotAddDriver = true;
@@ -2347,8 +2304,10 @@
                     if (value) {
                         let matchesFound = false;
                         dataList.forEach(item => {
-                            if (item.text.toLowerCase().includes(value)) {
-                                autocompleteList.append("<div data-value='" + item.value + "'>" + item.text + "</div>");
+                            const textToDisplay = isArabic ? item.textAr : item.textEn;  // عرض النص بناءً على اللغة
+                            const textToShowOtherLang = isArabic ? item.textEn : item.textAr;  // النص الآخر
+                            if (textToDisplay.toLowerCase().includes(value)) {
+                                autocompleteList.append("<div data-value='" + item.value + "' data-other-lang='" + textToShowOtherLang + "'>" + textToDisplay + "</div>");
                                 matchesFound = true;
                             }
                         });
@@ -2359,24 +2318,27 @@
                     }
                 });
 
-                $(document).on("click", "#" + list + " div", function () {
+                   $(document).on("click", "#" + list + " div", function () {
                     const selectedText = $(this).text();
                     const selectedValue = $(this).data("value");
-
+                    const otherLangText = $(this).data("other-lang");
+                     console.log("Selected text:", selectedText);
+                     console.log("Selected value:", selectedValue);
+                     console.log("Other language text:", otherLangText);  // تحقق من القيمة
                     $("#" + inputId).val(selectedText);
                     $("#" + inputId + "-code").val(selectedValue);
-
-                    const matchedItemFromChose = dataList.find(item => item.text === selectedText);
+                    $("#" + inputId).attr('data-other-lang', otherLangText);
+                    const matchedItemFromChose = dataList.find(item => item.textAr === selectedText || item.textEn === selectedText);
 
                     if (validate) {
                         if (matchedItemFromChose) {
                             $("#" + inputId + "-code").val(matchedItemFromChose.value);
-                            $("#" + errorElementId).text(''); // Clear error message
-                            window[listsIsTrueOrNot] = true; // Update the global flag
+                            $("#" + errorElementId).text('');
+                            window[listsIsTrueOrNot] = true;
                         } else {
-                            $("#" + errorElementId).text("@localizer["requiredFiled"]"); // Show error message
+                            $("#" + errorElementId).text("@localizer["requiredFiled"]");
                             $("#" + inputId + "-code").val("");
-                            window[listsIsTrueOrNot] = false; // Update the global flag
+                            window[listsIsTrueOrNot] = false;
                         }
                     }
 
@@ -2407,7 +2369,7 @@
                         }
                     });
                 }
-            }
+            };
         $(document).ready(function () {
             // Initialize autocomplete for renters, drivers, and addDrivers
             setupAutocomplete("Region-city-tenant", "autocomplete-Cities1", dataLists.Cities, "Region-city-tenant-error", "listsIsTrueOrNotRenter", true);
@@ -3168,7 +3130,7 @@
                     const saudiNationality = nationalities.find(item => item.value === "1000000003");
 
                     if (saudiNationality) {
-                        nationalityInput.value = saudiNationality.text; // تعيين الاسم
+                        nationalityInput.value = isArabic ? saudiNationality.textAr : saudiNationality.textEn; // تعيين الاسم
                         nationalityCodeInput.value = saudiNationality.value; // تعيين الكود
                     }
 
@@ -3615,20 +3577,15 @@
             RenterInformation.postArDistictName = document.getElementById("AR-adress-tenant").value;
             RenterInformation.postEnDistictName = document.getElementById("EN-adress-tenant").value;
 
-            RenterInformation.postArNameConcenate = document.getElementById("Region-city-tenant").value;
-            if (RenterInformation.postArDistictName) {
-                RenterInformation.postArNameConcenate += " - " + RenterInformation.postArDistictName;
-            }
-
-            RenterInformation.postEnNameConcenate = document.getElementById("Region-city-tenant").value;
-            if (RenterInformation.postEnDistictName) {
-                RenterInformation.postEnNameConcenate += " - " + RenterInformation.postEnDistictName;
-            }
+            
 
             RenterInformation.cityCode = document.getElementById("Region-city-tenant-code").value;
             RenterInformation.nationalityCode = document.getElementById("nationality-Renter-code").value;
             RenterInformation.employerCode = document.getElementById("tenant-workplace-code").value;
             RenterInformation.professionsCode = document.getElementById("Profession-tenant").value;
+            var selectedOptionProffesion = document.getElementById("Profession-tenant").selectedOptions[0];
+            RenterInformation.personalArProfessions = selectedOptionProffesion.getAttribute("data-name-ar");
+            RenterInformation.personalEnProfessions = selectedOptionProffesion.getAttribute("data-name-en");
             RenterInformation.personalEmail = document.getElementById("Email-Renter").value;
             RenterInformation.keyCountry = document.getElementById("countryCodeRenter").value;
             RenterInformation.mobileNumber = document.getElementById("mobileRenter").value;
@@ -3652,21 +3609,37 @@
                 $('#RenterIsdriver').remove();
             }
 
-            // Handle culture-specific settings
+                // Handle culture-specific settings
             if ("@requestCulture?.RequestCulture.UICulture.Name" == "en-US") {
+                // تحديد القيم الإنجليزية
                 RenterInformation.personalEnNationality = document.getElementById("nationality-Renter").value;
                 RenterInformation.employerEnName = document.getElementById("tenant-workplace").value;
                 RenterInformation.cityEn = document.getElementById("Region-city-tenant").value;
-                // setTimeout(() => {
-                //     $("#EN-name-tenant").focus();
-                // }, 500);
+    
+                // تحديد القيم العربية بناءً على اللغة
+                RenterInformation.personalArNationality = document.getElementById("nationality-Renter").getAttribute('data-other-lang');
+                RenterInformation.employerArName = document.getElementById("tenant-workplace").getAttribute('data-other-lang');
+                RenterInformation.cityAr = document.getElementById("Region-city-tenant").getAttribute('data-other-lang');
             } else {
+                // تحديد القيم العربية
                 RenterInformation.personalArNationality = document.getElementById("nationality-Renter").value;
                 RenterInformation.employerArName = document.getElementById("tenant-workplace").value;
                 RenterInformation.cityAr = document.getElementById("Region-city-tenant").value;
-                // setTimeout(() => {
-                //     $("#AR-name-tenant").focus();
-                // }, 500);
+    
+                // تحديد القيم الإنجليزية بناءً على اللغة
+                RenterInformation.personalEnNationality = document.getElementById("nationality-Renter").getAttribute('data-other-lang');
+                RenterInformation.employerEnName = document.getElementById("tenant-workplace").getAttribute('data-other-lang');
+                RenterInformation.cityEn = document.getElementById("Region-city-tenant").getAttribute('data-other-lang');
+            }
+
+            RenterInformation.postArNameConcenate = RenterInformation.cityAr;
+            if (RenterInformation.postArDistictName) {
+                RenterInformation.postArNameConcenate += " - " + RenterInformation.postArDistictName;
+            }
+
+            RenterInformation.postEnNameConcenate = RenterInformation.cityEn;
+            if (RenterInformation.postEnDistictName) {
+                RenterInformation.postEnNameConcenate += " - " + RenterInformation.postEnDistictName;
             }
             ShowPrivateAndRenterIsDriver();
             console.log("RenterInformation", RenterInformation);
@@ -3984,6 +3957,9 @@
             DriverInformation.nationalityCode = document.getElementById("nationality-Driver-code").value;
             DriverInformation.employerCode = document.getElementById("driver-workplace-code").value;
             DriverInformation.professionsCode = document.getElementById("Profession-driver").value;
+            var selectedOptionProffesion = document.getElementById("Profession-driver").selectedOptions[0];
+            DriverInformation.personalArProfessions = selectedOptionProffesion.getAttribute("data-name-ar");
+            DriverInformation.personalEnProfessions = selectedOptionProffesion.getAttribute("data-name-en");
             DriverInformation.personalEmail = document.getElementById("Email-Driver").value;
             DriverInformation.keyCountry = document.getElementById("countryCodeDriver").value;
             DriverInformation.mobileNumber = document.getElementById("mobileDriver").value;
@@ -4014,15 +3990,28 @@
                 $('#divGenderDriver').remove();
             }
 
-            // Handle culture-specific settings
+           
             if ("@requestCulture?.RequestCulture.UICulture.Name" == "en-US") {
+                // تحديد القيم الإنجليزية
                 DriverInformation.personalEnNationality = document.getElementById("nationality-Driver").value;
-                DriverInformation.employerEnName = document.getElementById("driver-workplace").value;
-                DriverInformation.cityEn = document.getElementById("Region-city-driver").value;
+                DriverInformation.employerEnName = document.getElementById("tenant-workplace").value;
+                DriverInformation.cityEn = document.getElementById("Region-city-tenant").value;
+
+                // تحديد القيم العربية بناءً على اللغة
+                DriverInformation.personalArNationality = document.getElementById("nationality-Driver").getAttribute('data-other-lang');
+                DriverInformation.employerArName = document.getElementById("driver-workplace").getAttribute('data-other-lang');
+                DriverInformation.cityAr = document.getElementById("Region-city-driver").getAttribute('data-other-lang');
+
             } else {
+                // تحديد القيم العربية
                 DriverInformation.personalArNationality = document.getElementById("nationality-Driver").value;
                 DriverInformation.employerArName = document.getElementById("driver-workplace").value;
                 DriverInformation.cityAr = document.getElementById("Region-city-driver").value;
+
+                // تحديد القيم الإنجليزية بناءً على اللغة
+                DriverInformation.personalEnNationality = document.getElementById("nationality-Driver").getAttribute('data-other-lang');
+                DriverInformation.employerEnName = document.getElementById("driver-workplace").getAttribute('data-other-lang');
+                DriverInformation.cityEn = document.getElementById("Region-city-driver").getAttribute('data-other-lang');
             }
             // Auto Focus
             console.log("DriverInformation", DriverInformation);
@@ -4246,6 +4235,9 @@
             AddDriverInformation.nationalityCode = document.getElementById("nationality-AddDriver-code").value;
             AddDriverInformation.employerCode = document.getElementById("addDriver-workplace-code").value;
             AddDriverInformation.professionsCode = document.getElementById("Profession-addDriver").value;
+            var selectedOptionProffesion = document.getElementById("Profession-addDriver").selectedOptions[0];
+            AddDriverInformation.personalArProfessions = selectedOptionProffesion.getAttribute("data-name-ar");
+            AddDriverInformation.personalEnProfessions = selectedOptionProffesion.getAttribute("data-name-en");
             AddDriverInformation.personalEmail = document.getElementById("Email-AddDriver").value;
             var selectedOption = $("#licence-addDriver-type option:selected");
             var enNameLicense = selectedOption.data('en') || '';
@@ -4273,22 +4265,27 @@
                 $('.genderAddDriver[type="radio"]').prop('checked', false);
                 $('#divGenderAddDriver').remove();
             }
-
-            // Handle culture-specific settings
             if ("@requestCulture?.RequestCulture.UICulture.Name" == "en-US") {
+                // تحديد القيم الإنجليزية
                 AddDriverInformation.personalEnNationality = document.getElementById("nationality-AddDriver").value;
-                AddDriverInformation.employerEnName = document.getElementById("addDriver-workplace").value;
-                AddDriverInformation.cityEn = document.getElementById("Region-city-addDriver").value;
-                setTimeout(() => {
-                    $("#EN-name-addDriver").focus();
-                }, 500);
+                AddDriverInformation.employerEnName = document.getElementById("tenant-workplace").value;
+                AddDriverInformation.cityEn = document.getElementById("Region-city-tenant").value;
+
+                // تحديد القيم العربية بناءً على اللغة
+                AddDriverInformation.personalArNationality = document.getElementById("nationality-AddDriver").getAttribute('data-other-lang');
+                AddDriverInformation.employerArName = document.getElementById("addDriver-workplace").getAttribute('data-other-lang');
+                AddDriverInformation.cityAr = document.getElementById("Region-city-addDriver").getAttribute('data-other-lang');
+
             } else {
+                // تحديد القيم العربية
                 AddDriverInformation.personalArNationality = document.getElementById("nationality-AddDriver").value;
                 AddDriverInformation.employerArName = document.getElementById("addDriver-workplace").value;
                 AddDriverInformation.cityAr = document.getElementById("Region-city-addDriver").value;
-                setTimeout(() => {
-                    $("#AR-name-addDriver").focus();
-                }, 500);
+
+                // تحديد القيم الإنجليزية بناءً على اللغة
+                AddDriverInformation.personalEnNationality = document.getElementById("nationality-AddDriver").getAttribute('data-other-lang');
+                AddDriverInformation.employerEnName = document.getElementById("addDriver-workplace").getAttribute('data-other-lang');
+                AddDriverInformation.cityEn = document.getElementById("Region-city-addDriver").getAttribute('data-other-lang');
             }
             console.log("AddDriverInformation", AddDriverInformation);
         }
@@ -5835,47 +5832,47 @@
     <!--Create Card Contract PDf-->
     <script>
         const CreateCardContract = async () => {
-         try {
-           const contractNo ="@ViewBag.ContractNo";
-           const canvas = document.getElementById("myCanvas");
-           var dates = getDates();
-           const dynamicData = {
-              CARD_TITLE_AR: "عقد إيجار سيارة",
-              CARD_TITLE_EN: "Car Rental Contract",
-              RENTAR_NAME_AR: RenterInformation.personalArName,
-              RENTAR_NAME_EN: RenterInformation.personalEnName,
-              CAR_NAME_AR: CarInformation.carInformation.crCasCarInformationConcatenateArName,
-              CAR_NAME_EN: CarInformation.carInformation.crCasCarInformationConcatenateEnName,
-              CONTRACT_DATE_AR: dates.start.startHijri,
-              CONTRACT_DATE_EN: dates.start.startMiladi,
-              CONTRACT_END_DATE_AR: dates.end.endHijri,
-              CONTRACT_END_DATE_EN: dates.end.endMiladi,
-              ADDRESS: '@Html.Raw(Model.CrCasBranchInformation?.CrCasBranchPost?.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateArName)' + ' - ' + '@Html.Raw(Model.CrCasBranchInformation?.CrCasBranchInformationArShortName)',
-              CONTRACT_NUMBER: contractNo,
-               images: {
-                   background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractCard)",
-                   QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
-               },
-           };
+             try {
+               const contractNo ="@ViewBag.ContractNo";
+               const canvas = document.getElementById("myCanvas");
+               var dates = getDates();
+               const dynamicData = {
+                  CARD_TITLE_AR: "عقد إيجار سيارة",
+                  CARD_TITLE_EN: "Car Rental Contract",
+                  RENTAR_NAME_AR: RenterInformation.personalArName,
+                  RENTAR_NAME_EN: RenterInformation.personalEnName,
+                  CAR_NAME_AR: CarInformation.carInformation.crCasCarInformationConcatenateArName,
+                  CAR_NAME_EN: CarInformation.carInformation.crCasCarInformationConcatenateEnName,
+                  CONTRACT_DATE_AR: dates.start.startHijri,
+                  CONTRACT_DATE_EN: dates.start.startMiladi,
+                  CONTRACT_END_DATE_AR: dates.end.endHijri,
+                  CONTRACT_END_DATE_EN: dates.end.endMiladi,
+                  ADDRESS: '@Html.Raw(Model.CrCasBranchInformation?.CrCasBranchPost?.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateArName)' + ' - ' + '@Html.Raw(Model.CrCasBranchInformation?.CrCasBranchInformationArShortName)',
+                  CONTRACT_NUMBER: contractNo,
+                   images: {
+                       background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractCard)",
+                       QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                   },
+               };
 
-           const loadedImages = await loadDynamicImages(dynamicData.images);
-           const dataWithImages = { ...dynamicData, images: loadedImages };
-           console.log("dataWithImages", dataWithImages);
+               const loadedImages = await loadDynamicImages(dynamicData.images);
+               const dataWithImages = { ...dynamicData, images: loadedImages };
+               console.log("dataWithImages", dataWithImages);
 
-           await drawCard(canvas, dataWithImages);
-           // حفظ الصورة كـ Base64
-           const base64Image = canvas.toDataURL("image/png");
+               await drawCard(canvas, dataWithImages);
+               // حفظ الصورة كـ Base64
+               const base64Image = canvas.toDataURL("image/png");
 
-           // تخزين Base64 في input
-           const inputPdf = document.getElementById("StaticContractCardImg");
-           inputPdf.value = base64Image;
-           console.log("Base64 Image:", base64Image);
-          }
-              catch (error) {
-                  console.error("خطأ في إنشاء الفاتورة:", error);
+               // تخزين Base64 في input
+               const inputPdf = document.getElementById("StaticContractCardImg");
+               inputPdf.value = base64Image;
+               console.log("Base64 Image:", base64Image);
               }
-          }
-           function getDates() {
+             catch (error) {
+                      console.error("خطأ في إنشاء الفاتورة:", error);
+             }
+        };
+        function getDates() {
                // تحديد خيارات التنسيق
                var options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
 
@@ -5919,7 +5916,7 @@
                    endHijri: endHijriDate,
                  },
                };
-         }
+        };
     </script>
     <!--Create Receipt PDf-->
     <script>
@@ -6014,7 +6011,7 @@
         async function CreateInvoicePdf() {
             const accountInvoiceNo = "@ViewBag.InvoiceAccount";
             const canvas = document.getElementById("myCanvas");
-             const dates = getFormattedDatesMiliadiAndHijri();
+            const dates = getFormattedDatesMiliadiAndHijri();
             var rentDailyValue= GetRentDailyValue();
             var delegationValue= GetDelegationValue();
             var addDriverValue = GetAddDriverValue();
@@ -6269,7 +6266,424 @@
             return additionalValue;
         }
     </script>
+    <!--Create Contract-->
+    <script>
+      // Page1
+      const ContractPage1 = async (canvas) => {
+          try {
+              console.log("الصفحة الاولي بتحمل .....")
+                // const canvas = document.getElementById("myCanvasPage1");
+                
+                var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
+                var startDate = new Date(dateTimeNow);
+                var daysNo = parseInt(document.getElementById('dayNo').value);
+                var endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + daysNo);
+                const miladiDate = new Date(dateTimeNow);
+                var renterIsDriver = document.getElementById("RenterIsdriver").checked;
+                
+                // تحديد حالة العقد بناءً على ما إذا كان المستأجر هو السائق أم لا
+                var contractStatusAr = renterIsDriver ? "جديد / باليوم بدون سائق" : "جديد / باليوم مع سائق";
+                var contractStatusEn = renterIsDriver ? "New / Daily without Driver" : "New / Daily with Driver";
+                const dynamicData = {
+                      NUMBER: "2490667684810001",
+                      CONTRACT_NUMBER: "@ViewBag.ContractNo",
+                      CONTRACT_DATE_AR: formatHijriDate(miladiDate,"ar"),
+                      CONTRACT_DATE_EN: formatHijriDate(miladiDate,"en"),
+                      CONTRACT_START_AR: formatHijriDate(startDate,"ar"),
+                      CONTRACT_START_EN: formatHijriDate(startDate,"en"),
+                      CONTRACT_END_AR: formatHijriDate(startDate,"ar"),
+                      CONTRACT_END_EN: formatHijriDate(startDate,"en"),
+                      DAYSNUMBER: daysNo,
+                      DATE_1: formatMiladiDate(startDate),
+                      TIME_1: formatTime(startDate),
+                      DATE_2: formatMiladiDate(startDate),
+                      TIME_2: formatTime(startDate),
+                      DATE_3: formatMiladiDate(startDate),
+                      TIME_3: formatTime(startDate),
+                      CONTRACT_STATUE_AR: contractStatusAr,
+                      CONTRACT_STATUE_EN: contractStatusEn,
+                      BRANCH_AR: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationArName") || "",
+                      BRANCH_EN: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationEnName") || "",
+                      PHONE_1: (decodeHTMLEntities("@Model.CrCasBranchInformation?.CrMasBranchInformationMobileKey") + decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationMobile")) || "",
+                      PHONE_2: (decodeHTMLEntities("@Model.CrCasBranchInformation?.CrMasBranchInformationTeleKey") + decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationTelephone")) || "",
+                      EMAIL: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationLessorNavigation.CrMasLessorInformationEmail") || "",
+                      ADDRESS_AR: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchPost.CrCasBranchPostArConcatenate") || "",
+                      ADDRESS_EN: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchPost.CrCasBranchPostEnConcatenate") || "",
+                      CAR_DETAILS_AR: CarInformationForContract.crCasCarInformationConcatenateArName || "",
+                      CAR_DETAILS_EN: CarInformationForContract.crCasCarInformationConcatenateEnName || "",
+                      SERIAL_NUMBER: CarInformationForContract.crCasCarInformationSerailNo || "",
+                      REGISTRATION_AR: CarInformationForContract.registerationAr || "",
+                      REGISTRATION_EN: CarInformationForContract.registerationEn || "",
+                      FUEL_TYPE_AR: CarInformationForContract.fuelAr || "",
+                      FUEL_TYPE_EN: CarInformationForContract.fuelEn || "",
+                      TRANSMISSION_AR: CarInformationForContract.cvtAr || "",
+                      TRANSMISSION_EN: CarInformationForContract.cvtEn || "",
+                      OIL_TYPE_AR: CarInformationForContract.oilAr || "",
+                      OIL_TYPE_EN: CarInformationForContract.oilEn || "",
+                      CHANGE_OIL_DATE: CarInformationForContract.changeOilDate || "",
+                      REGISTRATION_END_DATE: CarInformationForContract.endDrivinglicence || "",
+                      INESPECTION_END_DATE: CarInformationForContract.endPeriodicInspection || "",
+                      OPERATING_CARD: CarInformationForContract.runningCardNo || "",
+                      OPERATING_CARD_END: CarInformationForContract.runningCardEndDate || "",
+                      INSURANCE: CarInformationForContract.insurancePolicyNo || "",
+                      INSURANCE_END: CarInformationForContract.insurancePolicyEndDate || "",
+                      PERODIC_MAINTENANCE: CarInformationForContract.periodicMaintenanceDate || "",
+                      TIRE_MAINTENANCE: CarInformationForContract.tiresDate || "",
+                      FRONT_BREAK: CarInformationForContract.frontBrakeDate || "",
+                      REAR_BREAK: CarInformationForContract.rearBrakeDate || "",
+                      OWNER_COMPANY_AR: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationArLongName") || "",
+                      OWNER_COMPANY_EN: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEnLongName") || "",
+                      ID_NUMBER: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationOwnerId") || "",
+                      ID_TYPE_AR: "سجل تجاري",
+                      ID_TYPE_EN: "Commercial Register",
+                      VERSION_NUM: "512",
+                      PHONE_3: ( decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationCommunicationMobileKey") + decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationCommunicationMobile")) || "",
+                      EMAIL_2: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEmail") || "",
+                      SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                      SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                      images: {
+                            background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage1)",
+                            EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                            TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
+                            QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                            STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                            Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                    },
+                  };
+                const loadedImages = await loadDynamicImages(dynamicData.images);
+                const dataWithImages = { ...dynamicData, images: loadedImages };
+                console.log("dataWithImages",dataWithImages);
+                await DrawContractPage1(canvas, dataWithImages);
+          }
+          catch (error) {
+                console.error("خطأ في إنشاء الصفحة الاولي من العقد:", error);
+          }
+      };
+      // Page2
+      const ContractPage2 = async (canvas) => {
+            try {
+                // const canvas = document.getElementById("myCanvasPage2");
+                var driverIdType = getSelectedTypeIdNames("nationality-type-driver");
+                var addDriverIdType = getSelectedTypeIdNames("nationality-type-addDriver");
+                const getFormattedDate = (date) => date ? getFormatDate(date) : "";
+                const dynamicData = {
+                    NUMBER: "2490667684810001",
+                    CONTRACT_NUMBER: "@ViewBag.ContractNo",
+                    TENANT_NAME_AR: RenterInformation.personalArName || "",
+                    TENANT_NAME_EN: RenterInformation.personalEnName || "",
+                    TENANT_ID: RenterInformation.renterID || "",
+                    TENANT_TAX_NUM: RenterInformation.taxNo || "",
+                    TENANT_EMAIL: RenterInformation.personalEmail || "",
+                    TENANT_ADDRESS_AR: RenterInformation.postArNameConcenate || "",
+                    TENANT_ADDRESS_EN: RenterInformation.postEnNameConcenate || "",
 
+                    DRIVER_NAME_AR: DriverInformation?.personalArName || "",
+                    DRIVER_NAME_EN: DriverInformation?.personalEnName || "",
+                    DRIVER_ID: DriverInformation?.renterID || "",
+                    DRIVER_ID_TYPE_AR: driverIdType?.nameAr || "",
+                    DRIVER_ID_TYPE_EN: driverIdType?.nameEn || "",
+                    DRIVER_VERSION_NUM: DriverInformation?.idCopyNumber || "",
+                    DRIVER_BIRTH_DATE: getFormattedDate(DriverInformation?.birthDate),
+                    DRIVER_GENDER_AR: DriverInformation?.personalArGender || "",
+                    DRIVER_GENDER_EN: DriverInformation?.personalEnGender || "",
+                    DRIVER_NATIONALITY_AR: DriverInformation?.personalArNationality || "",
+                    DRIVER_NATIONALITY_EN: DriverInformation?.personalEnNationality || "",
+                    DRIVER_LICENSE: DriverInformation?.licenseCode || "",
+                    DRIVER_VEHICLE_TYPE_AR: DriverInformation?.licenseArName || "",
+                    DRIVER_VEHICLE_TYPE_EN: DriverInformation?.licenseEnName || "",
+                    DRIVER_LICENSE_EXPIRY: getFormattedDate(DriverInformation?.licenseExpiryDate),
+                    DRIVER_POSITION_AR: DriverInformation?.personalArProfessions || "",
+                    DRIVER_POSITION_EN: DriverInformation?.personalEnProfessions || "",
+                    DRIVER_WORKPLACE_AR: DriverInformation?.employerArName || "",
+                    DRIVER_WORKPLACE_EN: DriverInformation?.employerEnName || "",
+                    DRIVER_EMAIL: DriverInformation?.personalEmail || "",
+                    DRIVER_ADDRESS_AR: DriverInformation?.postArNameConcenate || "",
+                    DRIVER_ADDRESS_EN: DriverInformation?.postEnNameConcenate || "",
+
+                    ADDITIONAL_DRIVER_NAME_AR: AddDriverInformation?.personalArName || "",
+                    ADDITIONAL_DRIVER_NAME_EN: AddDriverInformation?.personalEnName || "",
+                    ADDITIONAL_DRIVER_ID: AddDriverInformation?.renterID || "",
+                    ADDITIONAL_DRIVER_ID_TYPE_AR: addDriverIdType?.nameAr || "",
+                    ADDITIONAL_DRIVER_ID_TYPE_EN: addDriverIdType?.nameEn || "",
+                    ADDITIONAL_DRIVER_VERSION_NUM: AddDriverInformation?.idCopyNumber || "",
+                    ADDITIONAL_DRIVER_BIRTH_DATE: getFormattedDate(AddDriverInformation?.birthDate),
+                    ADDITIONAL_DRIVER_GENDER_AR: AddDriverInformation?.personalArGender || "",
+                    ADDITIONAL_DRIVER_GENDER_EN: AddDriverInformation?.personalEnGender || "",
+                    ADDITIONAL_DRIVER_NATIONALITY_AR: AddDriverInformation?.personalArNationality || "",
+                    ADDITIONAL_DRIVER_NATIONALITY_EN: AddDriverInformation?.personalEnNationality || "",
+                    ADDITIONAL_DRIVER_LICENSE: AddDriverInformation?.licenseCode || "",
+                    ADDITIONAL_DRIVER_VEHICLE_TYPE_AR: AddDriverInformation?.licenseArName || "",
+                    ADDITIONAL_DRIVER_VEHICLE_TYPE_EN: AddDriverInformation?.licenseEnName || "",
+                    ADDITIONAL_DRIVER_LICENSE_EXPIRY: getFormattedDate(AddDriverInformation?.licenseExpiryDate),
+                    ADDITIONAL_DRIVER_POSITION_AR: AddDriverInformation?.personalArProfessions || "",
+                    ADDITIONAL_DRIVER_POSITION_EN: AddDriverInformation?.personalEnProfessions || "",
+                    ADDITIONAL_DRIVER_WORKPLACE_AR: AddDriverInformation?.employerArName || "",
+                    ADDITIONAL_DRIVER_WORKPLACE_EN: AddDriverInformation?.employerEnName || "",
+                    ADDITIONAL_DRIVER_EMAIL: AddDriverInformation?.personalEmail || "",
+                    ADDITIONAL_DRIVER_ADDRESS_AR: AddDriverInformation?.postArNameConcenate || "",
+                    ADDITIONAL_DRIVER_ADDRESS_EN: AddDriverInformation?.postEnNameConcenate || "",
+
+                    PRIVATE_DRIVER_NAME_AR: PrivateDriverInformation?.personalArName || "",
+                    PRIVATE_DRIVER_NAME_EN: PrivateDriverInformation?.personalEnName || "",
+                    PRIVATE_DRIVER_ID: PrivateDriverInformation?.renterID || "",
+                    PRIVATE_DRIVER_ID_TYPE_AR: PrivateDriverInformation?.renterIDTypeNameAr || "",
+                    PRIVATE_DRIVER_ID_TYPE_EN: PrivateDriverInformation?.renterIDTypeNameEn || "",
+                    PRIVATE_DRIVER_NATIONALITY: PrivateDriverInformation?.personalArNationality || "",
+                    PRIVATE_DRIVER_NATIONALITY_EN: PrivateDriverInformation?.personalArNationality || "",
+                    PRIVATE_DRIVER_LICENSE: PrivateDriverInformation?.licenseCode || "",
+                    PRIVATE_DRIVER_VEHICLE_TYPE_AR: PrivateDriverInformation?.licenseArName || "",
+                    PRIVATE_DRIVER_VEHICLE_TYPE_EN: PrivateDriverInformation?.licenseEnName || "",
+                    PRIVATE_DRIVER_LICENSE_EXPIRY: getFormattedDate(PrivateDriverInformation?.licenseExpiryDate),
+
+                   SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                   SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                   images: {
+                          background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage2)",
+                          EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                          TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
+                          QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                          STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                          Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                   },
+                };
+                const loadedImages = await loadDynamicImages(dynamicData.images);
+                const dataWithImages = { ...dynamicData, images: loadedImages };
+                console.log("dataWithImages",dataWithImages);
+                await DrawContractPage2(canvas, dataWithImages);
+                }
+            catch (error) {
+                      console.error("خطأ في إنشاء الصفحة الثانية من العقد:", error);
+            }
+      };
+      function getSelectedTypeIdNames(selectId) {
+            var selectElement = document.getElementById(selectId);
+            if (!selectElement) return { nameAr: "", nameEn: "" }; // التحقق من وجود العنصر
+
+            var selectedOption = selectElement.options[selectElement.selectedIndex];
+            if (selectedOption) {
+                return {
+                    nameAr: selectedOption.getAttribute("data-name-ar") || "",
+                    nameEn: selectedOption.getAttribute("data-name-en") || ""
+                };
+            }
+            return { nameAr: "", nameEn: "" }; // في حالة عدم تحديد أي خيار
+        }
+      // Page3
+      // تعريف المتغيرات لتخزين القيم الديناميكية
+        let OptionsItems = [];
+        let AdditionalItems = [];
+        let Option_Price_Items = [];
+        let Addition_Price_Items = [];
+      const ContractPage3 = async (canvas) => {
+        try {
+            // const canvas = document.getElementById("myCanvasPage3");
+            var delegateStatus = getDelegateStatus();
+            var recevingBranch = getRecevingBranch();
+            var discountRate = getDiscountRate();
+            var taxRate = getTaxRate();
+            var policy =getPolicyDetailsByCode();
+           
+            getAdditionalData();  // ملء AdditionalItems و Addition_Price_Items
+            getChoicesData();  // ملء OptionsItems و Option_Price_Items
+            const dynamicData = {
+            NUMBER: "2490667684810001",
+            CONTRACT_NUMBER: "@ViewBag.ContractNo",
+            // بنود التأجير //
+            DELIVERY_BRANCH_AR: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationArShortName") || "",
+            DELIVERY_BRANCH_EN: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationEnShortName") || "",
+            RECEIVING_BRANCH_AR: recevingBranch.branchAr,
+            RECEIVING_BRANCH_EN: recevingBranch.branchEn,
+            Geographic_area_AR: delegateStatus.statusAr,
+            Geographic_area_EN: delegateStatus.statusEn,
+            DAILY_RENT: CarInformation.carPrice.crCasPriceCarBasicDailyRent || "",
+            Additional_driver: CarInformation.carPrice.crCasPriceCarBasicAdditionalDriverValue || "",
+            Personal_driver: CarInformation.carPrice.crCasPriceCarBasicPrivateDriverValue || "",
+            Free_hours: CarInformation.carPrice.crCasPriceCarBasicFreeAdditionalHours || "",
+            Maximum_hours: CarInformation.carPrice.crCasPriceCarBasicExtraHourValue || "",
+            Free_KM: CarInformation.carPrice.crCasPriceCarBasicNoDailyFreeKm || "",
+            Extra_KM_Value: CarInformation.carPrice.crCasPriceCarBasicAdditionalKmValue || "",
+            Extra_hours_Value: CarInformation.carPrice.crCasPriceCarBasicExtraHourValue || "",
+            full_Fuel_value: CarInformation.carInformation.crCasCarInformationFuelValue || "",
+            Discount_rate: discountRate,
+            Value_added_ratio : taxRate,
+            Total_expected_contract: TotalActualContract.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            accident_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationAccident || "",
+            theft_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationTheft || "",
+            fire_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationFire || "",
+            drowning_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationDrowning || "",
+
+            // سياسة التأجير //
+            RENTAL_POLICY_AR: policy.crCasLessorPolicyShortName,
+            Fuel_Policy: policy.crCasLessorPolicyFuel,
+            RETURN_POLICY_AR: policy.crCasLessorPolicyEarlyReturn,
+            EXTEND_POLICY: policy.crCasLessorPolicyExtendDays,
+            ACCIDENT_POLICY:policy.crCasLessorPolicyAccidents,
+            FAULT_POLICY:policy.crCasLessorPolicyFault,
+            EXTENTION_POLICY:policy.crCasLessorPolicyExtension,
+
+            // التوقيع //
+            SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+            SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+            images: {
+                      background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage3)",
+                      EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                      TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
+                      QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                      STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                      Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+            },
+              // عناصر الجدول
+            OptionsItems:OptionsItems ,
+            AdditionalItems: AdditionalItems,
+            Option_Price_Items: Option_Price_Items,
+            Addition_Price_Items:Addition_Price_Items,
+            };
+
+            const loadedImages = await loadDynamicImages(dynamicData.images);
+            const dataWithImages = { ...dynamicData, images: loadedImages };
+            console.log("dataWithImages", dataWithImages);
+            await DrawContractPage3(canvas, dataWithImages);
+        }
+        catch (error) {
+              console.error("خطأ في إنشاء الصفحة الاولي من العقد:", error);
+        }
+      };
+      function getPolicyDetailsByCode(policyCode) {
+            var policies = @Html.Raw(Json.Serialize(Model.Policies));
+            var policy=policies.find(policy => policy.CrCasLessorPolicyCode === policyCode);
+            console.log("policy",policy);
+            return policy;
+      }
+      function getDelegateStatus() {
+            // التحقق مما إذا كان الخيار مختاراً
+            var isChecked = document.getElementById('Delegate-out').checked;
+
+            // العودة بالنص المناسب بناءً على اللغة المختارة
+            var statusAr = isChecked ? "خارج المملكة" : "داخل المملكة";
+            var statusEn = isChecked ? "Outside the Kingdom" : "Inside the Kingdom";
+
+            // إرجاع النصوص باللغتين
+            return { statusAr: statusAr, statusEn: statusEn };
+      }
+      function getRecevingBranch() {
+            // التحقق مما إذا كان الخيار مختاراً
+            var selectedOptionBrn = $("#Receiving-branch-dropdown option:selected");
+
+            // العودة بالنص المناسب بناءً على اللغة المختارة
+            var branchAr = selectedOptionBrn.data('ar') || ''
+            var branchEn = selectedOptionBrn.data('en') || ''
+
+            // إرجاع النصوص باللغتين
+            return { branchAr: branchAr, branchEn: branchEn };
+      }
+      function getDiscountRate() {
+        // الحصول على القيمة المدخلة من حقل الإدخال
+        var DiscountInput = document.getElementById("Discount_Input").value;
+
+        // التأكد من أن القيمة هي رقم
+        if (!isNaN(DiscountInput) && DiscountInput.trim() !== "") {
+            // إضافة النسبة المئوية
+            var DiscountRate = DiscountInput + "%";
+            console.log("Discount Rate: ", DiscountRate);
+            return DiscountRate; // إرجاع القيمة المعدلة
+        } else {
+            // في حال كانت القيمة غير صحيحة، تعيين القيمة إلى 0
+            var DiscountRate = "0%";
+            console.log("الرجاء إدخال قيمة صحيحة، سيتم تعيين الخصم إلى: ", DiscountRate);
+            return DiscountRate; // إرجاع القيمة المعدلة
+        }
+    }
+      function getTaxRate() {
+        // الحصول على قيمة الـ Tax Rate من الكائن CarInformation
+        var taxRate = CarInformation.carPrice.crCasPriceCarBasicRentalTaxRate;
+
+        // التأكد من أن القيمة هي رقم
+        if (!isNaN(taxRate) && taxRate !== "") {
+            // إضافة النسبة المئوية
+            var ValueAddedRatio = taxRate + "%";
+            console.log("Value Added Ratio: ", ValueAddedRatio);
+            return ValueAddedRatio; // إرجاع القيمة المعدلة
+        } else {
+            // في حال كانت القيمة غير صحيحة، تعيين القيمة إلى 0
+            var ValueAddedRatio = "0%";
+            console.log("الرجاء إدخال قيمة صحيحة، سيتم تعيين النسبة إلى: ", ValueAddedRatio);
+            return ValueAddedRatio; // إرجاع القيمة المعدلة
+        }
+    }
+      function getAdditionalData() {
+            // إعادة تعيين البيانات الحالية (إذا كانت موجودة)
+            AdditionalsItems.forEach(function (item, index) {
+                // إضافة البيانات إلى القائمة
+                var arNameText = item.arName.trim();
+                var enNameText = item.enName.trim();
+                var valueText = item.value;
+
+                // إضافة البيانات إلى القائمة الديناميكية
+                Addition_Price_Items.push({ content: valueText }); // قيم إضافية
+
+                // إضافة البيانات إلى AdditionalItems
+                AdditionalItems.push({
+                    arabic: arNameText,
+                    english: enNameText,
+                    textAlign: "right"
+                });
+            });
+    }
+      function getChoicesData() {
+            // إعادة تعيين البيانات الحالية (إذا كانت موجودة)
+            ChoiceItems.forEach(function (item, index) {
+                // إضافة البيانات إلى القائمة
+                var arNameText = item.arName.trim();
+                var enNameText = item.enName.trim();
+                var valueText = item.value;
+
+                // إضافة البيانات إلى القائمة الديناميكية
+                Option_Price_Items.push({ content: valueText }); // قيم خيارات
+
+                // إضافة البيانات إلى OptionsItems
+                OptionsItems.push({
+                    arabic: arNameText,
+                    english: enNameText,
+                    textAlign: "right"
+                });
+            });
+    }
+      // Page4
+    </script>
+    <!--handle Create Contract Pdf-->
+    <script>
+      // دالة لدمج كل الصفحات وتحويلها إلى PDF
+        const CreateContractPdf = async () => {
+            console.log("⏳ بدء إنشاء الصفحات...");
+
+            // استرجاع الـ canvas لكل صفحة
+            const canvas1 = document.getElementById("myCanvasPage1");
+            const canvas2 = document.getElementById("myCanvasPage2");
+            const canvas3 = document.getElementById("myCanvasPage3");
+
+            // تنفيذ الدوال الخاصة بكل صفحة
+            console.log("⏳ بدء إنشاء الصفحة 1...");
+            await ContractPage1(canvas1);
+            console.log("✅ صفحة 1 تم إنشاؤها بنجاح.");
+
+            console.log("⏳ بدء إنشاء الصفحة 2...");
+            await ContractPage2(canvas2);
+            console.log("✅ صفحة 2 تم إنشاؤها بنجاح.");
+
+            console.log("⏳ بدء إنشاء الصفحة 3...");
+            await ContractPage3(canvas3);
+            console.log("✅ صفحة 3 تم إنشاؤها بنجاح.");
+
+            // جمع جميع الـ canvas في مصفوفة
+            const canvasArray = [canvas1, canvas2, canvas3];
+
+            // إنشاء الـ PDF من الصفحات
+            console.log("⏳ بدء إنشاء ملف PDF...");
+            await generateContractPdf(canvasArray, "SavePdfContract");
+            console.log("✅ تم الانتهاء من إنشاء ملف العقد.");
+        };
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('msform');
@@ -6296,22 +6710,30 @@
             try {
                 // Show loader
                 $("#ContainerLoader").show();
+                // console.log("⏳ بدء إنشاء صورة البطاقة...");
+                // await CreateCardContract();
+                // console.log("✅ البطاقة تم إنشاؤها بنجاح.");
 
-                if (parseFloat(AmountPayed) > 0) {
-                     await CreateReceiptPdf();
-                     console.log("receipt sent successfully.");
-                }
+                // console.log("⏳ بدء إنشاء الفاتورة...");
+                // await CreateInvoicePdf();
+                // console.log("✅ الفاتورة تم إنشاؤها بنجاح.");
 
-                await CreateInvoicePdf();
-                console.log("Invoice sent successfully.");
+                // if (AmountPayed > 0) {
+                //     console.log("⏳ بدء إنشاء الإيصال...");
+                //     await CreateReceiptPdf();
+                //     console.log("✅ الإيصال تم إنشاؤه بنجاح.");
+                // }
+                console.log("⏳ بدء إنشاء العقد...");
+                await CreateContractPdf();
+                console.log("✅ العقد تم إنشاؤه بنجاح.");
 
-                await delay(2000);
-                $("#ContainerLoader").hide();
+                console.log("كل العمليات انتهت، يتم الآن إرسال النموذج.");
+                console.log("🚀 يتم الآن إرسال النموذج فعليًا...");
                 form.submit();
             } catch (error) {
                 console.error("Error during contract processing:", error);
             }
-        }
+        };
         function delay(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         };
@@ -6412,24 +6834,16 @@
                 return parsedDate.toLocaleDateString('en-US-u-ca-islamic-umalqura', options).replace(/AH/g, ''); // إزالة "AH" من التاريخ الإنجليزي
             }
         }
-        function formatHijriEnDate(date) {
-            const parsedDate = new Date(date);
-            const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long', calendar: 'islamic-umalqura' };
-            return parsedDate.toLocaleDateString('en-US-u-ca-islamic-umalqura', options).replace(/AH/g, ''); // Remove "AH" suffix
+               // دالة تنسيق التاريخ الميلادي
+        function formatMiladiDate(date) {
+            return date.toLocaleDateString('en-GB'); // يعطي الصيغة DD/MM/YYYY
         }
-        function getFormatDate(date) {
-            const parsedDate = new Date(date);
-            if (!isNaN(parsedDate) && parsedDate != null && parsedDate != "") {
-                var dateFormat = parsedDate.getFullYear() + '/' +
-                    (parsedDate.getMonth() + 1).toString().padStart(2, '0') + '/' +
-                    parsedDate.getDate().toString().padStart(2, '0') + ' ' +
-                    parsedDate.getHours().toString().padStart(2, '0') + ':' +
-                    parsedDate.getMinutes().toString().padStart(2, '0') + ':' +
-                    parsedDate.getSeconds().toString().padStart(2, '0');
-                return dateFormat;
-            }
-            return "";
+
+        // دالة تنسيق الوقت
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-GB'); // يعطي الصيغة HH:MM:SS
         }
+
         function formatDateOnly(dateString) {
             var date = new Date(dateString);
             return date.getFullYear() + '/' + (date.getMonth() + 1).toString().padStart(2, '0') + '/' + date.getDate().toString().padStart(2, '0');
@@ -6536,7 +6950,7 @@
         //     return age;
         // }
 
-                function getFormattedDatesMiliadiAndHijri() {
+        function getFormattedDatesMiliadiAndHijri() {
             // الحصول على التاريخ الميلادي الحالي من الخادم
             var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
             const miladiDate = new Date(dateTimeNow);
@@ -6559,6 +6973,19 @@
                     en: hijriDateStringEn
                 }
             };
+        }
+        function getFormatDate(date) {
+            const parsedDate = new Date(date);
+            if (!isNaN(parsedDate) && parsedDate != null && parsedDate != "") {
+                var dateFormat = parsedDate.getFullYear() + '/' +
+                    (parsedDate.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                    parsedDate.getDate().toString().padStart(2, '0') + ' ' +
+                    parsedDate.getHours().toString().padStart(2, '0') + ':' +
+                    parsedDate.getMinutes().toString().padStart(2, '0') + ':' +
+                    parsedDate.getSeconds().toString().padStart(2, '0');
+                return dateFormat;
+            }
+            return "";
         }
     </script>
     <!--Controller to inputs-->

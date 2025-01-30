@@ -5,6 +5,8 @@
         // Personal
         public string? RenterID { get; set; }
         public string? RenterIDType { get; set; }
+        public string? RenterIDTypeNameAr { get; set; }
+        public string? RenterIDTypeNameEn { get; set; }
         public string? PersonalArName { get; set; }
         public string? PersonalEnName { get; set; }
         public string? PersonalArNationality { get; set; }

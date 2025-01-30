@@ -3,16 +3,27 @@ const loadDynamicImages = async (images) => {
     try {
         const loadedImages = {};
         for (let key in images) {
-            loadedImages[key] = await loadImage(images[key]);
+            if (!images[key]) continue; // تخطي الصور الفارغة أو غير المعرفة
+            try {
+                loadedImages[key] = await loadImage(images[key]);
+            } catch (error) {
+                console.warn(`Skipping image: ${key}, failed to load.`);
+            }
         }
         return loadedImages;
     } catch (error) {
         console.error("Error loading images", error);
+        return {}; // إرجاع كائن فارغ في حالة وجود خطأ
     }
 };
 
 const loadImage = (src) => {
     return new Promise((resolve, reject) => {
+        if (!src) {
+            console.warn("Invalid image source:", src);
+            return reject(new Error("Invalid image source"));
+        }
+
         const img = new Image();
         img.onload = () => resolve(img);
         img.onerror = (error) => {
@@ -156,4 +167,62 @@ const arrayBufferToBase64 = (arrayBuffer) => {
          binaryString += String.fromCharCode(byte);
      });
      return btoa(binaryString);
- };
+};
+
+
+// دالة لدمج كل الصفحات وتحويلها إلى PDF
+const generateContractPdf = async (canvasArray, InputPdf) => {
+    const imageBlobs = [];
+    for (const canvas of canvasArray) {
+        // تحويل كل Canvas إلى صورة (Blob)
+        const imageBlob = await new Promise((resolve) => {
+            canvas.toBlob(resolve, 'image/png');
+        });
+        imageBlobs.push(imageBlob);
+    }
+    // بعد جمع كل الصور، نرسلها إلى دالة إنشاء الـ PDF
+    await createPdfWithMultiPhoto(imageBlobs, InputPdf);
+};
+const createPdfWithMultiPhoto = async (imageBlobs, InputPdf) => {
+    const doc = new jsPDF('p', 'pt', 'a4', true);
+
+    // إضافة الصور إلى الـ PDF
+    for (let imageIndex = 0; imageIndex < imageBlobs.length; imageIndex++) {
+        if (imageIndex > 0) {
+            doc.addPage();
+        }
+        doc.setPage(imageIndex + 1);
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
+        const blob = imageBlobs[imageIndex];
+        const img = await createImageFromBlob(blob);
+
+        const imgWidth = pageWidth;
+        const imgHeight = (pageWidth * img.height) / img.width;
+
+        // حساب الموضع لتوسيط الصورة عموديًا
+        const imgYPos = (pageHeight - imgHeight) / 2;
+        const imgXPos = 0;
+        doc.addImage(img, 'PNG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
+    }
+
+    // تحويل الـ PDF إلى base64 بعد إضافة جميع الصور
+    const pdfBase64 = doc.output('datauristring');
+
+    // تعيين الـ base64 إلى الحقل المخفي
+    document.getElementById(InputPdf).value = pdfBase64;
+
+    // تحميل الـ PDF
+    doc.save('contract.pdf');  // سيتم تحميل الـ PDF بعد إضافة جميع الصور
+};
+// Helper function to create an image element from a blob
+const createImageFromBlob = (blob) => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = URL.createObjectURL(blob);
+    });
+};

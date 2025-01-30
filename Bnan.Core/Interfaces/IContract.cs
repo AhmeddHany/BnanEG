@@ -26,7 +26,7 @@ namespace Bnan.Core.Interfaces
                                                        string AdditionalDriver, string SerialNo, string PriceNo, string DaysNo, string UserFreeHour, string UserFreeKm,
                                                        string CurrentMeter, string OptionsTotal, string AdditionalTotal, string ContractValueAfterDiscount,
                                                        string DiscountValue, string ContractValueBeforeDiscount, string TaxValue, string TotalAmount, string UserInsert,
-                                                       string Authrization,string UserDiscount, string AmountPayed, string ContractPdf, string Reasons);
+                                                       string Authrization,string UserDiscount, string AmountPayed, string ContractPdf,string PolicyCode,string SourceCode, string Reasons);
         Task<bool> AddRenterContractAuthrization(string ContractNo,string LessorCode,string AuthrizationType,string AuthrizationValue);
         Task<bool> UpdateCarInformation(string SerialNo, string LessorCode, string BranchCode, DateTime LastContract, int DaysNo, int CurrentMeter,string ExpireMaintainceCount);
         Task<string> UpdateCarDocMaintainance(string SerialNo, string LessorCode, string BranchCode, int CurrentMeter);

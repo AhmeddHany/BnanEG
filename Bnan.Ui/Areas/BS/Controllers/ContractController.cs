@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace Bnan.Ui.Areas.BS.Controllers
@@ -84,15 +85,17 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var CallingKeysAll = await _unitOfWork.CrMasSysCallingKeys.FindAllAsNoTrackingAsync(l => l.CrMasSysCallingKeysStatus != Status.Deleted);
             var CallingKeys = CallingKeysAll.OrderByDescending(x => x.CrMasSysCallingKeysCount).ToList();
             var DrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterDrivingLicenseStatus != Status.Deleted && l.CrMasSupRenterDrivingLicenseCode != "1");
+            var Policies = await _unitOfWork.CrCasLessorPolicy.FindAllAsNoTrackingAsync(l => l.CrCasLessorPolicyStatus != Status.Deleted);
             // Transform data based on culture
             var nationalitiesArray = Nationailties.Select(c => new
             {
-                text = isArabic ? c.CrMasSupRenterNationalitiesArName : c.CrMasSupRenterNationalitiesEnName, // الاسم العربي أو الإنجليزي
+                textAr = c.CrMasSupRenterNationalitiesArName ,
+                textEn = c.CrMasSupRenterNationalitiesEnName, // الاسم العربي أو الإنجليزي
                 value = c.CrMasSupRenterNationalitiesCode, // كود الجنسية
                 naqlGCC = c.CrMasSupRenterNationalitiesNaqlGcc // إضافة العمود الإضافي (مثلاً CrMasSupRenterNationalitiesNaqlGcc)
             }).ToList();
-            var citiesArray = Cities.Select(c => new { text = isArabic ? c.CrMasSupPostCityConcatenateArName : c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode }).ToList();
-            var workplacesArray = Workplaces.Select(c => new { text = isArabic ? c.CrMasSupRenterEmployerArName : c.CrMasSupRenterEmployerEnName, value = c.CrMasSupRenterEmployerCode }).ToList();
+            var citiesArray = Cities.Select(c => new { textAr = c.CrMasSupPostCityConcatenateArName ,textEn = c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode }).ToList();
+            var workplacesArray = Workplaces.Select(c => new { textAr =  c.CrMasSupRenterEmployerArName, textEn = c.CrMasSupRenterEmployerEnName, value = c.CrMasSupRenterEmployerCode }).ToList();
 
             DateTime year = DateTime.Now;
             var y = year.ToString("yy");
@@ -126,6 +129,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             bSLayoutVM.CallingKeys = CallingKeys;
             bSLayoutVM.DrivingLicense = DrivingLicenses;
             bSLayoutVM.RenterProfession = RenterProffesions;
+            bSLayoutVM.Policies = Policies;
             ViewBag.RenterNationalities = nationalitiesArray;
             ViewBag.RenterCities = citiesArray;
             ViewBag.RenterWorkplaces = workplacesArray;
@@ -179,6 +183,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
             //    return RedirectToAction("Index", "Home");
             //}
             //var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, branch.CrCasBranchInformationCode, basicContractNo, "ar", "Contract");
+            
+            contractInfo.SourceCode = "10";//Static Data
             var basicContract = await AddRenterContractBasicAsync(lessorCode, branch, basicContractNo, contractInfo, userLogin, /*pdfContract*/"", sectorCodeForRenter);
             if (basicContract == null)
             {
@@ -316,7 +322,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 contractInfo.DaysNo, contractInfo.UserAddHours, contractInfo.UserAddKm, contractInfo.CurrentMeter, contractInfo.OptionTotal,
                 contractInfo.AdditionalTotal, contractInfo.ContractValueAfterDiscount, contractInfo.DiscountValue, contractInfo.ContractValueBeforeDiscount,
                 contractInfo.TaxValue, contractInfo.TotalContractAmount, userLogin.CrMasUserInformationCode, contractInfo.OutFeesTmm,
-                contractInfo.UserDiscount, contractInfo.AmountPayed, ContractPdf, contractInfo.RenterReasons);
+                contractInfo.UserDiscount, contractInfo.AmountPayed, ContractPdf,contractInfo.PolicyCode,contractInfo.SourceCode, contractInfo.RenterReasons);
         }
 
         private async Task<CrCasAccountReceipt> AddAccountReceiptAsync(CrCasRenterContractBasic basicContract, string lessorCode, string sectorCode, CrCasBranchInformation branch,
@@ -577,6 +583,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
             {
                 RenterID = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationId,
                 RenterIDType = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationLicenseType,
+                RenterIDTypeNameAr = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationIdtrypeNavigation?.CrMasSupRenterIdtypeArName,
+                RenterIDTypeNameEn = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationIdtrypeNavigation?.CrMasSupRenterIdtypeEnName,
                 PersonalArName = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationArName,
                 PersonalEnName = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationEnName,
                 GenderCode = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationGender,
@@ -774,6 +782,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
             {
                 RenterID = renterInfo?.CrMasRenterInformationId,
                 RenterIDType = renterInfo?.CrMasRenterInformationIdtype,
+                RenterIDTypeNameAr = renterInfo?.CrMasRenterInformationIdtypeNavigation?.CrMasSupRenterIdtypeArName,
+                RenterIDTypeNameEn = renterInfo?.CrMasRenterInformationIdtypeNavigation?.CrMasSupRenterIdtypeEnName,
                 PersonalArName = renterInfo?.CrMasRenterInformationArName,
                 PersonalEnName = renterInfo?.CrMasRenterInformationEnName,
                 GenderCode = renterInfo?.CrMasRenterInformationGender,
@@ -931,37 +941,88 @@ namespace Bnan.Ui.Areas.BS.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCarInfoForContract(string serialNumber)
         {
+            if (string.IsNullOrEmpty(serialNumber))
+                return BadRequest("Serial number is required.");
+
             var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
-            CarInfomationVM carVM = new CarInfomationVM();
-            var carInfo = _unitOfWork.CrCasCarInformation.Find(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationSerailNo == serialNumber);
-            carVM = _mapper.Map<CarInfomationVM>(carInfo);
-            //Fuel
-            var fuel = await _unitOfWork.CrMasSupCarFuel.FindAsync(x => x.CrMasSupCarFuelCode == carInfo.CrCasCarInformationFuel);
-            carVM.FuelAr = fuel.CrMasSupCarFuelArName;
-            carVM.FuelEn = fuel.CrMasSupCarFuelEnName;
-            //Fuel
-            var CVT = await _unitOfWork.CrMasSupCarCvt.FindAsync(x => x.CrMasSupCarCvtCode == carInfo.CrCasCarInformationCvt);
-            carVM.CVTAr = CVT.CrMasSupCarCvtArName;
-            carVM.CVTEn = CVT.CrMasSupCarCvtEnName;
-            //Fuel
-            var Registeration = await _unitOfWork.CrMasSupCarRegistration.FindAsync(x => x.CrMasSupCarRegistrationCode == carInfo.CrCasCarInformationRegistration);
-            carVM.RegisterationAr = Registeration.CrMasSupCarRegistrationArName;
-            carVM.RegisterationEn = Registeration.CrMasSupCarRegistrationEnName;
-            // PeriodicInspectionNo
-            var doc1 = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAsync(x => x.CrCasCarDocumentsMaintenanceSerailNo == carInfo.CrCasCarInformationSerailNo && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12" && x.CrCasCarDocumentsMaintenanceProcedures == "123");
-            carVM.PeriodicInspectionNo = doc1.CrCasCarDocumentsMaintenanceNo;
-            // RunningCard
-            var doc2 = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAsync(x => x.CrCasCarDocumentsMaintenanceSerailNo == carInfo.CrCasCarInformationSerailNo && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12" && x.CrCasCarDocumentsMaintenanceProcedures == "122");
-            carVM.RunningCardNo = doc2.CrCasCarDocumentsMaintenanceNo;
-            carVM.RunningCardEndDate = doc2.CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
-            // Insurance Policy
-            var doc3 = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAsync(x => x.CrCasCarDocumentsMaintenanceSerailNo == carInfo.CrCasCarInformationSerailNo && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12" && x.CrCasCarDocumentsMaintenanceProcedures == "121");
-            carVM.InsurancePolicyNo = doc3.CrCasCarDocumentsMaintenanceNo;
-            carVM.InsurancePolicyEndDate = doc3.CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            var lessorCode = userLogin?.CrMasUserInformationLessor;
+
+            if (lessorCode == null)
+                return Unauthorized();
+
+            var carInfo = await _unitOfWork.CrCasCarInformation.FindAsync(x =>
+                x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationSerailNo == serialNumber);
+
+            if (carInfo == null)
+                return NotFound("Car information not found.");
+
+            var carVM = _mapper.Map<CarInfomationVM>(carInfo);
+
+            // الحصول على جميع البيانات المطلوبة دفعة واحدة
+            var fuelTask = _unitOfWork.CrMasSupCarFuel.FindAsync(x => x.CrMasSupCarFuelCode == carInfo.CrCasCarInformationFuel);
+            var cvtTask = _unitOfWork.CrMasSupCarCvt.FindAsync(x => x.CrMasSupCarCvtCode == carInfo.CrCasCarInformationCvt);
+            var oilTask = _unitOfWork.CrMasSupCarOil.FindAsync(x => x.CrMasSupCarOilCode == carInfo.CrCasCarInformationOil);
+            var registrationTask = _unitOfWork.CrMasSupCarRegistration.FindAsync(x => x.CrMasSupCarRegistrationCode == carInfo.CrCasCarInformationRegistration);
+
+            // استعلامات الصيانة دفعة واحدة
+            var maintenanceTasks = _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsync(x =>
+                x.CrCasCarDocumentsMaintenanceSerailNo == serialNumber &&
+                (x.CrCasCarDocumentsMaintenanceProceduresClassification == "12" || x.CrCasCarDocumentsMaintenanceProceduresClassification == "13"));
+
+            await Task.WhenAll(fuelTask, cvtTask, oilTask, registrationTask, maintenanceTasks);
+
+            var fuel = fuelTask.Result;
+            var cvt = cvtTask.Result;
+            var oil = oilTask.Result;
+            var registration = registrationTask.Result;
+            var maintenanceDocs = maintenanceTasks.Result.ToList();
+
+            // تعبئة البيانات
+            carVM.FuelAr = fuel?.CrMasSupCarFuelArName;
+            carVM.FuelEn = fuel?.CrMasSupCarFuelEnName;
+
+            carVM.CVTAr = cvt?.CrMasSupCarCvtArName;
+            carVM.CVTEn = cvt?.CrMasSupCarCvtEnName;
+
+            carVM.OilAr = oil?.CrMasSupCarOilArName;
+            carVM.OilEn = oil?.CrMasSupCarOilEnName;
+
+            carVM.RegisterationAr = registration?.CrMasSupCarRegistrationArName;
+            carVM.RegisterationEn = registration?.CrMasSupCarRegistrationEnName;
+
+            // استخراج التواريخ من الصيانة
+            carVM.ChangeOilDate = GetMaintenanceDate(maintenanceDocs, "13", "131");
+            carVM.EndDrivinglicence = GetMaintenanceDate(maintenanceDocs, "12", "120");
+            carVM.EndPeriodicInspection = GetMaintenanceDate(maintenanceDocs, "12", "123");
+            carVM.TiresDate = GetMaintenanceDate(maintenanceDocs, "13", "130");
+            carVM.PeriodicMaintenanceDate = GetMaintenanceDate(maintenanceDocs, "13", "132");
+            carVM.FrontBrakeDate = GetMaintenanceDate(maintenanceDocs, "13", "133");
+            carVM.RearBrakeDate = GetMaintenanceDate(maintenanceDocs, "13", "134");
+
+            // استخراج بيانات الوثائق
+            carVM.PeriodicInspectionNo = GetMaintenanceNumber(maintenanceDocs, "12", "123");
+            carVM.RunningCardNo = GetMaintenanceNumber(maintenanceDocs, "12", "122");
+            carVM.RunningCardEndDate = GetMaintenanceDate(maintenanceDocs, "12", "122");
+            carVM.InsurancePolicyNo = GetMaintenanceNumber(maintenanceDocs, "12", "121");
+            carVM.InsurancePolicyEndDate = GetMaintenanceDate(maintenanceDocs, "12", "121");
 
             return Json(carVM);
+        }
 
+        // دالة مساعدة لاستخراج التواريخ
+        private string GetMaintenanceDate(List<CrCasCarDocumentsMaintenance> docs, string classification, string procedure)
+        {
+            return docs.FirstOrDefault(x => x.CrCasCarDocumentsMaintenanceProceduresClassification == classification &&
+                                            x.CrCasCarDocumentsMaintenanceProcedures == procedure)?
+                       .CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+        }
+
+        // دالة مساعدة لاستخراج الأرقام
+        private string GetMaintenanceNumber(List<CrCasCarDocumentsMaintenance> docs, string classification, string procedure)
+        {
+            return docs.FirstOrDefault(x => x.CrCasCarDocumentsMaintenanceProceduresClassification == classification &&
+                                            x.CrCasCarDocumentsMaintenanceProcedures == procedure)?
+                       .CrCasCarDocumentsMaintenanceNo;
         }
         [HttpGet]
         public async Task<IActionResult> GetAdvantagesValue(string priceNumber)
