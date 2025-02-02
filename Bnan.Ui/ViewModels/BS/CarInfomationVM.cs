@@ -17,6 +17,7 @@ namespace Bnan.Ui.ViewModels.BS
         public string? OilAr { get; set; }
         public string? OilEn { get; set; }
         public string? ChangeOilDate { get; set; }
+        public string? ChangeOilKm { get; set; }
         public string? EndPeriodicInspection { get; set; }
         public string? EndDrivinglicence { get; set; }
         public string? PeriodicInspectionNo { get; set; }
@@ -25,9 +26,13 @@ namespace Bnan.Ui.ViewModels.BS
         public string? InsurancePolicyNo { get; set; }
         public string? InsurancePolicyEndDate { get; set; }
         public string? TiresDate { get; set; }
+        public string? TiresKm { get; set; }
         public string? PeriodicMaintenanceDate { get; set; }
+        public string? PeriodicMaintenanceKm { get; set; }
         public string? FrontBrakeDate { get; set; }
+        public string? FrontBrakeKm { get; set; }
         public string? RearBrakeDate { get; set; }
+        public string? RearBrakeKm { get; set; }
 
 
     }

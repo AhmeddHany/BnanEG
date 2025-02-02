@@ -1702,7 +1702,7 @@
                                                             </option>
                                                             @foreach (var policy in Model.Policies)
                                                             {
-                                                             <option value="@policy.CrCasLessorPolicyCode">@policy.CrCasLessorPolicyShortName</option>
+                                                                <option value="@policy.CrCasLessorPolicyCode">@policy.CrCasLessorPolicyShortName</option>
                                                             }
                                                         </select>
                                                         <div class="row requird-field-row-last">
@@ -2218,6 +2218,15 @@
 <canvas id="myCanvasPage1" hidden></canvas>
 <canvas id="myCanvasPage2" hidden></canvas>
 <canvas id="myCanvasPage3" hidden></canvas>
+<canvas id="myCanvasPage4" hidden></canvas>
+<canvas id="myCanvasPage5" hidden></canvas>
+<canvas id="myCanvasPage6" hidden></canvas>
+<canvas id="myCanvasPage7" hidden></canvas>
+<canvas id="myCanvasPage8" hidden></canvas>
+<canvas id="myCanvasPage9" hidden></canvas>
+<canvas id="myCanvasPage10" hidden></canvas>
+<canvas id="myCanvasPage11" hidden></canvas>
+<canvas id="myCanvasPage12" hidden></canvas>
 <footer class="fixed-bottom-xl">
     <div class="before-footer-widget">
         <svg width: 100%; height:auto viewbox="0 0 2444 132">
@@ -2245,6 +2254,10 @@
     <script src="~/PdfJS/Contract/page1.js"></script>
     <script src="~/PdfJS/Contract/page2.js"></script>
     <script src="~/PdfJS/Contract/page3.js"></script>
+    <script src="~/PdfJS/Contract/page4.js"></script>
+    <script src="~/PdfJS/Contract/page5.js"></script>
+    <script src="~/PdfJS/Contract/page6.js"></script>
+    <script src="~/PdfJS/Contract/conditions.js"></script>
     <!--Contract-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
     <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
@@ -3577,7 +3590,7 @@
             RenterInformation.postArDistictName = document.getElementById("AR-adress-tenant").value;
             RenterInformation.postEnDistictName = document.getElementById("EN-adress-tenant").value;
 
-            
+
 
             RenterInformation.cityCode = document.getElementById("Region-city-tenant-code").value;
             RenterInformation.nationalityCode = document.getElementById("nationality-Renter-code").value;
@@ -3615,7 +3628,7 @@
                 RenterInformation.personalEnNationality = document.getElementById("nationality-Renter").value;
                 RenterInformation.employerEnName = document.getElementById("tenant-workplace").value;
                 RenterInformation.cityEn = document.getElementById("Region-city-tenant").value;
-    
+
                 // تحديد القيم العربية بناءً على اللغة
                 RenterInformation.personalArNationality = document.getElementById("nationality-Renter").getAttribute('data-other-lang');
                 RenterInformation.employerArName = document.getElementById("tenant-workplace").getAttribute('data-other-lang');
@@ -3625,7 +3638,7 @@
                 RenterInformation.personalArNationality = document.getElementById("nationality-Renter").value;
                 RenterInformation.employerArName = document.getElementById("tenant-workplace").value;
                 RenterInformation.cityAr = document.getElementById("Region-city-tenant").value;
-    
+
                 // تحديد القيم الإنجليزية بناءً على اللغة
                 RenterInformation.personalEnNationality = document.getElementById("nationality-Renter").getAttribute('data-other-lang');
                 RenterInformation.employerEnName = document.getElementById("tenant-workplace").getAttribute('data-other-lang');
@@ -3925,12 +3938,26 @@
             $(".hidden-input-row-Driver").show();
             CheckIfDriverIdChecked = true;
             CheckIfDriverIdSameRenterId = true;
+            console.log("SetRenterIsDriverInformation",DriverInformation)
         }
         function SetInformationForDriverIfNotExist() {
             // Personal Information
             if (DriverInformation == null) {
                 DriverInformation = { ...modelPersonal };
             }
+            var driverRadio1 = document.getElementById("RenterIsdriver");
+            if (driverRadio1.checked){
+            DriverInformation = RenterInformation;
+            var selectedOption = $("#licence-driver-type option:selected");
+            var enNameLicense = selectedOption.data('en') || '';
+            var arNameLicense = selectedOption.data('ar') || ''; // Defaults to empty string if null or empty
+            DriverInformation.licenseArName = arNameLicense;
+            DriverInformation.licenseEnName = enNameLicense;
+            DriverInformation.licenseCode = document.getElementById("licence-driver-number").value;
+            DriverInformation.licenseType = document.getElementById("licence-driver-type").value;
+            DriverInformation.licenseExpiryDate = document.getElementById("ExpiryDrivingLicenseDate-driver").value;
+            }
+            else{
             DriverInformation.renterID = document.getElementById("Contract_DriverInfo_CrMasRenterInformationId").value;
             DriverInformation.renterIDType = document.getElementById("nationality-type-driver").value;
             // DriverInformation.birthDate = document.getElementById("birth-date-driver").value;
@@ -3990,7 +4017,7 @@
                 $('#divGenderDriver').remove();
             }
 
-           
+
             if ("@requestCulture?.RequestCulture.UICulture.Name" == "en-US") {
                 // تحديد القيم الإنجليزية
                 DriverInformation.personalEnNationality = document.getElementById("nationality-Driver").value;
@@ -4015,6 +4042,7 @@
             }
             // Auto Focus
             console.log("DriverInformation", DriverInformation);
+            }
         }
         function CheckIfDriverHaveContractsBefore() {
             if (DriverInformation && DriverInformation.countContracts > 0) {
@@ -5360,41 +5388,40 @@
             }
         }
         function GetCheckUp() {
-            // Initialize an empty array to store the data
             var checkUpData = [];
-
-            // Iterate over each table row
             $(".tabel-data-checkbox-td").each(function () {
-                var $row = $(this).closest("tr"); // Get the closest <tr> element
+                var $row = $(this).closest("tr");
 
-                // Extract data from the row
                 var notes = $row.find(".check-table-notes").val().trim();
                 var $label = $row.find(".Tires");
-                var dataEn = $label.data('en'); // Get the data-en attribute
-                var dataAr = $label.data('ar'); // Get the data-ar attribute
+                var dataEn = $label.data('en'); // الاسم بالإنجليزية
+                var dataAr = $label.data('ar'); // الاسم بالعربية
                 var isChecked = $row.find(".CheckUp").is(":checked");
-                var selectedReasonCheckCode = $row.find(".form-select").data('code'); // Get the selected value from the <select>
-                var selectedReasonCheckId = $row.find(".form-select").val(); // Get the selected value from the <select>
-                var selectedReasonCheckName = $row.find(".form-select").text(); // Get the selected value from the <select>
 
-                // Check if the checkbox is checked
-                 if (isChecked) {
-                    // Create an object to store the extracted data
-                   var rowData = {
+                var $select = $row.find(".form-select");
+                var selectedReasonCheckCode = $select.data('code'); // كود الفحص
+                var selectedReasonCheckId = $select.val(); // رقم الفحص المختار
+                var selectedOption = $select.find("option:selected");
+
+                var selectedReasonCheckEnName = selectedOption.data('en') || selectedOption.text(); // الاسم الإنجليزي للفحص المختار
+                var selectedReasonCheckArName = selectedOption.data('ar') || selectedOption.text(); // الاسم العربي للفحص المختار
+
+                if (isChecked) {
+                    var rowData = {
                         reason: notes,
                         code: selectedReasonCheckCode,
                         no: selectedReasonCheckId,
                         enName: dataEn,
                         arName: dataAr,
-                        reasonCheckName: selectedReasonCheckName, // Add the selected value to the object
-                        reasonCheckCode: selectedReasonCheckCode // Add the selected value to the object
+                        reasonCheckEnName: selectedReasonCheckEnName,
+                        reasonCheckArName: selectedReasonCheckArName
                     };
-                    console.log("rowData CheckUp",rowData)
-                    // Push the object into the array
                     checkUpData.push(rowData);
-                    CarCheckUp = checkUpData;
                 }
             });
+
+            console.log("CheckUp Data:", checkUpData);
+            return checkUpData; // إرجاع البيانات لاستخدامها في `ContractPage4`
         }
         function convertGregorianToHijri(date) {
             const gregorianYear = date.getFullYear();
@@ -6268,392 +6295,655 @@
     </script>
     <!--Create Contract-->
     <script>
-      // Page1
-      const ContractPage1 = async (canvas) => {
-          try {
-              console.log("الصفحة الاولي بتحمل .....")
-                // const canvas = document.getElementById("myCanvasPage1");
-                
-                var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
-                var startDate = new Date(dateTimeNow);
-                var daysNo = parseInt(document.getElementById('dayNo').value);
-                var endDate = new Date(startDate);
-                endDate.setDate(endDate.getDate() + daysNo);
-                const miladiDate = new Date(dateTimeNow);
-                var renterIsDriver = document.getElementById("RenterIsdriver").checked;
-                
-                // تحديد حالة العقد بناءً على ما إذا كان المستأجر هو السائق أم لا
-                var contractStatusAr = renterIsDriver ? "جديد / باليوم بدون سائق" : "جديد / باليوم مع سائق";
-                var contractStatusEn = renterIsDriver ? "New / Daily without Driver" : "New / Daily with Driver";
-                const dynamicData = {
-                      NUMBER: "2490667684810001",
-                      CONTRACT_NUMBER: "@ViewBag.ContractNo",
-                      CONTRACT_DATE_AR: formatHijriDate(miladiDate,"ar"),
-                      CONTRACT_DATE_EN: formatHijriDate(miladiDate,"en"),
-                      CONTRACT_START_AR: formatHijriDate(startDate,"ar"),
-                      CONTRACT_START_EN: formatHijriDate(startDate,"en"),
-                      CONTRACT_END_AR: formatHijriDate(startDate,"ar"),
-                      CONTRACT_END_EN: formatHijriDate(startDate,"en"),
-                      DAYSNUMBER: daysNo,
-                      DATE_1: formatMiladiDate(startDate),
-                      TIME_1: formatTime(startDate),
-                      DATE_2: formatMiladiDate(startDate),
-                      TIME_2: formatTime(startDate),
-                      DATE_3: formatMiladiDate(startDate),
-                      TIME_3: formatTime(startDate),
-                      CONTRACT_STATUE_AR: contractStatusAr,
-                      CONTRACT_STATUE_EN: contractStatusEn,
-                      BRANCH_AR: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationArName") || "",
-                      BRANCH_EN: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationEnName") || "",
-                      PHONE_1: (decodeHTMLEntities("@Model.CrCasBranchInformation?.CrMasBranchInformationMobileKey") + decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationMobile")) || "",
-                      PHONE_2: (decodeHTMLEntities("@Model.CrCasBranchInformation?.CrMasBranchInformationTeleKey") + decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationTelephone")) || "",
-                      EMAIL: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationLessorNavigation.CrMasLessorInformationEmail") || "",
-                      ADDRESS_AR: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchPost.CrCasBranchPostArConcatenate") || "",
-                      ADDRESS_EN: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchPost.CrCasBranchPostEnConcatenate") || "",
-                      CAR_DETAILS_AR: CarInformationForContract.crCasCarInformationConcatenateArName || "",
-                      CAR_DETAILS_EN: CarInformationForContract.crCasCarInformationConcatenateEnName || "",
-                      SERIAL_NUMBER: CarInformationForContract.crCasCarInformationSerailNo || "",
-                      REGISTRATION_AR: CarInformationForContract.registerationAr || "",
-                      REGISTRATION_EN: CarInformationForContract.registerationEn || "",
-                      FUEL_TYPE_AR: CarInformationForContract.fuelAr || "",
-                      FUEL_TYPE_EN: CarInformationForContract.fuelEn || "",
-                      TRANSMISSION_AR: CarInformationForContract.cvtAr || "",
-                      TRANSMISSION_EN: CarInformationForContract.cvtEn || "",
-                      OIL_TYPE_AR: CarInformationForContract.oilAr || "",
-                      OIL_TYPE_EN: CarInformationForContract.oilEn || "",
-                      CHANGE_OIL_DATE: CarInformationForContract.changeOilDate || "",
-                      REGISTRATION_END_DATE: CarInformationForContract.endDrivinglicence || "",
-                      INESPECTION_END_DATE: CarInformationForContract.endPeriodicInspection || "",
-                      OPERATING_CARD: CarInformationForContract.runningCardNo || "",
-                      OPERATING_CARD_END: CarInformationForContract.runningCardEndDate || "",
-                      INSURANCE: CarInformationForContract.insurancePolicyNo || "",
-                      INSURANCE_END: CarInformationForContract.insurancePolicyEndDate || "",
-                      PERODIC_MAINTENANCE: CarInformationForContract.periodicMaintenanceDate || "",
-                      TIRE_MAINTENANCE: CarInformationForContract.tiresDate || "",
-                      FRONT_BREAK: CarInformationForContract.frontBrakeDate || "",
-                      REAR_BREAK: CarInformationForContract.rearBrakeDate || "",
-                      OWNER_COMPANY_AR: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationArLongName") || "",
-                      OWNER_COMPANY_EN: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEnLongName") || "",
-                      ID_NUMBER: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationOwnerId") || "",
-                      ID_TYPE_AR: "سجل تجاري",
-                      ID_TYPE_EN: "Commercial Register",
-                      VERSION_NUM: "512",
-                      PHONE_3: ( decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationCommunicationMobileKey") + decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationCommunicationMobile")) || "",
-                      EMAIL_2: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEmail") || "",
-                      SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
-                      SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
-                      images: {
-                            background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage1)",
-                            EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
-                            TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
-                            QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
-                            STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
-                            Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
-                    },
-                  };
-                const loadedImages = await loadDynamicImages(dynamicData.images);
-                const dataWithImages = { ...dynamicData, images: loadedImages };
-                console.log("dataWithImages",dataWithImages);
-                await DrawContractPage1(canvas, dataWithImages);
-          }
-          catch (error) {
-                console.error("خطأ في إنشاء الصفحة الاولي من العقد:", error);
-          }
-      };
-      // Page2
-      const ContractPage2 = async (canvas) => {
+          // Page1
+          const ContractPage1 = async (canvas) => {
+              try {
+                  console.log("الصفحة الاولي بتحمل .....")
+                    // const canvas = document.getElementById("myCanvasPage1");
+
+                    var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
+                    var startDate = new Date(dateTimeNow);
+                    var daysNo = parseInt(document.getElementById('dayNo').value);
+                    var endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + daysNo);
+                    const miladiDate = new Date(dateTimeNow);
+                    var renterIsDriver = document.getElementById("RenterIsdriver").checked;
+
+                    // تحديد حالة العقد بناءً على ما إذا كان المستأجر هو السائق أم لا
+                    var contractStatusAr = renterIsDriver ? "ساري / يومي" : "ساري / يومي (سائق خاص)";
+                    var contractStatusEn = renterIsDriver ? "Sari / Daily" : "Sari / Daily (Private Driver)";
+                    const dynamicData = {
+                          NUMBER: "2490667684810001",
+                          CONTRACT_NUMBER: "@ViewBag.ContractNo",
+                          CONTRACT_DATE_AR: formatHijriDate(miladiDate,"ar"),
+                          CONTRACT_DATE_EN: formatHijriDate(miladiDate,"en"),
+                          CONTRACT_START_AR: formatHijriDate(startDate,"ar"),
+                          CONTRACT_START_EN: formatHijriDate(startDate,"en"),
+                          CONTRACT_END_AR: formatHijriDate(startDate,"ar"),
+                          CONTRACT_END_EN: formatHijriDate(startDate,"en"),
+                          DAYSNUMBER: daysNo,
+                          DATE_1: formatMiladiDate(startDate),
+                          TIME_1: formatTime(startDate),
+                          DATE_2: formatMiladiDate(startDate),
+                          TIME_2: formatTime(startDate),
+                          DATE_3: formatMiladiDate(startDate),
+                          TIME_3: formatTime(startDate),
+                          CONTRACT_STATUE_AR: contractStatusAr,
+                          CONTRACT_STATUE_EN: contractStatusEn,
+                          BRANCH_AR: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationArName") || "",
+                          BRANCH_EN: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationEnName") || "",
+                          PHONE_1: (decodeHTMLEntities("@Model.CrCasBranchInformation?.CrMasBranchInformationMobileKey") + decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationMobile")) || "",
+                          PHONE_2: (decodeHTMLEntities("@Model.CrCasBranchInformation?.CrMasBranchInformationTeleKey") + decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationTelephone")) || "",
+                          EMAIL: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationLessorNavigation.CrMasLessorInformationEmail") || "",
+                          ADDRESS_AR: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchPost.CrCasBranchPostArConcatenate") || "",
+                          ADDRESS_EN: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchPost.CrCasBranchPostEnConcatenate") || "",
+                          CAR_DETAILS_AR: CarInformationForContract.crCasCarInformationConcatenateArName || "",
+                          CAR_DETAILS_EN: CarInformationForContract.crCasCarInformationConcatenateEnName || "",
+                          SERIAL_NUMBER: CarInformationForContract.crCasCarInformationSerailNo || "",
+                          REGISTRATION_AR: CarInformationForContract.registerationAr || "",
+                          REGISTRATION_EN: CarInformationForContract.registerationEn || "",
+                          FUEL_TYPE_AR: CarInformationForContract.fuelAr || "",
+                          FUEL_TYPE_EN: CarInformationForContract.fuelEn || "",
+                          TRANSMISSION_AR: CarInformationForContract.cvtAr || "",
+                          TRANSMISSION_EN: CarInformationForContract.cvtEn || "",
+                          OIL_TYPE_AR: CarInformationForContract.oilAr || "",
+                          OIL_TYPE_EN: CarInformationForContract.oilEn || "",
+                          CHANGE_OIL_DATE: CarInformationForContract.changeOilDate 
+                            ? CarInformationForContract.changeOilKm 
+                                ? `${CarInformationForContract.changeOilDate} (${CarInformationForContract.changeOilKm})` 
+                                : CarInformationForContract.changeOilDate
+                            : "",
+                          REGISTRATION_END_DATE: CarInformationForContract.endDrivinglicence || "",
+                          INESPECTION_END_DATE: CarInformationForContract.endPeriodicInspection || "",
+                          OPERATING_CARD: CarInformationForContract.runningCardNo || "",
+                          OPERATING_CARD_END: CarInformationForContract.runningCardEndDate || "",
+                          INSURANCE: CarInformationForContract.insurancePolicyNo || "",
+                          INSURANCE_END: CarInformationForContract.insurancePolicyEndDate || "",
+                          PERODIC_MAINTENANCE: CarInformationForContract.periodicMaintenanceDate 
+                              ? CarInformationForContract.periodicMaintenanceKm 
+                                  ? `${CarInformationForContract.periodicMaintenanceDate} (${CarInformationForContract.periodicMaintenanceKm})` 
+                                  : CarInformationForContract.periodicMaintenanceDate
+                              : "",
+                         
+                          TIRE_MAINTENANCE: CarInformationForContract.tiresDate 
+                              ? CarInformationForContract.tiresKm 
+                                  ? `${CarInformationForContract.tiresDate} (${CarInformationForContract.tiresKm})` 
+                                  : CarInformationForContract.tiresDate
+                              : "",
+                         
+                          FRONT_BREAK: CarInformationForContract.frontBrakeDate 
+                              ? CarInformationForContract.frontBrakeKm 
+                                  ? `${CarInformationForContract.frontBrakeDate} (${CarInformationForContract.frontBrakeKm})` 
+                                  : CarInformationForContract.frontBrakeDate
+                              : "",
+                         
+                          REAR_BREAK: CarInformationForContract.rearBrakeDate 
+                              ? CarInformationForContract.rearBrakeKm 
+                                  ? `${CarInformationForContract.rearBrakeDate} (${CarInformationForContract.rearBrakeKm})` 
+                                  : CarInformationForContract.rearBrakeDate
+                              : "",
+                          OWNER_COMPANY_AR: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationArLongName") || "",
+                          OWNER_COMPANY_EN: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEnLongName") || "",
+                          ID_NUMBER: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationOwnerId") || "",
+                          ID_TYPE_AR: "سجل تجاري",
+                          ID_TYPE_EN: "Commercial Register",
+                          VERSION_NUM: "512",
+                          PHONE_3: ( decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationCommunicationMobileKey") + decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationCommunicationMobile")) || "",
+                          EMAIL_2: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEmail") || "",
+                          SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                          SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                          images: {
+                                background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage1)",
+                                EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                                TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
+                                QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                                STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                                Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                        },
+                      };
+                    const loadedImages = await loadDynamicImages(dynamicData.images);
+                    const dataWithImages = { ...dynamicData, images: loadedImages };
+                    console.log("dataWithImages",dataWithImages);
+                    await DrawContractPage1(canvas, dataWithImages);
+              }
+              catch (error) {
+                    console.error("خطأ في إنشاء الصفحة الاولي من العقد:", error);
+              }
+          };
+          // Page2
+          const ContractPage2 = async (canvas) => {
+                try {
+                    // const canvas = document.getElementById("myCanvasPage2");
+                    var driverIdType = getSelectedTypeIdNames("nationality-type-driver");
+                    var addDriverIdType = getSelectedTypeIdNames("nationality-type-addDriver");
+                    const getFormattedDate = (date) => date ? getFormatDate(date) : "";
+                    console.log("DriverInformation page 2",DriverInformation);
+                    const dynamicData = {
+                        NUMBER: "2490667684810001",
+                        CONTRACT_NUMBER: "@ViewBag.ContractNo",
+                        TENANT_NAME_AR: RenterInformation.personalArName || "",
+                        TENANT_NAME_EN: RenterInformation.personalEnName || "",
+                        TENANT_ID: RenterInformation.renterID || "",
+                        TENANT_TAX_NUM: RenterInformation.taxNo || "",
+                        TENANT_EMAIL: RenterInformation.personalEmail || "",
+                        TENANT_ADDRESS_AR: RenterInformation.postArNameConcenate || "",
+                        TENANT_ADDRESS_EN: RenterInformation.postEnNameConcenate || "",
+
+                        DRIVER_NAME_AR: DriverInformation?.personalArName || "",
+                        DRIVER_NAME_EN: DriverInformation?.personalEnName || "",
+                        DRIVER_ID: DriverInformation?.renterID || "",
+                        DRIVER_ID_TYPE_AR: driverIdType?.nameAr || "",
+                        DRIVER_ID_TYPE_EN: driverIdType?.nameEn || "",
+                        DRIVER_VERSION_NUM: DriverInformation?.idCopyNumber || "",
+                        DRIVER_BIRTH_DATE: (DriverInformation?.year && DriverInformation?.month && DriverInformation?.day) 
+                            ? `${DriverInformation.year}/${DriverInformation.month.toString().padStart(2, '0')}/${DriverInformation.day.toString().padStart(2, '0')}`
+                            : "",
+                        DRIVER_GENDER_AR: DriverInformation?.personalArGender || "",
+                        DRIVER_GENDER_EN: DriverInformation?.personalEnGender || "",
+                        DRIVER_NATIONALITY_AR: DriverInformation?.personalArNationality || "",
+                        DRIVER_NATIONALITY_EN: DriverInformation?.personalEnNationality || "",
+                        DRIVER_LICENSE: DriverInformation?.licenseCode || "",
+                        DRIVER_VEHICLE_TYPE_AR: DriverInformation?.licenseArName || "",
+                        DRIVER_VEHICLE_TYPE_EN: DriverInformation?.licenseEnName || "",
+                        DRIVER_LICENSE_EXPIRY: getFormattedDate(DriverInformation?.licenseExpiryDate),
+                        DRIVER_POSITION_AR: DriverInformation?.personalArProfessions || "",
+                        DRIVER_POSITION_EN: DriverInformation?.personalEnProfessions || "",
+                        DRIVER_WORKPLACE_AR: DriverInformation?.employerArName || "",
+                        DRIVER_WORKPLACE_EN: DriverInformation?.employerEnName || "",
+                        DRIVER_EMAIL: DriverInformation?.personalEmail || "",
+                        DRIVER_ADDRESS_AR: DriverInformation?.postArNameConcenate || "",
+                        DRIVER_ADDRESS_EN: DriverInformation?.postEnNameConcenate || "",
+
+                        ADDITIONAL_DRIVER_NAME_AR: AddDriverInformation?.personalArName || "",
+                        ADDITIONAL_DRIVER_NAME_EN: AddDriverInformation?.personalEnName || "",
+                        ADDITIONAL_DRIVER_ID: AddDriverInformation?.renterID || "",
+                        ADDITIONAL_DRIVER_ID_TYPE_AR: addDriverIdType?.nameAr || "",
+                        ADDITIONAL_DRIVER_ID_TYPE_EN: addDriverIdType?.nameEn || "",
+                        ADDITIONAL_DRIVER_VERSION_NUM: AddDriverInformation?.idCopyNumber || "",
+                        ADDITIONAL_DRIVER_BIRTH_DATE: (AddDriverInformation?.year && AddDriverInformation?.month && AddDriverInformation?.day)
+                            ? `${AddDriverInformation.year}/${AddDriverInformation.month.toString().padStart(2, '0')}/${AddDriverInformation.day.toString().padStart(2, '0')}`
+                            : "",                   
+                        ADDITIONAL_DRIVER_GENDER_AR: AddDriverInformation?.personalArGender || "",
+                        ADDITIONAL_DRIVER_GENDER_EN: AddDriverInformation?.personalEnGender || "",
+                        ADDITIONAL_DRIVER_NATIONALITY_AR: AddDriverInformation?.personalArNationality || "",
+                        ADDITIONAL_DRIVER_NATIONALITY_EN: AddDriverInformation?.personalEnNationality || "",
+                        ADDITIONAL_DRIVER_LICENSE: AddDriverInformation?.licenseCode || "",
+                        ADDITIONAL_DRIVER_VEHICLE_TYPE_AR: AddDriverInformation?.licenseArName || "",
+                        ADDITIONAL_DRIVER_VEHICLE_TYPE_EN: AddDriverInformation?.licenseEnName || "",
+                        ADDITIONAL_DRIVER_LICENSE_EXPIRY: getFormattedDate(AddDriverInformation?.licenseExpiryDate),
+                        ADDITIONAL_DRIVER_POSITION_AR: AddDriverInformation?.personalArProfessions || "",
+                        ADDITIONAL_DRIVER_POSITION_EN: AddDriverInformation?.personalEnProfessions || "",
+                        ADDITIONAL_DRIVER_WORKPLACE_AR: AddDriverInformation?.employerArName || "",
+                        ADDITIONAL_DRIVER_WORKPLACE_EN: AddDriverInformation?.employerEnName || "",
+                        ADDITIONAL_DRIVER_EMAIL: AddDriverInformation?.personalEmail || "",
+                        ADDITIONAL_DRIVER_ADDRESS_AR: AddDriverInformation?.postArNameConcenate || "",
+                        ADDITIONAL_DRIVER_ADDRESS_EN: AddDriverInformation?.postEnNameConcenate || "",
+
+                        PRIVATE_DRIVER_NAME_AR: PrivateDriverInformation?.personalArName || "",
+                        PRIVATE_DRIVER_NAME_EN: PrivateDriverInformation?.personalEnName || "",
+                        PRIVATE_DRIVER_ID: PrivateDriverInformation?.renterID || "",
+                        PRIVATE_DRIVER_ID_TYPE_AR: PrivateDriverInformation?.renterIDTypeNameAr || "",
+                        PRIVATE_DRIVER_ID_TYPE_EN: PrivateDriverInformation?.renterIDTypeNameEn || "",
+                        PRIVATE_DRIVER_NATIONALITY: PrivateDriverInformation?.personalArNationality || "",
+                        PRIVATE_DRIVER_NATIONALITY_EN: PrivateDriverInformation?.personalArNationality || "",
+                        PRIVATE_DRIVER_LICENSE: PrivateDriverInformation?.licenseCode || "",
+                        PRIVATE_DRIVER_VEHICLE_TYPE_AR: PrivateDriverInformation?.licenseArName || "",
+                        PRIVATE_DRIVER_VEHICLE_TYPE_EN: PrivateDriverInformation?.licenseEnName || "",
+                        PRIVATE_DRIVER_LICENSE_EXPIRY: getFormattedDate(PrivateDriverInformation?.licenseExpiryDate),
+
+                       SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                       SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                       images: {
+                              background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage2)",
+                              EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                              TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
+                              QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                              STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                              Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                       },
+                    };
+                    const loadedImages = await loadDynamicImages(dynamicData.images);
+                    const dataWithImages = { ...dynamicData, images: loadedImages };
+                    console.log("dataWithImages",dataWithImages);
+                    await DrawContractPage2(canvas, dataWithImages);
+                    }
+                catch (error) {
+                          console.error("خطأ في إنشاء الصفحة الثانية من العقد:", error);
+                }
+          };
+          function getSelectedTypeIdNames(selectId) {
+                var selectElement = document.getElementById(selectId);
+                if (!selectElement) return { nameAr: "", nameEn: "" }; // التحقق من وجود العنصر
+
+                var selectedOption = selectElement.options[selectElement.selectedIndex];
+                if (selectedOption) {
+                    return {
+                        nameAr: selectedOption.getAttribute("data-name-ar") || "",
+                        nameEn: selectedOption.getAttribute("data-name-en") || ""
+                    };
+                }
+                return { nameAr: "", nameEn: "" }; // في حالة عدم تحديد أي خيار
+            }
+          // Page3
+          // تعريف المتغيرات لتخزين القيم الديناميكية
+          let OptionsItems = [];
+          let AdditionalItems = [];
+          let Option_Price_Items = [];
+          let Addition_Price_Items = [];
+          const ContractPage3 = async (canvas) => {
             try {
-                // const canvas = document.getElementById("myCanvasPage2");
-                var driverIdType = getSelectedTypeIdNames("nationality-type-driver");
-                var addDriverIdType = getSelectedTypeIdNames("nationality-type-addDriver");
-                const getFormattedDate = (date) => date ? getFormatDate(date) : "";
+                // const canvas = document.getElementById("myCanvasPage3");
+                var delegateStatus = getDelegateStatus();
+                var recevingBranch = getRecevingBranch();
+                var discountRate = getDiscountRate();
+                var taxRate = getTaxRate();
+                var policy =getPolicyDetailsByCode();
+
+                getAdditionalData();  // ملء AdditionalItems و Addition_Price_Items
+                getChoicesData();  // ملء OptionsItems و Option_Price_Items
                 const dynamicData = {
-                    NUMBER: "2490667684810001",
-                    CONTRACT_NUMBER: "@ViewBag.ContractNo",
-                    TENANT_NAME_AR: RenterInformation.personalArName || "",
-                    TENANT_NAME_EN: RenterInformation.personalEnName || "",
-                    TENANT_ID: RenterInformation.renterID || "",
-                    TENANT_TAX_NUM: RenterInformation.taxNo || "",
-                    TENANT_EMAIL: RenterInformation.personalEmail || "",
-                    TENANT_ADDRESS_AR: RenterInformation.postArNameConcenate || "",
-                    TENANT_ADDRESS_EN: RenterInformation.postEnNameConcenate || "",
+                NUMBER: "2490667684810001",
+                CONTRACT_NUMBER: "@ViewBag.ContractNo",
+                // بنود التأجير //
+                DELIVERY_BRANCH_AR: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationArShortName") || "",
+                DELIVERY_BRANCH_EN: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationEnShortName") || "",
+                RECEIVING_BRANCH_AR: recevingBranch.branchAr,
+                RECEIVING_BRANCH_EN: recevingBranch.branchEn,
+                Geographic_area_AR: delegateStatus.statusAr,
+                Geographic_area_EN: delegateStatus.statusEn,
+                DAILY_RENT: CarInformation.carPrice.crCasPriceCarBasicDailyRent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
+                Additional_driver: CarInformation.carPrice.crCasPriceCarBasicAdditionalDriverValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
+                Personal_driver: CarInformation.carPrice.crCasPriceCarBasicPrivateDriverValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
+                Free_hours: CarInformation.carPrice.crCasPriceCarBasicFreeAdditionalHours || "",
+                Maximum_hours: CarInformation.carPrice.crCasPriceCarBasicExtraHourValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
+                Free_KM: CarInformation.carPrice.crCasPriceCarBasicNoDailyFreeKm.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
+                Extra_KM_Value: CarInformation.carPrice.crCasPriceCarBasicAdditionalKmValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
+                Extra_hours_Value: CarInformation.carPrice.crCasPriceCarBasicExtraHourValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
+                full_Fuel_value: CarInformation.carInformation.crCasCarInformationFuelValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
+                Discount_rate: discountRate,
+                Value_added_ratio : taxRate,
+                Total_expected_contract: TotalActualContract.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                accident_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationAccident.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
+                theft_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationTheft.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
+                fire_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationFire.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
+                drowning_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationDrowning.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "",
 
-                    DRIVER_NAME_AR: DriverInformation?.personalArName || "",
-                    DRIVER_NAME_EN: DriverInformation?.personalEnName || "",
-                    DRIVER_ID: DriverInformation?.renterID || "",
-                    DRIVER_ID_TYPE_AR: driverIdType?.nameAr || "",
-                    DRIVER_ID_TYPE_EN: driverIdType?.nameEn || "",
-                    DRIVER_VERSION_NUM: DriverInformation?.idCopyNumber || "",
-                    DRIVER_BIRTH_DATE: getFormattedDate(DriverInformation?.birthDate),
-                    DRIVER_GENDER_AR: DriverInformation?.personalArGender || "",
-                    DRIVER_GENDER_EN: DriverInformation?.personalEnGender || "",
-                    DRIVER_NATIONALITY_AR: DriverInformation?.personalArNationality || "",
-                    DRIVER_NATIONALITY_EN: DriverInformation?.personalEnNationality || "",
-                    DRIVER_LICENSE: DriverInformation?.licenseCode || "",
-                    DRIVER_VEHICLE_TYPE_AR: DriverInformation?.licenseArName || "",
-                    DRIVER_VEHICLE_TYPE_EN: DriverInformation?.licenseEnName || "",
-                    DRIVER_LICENSE_EXPIRY: getFormattedDate(DriverInformation?.licenseExpiryDate),
-                    DRIVER_POSITION_AR: DriverInformation?.personalArProfessions || "",
-                    DRIVER_POSITION_EN: DriverInformation?.personalEnProfessions || "",
-                    DRIVER_WORKPLACE_AR: DriverInformation?.employerArName || "",
-                    DRIVER_WORKPLACE_EN: DriverInformation?.employerEnName || "",
-                    DRIVER_EMAIL: DriverInformation?.personalEmail || "",
-                    DRIVER_ADDRESS_AR: DriverInformation?.postArNameConcenate || "",
-                    DRIVER_ADDRESS_EN: DriverInformation?.postEnNameConcenate || "",
+                // سياسة التأجير //
+                RENTAL_POLICY_AR: policy.crCasLessorPolicyShortName,
+                Fuel_Policy: policy.crCasLessorPolicyFuel,
+                RETURN_POLICY_AR: policy.crCasLessorPolicyEarlyReturn,
+                EXTEND_POLICY: policy.crCasLessorPolicyExtendDays,
+                ACCIDENT_POLICY:policy.crCasLessorPolicyAccidents,
+                FAULT_POLICY:policy.crCasLessorPolicyFault,
+                EXTENTION_POLICY:policy.crCasLessorPolicyExtension,
 
-                    ADDITIONAL_DRIVER_NAME_AR: AddDriverInformation?.personalArName || "",
-                    ADDITIONAL_DRIVER_NAME_EN: AddDriverInformation?.personalEnName || "",
-                    ADDITIONAL_DRIVER_ID: AddDriverInformation?.renterID || "",
-                    ADDITIONAL_DRIVER_ID_TYPE_AR: addDriverIdType?.nameAr || "",
-                    ADDITIONAL_DRIVER_ID_TYPE_EN: addDriverIdType?.nameEn || "",
-                    ADDITIONAL_DRIVER_VERSION_NUM: AddDriverInformation?.idCopyNumber || "",
-                    ADDITIONAL_DRIVER_BIRTH_DATE: getFormattedDate(AddDriverInformation?.birthDate),
-                    ADDITIONAL_DRIVER_GENDER_AR: AddDriverInformation?.personalArGender || "",
-                    ADDITIONAL_DRIVER_GENDER_EN: AddDriverInformation?.personalEnGender || "",
-                    ADDITIONAL_DRIVER_NATIONALITY_AR: AddDriverInformation?.personalArNationality || "",
-                    ADDITIONAL_DRIVER_NATIONALITY_EN: AddDriverInformation?.personalEnNationality || "",
-                    ADDITIONAL_DRIVER_LICENSE: AddDriverInformation?.licenseCode || "",
-                    ADDITIONAL_DRIVER_VEHICLE_TYPE_AR: AddDriverInformation?.licenseArName || "",
-                    ADDITIONAL_DRIVER_VEHICLE_TYPE_EN: AddDriverInformation?.licenseEnName || "",
-                    ADDITIONAL_DRIVER_LICENSE_EXPIRY: getFormattedDate(AddDriverInformation?.licenseExpiryDate),
-                    ADDITIONAL_DRIVER_POSITION_AR: AddDriverInformation?.personalArProfessions || "",
-                    ADDITIONAL_DRIVER_POSITION_EN: AddDriverInformation?.personalEnProfessions || "",
-                    ADDITIONAL_DRIVER_WORKPLACE_AR: AddDriverInformation?.employerArName || "",
-                    ADDITIONAL_DRIVER_WORKPLACE_EN: AddDriverInformation?.employerEnName || "",
-                    ADDITIONAL_DRIVER_EMAIL: AddDriverInformation?.personalEmail || "",
-                    ADDITIONAL_DRIVER_ADDRESS_AR: AddDriverInformation?.postArNameConcenate || "",
-                    ADDITIONAL_DRIVER_ADDRESS_EN: AddDriverInformation?.postEnNameConcenate || "",
-
-                    PRIVATE_DRIVER_NAME_AR: PrivateDriverInformation?.personalArName || "",
-                    PRIVATE_DRIVER_NAME_EN: PrivateDriverInformation?.personalEnName || "",
-                    PRIVATE_DRIVER_ID: PrivateDriverInformation?.renterID || "",
-                    PRIVATE_DRIVER_ID_TYPE_AR: PrivateDriverInformation?.renterIDTypeNameAr || "",
-                    PRIVATE_DRIVER_ID_TYPE_EN: PrivateDriverInformation?.renterIDTypeNameEn || "",
-                    PRIVATE_DRIVER_NATIONALITY: PrivateDriverInformation?.personalArNationality || "",
-                    PRIVATE_DRIVER_NATIONALITY_EN: PrivateDriverInformation?.personalArNationality || "",
-                    PRIVATE_DRIVER_LICENSE: PrivateDriverInformation?.licenseCode || "",
-                    PRIVATE_DRIVER_VEHICLE_TYPE_AR: PrivateDriverInformation?.licenseArName || "",
-                    PRIVATE_DRIVER_VEHICLE_TYPE_EN: PrivateDriverInformation?.licenseEnName || "",
-                    PRIVATE_DRIVER_LICENSE_EXPIRY: getFormattedDate(PrivateDriverInformation?.licenseExpiryDate),
-
-                   SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
-                   SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
-                   images: {
-                          background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage2)",
+                // التوقيع //
+                SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                images: {
+                          background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage3)",
                           EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
                           TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
                           QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
                           STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
                           Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
-                   },
+                },
+                  // عناصر الجدول
+                OptionsItems:OptionsItems ,
+                AdditionalItems: AdditionalItems,
+                Option_Price_Items: Option_Price_Items,
+                Addition_Price_Items:Addition_Price_Items,
                 };
+
                 const loadedImages = await loadDynamicImages(dynamicData.images);
                 const dataWithImages = { ...dynamicData, images: loadedImages };
-                console.log("dataWithImages",dataWithImages);
-                await DrawContractPage2(canvas, dataWithImages);
-                }
+                console.log("dataWithImages", dataWithImages);
+                await DrawContractPage3(canvas, dataWithImages);
+            }
             catch (error) {
-                      console.error("خطأ في إنشاء الصفحة الثانية من العقد:", error);
+                  console.error("خطأ في إنشاء الصفحة الثالثة من العقد:", error);
             }
-      };
-      function getSelectedTypeIdNames(selectId) {
-            var selectElement = document.getElementById(selectId);
-            if (!selectElement) return { nameAr: "", nameEn: "" }; // التحقق من وجود العنصر
+          };
+          function getPolicyDetailsByCode(policyCode) {
+                var policies = @Html.Raw(Json.Serialize(Model.Policies));
+                var policy=policies.find(policy => policy.CrCasLessorPolicyCode === policyCode);
+                console.log("policy",policy);
+                return policy;
+          }
+          function getDelegateStatus() {
+                // التحقق مما إذا كان الخيار مختاراً
+                var isChecked = document.getElementById('Delegate-out').checked;
 
-            var selectedOption = selectElement.options[selectElement.selectedIndex];
-            if (selectedOption) {
-                return {
-                    nameAr: selectedOption.getAttribute("data-name-ar") || "",
-                    nameEn: selectedOption.getAttribute("data-name-en") || ""
+                // العودة بالنص المناسب بناءً على اللغة المختارة
+                var statusAr = isChecked ? "خارج المملكة" : "داخل المملكة";
+                var statusEn = isChecked ? "Outside the Kingdom" : "Inside the Kingdom";
+
+                // إرجاع النصوص باللغتين
+                return { statusAr: statusAr, statusEn: statusEn };
+          }
+          function getRecevingBranch() {
+                // التحقق مما إذا كان الخيار مختاراً
+                var selectedOptionBrn = $("#Receiving-branch-dropdown option:selected");
+
+                // العودة بالنص المناسب بناءً على اللغة المختارة
+                var branchAr = selectedOptionBrn.data('ar') || ''
+                var branchEn = selectedOptionBrn.data('en') || ''
+
+                // إرجاع النصوص باللغتين
+                return { branchAr: branchAr, branchEn: branchEn };
+          }
+          function getDiscountRate() {
+            // الحصول على القيمة المدخلة من حقل الإدخال
+            var DiscountInput = document.getElementById("Discount_Input").value;
+
+            // التأكد من أن القيمة هي رقم
+            if (!isNaN(DiscountInput) && DiscountInput.trim() !== "") {
+                // إضافة النسبة المئوية
+                var DiscountRate = DiscountInput + "%";
+                console.log("Discount Rate: ", DiscountRate);
+                return DiscountRate; // إرجاع القيمة المعدلة
+            } else {
+                // في حال كانت القيمة غير صحيحة، تعيين القيمة إلى 0
+                var DiscountRate = "0%";
+                console.log("الرجاء إدخال قيمة صحيحة، سيتم تعيين الخصم إلى: ", DiscountRate);
+                return DiscountRate; // إرجاع القيمة المعدلة
+            }
+        }
+          function getTaxRate() {
+            // الحصول على قيمة الـ Tax Rate من الكائن CarInformation
+            var taxRate = CarInformation.carPrice.crCasPriceCarBasicRentalTaxRate;
+
+            // التأكد من أن القيمة هي رقم
+            if (!isNaN(taxRate) && taxRate !== "") {
+                // إضافة النسبة المئوية
+                var ValueAddedRatio = taxRate + "%";
+                console.log("Value Added Ratio: ", ValueAddedRatio);
+                return ValueAddedRatio; // إرجاع القيمة المعدلة
+            } else {
+                // في حال كانت القيمة غير صحيحة، تعيين القيمة إلى 0
+                var ValueAddedRatio = "0%";
+                console.log("الرجاء إدخال قيمة صحيحة، سيتم تعيين النسبة إلى: ", ValueAddedRatio);
+                return ValueAddedRatio; // إرجاع القيمة المعدلة
+            }
+        }
+          function getAdditionalData() {
+                // إعادة تعيين البيانات الحالية (إذا كانت موجودة)
+                AdditionalsItems.forEach(function (item, index) {
+                    // إضافة البيانات إلى القائمة
+                    var arNameText = item.arName.trim();
+                    var enNameText = item.enName.trim();
+                    var valueText = item.value;
+
+                    // إضافة البيانات إلى القائمة الديناميكية
+                    Addition_Price_Items.push({ content: valueText }); // قيم إضافية
+
+                    // إضافة البيانات إلى AdditionalItems
+                    AdditionalItems.push({
+                        arabic: arNameText,
+                        english: enNameText,
+                        textAlign: "right"
+                    });
+                });
+        }
+          function getChoicesData() {
+                // إعادة تعيين البيانات الحالية (إذا كانت موجودة)
+                ChoiceItems.forEach(function (item, index) {
+                    // إضافة البيانات إلى القائمة
+                    var arNameText = item.arName.trim();
+                    var enNameText = item.enName.trim();
+                    var valueText = item.value;
+
+                    // إضافة البيانات إلى القائمة الديناميكية
+                    Option_Price_Items.push({ content: valueText }); // قيم خيارات
+
+                    // إضافة البيانات إلى OptionsItems
+                    OptionsItems.push({
+                        arabic: arNameText,
+                        english: enNameText,
+                        textAlign: "right"
+                    });
+                });
+        }
+          // Page4
+          const ContractPage4 = async (canvas) => {
+              try {
+                const checkUpData = GetCheckUp(); // جلب البيانات من `GetCheckUp`
+
+                // تحويل البيانات إلى التنسيق المطلوب
+                const Inspection_Items = checkUpData.map(item => ({
+                    arabic: item.arName,
+                    english: item.enName,
+                    textAlign: "right"
+                }));
+
+                const Inspection_Status = checkUpData.map(item => ({
+                    arabic: item.reasonCheckArName,
+                    english: item.reasonCheckEnName,
+                    textAlign: "right"
+                }));
+
+                const Notes_Items = checkUpData.map(item => ({
+                    content: item.reason || " "
+                }));
+                console.log("Inspection_Items",Inspection_Items)
+                console.log("Inspection_Status",Inspection_Status)
+                console.log("Notes_Items",Notes_Items)
+                // بيانات العقد مع دمج العناصر المستخرجة
+                const dynamicData = {
+                    NUMBER: "2490667684810001",
+                    CONTRACT_NUMBER: "@ViewBag.ContractNo",
+                    SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                    SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                    images: {
+                        background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage4)",
+                        EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                        TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
+                        QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                        STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                        Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)"
+                    },
+                    Inspection_Items,  // عناصر الفحص
+                    Inspection_Status, // حالة الفحص
+                    Notes_Items     // الملاحظات
                 };
-            }
-            return { nameAr: "", nameEn: "" }; // في حالة عدم تحديد أي خيار
-        }
-      // Page3
-      // تعريف المتغيرات لتخزين القيم الديناميكية
-        let OptionsItems = [];
-        let AdditionalItems = [];
-        let Option_Price_Items = [];
-        let Addition_Price_Items = [];
-      const ContractPage3 = async (canvas) => {
-        try {
-            // const canvas = document.getElementById("myCanvasPage3");
-            var delegateStatus = getDelegateStatus();
-            var recevingBranch = getRecevingBranch();
-            var discountRate = getDiscountRate();
-            var taxRate = getTaxRate();
-            var policy =getPolicyDetailsByCode();
-           
-            getAdditionalData();  // ملء AdditionalItems و Addition_Price_Items
-            getChoicesData();  // ملء OptionsItems و Option_Price_Items
-            const dynamicData = {
-            NUMBER: "2490667684810001",
-            CONTRACT_NUMBER: "@ViewBag.ContractNo",
-            // بنود التأجير //
-            DELIVERY_BRANCH_AR: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationArShortName") || "",
-            DELIVERY_BRANCH_EN: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationEnShortName") || "",
-            RECEIVING_BRANCH_AR: recevingBranch.branchAr,
-            RECEIVING_BRANCH_EN: recevingBranch.branchEn,
-            Geographic_area_AR: delegateStatus.statusAr,
-            Geographic_area_EN: delegateStatus.statusEn,
-            DAILY_RENT: CarInformation.carPrice.crCasPriceCarBasicDailyRent || "",
-            Additional_driver: CarInformation.carPrice.crCasPriceCarBasicAdditionalDriverValue || "",
-            Personal_driver: CarInformation.carPrice.crCasPriceCarBasicPrivateDriverValue || "",
-            Free_hours: CarInformation.carPrice.crCasPriceCarBasicFreeAdditionalHours || "",
-            Maximum_hours: CarInformation.carPrice.crCasPriceCarBasicExtraHourValue || "",
-            Free_KM: CarInformation.carPrice.crCasPriceCarBasicNoDailyFreeKm || "",
-            Extra_KM_Value: CarInformation.carPrice.crCasPriceCarBasicAdditionalKmValue || "",
-            Extra_hours_Value: CarInformation.carPrice.crCasPriceCarBasicExtraHourValue || "",
-            full_Fuel_value: CarInformation.carInformation.crCasCarInformationFuelValue || "",
-            Discount_rate: discountRate,
-            Value_added_ratio : taxRate,
-            Total_expected_contract: TotalActualContract.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-            accident_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationAccident || "",
-            theft_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationTheft || "",
-            fire_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationFire || "",
-            drowning_Liability: CarInformation.carPrice.crCasPriceCarBasicCompensationDrowning || "",
 
-            // سياسة التأجير //
-            RENTAL_POLICY_AR: policy.crCasLessorPolicyShortName,
-            Fuel_Policy: policy.crCasLessorPolicyFuel,
-            RETURN_POLICY_AR: policy.crCasLessorPolicyEarlyReturn,
-            EXTEND_POLICY: policy.crCasLessorPolicyExtendDays,
-            ACCIDENT_POLICY:policy.crCasLessorPolicyAccidents,
-            FAULT_POLICY:policy.crCasLessorPolicyFault,
-            EXTENTION_POLICY:policy.crCasLessorPolicyExtension,
+                const loadedImages = await loadDynamicImages(dynamicData.images);
+                const dataWithImages = { ...dynamicData, images: loadedImages };
+                console.log("Final Data for Contract Page 4:", dataWithImages);
+                await DrawContractPage4(canvas, dataWithImages);
+                }
+              catch (error) {
+                      console.error("خطأ في إنشاء الصفحة الرابعة من العقد:", error);
+                }
+          };
+          // Page5
+          const ContractPage5 = async (canvas) => {
+              try{
+                    console.log("🚀 بدء إنشاء الصفحة الخامسة من العقد...");
 
-            // التوقيع //
-            SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
-            SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
-            images: {
-                      background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage3)",
-                      EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
-                      TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
-                      QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
-                      STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
-                      Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
-            },
-              // عناصر الجدول
-            OptionsItems:OptionsItems ,
-            AdditionalItems: AdditionalItems,
-            Option_Price_Items: Option_Price_Items,
-            Addition_Price_Items:Addition_Price_Items,
+                   const ExtractedUrls = imgCheckUpArray.map(item => item.url);
+                   console.log("📸 صور الفحص المحملة:", ExtractedUrls);
+                   const dynamicData = {
+                    NUMBER: "2490667684810001",
+                    CONTRACT_NUMBER: "@ViewBag.ContractNo",
+                    SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                    SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                   // الصور
+                     images: {
+                        background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage5)",
+                        EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                        TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
+                        QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                        STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                        Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                       //
+                       TechnicalImage : "/PdfJS/style/images/Frame 2608609.png",
+                       VisualImage1: ExtractedUrls[0] || null,
+                       VisualImage2: ExtractedUrls[1] || null,
+                       VisualImage3: ExtractedUrls[2] || null,
+                       VisualImage4: ExtractedUrls[3] || null,
+                     },
+                   };
+                   const loadedImages = await loadDynamicImages(dynamicData.images);
+                   const dataWithImages = { ...dynamicData, images: loadedImages };
+                   console.log("dataWithImages", dataWithImages);
+                   await DrawContractPage5(canvas, dataWithImages);
+              }
+              catch (error) {
+                     console.error("خطأ في إنشاء الصفحة الخامسة من العقد:", error);
+              }
+          }
+          //Page6
+          const ContractPage6 = async (canvas) => {
+               try{
+                    console.log("🚀 بدء إنشاء الصفحة السادسة من العقد...");
+                    const ExtractedUrls = imgCheckUpArray.map(item => item.url);
+                    const dynamicData = {
+                        NUMBER: "2490667684810001",
+                        CONTRACT_NUMBER: "@ViewBag.ContractNo",
+                        SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                        SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                        // الصور
+                        images: {
+                        background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage6)",
+                        EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                        TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
+                        QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                        STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                        Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                            //
+                            VisualImage1: ExtractedUrls[4] || null,
+                            VisualImage2: ExtractedUrls[5] || null,
+                            VisualImage3: ExtractedUrls[6] || null,
+                            VisualImage4: ExtractedUrls[7] || null,
+                            VisualImage5: ExtractedUrls[8] || null,
+                            VisualImage6: ExtractedUrls[9] || null,
+                        },
+                    };
+
+                    const loadedImages = await loadDynamicImages(dynamicData.images);
+                    const dataWithImages = { ...dynamicData, images: loadedImages };
+                    console.log("dataWithImages", dataWithImages);
+                    await DrawContractPage6(canvas, dataWithImages);
+               }
+               catch (error) {
+                    console.error("خطأ في إنشاء الصفحة السادسة من العقد:", error);
+               }
+          }
+
+
+          // //Page7 to 12
+          // const ContractPageFrom7To12 = async (canvas, pageNo) => {
+          //       try {
+          //           const backgroundUrl = userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage[`CrMasLessorImageContractPage${pageNo}`];
+
+          //           // التحقق من وجود المسار وتحميل الصورة
+          //           if (backgroundUrl) {
+          //               const isImageValid = await checkImageLoad(backgroundUrl);
+
+          //               if (!isImageValid) {
+          //                   console.warn(`الصورة في المسار ${backgroundUrl} غير موجودة أو فشلت في التحميل.`);
+          //                   return;  // إذا فشل تحميل الصورة، لن نتابع رسم الصفحة
+          //               }
+          //           } else {
+          //               console.warn("مسار الصورة غير موجود.");
+          //               return;  // إذا كان المسار غير موجود، لا نتابع
+          //           }
+
+          //           // إذا كانت الصورة موجودة وتم تحميلها بنجاح، أكمل رسم الصفحة
+          //           const dynamicData = {
+          //               NUMBER: "2490667684810001",
+          //               CONTRACT_NUMBER: "@ViewBag.ContractNo",
+          //               SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+          //               SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+          //               images: {
+          //                   background: backgroundUrl,
+          //                   EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+          //                   TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
+          //                   QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+          //                   STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+          //                   Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)"
+          //               },
+          //           };
+
+          //           // استدعاء الفانكشن لرسم الصفحة بعد التحقق من الصورة
+          //           const loadedImages = await loadDynamicImages(dynamicData.images);
+          //           const dataWithImages = { ...dynamicData, images: loadedImages };
+          //           console.log("dataWithImages", dataWithImages);
+          //           await DrawContractPageConditions(canvas, dataWithImages, pageNo);
+
+          //       } catch (error) {
+          //           console.error("خطأ أثناء التحقق من تحميل الصورة أو رسم الصفحة:", error);
+          //       }
+          // };
+          // const checkImageLoad = (imageUrl) => {
+          //    return new Promise((resolve, reject) => {
+          //        const img = new Image();
+          //        img.onload = () => resolve(true);  // إذا تم تحميل الصورة بنجاح
+          //        img.onerror = () => reject(false); // إذا حدث خطأ أثناء تحميل الصورة
+          //        img.src = imageUrl;  // تحديد مصدر الصورة
+          //    });
+          // };
+
+              // دالة لصفحة 7 إلى 12 تتحقق من تحميل الصورة قبل إضافتها إلى الـ canvasArray
+          const createPageAndAddToCanvasArray = async (canvas, pageNo,background, canvasArray) => {
+                try {
+                    // التحقق من وجود المسار وتحميل الصورة
+                    console.log("background",background);
+                    if (background) {
+                        const isImageValid = await checkImageLoad(background);
+
+                        if (!isImageValid) {
+                            console.warn(`الصورة في المسار ${background} غير موجودة أو فشلت في التحميل.`);
+                            return;  // إذا فشلت الصورة في التحميل، لن نضيف هذه الصفحة
+                        }
+                    } else {
+                        console.warn("مسار الصورة غير موجود.");
+                        return;  // إذا كان المسار غير موجود، لا نضيف الصفحة
+                    }
+
+                    // إذا كانت الصورة موجودة وتم تحميلها بنجاح، أكمل رسم الصفحة
+                    const dynamicData = {
+                        NUMBER: "2490667684810001",
+                        CONTRACT_NUMBER: "@ViewBag.ContractNo",
+                        SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                        SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                        images: {
+                            background: background,
+                            EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                            TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
+                            QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                            STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                            Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)"
+                        },
+                    };
+
+                    const loadedImages = await loadDynamicImages(dynamicData.images);
+                    const dataWithImages = { ...dynamicData, images: loadedImages };
+                    console.log("dataWithImages", dataWithImages);
+
+                    // استدعاء الفانكشن لرسم الصفحة بعد التحقق من الصورة
+                    await DrawContractPageConditions(canvas, dataWithImages, pageNo);
+
+                    // إضافة الصفحة إلى الـ canvasArray بعد رسمها
+                    canvasArray.push(canvas);
+
+                } catch (error) {
+                    console.error("خطأ أثناء التحقق من تحميل الصورة أو رسم الصفحة:", error);
+                }
             };
-
-            const loadedImages = await loadDynamicImages(dynamicData.images);
-            const dataWithImages = { ...dynamicData, images: loadedImages };
-            console.log("dataWithImages", dataWithImages);
-            await DrawContractPage3(canvas, dataWithImages);
-        }
-        catch (error) {
-              console.error("خطأ في إنشاء الصفحة الاولي من العقد:", error);
-        }
-      };
-      function getPolicyDetailsByCode(policyCode) {
-            var policies = @Html.Raw(Json.Serialize(Model.Policies));
-            var policy=policies.find(policy => policy.CrCasLessorPolicyCode === policyCode);
-            console.log("policy",policy);
-            return policy;
-      }
-      function getDelegateStatus() {
-            // التحقق مما إذا كان الخيار مختاراً
-            var isChecked = document.getElementById('Delegate-out').checked;
-
-            // العودة بالنص المناسب بناءً على اللغة المختارة
-            var statusAr = isChecked ? "خارج المملكة" : "داخل المملكة";
-            var statusEn = isChecked ? "Outside the Kingdom" : "Inside the Kingdom";
-
-            // إرجاع النصوص باللغتين
-            return { statusAr: statusAr, statusEn: statusEn };
-      }
-      function getRecevingBranch() {
-            // التحقق مما إذا كان الخيار مختاراً
-            var selectedOptionBrn = $("#Receiving-branch-dropdown option:selected");
-
-            // العودة بالنص المناسب بناءً على اللغة المختارة
-            var branchAr = selectedOptionBrn.data('ar') || ''
-            var branchEn = selectedOptionBrn.data('en') || ''
-
-            // إرجاع النصوص باللغتين
-            return { branchAr: branchAr, branchEn: branchEn };
-      }
-      function getDiscountRate() {
-        // الحصول على القيمة المدخلة من حقل الإدخال
-        var DiscountInput = document.getElementById("Discount_Input").value;
-
-        // التأكد من أن القيمة هي رقم
-        if (!isNaN(DiscountInput) && DiscountInput.trim() !== "") {
-            // إضافة النسبة المئوية
-            var DiscountRate = DiscountInput + "%";
-            console.log("Discount Rate: ", DiscountRate);
-            return DiscountRate; // إرجاع القيمة المعدلة
-        } else {
-            // في حال كانت القيمة غير صحيحة، تعيين القيمة إلى 0
-            var DiscountRate = "0%";
-            console.log("الرجاء إدخال قيمة صحيحة، سيتم تعيين الخصم إلى: ", DiscountRate);
-            return DiscountRate; // إرجاع القيمة المعدلة
-        }
-    }
-      function getTaxRate() {
-        // الحصول على قيمة الـ Tax Rate من الكائن CarInformation
-        var taxRate = CarInformation.carPrice.crCasPriceCarBasicRentalTaxRate;
-
-        // التأكد من أن القيمة هي رقم
-        if (!isNaN(taxRate) && taxRate !== "") {
-            // إضافة النسبة المئوية
-            var ValueAddedRatio = taxRate + "%";
-            console.log("Value Added Ratio: ", ValueAddedRatio);
-            return ValueAddedRatio; // إرجاع القيمة المعدلة
-        } else {
-            // في حال كانت القيمة غير صحيحة، تعيين القيمة إلى 0
-            var ValueAddedRatio = "0%";
-            console.log("الرجاء إدخال قيمة صحيحة، سيتم تعيين النسبة إلى: ", ValueAddedRatio);
-            return ValueAddedRatio; // إرجاع القيمة المعدلة
-        }
-    }
-      function getAdditionalData() {
-            // إعادة تعيين البيانات الحالية (إذا كانت موجودة)
-            AdditionalsItems.forEach(function (item, index) {
-                // إضافة البيانات إلى القائمة
-                var arNameText = item.arName.trim();
-                var enNameText = item.enName.trim();
-                var valueText = item.value;
-
-                // إضافة البيانات إلى القائمة الديناميكية
-                Addition_Price_Items.push({ content: valueText }); // قيم إضافية
-
-                // إضافة البيانات إلى AdditionalItems
-                AdditionalItems.push({
-                    arabic: arNameText,
-                    english: enNameText,
-                    textAlign: "right"
+          const checkImageLoad = (imageUrl) => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve(true);  // إذا تم تحميل الصورة بنجاح
+                    img.onerror = () => reject(false); // إذا حدث خطأ أثناء تحميل الصورة
+                    img.src = imageUrl;  // تحديد مصدر الصورة
                 });
-            });
-    }
-      function getChoicesData() {
-            // إعادة تعيين البيانات الحالية (إذا كانت موجودة)
-            ChoiceItems.forEach(function (item, index) {
-                // إضافة البيانات إلى القائمة
-                var arNameText = item.arName.trim();
-                var enNameText = item.enName.trim();
-                var valueText = item.value;
-
-                // إضافة البيانات إلى القائمة الديناميكية
-                Option_Price_Items.push({ content: valueText }); // قيم خيارات
-
-                // إضافة البيانات إلى OptionsItems
-                OptionsItems.push({
-                    arabic: arNameText,
-                    english: enNameText,
-                    textAlign: "right"
-                });
-            });
-    }
-      // Page4
-    </script>
+            };
+</script>
     <!--handle Create Contract Pdf-->
     <script>
-      // دالة لدمج كل الصفحات وتحويلها إلى PDF
+        // دالة لدمج كل الصفحات وتحويلها إلى PDF
         const CreateContractPdf = async () => {
             console.log("⏳ بدء إنشاء الصفحات...");
 
@@ -6661,22 +6951,65 @@
             const canvas1 = document.getElementById("myCanvasPage1");
             const canvas2 = document.getElementById("myCanvasPage2");
             const canvas3 = document.getElementById("myCanvasPage3");
+            const canvas4 = document.getElementById("myCanvasPage4");
+            const canvas5 = document.getElementById("myCanvasPage5");
+            const canvas6 = document.getElementById("myCanvasPage6");
+
+            // الصفحات من 7 إلى 12
+            const canvas7 = document.getElementById("myCanvasPage7");
+            const canvas8 = document.getElementById("myCanvasPage8");
+            const canvas9 = document.getElementById("myCanvasPage9");
+            const canvas10 = document.getElementById("myCanvasPage10");
+            const canvas11 = document.getElementById("myCanvasPage11");
+            const canvas12 = document.getElementById("myCanvasPage12");
+
+            // مصفوفة الـ canvas التي سيتم إضافتها
+            const canvasArray = [];
 
             // تنفيذ الدوال الخاصة بكل صفحة
             console.log("⏳ بدء إنشاء الصفحة 1...");
             await ContractPage1(canvas1);
             console.log("✅ صفحة 1 تم إنشاؤها بنجاح.");
+            canvasArray.push(canvas1);  // إضافة الصفحة 1 إذا تم إنشاؤها بنجاح
 
             console.log("⏳ بدء إنشاء الصفحة 2...");
             await ContractPage2(canvas2);
             console.log("✅ صفحة 2 تم إنشاؤها بنجاح.");
+            canvasArray.push(canvas2);  // إضافة الصفحة 2 إذا تم إنشاؤها بنجاح
 
             console.log("⏳ بدء إنشاء الصفحة 3...");
             await ContractPage3(canvas3);
             console.log("✅ صفحة 3 تم إنشاؤها بنجاح.");
+            canvasArray.push(canvas3);  // إضافة الصفحة 3 إذا تم إنشاؤها بنجاح
 
-            // جمع جميع الـ canvas في مصفوفة
-            const canvasArray = [canvas1, canvas2, canvas3];
+            console.log("⏳ بدء إنشاء الصفحة 4...");
+            await ContractPage4(canvas4);
+            console.log("✅ صفحة 4 تم إنشاؤها بنجاح.");
+            canvasArray.push(canvas4);  // إضافة الصفحة 4 إذا تم إنشاؤها بنجاح
+
+            console.log("⏳ بدء إنشاء الصفحة 5...");
+            await ContractPage5(canvas5);
+            console.log("✅ صفحة 5 تم إنشاؤها بنجاح.");
+            canvasArray.push(canvas5);  // إضافة الصفحة 5 إذا تم إنشاؤها بنجاح
+
+            console.log("⏳ بدء إنشاء الصفحة 6...");
+            if(imgCheckUpArray.length>4){
+                await ContractPage6(canvas6);
+                console.log("✅ صفحة 6 تم إنشاؤها بنجاح.");
+                canvasArray.push(canvas6);  // إضافة الصفحة 6 إذا تم إنشاؤها بنجاح
+            }
+            else{
+               console.log("✅ صفحة 6 لم يتم إنشاء لعدم وجود مزيد من الصور.");
+            }
+            
+
+            // الصفحات من 7 إلى 12
+            await createPageAndAddToCanvasArray(canvas7,7,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage7)", canvasArray);
+            await createPageAndAddToCanvasArray(canvas8,8,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage8)", canvasArray);
+            await createPageAndAddToCanvasArray(canvas9,9,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage9)", canvasArray);
+            await createPageAndAddToCanvasArray(canvas10,10,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage10)", canvasArray);
+            await createPageAndAddToCanvasArray(canvas11,11,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage11)", canvasArray);
+            await createPageAndAddToCanvasArray(canvas12,12,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage12)", canvasArray);
 
             // إنشاء الـ PDF من الصفحات
             console.log("⏳ بدء إنشاء ملف PDF...");
@@ -6979,10 +7312,7 @@
             if (!isNaN(parsedDate) && parsedDate != null && parsedDate != "") {
                 var dateFormat = parsedDate.getFullYear() + '/' +
                     (parsedDate.getMonth() + 1).toString().padStart(2, '0') + '/' +
-                    parsedDate.getDate().toString().padStart(2, '0') + ' ' +
-                    parsedDate.getHours().toString().padStart(2, '0') + ':' +
-                    parsedDate.getMinutes().toString().padStart(2, '0') + ':' +
-                    parsedDate.getSeconds().toString().padStart(2, '0');
+                    parsedDate.getDate().toString().padStart(2, '0') ;
                 return dateFormat;
             }
             return "";

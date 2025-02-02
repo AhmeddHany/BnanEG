@@ -1,12 +1,7 @@
 
-
-
-
-
-
 // رسم العقد على الـ Canvas
 const DrawContractPage2 = async (canvas, data) => {
-console.log("Start DrawContract");
+console.log("بدء رسم الصفحة التانية");
 const ctx = canvas.getContext("2d");
 
 // ضبط أبعاد الـ canvas
@@ -45,7 +40,7 @@ const fixedConfig = {
     { key: "DRIVER_VEHICLE_TYPE_EN", x: canvas.width - 1270, y: 1314 , align: "right"},
     { key: "DRIVER_LICENSE_EXPIRY", x: canvas.width - 1835, y: 1290 , align: "right"},
     { key: "DRIVER_POSITION_AR", x: canvas.width - 555, y: 1377, fontSize: 40 , align: "right"},
-    { key: "DRIVER_POSITION_EN", x: canvas.width - 555, y: 1415 },
+    { key: "DRIVER_POSITION_EN", x: canvas.width - 555, y: 1415 ,align: "right"},
     { key: "DRIVER_WORKPLACE_AR", x: canvas.width - 1175, y: 1377, fontSize: 40 , align: "right"},
     { key: "DRIVER_WORKPLACE_EN", x: canvas.width - 1175, y: 1415 , align: "right" },
     { key: "DRIVER_EMAIL", x: canvas.width - 1730, y: 1395 , align: "right"},
@@ -104,8 +99,10 @@ const fixedConfig = {
       textColor: "#000000",
       textAlign: "right",
   },
-};
-
+    };
+// تحميل الخطوط قبل استخدامها
+await document.fonts.ready;
+console.log("✅ الخطوط جاهزة للاستخدام");
 //await document.fonts.load(`${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`);
 
 // رسم النصوص

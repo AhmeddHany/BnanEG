@@ -33,6 +33,28 @@ const loadImage = (src) => {
         img.src = src;
     });
 };
+const convertBase64ToImage = (base64String) => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img); // عندما يتم تحميل الصورة بنجاح
+        img.onerror = (error) => reject(error); // في حالة حدوث خطأ أثناء تحميل الصورة
+        img.src = base64String; // تعيين Base64 للصورة
+    });
+};
+
+const convertBlobToImage = async (blobUrl) => {
+    return new Promise((resolve, reject) => {
+        fetch(blobUrl)
+            .then((response) => response.blob()) // تحويل الـ Blob
+            .then((blob) => {
+                const img = new Image();
+                img.onload = () => resolve(img); // عندما يتم تحميل الصورة بنجاح
+                img.onerror = (error) => reject(error); // في حالة حدوث خطأ أثناء تحميل الصورة
+                img.src = URL.createObjectURL(blob); // تحويل الـ Blob إلى URL يمكن تحميله
+            })
+            .catch((error) => reject(error)); // في حال حدوث أي خطأ أثناء جلب الـ Blob
+    });
+};
 // تحويل الـ Canvas إلى PDF
 const createPdf = async (PdfNo, canvas, InputPdf, InputHaveNo) => {
     const doc = new jsPDF("p", "pt", "a4", true);
@@ -168,8 +190,6 @@ const arrayBufferToBase64 = (arrayBuffer) => {
      });
      return btoa(binaryString);
 };
-
-
 // دالة لدمج كل الصفحات وتحويلها إلى PDF
 const generateContractPdf = async (canvasArray, InputPdf) => {
     const imageBlobs = [];

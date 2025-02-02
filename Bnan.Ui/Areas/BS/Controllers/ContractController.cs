@@ -170,25 +170,25 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
 
             var basicContractNo = GenerateContractNumber(lessorCode, branch.CrCasBranchInformationCode, sectorCodeForRenter);
-            ////Contract
-            //if (string.IsNullOrEmpty(SavePdfContract))
-            //{
-            //    _toastNotification.AddErrorToastMessage("فشلت العملية لعدم استقبال ملف العقد، يجب ان تكون الصورة الواحدة لا تزيد 500 كيلو بايت", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-            //    return RedirectToAction("Index", "Home");
-            //}
-            //SavePdfContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfContract);
-            //if (string.IsNullOrEmpty(SavePdfContract))
-            //{
-            //    _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ العقد", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-            //    return RedirectToAction("Index", "Home");
-            //}
-            //var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, branch.CrCasBranchInformationCode, basicContractNo, "ar", "Contract");
-            
+            //Contract
+            if (string.IsNullOrEmpty(SavePdfContract))
+            {
+                _toastNotification.AddErrorToastMessage("فشلت العملية لعدم استقبال ملف العقد، يجب ان تكون الصورة الواحدة لا تزيد 500 كيلو بايت", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Home");
+            }
+            SavePdfContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfContract);
+            if (string.IsNullOrEmpty(SavePdfContract))
+            {
+                _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ العقد", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Home");
+            }
+            var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, branch.CrCasBranchInformationCode, basicContractNo, "Contract");
+
             contractInfo.SourceCode = "10";//Static Data
-            var basicContract = await AddRenterContractBasicAsync(lessorCode, branch, basicContractNo, contractInfo, userLogin, /*pdfContract*/"", sectorCodeForRenter);
+            var basicContract = await AddRenterContractBasicAsync(lessorCode, branch, basicContractNo, contractInfo, userLogin, pdfContract , sectorCodeForRenter);
             if (basicContract == null)
             {
-                //await RemovePdfs(new[] { pdfContract });
+                await RemovePdfs(new[] { pdfContract });
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
@@ -201,7 +201,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
                 if (string.IsNullOrEmpty(SavePdfReceipt))
                 {
-                    //await RemovePdfs(new[] { pdfContract });
+                    await RemovePdfs(new[] { pdfContract });
                     _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ السند", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return RedirectToAction("Index", "Home");
                 }
@@ -229,10 +229,10 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             var checks = await PerformAdditionalChecksAsync(basicContract, lessorCode, contractInfo, ChoicesList, AdditionalsList, CheckupDetails);
 
-            var pdfDictionaryPaths = GetPdfDictionaryWithPath(/*pdfContract*/"", pdfInvoicePath, pdfReceiptPath, amountPaid);
+            var pdfDictionaryPaths = GetPdfDictionaryWithPath(pdfContract, pdfInvoicePath, pdfReceiptPath, amountPaid);
 
-            //bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
-            if (/*!checkPdf ||*/ !checks || !checkAccountInvoice)
+            bool checkPdf = CheckPdfs(pdfDictionaryPaths.Keys.ToArray());
+            if (!checkPdf || !checks || !checkAccountInvoice)
             {
                 await RemovePdfs(pdfDictionaryPaths.Keys.ToArray());
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -242,7 +242,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             if (await _unitOfWork.CompleteAsync() > 0)
             {
                 if (StaticContractCardImg != null) await WhatsAppServicesExtension.SendMediaAsync(userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ", lessorCode, StaticContractCardImg, "CreateContractCard.png");
-                var pdfDictionaryBase64 = GetPdfDictionaryBase64(/*SavePdfContract*/"", SavePdfInvoice, SavePdfReceipt, amountPaid);
+                var pdfDictionaryBase64 = GetPdfDictionaryBase64(SavePdfContract, SavePdfInvoice, SavePdfReceipt, amountPaid);
                 await SendPdfsToWhatsAppAsync(pdfDictionaryBase64, lessorCode,contractInfo.AccountReceiptNo,contractInfo.InitialInvoiceNo, basicContract.CrCasRenterContractBasicNo,
                                               userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, contractInfo.RenterInfo.CrMasRenterInformationArName, contractInfo.RenterInfo.CrMasRenterInformationEnName);
                 _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -991,38 +991,34 @@ namespace Bnan.Ui.Areas.BS.Controllers
             carVM.RegisterationEn = registration?.CrMasSupCarRegistrationEnName;
 
             // استخراج التواريخ من الصيانة
-            carVM.ChangeOilDate = GetMaintenanceDate(maintenanceDocs, "13", "131");
-            carVM.EndDrivinglicence = GetMaintenanceDate(maintenanceDocs, "12", "120");
-            carVM.EndPeriodicInspection = GetMaintenanceDate(maintenanceDocs, "12", "123");
-            carVM.TiresDate = GetMaintenanceDate(maintenanceDocs, "13", "130");
-            carVM.PeriodicMaintenanceDate = GetMaintenanceDate(maintenanceDocs, "13", "132");
-            carVM.FrontBrakeDate = GetMaintenanceDate(maintenanceDocs, "13", "133");
-            carVM.RearBrakeDate = GetMaintenanceDate(maintenanceDocs, "13", "134");
+            carVM.ChangeOilDate = GetMaintenanceRecord(maintenanceDocs, "13", "131").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture);
+            carVM.EndDrivinglicence = GetMaintenanceRecord(maintenanceDocs, "12", "120").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.EndPeriodicInspection = GetMaintenanceRecord(maintenanceDocs, "12", "123").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.TiresDate = GetMaintenanceRecord(maintenanceDocs, "13", "130").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.PeriodicMaintenanceDate = GetMaintenanceRecord(maintenanceDocs, "13", "132").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.FrontBrakeDate = GetMaintenanceRecord(maintenanceDocs, "13", "133").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.RearBrakeDate = GetMaintenanceRecord(maintenanceDocs, "13", "134").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.ChangeOilKm = GetMaintenanceRecord(maintenanceDocs, "13", "131").CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture);
+            carVM.TiresKm = GetMaintenanceRecord(maintenanceDocs, "13", "130").CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture);
+            carVM.PeriodicMaintenanceKm = GetMaintenanceRecord(maintenanceDocs, "13", "132").CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture);
+            carVM.FrontBrakeKm = GetMaintenanceRecord(maintenanceDocs, "13", "133").CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture);
+            carVM.RearBrakeKm = GetMaintenanceRecord(maintenanceDocs, "13", "134").CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture);
 
             // استخراج بيانات الوثائق
-            carVM.PeriodicInspectionNo = GetMaintenanceNumber(maintenanceDocs, "12", "123");
-            carVM.RunningCardNo = GetMaintenanceNumber(maintenanceDocs, "12", "122");
-            carVM.RunningCardEndDate = GetMaintenanceDate(maintenanceDocs, "12", "122");
-            carVM.InsurancePolicyNo = GetMaintenanceNumber(maintenanceDocs, "12", "121");
-            carVM.InsurancePolicyEndDate = GetMaintenanceDate(maintenanceDocs, "12", "121");
+            carVM.PeriodicInspectionNo = GetMaintenanceRecord(maintenanceDocs, "12", "123").CrCasCarDocumentsMaintenanceNo;
+            carVM.RunningCardNo = GetMaintenanceRecord(maintenanceDocs, "12", "122").CrCasCarDocumentsMaintenanceNo;
+            carVM.RunningCardEndDate = GetMaintenanceRecord(maintenanceDocs, "12", "122").CrCasCarDocumentsMaintenanceNo;
+            carVM.InsurancePolicyNo = GetMaintenanceRecord(maintenanceDocs, "12", "121").CrCasCarDocumentsMaintenanceNo;
+            carVM.InsurancePolicyEndDate = GetMaintenanceRecord(maintenanceDocs, "12", "121").CrCasCarDocumentsMaintenanceNo;
 
             return Json(carVM);
         }
 
         // دالة مساعدة لاستخراج التواريخ
-        private string GetMaintenanceDate(List<CrCasCarDocumentsMaintenance> docs, string classification, string procedure)
+        private CrCasCarDocumentsMaintenance GetMaintenanceRecord(List<CrCasCarDocumentsMaintenance> docs, string classification, string procedure)
         {
             return docs.FirstOrDefault(x => x.CrCasCarDocumentsMaintenanceProceduresClassification == classification &&
-                                            x.CrCasCarDocumentsMaintenanceProcedures == procedure)?
-                       .CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
-        }
-
-        // دالة مساعدة لاستخراج الأرقام
-        private string GetMaintenanceNumber(List<CrCasCarDocumentsMaintenance> docs, string classification, string procedure)
-        {
-            return docs.FirstOrDefault(x => x.CrCasCarDocumentsMaintenanceProceduresClassification == classification &&
-                                            x.CrCasCarDocumentsMaintenanceProcedures == procedure)?
-                       .CrCasCarDocumentsMaintenanceNo;
+                                            x.CrCasCarDocumentsMaintenanceProcedures == procedure);
         }
         [HttpGet]
         public async Task<IActionResult> GetAdvantagesValue(string priceNumber)
