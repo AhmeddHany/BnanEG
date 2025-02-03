@@ -38,7 +38,7 @@ const DrawContractPageConditions = async (canvas, data, No) => {
         };
         await document.fonts.ready;
         console.log("✅ الخطوط جاهزة للاستخدام");
-        //await document.fonts.load(`${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`);
+        await document.fonts.load(`${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`);
 
         ctx.font = `${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`;
         ctx.fillStyle = fixedConfig.textStyle.textColor;

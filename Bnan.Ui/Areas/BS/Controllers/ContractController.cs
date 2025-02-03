@@ -232,7 +232,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var pdfDictionaryPaths = GetPdfDictionaryWithPath(pdfContract, pdfInvoicePath, pdfReceiptPath, amountPaid);
 
             bool checkPdf = CheckPdfs(pdfDictionaryPaths.Keys.ToArray());
-            if (!checkPdf || !checks || !checkAccountInvoice)
+            if (/*!checkPdf ||*/ !checks || !checkAccountInvoice)
             {
                 await RemovePdfs(pdfDictionaryPaths.Keys.ToArray());
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -248,10 +248,10 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
-            //else
-            //{
-            //    await RemovePdfs(pdfDictionary.Keys.ToArray());
-            //}
+            else
+            {
+                await RemovePdfs(pdfDictionaryPaths.Keys.ToArray());
+            }
 
             _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             return RedirectToAction("Index", "Home");
@@ -959,23 +959,17 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var carVM = _mapper.Map<CarInfomationVM>(carInfo);
 
             // الحصول على جميع البيانات المطلوبة دفعة واحدة
-            var fuelTask = _unitOfWork.CrMasSupCarFuel.FindAsync(x => x.CrMasSupCarFuelCode == carInfo.CrCasCarInformationFuel);
-            var cvtTask = _unitOfWork.CrMasSupCarCvt.FindAsync(x => x.CrMasSupCarCvtCode == carInfo.CrCasCarInformationCvt);
-            var oilTask = _unitOfWork.CrMasSupCarOil.FindAsync(x => x.CrMasSupCarOilCode == carInfo.CrCasCarInformationOil);
-            var registrationTask = _unitOfWork.CrMasSupCarRegistration.FindAsync(x => x.CrMasSupCarRegistrationCode == carInfo.CrCasCarInformationRegistration);
+            var fuel =await _unitOfWork.CrMasSupCarFuel.FindAsync(x => x.CrMasSupCarFuelCode == carInfo.CrCasCarInformationFuel);
+            var cvt = await _unitOfWork.CrMasSupCarCvt.FindAsync(x => x.CrMasSupCarCvtCode == carInfo.CrCasCarInformationCvt);
+            var oil = await _unitOfWork.CrMasSupCarOil.FindAsync(x => x.CrMasSupCarOilCode == carInfo.CrCasCarInformationOil);
+            var registration =await _unitOfWork.CrMasSupCarRegistration.FindAsync(x => x.CrMasSupCarRegistrationCode == carInfo.CrCasCarInformationRegistration);
 
             // استعلامات الصيانة دفعة واحدة
-            var maintenanceTasks = _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsync(x =>
+            var maintenances = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsync(x =>
                 x.CrCasCarDocumentsMaintenanceSerailNo == serialNumber &&
                 (x.CrCasCarDocumentsMaintenanceProceduresClassification == "12" || x.CrCasCarDocumentsMaintenanceProceduresClassification == "13"));
 
-            await Task.WhenAll(fuelTask, cvtTask, oilTask, registrationTask, maintenanceTasks);
-
-            var fuel = fuelTask.Result;
-            var cvt = cvtTask.Result;
-            var oil = oilTask.Result;
-            var registration = registrationTask.Result;
-            var maintenanceDocs = maintenanceTasks.Result.ToList();
+            var maintenanceDocs = maintenances.ToList();
 
             // تعبئة البيانات
             carVM.FuelAr = fuel?.CrMasSupCarFuelArName;
@@ -991,7 +985,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             carVM.RegisterationEn = registration?.CrMasSupCarRegistrationEnName;
 
             // استخراج التواريخ من الصيانة
-            carVM.ChangeOilDate = GetMaintenanceRecord(maintenanceDocs, "13", "131").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture);
+            carVM.ChangeOilDate = GetMaintenanceRecord(maintenanceDocs.ToList(), "13", "131").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture);
             carVM.EndDrivinglicence = GetMaintenanceRecord(maintenanceDocs, "12", "120").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
             carVM.EndPeriodicInspection = GetMaintenanceRecord(maintenanceDocs, "12", "123").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
             carVM.TiresDate = GetMaintenanceRecord(maintenanceDocs, "13", "130").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
@@ -1007,9 +1001,9 @@ namespace Bnan.Ui.Areas.BS.Controllers
             // استخراج بيانات الوثائق
             carVM.PeriodicInspectionNo = GetMaintenanceRecord(maintenanceDocs, "12", "123").CrCasCarDocumentsMaintenanceNo;
             carVM.RunningCardNo = GetMaintenanceRecord(maintenanceDocs, "12", "122").CrCasCarDocumentsMaintenanceNo;
-            carVM.RunningCardEndDate = GetMaintenanceRecord(maintenanceDocs, "12", "122").CrCasCarDocumentsMaintenanceNo;
+            carVM.RunningCardEndDate = GetMaintenanceRecord(maintenanceDocs, "12", "122").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
             carVM.InsurancePolicyNo = GetMaintenanceRecord(maintenanceDocs, "12", "121").CrCasCarDocumentsMaintenanceNo;
-            carVM.InsurancePolicyEndDate = GetMaintenanceRecord(maintenanceDocs, "12", "121").CrCasCarDocumentsMaintenanceNo;
+            carVM.InsurancePolicyEndDate = GetMaintenanceRecord(maintenanceDocs, "12", "121").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
 
             return Json(carVM);
         }

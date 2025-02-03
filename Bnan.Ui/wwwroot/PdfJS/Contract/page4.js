@@ -41,7 +41,7 @@ const DrawContractPage4 = async (canvas, data) => {
             },
             tableStyle: {
                 fontWeight: "normal",
-                fontSize: 40,
+                fontSize: 35,
                 fontFamily: "Sakkal Majalla Regular",
                 textColor: "#000000",
                 textAlign: "center",
@@ -87,8 +87,8 @@ const DrawContractPage4 = async (canvas, data) => {
         // رسم الجدول
         console.log("📊 رسم الجدول");
 
-        let startY = 612;
-        let increment = 104;
+        let startY = 625;
+        let increment = 104; 
 
         const drawTextItems = (ctx, items, baseX, startY, increment) => {
             if (items && items.length > 0) {
@@ -125,7 +125,7 @@ const DrawContractPage4 = async (canvas, data) => {
 
         console.log("📝 رسم الملاحظات");
 
-        let startY_Notes = 635;
+        let startY_Notes = 640;
         let increment_Notes = 104;
 
         const drawItems = (items, xPosition, startY, align) => {

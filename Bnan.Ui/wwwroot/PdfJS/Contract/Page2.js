@@ -103,7 +103,7 @@ const fixedConfig = {
 // تحميل الخطوط قبل استخدامها
 await document.fonts.ready;
 console.log("✅ الخطوط جاهزة للاستخدام");
-//await document.fonts.load(`${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`);
+await document.fonts.load(`${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`);
 
 // رسم النصوص
 fixedConfig.texts.forEach(({ key, x, y, align , color , fontSize , fontWeight}) => {

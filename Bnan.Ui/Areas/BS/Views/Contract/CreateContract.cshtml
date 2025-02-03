@@ -27,7 +27,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <!--Pdf-->
-<link rel="stylesheet" href="~/PdfJS/style/style/style.css">
+<link rel="stylesheet" href="@Url.Content("~/PdfJS/style/style/style.css")">
 <!--Pdf-->
 @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
 {
@@ -2214,7 +2214,9 @@
         </div>
     </section>
 </div>
-<canvas id="myCanvas" hidden></canvas>
+<canvas id="myCanvasReceipt" hidden></canvas>
+<canvas id="myCanvasInvoice" hidden></canvas>
+<canvas id="myCanvasCard" hidden></canvas>
 <canvas id="myCanvasPage1" hidden></canvas>
 <canvas id="myCanvasPage2" hidden></canvas>
 <canvas id="myCanvasPage3" hidden></canvas>
@@ -5094,7 +5096,7 @@
                 });
             });
         }
-        function GetCarInfoForContract(serialNumber) {
+       function GetCarInfoForContract(serialNumber) {
             return new Promise((resolve, reject) => {
                 $.ajax({
                     url: "/BS/Contract/GetCarInfoForContract",
@@ -5861,7 +5863,7 @@
         const CreateCardContract = async () => {
              try {
                const contractNo ="@ViewBag.ContractNo";
-               const canvas = document.getElementById("myCanvas");
+               const canvas = document.getElementById("myCanvasCard");
                var dates = getDates();
                const dynamicData = {
                   CARD_TITLE_AR: "عقد إيجار سيارة",
@@ -5901,38 +5903,19 @@
         };
         function getDates() {
                // تحديد خيارات التنسيق
-               var options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+               var options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',hour12: false  };
+               var daysNo = parseInt(document.getElementById('dayNo').value);
+               var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
+               var startDate = new Date(dateTimeNow);
+               var endDate = new Date(startDate);
+               endDate.setDate(endDate.getDate() + daysNo);
 
-               // تنسيق التاريخ الميلادي باستخدام البيانات من الـ Model (تأكد من مرور التاريخ من الـ Razor بشكل صحيح)
-               var formattedStartDate = "@Model.ExtensionContract?.CrCasRenterContractBasicExpectedStartDate?.ToString("yyyy/MM/dd HH:mm", CultureInfo.InvariantCulture)";
-               var startDate = new Date(formattedStartDate);  // تحويل النص إلى كائن Date
-
-               // التحقق إذا كانت القيمة صالحة
-               if (isNaN(startDate)) {
-                 console.error('تاريخ البدء غير صالح');
-                 startDate = new Date();  // تعيين تاريخ افتراضي في حال حدوث خطأ
-               }
-
-               // تحويل التاريخ الهجري باستخدام دالة formatHijriDate
-                const startHijriDate = formatHijriDate(startDate,"ar");
-
-               // الحصول على تاريخ النهاية من الـ DOM (افترض أن #EndDate هو عنصر يحتوي على التاريخ)
-               var endDateInput = $("#EndDate").text();
-               var endDate = new Date(endDateInput);  // تحويل النص إلى كائن Date
-
-               // التحقق إذا كانت القيمة صالحة
-               if (isNaN(endDate)) {
-                 console.error('تاريخ الانتهاء غير صالح');
-                 endDate = new Date();  // تعيين تاريخ افتراضي في حال حدوث خطأ
-               }
-
-               // تنسيق التاريخ الميلادي لآخر تاريخ
+               var formattedStartDate = startDate.toLocaleString('en-CA', options).replace(',', '').replace(/-/g, '/');
+               const startHijriDate = formatHijriDate(startDate,"ar");
+              
                var formattedEndDate = endDate.toLocaleDateString('ja-JP', options);
-
-               // تحويل التاريخ الهجري باستخدام دالة formatHijriDate
                const endHijriDate = formatHijriDate(endDate,"ar");
 
-               // إرجاع التواريخ بالميلادي والهجري
                return {
                  start: {
                    startMiladi: formattedStartDate,
@@ -5949,7 +5932,7 @@
     <script>
         async function CreateReceiptPdf() {
                 const accountReceiptNo = "@ViewBag.AccountReceiptNo";
-                const canvas = document.getElementById("myCanvas");
+                const canvas = document.getElementById("myCanvasReceipt");
                 const dates = getFormattedDatesMiliadiAndHijri();
                 var namesOfPaymentMethod = getSelectedOptionDataPaymentMethod();
                 var getAfterAndBeforeDecimalAmountPayed =await getFormattedAmount();
@@ -6037,7 +6020,7 @@
     <script>
         async function CreateInvoicePdf() {
             const accountInvoiceNo = "@ViewBag.InvoiceAccount";
-            const canvas = document.getElementById("myCanvas");
+            const canvas = document.getElementById("myCanvasInvoice");
             const dates = getFormattedDatesMiliadiAndHijri();
             var rentDailyValue= GetRentDailyValue();
             var delegationValue= GetDelegationValue();
@@ -6160,19 +6143,19 @@
                     return {
                         arabic: item.arabic,
                         english: item.english,
-                        value: item.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // قيمة الوحدة
+                        value: item.value, // تخزين القيمة الأصلية كرقم
                         number: item.number, // العدد
-                        amount: totalBeforeDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // إجمالي السعر قبل الخصم
-                        discount: discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // قيمة الخصم
-                        afterDiscount: afterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // القيمة بعد الخصم
-                        vat: vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // الضريبة
-                        total: totalAfterVAT.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // الإجمالي بعد الضريبة
+                        amount: totalBeforeDiscount, // إجمالي السعر قبل الخصم
+                        discount: discountAmount, // قيمة الخصم
+                        afterDiscount: afterDiscount, // القيمة بعد الخصم
+                        vat: vatAmount, // الضريبة
+                        total: totalAfterVAT, // الإجمالي بعد الضريبة
                     };
                 });
 
             // حساب المجموع لكل عمود
             const sumColumn = (key) =>
-                processedItems.reduce((sum, item) => sum + parseFloat(item[key]), 0).toFixed(2);
+                processedItems.reduce((sum, item) => sum + item[key], 0).toFixed(2);
 
             return {
                 Serviceitems: [
@@ -6183,32 +6166,32 @@
                     }))
                 ],
                 Valueitems: [
-                    ...processedItems.map(item => ({ content: item.value })),
-                    { sum: sumColumn("value") }
+                    ...processedItems.map(item => ({ content: item.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("value").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
                 ],
                 Numberitems: [
                     ...processedItems.map(item => ({ content: item.number })),
                     { sum: "-" }
                 ],
                 Amountitems: [
-                    ...processedItems.map(item => ({ content: item.amount })),
-                    { sum: sumColumn("amount") }
+                    ...processedItems.map(item => ({ content: item.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("amount").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
                 ],
                 Discountitems: [
-                    ...processedItems.map(item => ({ content: item.discount })),
-                    { sum: sumColumn("discount") }
+                    ...processedItems.map(item => ({ content: item.discount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("discount").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
                 ],
                 AfterDiscountitems: [
-                    ...processedItems.map(item => ({ content: item.afterDiscount })),
-                    { sum: sumColumn("afterDiscount") }
+                    ...processedItems.map(item => ({ content: item.afterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("afterDiscount").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
                 ],
                 VATitems: [
-                    ...processedItems.map(item => ({ content: item.vat })),
-                    { sum: sumColumn("vat") }
+                    ...processedItems.map(item => ({ content: item.vat.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("vat").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
                 ],
                 Totalitems: [
-                    ...processedItems.map(item => ({ content: item.total })),
-                    { sum: sumColumn("total") }
+                    ...processedItems.map(item => ({ content: item.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("total").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
                 ],
             };
         }
@@ -6307,11 +6290,11 @@
                     var endDate = new Date(startDate);
                     endDate.setDate(endDate.getDate() + daysNo);
                     const miladiDate = new Date(dateTimeNow);
-                    var renterIsDriver = document.getElementById("RenterIsdriver").checked;
+                    var checkPrivateDriver = GetPrivateDriverCheck();
 
                     // تحديد حالة العقد بناءً على ما إذا كان المستأجر هو السائق أم لا
-                    var contractStatusAr = renterIsDriver ? "ساري / يومي" : "ساري / يومي (سائق خاص)";
-                    var contractStatusEn = renterIsDriver ? "Sari / Daily" : "Sari / Daily (Private Driver)";
+                    var contractStatusAr = !checkPrivateDriver ? "قائم / يومي" : "قائم / يومي (سائق خاص)";
+                    var contractStatusEn = !checkPrivateDriver ? "Valid / Daily" : "Valid / Daily (Private Driver)";
                     const dynamicData = {
                           NUMBER: "2490667684810001",
                           CONTRACT_NUMBER: "@ViewBag.ContractNo",
@@ -6319,15 +6302,15 @@
                           CONTRACT_DATE_EN: formatHijriDate(miladiDate,"en"),
                           CONTRACT_START_AR: formatHijriDate(startDate,"ar"),
                           CONTRACT_START_EN: formatHijriDate(startDate,"en"),
-                          CONTRACT_END_AR: formatHijriDate(startDate,"ar"),
-                          CONTRACT_END_EN: formatHijriDate(startDate,"en"),
+                          CONTRACT_END_AR: formatHijriDate(endDate,"ar"),
+                          CONTRACT_END_EN: formatHijriDate(endDate,"en"),
                           DAYSNUMBER: daysNo,
                           DATE_1: formatMiladiDate(startDate),
                           TIME_1: formatTime(startDate),
                           DATE_2: formatMiladiDate(startDate),
                           TIME_2: formatTime(startDate),
-                          DATE_3: formatMiladiDate(startDate),
-                          TIME_3: formatTime(startDate),
+                          DATE_3: formatMiladiDate(endDate),
+                          TIME_3: formatTime(endDate),
                           CONTRACT_STATUE_AR: contractStatusAr,
                           CONTRACT_STATUE_EN: contractStatusEn,
                           BRANCH_AR: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchInformationArName") || "",
@@ -6350,7 +6333,7 @@
                           OIL_TYPE_EN: CarInformationForContract.oilEn || "",
                           CHANGE_OIL_DATE: CarInformationForContract.changeOilDate 
                             ? CarInformationForContract.changeOilKm 
-                                ? `${CarInformationForContract.changeOilDate} (${CarInformationForContract.changeOilKm})` 
+                                ? `(${CarInformationForContract.changeOilKm}) ${CarInformationForContract.changeOilDate}` 
                                 : CarInformationForContract.changeOilDate
                             : "",
                           REGISTRATION_END_DATE: CarInformationForContract.endDrivinglicence || "",
@@ -6361,25 +6344,25 @@
                           INSURANCE_END: CarInformationForContract.insurancePolicyEndDate || "",
                           PERODIC_MAINTENANCE: CarInformationForContract.periodicMaintenanceDate 
                               ? CarInformationForContract.periodicMaintenanceKm 
-                                  ? `${CarInformationForContract.periodicMaintenanceDate} (${CarInformationForContract.periodicMaintenanceKm})` 
+                                  ? `(${CarInformationForContract.periodicMaintenanceKm}) ${CarInformationForContract.periodicMaintenanceDate} ` 
                                   : CarInformationForContract.periodicMaintenanceDate
                               : "",
                          
                           TIRE_MAINTENANCE: CarInformationForContract.tiresDate 
                               ? CarInformationForContract.tiresKm 
-                                  ? `${CarInformationForContract.tiresDate} (${CarInformationForContract.tiresKm})` 
+                                  ? `(${CarInformationForContract.tiresKm}) ${CarInformationForContract.tiresDate} ` 
                                   : CarInformationForContract.tiresDate
                               : "",
                          
                           FRONT_BREAK: CarInformationForContract.frontBrakeDate 
-                              ? CarInformationForContract.frontBrakeKm 
-                                  ? `${CarInformationForContract.frontBrakeDate} (${CarInformationForContract.frontBrakeKm})` 
+                              ? CarInformationForContract.frontBrakeKm
+                                  ? `(${CarInformationForContract.frontBrakeKm}) ${CarInformationForContract.frontBrakeDate}`
                                   : CarInformationForContract.frontBrakeDate
                               : "",
                          
                           REAR_BREAK: CarInformationForContract.rearBrakeDate 
                               ? CarInformationForContract.rearBrakeKm 
-                                  ? `${CarInformationForContract.rearBrakeDate} (${CarInformationForContract.rearBrakeKm})` 
+                                  ? `(${CarInformationForContract.rearBrakeKm}) ${CarInformationForContract.rearBrakeDate}` 
                                   : CarInformationForContract.rearBrakeDate
                               : "",
                           OWNER_COMPANY_AR: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationArLongName") || "",
@@ -6410,6 +6393,16 @@
                     console.error("خطأ في إنشاء الصفحة الاولي من العقد:", error);
               }
           };
+          function GetPrivateDriverCheck(){
+              var privateDriverRadio1 = document.getElementById("PrivateDriver");
+              var privateDriverID = $("#Private-Driver-selectt").val();
+              if (privateDriverRadio1.checked && privateDriverID != null) {
+                return true;
+              }
+              else{
+                return false;
+              }
+          }
           // Page2
           const ContractPage2 = async (canvas) => {
                 try {
@@ -7043,19 +7036,19 @@
             try {
                 // Show loader
                 $("#ContainerLoader").show();
-                // console.log("⏳ بدء إنشاء صورة البطاقة...");
-                // await CreateCardContract();
-                // console.log("✅ البطاقة تم إنشاؤها بنجاح.");
+                console.log("⏳ بدء إنشاء صورة البطاقة...");
+                await CreateCardContract();
+                console.log("✅ البطاقة تم إنشاؤها بنجاح.");
 
-                // console.log("⏳ بدء إنشاء الفاتورة...");
-                // await CreateInvoicePdf();
-                // console.log("✅ الفاتورة تم إنشاؤها بنجاح.");
+                console.log("⏳ بدء إنشاء الفاتورة...");
+                await CreateInvoicePdf();
+                console.log("✅ الفاتورة تم إنشاؤها بنجاح.");
 
-                // if (AmountPayed > 0) {
-                //     console.log("⏳ بدء إنشاء الإيصال...");
-                //     await CreateReceiptPdf();
-                //     console.log("✅ الإيصال تم إنشاؤه بنجاح.");
-                // }
+                if (AmountPayed > 0) {
+                    console.log("⏳ بدء إنشاء الإيصال...");
+                    await CreateReceiptPdf();
+                    console.log("✅ الإيصال تم إنشاؤه بنجاح.");
+                }
                 console.log("⏳ بدء إنشاء العقد...");
                 await CreateContractPdf();
                 console.log("✅ العقد تم إنشاؤه بنجاح.");

@@ -1381,70 +1381,70 @@
                 }
         }
         function generateInvoiceItems(itemsData) {
-            const processedItems = itemsData
-                .filter(item => item.value > 0 && item.number > 0) // تصفية القيم الصفرية
-                .map(item => {
-                    const totalBeforeDiscount = item.value * item.number; // إجمالي السعر قبل الخصم
-                    const discountAmount = (item.discount / 100) * totalBeforeDiscount; // قيمة الخصم
-                    const afterDiscount = totalBeforeDiscount - discountAmount; // القيمة بعد الخصم
-                    const vatAmount = (item.vat / 100) * afterDiscount; // الضريبة
-                    const totalAfterVAT = afterDiscount + vatAmount; // الإجمالي بعد الضريبة
+             const processedItems = itemsData
+                 .filter(item => item.value > 0 && item.number > 0) // تصفية القيم الصفرية
+                 .map(item => {
+                     const totalBeforeDiscount = item.value * item.number; // إجمالي السعر قبل الخصم
+                     const discountAmount = (item.discount / 100) * totalBeforeDiscount; // قيمة الخصم
+                     const afterDiscount = totalBeforeDiscount - discountAmount; // القيمة بعد الخصم
+                     const vatAmount = (item.vat / 100) * afterDiscount; // الضريبة
+                     const totalAfterVAT = afterDiscount + vatAmount; // الإجمالي بعد الضريبة
 
-                    return {
-                        arabic: item.arabic,
-                        english: item.english,
-                        value: item.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // قيمة الوحدة
-                        number: item.number, // العدد
-                        amount: totalBeforeDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // إجمالي السعر قبل الخصم
-                        discount: discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // قيمة الخصم
-                        afterDiscount: afterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // القيمة بعد الخصم
-                        vat: vatAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // الضريبة
-                        total: totalAfterVAT.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), // الإجمالي بعد الضريبة
-                    };
-                });
+                     return {
+                         arabic: item.arabic,
+                         english: item.english,
+                         value: item.value, // تخزين القيمة الأصلية كرقم
+                         number: item.number, // العدد
+                         amount: totalBeforeDiscount, // إجمالي السعر قبل الخصم
+                         discount: discountAmount, // قيمة الخصم
+                         afterDiscount: afterDiscount, // القيمة بعد الخصم
+                         vat: vatAmount, // الضريبة
+                         total: totalAfterVAT, // الإجمالي بعد الضريبة
+                     };
+                 });
 
-            // حساب المجموع لكل عمود
-            const sumColumn = (key) =>
-                processedItems.reduce((sum, item) => sum + parseFloat(item[key]), 0).toFixed(2);
+             // حساب المجموع لكل عمود
+             const sumColumn = (key) =>
+                 processedItems.reduce((sum, item) => sum + item[key], 0).toFixed(2);
 
-            return {
-                Serviceitems: [
-                    ...processedItems.map(item => ({
-                        arabic: item.arabic,
-                        english: item.english,
-                        textAlign: "center",
-                    }))
-                ],
-                Valueitems: [
-                    ...processedItems.map(item => ({ content: item.value })),
-                    { sum: sumColumn("value") }
-                ],
-                Numberitems: [
-                    ...processedItems.map(item => ({ content: item.number })),
-                    { sum: "-" }
-                ],
-                Amountitems: [
-                    ...processedItems.map(item => ({ content: item.amount })),
-                    { sum: sumColumn("amount") }
-                ],
-                Discountitems: [
-                    ...processedItems.map(item => ({ content: item.discount })),
-                    { sum: sumColumn("discount") }
-                ],
-                AfterDiscountitems: [
-                    ...processedItems.map(item => ({ content: item.afterDiscount })),
-                    { sum: sumColumn("afterDiscount") }
-                ],
-                VATitems: [
-                    ...processedItems.map(item => ({ content: item.vat })),
-                    { sum: sumColumn("vat") }
-                ],
-                Totalitems: [
-                    ...processedItems.map(item => ({ content: item.total })),
-                    { sum: sumColumn("total") }
-                ],
-            };
-        }
+             return {
+                 Serviceitems: [
+                     ...processedItems.map(item => ({
+                         arabic: item.arabic,
+                         english: item.english,
+                         textAlign: "center",
+                     }))
+                 ],
+                 Valueitems: [
+                     ...processedItems.map(item => ({ content: item.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                     { sum: sumColumn("value").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                 ],
+                 Numberitems: [
+                     ...processedItems.map(item => ({ content: item.number })),
+                     { sum: "-" }
+                 ],
+                 Amountitems: [
+                     ...processedItems.map(item => ({ content: item.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                     { sum: sumColumn("amount").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                 ],
+                 Discountitems: [
+                     ...processedItems.map(item => ({ content: item.discount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                     { sum: sumColumn("discount").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                 ],
+                 AfterDiscountitems: [
+                     ...processedItems.map(item => ({ content: item.afterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                     { sum: sumColumn("afterDiscount").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                 ],
+                 VATitems: [
+                     ...processedItems.map(item => ({ content: item.vat.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                     { sum: sumColumn("vat").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                 ],
+                 Totalitems: [
+                     ...processedItems.map(item => ({ content: item.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                     { sum: sumColumn("total").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                 ],
+             };
+         }
         function GetRentDailyValue(){
             return parseFloat('@Html.Raw(Model.ExtensionContract?.CrCasRenterContractBasicDailyRent)') ||0;
         }

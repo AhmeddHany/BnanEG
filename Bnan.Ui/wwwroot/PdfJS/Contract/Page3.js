@@ -36,7 +36,7 @@ const DrawContractPage3 = async (canvas, data) => {
                 { key: "Extra_hours_Value", x: canvas.width - 1335, y: 835, align: "right" },
                 { key: "full_Fuel_value", x: canvas.width - 1885, y: 835, align: "right" },
                 { key: "Discount_rate", x: canvas.width - 600, y: 940, align: "right" },
-                { key: "Value_added_ratio ", x: canvas.width - 1295, y: 940, align: "right" },
+                { key: "Value_added_ratio", x: canvas.width - 1295, y: 940, align: "right" },
                 { key: "Total_expected_contract", x: canvas.width - 1920, y: 940, align: "right" },
                 { key: "accident_Liability", x: canvas.width - 635, y: 1045, align: "right" },
                 { key: "theft_Liability", x: canvas.width - 1210, y: 1045, align: "right" },
@@ -80,8 +80,8 @@ const DrawContractPage3 = async (canvas, data) => {
         // تحميل الخطوط قبل استخدامها
         await document.fonts.ready;
         console.log("✅ الخطوط جاهزة للاستخدام");
-        //await document.fonts.load(`${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`);
-        //await document.fonts.load(`${fixedConfig.tableStyle.fontWeight} ${fixedConfig.tableStyle.fontSize}px ${fixedConfig.tableStyle.fontFamily}`);
+        await document.fonts.load(`${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`);
+        await document.fonts.load(`${fixedConfig.tableStyle.fontWeight} ${fixedConfig.tableStyle.fontSize}px ${fixedConfig.tableStyle.fontFamily}`);
 
         ctx.font = `${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`;
         ctx.fillStyle = fixedConfig.textStyle.textColor;

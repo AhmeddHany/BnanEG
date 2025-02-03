@@ -55,13 +55,13 @@ const convertBlobToImage = async (blobUrl) => {
             .catch((error) => reject(error)); // في حال حدوث أي خطأ أثناء جلب الـ Blob
     });
 };
-// تحويل الـ Canvas إلى PDF
+// تحويل الـ Canvas إلى PDF بحجم مضغوط
 const createPdf = async (PdfNo, canvas, InputPdf, InputHaveNo) => {
     const doc = new jsPDF("p", "pt", "a4", true);
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
 
-    // تحويل canvas إلى blob بشكل متزامن
+    // تحويل canvas إلى blob بجودة أقل لضغط الحجم
     const blob = await new Promise((resolve, reject) => {
         canvas.toBlob((blob) => {
             if (blob) {
@@ -69,7 +69,7 @@ const createPdf = async (PdfNo, canvas, InputPdf, InputHaveNo) => {
             } else {
                 reject("Error generating blob from canvas.");
             }
-        });
+        }, "image/jpeg", 0.2); // 🔹 تحويل إلى JPEG بجودة 0.3 لتقليل الحجم
     });
 
     // قراءة blob وتحويله إلى Data URL بشكل متزامن
@@ -80,12 +80,28 @@ const createPdf = async (PdfNo, canvas, InputPdf, InputHaveNo) => {
         reader.readAsDataURL(blob);
     });
 
-    // إضافة الصورة إلى الـ PDF
-    doc.addImage(imageDataUrl, "PNG", 0, 0, pageWidth, pageHeight, "", "FAST");
+    // ضبط أبعاد الصورة داخل الصفحة
+    const img = new Image();
+    img.src = imageDataUrl;
 
-    // إنشاء الـ PDF Blob و Base64
+    await new Promise((resolve) => (img.onload = resolve));
+
+    let imgWidth = img.width;
+    let imgHeight = img.height;
+    let scale = Math.min(pageWidth / imgWidth, pageHeight / imgHeight); // 🔹 تصغير الأبعاد بما يناسب الصفحة
+
+    imgWidth *= scale;
+    imgHeight *= scale;
+
+    const imgXPos = (pageWidth - imgWidth) / 2; // توسيط الصورة أفقيًا
+    const imgYPos = (pageHeight - imgHeight) / 2; // توسيط الصورة عموديًا
+
+    // إضافة الصورة إلى الـ PDF بعد الضغط
+    doc.addImage(imageDataUrl, "JPEG", imgXPos, imgYPos, imgWidth, imgHeight, "", "FAST");
+
+    // إنشاء PDF مضغوط
     const pdfBlob = doc.output("blob");
-    const pdfBase64 = doc.output("datauristring");
+    const pdfBase64 = doc.output("datauristring", { compress: true }); // 🔹 تفعيل الضغط
 
     // تخزين الـ PDF في المدخلات
     document.getElementById(InputPdf).value = pdfBase64;
@@ -93,8 +109,6 @@ const createPdf = async (PdfNo, canvas, InputPdf, InputHaveNo) => {
 
     console.log("pdfBase64", pdfBase64);
     console.log("PdfNo", PdfNo);
-
-    // يمكنك إضافة منطق لتحميل الـ PDF إذا كان مطلوبًا
 };
 // تحويل الـ Canvas إلى PDF
 const createMergedPdfs = async (PdfNo, canvas, InputPdf, InputHaveNo, exitingInvoicePdf) => {
@@ -103,7 +117,7 @@ const createMergedPdfs = async (PdfNo, canvas, InputPdf, InputHaveNo, exitingInv
     const pageHeight = doc.internal.pageSize.getHeight();
 
     try {
-        // تحويل canvas إلى blob بشكل متزامن
+        // 🔹 تحويل canvas إلى blob بجودة أقل لضغط الحجم
         const blob = await new Promise((resolve, reject) => {
             canvas.toBlob((blob) => {
                 if (blob) {
@@ -111,10 +125,10 @@ const createMergedPdfs = async (PdfNo, canvas, InputPdf, InputHaveNo, exitingInv
                 } else {
                     reject("Error generating blob from canvas.");
                 }
-            });
+            }, "image/jpeg", 0.2); // 🔹 تحويل إلى JPEG بجودة 0.3 لتقليل الحجم
         });
 
-        // قراءة blob وتحويله إلى Data URL بشكل متزامن
+        // 🔹 قراءة blob وتحويله إلى Data URL
         const imageDataUrl = await new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => resolve(reader.result);
@@ -122,30 +136,42 @@ const createMergedPdfs = async (PdfNo, canvas, InputPdf, InputHaveNo, exitingInv
             reader.readAsDataURL(blob);
         });
 
-        // إضافة الصورة إلى الـ PDF
-        doc.addImage(imageDataUrl, "PNG", 0, 0, pageWidth, pageHeight, "", "FAST");
+        // 🔹 ضبط أبعاد الصورة داخل الصفحة
+        const img = new Image();
+        img.src = imageDataUrl;
+        await new Promise((resolve) => (img.onload = resolve));
+
+        let imgWidth = img.width;
+        let imgHeight = img.height;
+        let scale = Math.min(pageWidth / imgWidth, pageHeight / imgHeight); // 🔹 تصغير الأبعاد بما يناسب الصفحة
+        imgWidth *= scale;
+        imgHeight *= scale;
+
+        const imgXPos = (pageWidth - imgWidth) / 2; // توسيط الصورة أفقيًا
+        const imgYPos = (pageHeight - imgHeight) / 2; // توسيط الصورة عموديًا
+
+        // 🔹 إضافة الصورة إلى الـ PDF بعد الضغط
+        doc.addImage(imageDataUrl, "JPEG", imgXPos, imgYPos, imgWidth, imgHeight, "", "FAST");
         const pdfBlob = doc.output("blob");
 
-        // التحقق مما إذا كان exitingInvoicePdf صالحًا قبل الدمج
+        // 🔹 التحقق مما إذا كان هناك ملف PDF موجود مسبقًا للدمج
         let mergedPdfBase64;
-
         if (exitingInvoicePdf && exitingInvoicePdf.length > 0) {
             try {
-                // دمج الـ PDF الجديد مع الـ exitingInvoicePdf
-                mergedPdfBase64 = await mergePdfs(exitingInvoicePdf, pdfBlob);
+                // 🔹 دمج الـ PDF الجديد مع الـ exitingInvoicePdf
+                mergedPdfBase64 = await mergePdfs(exitingInvoicePdf, pdfBlob, true); // تمرير `true` للضغط
             } catch (error) {
                 console.error('Error merging PDFs:', error);
-                // في حالة وجود خطأ، استخدام الـ PDF الجديد فقط
-                mergedPdfBase64 = doc.output('datauristring');
+                mergedPdfBase64 = doc.output('datauristring', { compress: true }); // 🔹 استخدام الضغط
             }
         } else {
-            // إذا لم يكن exitingInvoicePdf موجودًا، استخدام الـ PDF الجديد فقط
-            mergedPdfBase64 = doc.output('datauristring');
+            mergedPdfBase64 = doc.output('datauristring', { compress: true });
         }
 
-        // تحديث الحقل المخفي بـ Base64 الناتج
+        // 🔹 تحديث الحقل المخفي بـ Base64 الناتج
         document.getElementById(InputPdf).value = mergedPdfBase64;
         document.getElementById(InputHaveNo).value = PdfNo;
+
         console.log("mergedPdfBase64", mergedPdfBase64);
         console.log("PdfNo", PdfNo);
 
@@ -153,6 +179,7 @@ const createMergedPdfs = async (PdfNo, canvas, InputPdf, InputHaveNo, exitingInv
         console.error('Error creating or merging PDFs:', error);
     }
 };
+
 const mergePdfs = async (existingPdfPath, newPdfBlob) => {
      try {
          console.log(`Fetching existing PDF from ${existingPdfPath}`);
@@ -206,7 +233,6 @@ const generateContractPdf = async (canvasArray, InputPdf) => {
 const createPdfWithMultiPhoto = async (imageBlobs, InputPdf) => {
     const doc = new jsPDF('p', 'pt', 'a4', true);
 
-    // إضافة الصور إلى الـ PDF
     for (let imageIndex = 0; imageIndex < imageBlobs.length; imageIndex++) {
         if (imageIndex > 0) {
             doc.addPage();
@@ -216,26 +242,49 @@ const createPdfWithMultiPhoto = async (imageBlobs, InputPdf) => {
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
 
+        // ضغط الصورة مع تقليل الحجم أكثر
         const blob = imageBlobs[imageIndex];
-        const img = await createImageFromBlob(blob);
+        const imgCompressed = await compressImage(blob, 0.2);
+        const img = await createImageFromBlob(imgCompressed);
 
-        const imgWidth = pageWidth;
-        const imgHeight = (pageWidth * img.height) / img.width;
+        // 🔹 جعل الصورة تغطي الصفحة بالكامل دون فراغ زائد
+        let imgWidth = pageWidth; // تغيير إلى let بدلاً من const
+        let imgHeight = (imgWidth * img.height) / img.width; // تغيير إلى let بدلاً من const
 
-        // حساب الموضع لتوسيط الصورة عموديًا
-        const imgYPos = (pageHeight - imgHeight) / 2;
-        const imgXPos = 0;
-        doc.addImage(img, 'PNG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
+        // إذا كانت الصورة أطول من الصفحة، سنتأكد من أنها تغطي العرض الكامل
+        if (imgHeight < pageHeight) {
+            const scale = pageHeight / imgHeight;
+            imgHeight *= scale;
+            imgWidth *= scale;
+        }
+
+        const imgXPos = 0; // تأكد أن الصورة تبدأ من أقصى اليسار
+        const imgYPos = (pageHeight - imgHeight) / 2; // توسيط الصورة عموديًا
+
+        doc.addImage(img, 'JPEG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
     }
 
-    // تحويل الـ PDF إلى base64 بعد إضافة جميع الصور
-    const pdfBase64 = doc.output('datauristring');
-
-    // تعيين الـ base64 إلى الحقل المخفي
+    // 🔹 استخدام الضغط لتقليل حجم PDF أكثر
+    const pdfBase64 = doc.output('datauristring', { compress: true });
     document.getElementById(InputPdf).value = pdfBase64;
+};
+const compressImage = (blob, quality) => {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.src = URL.createObjectURL(blob);
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
 
-    // تحميل الـ PDF
-    doc.save('contract.pdf');  // سيتم تحميل الـ PDF بعد إضافة جميع الصور
+            // 🔹 تعيين الخلفية بيضاء لمنع أي حواف سوداء عند الضغط
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+            canvas.toBlob((compressedBlob) => resolve(compressedBlob), 'image/jpeg', quality);
+        };
+    });
 };
 // Helper function to create an image element from a blob
 const createImageFromBlob = (blob) => {
