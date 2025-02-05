@@ -267,6 +267,7 @@ const createPdfWithMultiPhoto = async (imageBlobs, InputPdf) => {
     // 🔹 استخدام الضغط لتقليل حجم PDF أكثر
     const pdfBase64 = doc.output('datauristring', { compress: true });
     document.getElementById(InputPdf).value = pdfBase64;
+    doc.save("Contracts.pdf")
 };
 const compressImage = (blob, quality) => {
     return new Promise((resolve) => {

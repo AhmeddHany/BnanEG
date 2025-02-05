@@ -32,7 +32,7 @@ const fixedConfig = {
             { key: "TIME_3", x: canvas.width - 1758, y: 728, align: "right" },
             //الفرع//
             { key: "BRANCH_AR", x: canvas.width - 420, y: 986, align: "right", color: "#0D5485", fontSize: 50, fontWeight: "600" },
-            { key: "BRANCH_EN", x: canvas.width - 420, y: 1045, align: "right", color: "#0D5485", fontSize: 45, fontWeight: "600" },
+            { key: "BRANCH_EN", x: canvas.width - 420, y: 1045, align: "right", color: "#0D5485", fontSize: 35, fontWeight: "600" },
             { key: "PHONE_1", x: canvas.width - 526, y: 1135, align: "right" },
             { key: "PHONE_2", x: canvas.width - 1130, y: 1135, align: "right" },
             { key: "EMAIL", x: canvas.width - 1730, y: 1135, align: "right" },
@@ -40,7 +40,7 @@ const fixedConfig = {
             { key: "ADDRESS_EN", x: canvas.width - 535, y: 1265, align: "right" },
             //السيارة//
             { key: "CAR_DETAILS_AR", x: canvas.width - 425, y: 1430, align: "right", color: "#0D5485", fontSize: 50, fontWeight: "600" },
-            { key: "CAR_DETAILS_EN", x: canvas.width - 425, y: 1490, align: "right", color: "#0D5485", fontSize: 45, fontWeight: "600" },
+            { key: "CAR_DETAILS_EN", x: canvas.width - 425, y: 1490, align: "right", color: "#0D5485", fontSize: 35, fontWeight: "600" },
             { key: "SERIAL_NUMBER", x: canvas.width - 630, y: 1575, align: "right" },
             { key: "REGISTRATION_AR", x: canvas.width - 1798, y: 1560, align: "right" },
             { key: "REGISTRATION_EN", x: canvas.width - 1798, y: 1600, align: "right" },
@@ -63,7 +63,7 @@ const fixedConfig = {
             { key: "REAR_BREAK", x: canvas.width - 1930, y: 2310, align: "right" },
             // المالك
             { key: "OWNER_COMPANY_AR", x: canvas.width - 425, y: 2460, align: "right", color: "#0D5485", fontSize: 50, fontWeight: "600" },
-            { key: "OWNER_COMPANY_EN", x: canvas.width - 425, y: 2520, align: "right", color: "#0D5485", fontSize: 45, fontWeight: "600" },
+            { key: "OWNER_COMPANY_EN", x: canvas.width - 425, y: 2520, align: "right", color: "#0D5485", fontSize: 35, fontWeight: "600" },
             { key: "ID_NUMBER", x: canvas.width - 515, y: 2610, align: "right" },
             { key: "ID_TYPE_AR", x: canvas.width - 1170, y: 2597, align: "right" },
             { key: "ID_TYPE_EN", x: canvas.width - 1170, y: 2634, align: "right" },

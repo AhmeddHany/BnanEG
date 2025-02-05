@@ -14,7 +14,6 @@ const DrawContractPage5 = async (canvas, data) => {
         ctx.drawImage(backgroundImg, 0, 0);
         console.log("✅ تم تحميل الخلفية بنجاح");
 
-        // إعدادات النصوص والصور
         const fixedConfig = {
             texts: [
                 { key: "NUMBER", x: canvas.width - 2360, y: 358, align: "left", color: "#0D5485", fontSize: 40, fontWeight: "700" },
@@ -36,31 +35,31 @@ const DrawContractPage5 = async (canvas, data) => {
                 // صورة الفحص الظاهري 
                 {
                     content: data.images.VisualImage1,
-                    x: canvas.width - 1205,
-                    y: 1587,
-                    width: 775,
-                    height: 395,
+                    x: canvas.width - 1250,
+                    y: 1550,
+                    width: 950,
+                    height: 550,
                 },
                 {
                     content: data.images.VisualImage2,
-                    x: canvas.width - 2125,
-                    y: 1587,
-                    width: 775,
-                    height: 395,
+                    x: canvas.width - 2250,
+                    y: 1550,
+                    width: 950,
+                    height: 550,
                 },
                 {
                     content: data.images.VisualImage3,
-                    x: canvas.width - 1205,
-                    y: 2307,
-                    width: 775,
-                    height: 395,
+                    x: canvas.width - 1250,
+                    y: 2170,
+                    width: 950,
+                    height: 550,
                 },
                 {
                     content: data.images.VisualImage4,
-                    x: canvas.width - 2125,
-                    y: 2307,
-                    width: 775,
-                    height: 395,
+                    x: canvas.width - 2250,
+                    y: 2170,
+                    width: 950,
+                    height: 550,
                 },
                 // 
                 { content: data.images.EMPLOYEE_SIGN, x: canvas.width - 705, y: 2810, width: 160, height: 50 },

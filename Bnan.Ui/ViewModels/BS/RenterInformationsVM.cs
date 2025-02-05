@@ -5,6 +5,7 @@
         // Personal
         public string? RenterID { get; set; }
         public string? RenterIDType { get; set; }
+        public int? IdCopyNumber { get; set; }
         public string? RenterIDTypeNameAr { get; set; }
         public string? RenterIDTypeNameEn { get; set; }
         public string? PersonalArName { get; set; }
@@ -21,6 +22,9 @@
         public string? PersonalEmail { get; set; }
         public string? MobileNumber { get; set; }
         public string? KeyCountry { get; set; }
+        public int? Day { get; set; }
+        public int? Month { get; set; }
+        public int? Year { get; set; }
         public DateTime? BirthDate { get; set; }
         public DateTime? ExpiryIdDate { get; set; }
         public decimal? Balance { get; set; }
