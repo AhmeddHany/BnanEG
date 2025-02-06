@@ -205,7 +205,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     // Invoice 
                     var PdfInovice = "";
                     SavePdfInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfInvoice);
-                    if (!string.IsNullOrEmpty(SavePdfInvoice)) PdfInovice = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "Invoice");
+                    if (!string.IsNullOrEmpty(SavePdfInvoice)) PdfInovice = await FileExtensions.SavePdf(_hostingEnvironment, SavePdfInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "ProformaInvoice");
                     var CheckAccountInvoice = await _contractExtension.AddAccountInvoice(NewContract.CrCasRenterContractBasicNo, NewContract.CrCasRenterContractBasicRenterId, lessorCode, Branch.CrCasBranchInformationCode,
                         NewContract.CrCasRenterContractBasicUserInsert, CheckAccountReceipt.CrCasAccountReceiptNo, PdfInovice);
 

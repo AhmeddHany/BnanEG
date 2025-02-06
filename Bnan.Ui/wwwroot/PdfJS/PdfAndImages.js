@@ -1,34 +1,33 @@
 ﻿
 const loadDynamicImages = async (images) => {
-    try {
-        const loadedImages = {};
-        for (let key in images) {
-            if (!images[key]) continue; // تخطي الصور الفارغة أو غير المعرفة
-            try {
-                loadedImages[key] = await loadImage(images[key]);
-            } catch (error) {
-                console.warn(`Skipping image: ${key}, failed to load.`);
-            }
+    const loadedImages = {};
+
+    for (let key in images) {
+        if (!images[key]) continue; // تخطي الصور الفارغة أو غير المعرفة
+        
+        const img = await loadImage(images[key]);
+        if (img) {
+            loadedImages[key] = img;
+        } else {
+            console.warn(`Skipping image: ${key}, failed to load.`);
         }
-        return loadedImages;
-    } catch (error) {
-        console.error("Error loading images", error);
-        return {}; // إرجاع كائن فارغ في حالة وجود خطأ
     }
+
+    return loadedImages;
 };
 
 const loadImage = (src) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (!src) {
             console.warn("Invalid image source:", src);
-            return reject(new Error("Invalid image source"));
+            return resolve(null); // إرجاع null بدلاً من رفض الـ Promise
         }
 
         const img = new Image();
         img.onload = () => resolve(img);
-        img.onerror = (error) => {
-            console.error(`Failed to load image: ${src}`, error);
-            reject(error);
+        img.onerror = () => {
+            console.warn(`Failed to load image: ${src}`);
+            resolve(null); // إرجاع null بدلاً من رفض الـ Promise
         };
         img.src = src;
     });

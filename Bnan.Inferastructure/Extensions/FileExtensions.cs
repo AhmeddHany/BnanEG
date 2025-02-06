@@ -82,9 +82,10 @@ namespace Bnan.Inferastructure.Extensions
             // Define the subfolder based on the document type
             string subfolder = Type switch
             {
-                "Receipt" => "Receipts", // Always use "Receipts" regardless of language
-                "Contract" => "Contracts",
-                "Invoice" => "Invoices",
+                "Receipt" => "Receipt", // Always use "Receipts" regardless of language
+                "BnanContract" => "Bnan Contract",
+                "TaxInvoice" => "Tax Invoice",
+                "ProformaInvoice" => "Proforma Invoice",
                 _ => throw new ArgumentException("Invalid document type", nameof(Type))
             };
 
