@@ -342,7 +342,7 @@ namespace Bnan.Inferastructure.Repository
                                                        string AdditionalDriver, string SerialNo, string PriceNo, string DaysNo, string UserFreeHour, string UserFreeKm,
                                                        string CurrentMeter, string OptionsTotal, string AdditionalTotal, string ContractValueAfterDiscount,
                                                        string DiscountValue, string ContractValueBeforeDiscount, string TaxValue, string TotalAmount, string UserInsert,
-                                                       string Authrization, string UserDiscount, string AmountPayed, string ContractPdf, string Reasons)
+                                                       string Authrization, string UserDiscount, string AmountPayed, string ContractPdf,string PolicyCode,string SourceCode, string Reasons)
         {
             DateTime now = DateTime.Now;
             CrCasRenterContractBasic renterContractBasic = new CrCasRenterContractBasic();
@@ -360,6 +360,8 @@ namespace Bnan.Inferastructure.Repository
             renterContractBasic.CrCasRenterContractBasicProcedures = "401";
             renterContractBasic.CrCasRenterContractBasicLessor = LessorCode;
             renterContractBasic.CrCasRenterContractBasicBranch = BranchCode;
+            renterContractBasic.CrCasRenterContractBasicPolicy =int.Parse(PolicyCode);
+            renterContractBasic.CrCasRenterContractBasicSource = SourceCode;
             renterContractBasic.CrCasRenterContractBasicIssuedDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
             renterContractBasic.CrCasRenterContractBasicExpectedStartDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
             renterContractBasic.CrCasRenterContractBasicExpectedRentalDays = int.Parse(DaysNo);

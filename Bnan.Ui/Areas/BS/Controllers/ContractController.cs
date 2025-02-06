@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace Bnan.Ui.Areas.BS.Controllers
@@ -84,15 +85,17 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var CallingKeysAll = await _unitOfWork.CrMasSysCallingKeys.FindAllAsNoTrackingAsync(l => l.CrMasSysCallingKeysStatus != Status.Deleted);
             var CallingKeys = CallingKeysAll.OrderByDescending(x => x.CrMasSysCallingKeysCount).ToList();
             var DrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterDrivingLicenseStatus != Status.Deleted && l.CrMasSupRenterDrivingLicenseCode != "1");
+            var Policies = await _unitOfWork.CrCasLessorPolicy.FindAllAsNoTrackingAsync(l => l.CrCasLessorPolicyStatus != Status.Deleted);
             // Transform data based on culture
             var nationalitiesArray = Nationailties.Select(c => new
             {
-                text = isArabic ? c.CrMasSupRenterNationalitiesArName : c.CrMasSupRenterNationalitiesEnName, // الاسم العربي أو الإنجليزي
+                textAr = c.CrMasSupRenterNationalitiesArName ,
+                textEn = c.CrMasSupRenterNationalitiesEnName, // الاسم العربي أو الإنجليزي
                 value = c.CrMasSupRenterNationalitiesCode, // كود الجنسية
                 naqlGCC = c.CrMasSupRenterNationalitiesNaqlGcc // إضافة العمود الإضافي (مثلاً CrMasSupRenterNationalitiesNaqlGcc)
             }).ToList();
-            var citiesArray = Cities.Select(c => new { text = isArabic ? c.CrMasSupPostCityConcatenateArName : c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode }).ToList();
-            var workplacesArray = Workplaces.Select(c => new { text = isArabic ? c.CrMasSupRenterEmployerArName : c.CrMasSupRenterEmployerEnName, value = c.CrMasSupRenterEmployerCode }).ToList();
+            var citiesArray = Cities.Select(c => new { textAr = c.CrMasSupPostCityConcatenateArName ,textEn = c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode }).ToList();
+            var workplacesArray = Workplaces.Select(c => new { textAr =  c.CrMasSupRenterEmployerArName, textEn = c.CrMasSupRenterEmployerEnName, value = c.CrMasSupRenterEmployerCode }).ToList();
 
             DateTime year = DateTime.Now;
             var y = year.ToString("yy");
@@ -126,6 +129,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             bSLayoutVM.CallingKeys = CallingKeys;
             bSLayoutVM.DrivingLicense = DrivingLicenses;
             bSLayoutVM.RenterProfession = RenterProffesions;
+            bSLayoutVM.Policies = Policies;
             ViewBag.RenterNationalities = nationalitiesArray;
             ViewBag.RenterCities = citiesArray;
             ViewBag.RenterWorkplaces = workplacesArray;
@@ -166,23 +170,25 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
 
             var basicContractNo = GenerateContractNumber(lessorCode, branch.CrCasBranchInformationCode, sectorCodeForRenter);
-            ////Contract
-            //if (string.IsNullOrEmpty(SavePdfContract))
-            //{
-            //    _toastNotification.AddErrorToastMessage("فشلت العملية لعدم استقبال ملف العقد، يجب ان تكون الصورة الواحدة لا تزيد 500 كيلو بايت", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-            //    return RedirectToAction("Index", "Home");
-            //}
-            //SavePdfContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfContract);
-            //if (string.IsNullOrEmpty(SavePdfContract))
-            //{
-            //    _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ العقد", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-            //    return RedirectToAction("Index", "Home");
-            //}
-            //var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, branch.CrCasBranchInformationCode, basicContractNo, "ar", "Contract");
-            var basicContract = await AddRenterContractBasicAsync(lessorCode, branch, basicContractNo, contractInfo, userLogin, /*pdfContract*/"", sectorCodeForRenter);
+            //Contract
+            if (string.IsNullOrEmpty(SavePdfContract))
+            {
+                _toastNotification.AddErrorToastMessage("فشلت العملية لعدم استقبال ملف العقد، يجب ان تكون الصورة الواحدة لا تزيد 500 كيلو بايت", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Home");
+            }
+            SavePdfContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfContract);
+            if (string.IsNullOrEmpty(SavePdfContract))
+            {
+                _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ العقد", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Home");
+            }
+            var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, branch.CrCasBranchInformationCode, basicContractNo, "BnanContract");
+
+            contractInfo.SourceCode = "10";//Static Data
+            var basicContract = await AddRenterContractBasicAsync(lessorCode, branch, basicContractNo, contractInfo, userLogin, pdfContract , sectorCodeForRenter);
             if (basicContract == null)
             {
-                //await RemovePdfs(new[] { pdfContract });
+                await RemovePdfs(new[] { pdfContract });
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
@@ -195,7 +201,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
                 if (string.IsNullOrEmpty(SavePdfReceipt))
                 {
-                    //await RemovePdfs(new[] { pdfContract });
+                    await RemovePdfs(new[] { pdfContract });
                     _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ السند", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return RedirectToAction("Index", "Home");
                 }
@@ -217,15 +223,15 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 _toastNotification.AddErrorToastMessage("حدث خطأ ما اثناء عملية حفظ الفاتورة", new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
-            var pdfInvoicePath = await SavePdfAsync(SavePdfInvoice, lessorCode, branch.CrCasBranchInformationCode, contractInfo.InitialInvoiceNo, "Invoice");
+            var pdfInvoicePath = await SavePdfAsync(SavePdfInvoice, lessorCode, branch.CrCasBranchInformationCode, contractInfo.InitialInvoiceNo, "ProformaInvoice");
 
             var checkAccountInvoice = await AddAccountInvoiceAsync(basicContract, checkAccountReceipt, sectorCodeForRenter, pdfInvoicePath);
 
             var checks = await PerformAdditionalChecksAsync(basicContract, lessorCode, contractInfo, ChoicesList, AdditionalsList, CheckupDetails);
 
-            var pdfDictionaryPaths = GetPdfDictionaryWithPath(CultureInfo.CurrentCulture.Name, /*pdfContract*/"", pdfInvoicePath, pdfReceiptPath, amountPaid);
+            var pdfDictionaryPaths = GetPdfDictionaryWithPath(pdfContract, pdfInvoicePath, pdfReceiptPath, amountPaid);
 
-            //bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
+            bool checkPdf = CheckPdfs(pdfDictionaryPaths.Keys.ToArray());
             if (/*!checkPdf ||*/ !checks || !checkAccountInvoice)
             {
                 await RemovePdfs(pdfDictionaryPaths.Keys.ToArray());
@@ -235,17 +241,17 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             if (await _unitOfWork.CompleteAsync() > 0)
             {
-                //if (StaticContractCardImg != null) await WhatsupExtension.SendBase64StringAsImageToWhatsUp(StaticContractCardImg, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ");
-                var pdfDictionaryBase64 = GetPdfDictionaryBase64(CultureInfo.CurrentCulture.Name, /*SavePdfContract*/"", SavePdfInvoice, SavePdfReceipt, amountPaid);
+                if (StaticContractCardImg != null) await WhatsAppServicesExtension.SendMediaAsync(userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ", lessorCode, StaticContractCardImg, "CreateContractCard.png");
+                var pdfDictionaryBase64 = GetPdfDictionaryBase64(SavePdfContract, SavePdfInvoice, SavePdfReceipt, amountPaid);
                 await SendPdfsToWhatsAppAsync(pdfDictionaryBase64, lessorCode,contractInfo.AccountReceiptNo,contractInfo.InitialInvoiceNo, basicContract.CrCasRenterContractBasicNo,
                                               userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, contractInfo.RenterInfo.CrMasRenterInformationArName, contractInfo.RenterInfo.CrMasRenterInformationEnName);
                 _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
-            //else
-            //{
-            //    await RemovePdfs(pdfDictionary.Keys.ToArray());
-            //}
+            else
+            {
+                await RemovePdfs(pdfDictionaryPaths.Keys.ToArray());
+            }
 
             _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             return RedirectToAction("Index", "Home");
@@ -292,14 +298,14 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
             return false;
         }
-        private Dictionary<string, string> GetPdfDictionaryWithPath(string culture, string Contract, string Invoice, string Receipt, decimal amountPaid)
+        private Dictionary<string, string> GetPdfDictionaryWithPath(string Contract, string Invoice, string Receipt, decimal amountPaid)
         {
             var pdfDictionary = new Dictionary<string, string>();
             pdfDictionary = new Dictionary<string, string> { { Contract, "Contract" }, { Invoice, "Invoice" } };
             if (amountPaid > 0) pdfDictionary.Add(Receipt, "Receipt");
             return pdfDictionary;
         }
-        private Dictionary<string, string> GetPdfDictionaryBase64(string culture, string Contract, string Invoice, string Receipt, decimal amountPaid)
+        private Dictionary<string, string> GetPdfDictionaryBase64(string Contract, string Invoice, string Receipt, decimal amountPaid)
         {
             var pdfDictionary = new Dictionary<string, string>();
             pdfDictionary = new Dictionary<string, string> { { Contract, "Contract" }, { Invoice, "Invoice" } };
@@ -316,7 +322,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 contractInfo.DaysNo, contractInfo.UserAddHours, contractInfo.UserAddKm, contractInfo.CurrentMeter, contractInfo.OptionTotal,
                 contractInfo.AdditionalTotal, contractInfo.ContractValueAfterDiscount, contractInfo.DiscountValue, contractInfo.ContractValueBeforeDiscount,
                 contractInfo.TaxValue, contractInfo.TotalContractAmount, userLogin.CrMasUserInformationCode, contractInfo.OutFeesTmm,
-                contractInfo.UserDiscount, contractInfo.AmountPayed, ContractPdf, contractInfo.RenterReasons);
+                contractInfo.UserDiscount, contractInfo.AmountPayed, ContractPdf,contractInfo.PolicyCode,contractInfo.SourceCode, contractInfo.RenterReasons);
         }
 
         private async Task<CrCasAccountReceipt> AddAccountReceiptAsync(CrCasRenterContractBasic basicContract, string lessorCode, string sectorCode, CrCasBranchInformation branch,
@@ -577,6 +583,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
             {
                 RenterID = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationId,
                 RenterIDType = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationLicenseType,
+                RenterIDTypeNameAr = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationIdtrypeNavigation?.CrMasSupRenterIdtypeArName,
+                RenterIDTypeNameEn = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationIdtrypeNavigation?.CrMasSupRenterIdtypeEnName,
                 PersonalArName = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationArName,
                 PersonalEnName = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationEnName,
                 GenderCode = PrivateDriverInfo?.CrCasRenterPrivateDriverInformationGender,
@@ -774,6 +782,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
             {
                 RenterID = renterInfo?.CrMasRenterInformationId,
                 RenterIDType = renterInfo?.CrMasRenterInformationIdtype,
+                RenterIDTypeNameAr = renterInfo?.CrMasRenterInformationIdtypeNavigation?.CrMasSupRenterIdtypeArName,
+                RenterIDTypeNameEn = renterInfo?.CrMasRenterInformationIdtypeNavigation?.CrMasSupRenterIdtypeEnName,
                 PersonalArName = renterInfo?.CrMasRenterInformationArName,
                 PersonalEnName = renterInfo?.CrMasRenterInformationEnName,
                 GenderCode = renterInfo?.CrMasRenterInformationGender,
@@ -931,37 +941,78 @@ namespace Bnan.Ui.Areas.BS.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCarInfoForContract(string serialNumber)
         {
+            if (string.IsNullOrEmpty(serialNumber))
+                return BadRequest("Serial number is required.");
+
             var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
-            CarInfomationVM carVM = new CarInfomationVM();
-            var carInfo = _unitOfWork.CrCasCarInformation.Find(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationSerailNo == serialNumber);
-            carVM = _mapper.Map<CarInfomationVM>(carInfo);
-            //Fuel
-            var fuel = await _unitOfWork.CrMasSupCarFuel.FindAsync(x => x.CrMasSupCarFuelCode == carInfo.CrCasCarInformationFuel);
-            carVM.FuelAr = fuel.CrMasSupCarFuelArName;
-            carVM.FuelEn = fuel.CrMasSupCarFuelEnName;
-            //Fuel
-            var CVT = await _unitOfWork.CrMasSupCarCvt.FindAsync(x => x.CrMasSupCarCvtCode == carInfo.CrCasCarInformationCvt);
-            carVM.CVTAr = CVT.CrMasSupCarCvtArName;
-            carVM.CVTEn = CVT.CrMasSupCarCvtEnName;
-            //Fuel
-            var Registeration = await _unitOfWork.CrMasSupCarRegistration.FindAsync(x => x.CrMasSupCarRegistrationCode == carInfo.CrCasCarInformationRegistration);
-            carVM.RegisterationAr = Registeration.CrMasSupCarRegistrationArName;
-            carVM.RegisterationEn = Registeration.CrMasSupCarRegistrationEnName;
-            // PeriodicInspectionNo
-            var doc1 = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAsync(x => x.CrCasCarDocumentsMaintenanceSerailNo == carInfo.CrCasCarInformationSerailNo && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12" && x.CrCasCarDocumentsMaintenanceProcedures == "123");
-            carVM.PeriodicInspectionNo = doc1.CrCasCarDocumentsMaintenanceNo;
-            // RunningCard
-            var doc2 = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAsync(x => x.CrCasCarDocumentsMaintenanceSerailNo == carInfo.CrCasCarInformationSerailNo && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12" && x.CrCasCarDocumentsMaintenanceProcedures == "122");
-            carVM.RunningCardNo = doc2.CrCasCarDocumentsMaintenanceNo;
-            carVM.RunningCardEndDate = doc2.CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
-            // Insurance Policy
-            var doc3 = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAsync(x => x.CrCasCarDocumentsMaintenanceSerailNo == carInfo.CrCasCarInformationSerailNo && x.CrCasCarDocumentsMaintenanceProceduresClassification == "12" && x.CrCasCarDocumentsMaintenanceProcedures == "121");
-            carVM.InsurancePolicyNo = doc3.CrCasCarDocumentsMaintenanceNo;
-            carVM.InsurancePolicyEndDate = doc3.CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            var lessorCode = userLogin?.CrMasUserInformationLessor;
+
+            if (lessorCode == null)
+                return Unauthorized();
+
+            var carInfo = await _unitOfWork.CrCasCarInformation.FindAsync(x =>
+                x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationSerailNo == serialNumber);
+
+            if (carInfo == null)
+                return NotFound("Car information not found.");
+
+            var carVM = _mapper.Map<CarInfomationVM>(carInfo);
+
+            // الحصول على جميع البيانات المطلوبة دفعة واحدة
+            var fuel =await _unitOfWork.CrMasSupCarFuel.FindAsync(x => x.CrMasSupCarFuelCode == carInfo.CrCasCarInformationFuel);
+            var cvt = await _unitOfWork.CrMasSupCarCvt.FindAsync(x => x.CrMasSupCarCvtCode == carInfo.CrCasCarInformationCvt);
+            var oil = await _unitOfWork.CrMasSupCarOil.FindAsync(x => x.CrMasSupCarOilCode == carInfo.CrCasCarInformationOil);
+            var registration =await _unitOfWork.CrMasSupCarRegistration.FindAsync(x => x.CrMasSupCarRegistrationCode == carInfo.CrCasCarInformationRegistration);
+
+            // استعلامات الصيانة دفعة واحدة
+            var maintenances = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsync(x =>
+                x.CrCasCarDocumentsMaintenanceSerailNo == serialNumber &&
+                (x.CrCasCarDocumentsMaintenanceProceduresClassification == "12" || x.CrCasCarDocumentsMaintenanceProceduresClassification == "13"));
+
+            var maintenanceDocs = maintenances.ToList();
+
+            // تعبئة البيانات
+            carVM.FuelAr = fuel?.CrMasSupCarFuelArName;
+            carVM.FuelEn = fuel?.CrMasSupCarFuelEnName;
+
+            carVM.CVTAr = cvt?.CrMasSupCarCvtArName;
+            carVM.CVTEn = cvt?.CrMasSupCarCvtEnName;
+
+            carVM.OilAr = oil?.CrMasSupCarOilArName;
+            carVM.OilEn = oil?.CrMasSupCarOilEnName;
+
+            carVM.RegisterationAr = registration?.CrMasSupCarRegistrationArName;
+            carVM.RegisterationEn = registration?.CrMasSupCarRegistrationEnName;
+
+            // استخراج التواريخ من الصيانة
+            carVM.ChangeOilDate = GetMaintenanceRecord(maintenanceDocs.ToList(), "13", "131").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture);
+            carVM.EndDrivinglicence = GetMaintenanceRecord(maintenanceDocs, "12", "120").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.EndPeriodicInspection = GetMaintenanceRecord(maintenanceDocs, "12", "123").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.TiresDate = GetMaintenanceRecord(maintenanceDocs, "13", "130").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.PeriodicMaintenanceDate = GetMaintenanceRecord(maintenanceDocs, "13", "132").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.FrontBrakeDate = GetMaintenanceRecord(maintenanceDocs, "13", "133").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.RearBrakeDate = GetMaintenanceRecord(maintenanceDocs, "13", "134").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.ChangeOilKm = GetMaintenanceRecord(maintenanceDocs, "13", "131").CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture);
+            carVM.TiresKm = GetMaintenanceRecord(maintenanceDocs, "13", "130").CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture);
+            carVM.PeriodicMaintenanceKm = GetMaintenanceRecord(maintenanceDocs, "13", "132").CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture);
+            carVM.FrontBrakeKm = GetMaintenanceRecord(maintenanceDocs, "13", "133").CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture);
+            carVM.RearBrakeKm = GetMaintenanceRecord(maintenanceDocs, "13", "134").CrCasCarDocumentsMaintenanceKmEndsAt?.ToString("N0", CultureInfo.InvariantCulture);
+
+            // استخراج بيانات الوثائق
+            carVM.PeriodicInspectionNo = GetMaintenanceRecord(maintenanceDocs, "12", "123").CrCasCarDocumentsMaintenanceNo;
+            carVM.RunningCardNo = GetMaintenanceRecord(maintenanceDocs, "12", "122").CrCasCarDocumentsMaintenanceNo;
+            carVM.RunningCardEndDate = GetMaintenanceRecord(maintenanceDocs, "12", "122").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            carVM.InsurancePolicyNo = GetMaintenanceRecord(maintenanceDocs, "12", "121").CrCasCarDocumentsMaintenanceNo;
+            carVM.InsurancePolicyEndDate = GetMaintenanceRecord(maintenanceDocs, "12", "121").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
 
             return Json(carVM);
+        }
 
+        // دالة مساعدة لاستخراج التواريخ
+        private CrCasCarDocumentsMaintenance GetMaintenanceRecord(List<CrCasCarDocumentsMaintenance> docs, string classification, string procedure)
+        {
+            return docs.FirstOrDefault(x => x.CrCasCarDocumentsMaintenanceProceduresClassification == classification &&
+                                            x.CrCasCarDocumentsMaintenanceProcedures == procedure);
         }
         [HttpGet]
         public async Task<IActionResult> GetAdvantagesValue(string priceNumber)

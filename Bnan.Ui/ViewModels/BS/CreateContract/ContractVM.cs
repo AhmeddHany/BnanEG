@@ -45,6 +45,7 @@ namespace Bnan.Ui.ViewModels.BS.CreateContract
         public string? BranchReceivingCode { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? PolicyCode { get; set; }
+        public string? SourceCode { get; set; }
         public string? TokenNo { get; set; }
         public long? TGAContractNo { get; set; }
         public string? ContractTypeCode { get; set; }

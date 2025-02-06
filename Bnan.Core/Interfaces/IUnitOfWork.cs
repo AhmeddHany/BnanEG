@@ -100,6 +100,7 @@ namespace Bnan.Core.Interfaces
         public IGenric<CrCasLessorTgaConnect> CrCasLessorTgaConnect { get; }
         public IGenric<CrCasLessorSmsConnect> CrCasLessorSmsConnect { get; }
         public IGenric<CrCasLessorShomoosConnect> CrCasLessorShomoosConnect { get; }
+        public IGenric<CrCasLessorPolicy> CrCasLessorPolicy { get; }
         int Complete();
         Task<int> CompleteAsync();
     }

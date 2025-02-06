@@ -198,12 +198,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             if (userLogin != null && Renter != null && Car != null && CarPrice != null && Branch != null)
             {
-                SavePdfContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfContract);
-                var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, Branch.CrCasBranchInformationCode, OldContract.CrCasRenterContractBasicNo, "Contract");
-                var UpdateSettlementContract = await UpdateRenterContractBasicAsync(lessorCode, Branch, OldContract.CrCasRenterContractBasicNo, ContractInfo, userLogin, pdfContract, (decimal)RenterLessor.CrCasRenterLessorAvailableBalance);
+                //SavePdfContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfContract);
+                //var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, Branch.CrCasBranchInformationCode, OldContract.CrCasRenterContractBasicNo, "BnanContract");
+                var UpdateSettlementContract = await UpdateRenterContractBasicAsync(lessorCode, Branch, OldContract.CrCasRenterContractBasicNo, ContractInfo, userLogin, /*pdfContract*/"", (decimal)RenterLessor.CrCasRenterLessorAvailableBalance);
                 if (UpdateSettlementContract == null)
                 {
-                    await RemovePdfs(new[] { pdfContract });
+                    //await RemovePdfs(new[] { pdfContract });
                     _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return RedirectToAction("Index", "Home");
                 }
@@ -218,16 +218,16 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 // Account Receipt
                 if (UpdateSettlementContract.CrCasRenterContractBasicAmountPaid > 0)
                 {
-                    SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
-                    if (!string.IsNullOrEmpty(SavePdfReceipt)) pdfReceipt = await SavePdfAsync(SavePdfReceipt, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.AccountReceiptNo, "Receipt");
-                    CheckAccountReceipt = await AddAccountReceiptAsync(UpdateSettlementContract, lessorCode, Branch, ContractInfo, userLogin, pdfReceipt);
+                    //SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
+                    //if (!string.IsNullOrEmpty(SavePdfReceipt)) pdfReceipt = await SavePdfAsync(SavePdfReceipt, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.AccountReceiptNo, "Receipt");
+                    CheckAccountReceipt = await AddAccountReceiptAsync(UpdateSettlementContract, lessorCode, Branch, ContractInfo, userLogin, /*pdfReceipt*/"");
                     CheckBalances = await UpdateBalancesAsync(Branch, UpdateSettlementContract, userLogin, ContractInfo);
                 }
 
                 // Invoice 
-                SavePdfInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfInvoice);
-                var pdfInvoice = await SavePdfAsync(SavePdfInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "Invoice");
-                var checkAccountInvoiceNo = await AddAccountInvoiceAsync(UpdateSettlementContract, CheckAccountReceipt, pdfInvoice);
+                //SavePdfInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfInvoice);
+                //var pdfInvoice = await SavePdfAsync(SavePdfInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "TaxInvoice");
+                var checkAccountInvoiceNo = await AddAccountInvoiceAsync(UpdateSettlementContract, CheckAccountReceipt, /*pdfInvoice*/"");
 
                 // Renter Balance 
                 var TotalContractValue = UpdateSettlementContract.CrCasRenterContractBasicActualTotal - UpdateSettlementContract.CrCasRenterContractBasicExpensesValue + UpdateSettlementContract.CrCasRenterContractBasicCompensationValue;
@@ -258,16 +258,16 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     ChechAddAccountContractCompanyOwed = await _contractSettlement.AddAccountContractCompanyOwed(UpdateSettlementContract.CrCasRenterContractBasicNo, ContractInfo.ActualDaysNo, (decimal)UpdateSettlementContract.CrCasRenterContractBasicActualDailyRent);
                 }
 
-                var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, pdfContract, pdfInvoice, pdfReceipt, (decimal)UpdateSettlementContract.CrCasRenterContractBasicAmountPaid);
+                //var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, pdfContract, pdfInvoice, pdfReceipt, (decimal)UpdateSettlementContract.CrCasRenterContractBasicAmountPaid);
                 var ChechUpdateRenterStatistics = await _contractSettlement.UpdateRenterStatistics(UpdateSettlementContract, userLogin.CrMasUserInformationCode, CheckAddAccountContractTaxOwed);
 
-                bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
-                if (!checkPdf)
-                {
-                    await RemovePdfs(pdfDictionary.Keys.ToArray());
-                    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return RedirectToAction("Index", "Home");
-                }
+                //bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
+                //if (!checkPdf)
+                //{
+                //    await RemovePdfs(pdfDictionary.Keys.ToArray());
+                //    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                //    return RedirectToAction("Index", "Home");
+                //}
 
                 if (UpdateSettlementContract != null && CheckAccountReceipt != null && CheckBalances && CheckSalesPoint && CheckBranchValidity && CheckUserInformation && checkAccountInvoiceNo != null &&
                     CheckMasRenter && CheckUpdateAuthrization && CheckUpdateAlert && CheckAddAccountContractTaxOwed != null && CheckUpdateRenterBalance && CheckDrivers
@@ -275,22 +275,22 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 {
                     if (await _unitOfWork.CompleteAsync() > 0)
                     {
-                        if (StaticContractCardImg != null) await WhatsupExtension.SendBase64StringAsImageToWhatsUp(StaticContractCardImg, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ");
-                        await SendPdfsToWhatsAppAsync(pdfDictionary, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter);
+                        //if (StaticContractCardImg != null) await WhatsupExtension.SendBase64StringAsImageToWhatsUp(StaticContractCardImg, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ");
+                        //await SendPdfsToWhatsAppAsync(pdfDictionary, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter);
                         _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                         this.SetRenterTempData(Renter.CrMasRenterInformationId, ContractInfo.CrCasRenterContractBasicNo);
                         return RedirectToAction("Index", "Home");
 
                     }
-                    else
-                    {
-                        await RemovePdfs(pdfDictionary.Keys.ToArray());
-                    }
+                    //else
+                    //{
+                    //    await RemovePdfs(pdfDictionary.Keys.ToArray());
+                    //}
                 }
-                else
-                {
-                    await RemovePdfs(pdfDictionary.Keys.ToArray());
-                }
+                //else
+                //{
+                //    await RemovePdfs(pdfDictionary.Keys.ToArray());
+                //}
             }
             _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             return RedirectToAction("Index", "Home");
