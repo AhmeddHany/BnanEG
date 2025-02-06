@@ -10,7 +10,6 @@ namespace Bnan.Ui.ViewModels.CAS
         [Required(ErrorMessage = "requiredFiled")]
         public string CrCasOwnersCode { get; set; } = null!;
         public string CrCasOwnersLessorCode { get; set; } = null!;
-        public string? CrCasOwnersCommercialNo { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrCasOwnersArName { get; set; }
         [Required(ErrorMessage = "requiredFiled")]

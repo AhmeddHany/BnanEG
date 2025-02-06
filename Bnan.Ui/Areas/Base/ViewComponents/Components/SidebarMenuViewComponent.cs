@@ -281,9 +281,9 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                         }),
                                         ("208", "/CasSys/images/services.svg", "services-items", new List<(string, string, string)>
                                         {
-                                            ("2208001", "#", "#"),
-                                            ("2208002", "#", "#"),
-                                            ("2208003", "#", "#"),
+                                            ("2208001", "AccountBank_CAS", "Index"),
+                                            ("2208002", "AccountSalesPoint_CAS", "Index"),
+                                            ("2208003", "RenterDriver", "Index"),
                                             ("2208004", "TechnicalConnectivity", "Connect"),
                                             ("2208005", "#", "#"),
                                             ("2208006", "#", "#"),

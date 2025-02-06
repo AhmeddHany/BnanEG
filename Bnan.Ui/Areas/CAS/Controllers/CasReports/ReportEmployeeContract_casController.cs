@@ -7,7 +7,6 @@ using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
 //using Bnan.Inferastructure.Repository.CAS;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.Areas.CAS.Controllers;
 using Bnan.Ui.ViewModels.CAS;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +17,7 @@ using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Globalization;
 using System.Numerics;
-namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
+namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
 {
     [Area("CAS")]
     [Authorize(Roles = "CAS")]
@@ -66,7 +65,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
 
             var all_users_hasContracts = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                     //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                    predicate: x => 
+                    predicate: x =>
                    x.CrCasRenterContractBasicLessor == user.CrMasUserInformationLessor
                    && x.CrCasRenterContractBasicUserInsert != null
                    && x.CrCasRenterContractBasicStatus != Status.Extension
@@ -79,7 +78,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                     //, includes: new string[] { "CrCasRenterContractBasicCarSerailNoNavigation" }
                     );
 
-            all_users_hasContracts = all_users_hasContracts.DistinctBy(x=>x.id_key).ToList();
+            all_users_hasContracts = all_users_hasContracts.DistinctBy(x => x.id_key).ToList();
 
             var all_EmployeeContracts = await _unitOfWork.CrCasRenterContractStatistic.FindAllWithSelectAsNoTrackingAsync(
                     //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
@@ -118,7 +117,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                 //,includes: new string[] { "" } 
                 );
 
-            all_UserData = all_UserData.Where(x=> all_users_hasContracts.Any(y=>y.id_key==x.CrMasUserInformationCode)).ToList();
+            all_UserData = all_UserData.Where(x => all_users_hasContracts.Any(y => y.id_key == x.CrMasUserInformationCode)).ToList();
 
             foreach (var single in all_UserData)
             {
@@ -126,10 +125,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                 var closed_Contracts = all_EmployeeContracts?.Where(y => y.CrCasRenterContractStatisticsUserClose?.Trim() == single.CrMasUserInformationCode)?.ToList();
                 if (list_Contracts != null)
                 {
-                    single.LastDate = list_Contracts.Max(k => k.CrCasRenterContractStatisticsDate)?.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture) ?? "";
-                    single.RentValue = ((list_Contracts.Sum(c => c.CrCasRenterContractStatisticsRentValue)?? 0.0m) +(list_Contracts.Sum(c => c.CrCasRenterContractStatisticsCompensationValue)?? 0.0m) -(list_Contracts.Sum(c => c.CrCasRenterContractStatisticsExpensesValue)?? 0.0m)).ToString("N2", CultureInfo.InvariantCulture) ?? "0.00";
+                    single.LastDate = list_Contracts.Max(k => k.CrCasRenterContractStatisticsDate)?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) ?? "";
+                    single.RentValue = ((list_Contracts.Sum(c => c.CrCasRenterContractStatisticsRentValue) ?? 0.0m) + (list_Contracts.Sum(c => c.CrCasRenterContractStatisticsCompensationValue) ?? 0.0m) - (list_Contracts.Sum(c => c.CrCasRenterContractStatisticsExpensesValue) ?? 0.0m)).ToString("N2", CultureInfo.InvariantCulture) ?? "0.00";
                     single.open = list_Contracts.Count();
-                    single.DaysCount = list_Contracts.Sum(c => c.CrCasRenterContractStatisicsDays)?? 0;
+                    single.DaysCount = list_Contracts.Sum(c => c.CrCasRenterContractStatisicsDays) ?? 0;
                 }
                 if (closed_Contracts != null)
                 {
@@ -153,7 +152,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
 
         [HttpGet]
         //[Route("/CAS/ReportEmployeeContract/GetContractsByStatus")]
-        public async Task<PartialViewResult> GetContractsByStatus(string id,string start, string end)
+        public async Task<PartialViewResult> GetContractsByStatus(string id, string start, string end)
         {
             var user = await _userManager.GetUserAsync(User);
             listReportEmployeeContract_CAS_VM VM = new listReportEmployeeContract_CAS_VM();
@@ -228,7 +227,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                     if (ThisInvoice.Count > 0)
                     {
                         all_Invoices.Add(ThisInvoice.FirstOrDefault());
-                    }                
+                    }
 
                     var ThisRenterData = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
                         //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
@@ -290,7 +289,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
             await SetPageTitleAsync(Status.Update, pageNumber);
 
             var listmaxDate = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
-                    predicate: x=> x.CrCasRenterContractBasicUserInsert == id && x.CrCasRenterContractBasicStatus != Status.Extension
+                    predicate: x => x.CrCasRenterContractBasicUserInsert == id && x.CrCasRenterContractBasicStatus != Status.Extension
                     && x.CrCasRenterContractBasicLessor == user.CrMasUserInformationLessor
                     ,
                     selectProjection: query => query.Select(x => new Date_ReportActiveContract_CasVM
@@ -398,7 +397,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                 {
                     all_renters.Add(ThisRenterData.FirstOrDefault());
                 }
-                if(single.CrCasRenterContractBasicStatus == Status.Closed)
+                if (single.CrCasRenterContractBasicStatus == Status.Closed)
                 {
                     summition.Days_Count += single.CrCasRenterContractBasicActualDays;
                     summition.km_Count += single.CrCasRenterContractBasicActualCurrentReadingMeter - single.CrCasRenterContractBasicCurrentReadingMeter;

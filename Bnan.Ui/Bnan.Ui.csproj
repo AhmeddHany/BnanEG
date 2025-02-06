@@ -419,6 +419,17 @@
     <Folder Include="wwwroot\images\CAS\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Areas\CAS\Views\RenterDriver\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\CAS\Views\RenterDriver\_DataTableRenterDriver.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

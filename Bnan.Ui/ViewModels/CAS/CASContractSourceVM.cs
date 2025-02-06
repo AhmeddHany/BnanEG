@@ -10,11 +10,12 @@ namespace Bnan.Ui.ViewModels.CAS
     
     public class CASContractSourceVM
     {
-        [Required(ErrorMessage = "requiredFiled"), MaxLength(20, ErrorMessage = "requiredNoLengthFiled20")]
+        public int countForCars { get; set; } = 0;
+
+        [Required(ErrorMessage = "requiredFiled"), Range(1,9999999999, ErrorMessage = "requiredNoLengthFiled10")]
         public string CrCasOwnersCode { get; set; } = null!;
         [Required(ErrorMessage = "requiredFiled"), MaxLength(4, ErrorMessage = "requiredFiled")]
         public string CrCasOwnersLessorCode { get; set; } = null!;
-        public string? CrCasOwnersCommercialNo { get; set; }
         [Required(ErrorMessage = "requiredFiled"), MaxLength(10, ErrorMessage = "requiredNoLengthFiled10")]
         public string? CrCasOwnersCountryKey { get; set; }
         [Required(ErrorMessage = "requiredFiled"), MaxLength(20, ErrorMessage = "requiredNoLengthFiled20")]
@@ -30,9 +31,10 @@ namespace Bnan.Ui.ViewModels.CAS
 
         [MaxLength(100, ErrorMessage = "requiredNoLengthFiled100")]
         //[EmailAddress(ErrorMessage = "requiredFiledEmail")]
+        public string? CrCasOwnersEmail { get; set; }
 
         public string? CrCasOwnersConnectStatus { get; set; } = "0";
-        public string? CrCasOwnersEmail { get; set; }
+
 
         public List<CrCasOwner> list_crCasOwner = new List<CrCasOwner>();
         public List<CrMasSysCallingKey> keys = new List<CrMasSysCallingKey>();

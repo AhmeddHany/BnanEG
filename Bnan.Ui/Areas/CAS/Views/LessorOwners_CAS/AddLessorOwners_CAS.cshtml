@@ -13,7 +13,6 @@
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
         <form asp-area="CAS" asp-controller="LessorOwners_CAS" asp-action="AddLessorOwners_CAS" class="needs-validation" novalidate>
-            <input hidden asp-for="CrCasOwnersCode" />
             <input hidden asp-for="CrCasOwnersLessorCode" />
             <input hidden asp-for="CrCasOwnersConnectStatus" id="status_radio_asp" />
             <div class="row  mt-3 g-3">
@@ -30,33 +29,42 @@
                         </div>
                         <div class="container-fluid">
                             <div class="row mt-3 g-3">
+                                <div class="col-md-12">
 
                                 <div class="row align-items-center">
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-auto">
-                                            <p>@localizer["RenterIdtypeName_view"] </p>
-                                        </div>
-                                        <div class=" col-md-auto Saved-data">
-                                            <p> @Model.CrCasOwnersCode </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-
-                                    <button type="button" class="btn modal-btn"
-                                            data-bs-toggle="modal"
-                                            href="#Doc-photo-modal">
-                                        <div class="row align-items-center">
-                                            <div class="col">@localizer["RenterIdPhoto"] </div>
-                                            <div class="col-auto">
-                                                <div class="systems-check">
-                                                    <i class="fa-solid fa-check text-white"></i>
+                                        <div class="col-md-6">
+                                            <label for="Identity"
+                                                   class="form-label">
+                                                @localizer["RenterIdtypeName_view"]
+                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text"
+                                                   class="form-control inputs " maxlength="10"
+                                                   asp-for="CrCasOwnersCode" id="CrCasOwnersCode" oninput="this.value=this.value.replace(/\D/g, '')" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="@Model.CrCasOwnersCode" class="text-danger"></span>
+                                                    <span class="text-danger" id="CrCasOwnersCode-Error"></span>
                                                 </div>
                                             </div>
                                         </div>
-                                    </button>
+                                        @*<div class="col-md-6">
+                                            <button type="button" disabled class="btn modal-btn"
+                                                    data-bs-toggle="modal"
+                                                    href="#Doc-photo-modal">
+                                                <div class="row align-items-center">
+                                                    <div class="col">@localizer["RenterIdPhoto"] </div>
+                                                    <div class="col-auto">
+                                                        <div class="systems-check">
+                                                            <i class="fa-solid fa-check text-white"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </div>*@
+
                                 </div>
+
                             </div>
 
 
@@ -190,6 +198,11 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/toastr.js"></script>
     <script>
+        function validateNumberInput(input) {
+            input.value = input.value.replace(/\D/g, ''); // استبدال كل الأحرف غير الرقمية
+        }
+    </script>
+    <script>
         // الحصول على الـ checkbox والـ radio buttons
         const checkbox = document.getElementById('sendContract');
         const radioButtons = document.querySelectorAll('input[name="sendWay"]');
@@ -281,14 +294,11 @@
                 var newValue = $(this).val();
                 Check_onChange_input('CrCasOwnersEnName', newValue);
             });
-            $('#CrCasOwnersEmail').on('change', function () {
+            $('#CrCasOwnersCode').on('change', function () {
                 var newValue = $(this).val();
-                Check_onChange_input('CrCasOwnersEmail', newValue);
+                Check_onChange_input('CrCasOwnersCode', newValue);
             });
-            $('#CrCasOwnersMobile').on('change', function () {
-                var newValue = $(this).val();
-                Check_onChange_input('CrCasOwnersMobile', newValue);
-            });
+
         });
 
     </script>

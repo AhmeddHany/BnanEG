@@ -7,7 +7,6 @@ using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
 //using Bnan.Inferastructure.Repository.CAS;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.Areas.CAS.Controllers;
 using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.CAS;
 using ClosedXML.Excel;
@@ -22,7 +21,7 @@ using NToastNotify;
 using System.Drawing;
 using System.Globalization;
 using System.Numerics;
-namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
+namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
 {
     [Area("CAS")]
     [Authorize(Roles = "CAS")]
@@ -99,8 +98,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
             var all_Recipts = await _unitOfWork.CrCasAccountReceipt.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                 predicate: x => x.CrCasAccountReceiptLessorCode == user.CrMasUserInformationLessor
-                &&(x.CrCasAccountReceiptType == "301" || x.CrCasAccountReceiptType == "302")
-                && (x.CrCasAccountReceiptDate > start && x.CrCasAccountReceiptDate <= end)
+                && (x.CrCasAccountReceiptType == "301" || x.CrCasAccountReceiptType == "302")
+                && x.CrCasAccountReceiptDate > start && x.CrCasAccountReceiptDate <= end
                 ,
                 selectProjection: query => query.Select(x => new DailyReport_ReciptVM
                 {
@@ -171,7 +170,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                 summition.Debitor_Total += single.CrCasAccountReceiptReceipt;
                 summition.Creditor_Total += single.CrCasAccountReceiptPayment;
             }
-            
+
             foreach (var single2 in all_BranchesData)
             {
 
@@ -202,7 +201,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
 
         [HttpGet]
         //[Route("/CAS/DailyReport/GetContractsByStatus")]
-        public async Task<PartialViewResult> GetContractsByStatus(string status,string start, string end)
+        public async Task<PartialViewResult> GetContractsByStatus(string status, string start, string end)
         {
             var user = await _userManager.GetUserAsync(User);
 
@@ -226,7 +225,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                 var all_Recipts = await _unitOfWork.CrCasAccountReceipt.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                 predicate: x => x.CrCasAccountReceiptLessorCode == user.CrMasUserInformationLessor
-                && (x.CrCasAccountReceiptDate > start_Date && x.CrCasAccountReceiptDate <= end_Date)
+                && x.CrCasAccountReceiptDate > start_Date && x.CrCasAccountReceiptDate <= end_Date
                 ,
                 selectProjection: query => query.Select(x => new DailyReport_ReciptVM
                 {
@@ -258,7 +257,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                 , includes: new string[] { "CrCasAccountReceiptPaymentMethodNavigation", "CrCasAccountReceiptReferenceTypeNavigation", "CrCasAccountReceiptSalesPointNavigation", "CrCasAccountReceiptNavigation" }
                 );
 
-                if (status=="1")
+                if (status == "1")
                 {
                     all_Recipts = all_Recipts.Where(x => x.CrCasAccountReceiptIsPassing == "1").ToList();
                 }
@@ -266,7 +265,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                 {
                     all_Recipts = all_Recipts.Where(x => x.CrCasAccountReceiptIsPassing == "2").ToList();
                 }
-                else if(status == "3")
+                else if (status == "3")
                 {
                     all_Recipts = all_Recipts.Where(x => x.CrCasAccountReceiptIsPassing == "3" || x.CrCasAccountReceiptIsPassing == "4").ToList();
                 }
@@ -282,7 +281,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                     );
 
                 var all_BranchesData = await _unitOfWork.CrCasBranchInformation.FindAllWithSelectAsNoTrackingAsync(
-                    predicate: x => x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor && x.CrCasBranchInformationStatus!=Status.Deleted,
+                    predicate: x => x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor && x.CrCasBranchInformationStatus != Status.Deleted,
                     selectProjection: query => query.Select(x => new cas_BranchData
                     {
                         id_key = x.CrCasBranchInformationCode,
@@ -340,7 +339,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
 
 
         [HttpPost]
-        public async Task<IActionResult> createExcel_saveAs_Receipt_Action(List<string> list_recipt_ids, List<string> list_serials, string debits, string credits,string start, string end)
+        public async Task<IActionResult> createExcel_saveAs_Receipt_Action(List<string> list_recipt_ids, List<string> list_serials, string debits, string credits, string start, string end)
         {
             var id = "55";
             try
@@ -432,9 +431,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
 
                 if (CultureInfo.CurrentUICulture.Name == "en-US")
                 {
-                    bool folderExistsEn = System.IO.Directory.Exists(folderEn);
+                    bool folderExistsEn = Directory.Exists(folderEn);
                     if (!folderExistsEn)
-                        System.IO.Directory.CreateDirectory(folderEn);
+                        Directory.CreateDirectory(folderEn);
 
 
                     string originalFilePath_En = folderSource + "/" + "DailyReportFormula" + ".xlsx";
@@ -472,9 +471,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                 }
                 else
                 {
-                    bool folderExistsAr = System.IO.Directory.Exists(folderAr);
+                    bool folderExistsAr = Directory.Exists(folderAr);
                     if (!folderExistsAr)
-                        System.IO.Directory.CreateDirectory(folderAr);
+                        Directory.CreateDirectory(folderAr);
 
 
                     // مسار الملف الأصلي old excel Ar
@@ -512,7 +511,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.MasReports
                     }
                 }
 
-                                
+
 
 
                 var result = new

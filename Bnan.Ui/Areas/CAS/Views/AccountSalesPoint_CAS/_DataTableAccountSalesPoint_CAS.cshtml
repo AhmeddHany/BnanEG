@@ -1,0 +1,67 @@
+﻿@using Bnan.Ui.ViewModels.CAS
+@using Bnan.Core.Extensions
+@model CAS_AccountSalesPointVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            @*<th> @localizer["AccountSalesPointSalesCount"]</th>
+            <th class="DifferAlign"> @localizer["SalesPointNameArAccount"]</th>
+            <th class="DifferAlign"> @localizer["AccountSalesPointName"]</th>
+            <th class="DifferAlign"> @localizer["AccountSalesPointCode"]</th>
+            <th></th>*@
+            <th scope="col" class="DifferAlign"> الحساب </th>
+            <th scope="col"> البنك  </th>
+            <th scope="col"> الفرع  </th>
+            <th scope="col" class="DifferAlign"> نقطة البيع</th>
+            <th></th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.list_CrCasAccountSalesPoint)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "AccountSalesPoint_CAS", new { id = item.CrCasAccountSalesPointCode })'">
+                <td class="DifferAlign">
+                    <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.all_AccountsNames?.Find(x => x.id_key == item?.CrCasAccountSalesPointAccountBank)?.nameEn : Model.all_AccountsNames?.Find(x => x.id_key == item?.CrCasAccountSalesPointAccountBank)?.nameAr)</p>
+                </td>
+                <td>
+                    <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.all_BanksName?.Find(x => x.CrMasSupAccountBankCode == item?.CrCasAccountSalesPointBank)?.CrMasSupAccountBankEnName : Model.all_BanksName?.Find(x => x.CrMasSupAccountBankCode == item?.CrCasAccountSalesPointBank)?.CrMasSupAccountBankArName)</p>
+                </td>
+                <td>
+                    <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.all_branchesNames?.Find(x => x.id_key == item?.CrCasAccountSalesPointBrn)?.nameEn : Model.all_branchesNames?.Find(x => x.id_key == item?.CrCasAccountSalesPointBrn)?.nameAr)</p>
+                </td>
+                <td class="DifferAlign">
+                    <p class="FirstLineP"> @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrCasAccountSalesPointEnName : item.CrCasAccountSalesPointArName)    </p>
+                    <p class="secondLineP">@(item.CrCasAccountSalesPointNo)</p>
+                </td>
+                <td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrCasAccountSalesPointStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrCasAccountSalesPointStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrCasAccountSalesPointStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>
+            </tr>
+            no++;
+
+                @*<td>
+                    <p>@(Model.all_SalesPointsCount?.Find(x => x.Column?.ToString()?.Trim() == item.CrCasAccountSalesPointCode)?.RowCount.ToString("N0") ?? "0")</p>
+                </td>*@
+        }
+
+    </tbody>
+</table>

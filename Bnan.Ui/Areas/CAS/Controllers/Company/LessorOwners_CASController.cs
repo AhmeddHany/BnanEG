@@ -3,13 +3,12 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Interfaces.MAS;
-//using Bnan.Core.Interfaces.CAS;
+using Bnan.Core.Interfaces.CAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
-//using Bnan.Inferastructure.Repository.CAS;
+
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -61,8 +60,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 return RedirectToAction("Index", "Home");
             }
             // Retrieve active driving licenses
-            var owners = _unitOfWork.CrCasOwners
-                .GetAll();
+            var owners = await _unitOfWork.CrCasOwners.FindAllAsync(x => x.CrCasOwnersLessorCode == user.CrMasUserInformationLessor && x.CrCasOwnersStatus == Status.Active);
 
             var all_CarsCount = await _unitOfWork.CrCasCarInformation.FindCountByColumnAsync<CrCasCarInformation>(
                predicate: x => x.CrCasCarInformationLessor == user.CrMasUserInformationLessor && (x.CrCasCarInformationStatus != Status.Deleted || x.CrCasCarInformationStatus != Status.ForSale) && x.CrCasCarInformationOwnerStatus != Status.Deleted,
@@ -71,7 +69,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                );
 
             // If no active licenses, retrieve all licenses
-            if (owners==null)
+            if (owners.Count()==0)
             {
                 owners = await _unitOfWork.CrCasOwners
                     .FindAllAsync(x => x.CrCasOwnersLessorCode == user.CrMasUserInformationLessor && x.CrCasOwnersStatus == Status.Hold
@@ -142,12 +140,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 return RedirectToAction("Index", "LessorOwners_CAS");
             }
             await SetPageTitleAsync(Status.Insert, pageNumber);
-            // Check If code > 9 get error , because code is char(1)
-            if (Int64.Parse(await GenerateLicenseCodeAsync(user.CrMasUserInformationLessor)) > 7004999999)
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "LessorOwners_CAS");
-            }
+            //// Check If code > 9 get error , because code is char(1)
+            //if (Int64.Parse(await GenerateLicenseCodeAsync(user.CrMasUserInformationLessor)) > 7004999999)
+            //{
+            //    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+            //    return RedirectToAction("Index", "LessorOwners_CAS");
+            //}
             var all_keys = await _unitOfWork.CrMasSysCallingKeys.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                 predicate: null,
@@ -158,7 +156,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 );
             // Set Title 
             CASContractSourceVM lessorMarketingVM = new CASContractSourceVM();
-            lessorMarketingVM.CrCasOwnersCode = await GenerateLicenseCodeAsync(user.CrMasUserInformationLessor);
+            //lessorMarketingVM.CrCasOwnersCode = await GenerateLicenseCodeAsync(user.CrMasUserInformationLessor);
             lessorMarketingVM.CrCasOwnersLessorCode = user.CrMasUserInformationLessor;           
             lessorMarketingVM.keys= all_keys;
             return View(lessorMarketingVM);
@@ -192,20 +190,20 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 var ownerEntity = _mapper.Map<CrCasOwner>(lessorMarketingVM);
 
                 // Check if the entity already exists
-                if (await _LessorOwners_CAS.ExistsByDetailsAsync(ownerEntity))
+                if (await _LessorOwners_CAS.ExistsByDetails_AddAsync(ownerEntity))
                 {
                     await AddModelErrorsAsync(ownerEntity);
                     _toastNotification.AddErrorToastMessage(_localizer["toastor_Exist"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return View("AddLessorOwners_CAS", lessorMarketingVM);
                 }
-                // Check If code > 9 get error , because code is char(1)
-                if (Int64.Parse(await GenerateLicenseCodeAsync(user.CrMasUserInformationLessor)) > 7004999999)
-                {
-                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("AddLessorOwners_CAS", lessorMarketingVM);
-                }
-                // Generate and set the Driving License Code
-                lessorMarketingVM.CrCasOwnersCode = await GenerateLicenseCodeAsync(user.CrMasUserInformationLessor);
+                //// Check If code > 9 get error , because code is char(1)
+                //if (Int64.Parse(await GenerateLicenseCodeAsync(user.CrMasUserInformationLessor)) > 7004999999)
+                //{
+                //    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_AddMore"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                //    return View("AddLessorOwners_CAS", lessorMarketingVM);
+                //}
+                //// Generate and set the Driving License Code
+                //lessorMarketingVM.CrCasOwnersCode = await GenerateLicenseCodeAsync(user.CrMasUserInformationLessor);
                 // Set status and add the record
                 ownerEntity.CrCasOwnersStatus = "A";
                 await _unitOfWork.CrCasOwners.AddAsync(ownerEntity);
@@ -243,6 +241,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 })
                 );
             var model = _mapper.Map<CASContractSourceVM>(contract);
+            model.countForCars = await _unitOfWork.CrMasLessorInformation.CountAsync(x => x.CrMasLessorInformationGovernmentNo.Trim() == id.Trim() && x.CrMasLessorInformationStatus != Status.Deleted);
             model.keys = all_keys;
             return View(model);
         }
@@ -275,6 +274,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             //}
             try
             {
+                var canEdit = await _LessorOwners_CAS.CheckIfCanEdit_It(lessorMarketingVM.CrCasOwnersCode);
+                if(!canEdit)
+                {               
+                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_NoEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return View("Edit", lessorMarketingVM);
+                }
+                
                 //Check Validition
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
                 {
@@ -312,19 +318,43 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return "false";
 
-            var licence = await _unitOfWork.CrCasOwners.FindAsync(x=>x.CrCasOwnersCode == code && x.CrCasOwnersLessorCode == user.CrMasUserInformationLessor );
-            if (licence == null) return "false";
+            var thisOwner = await _unitOfWork.CrCasOwners.FindAsync(x => x.CrCasOwnersCode == code && x.CrCasOwnersLessorCode == user.CrMasUserInformationLessor);
+            var All_Owner = await _unitOfWork.CrCasCarInformation.FindAllAsync(x => x.CrCasCarInformationOwner.Trim() == code && x.CrCasCarInformationLessor == user.CrMasUserInformationLessor);
+            if (thisOwner == null) return "false";
 
             try
             {
 
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
-                if (status == Status.Deleted) { if (!await _LessorOwners_CAS.CheckIfCanDeleteIt(licence.CrCasOwnersCode)) return "udelete"; }
+                if (status == Status.Deleted) { if (!await _LessorOwners_CAS.CheckIfCanDeleteIt(thisOwner.CrCasOwnersCode)) return "udelete"; }
+                
+                var canEdit = await _LessorOwners_CAS.CheckIfCanEdit_It(thisOwner.CrCasOwnersCode);
+                if (!canEdit)
+                {
+                    //_toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_NoUpdateStatus"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                    return "un_NoUpdateStatus";
+                }
+                if (status == Status.UnHold)
+                {
+                    foreach (var single in All_Owner)
+                    {
+                        single.CrCasCarInformationOwnerStatus = Status.Active;
+                    }
+                    _unitOfWork.CrCasCarInformation.UpdateRange(All_Owner);
+                }
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
-                licence.CrCasOwnersStatus = status;
-                _unitOfWork.CrCasOwners.Update(licence);
+                thisOwner.CrCasOwnersStatus = status;
+                _unitOfWork.CrCasOwners.Update(thisOwner);
+                if(status == Status.Hold)
+                {
+                    foreach(var single in All_Owner)
+                    {
+                        single.CrCasCarInformationOwnerStatus = Status.Hold;
+                    }
+                    _unitOfWork.CrCasCarInformation.UpdateRange(All_Owner);
+                }
                 _unitOfWork.Complete();
-                await SaveTracingForLicenseChange(user, licence, status);
+                await SaveTracingForLicenseChange(user, thisOwner, status);
                 return "true";
             }
             catch (Exception ex)
@@ -337,12 +367,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         private async Task AddModelErrorsAsync(CrCasOwner entity)
         {
 
-            if (await _LessorOwners_CAS.ExistsByArabicNameAsync(entity.CrCasOwnersArName, entity.CrCasOwnersCode))
+
+            if (await _LessorOwners_CAS.ExistsByArabicNameAsync(entity.CrCasOwnersArName, entity.CrCasOwnersCode,entity.CrCasOwnersLessorCode))
             {
                 ModelState.AddModelError("CrCasOwnersArName", _localizer["Existing"]);
             }
 
-            if (await _LessorOwners_CAS.ExistsByEnglishNameAsync(entity.CrCasOwnersEnName, entity.CrCasOwnersCode))
+            if (await _LessorOwners_CAS.ExistsByEnglishNameAsync(entity.CrCasOwnersEnName, entity.CrCasOwnersCode, entity.CrCasOwnersLessorCode))
             {
                 ModelState.AddModelError("CrCasOwnersEnName", _localizer["Existing"]);
             }
@@ -350,28 +381,35 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             //{
             //    ModelState.AddModelError("CrCasOwnersEmail", _localizer["Existing"]);
             //}
-            if (await _LessorOwners_CAS.ExistsByMobileAsync(entity.CrCasOwnersMobile, entity.CrCasOwnersCode))
-            {
-                ModelState.AddModelError("CrCasOwnersMobile", _localizer["Existing"]);
-            }
+            //if (await _LessorOwners_CAS.ExistsByMobileAsync(entity.CrCasOwnersMobile, entity.CrCasOwnersCode))
+            //{
+            //    ModelState.AddModelError("CrCasOwnersMobile", _localizer["Existing"]);
+            //}
         }
 
         //Error exist message when change input without run post action >> help us in front end
         [HttpGet]
         public async Task<JsonResult> CheckChangedField(string existName, string dataField)
         {
-            var All_LessorOwners_CASs = await _unitOfWork.CrCasOwners.GetAllAsync();
+            var user = await _userManager.GetUserAsync(User);
+
+            var All_LessorOwners_CASs = await _unitOfWork.CrCasOwners.FindAllAsync(x=>x.CrCasOwnersLessorCode == user.CrMasUserInformationLessor);
             var errors = new List<ErrorResponse>();
 
             if (!string.IsNullOrEmpty(dataField) && All_LessorOwners_CASs != null)
             {
                 // Check for existing Arabic driving license
-                if (existName == "CrCasOwnerArName" && All_LessorOwners_CASs.Any(x => x.CrCasOwnersArName == dataField))
+                if (existName == "CrCasOwnersCode" && All_LessorOwners_CASs.Any(x => x.CrCasOwnersCode == dataField))
+                {
+                    errors.Add(new ErrorResponse { Field = "CrCasOwnersCode", Message = _localizer["Existing"] });
+                }
+                // Check for existing Arabic driving license
+                if (existName == "CrCasOwnersArName" && All_LessorOwners_CASs.Any(x => x.CrCasOwnersArName == dataField))
                 {
                     errors.Add(new ErrorResponse { Field = "CrCasOwnersArName", Message = _localizer["Existing"] });
                 }
                 // Check for existing English driving license
-                else if (existName == "CrCasOwnerEnName" && All_LessorOwners_CASs.Any(x => x.CrCasOwnersEnName?.ToLower() == dataField.ToLower()))
+                else if (existName == "CrCasOwnersEnName" && All_LessorOwners_CASs.Any(x => x.CrCasOwnersEnName?.ToLower() == dataField.ToLower()))
                 {
                     errors.Add(new ErrorResponse { Field = "CrCasOwnersEnName", Message = _localizer["Existing"] });
                 }
@@ -380,11 +418,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 //{
                 //    errors.Add(new ErrorResponse { Field = "CrCasOwnersEmail", Message = _localizer["Existing"] });
                 //}
-                // Check for existing mobile
-                else if (existName == "CrCasOwnerMobile" && All_LessorOwners_CASs.Any(x => x.CrCasOwnersMobile == dataField))
-                {
-                    errors.Add(new ErrorResponse { Field = "CrCasOwnersMobile", Message = _localizer["Existing"] });
-                }
+                //// Check for existing mobile
+                //else if (existName == "CrCasOwnerMobile" && All_LessorOwners_CASs.Any(x => x.CrCasOwnersMobile == dataField))
+                //{
+                //    errors.Add(new ErrorResponse { Field = "CrCasOwnersMobile", Message = _localizer["Existing"] });
+                //}
             }
 
             return Json(new { errors });
@@ -396,12 +434,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var allLicenses = await _unitOfWork.CrCasOwners.FindAllAsync(x=>x.CrCasOwnersLessorCode == lessorCode);
             return allLicenses.Any() ? (BigInteger.Parse(allLicenses.Last().CrCasOwnersCode) + 1).ToString() : "700400" + lessorCode.Substring(3) + "100";
         }
-        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrCasOwner licence, string status)
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrCasOwner thisOwner, string status)
         {
 
 
-            var recordAr = licence.CrCasOwnersArName;
-            var recordEn = licence.CrCasOwnersEnName;
+            var recordAr = thisOwner.CrCasOwnersArName;
+            var recordEn = thisOwner.CrCasOwnersEnName;
             var (operationAr, operationEn) = GetStatusTranslation(status);
 
             var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);

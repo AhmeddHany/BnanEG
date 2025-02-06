@@ -9,6 +9,8 @@
     "AuthEmplpoyee_AddMore": "لا يمكن إضافة سجل جديد",
     "AuthEmplpoyee_NoUpdate": "لا يمكن تحديث هذا السجل",
     "AuthEmplpoyee_NoDelete": "لا يمكن حذفه",
+    "AuthEmplpoyee_NoEdit": "لا يمكن تعديله",
+    "AuthEmplpoyee_NoUpdateStatus": "لا يمكن تحديث حالته",
     "toastor_Exist": "هذا السجل مسجل من قبل",
     "NoDataToShow": "لا توجد بيانات لعرضها !!",
     "No_company_choosed": "الرجاء اختيار شركة",
@@ -1050,9 +1052,7 @@
     "CurrentPassInCorrect": "كلمة السر الحالية غير صحيحة, يرجي اعادة المحاولة",
     "NewAndConfirmPassInCorrect": "كلمة السر وتأكيد كلمة السر غير مطابقان, يرجي اعادة المحاولة",
     "CannotUserCurrentPassword": "لا يمكن استخدام كلمة السر الحالية",
-    // Cas Report ClosedContract
-    "ReportClosedContract_Cas_Data": "العقود المغلقة",
-    "ReportClosedContract_Cas_Details": "بيانات إضافية",
+
     //Lessor Images
     "LessorImgss": "صور مساندة",
     "Notifications": "الإشعارات",
@@ -1165,7 +1165,32 @@
     "ShomoosNotConnect": "يرجى توصيل خدمة شموس لإتمام للاستفادة من المميزات.",
     "TGANotConnect": "يرجى توصيل خدمة العقد الموحد للاستفادة من المميزات.",
     "SMSNotConnect": "يرجى توصيل خدمة الرسائل القصيرة للاستفادة من المميزات.",
-    "WhatsupNotConnect": "يرجى توصيل خدمة واتساب للاستفادة من المميزات."
+    "WhatsupNotConnect": "يرجى توصيل خدمة واتساب للاستفادة من المميزات.",
+
+
+    // CAS Owners
+    "ModalFirstMessage_LessorOwners_CAS_Delete": "سيترتب على حذف بيانات المالك حذفه من قائمة الملاك مع الاحتفاظ بجميع الاجراءات المالية والإدراية والعقود",
+    //"ModalSecondMessage_LessorOwners_CAS_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_LessorOwners_CAS_UnDelete": "سيترتب على إرجاع بيانات المالك إدراجه بقائمة الملاك وإرجاع جميع الاجراءات المالية والإدراية والعقود",
+    //"ModalSecondMessage_LessorOwners_CAS_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_LessorOwners_CAS_Hold": "سيترتب على إيقاف بيانات المالك ايقاف تأجير جميع السيارات المرتبطة بالمالك",
+    //"ModalSecondMessage_LessorOwners_CAS_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_LessorOwners_CAS_UnHold": "سيترتب على تفعيل بيانات المالك تفعيل جميع السيارات المرتبطة بالمالك",
+    //"ModalSecondMessage_LessorOwners_CAS_UnHold": "ارجاع بيانات ونتائج2",
+
+    // CAS Private Drivers
+    "ModalFirstMessage_RenterDriver_Delete": "سيترتب على حذف بيانات السائق الخاص حذفه من قائمة السائقين مع الاحتفاظ بجميع الاجراءات الادارية والعقود",
+    //"ModalSecondMessage_RenterDriver_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_RenterDriver_UnDelete": "سيترتب على إرجاع بيانات السائق الخاص ادراج البيانات بقائمة السائقين بالعقود",
+    //"ModalSecondMessage_RenterDriver_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_RenterDriver_Hold": "سيترتب على إيقاف بيانات السائق الخاص إيقاف إدراجه بقائمة السائقين بعقود التأجير",
+    //"ModalSecondMessage_RenterDriver_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_RenterDriver_UnHold": "سيترتب على تفعيل بيانات السائق الخاص ادراج بيانات السائق بقائمة عقود التأجير",
+    //"ModalSecondMessage_RenterDriver_UnHold": "ارجاع بيانات ونتائج2",
+
+    // Cas Report ClosedContract
+    "ReportClosedContract_Cas_Data": "العقود المغلقة",
+    "ReportClosedContract_Cas_Details": "بيانات إضافية"
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 
@@ -2203,7 +2228,10 @@
   "requiredNoLengthFiled60": "هذا الحقل يلازم اقل من 60 خانة",
   "requiredNoLengthFiled20": "هذا الحقل يلازم اقل من 20 خانة",
   "requiredNoLengthFiled10": "هذا الحقل يلازم 10 ارقام ويبدأ برقم 7",
+  //"requiredNoLengthFiled1_2": "هذا الحقل يلازم 10 ارقام ويبدأ برقم 1 أو 2",
+  "requiredNoLengthFiled1_2": "هذا رقم خاطئ",
   "requiredNoLengthFiled100": "هذا الحقل يلازم 100 خانة",
+  "requiredNoLengthFiled110": "هذا الحقل يلازم 110 خانة",
   //"NotStartWith7": "هذا الحقل يلازم 10 ارقام و لا يمكن ان يبدأ برقم 7",
   "NotStartWith7": "هذا الحقل لا يمكن ان يبدأ برقم 7",
   "requiredNoStartWithFiled7": "هذا الحقل مطلوب و يبدء برقم7",
@@ -2700,6 +2728,7 @@
 
   "AccountBankLessorCode": "كود الشركة",
   "AccountBankCode": "رقم الحساب",
+  "AccountBankSalesCount": "عدد نقاط البيع",
 
 
   "Edit AccountBank Hint": "تمكنك الصفحة من تعديل بيانات الحساب البنكي",
@@ -2710,8 +2739,30 @@
 
   "HintSureTodeleteAccountBank": "سيترتب على حذف بيانات الحساب البنكي حذف جميع نقاط البيع المرتبطة بالحساب مع الاحتفاظ بجميع الاجراءات الادارية والمالية.",
   "HintSureToHoldAccountBank": "سيترتب على إيقاف بيانات الحساب البنكي إيقاف جميع نقاط البيع المرتبطة الحساب",
-  "BankNameArAccount": "اسم البنك",
-  "BankNameEnAccount": "اسم البنك",
+  "BankNameArAccount": "البنك",
+  "BankNameEnAccount": "البنك",
+
+  "ModalFirstMessage_AccountBank_CAS_Delete": "سيترتب على حذف الحساب البنكي حذف إدراجه من قائمة الحسابات البنكية وحذف نقاط البيع مع الاحتفاظ بجميع الاجراءات المالية والإدارية",
+  //"ModalSecondMessage_AccountBank_CAS_Delete": "حذف بيانات ونتائج2",
+  "ModalFirstMessage_AccountBank_CAS_UnDelete": "سيترتب على إرجاع الحساب البنكي إدراجه بقائمة الحسابات البنكية وإرجاع نقاط البيع",
+  //"ModalSecondMessage_AccountBank_CAS_UnDelete": "استعادة بيانات ونتائج2",
+  "ModalFirstMessage_AccountBank_CAS_Hold": "سيترتب على إيقاف الحساب البنكي إيقاف إدراجه بقائمة الحسابات البنكية وإيقاف نقاط البيع مع الاحتفاظ بجميع الاجراءات المالية والإدارية",
+  //"ModalSecondMessage_AccountBank_CAS_Hold": "ايقاف بيانات ونتائج2",
+  "ModalFirstMessage_AccountBank_CAS_UnHold": "سيترتب على تفعيل الحساب البنكي إدراجه بقائمة الحسابات البنكية وتفعيل نقاط البيع",
+  //"ModalSecondMessage_AccountBank_CAS_UnHold": "ارجاع بيانات ونتائج2",
+
+  "View_AccountBank_CAS_PageTitle": "البنوك",
+  "AccountBankName": "الحساب",
+
+  // CAS Services salesPoints
+  "ModalFirstMessage_AccountSalesPoint_CAS_Delete": "سيترتب على حذف نقطة البيع حذف إدراجها من قائمة نقط البيع مع الاحتفاظ بجميع الاجراءات المالية والإدارية",
+  //"ModalSecondMessage_AccountSalesPoint_CAS_Delete": "حذف بيانات ونتائج2",
+  "ModalFirstMessage_AccountSalesPoint_CAS_UnDelete": "سيترتب على إرجاع نقطة البيع إدراجها بقائمة نقاط البيع",
+  //"ModalSecondMessage_AccountSalesPoint_CAS_UnDelete": "استعادة بيانات ونتائج2",
+  "ModalFirstMessage_AccountSalesPoint_CAS_Hold": "سيترتب على إيقاف نقطة البيع إيقاف إدراجها بقائمة نقاط البيع مع الاحتفاظ بجميع الاجراءات المالية والإدارية",
+  //"ModalSecondMessage_AccountSalesPoint_CAS_Hold": "ايقاف بيانات ونتائج2",
+  "ModalFirstMessage_AccountSalesPoint_CAS_UnHold": "سيترتب على تفعيل نقطة البيع إدراجها بقائمة نقاط البيع",
+  //"ModalSecondMessage_AccountSalesPoint_CAS_UnHold": "ارجاع بيانات ونتائج2",
 
   //Cas EMployee
   "EmployementEn": "المسمى الوظيفي انجليزي",
@@ -2727,14 +2778,16 @@
   //RenterDriver Services
   "RenterDriver Data": "بيانات السائقين",
   "RenterDriver Hint": "تمكنك الصفحة من عرض و إضافة و تعديل بيانات السائقين.",
-  "RenterDriverNameEn": "اسم السائق انجليزي",
-  "RenterDriverNameAr": "اسم السائق عربي",
+  "RenterDriverNameEn": "السائق انجليزي",
+  "PersonalData": "بيانات شخصية",
+  "DriverLicenseData": "رخصة القيادة",
+  "RenterDriverNameAr": "السائق عربي",
 
   "Add RenterDriver": "اضافة سائق خاص",
   "Add RenterDriver Method": "اضافة السائق الخاص",
   "Add RenterDriver Hint": "تمكنك الصفحة من إضافة بيانات السائق الخاص.",
   "Add RenterDriver Data": "اضافة السائق الخاص",
-  "RenterDriverName": "اسم السائق",
+  "RenterDriverName": "السائق",
 
   "RenterDriverLessorCode": "كود الشركة",
   "RenterDriverID": "رقم الهوية",
@@ -2742,15 +2795,20 @@
   "RenterDriverBirthday": "تاريخ الميلاد",
   "RenterDriverIssueDate": "تاريخ اصدار الهوية",
   "RenterDriverExpireDate": "تاريخ انتهاء الهوية",
-  "RenterDriverLicenseNO": "رقم رخصة القيادة",
-  "RenterDriverLicenseType": "نوع رخصة القيادة",
+  "RenterDriverLicenseNO": "رقم الرخصة",
+  "RenterDriverLicenseType_s": "الرخصة",
+  "RenterDriverLicenseType": "نوع الرخصة",
 
   "LicenseIssueDate": "تاريخ رخصة القيادة",
-  "LicenseExpireDate": "تاريخ انتهاء رخصة القيادة",
+  "LicenseExpireDate": "تاريخ انتهاء الرخصة",
+  "male": "ذكر",
+  "female": "انثى",
+  "ID_Image": "صورة الهوية",
+  "DrivingLicense_Image": "صورة رخصة القيادة",
 
   "RenterDriverNationality": "الجنسية",
   "RenterDriverGender": "الجنس",
-  "RenterDriverMobile": "رقم الجوال",
+  "RenterDriverMobile": "الجوال",
   "RenterDriverEmail": "البريد الالكتروني",
   "RenterDriverLastContract": "تاريخ أخر عقد",
   "RenterDriverContractsCount": "عدد العقود",
@@ -2763,7 +2821,7 @@
   "RenterDriverLicenseImg": "رخصة القيادة",
 
   "Edit RenterDriver Hint": "تمكنك الصفحة من الاطلاع على بيانات السائق الخاص وتحديثها",
-  "Edit RenterDriver Data": "تحديث بيانات السائق الخاص",
+  "Edit RenterDriver Data": "تحديث بيانات السائق",
 
   "SureToRetriveHoldRenterDriver": "تأكيد التفعيل ...",
   "HintSureToRetriveHRenterDriver": "سيترتب على تفعيل بيانات السائق الخاص ادراج بيانات السائق بقائمة عقود التأجير.",

@@ -5,116 +5,228 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["RenterDriver Data"];
+    ViewData["Page-title"] = @localizer["View_RenterDriver_PageTitle"];
     ViewData["Page-Hint"] = @localizer["RenterDriver Hint"];
 }
+<link href="~/css/toastr.css" rel="stylesheet" />
+
 <style>
-    body {
-        overflow: hidden
-    }
 
-    @@media (max-width: 600px) {
-        #basic-datatable1_wrapper .row:first-child > div {
-            text-align: center;
-        }
-
-            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
-                text-align: center;
-            }
-    }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f9f9f9;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
+    /* العنصر الذي سيتم محاذاته */
+    .LoaderRun_Center_div {
+        width: 1900px;
+        height: 850px;
+        /*background-color: #3498db;*/
+        text-align: center;
+        /*color: white;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        z-index: 4;
     }
 </style>
 
-<div class="sub-container">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div class="col-sm-12 col-md-9">
-                <div class="col-sm-12 col-md-4 p-0">
-                    <a type="button" class="btn btn-danger" title="@localizer["Back"]" asp-area="CAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
-                    <a class="btn btn-secondary InsertBtn" onclick="CheckValidation('2207005', '@Status.Insert', '@Url.Action("AddRenterDriver", "RenterDriver")')">
-                        @localizer["Add RenterDriver"]
-                    </a>
+<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
+    <div class="content LoaderRun_Center_div">
+        <div class="loader"></div>
+    </div>
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3 mb-2">
+                <div class="col">
+                    <h3>@localizer["RenterDriver Data"]</h3>
                 </div>
-            </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
 
-            @*search And Fitler Radio Button*@
-            <div class="col-sm-12 col-md-3 p-0">
-                <input class="form-control" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
-            </div>
-            <div class="col-sm-12 col-md-12 mt-3" id="status-filter">
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioAll" name="customRadio" value="All" class="form-check-input">
-                    <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioActive" name="customRadio" value="A" class="form-check-input">
-                    <label class="form-check-label" for="customRadioActive">@localizer["Active"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioStoped" name="customRadio" value="H" class="form-check-input">
-                    <label class="form-check-label" for="customRadioStoped">@localizer["Holded"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioRemoved" name="customRadio" value="D" class="form-check-input">
-                    <label class="form-check-label" for="customRadioRemoved">@localizer["Deleted"]</label>
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search2" class="form-control inputs search-input" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
+
                 </div>
             </div>
-        </div>
-        <div class=dataTable>
-            <partial name="_DataTableRenterDriver" />
-        </div>
+            <div class="row mb-3">
+                <div class="col-12 filters-col">
+                    <div class="filters-custom-order">
+                        <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioAll" name="customRadio" value="All" />
+                    </div>
+
+                    <div class="filters-custom-order">
+                        <label class="form-check-label filter2" for="customRadioActive">@localizer["Active"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioActive" name="customRadio" value="A" checked />
+                    </div>
+
+                    <div class="filters-custom-order">
+                        <label class="form-check-label  filter1" for="customRadioStoped">@localizer["Stoped"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioStoped" name="customRadio" value="H" />
+                    </div>
+                    <div class="filters-custom-order">
+                        <label class="form-check-label filter3" for="customRadioRemoved">@localizer["Deleted"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioRemoved" name="customRadio" value="D" />
+                    </div>
+
+                </div>
+            </div>
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
+                    <partial name="_DataTableRenterDriver" />
+                </div>
+            </div>
+        </form>
+        <a asp-area="CAS" asp-controller="RenterDriver" asp-action="AddRenterDriver" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add_RenterDriver_PageTitle"]" class="new-Page-icon" style="cursor: pointer">
+            <img src="~/CasSys/images/new driver.svg" alt="new item">
+        </a>
+        <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="main-page-icon">
+            <img src="~/CasSys/images/back to main.svg" alt="man">
+        </a>
+    </div>
     </div>
 </div>
 
 @section scripts {
+    <!-- تحميل مكتبة jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- تحميل مكتبة DataTables -->
+    <script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="~/js/toastr.js"></script>
+
+    <script>
+        // لجعل الحالة حسب ما هي جاية من index نشط او الكل
+        $(document).ready(function () {
+            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+
+        ///////
+        // تهيئة DataTable
+        var table2 = $('#Table').DataTable({
+            ordering: false, // تعطيل الترتيب التلقائي للصفوف
+            stateSave: true,   // حفظ حالة الجدول
+        });
+        end_init_ShowDatatable();
+
+        });
+
+        function end_init_ShowDatatable() {
+            $(".LoaderRun_Center_div").css("display", "none");
+            $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+            //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
+            $("select[name='Table_length']").val('10000').change();
+            $("#Table_info").css("display", "none");
+            $("#Table_previous").css("display", "none");
+            $("#Table_next").css("display", "none");
+            $("#Table_length").css("display", "none");
+            $("#Table_filter").css("display", "none");
+            $(".paginate_button").css("display", "none");
+            $(".ellipsis").css("display", "none");
+            $("select[name='Table_length'] option[value='10000']").prop("selected", true);
+        }
+
+        // دالة للبحث عن كلمة في جميع الصفوف
+        function searchRows() {
+            $(".LoaderRun_Center_div").css("display", "flex");// اظهار loader تحميل
+
+            var table = $('#Table').DataTable();
+            end_init_ShowDatatable();
+            var keyword = $('#search2').val().toLowerCase(); // الكلمة المدخلة للبحث (تحويلها إلى حروف صغيرة)
+
+            // إخفاء كل الصفوف أولاً
+            table.rows().every(function () {
+                this.nodes().to$().hide(); // إخفاء الصف
+            });
+
+            // التكرار عبر كل الصفوف
+            table.rows().every(function () {
+                var row = this.data();
+                var found = false;
+
+                // التكرار عبر كل الخلايا في الصف
+                row.forEach(function (cell) {
+                    if (cell.toString().toLowerCase().includes(keyword)) {
+                        found = true; // إذا تم العثور على الكلمة في أي خلية
+                    }
+                });
+
+                // إذا تم العثور على الكلمة في الصف، نظهره
+                if (found) {
+                    this.nodes().to$().show();// إظهار الصف
+                }
+            });
+
+
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+        }
+
+
+        // يمكن إضافة وظيفة البحث تلقائيًا عند كتابة النص
+        $('#search2').on('keyup', function () {
+            searchRows();
+        });
+
+
+        function showErrorToast_NoUpdate() {
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+            toastr.error("@localizer["AuthEmplpoyee_NoUpdate"]");
+        }
+
+        function showErrorToast_whitController(messageText) {
+            $.ajax({
+                url: '@Url.Action("DisplayToastError_NoUpdate", "RenterDriver")',
+                type: 'POST',
+                data: { messageText: messageText },
+                success: function (response) {
+                    if (response.success) {
+                        console.log('showErrorToast_whitController : ', messageText);
+                    }
+                },
+                error: function () {
+                    toastr.error('تعذر الاتصال بالخادم');
+                }
+            });
+        }
+    </script>
     @*Get RenterDriver Using filter*@
     <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
         //get RenterDriver By Status function
-        function GetRenterDriverFitler(status) {
+        function GetRenterDriverFitler(status, search) {
+            $(".LoaderRun_Center_div").css("display", "flex");
             $.ajax({
                 type: "GET",
                 data: {
-                    status: status
+                    status: status, search: search
                 },
-                url: "@Url.Action("GetRenterDriversByStatus", "RenterDriver", new { Area = "CAS" })",
+                url: "@Url.Action("GetRenterDriverByStatus", "RenterDriver", new { Area = "CAS" })",
                 success: function (response) {
                     $(".dataTable").html(response);
-                    set_basic_datatable();
+                    $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
                 },
             })
         }
 
-        //on Click Filter Radio Button GetRenterDriverByStatus
         $("input[name='customRadio']").on("click", function () {
-            // Clear the value from the search input
-            $("#top-search").val("");
-            GetRenterDriverFitler($(this).val())
-        })
+            const status = $(this).val();
+            const search = $("#search").val(); // الحصول على قيمة البحث
+            $("#search2").val("");
+            GetRenterDriverFitler(status, search);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#search").on("keyup", function () {
+            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+            const search = $(this).val(); // الحصول على قيمة البحث
+            $("#search2").val("");
+            GetRenterDriverFitler(status, search);
+        });
     </script>
 }
-
-
-<style>
-    .wrapper {
-        margin-bottom: 60px;
-        overflow: hidden;
-        background-image: url("~/Pictures/bg.jpg") !important;
-    }
-
-    .table-bordered td,
-    .table-bordered th {
-        border: none;
-    }
-</style>
-

@@ -1,785 +1,898 @@
 ﻿@using Bnan.Core.Extensions
-@model Bnan.Ui.ViewModels.CAS.RenterDriverVM
+@model Bnan.Ui.ViewModels.CAS.Services.RenterDriverVM
 
 @inject IViewLocalizer localizer
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-    @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
-
-    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? $"~{Context.Request.Path.Value}?id={HttpContextAccessor.HttpContext.Request.Query["id"]}&lessor={HttpContextAccessor.HttpContext.Request.Query["lessor"]}" : $"~{Context.Request.Path.Value}?id={HttpContextAccessor.HttpContext.Request.Query["id"]}&lessor={HttpContextAccessor.HttpContext.Request.Query["lessor"]}";
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
     ViewData["Page-title"] = localizer["Edit RenterDriver Data"];
-    ViewData["Page-Hint"] = localizer["Edit RenterDriver Hint"];
+    var DriverName = " ";
+    var IDType = " ";
+    //var LicenseType = " ";
+    var Nationality = " ";
+    var Gender = " ";
 }
+<link href="~/css/toastr.css" rel="stylesheet" />
 
-<style>
-    .row {
-        align-items: center;
-    }
-
-    #signaturePreview, #imagePreview {
-        display: block;
-        margin-top: -5px;
-        float: right;
-        margin-right: 20px;
-        height: 100px;
-        width: auto;
-        object-fit: cover;
-        border: .5px solid rgb(231, 231, 231);
-        position: relative;
-    }
-
-    #spanInput {
-        height: 35px;
-    }
-
-    .sub-container form .row > div:nth-child(odd):nth-child(-n+5), .sub-container-form form .row > div:nth-child(odd):nth-child(-n+5) {
-        margin: 0;
-    }
-
-    .file-upload {
-        background-color: #ffffff;
-        width: 200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    .file-upload-btn, .file-upload-btn2, .file-upload-btn3 {
-        width: 200px;
-        max-height: 200px;
-        max-width: 200px;
-        margin: 0;
-        color: #fff;
-        background: #727cf5;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        border-bottom: 4px solid #727cf5;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-    }
-
-        .file-upload-btn:hover {
-            background: #5661e3;
-            color: #ffffff;
-            transition: all .2s ease;
-            cursor: pointer;
-        }
-
-    /* .file-upload-btn:active {
-                                            border: 0;
-                                            transition: all .2s ease;
-                                        }*/
-
-    .file-upload-content {
-    }
-
-    .file-upload-input-picture1, .file-upload-input-signature, .file-upload-input-picture2, .file-upload-input-picture3 {
-        position: absolute;
-        margin: 0;
-        padding: 0;
-        width: 200px;
-        height: 200px;
-        max-height: 200px;
-        max-width: 200px;
-        outline: none;
-        opacity: 0;
-        cursor: pointer;
-    }
-
-    .image-upload-wrap {
-        max-height: 200px;
-        max-width: 200px;
-        width: 200px;
-        margin-top: 5px;
-        border: 4px dashed rgb(231, 231, 231);
-        position: relative;
-        display: none;
-    }
-
-        .image-dropping,
-        .image-upload-wrap:hover {
-            background-color: rgb(231, 231, 231);
-            border: 4px dashed #ffffff;
-        }
-
-    .image-title-wrap {
-        color: #222;
-    }
-
-    .drag-text {
-        text-align: center;
-    }
-
-        .drag-text h3 {
-            font-weight: 100;
-            text-transform: uppercase;
-            padding: 60px 0;
-        }
-
-    .file-upload-image {
-        height: 200px;
-        max-width: 200px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        padding: 20px;
-        border: .5px solid rgb(231, 231, 231);
-    }
-
-    .remove-image {
-        margin: 0;
-        max-height: 200px;
-        max-width: 200px;
-        width: 200px;
-        color: #fff;
-        background: #fa5c7c;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        border-bottom: 4px solid #fa5c7c;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-    }
-
-        .remove-image:hover {
-            background: #f35474;
-            color: #ffffff;
-            transition: all .2s ease;
-            cursor: pointer;
-        }
-
-</style>
-<style>
-
-    .datepicker-widget {
-        display: none;
-    }
-
-
-    .datepicker-icon i {
-        font-size: 18px;
-        color: #999;
-    }
-
-    .dateRelative {
-        position: relative;
-    }
-
-    .form-contain {
-        position: relative;
-    }
-
-</style>
-@if (requestCulture.RequestCulture.UICulture.Name == "ar-EG")
-{
-    <style>
-        .datepicker-icon {
-            cursor: pointer;
-            top: 8%;
-            right: 77%;
-        }
-    </style>
-}
-
-@if (requestCulture.RequestCulture.UICulture.Name == "en-US")
-{
-    <style>
-        .datepicker-icon {
-            position: absolute;
-            display: inline-block;
-            top: 1px;
-            left: 178px;
-        }
-    </style>
-}
-<title>@ViewData["Title"]</title>
-
-<div class="sub-container-form">
-    <form class="needs-validation" novalidate asp-area="CAS" asp-controller="RenterDriver" asp-action="Edit" method="post" enctype="multipart/form-data">
-        <div class="form-contain">
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationLessor" hidden />
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationStatus" hidden />
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationEvaluationTotal" hidden />
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationIdtrype" hidden />
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationNationality" hidden />
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationLicenseType" hidden />
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationGender" hidden />
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationArName" hidden />
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationEnName" hidden />
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationIdImage" hidden />
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationLicenseImage" hidden />
-            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationSignature" hidden />
-            @*ID and Type*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="RenterDriverID">@localizer["RenterDriverID"]</label>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationId" maxlength="20" width="80%" readonly />
-
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                            <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationId" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label" for="RenterDriverType">@localizer["RenterDriverType"]</label>
-                </div>
-                <div class="col-md-1">
-                    @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
-                    {
-                        <input type="text" class="form-control" value="@ViewData["RenterDriverIDTypeAr"]" readonly />
-                    }
-                    else
-                    {
-                        <input type="text" class="form-control" value="@ViewData["RenterDriverIDTypeEn"]" readonly />
-                    }
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                @if (requestCulture.RequestCulture.UICulture.Name != "en-US")
+<div class="col my-2 d-flex align-items-center justify-content-center">
+                    <div class="container NewUpdate-container">
+            <form class="needs-validation" novalidate asp-area="CAS" asp-controller="RenterDriver" asp-action="Edit">
+                <div class="row">
+                <input type="text" value="@Model.CrCasRenterPrivateDriverInformationKeyMobile" id="key1" hidden />
+                <input asp-for="CrCasRenterPrivateDriverInformationStatus" hidden />
+                <input asp-for="CrCasRenterPrivateDriverInformationId" hidden />
+                <input asp-for="CrCasRenterPrivateDriverInformationLessor" hidden />
+                <input asp-for="CrCasRenterPrivateDriverInformationArName" hidden />
+                <input asp-for="CrCasRenterPrivateDriverInformationEnName" hidden />
+                <input asp-for="CrCasRenterPrivateDriverInformationIdtrype" hidden />
+                <input asp-for="CrCasRenterPrivateDriverInformationGender" hidden />
+                <input asp-for="CrCasRenterPrivateDriverInformationNationality" hidden />
+                
+                @if (requestCulture.RequestCulture.UICulture.Name == "en-US")
                 {
-                    @*RenterDriverNameAr arabic*@
-                    <div class="col-md-1">
-                        <label class="form-label" for="RenterDriverNameAr">@localizer["RenterDriverName"]</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationArName" id="RenterDriverNameAr" maxlength="50" width="80%" readonly />
-                        <div style="margin-top:2px">
-                            <div style="height: 1.0em">
-                                <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationArName" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
+                    DriverName = Model.CrCasRenterPrivateDriverInformationEnName;
+                    IDType = Model.all_IdType?.Find(x => x.Value?.Trim() == Model.CrCasRenterPrivateDriverInformationIdtrype?.Trim())?.text_En;
+                    //LicenseType = Model.all_LicenseType?.Find(x => x.Value?.Trim() == Model.CrCasRenterPrivateDriverInformationLicenseType?.Trim())?.text_En;
+                    Nationality = Model.all_Nationalities?.Find(x => x.Value?.Trim() == Model.CrCasRenterPrivateDriverInformationNationality?.Trim())?.text_En;
+                    Gender = Model.all_Genders?.Find(x => x.Value?.Trim() == Model.CrCasRenterPrivateDriverInformationGender?.Trim())?.text_En;
                 }
                 else
                 {
-                    @*RenterDriverNameEn English*@
-                    <div class="col-md-1">
-                        <label class="form-label" for="RenterDriverNameEn">@localizer["RenterDriverName"]</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationEnName" id="RenterDriverNameEn" maxlength="100" width="80%" readonly />
-                        <div style="margin-top:2px">
-                            <div style="height: 1.0em">
-                                <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationEnName" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
+                    DriverName = Model.CrCasRenterPrivateDriverInformationArName;
+                    IDType = Model.all_IdType?.Find(x => x.Value?.Trim() == Model.CrCasRenterPrivateDriverInformationIdtrype?.Trim())?.text_Ar;
+                    //LicenseType = Model.all_LicenseType?.Find(x => x.Value?.Trim() == Model.CrCasRenterPrivateDriverInformationLicenseType?.Trim())?.text_Ar;
+                    Nationality = Model.all_Nationalities?.Find(x => x.Value?.Trim() == Model.CrCasRenterPrivateDriverInformationNationality?.Trim())?.text_Ar;
+                    Gender = Model.all_Genders?.Find(x => x.Value?.Trim() == Model.CrCasRenterPrivateDriverInformationGender?.Trim())?.text_Ar;
                 }
-            </div>
-            @*RenterDriver dates Birthday *@
-            <div class="row mt-2">
-                @*RenterDriver Birthday *@
-                <div class="col-md-3">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label" for="RenterDriverBirthday">@localizer["RenterDriverBirthday"]</label>
-                        </div>
-                        <div class="col-md-6 dateRelative">
-                            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationBirthDate" value="@ViewData["BirthDate"]" readonly />
-                        </div>
-                    </div>
-                </div>
-                @*RenterDriver Issuedate *@
-                <div class="col-md-3">
-                    <div class="row">
+                
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-9">
+                                        <div class="row g-3 my-2">
+                                            <div class="col-md-6">
 
-                        <div class="col-md-5">
-                            <label class="form-label" for="RenterDriverIssueDate">@localizer["RenterDriverIssueDate"]</label>
-                        </div>
-                        <div class="col-md-7 dateRelative">
-                            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationIssueIdDate" />
-                            <div style="margin-top:2px">
-                                <div style="margin-top:2px">
-                                    <div style="height: 1.0em">
-                                        <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationIssueIdDate" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @*RenterDriver ExpireDate *@
-                <div class="col-md-3">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label" for="RenterDriverExpireDate">@localizer["RenterDriverExpireDate"]</label>
-                        </div>
-                        <div class="col-md-7 dateRelative">
-                            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationExpiryIdDate" />
-                            <div style="margin-top:2px">
-                                <div style="margin-top:2px">
-                                    <div style="height: 1.0em">
-                                        <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationExpiryIdDate" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-
-            @*LicenseID and Type*@
-            <div class="row mt-2">
-                <div class="col-md-3">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label" for="RenterDriverLicenseNO">@localizer["RenterDriverLicenseNO"]</label>
-                        </div>
-                        <div class="col-md-7">
-                            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationLicenseNo" id="RenterDriverLicenseNO" maxlength="20" width="70%" oninput="this.value = this.value.replace(/\D/g, '')" required />
-                            <div style="margin-top:2px">
-                                <div style="height: 1.0em">
-                                    <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationLicenseNo" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <label class="form-label" for="RenterDriverLicenseType">@localizer["RenterDriverLicenseType"]</label>
-                        </div>
-                        <div class="col-md-7">
-                            @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
-                            {
-                                <input type="text" class="form-control" value="@ViewData["RenterDriverLicenseTypeAr"]" readonly />
-
-                                <div style="margin-top:2px">
-                                    <div style="height: 1.35em">
-                                        <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationLicenseType" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <input type="text" class="form-control" value="@ViewData["RenterDriverLicenseTypeEn"]" readonly />
-
-                                <div style="margin-top:2px">
-                                    <div style="height: 1.35em">
-                                        <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationLicenseType" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            }
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            @*RenterDriver LicenseDate *@
-            <div class="row mt-2">
-                <div class="col-md-3">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label" for="LicenseIssueDate">@localizer["LicenseIssueDate"]</label>
-                        </div>
-                        <div class="col-md-7 dateRelative">
-                            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationLicenseDate" />
-                            <div style="margin-top:2px">
-                                <div style="margin-top:2px">
-                                    <div style="height: 1.0em">
-                                        <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationLicenseDate" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                @*RenterDriver LicenseDate End *@
-                <div class="col-md-3">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <label class="form-label" for="LicenseExpireDate">@localizer["LicenseExpireDate"]</label>
-                        </div>
-                        <div class="col-md-7 dateRelative">
-                            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationLicenseExpiry" />
-                            <div style="margin-top:2px">
-                                <div style="margin-top:2px">
-                                    <div style="height: 1.0em">
-                                        <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationLicenseExpiry" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            @*RenterDriver Nationality and Gender *@
-            <div class="row mt-2">
-                <div class="col-md-3">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label" for="RenterDriverNationality">@localizer["RenterDriverNationality"]</label>
-                        </div>
-                        <div class="col-md-6">
-                            @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
-                            {
-                                <input type="text" class="form-control" value="@ViewData["RenterDriverNationalityAr"]" readonly />
-                                <div style="margin-top:2px">
-                                    <div style="height: 1.35em">
-                                        <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationNationality" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <input type="text" class="form-control" value="@ViewData["RenterDriverNationalityEn"]" readonly />
-                                <div style="margin-top:2px">
-                                    <div style="height: 1.35em">
-                                        <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationNationality" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            }
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <label class="form-label" for="RenterDriverGender">@localizer["RenterDriverGender"]</label>
-                        </div>
-                        <div class="col-md-7">
-                            @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
-                            {
-                                <input type="text" class="form-control" value="@ViewData["RenterDriverGenderAr"]" readonly />
-                                <div style="margin-top:2px">
-                                    <div style="height: 1.35em">
-                                        <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationGender" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <input type="text" class="form-control" value="@ViewData["RenterDriverGenderEn"]" readonly />
-                                <div style="margin-top:2px">
-                                    <div style="height: 1.35em">
-                                        <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationGender" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            }
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            @*telephone and email*@
-            <div class="row mt-2">
-                <div class="col-md-3">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label" for="RenterDriverMobile">@localizer["RenterDriverMobile"]</label>
-                        </div>
-                        <div class="col-md-7">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationMobile" id="RenterDriverMobile" maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
-                                    <div style="margin-top:2px">
-                                        <div style="height: 1.35em">
-                                            <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationMobile" class="text-danger" id="RenterDriverMobile"></span>
+                                <h3> @localizer["Edit RenterDriver Data"]</h3>
+                                            
                                         </div>
+                                            <div class="col-md-6 save-col">
+                                <button type="submit" class="custom-img-btn" id="SaveEdit">
+                                    <img src="~/CasSys/images/save.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn" id="HoldBtn" data-bs-toggle="modal" data-bs-target="#Stop-Modal">
+                                    <img id="StopModalIcon" src="~/CasSys/images/stop.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn" id="DeleteBtn" data-bs-toggle="modal" data-bs-target="#Delete-Modal">
+                                    <img id="modalIcon" src="~/MasSystem/images/delete.svg" />
+                                </button>
+                                <button type="button" class="custom-img-btn">
+                                    <a href="/CAS/RenterDriver/Index">
+                                        <img class="Chevron"
+                                                        src="~/CasSys/images/Chevron_Left.svg" /></a></button>
+                                            </div>
+                                        </div>
+                                        <main class="mt-4 g-3">
+
+                                        <h5 class="subtitle"> @DriverName</h5>
+                            <h5 class="subtitle"> @(Model.CrCasRenterPrivateDriverInformationId) (@IDType)</h5>
+
+                                            <div class="accordion inputs-accordion">
+                                                <div class=" inputs-accordion-item">
+                                                    <div class=" inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            @localizer["PersonalData"]
+                                                        </span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                                            viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                                            stroke-width="3" stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            class="lucide lucide-chevron-down accordion-item-header-icon">
+                                                            <path d="m6 9 6 6 6-6" />
+                                                        </svg>
+                                                    </div>
+                                                    <div class="accordion-item-description-wrapper">
+
+                                                        <div class="accordion-item-description">
+                                                            <hr class="accordion-items-hr">
+
+                                                            <div class="container-fluid">
+                                                                @*<div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="row">
+                                                                            <div class="col-auto">
+                                                                <p> @localizer["RenterDriverID"]</p>
+                                                                            </div>
+                                                                            <div class=" col-md-auto Saved-data">
+                                                                                <p> @Model.CrCasRenterPrivateDriverInformationId </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="row">
+                                                                            <div class="col-auto">
+                                                                <p> @localizer["RenterDriverType"] </p>
+                                                                            </div>
+                                                                            <div class=" col-md-auto Saved-data">
+                                                                <p>@IDType</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>*@
+                                                                <div class="row align-items-center">
+                                                                    <div class="col-md-6 ">
+                                                        <label for="EndDate" class="form-label">
+                                                            @localizer["RenterDriverBirthday"]
+                                                                            <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                                                        </label>
+                                                                        <input type="date" id="EndDate"
+                                                                    class="form-control inputs custom-date-input" min="@Model.before100Y" max="@Model.ToDay"
+                                                                    asp-for="CrCasRenterPrivateDriverInformationBirthDate" required>
+                                                                        <div class="invaild">
+                                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationBirthDate" class="text-danger"></span>
+                                                                <span class="text-danger" id="CrCasRenterPrivateDriverInformationBirthDate-Error"></span>
+                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    @*<div class="col-md-6">
+                                                                        <button type="button" class="btn modal-btn"
+                                                                            data-bs-toggle="modal"
+                                                                            href="#Doc-photo-modal">
+                                                                            <div class="row align-items-center">
+                                                                <div class="col">@localizer["ID_Image"] </div>
+                                                                                <div class="col-auto">
+                                                                                    <div class="systems-check"><i
+                                                                                            class="fa-solid fa-check text-white"></i>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </button>
+                                                                    </div>*@
+
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="row">
+                                                                            <div class="col-auto">
+                                                                <p> @localizer["RenterDriverNationality"] </p>
+                                                                            </div>
+                                                                            <div class=" col-md-auto Saved-data">
+                                                                                <p> @Nationality </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="row">
+                                                                            <div class="col-auto">
+                                                                <p> @localizer["RenterDriverGender"] </p>
+                                                                            </div>
+                                                                            <div class=" col-md-auto Saved-data">
+                                                                        <p> @Gender </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                        <label for="email" class="form-label"> @localizer["RenterDriverEmail"] </label>
+                                                        <input type="text" id="CrCasRenterPrivateDriverInformationEmail"
+                                                                            class="form-control inputs english-input"
+                                                               asp-for="CrCasRenterPrivateDriverInformationEmail">
+                                                                        <div class="invaild">
+                                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationEmail" class="text-danger"></span>
+                                                                <span class="text-danger" id="CrCasRenterPrivateDriverInformationEmail-Error"></span>
+                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="phone2" class="form-label">
+                                                            @localizer["RenterDriverMobile"]
+                                                            <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                                        </label>
+                                                        <div class="input-group has-validation">
+                                                            <input type="text"
+                                                                   class="form-control inputs tel-input" oninput="this.value=this.value.replace(/\D/g, '')"
+                                                                   id="CrCasRenterPrivateDriverInformationMobile" asp-for="CrCasRenterPrivateDriverInformationMobile" required>
+                                                            <select class="input-group-text select-style counterCode"
+                                                                    asp-for="CrCasRenterPrivateDriverInformationKeyMobile" id="KeyCode" required>
+                                                                <option value="" selected> </option>
+                                                                @foreach (var callingKeys in Model.all_callingKey)
+                                                                {
+                                                                    <option value="@callingKeys?.text_Ar?.Trim()" id="@callingKeys?.text_Ar?.Trim()">@callingKeys?.text_Ar?.Trim()</option>
+                                                                }
+                                                            </select>
+                                                            <div class="invaild">
+                                                                <div class="invalid-feedback">
+                                                                    <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationMobile" class="text-danger"></span>
+                                                                    <span class="text-danger" id="CrCasRenterPrivateDriverInformationMobile-Error"></span>
+                                                                    <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationKeyMobile" class="text-danger"></span>
+                                                                    <span class="text-danger" id="CrCasRenterPrivateDriverInformationKeyMobile-Error"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+
+
+                                                                </div>
+                                                                <div class="row align-items-center ">
+
+                                                                    <div class="col-md-8">
+                                                        <label>@localizer["Reason_s"]</label>
+                                                                        <textarea class=" form-control textarea-inputs"
+                                                                            rows="1" maxlength="100" asp-for="CrCasRenterPrivateDriverInformationReasons"
+                                                                            type="text"></textarea>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="row align-items-center">
+                                                                            <div class="col-auto">
+                                                                                <button type="button"
+                                                                                    class="custom-img-btn"><img
+                                                                                        src="~/CasSys/images/icon.svg"
+                                                                                        data-bs-toggle="modal"
+                                                                                        href="#signature-modal" /></button>
+                                                                            </div>
+                                                                            <div class="col">
+                                                                                <img src="~/CasSys/images/signature.svg"
+                                                                                    id="previewSignature">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="inputs-accordion-item">
+                                                    <div class="inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">@localizer["DriverLicenseData"]</span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                                            viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                                            stroke-width="3" stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            class="lucide lucide-chevron-down accordion-item-header-icon">
+                                                            <path d="m6 9 6 6 6-6" />
+                                                        </svg>
+                                                    </div>
+                                                    <div class="accordion-item-description-wrapper">
+                                                        <div class="accordion-item-description">
+                                                            <hr class="accordion-items-hr">
+                                                            <div class="container-fluid">
+                                                                @*<div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="row">
+                                                                            <div class="col-auto">
+                                                                <p>@localizer["RenterDriverLicenseNO"]</p>
+                                                                            </div>
+                                                                            <div class="col-md-auto Saved-data">
+                                                                                <p>@Model.CrCasRenterPrivateDriverInformationLicenseNo</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="row">
+                                                                            <div class="col-auto">
+                                                                <p>@localizer["RenterDriverLicenseType"]</p>
+                                                                            </div>
+                                                                            <div class="col-md-auto Saved-data">
+                                                                <p>@Model.CrCasRenterPrivateDriverInformationLicenseType</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>*@
+                                                
+                                                                
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <label for="CrCasRenterPrivateDriverInformationLicenseNo"
+                                                                               class="form-label"> @localizer["RenterDriverLicenseNO"]  <i class="fa-solid fa-star-of-life RequirdStar"></i></label>
+                                                                        <input type="text" id="CrCasRenterPrivateDriverInformationLicenseNo"
+                                                                               class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/\D/g, '')"
+                                                                               asp-for="CrCasRenterPrivateDriverInformationLicenseNo" required>
+                                                                        <div class="invaild">
+                                                                            <div class="invalid-feedback">
+                                                                                <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationLicenseNo" class="text-danger"></span>
+                                                                                <span class="text-danger" id="CrCasRenterPrivateDriverInformationLicenseNo-Error"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6 ">
+                                                                        <label for="CrCasRenterPrivateDriverInformationLicenseType" class="form-label">
+                                                                            @localizer["RenterDriverLicenseType"]  <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                                                        </label>
+                                                                        <select class="form-select select-style "
+                                                                                asp-for="CrCasRenterPrivateDriverInformationLicenseType" id="CrCasRenterPrivateDriverInformationLicenseType" required>
+                                                                            <option> </option>
+                                                                            @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
+                                                                            {
+                                                                                foreach (var TypeAr in Model.all_LicenseType)
+                                                                                {
+                                                                                    <option value="@TypeAr.Value">@TypeAr.text_Ar</option>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                foreach (var TypeEn in Model.all_LicenseType)
+                                                                                {
+                                                                                    <option value="@TypeEn.Value">@TypeEn.text_En</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                        <div class="invaild">
+                                                                            <div class="invalid-feedback">
+                                                                                <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationLicenseType" class="text-danger"></span>
+                                                                                <span class="text-danger" id="CrCasRenterPrivateDriverInformationLicenseType-Error"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+
+
+
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <label for="LicenceDate"
+                                                               class="form-label">@localizer["Date_start"]  <i class="fa-solid fa-star-of-life RequirdStar"></i></label>
+                                                                        <input type="date" id="LicenceDate"
+                                                                        class="form-control inputs custom-date-input" min="@Model.before7Y" max="@Model.ToDay"
+                                                                        asp-for="CrCasRenterPrivateDriverInformationLicenseDate"  required>
+                                                                        <div class="invalid-feedback">
+                                                            <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationLicenseDate" class="text-danger"></span>
+                                                            <span class="text-danger" id="CrCasRenterPrivateDriverInformationLicenseDate-Error"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <label for="LicenceEndDate"
+                                                               class="form-label">@localizer["Date_end"]  <i class="fa-solid fa-star-of-life RequirdStar"></i></label>
+                                                                    <input type="date" id="LicenceEndDate" min="@Model.ToDay" max="@Model.after10Y"
+                                                                            class="form-control inputs custom-date-input"
+                                                                            asp-for="CrCasRenterPrivateDriverInformationLicenseExpiry" required>
+                                                        <div class="invalid-feedback">
+                                                            <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationLicenseExpiry" class="text-danger"></span>
+                                                            <span class="text-danger" id="CrCasRenterPrivateDriverInformationLicenseExpiry-Error"></span>
+                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row align-items-center mt-3">
+                                                                    @*<div class="col-md-6">
+                                                                        <button type="button" class="btn modal-btn"
+                                                                            data-bs-toggle="modal"
+                                                                            href="#License-photo-modal">
+                                                                            <div class="row align-items-center">
+                                                                <div class="col">@localizer["DrivingLicense_Image"]</div>
+                                                                                <div class="col-auto">
+                                                                                    <div class="systems-check-license">
+                                                                                        <i class="fa-solid fa-check text-white"></i>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </button>
+                                                                    </div>*@
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </main>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <select class="form-select" asp-for="CrCasRenterPrivateDriverInformationKeyMobile" id="callingKey" style="width: 86px; margin-right: -25px;">
-                                        @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
-                                        {
-                                            <option value="@callingKey.Text">@callingKey.Text</option>
-                                        }
-                                    </select>
-                                </div>
                             </div>
-
-
-                        </div>
-
+                        </form>
                     </div>
                 </div>
-                <div class="col-md-8">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <label class="form-label" for="RenterDriverEmail">@localizer["RenterDriverEmail"]</label>
-                        </div>
-                        <div class="col-md-7" style="margin-right: -15px;width: 606px;">
-                            <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationEmail" maxlength="100" id="RenterDriverEmail" width="80%" readonly oninput="this.value = this.value.replace(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDCF\uFDF0-\uFDFF\uFE70-\uFEFF]/g, '')">
-                            <div style="margin-top:2px">
-                                <div style="height: 1.0em">
-                                    <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationEmail" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+
+
+<!-- delete modal -->
+<div class="modal fade" id="Delete-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="Delete-ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: 1px solid var(--main-color);">
+            <div class="content" id="modalContent">
             </div>
-
-            @*RenterDriver LastContract and counter and days *@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="RenterDriverLastContract">@localizer["RenterDriverLastContract"]</label>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationLastContract" id="RenterDriverLastContract" maxlength="100" width="80%" readonly />
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                            <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationLastContract" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label" for="RenterDriverContractsCount">@localizer["RenterDriverContractsCount"]</label>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationContractCount" id="RenterDriverContractsCount" maxlength="100" width="80%" readonly />
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                            <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationContractCount" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label" for="RenterDriverDaysCount">@localizer["RenterDriverDaysCount"]</label>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationDaysCount" id="RenterDriverDaysCount" maxlength="100" width="80%" readonly />
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                            <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationDaysCount" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
+            <!-- Hidden spinner  -->
+            <div class="modal-body text-center" id="spinner" style="display: none;">
+                <span class="State-Modal-loader"></span>
             </div>
-
-            @*RenterDriver Killos and TotalEval and EvalVal *@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="RenterDriverDistance">@localizer["RenterDriverDistance"]</label>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationTraveledDistance" id="RenterDriverDistance" maxlength="100" width="80%" readonly />
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                            <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationTraveledDistance" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label" for="RenterDriverEvalVal">@localizer["RenterDriverEvalVal"]</label>
-                </div>
-                <div class="col-md-2">
-                    <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationEvaluationValue" id="RenterDriverEvalVal" value="0" width="80%" readonly />
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            @*reasons*@
-            <div class="row mt-2">
-                <div class="col-md-1">
-                    <label class="form-label" for="RenterDriverReasons">@localizer["reasons"]</label>
-                </div>
-                <div class="col-md-7">
-                    <input type="text" class="form-control" asp-for="CrCasRenterPrivateDriverInformationReasons" maxlength="100" id="RenterDriverReasons" width="80%">
-                    <div style="margin-top:2px">
-                        <div style="height: 1.0em">
-                            <span asp-validation-for="@Model.CrCasRenterPrivateDriverInformationReasons" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            @*RenterDriver Images*@
-            <div class="row mt-1">
-                <div class="col-md-4">
-                    <div class="file-upload">
-                        <button class="file-upload-btn" type="button" onclick="$('.file-upload-input-picture1').trigger('click')">@localizer["RenterDriverSignature"]</button>
-                        <div class="image-upload-wrap">
-                            <input class="file-upload-input-picture1" type="file" onchange="readURL(this, 'picture1');" accept="image/*" id="RenterDriverSignature" name="SignatureImg" />
-                            <div class="drag-text">
-                                <h3>@localizer["DragAndDrop"]</h3>
-                            </div>
-                        </div>
-                        <div class="file-upload-content picture1">
-                            <img class="file-upload-image picture1" src="@Url.Content(Model.CrCasRenterPrivateDriverInformationSignature?.ToString())" />
-                            <div class="image-title-wrap">
-                                <button type="button" onclick="removeUpload(this)" class="remove-image">@localizer["Remove"]</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="file-upload">
-                        <button class="file-upload-btn2" type="button" onclick="$('.file-upload-input-picture2').trigger('click')">@localizer["RenterDriverIDImg"]</button>
-                        <div class="image-upload-wrap">
-                            <input class="file-upload-input-picture2" type="file" onchange="readURL(this, 'picture2');" accept="image/*" id="RenterDriverIDImg" name="IDImg" />
-                            <div class="drag-text">
-                                <h3>@localizer["DragAndDrop"]</h3>
-                            </div>
-                        </div>
-                        <div class="file-upload-content picture2">
-                            <img class="file-upload-image picture2" src="@Url.Content(Model.CrCasRenterPrivateDriverInformationIdImage?.ToString())" />
-                            <div class="image-title-wrap">
-                                <button type="button" onclick="removeUpload(this)" class="remove-image">@localizer["Remove"]</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="file-upload">
-                        <button class="file-upload-btn3" type="button" onclick="$('.file-upload-input-picture3').trigger('click')">@localizer["RenterDriverLicenseImg"]</button>
-                        <div class="image-upload-wrap">
-                            <input class="file-upload-input-picture3" type="file" onchange="readURL(this, 'picture3');" accept="image/*" id="RenterDriverLicenseImg" name="LicenseImg" />
-                            <div class="drag-text">
-                                <h3>@localizer["DragAndDrop"]</h3>
-                            </div>
-                        </div>
-                        <div class="file-upload-content picture3">
-                            <img class="file-upload-image picture3" src="@Url.Content(Model.CrCasRenterPrivateDriverInformationLicenseImage?.ToString())" />
-                            <div class="image-title-wrap">
-                                <button type="button" onclick="removeUpload(this)" class="remove-image">@localizer["Remove"]</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
         </div>
-        @Html.ValidationMessage("NoCHanged", null, new { @class = "text-danger" })
-
-        <div class="mt-4" id="buttonContainer">
-
-            <button type="submit" id="saveEdit" class="btn btn-primary ms-1">@localizer["Save"]</button>
-
-            @if (Model.CrCasRenterPrivateDriverInformationStatus == "A")
-            {
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Hold" data-bs-targett="#centermodalhold">
-                    @localizer["Hold"]
-                </a>
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Deleted" data-bs-targett="#centermodalDelete">
-                    @localizer["Delete"]
-                </a>
-            }
-            else if (Model.CrCasRenterPrivateDriverInformationStatus == "H")
-            {
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.UnHold" data-bs-targett="#centermodalRHold">
-                    @localizer["ReactiveHold"]
-                </a>
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Deleted" data-bs-targett="#centermodalDelete">
-                    @localizer["Delete"]
-                </a>
-            }
-            else if (Model.CrCasRenterPrivateDriverInformationStatus == "D")
-            {
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.Hold" data-bs-targett="#centermodalhold">
-                    @localizer["Hold"]
-                </a>
-                <a type="button" class="btn btn-primary ms-1" data-bs-toggle="modal" data-error="@Status.UnDeleted" data-bs-targett="#centermodalRDelete">
-                    @localizer["ReactiveDelete"]
-                </a>
-            }
-
-            <a type="button" class="btn btn-danger ms-2" asp-area="CAS" asp-controller="RenterDriver" asp-action="Index">
-                @localizer["Back"]
-            </a>
+    </div>
+</div>
+<!-- Stopp  modal -->
+<div class="modal fade" id="Stop-Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="Stop-ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: 1px solid var(--main-color);">
+            <div class=" content" id="Stop-modal-Content">
+            </div>
+            <!-- Hidden spinner  -->
+            <div class="modal-body text-center" id="spinner2" style="display: none;">
+                <span class="State-Modal-loader"></span>
+            </div>
         </div>
-    </form>
+    </div>
+</div>
+
+<!-- document modal -->
+<div class="modal fade" id="Doc-photo-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered d-flex justify-content-center">
+        <div class="modal-content Doc-photo-modal-content p-3">
+            <div class="modal-body Doc-photo-modal-body">
+                <div class="Doc-Card">
+                    <div class="Doc-main-container" id="removeIDImg"></div>
+                    <div class="Doc-upload-container" id="Doc-upload-container">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <div class="Doc-btn-card p-2">
+                            <img src="~/CasSys/images/save (2).svg" class="w-100" id="Doc-photo-save">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="Doc-btn-card p-2">
+                            <img src="~/CasSys/images/Camera.svg" class="w-100" id="openCamera">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="Doc-btn-card p-2">
+                            <img src="~/CasSys/images/Pic.svg" class="w-100" id="UploadPic">
+                            <input type="file" id="DocimageUpload" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- License modal -->
+<div class="modal fade" id="License-photo-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered d-flex justify-content-center">
+        <div class="modal-content License-photo-modal-content p-3">
+            <div class="modal-body License-photo-modal-body">
+                <div class="License-Card">
+                    <div class="License-main-container" id="removeLicenseImg"></div>
+                    <div class="License-upload-container" id="License-upload-container"></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <div class="License-btn-card p-2">
+                            <img src="~/CasSys/images/save (2).svg" class="w-100" id="License-photo-save">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="License-btn-card p-2">
+                            <img src="~/CasSys/images/Camera.svg" class="w-100" id="openCameraLicense">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="License-btn-card p-2">
+                            <img src="~/CasSys/images/Pic.svg" class="w-100" id="UploadLicensePic">
+                            <input type="file" id="LicenseimageUpload" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- signature modal -->
+<div class="modal fade" id="signature-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered d-flex justify-content-center">
+        <div class="modal-content signature-modal-content p-3">
+            <div class="modal-body Signature-modal-body">
+                <div class="SignatureCard">
+                    <div class="image-main-container" id="removeSignatureImg"></div>
+                    <div class="upload-container">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/CasSys/images/signature/save.svg" class="w-100" id="save">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/CasSys/images/signature/Frame.svg" class="w-100" id="clear">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/CasSys/images/signature/file-signature_9795523 1.svg" class="w-100"
+                                 id="WriteSignature">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sinature-Btn-Card p-2">
+                            <img src="~/CasSys/images/signature/Pic.svg" class="w-100" id="UploadSigntaurePic">
+                            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
-<!-- MOdel-->
-<!-- Reactive Hold RenterDriver MOdel-->
-<div class="modal fade" id="centermodalRHold" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h4>@localizer["SureToRetriveHoldRenterDriver"]</h4>
-                <p>@localizer["HintSureToRetriveHRenterDriver"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="retriveRenterDriverButtonH" class="btn btn-primary">@localizer["Okay"]</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<!-- Reactive Delete RenterDriver MOdel-->
-<div class="modal fade" id="centermodalRDelete" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
 
-            <div class="modal-body">
-                <h4>@localizer["SureToRetriveDelete"]</h4>
-                <p>@localizer["HintSureToRetriveDRenterDriver"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="retriveRenterDriverButtonD" class="btn btn-primary">@localizer["Okay"]</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<!-- Delete RenterDriver Modal-->
-<div class="modal fade" id="centermodalDelete" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-body">
-                <h4>@localizer["SureTodelete"]</h4>
-                <p> @localizer["HintSureTodeleteRenterDriver"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="deleteRenterDriverButton" class="btn btn-primary">@localizer["Okay"]</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<!-- Hold Lessor MOdel-->
-<div class="modal fade" id="centermodalhold" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-body">
-                <h4>@localizer["SureToHold"]</h4>
-                <p> @localizer["HintSureToHoldRenterDriver"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@localizer["Cancel"]</button>
-                <button type="button" id="holdRenterDriverButton" class="btn btn-primary">@localizer["Okay"]</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/toastr.js"></script>
+    @*<script src="~/CasSys/scripts/Scripts.js"></script>*@
+    <script src="~/CasSys/scripts/signature.js"></script>
+    <script src="~/CasSys/scripts/uploadPic.js"></script>
+    <script src="~/CasSys/scripts/uploadPic2.js"></script>
+
+@*    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const data = {
+                "date": '2025-01-09',
+                "phone2": "0987654321",
+                "email": "ABC@gmail.com",
+                "notes": 'ملاحظات الفرع',
+                "Signature": '~/CasSys/images/signature_29.png'
+            };
+            document.getElementById("EndDate").value = data.date;
+            document.getElementById("phone2").value = data.phone2;
+            document.getElementById("email").value = data.email;
+            document.querySelector('textarea[name="notes"]').value = data.notes;
+            document.getElementById('previewSignature').src = data.Signature;
+
+        });
+        const IDImg = document.getElementById('Doc-upload-container')
+        IDImg.innerHTML = `<img class="preview-image" src="~/CasSys/images/Commercial Register.png">`
+
+    </script>*@
+
     <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        $(document).ready(function () {
+            var mobileKey =$('#key1').val();
+            console.log(mobileKey);
+            $('#KeyCode').val(mobileKey).trigger('change');
+        });
+        $("#CrCasRenterPrivateDriverInformationEmail").on('change',function(){
+
+            var emailInput = document.getElementById('CrCasRenterPrivateDriverInformationEmail');
+            var mailformat = /^\w+([\.-]?\w+)*@@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            if (!emailInput.value.match(mailformat)) {
+            //alert('يرجى إدخال بريد إلكتروني صالح يحتوي على "@@"');
+                $(`#${"CrCasRenterPrivateDriverInformationEmail"}-Error`).text("@localizer["requiredFiledEmail"]").show();
+            }
+            else{
+                $(`#${"CrCasRenterPrivateDriverInformationEmail"}-Error`).text(" ");
+            }
+        });
+    
+    </script>
+    <script>
+        // This To Focus On input when page load
+        if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+            $("#CrCasRenterPrivateDriverInformationEnName").focus();
+        }
+        else {
+            $("#CrCasRenterPrivateDriverInformationArName").focus();
+        }
+        //////////////////////////////////////////
+        var statusInput = $("#CrCasRenterPrivateDriverInformationStatus");
+        var OldArName = $("#CrCasRenterPrivateDriverInformationArName").val();
+        var OldEnName = $("#CrCasRenterPrivateDriverInformationEnName").val();
+
+
+
+        function Check_onChange_input(existName, dataField, oldValue) {
+            //get the old value
+            if (dataField === oldValue) {
+                // Clear any existing error message if the values match
+                $(`#${existName}-Error`).hide();
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/CAS/RenterDriver/CheckChangedField",
+                data: { existName: existName, dataField: dataField },
+                success: function (result) {
+                    console.log("feedback", result);
+                    // Hide all previous error messages
+                    $('.invalid-feedback').show();
+
+                    // Show new error messages if they exist
+                    if (result.errors && result.errors.length > 0) {
+                        result.errors.forEach(function (error) {
+                            // Use the ID from the error object to find the correct element
+                            $(`#${error.field}-Error`).text(error.message).show();
+                        });
+                    } else {
+                        // Hide the error message if no errors
+                        $(`#${existName}-Error`).text("");
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        // Example usage for Arabic Name input
+        $('#CrCasRenterPrivateDriverInformationArName').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrCasRenterPrivateDriverInformationArName', newValue, OldArName);
+        });
+
+        // Example usage for English Name input
+        $('#CrCasRenterPrivateDriverInformationEnName').on('change', function () {
+            var newValue = $(this).val();
+            Check_onChange_input('CrCasRenterPrivateDriverInformationEnName', newValue, OldEnName);
+        });
+
+    </script>
+    <script>
+        function updateRenterDriverStatus(status) {
+            var code = document.getElementById("CrCasRenterPrivateDriverInformationId").value;
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: "POST",
+                    url: "/CAS/RenterDriver/EditStatus",
+                    data: { status: status, code: code },
+                    success: function (result) {
+                        toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+
+                        if (result == "true") {
+                            //@*toastr.success("@localizer["ToastSave"]");*@
+                            resolve(true);
+                        } else if (result == "false_auth") {
+                            toastr.error("@localizer["AuthEmplpoyee_No_auth"]");
+                            resolve(false);
+                        } else if (result == "udelete") {
+                            //@* toastr.error("@localizer["SureTo_Cannot_delete"]");  //*@
+                            resolve(false);
+                        } else if (result == "un_NoUpdateStatus") {
+                            //@* toastr.error("@localizer["AuthEmplpoyee_NoUpdateStatus"]"); //*@
+                            resolve(false);
+                        } else {
+                            toastr.error("@localizer["ToastFailed"]");
+                            resolve(false);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("@localizer["ToastFailed"]");
+                        resolve(false);
+                    }
+                });
+            });
+        }
+    </script>
+    <script>
+        let isDeleted = false;
+        let isStoped = false
+        if (statusInput.val() == '@Status.Hold') {
+            isDeleted = false;
+            isStoped = true
+        }
+        else if (statusInput.val() == '@Status.Deleted') {
+            isDeleted = true;
+            isStoped = false
+        }
+
+        window.onload = () => {
+            DeleteState(isDeleted);
+            StopState(isStoped);
+        };
+
+        function DeleteState(deleted) {
+            isDeleted = deleted;
+
+            document.getElementById("modalContent").style.display = "block";
+            document.getElementById("modalIcon").src = isDeleted
+                ? "/MasSystem/images/Property 1=recycle.svg"
+                : "/MasSystem/images/delete.svg";
+
+            document.getElementById("modalContent").innerHTML = isDeleted
+                ? `
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                                <img src="/MasSystem/images/Green-recycle.svg" /> @localizer["SureToRetriveDelete"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_RenterDriver_UnDelete"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_RenterDriver_UnDelete"]</p>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`
+                : `
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                                <img src="/MasSystem/images/delete (2).svg" /> @localizer["SureTodelete"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                            @if (Model.CrCasRenterPrivateDriverInformationStatus == Status.Rented)
+                                                            {
+                                                                    <p>@localizer["SureTo_Cannot_delete"]</p>
+                                                            }
+                                                            else
+                                                            {
+                                                                <p>@localizer["ModalFirstMessage_RenterDriver_Delete"]</p>
+                                                                <p>@localizer["ModalSecondMessage_RenterDriver_Delete"]</p>
+                                                            }
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="DeleteBtn" onclick="DeleteLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`;
+        }
+        function DeleteLoad() {
+            const modalContent = document.getElementById("modalContent");
+            const spinner = document.getElementById("spinner");
+            const deleteModal = document.getElementById("Delete-Modal");
+            const modalIcon = document.getElementById("modalIcon");
+
+            modalContent.style.display = "none";
+            spinner.style.display = "flex";
+
+            setTimeout(async () => {
+                spinner.style.display = "none";
+                const modal = bootstrap.Modal.getInstance(deleteModal);
+                modal.hide();
+
+                const newStatus = isDeleted ? '@Status.UnDeleted' : '@Status.Deleted';
+                const success = await updateRenterDriverStatus(newStatus);
+                if (success) {
+                    statusInput.val(isDeleted ? '@Status.Active' : '@Status.Deleted');
+                    isDeleted = !isDeleted;
+
+                    modalIcon.src = isDeleted
+                        ? "/MasSystem/images/Property 1=recycle.svg"
+                        : "/MasSystem/images/delete.svg";
+
+                    DeleteState(isDeleted);
+                    setTimeout(function () {
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterDriver")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
+                }
+                else {
+                    modalIcon.src = isDeleted
+                        ? "/MasSystem/images/Property 1=recycle.svg"
+                        : "/MasSystem/images/delete.svg";
+
+                    DeleteState(isDeleted);
+                }
+            }, 500);
+        }
+
+        function StopState(Stoped) {
+            isStoped = Stoped;
+
+            document.getElementById("Stop-modal-Content").style.display = "block";
+            document.getElementById("StopModalIcon").src = isStoped
+                ? "/MasSystem/images/Property 1=active.svg"
+                : "/MasSystem/images/stop.svg";
+
+            document.getElementById("Stop-modal-Content").innerHTML = isStoped
+                ? `
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                                <img src="/MasSystem/images/GreenStop.svg" /> @localizer["SureToRetriveHold"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>@localizer["ModalFirstMessage_RenterDriver_UnHold"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_RenterDriver_UnHold"]</p>
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="RetriveBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`
+                : `
+                                                                    <div class="modal-header border-0">
+                                                                      <h1 class="modal-title fs-4 m-auto d-flex align-items-start gap-2" id="Delete-ModalLabel">
+                                                                                <img src="/MasSystem/images/RedStop.svg" /> @localizer["SureToHold"]
+                                                                      </h1>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                            @if (Model.CrCasRenterPrivateDriverInformationStatus == Status.Rented)
+                                                            {
+                                                                        <p>@localizer["AuthEmplpoyee_NoUpdateStatus"]</p>
+                                                            }
+                                                            else
+                                                            {
+                                                                        <p>@localizer["ModalFirstMessage_RenterDriver_Hold"]</p>
+                                                                        <p>@localizer["ModalSecondMessage_RenterDriver_Hold"]</p>
+                                                            }
+                                                                    </div>
+                                                                    <div class="modal-footer border-0">
+                                                                      <div class="container">
+                                                                        <div class="row">
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-modal-Save" id="HoldBtn" onclick="StopLoad()">@localizer["Okay"]</button>
+                                                                          </div>
+                                                                          <div class="col-md-6 text-center">
+                                                                            <button type="button" class="btn btn-Cancel" data-bs-dismiss="modal">@localizer["Cancel"]</button>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>`;
+        }
+        function StopLoad() {
+            const stopModalContent = document.getElementById("Stop-modal-Content");
+            const spinner = document.getElementById("spinner2");
+            const modalElement = document.getElementById("Stop-Modal");
+            const stopModalIcon = document.getElementById("StopModalIcon");
+
+            stopModalContent.style.display = "none";
+            spinner.style.display = "flex";
+
+            setTimeout(async () => {
+                spinner.style.display = "none";
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+
+                const newStatus = isStoped ? '@Status.UnHold' : '@Status.Hold';
+                const success = await updateRenterDriverStatus(newStatus);
+                if (success) {
+                    statusInput.val(isStoped ? '@Status.Active' : '@Status.Hold');
+                    isStoped = !isStoped;
+
+                    stopModalIcon.src = isStoped
+                        ? "/MasSystem/images/Property 1=active.svg"
+                        : "/MasSystem/images/stop.svg";
+
+                    StopState(isStoped);
+                    setTimeout(function () {
+                        location.href = '@Url.Action("DisplayToastSuccess_withIndex", "RenterDriver")';
+                    }, 500); // التأخير لمدة .5 ثوانٍ
+                }
+            }, 500);
+        }
+
+    </script>
+
+
+    
+    @*<script>
         $(document).ready(function () {
             var today = new Date();
 
@@ -885,62 +998,9 @@
             //})
         })
 
-    </script>
-    <script>
-        function updateRenterDriverStatus(status) {
-            var code = $("#CrCasRenterPrivateDriverInformationId").val();
-            var lessor = $("#CrCasRenterPrivateDriverInformationLessor").val();
-            $.ajax({
-                type: "POST",
-                url: "/CAS/RenterDriver/EditStatus",
-                data: { status: status, code: code, lessor: lessor },
-                success: function (result) {
-                    $('.modal').modal('hide');
-                    window.location.href = "/CAS/RenterDriver/Index";
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
-        }
-
-        // Event listener for delete Lessor button
-        $('#deleteRenterDriverButton').click(function () {
-            updateRenterDriverStatus('D');
-        });
-
-        // Event listener for hold Lessor button
-        $('#holdRenterDriverButton').click(function () {
-            updateRenterDriverStatus('H');
-        });
-
-        // Event listener for retrieve Lessor button
-        $('#retriveRenterDriverButtonD').click(function () {
-            updateRenterDriverStatus('Reactivate');
-        });
-
-        $('#retriveRenterDriverButtonH').click(function () {
-            updateRenterDriverStatus('Reactivate');
-        });
-
-        $("#buttonContainer a").on("click", function (event) {
-            var status = $(this).attr("data-error")
-            var Modal = $(this).attr("data-bs-targett")
-            CheckValidation('2207005', status).done(function (data) {
-                if (data) $(Modal).modal('show');
-            });
-        })
-
-        $("#saveEdit").on("click", function (event) {
-            event.preventDefault();
-            CheckValidation('2207005', '@Status.Save').done(function (data) {
-                if (data) {
-                    $('form').submit();
-                }
-            });
-        })
-    </script>
-    <script>
+    </script>*@
+  
+    @*<script>
         function validateInput(event, inId, InEr, No) {
             event.target.value = event.target.value.replace(/[^0-9]/g, '');
 
@@ -993,7 +1053,8 @@
 
 
 
-    </script>
+    </script>*@
+
 
 
 }
