@@ -1,9 +1,9 @@
 ﻿using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
-using Bnan.Core.Interfaces.MAS;
+using Bnan.Core.Interfaces.CAS;
 using Bnan.Core.Models;
 
-namespace Bnan.Inferastructure.Repository.MAS
+namespace Bnan.Inferastructure.Repository.CAS
 {
     public class LessorOwners_CAS : ILessorOwners_CAS
     {
@@ -31,29 +31,45 @@ namespace Bnan.Inferastructure.Repository.MAS
             var allLicenses = await GetAllAsync();
 
             return allLicenses.Any(x =>
-                x.CrCasOwnersCode != entity.CrCasOwnersCode && // Exclude the current entity being updated
+                x.CrCasOwnersCode != entity.CrCasOwnersCode && x.CrCasOwnersLessorCode == entity.CrCasOwnersLessorCode && // Exclude the current entity being updated
                 (
+                    x.CrCasOwnersCode == entity.CrCasOwnersCode ||
                     x.CrCasOwnersArName == entity.CrCasOwnersArName ||
-                    x.CrCasOwnersEnName.ToLower().Equals(entity.CrCasOwnersEnName.ToLower()) ||
-                    //x.CrCasOwnersEmail.ToLower().Equals(entity.CrCasOwnersEmail.ToLower()) ||
-                    x.CrCasOwnersMobile == entity.CrCasOwnersMobile
+                    x.CrCasOwnersEnName.ToLower().Equals(entity.CrCasOwnersEnName.ToLower()) 
+                    // ||x.CrCasOwnersEmail.ToLower().Equals(entity.CrCasOwnersEmail.ToLower()) 
+                    // ||x.CrCasOwnersMobile == entity.CrCasOwnersMobile
                 )
             );
         }
 
+        public async Task<bool> ExistsByDetails_AddAsync(CrCasOwner entity)
+        {
+            var allLicenses = await GetAllAsync();
 
-        public async Task<bool> ExistsByArabicNameAsync(string arabicName, string code)
+            return allLicenses.Any(x =>
+                x.CrCasOwnersLessorCode == entity.CrCasOwnersLessorCode && // Exclude the current entity being updated
+                (
+                    x.CrCasOwnersCode == entity.CrCasOwnersCode ||
+                    x.CrCasOwnersArName == entity.CrCasOwnersArName ||
+                    x.CrCasOwnersEnName.ToLower().Equals(entity.CrCasOwnersEnName.ToLower())
+                // ||x.CrCasOwnersEmail.ToLower().Equals(entity.CrCasOwnersEmail.ToLower()) 
+                // ||x.CrCasOwnersMobile == entity.CrCasOwnersMobile
+                )
+            );
+        }
+
+        public async Task<bool> ExistsByArabicNameAsync(string arabicName, string code,string company)
         {
             if (string.IsNullOrEmpty(arabicName)) return false;
             return await _unitOfWork.CrCasOwners
-                .FindAsync(x => x.CrCasOwnersArName == arabicName && x.CrCasOwnersCode != code) != null;
+                .FindAsync(x => x.CrCasOwnersArName == arabicName && x.CrCasOwnersCode != code && x.CrCasOwnersLessorCode == company) != null;
         }
 
-        public async Task<bool> ExistsByEnglishNameAsync(string englishName, string code)
+        public async Task<bool> ExistsByEnglishNameAsync(string englishName, string code,string company)
         {
             if (string.IsNullOrEmpty(englishName)) return false;
             var allLicenses = await GetAllAsync();
-            return allLicenses.Any(x => x.CrCasOwnersEnName.ToLower().Equals(englishName.ToLower()) && x.CrCasOwnersCode != code);
+            return allLicenses.Any(x => x.CrCasOwnersEnName.ToLower().Equals(englishName.ToLower()) && x.CrCasOwnersCode != code && x.CrCasOwnersLessorCode == company);
         }
         //public async Task<bool> ExistsByEmailAsync(string email, string code)
         //{
@@ -69,8 +85,14 @@ namespace Bnan.Inferastructure.Repository.MAS
         }
         public async Task<bool> CheckIfCanDeleteIt(string code)
         {
-            var rentersLicenceCount = await _unitOfWork.CrCasCarInformation.CountAsync(x => x.CrCasCarInformationOwner == code && x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationOwnerStatus != Status.Deleted);
-            return rentersLicenceCount == 0;
+            var rentersLicenceCount = await _unitOfWork.CrCasCarInformation.CountAsync(x => x.CrCasCarInformationOwner == code && x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationOwnerStatus != Status.Deleted);
+            var Count2 = await _unitOfWork.CrMasLessorInformation.CountAsync(x => x.CrMasLessorInformationGovernmentNo.Trim() == code && x.CrMasLessorInformationStatus != Status.Deleted);
+            return rentersLicenceCount == 0 && Count2 == 0;
+        }
+        public async Task<bool> CheckIfCanEdit_It(string code)
+        {
+            var Count2 = await _unitOfWork.CrMasLessorInformation.CountAsync(x => x.CrMasLessorInformationGovernmentNo.Trim() == code && x.CrMasLessorInformationStatus != Status.Deleted);
+            return Count2 == 0;
         }
     }
 }

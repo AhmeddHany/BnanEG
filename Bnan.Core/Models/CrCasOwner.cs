@@ -21,8 +21,9 @@ namespace Bnan.Core.Models
         public string? CrCasOwnersEnName { get; set; }
         public string? CrCasOwnersStatus { get; set; }
         public string? CrCasOwnersReasons { get; set; }
+        
 
-        public virtual CrMasLessorInformation? CrCasOwnersLessorCodeNavigation { get; set; }
+        public virtual CrMasLessorInformation CrCasOwnersLessorCodeNavigation { get; set; } = null!;
         public virtual ICollection<CrCasCarInformation> CrCasCarInformations { get; set; }
         public virtual ICollection<CrCasRenterContractBasic> CrCasRenterContractBasics { get; set; }
     }

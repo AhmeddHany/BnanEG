@@ -1,6 +1,7 @@
 ﻿using Bnan.Core;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.CAS;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Interfaces.MAS.Users;
 using Bnan.Core.Interfaces.UpdateDataBaseJobs;
@@ -9,6 +10,7 @@ using Bnan.Core.Repository;
 using Bnan.Inferastructure.Filters;
 using Bnan.Inferastructure.Repository;
 using Bnan.Inferastructure.Repository.Base;
+using Bnan.Inferastructure.Repository.CAS;
 using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Inferastructure.Repository.UpdateDataBaseJobs;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -141,9 +143,11 @@ namespace Bnan.Inferastructure
             builder.Services.AddScoped<IBankService, BankService>();
             builder.Services.AddScoped<IMasAccountPaymentMethod, MasAccountPaymentMethod>();
             builder.Services.AddScoped<ICarDistribution, CarDistribution>();
-            
+
             builder.Services.AddScoped<ILessorOwners_CAS, LessorOwners_CAS>();
-            
+            builder.Services.AddScoped<IAccountBank_CAS, AccountBank_CAS>();
+            builder.Services.AddScoped<IAccountSalesPoint_CAS, AccountSalesPoint_CAS>();
+
 
             builder.Services.AddScoped<IMasContractAdditional, MasContractAdditional>();
             builder.Services.AddScoped<IMasContractOptions, MasContractOptions>();
@@ -196,6 +200,8 @@ namespace Bnan.Inferastructure
 
             //CAS
             builder.Services.AddScoped<IRenterLessorInformation, CasRenterLessorInformation>();
+            builder.Services.AddScoped<IRenterDriver_CAS, RenterDriver_CAS>();
+
             builder.Services.AddScoped<IRenterContract, CasRenterContract>();
             builder.Services.AddScoped<IDriverContract, DriverContract>();
             builder.Services.AddScoped<IUserContract, UserContract>();

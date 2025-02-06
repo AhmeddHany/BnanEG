@@ -2070,7 +2070,8 @@ namespace Bnan.Core.Models
 
             modelBuilder.Entity<CrCasOwner>(entity =>
             {
-                entity.HasKey(e => new { e.CrCasOwnersCode, e.CrCasOwnersLessorCode });
+                entity.HasKey(e => new { e.CrCasOwnersCode, e.CrCasOwnersLessorCode })
+                .HasName("PK_CR_Cas_Owners");
 
                 entity.ToTable("CR_Cas_Owners");
 
@@ -2116,7 +2117,7 @@ namespace Bnan.Core.Models
                 entity.Property(e => e.CrCasOwnersEmail)
                 .HasColumnName("CR_Cas_Owners_Email")
                 .HasMaxLength(100);
-                    
+
 
                 entity.Property(e => e.CrCasOwnersConnectStatus)
                     .HasMaxLength(1)
@@ -3645,7 +3646,7 @@ namespace Bnan.Core.Models
                 entity.HasKey(e => new { e.CrCasLessorPolicyCode, e.CrCasLessorPolicyLessor });
                 entity.ToTable("CR_Cas_Lessor_Policy");
 
-               
+
                 entity.Property(e => e.CrCasLessorPolicyCode)
                    .HasColumnName("CR_Cas_Lessor_Policy_Code");
 

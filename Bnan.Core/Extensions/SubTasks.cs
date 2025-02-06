@@ -139,11 +139,19 @@
 
 
         // CAS Statistics
-        public static string CasStatistics_Cars{ get; set; } = "2206001";
+        public static string CasStatistics_Cars { get; set; } = "2206001";
         public static string CasStatistics_Renters { get; set; } = "2206002";
         public static string CasStatistics_Contracts { get; set; } = "2206003";
         public static string CasStatistics_CarContracts { get; set; } = "2206004";
         public static string CasStatistics_RenterContracts { get; set; } = "2206005";
+
+        // CAS Services
+        public static string ServicesCas_Banks { get; set; } = "2208001";
+        public static string ServicesCas_SalesPoints { get; set; } = "2208002";
+        public static string ServicesCas_Drivers { get; set; } = "2208003";
+        public static string ServicesCas_TechnicalConnectivity { get; set; } = "2208004";
+        public static string ServicesCas_Alerts { get; set; } = "2208005";
+        public static string ServicesCas_Memberships { get; set; } = "2208006";
     }
 }
 
