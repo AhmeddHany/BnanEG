@@ -103,12 +103,12 @@
                                     <div class="form-card SettlementCard1 ">
                                         <div class="d-flex mb-3 gap-3">
                                             
-                                                <a href="@Url.Content(Model.ContractSettlement.CrCasRenterContractBasicPdfFile.ToString())" target="_blank" class="pdf-anchor"><img src="~/BranchSys/Pages/img/contract.svg" alt="pdf for contract details" class="pdf_img"></a>
+                                                <a href="@Url.Content(Model.ContractSettlement?.CrCasRenterContractBasicPdfFile?.ToString())" target="_blank" class="pdf-anchor"><img src="~/BranchSys/Pages/img/contract.svg" alt="pdf for contract details" class="pdf_img"></a>
                                             
                                             
 
                                            
-                                                <a href="@Url.Content(Model.ContractSettlement.InvoicePdfPath.ToString())" target="_blank" class="pdf-anchor2"><img src="~/BranchSys/Pages/img/Invoice.svg" alt="pdf for contract details" class="pdf_img2"></a>
+                                                <a href="@Url.Content(Model.ContractSettlement?.InvoicePdfPath?.ToString())" target="_blank" class="pdf-anchor2"><img src="~/BranchSys/Pages/img/Invoice.svg" alt="pdf for contract details" class="pdf_img2"></a>
                                             
                                             
                                             @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")

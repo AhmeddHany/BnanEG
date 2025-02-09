@@ -6,328 +6,594 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["Mecanism Data"];
-    ViewData["Page-Hint"] = @localizer["Mecanism Hint"];
+
 }
-<style>
-    .row {
-        align-items: baseline;
-    }
-</style>
-<style>
-    .plus-icon {
-        cursor: pointer
-    }
 
-    ul {
-        list-style: none;
-    }
 
-    .sub-container-form form .form-contain {
-        height: 50vh;
-        margin-top: 10px
-    }
-</style>
 
-<div class="sub-container-form">
-    <div class="collapsible">
-        <form>
 
-            <div class="form-contain mb-2" style="margin-right: 50px; margin-top:20px">
-                <div class="mt-2">
-                    <h4 style="font-size: 20px;">
-                        <label for="Branches" class="mb-1">
-                            @localizer["ContractCompany"]
-                        </label>
-                        <a class="plus-icon" onclick="showContractValidition()">
-                            <i class="dripicons-plus"></i>
-                        </a>
-                    </h4>
-                    <div id="ContractsValiditions" style="display: none;">
-                        @foreach (var item in Model.Where(x => x.CrCasLessorMechanismProceduresClassification == "10"))
-                        {
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container NewUpdate-container">
+        <form class="needs-validation">
+            <div class="row">
 
-                            @if (item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresSubjectAlert == true)
-                            {
-                                @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
-                                {
-                                    <ul class="list mt-2" style="font-size: 17px;">
-                                        <li>
-                                            <h4 class="mb-1">
-                                                <input type="checkbox" class="ContractValiditionCheckBox" data-id="@item.CrCasLessorMechanismProcedures" style="height: 15px;width: 30px;" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate" />
-                                                <label for="@item.CrCasLessorMechanismActivate">@item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresArName</label>
-                                                <input type="text" class="form-control ContractValiditionCheckInput" data-id="@item.CrCasLessorMechanismProcedures" style="width: 65px; display: inline;" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
-                                            </h4>
-                                        </li>
-                                    </ul>
-                                }
-                                else
-                                {
-                                    <ul class="list mt-2" style="font-size: 17px;">
-                                        <li>
-                                            <h4 class="mb-1">
-                                                <input type="checkbox" class="ContractValiditionCheckBox" data-id="@item.CrCasLessorMechanismProcedures" style="height: 15px;width: 30px;" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate" />
-                                                <label for="@item.CrCasLessorMechanismActivate">@item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresEnName</label>
-                                                <input type="text" class="form-control ContractValiditionCheckInput" data-id="@item.CrCasLessorMechanismProcedures" style="width: 65px; display: inline;" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
-                                            </h4>
-                                        </li>
-                                    </ul>
-                                }
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="row g-3 my-5">
+                            <div class="col-md-6">
+                                <h3> @localizer["Alerts"] </h3>
+                            </div>
+                            <div class="col-md-6 save-col">
+                                <button type="button" class="custom-img-btn" onclick="getValues()">
+                                    <img src="~/CasSys/images/save.svg" />
+                                </button>
+                            </div>
+                        </div>
+                        <main>
+                            <div class="accordion inputs-accordion">
+                                <div class=" inputs-accordion-item">
+                                    <div class=" inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            @localizer["ContractCompany"]
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
 
-                            }
-                        }
-                    </div>
-                </div>
-                <div class="mt-2">
-                    <h4 style="font-size: 20px;">
-                        <label for="CarsDocuments" class="mb-1">
-                            @localizer["CompanyContracts"]
-                        </label>
-                        <a class="plus-icon" onclick="showCarsDocuments()">
-                            <i class="dripicons-plus"></i>
-                        </a>
-                    </h4>
-                    <div id="CarsDocuments" style="display: none;">
-                        @foreach (var item in Model.Where(x => x.CrCasLessorMechanismProceduresClassification == "11"))
-                        {
+                                            <hr class="accordion-items-hr">
 
-                            @if (item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresSubjectAlert == true)
-                            {
-                                @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
-                                {
-                                    <ul class="list mt-2" style="font-size: 17px;">
-                                        <li>
-                                            <h4 class="mb-1">
-                                                <input type="checkbox" style="height: 15px;width: 30px;" data-id="@item.CrCasLessorMechanismProcedures" class="CarsDocumentsCheckBox" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate" />
-                                                <label for="@item.CrCasLessorMechanismActivate">@item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresArName</label>
-                                                <input type="text" class="form-control CarsDocumentsCheckInput" data-id="@item.CrCasLessorMechanismProcedures" style="width: 65px; display: inline;" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
-                                            </h4>
-                                        </li>
-                                    </ul>
-                                }
-                                else
-                                {
-                                    <ul class="list mt-2" style="font-size: 17px;">
-                                        <li>
-                                            <h4 class="mb-1">
-                                                <input type="checkbox" style="height: 15px;width: 30px;" data-id="@item.CrCasLessorMechanismProcedures" class="CarsDocumentsCheckBox" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate" />
-                                                <label for="@item.CrCasLessorMechanismActivate">@item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresEnName</label>
-                                                <input type="text" class="form-control CarsDocumentsCheckInput" data-id="@item.CrCasLessorMechanismProcedures" style="width: 65px; display: inline;" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
-                                            </h4>
-                                        </li>
-                                    </ul>
-                                }
+                                            <div class="container-fluid">
+                                                <div class="row g-2">
+                                                    @foreach (var item in Model.Where(x => x.CrCasLessorMechanismProceduresClassification == "10"))
+                                                    {@if (item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresSubjectAlert == true)
+                                                        {
 
-                            }
-                        }
-                    </div>
-                </div>
-                <div class="mt-2">
-                    <h4 style="font-size: 20px;">
-                        <label for="CarsFixed" class="mb-1">
-                            @localizer["CarsDocuments"]
-                        </label>
-                        <a class="plus-icon" onclick="showCarsFixed()">
-                            <i class="dripicons-plus"></i>
-                        </a>
-                    </h4>
-                    <div id="CarsFixed" style="display: none;">
-                        @foreach (var item in Model.Where(x => x.CrCasLessorMechanismProceduresClassification == "12"))
-                        {
+                                                            <div class="col-12  alert-col">
+                                                                <div class="col-8 col-md-6 checkbox-alert-col">
+                                                                    <input class="form-check-input checkbox ContractValiditionCheckBox" type="checkbox" data-id="@item.CrCasLessorMechanismProcedures"
+                                                                           value="checked" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate">
+                                                                    <label class="form-check-label" for="CommercialRegistry">
+                                                                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? @item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresEnName : @item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresArName)
+                                                                    </label>
+                                                                </div>
+                                                                <div class="col col-md-6 d-flex align-items-center gap-2">
+                                                                    <div class="number-input-container Documents-days-input ">
+                                                                        <div class="col">
+                                                                            <input type="number" min="10" max="90" class="alert-input ContractValiditionCheckInput"
+                                                                                   data-id="@item.CrCasLessorMechanismProcedures" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
+                                                                        </div>
+                                                                        <div class="col d-flex flex-column-reverse">
+                                                                            <button type="button" class="deincrement" disabled></button>
+                                                                            <button type="button" class="increment" disabled></button>
+                                                                        </div>
+                                                                    </div>
+                                                                    @localizer["TheDay"]
+                                                                </div>
+                                                            </div>
 
-                            @if (item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresSubjectAlert == true)
-                            {
-                                @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
-                                {
-                                    <ul class="list mt-2" style="font-size: 17px;">
-                                        <li>
-                                            <h4 class="mb-1">
-                                                <input type="checkbox" class="CarsFixedCheckBox" data-id="@item.CrCasLessorMechanismProcedures" style="height: 15px;width: 30px;" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate" />
-                                                <label for="@item.CrCasLessorMechanismActivate">@item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresArName</label>
-                                                <input type="text" class="form-control CarsFixedCheckInput" data-id="@item.CrCasLessorMechanismProcedures" style="width: 65px; display: inline;" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
-                                            </h4>
-                                        </li>
-                                    </ul>
-                                }
-                                else
-                                {
-                                    <ul class="list mt-2" style="font-size: 17px;">
-                                        <li>
-                                            <h4 class="mb-1">
-                                                <input type="checkbox" class="CarsFixedCheckBox" data-id="@item.CrCasLessorMechanismProcedures" style="height: 15px;width: 30px;" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate" />
-                                                <label for="@item.CrCasLessorMechanismActivate">@item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresEnName</label>
-                                                <input type="text" class="form-control CarsFixedCheckInput" data-id="@item.CrCasLessorMechanismProcedures" style="width: 65px; display: inline;" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
-                                            </h4>
-                                        </li>
-                                    </ul>
-                                }
 
-                            }
-                        }
-                    </div>
-                </div>
-                <div class="mt-2">
-                    <h4 style="font-size: 20px;">
-                        <label for="RenterAndDriver" class="mb-1">
-                            @localizer["CarsFixed"]
-                        </label>
-                        <a class="plus-icon" onclick="showRenterAndDriver()">
-                            <i class="dripicons-plus"></i>
-                        </a>
-                    </h4>
-                    <div id="RenterAndDriver" style="display: none;">
-                        @foreach (var item in Model.Where(x => x.CrCasLessorMechanismProceduresClassification == "13"))
-                        {
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" inputs-accordion-item">
+                                    <div class=" inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            @localizer["CarsDocuments"]
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
 
-                            @if (item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresSubjectAlert == true)
-                            {
-                                @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
-                                {
-                                    <ul class="list mt-2" style="font-size: 17px;">
-                                        <li>
-                                            <h4 class="mb-1">
-                                                <input type="checkbox" class="RenterAndDriverCheckBox" style="height: 15px;width: 30px;" data-id="@item.CrCasLessorMechanismProcedures" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate" />
-                                                <label for="@item.CrCasLessorMechanismActivate">@item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresArName</label>
-                                                <input type="text" class="form-control RenterAndDriverCheckInput" style="width: 65px; display: inline;" data-id="@item.CrCasLessorMechanismProcedures" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
-                                                <input type="text" class="form-control RenterAndDriverCheckInputKm" style="width: 100px; display: inline;" data-id="@item.CrCasLessorMechanismProcedures" asp-for="@item.CrCasLessorMechanismKmAlertAboutExpire" maxlength="5" />
+                                            <div class="container-fluid">
+                                                <div class="row g-2">
+                                                    @foreach (var item in Model.Where(x => x.CrCasLessorMechanismProceduresClassification == "12"))
+                                                    {
 
-                                            </h4>
-                                        </li>
-                                    </ul>
-                                }
-                                else
-                                {
-                                    <ul class="list mt-2" style="font-size: 17px;">
-                                        <li>
-                                            <h4 class="mb-1">
-                                                <input type="checkbox" class="RenterAndDriverCheckBox" style="height: 15px;width: 30px;" data-id="@item.CrCasLessorMechanismProcedures" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate" />
-                                                <label for="@item.CrCasLessorMechanismActivate">@item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresEnName</label>
-                                                <input type="text" class="form-control RenterAndDriverCheckInput" style="width: 65px; display: inline;" data-id="@item.CrCasLessorMechanismProcedures" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
-                                                <input type="text" class="form-control RenterAndDriverCheckInputKm" data-id="@item.CrCasLessorMechanismProcedures" style="width: 100px; display: inline;" asp-for="@item.CrCasLessorMechanismKmAlertAboutExpire" maxlength="5" />
-                                            </h4>
-                                        </li>
-                                    </ul>
-                                }
+                                                        @if (item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresSubjectAlert == true)
+                                                        {
+                                                            <div class="col-12  alert-col">
+                                                                <div class="col-8 col-md-6 checkbox-alert-col">
+                                                                    <input class="form-check-input checkbox CarsDocumentsCheckBox" type="checkbox" data-id="@item.CrCasLessorMechanismProcedures"
+                                                                           value="checked" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate">
+                                                                    <label class="form-check-label" for="Driving-license">
+                                                                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? @item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresEnName : @item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresArName)
+                                                                    </label>
+                                                                </div>
+                                                                <div class="col col-md-6 d-flex align-items-center gap-2">
+                                                                    <div class="number-input-container Documents-days-input ">
+                                                                        <div class="col">
+                                                                            <input type="number" min="10" max="90" class="alert-input CarsDocumentsCheckInput"
+                                                                                   data-id="@item.CrCasLessorMechanismProcedures" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
+                                                                        </div>
+                                                                        <div class="col d-flex flex-column-reverse">
+                                                                            <button type="button" class="deincrement" disabled></button>
+                                                                            <button type="button" class="increment" disabled></button>
+                                                                        </div>
+                                                                    </div>
+                                                                    @localizer["TheDay"]
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" inputs-accordion-item">
+                                    <div class=" inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            @localizer["CarsFixed"]
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
 
-                            }
-                        }
-                    </div>
-                </div>
-                <div class="mt-2">
-                    <h4 style="font-size: 20px;">
-                        <label for="Additional" class="mb-1">
-                            @localizer["Additional"]
-                        </label>
-                        <a class="plus-icon" onclick="showAdditional()">
-                            <i class="dripicons-plus"></i>
-                        </a>
-                    </h4>
-                    <div id="Additional" style="display: none;">
-                        @foreach (var item in Model.Where(x => x.CrCasLessorMechanismProceduresClassification == "20"))
-                        {
+                                            <div class="container-fluid">
+                                                <div class="row g-2">
+                                                    @foreach (var item in Model.Where(x => x.CrCasLessorMechanismProceduresClassification == "13"))
+                                                    {
+                                                        @if (item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresSubjectAlert == true)
+                                                        {
+                                                            <div class="col-12  alert-col ">
+                                                                <div class="col-8 col-md-4 mb-2 checkbox-alert-col">
+                                                                    <input class="form-check-input checkbox CarsFixedCheckBox" type="checkbox" id="@item.CrCasLessorMechanismProcedures" data-id="@item.CrCasLessorMechanismProcedures" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate">
+                                                                    <label class="form-check-label" for="@item.CrCasLessorMechanismProcedures">
+                                                                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? @item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresEnName : @item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresArName)
+                                                                    </label>
+                                                                </div>
+                                                                <div class="col-6  col-md-4 d-flex align-items-center gap-2">
+                                                                    <div class="number-input-container  car-maintenance-period ">
+                                                                        <div class="col">
+                                                                            <input type="number" min="1" max="15" class="alert-input CarsFixedCheckInput" data-id="@item.CrCasLessorMechanismProcedures" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
+                                                                        </div>
+                                                                        <div class="col d-flex flex-column-reverse">
+                                                                            <button type="button" class="deincrement" disabled></button>
+                                                                            <button type="button" class="increment" disabled></button>
+                                                                        </div>
+                                                                    </div>
+                                                                    @localizer["TheDay"]
+                                                                </div>
+                                                                <div class="col-6  col-md-4 d-flex align-items-center gap-2">
+                                                                    <div class="number-input-container car-maintenance-kilos ">
+                                                                        <div class="col">
+                                                                            <input type="number" min="500" max="9000" class="alert-input CarsFixedCheckInputKm" data-id="@item.CrCasLessorMechanismProcedures" asp-for="@item.CrCasLessorMechanismKmAlertAboutExpire" maxlength="5" />
+                                                                        </div>
+                                                                        <div class="col d-flex flex-column-reverse">
+                                                                            <button type="button" class="deincrement" disabled></button>
+                                                                            <button type="button" class="increment" disabled></button>
+                                                                        </div>
+                                                                    </div>
+                                                                    @localizer["KiloMetre"]
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" inputs-accordion-item">
+                                    <div class=" inputs-accordion-item-header">
+                                        <span class="accordion-item-header-title">
+                                            @localizer["Additional"]
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                             viewBox="0 0 24 24" fill="none" stroke="#666666"
+                                             stroke-width="3" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="lucide lucide-chevron-down accordion-item-header-icon">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                    <div class="accordion-item-description-wrapper">
+                                        <div class="accordion-item-description">
+                                            <hr class="accordion-items-hr">
 
-                            @if (item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresSubjectAlert == true)
-                            {
-                                @if (requestCulture?.RequestCulture.UICulture.Name != "en-US")
-                                {
-                                    <ul class="list mt-2" style="font-size: 17px;">
-                                        <li>
-                                            <h4 class="mb-1">
-                                                <input type="checkbox" class="AdditionalCheckBox" data-id="@item.CrCasLessorMechanismProcedures" style="height: 15px;width: 30px;" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate" />
-                                                <label for="@item.CrCasLessorMechanismActivate">@item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresArName</label>
-                                                <input type="text" class="form-control AdditionalCheckInput" data-id="@item.CrCasLessorMechanismProcedures" style="width: 65px; display: inline;" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
-                                            </h4>
-                                        </li>
-                                    </ul>
-                                }
-                                else
-                                {
-                                    <ul class="list mt-2" style="font-size: 17px;">
-                                        <li>
-                                            <h4 class="mb-1">
-                                                <input type="checkbox" class="AdditionalCheckBox" data-id="@item.CrCasLessorMechanismProcedures" style="height: 15px;width: 30px;" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate" />
-                                                <label for="@item.CrCasLessorMechanismActivate">@item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresEnName</label>
-                                                <input type="text" class="form-control AdditionalCheckInput" data-id="@item.CrCasLessorMechanismProcedures" style="width: 65px; display: inline;" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
-                                            </h4>
-                                        </li>
-                                    </ul>
-                                }
+                                            <div class="container-fluid">
+                                                <div class="row g-2">
+                                                    @foreach (var item in Model.Where(x => x.CrCasLessorMechanismProceduresClassification == "20"))
+                                                    {
 
-                            }
-                        }
+                                                        @if (item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresSubjectAlert == true)
+                                                        {
+                                                            <div class="col-12  alert-col">
+                                                                <div class="col-8 col-md-6 checkbox-alert-col">
+                                                                    <input class="form-check-input checkbox AdditionalCheckBox" type="checkbox" id="Update-prices"
+                                                                      data-id="@item.CrCasLessorMechanismProcedures" @((bool)item.CrCasLessorMechanismActivate ? "checked='checked'" : "") value="@item.CrCasLessorMechanismActivate">
+                                                                    <label class="form-check-label"  for="Update-prices">
+                                                                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? @item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresEnName : @item.CrCasLessorMechanismProceduresNavigation.CrMasSysProceduresArName)
+                                                                    </label>
+                                                                </div>
+                                                                <div class="col col-md-6 d-flex align-items-center gap-2">
+                                                                    <div class="number-input-container car-prices">
+                                                                        <div class="col">
+                                                                            <input type="number" min="5" max="30" class="alert-input AdditionalCheckInput" 
+                                                                              data-id="@item.CrCasLessorMechanismProcedures" asp-for="@item.CrCasLessorMechanismDaysAlertAboutExpire" maxlength="3" />
+                                                                        </div>
+                                                                        <div class="col d-flex flex-column-reverse">
+                                                                            <button type="button" class="deincrement" disabled></button>
+                                                                            <button type="button" class="increment" disabled></button>
+                                                                        </div>
+                                                                    </div>
+                                                                    @localizer["TheDay"]
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
                     </div>
                 </div>
             </div>
-            <div class="mt-3">
-                <a class="btn btn-primary ms-2" onclick="getValues()">@localizer["Save"]</a>
-                <a type="button" class="btn btn-danger ms-2" title="@localizer["Back"]" asp-area="CAS" asp-controller="Home" asp-action="Index">
-                    @localizer["Back"]
-                </a>
-            </div>
-
         </form>
-
+        <a href="/MAS/Home/Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["CompanyMessages_BackToHome"]"
+           class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
     </div>
 </div>
-@section scripts {
+
+@section Scripts {
+    <!-- adding disabled to input is checkbox not checked -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.col-12.alert-col').forEach(function (container) {
+                const checkbox = container.querySelector('.checkbox');
+                const inputContainers = container.querySelectorAll('.number-input-container');
+                const numberInputs = container.querySelectorAll('.alert-input');
+                const decrementButtons = container.querySelectorAll('.deincrement');
+                const incrementButtons = container.querySelectorAll('.increment');
+
+                // إضافة "disabled" عند تحميل الصفحة
+                inputContainers.forEach(inputContainer => {
+                    if (inputContainer) {
+                        inputContainer.classList.add('disabled');
+                    }
+                });
+
+                decrementButtons.forEach(decrementButton => {
+                    decrementButton.style.backgroundImage = "url('/CasSys/images/down1.svg')";
+                });
+                incrementButtons.forEach(incrementButton => {
+                    incrementButton.style.backgroundImage = "url('/CasSys/images/up1.svg')";
+                });
+                numberInputs.forEach(numberInput => {
+                    numberInput.style.color = "rgb(110, 110, 110)";
+                });
+
+                // التحقق مما إذا كان الـ checkbox مفعلًا أم لا عند تحميل الصفحة
+                if (checkbox.checked) {
+                    numberInputs.forEach(numberInput => {
+                        numberInput.disabled = false;
+                    });
+
+                    inputContainers.forEach(inputContainer => {
+                        inputContainer.classList.remove('disabled');
+                    });
+
+                    decrementButtons.forEach(decrementButton => {
+                        decrementButton.style.backgroundImage = "";
+                        decrementButton.disabled = false;
+                    });
+
+                    incrementButtons.forEach(incrementButton => {
+                        incrementButton.style.backgroundImage = "";
+                        incrementButton.disabled = false;
+                    });
+
+                    numberInputs.forEach(numberInput => {
+                        numberInput.style.color = "";
+                    });
+                }
+
+                // إضافة الـ Event Listener للـ checkbox لتغيير الحالة عند التغيير
+                checkbox.addEventListener('change', function () {
+                    const isChecked = this.checked;
+
+                    numberInputs.forEach(numberInput => {
+                        numberInput.disabled = !isChecked;
+                    });
+
+                    inputContainers.forEach(inputContainer => {
+                        if (isChecked) {
+                            inputContainer.classList.remove('disabled');
+                            decrementButtons.forEach(decrementButton => {
+                                decrementButton.style.backgroundImage = "";
+                            });
+                            incrementButtons.forEach(incrementButton => {
+                                incrementButton.style.backgroundImage = "";
+                            });
+                            numberInputs.forEach(numberInput => {
+                                numberInput.style.color = "";
+                            });
+                        } else {
+                            inputContainer.classList.add('disabled');
+                            decrementButtons.forEach(decrementButton => {
+                                decrementButton.style.backgroundImage = "url('/CasSys/images/down1.svg')";
+                            });
+                            incrementButtons.forEach(incrementButton => {
+                                incrementButton.style.backgroundImage = "url('/CasSys/images/up1.svg')";
+                            });
+                            numberInputs.forEach(numberInput => {
+                                numberInput.style.color = "rgb(110, 110, 110)";
+                            });
+                        }
+                    });
+
+                    decrementButtons.forEach(decrementButton => {
+                        decrementButton.disabled = !isChecked;
+                        if (!isChecked) {
+                            decrementButton.style.backgroundImage = "url('/CasSys/images/down1.svg')";
+                        } else {
+                            decrementButton.style.backgroundImage = "";
+                        }
+                    });
+
+                    incrementButtons.forEach(incrementButton => {
+                        incrementButton.disabled = !isChecked;
+                        if (!isChecked) {
+                            incrementButton.style.backgroundImage = "url('/CasSys/images/up1.svg')";
+                        } else {
+                            incrementButton.style.backgroundImage = "";
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+
+    <!-- script for inputs in collapses 1 , 2 ,3 -->
+    <script>
+        document.querySelectorAll('.Documents-days-input').forEach(function (container) {
+            let deincrement = container.querySelector(".deincrement");
+            let increment = container.querySelector(".increment");
+            let number = container.querySelector(".alert-input");
+
+            let step = 10;
+            let max = 90;
+            let min = 10;
+
+            number.addEventListener('input', () => {
+
+            });
+
+            number.addEventListener('blur', () => {
+                let currentValue = parseInt(number.value);
+                if (isNaN(currentValue)) {
+                    number.value = min;
+                } else if (currentValue > max) {
+                    number.value = max;
+                } else if (currentValue < min) {
+                    number.value = min;
+                }
+
+            });
+            increment.addEventListener("click", () => {
+                if (parseInt(number.value) + step >= max) {
+                    number.value = max;
+                    increment.style.backgroundImage = "url('/CasSys/images/up1.svg')";
+                    deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+
+                    return;
+                }
+                increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+                deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+                number.value = parseInt(number.value) + step;
+            });
+
+            deincrement.addEventListener("click", () => {
+                if (parseInt(number.value) - step <= min) {
+                    number.value = min;
+                    deincrement.style.backgroundImage = "url('/CasSys/images/down1.svg')";
+                    increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+
+                    return;
+                }
+                deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+                increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+
+                number.value = parseInt(number.value) - step;
+            });
+        });
+
+    </script>
 
     <script>
-        function showContractValidition() {
-            var list = document.getElementById("ContractsValiditions");
-            var plusIcon = document.getElementById("plus-icon");
-            if (list.style.display === "block") {
-                list.style.display = "none";
-            } else {
-                list.style.display = "block";
-            }
-        }
-        function showCarsDocuments() {
-            var list = document.getElementById("CarsDocuments");
-            var plusIcon = document.getElementById("plus-icon");
-            if (list.style.display === "block") {
-                list.style.display = "none";
-            } else {
-                list.style.display = "block";
-            }
-        }
-        function showCarsFixed() {
-            var list = document.getElementById("CarsFixed");
-            var plusIcon = document.getElementById("plus-icon");
-            if (list.style.display === "block") {
-                list.style.display = "none";
-            } else {
-                list.style.display = "block";
-            }
-        }
-        function showRenterAndDriver() {
-            var list = document.getElementById("RenterAndDriver");
-            var plusIcon = document.getElementById("plus-icon");
-            if (list.style.display === "block") {
-                list.style.display = "none";
-            } else {
-                list.style.display = "block";
-            }
-        }
-        function showContracts() {
-            var list = document.getElementById("Contracts");
-            var plusIcon = document.getElementById("plus-icon");
-            if (list.style.display === "block") {
-                list.style.display = "none";
-            } else {
-                list.style.display = "block";
-            }
-        }
+        document.querySelectorAll('.car-maintenance-period').forEach(function (container) {
+            let deincrement = container.querySelector(".deincrement");
+            let increment = container.querySelector(".increment");
+            let number = container.querySelector(".alert-input");
 
-        function showAdditional() {
-            var list = document.getElementById("Additional");
-            var plusIcon = document.getElementById("plus-icon");
-            if (list.style.display === "block") {
-                list.style.display = "none";
-            } else {
-                list.style.display = "block";
-            }
-        }
+            let step = 1;
+            let max = 15;
+            let min = 1;
 
+            number.addEventListener('input', () => {
+
+            });
+
+            number.addEventListener('blur', () => {
+                let currentValue = parseInt(number.value);
+                if (isNaN(currentValue)) {
+                    number.value = min;
+                } else if (currentValue > max) {
+                    number.value = max;
+                } else if (currentValue < min) {
+                    number.value = min;
+                }
+
+            });
+
+            increment.addEventListener("click", () => {
+                if (parseInt(number.value) + step >= max) {
+                    number.value = max;
+                    increment.style.backgroundImage = "url('/CasSys/images/up1.svg')";
+                    deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+
+                    return;
+                }
+                increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+                deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+                number.value = parseInt(number.value) + step;
+            });
+
+            deincrement.addEventListener("click", () => {
+                if (parseInt(number.value) - step <= min) {
+                    number.value = min;
+                    deincrement.style.backgroundImage = "url('~/CasSys/images/down1.svg')";
+                    increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+
+                    return;
+                }
+                deincrement.style.backgroundImage = "url('~/CasSys/images/down.svg')";
+                increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+
+                number.value = parseInt(number.value) - step;
+            });
+        });
+
+    </script>
+    <script>
+        document.querySelectorAll('.car-maintenance-kilos').forEach(function (container) {
+            let deincrement = container.querySelector(".deincrement");
+            let increment = container.querySelector(".increment");
+            let number = container.querySelector(".alert-input");
+
+            let step = 500;
+            let max = 9000;
+            let min = 500;
+
+            number.addEventListener('input', () => {
+
+            });
+
+            number.addEventListener('blur', () => {
+                let currentValue = parseInt(number.value);
+                if (isNaN(currentValue)) {
+                    number.value = min;
+                } else if (currentValue > max) {
+                    number.value = max;
+                } else if (currentValue < min) {
+                    number.value = min;
+                }
+
+            });
+
+            increment.addEventListener("click", () => {
+                if (parseInt(number.value) + step >= max) {
+                    number.value = max;
+                    increment.style.backgroundImage = "url('/CasSys/images/up1.svg')";
+                    deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+
+                    return;
+                }
+                increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+                deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+                number.value = parseInt(number.value) + step;
+            });
+
+            deincrement.addEventListener("click", () => {
+                if (parseInt(number.value) - step <= min) {
+                    number.value = min;
+                    deincrement.style.backgroundImage = "url('/CasSys/images/down1.svg')";
+                    increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+
+                    return;
+                }
+                deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+                increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+
+                number.value = parseInt(number.value) - step;
+            });
+        });
+    </script>
+    <script>
+        document.querySelectorAll('.car-prices').forEach(function (container) {
+            let deincrement = container.querySelector(".deincrement");
+            let increment = container.querySelector(".increment");
+            let number = container.querySelector(".alert-input");
+
+            let step = 5;
+            let max = 30;
+            let min = 5;
+
+            number.addEventListener('input', () => {
+
+            });
+
+            number.addEventListener('blur', () => {
+                let currentValue = parseInt(number.value);
+                if (isNaN(currentValue)) {
+                    number.value = min;
+                } else if (currentValue > max) {
+                    number.value = max;
+                } else if (currentValue < min) {
+                    number.value = min;
+                }
+
+            });
+
+            increment.addEventListener("click", () => {
+                if (parseInt(number.value) + step >= max) {
+                    number.value = max;
+                    increment.style.backgroundImage = "url('/CasSys/images/up1.svg')";
+                    deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+
+                    return;
+                }
+                increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+                deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+                number.value = parseInt(number.value) + step;
+            });
+
+            deincrement.addEventListener("click", () => {
+                if (parseInt(number.value) - step <= min) {
+                    number.value = min;
+                    deincrement.style.backgroundImage = "url('/CasSys/images/down1.svg')";
+                    increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+
+                    return;
+                }
+                deincrement.style.backgroundImage = "url('/CasSys/images/down.svg')";
+                increment.style.backgroundImage = "url('/CasSys/images/up.svg')";
+
+                number.value = parseInt(number.value) - step;
+            });
+        });
     </script>
     <script>
         $(document).ready(function () {
@@ -350,6 +616,7 @@
 
         function getValues() {
             // ContractValidition
+            $("#min-loader").removeClass("d-none");
             var checkBoxesContractValidition = document.getElementsByClassName("ContractValiditionCheckBox");
             var inputsContractValidition = document.getElementsByClassName("ContractValiditionCheckInput");
             var ContractValiditions = [];
@@ -387,48 +654,30 @@
             }
             console.log(CarsDocuments)
 
-            // CarsFixed
+           
+            //RenterAndDriver
             var checkBoxesCarsFixed = document.getElementsByClassName("CarsFixedCheckBox");
-            var inputsCarsFixed = document.getElementsByClassName("CarsFixedCheckInput");
+            var inputsDaysCarsFixed = document.getElementsByClassName("CarsFixedCheckInput");
+            var inputsKmCarsFixed = document.getElementsByClassName("CarsFixedCheckInputKm");
             var CarsFixed = [];
             for (var i = 0; i < checkBoxesCarsFixed.length; i++) {
                 var checkbox = checkBoxesCarsFixed[i];
                 var valueCheckBox = checkbox.checked;
                 var idCheckBox = checkbox.getAttribute("data-id");
-                for (var b = 0; b < inputsCarsFixed.length; b++) {
-                    var input = inputsCarsFixed[b];
-                    var valueInput = input.value;
-                    var idInput = input.getAttribute("data-id");
-                    if (idInput == idCheckBox) {
-                        CarsFixed.push({ id: idCheckBox, valueCheckBox: valueCheckBox, Days: valueInput });
-                    }
-                }
-            }
-            console.log(CarsFixed)
 
-            //RenterAndDriver
-            var checkBoxesRenterAndDriver = document.getElementsByClassName("RenterAndDriverCheckBox");
-            var inputsDaysRenterAndDriver = document.getElementsByClassName("RenterAndDriverCheckInput");
-            var inputsKmRenterAndDriver = document.getElementsByClassName("RenterAndDriverCheckInputKm");
-            var RenterAndDriver = [];
-            for (var i = 0; i < checkBoxesRenterAndDriver.length; i++) {
-                var checkbox = checkBoxesRenterAndDriver[i];
-                var valueCheckBox = checkbox.checked;
-                var idCheckBox = checkbox.getAttribute("data-id");
-
-                var inputDays = inputsDaysRenterAndDriver[i];
+                var inputDays = inputsDaysCarsFixed[i];
                 var valueInput = inputDays.value;
                 var idInput = inputDays.getAttribute("data-id");
 
-                var inputKm = inputsKmRenterAndDriver[i];
+                var inputKm = inputsKmCarsFixed[i];
                 var valueInputKm = inputKm.value;
                 var idInputKm = inputKm.getAttribute("data-id");
 
                 if (idInputKm == idInput) {
-                    RenterAndDriver.push({ id: idInputKm, valueCheckBox: valueCheckBox, Days: valueInput, Km: valueInputKm });
+                    CarsFixed.push({ id: idInputKm, valueCheckBox: valueCheckBox, Days: valueInput, Km: valueInputKm });
                 }
             }
-            console.log(RenterAndDriver)
+            console.log(CarsFixed)
 
 
             // Additional
@@ -445,7 +694,7 @@
                 Additional.push({ id: idCheckBox, valueCheckBox: valueCheckBox, Days: valueInput });
 
             }
-            
+
             console.log(Additional)
 
             $.ajax({
@@ -457,7 +706,6 @@
                     ContractValiditions: ContractValiditions,
                     CarsDocuments: CarsDocuments,
                     CarsFixed: CarsFixed,
-                    RenterAndDriver: RenterAndDriver,
                     Additional: Additional
                 }),
                 success: function (response) {
@@ -469,7 +717,7 @@
 
         }
     </script>
-  @*  <script>
+     <script>
         $('.ContractValiditionCheckInput').each(function () {
             // Store the initial value as the old value for each input element
             $(this).data('old-value', $(this).val());
@@ -486,6 +734,48 @@
             $(this).data('old-value', newValue);
         });
 
-       
-    </script>*@
+
+    </script>
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

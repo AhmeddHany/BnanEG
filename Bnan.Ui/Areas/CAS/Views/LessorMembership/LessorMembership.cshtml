@@ -6,345 +6,553 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = localizer["Membership Data"];
-    ViewData["Page-Hint"] = localizer["Membership Hint"];
+   
 }
 
 
-<style>
-    body {
-        overflow: hidden
-    }
 
-    @@media (max-width: 600px) {
-        #basic-datatable_wrapper .row:first-child > div {
-            text-align: center;
-        }
-
-            #basic-datatable_wrapper .row:first-child > div:last-child > * {
-                text-align: center;
-            }
-    }
-
-    .form-contain {
-        overflow: hidden;
-    }
-</style>
-<style>
-    .container1 {
-        display: flex;
-        align-items: center; /* Align items vertically center */
-    }
-
-    .checkbox1 {
-        flex: 0 0 auto; /* Set width to auto */
-        margin-right: 10px; /* Add some margin */
-    }
-
-    .text1 {
-        flex: 1; /* Expand to fill remaining space */
-    }
-</style>
-<div class="sub-container-form">
-    <form class="needs-validation" novalidate asp-area="CAS" asp-controller="LessorMembership" asp-action="Edit" method="post" enctype="multipart/form-data">
-        <div class="form-contain">
-            <div class="col-sm-12 col-md-9">
-                @*<div class="col-sm-12 col-md-4 p-0">
-                <a type="button" class="btn btn-danger" title="@localizer["Back"]" asp-area="CAS" asp-controller="Home" asp-action="Index">
-                <i class="mdi mdi-window-close"></i>
-                </a>
-                </div>*@
-            </div>
-            <div class=dataTable>
-                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                {
-                    <div class="col-sm-12" style="width:97%;margin-left:1%">
-                        <table id="basic-datatable1" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-                            <thead>
-                                <tr role="row">
-                                    @*<th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>*@
-                                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["Membership"]</th>
-                                    <th aria-label="Position: activate to sort column ascending">@localizer["Amountstraded"]</th>
-                                    <th aria-label="Position: activate to sort column ascending">@localizer["Condition"]</th>
-                                    <th aria-label="Position: activate to sort column ascending">@localizer["Kilotraveled"]</th>
-                                    <th aria-label="Position: activate to sort column ascending">@localizer["Condition"]</th>
-                                    <th aria-label="Position: activate to sort column ascending">@localizer["ContractsCount"]</th>
-                                    <th aria-label="Position: activate to sort column ascending" hidden>@localizer["Translate"]</th>
-                                    <th aria-label="Position: activate to sort column ascending" hidden>@localizer["GroupNumber"]</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                @foreach (var item in Model)
-                                {
-
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" id="CrCasLessorMembershipConditionsActivate-@item.CrCasLessorMembershipConditions"
-                                                   name="CrCasLessorMembershipConditionsActivate-@item.CrCasLessorMembershipConditions"
-                                                   checked="@item.CrCasLessorMembershipConditionsActivate.GetValueOrDefault()" style="height: 18px;width: 19px;" class="form-check-input">
-                                            <span style="margin-right:5%">@item.CrCasLessorMembershipConditionsNavigation.CrMasSupRenterMembershipEnName</span>
-                                        </td>
-                                        <td>
-                                            <input type="text" id="CrCasLessorMembershipConditionsAmount-@item.CrCasLessorMembershipConditions"
-                                                   name="CrCasLessorMembershipConditionsAmount-@item.CrCasLessorMembershipConditions" class="form-control"
-                                                   value="@item.CrCasLessorMembershipConditionsAmount.GetValueOrDefault()"
-                                                   onfocusout="calc('CrCasLessorMembershipConditionsAmount-@item.CrCasLessorMembershipConditions')" max="10" oninput="validateInput9Digit(this)">
-                                        </td>
-                                        <td>
-                                            @{
-                                                var cnd1 = new List<SelectListItem> {
-                                    new SelectListItem {Value="3",Text="",Selected=item.CrCasLessorMembershipConditionsLink1=="3"},
-                                    new SelectListItem {Value="1",Text="and" ,Selected=item.CrCasLessorMembershipConditionsLink1=="1"},
-                                    new SelectListItem {Value="2",Text="or",Selected=item.CrCasLessorMembershipConditionsLink1=="2"},
-                                    };
-                                            }
-                                            @Html.DropDownList("Conditions1", cnd1,  htmlAttributes: new
-                                    {
-                                    id = "Conditions1_" + item.CrCasLessorMembershipConditions,
-                                    name = "Conditions1_" + item.CrCasLessorMembershipConditions,
-                                    @class = "form-select",
-                                    style = "float:right;",
-                                    onchange = "calc('Conditions1-" + item.CrCasLessorMembershipConditions + "')"
-                                    })
-                                        </td>
-                                        <td>
-                                            <input type="text" id="CrCasLessorMembershipConditionsKm-@item.CrCasLessorMembershipConditions"
-                                                   name="CrCasLessorMembershipConditionsKm-@item.CrCasLessorMembershipConditions" class="form-control"
-                                                   value="@item.CrCasLessorMembershipConditionsKm.GetValueOrDefault()"
-                                                   onfocusout="calc('CrCasLessorMembershipConditionsKm-@item.CrCasLessorMembershipConditions')" maxlength="7" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                                        </td>
-                                        <td>
-                                            @{
-                                                var cnd2 = new List<SelectListItem> {
-                                    new SelectListItem {Value="3",Text="",Selected=item.CrCasLessorMembershipConditionsLink2=="3"},
-                                    new SelectListItem {Value="1",Text="and" ,Selected=item.CrCasLessorMembershipConditionsLink2=="1"},
-                                    new SelectListItem {Value="2",Text="or",Selected=item.CrCasLessorMembershipConditionsLink2=="2"},
-                                    };
-                                            }
-                                            @Html.DropDownList("Conditions2", cnd2,  htmlAttributes: new
-                                    {
-                                    id = "Conditions2_" + item.CrCasLessorMembershipConditions,
-                                    name = "Conditions2_" + item.CrCasLessorMembershipConditions,
-                                    @class = "form-select",
-                                    style = "float:right",
-                                    onchange = "calc('Conditions2-" + item.CrCasLessorMembershipConditions + "')"
-                                    })
-                                        </td>
-                                        <td>
-                                            <input type="text" id="CrCasLessorMembershipConditionsContractNo-@item.CrCasLessorMembershipConditions"
-                                                   name="CrCasLessorMembershipConditionsContractNo-@item.CrCasLessorMembershipConditions" class="form-control"
-                                                   value="@item.CrCasLessorMembershipConditionsContractNo.GetValueOrDefault()"
-                                                   onfocusout="calc('CrCasLessorMembershipConditionsContractNo-@item.CrCasLessorMembershipConditions')" maxlength="7" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                                        </td>
-                                        <td>
-                                            <input type="text" id="result-@item.CrCasLessorMembershipConditions" name="result-@item.CrCasLessorMembershipConditions"
-                                                   class=" form-control" readonly hidden />
-                                        </td>
-                                        <td>
-                                            <input type="text" id="Group-@item.CrCasLessorMembershipConditions" name="Group-@item.CrCasLessorMembershipConditions"
-                                                   class=" form-control" readonly hidden />
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+<div class="col my-2 d-flex align-items-center justify-content-center">
+    <div class="container  NewUpdate-container  ">
+        <form class="needs-validation" novalidate>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="row g-3 my-2">
+                        <div class="col-md-6">
+                            <h3> @localizer["View_RenterMembership_PageTitle"]  </h3>
+                        </div>
+                        <div class="col-md-6 save-col">
+                            <button type="button" class="custom-img-btn">
+                                <img src="~/CasSys/images/save.svg" />
+                            </button>
+                        </div>
                     </div>
-                }
-                else
-                {
-                    <div class="col-sm-12" style="width:97%;margin-right:1%">
-                        <table id="basic-datatable1" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline " role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-                            <thead>
-                                <tr role="row">
-                                    @*<th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>*@
-                                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["Membership"]</th>
-                                    <th aria-label="Position: activate to sort column ascending">@localizer["Amountstraded"]</th>
-                                    <th aria-label="Position: activate to sort column ascending">@localizer["Condition"]</th>
-                                    <th aria-label="Position: activate to sort column ascending">@localizer["Kilotraveled"]</th>
-                                    <th aria-label="Position: activate to sort column ascending">@localizer["Condition"]</th>
-                                    <th aria-label="Position: activate to sort column ascending">@localizer["ContractsCount"]</th>
-                                    <th aria-label="Position: activate to sort column ascending" hidden>@localizer["Translate"]</th>
-                                    <th aria-label="Position: activate to sort column ascending" hidden>@localizer["GroupNumber"]</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <div class="">
+                        <div class="row justify-content-center g-3">
+                            <div class="col-auto">
+                                <div class="Membership-card">
+                                    <div class="container">
+                                        <div class="row align-items-center">
+                                            <div class="col img-Membership-card">
+                                                <div class="card-radio">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input membership-checkbox " type="checkbox" value="VIP" name="membership">
+                                                    </div>
+                                                </div>
+                                                <img src="~/CasSys/images/membership/vip card.svg" class=" Membership-img ">
+                                                <i class="fa-solid fa-chevron-left membership-chevron"></i>
+                                            </div>
+                                            <div class="col-md-8 Data-Membership-card " style="display: none;">
+                                                <div class="row ">
+                                                    <div class="col-md-4">
+                                                        مبالغ متداولة
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control Membership-input number-input" type="number" name="Current-amounts-vip ">
+                                                    </div>
+                                                    <div class="col d-flex ">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="AndCase-Current-amounts-vip" value="and" name="and-or-Current-amounts-vip">
+                                                            <label class="form-check-label" for="AndCase-Current-amounts-vip">و</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="OrCase-Current-amounts-vip" value="or" name="and-or-Current-amounts-vip">
+                                                            <label class="form-check-label" for="OrCase-Current-amounts-vip">او</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-2 ">
+                                                    <div class="col-md-4">
+                                                        كيلوات مقطوعة
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control Membership-input number-input" type="number" name="kilos-amounts-vip">
+                                                    </div>
+                                                    <div class="col d-flex ">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="AndCase-kilos-amounts-vip" value="and" name="and-or-kilos-amounts-vip">
+                                                            <label class="form-check-label" for="AndCase-kilos-amounts-vip">و</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="OrCase-kilos-amounts-vip" value="or" name="and-or-kilos-amounts-vip">
+                                                            <label class="form-check-label" for="OrCase-kilos-amounts-vip">او</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-2 ">
+                                                    <div class="col-md-4">
+                                                        عدد العقود
+                                                    </div>
+                                                    <div class="col-6 col-md-4">
+                                                        <input class="form-control Membership-input number-input" type="number" name="contracts-amounts-vip">
+                                                    </div>
 
-                                @foreach (var item in Model)
-                                {
+                                                </div>
+                                            </div>
 
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" id="CrCasLessorMembershipConditionsActivate-@item.CrCasLessorMembershipConditions"
-                                                   name="CrCasLessorMembershipConditionsActivate-@item.CrCasLessorMembershipConditions"
-                                                   checked="@item.CrCasLessorMembershipConditionsActivate.GetValueOrDefault()" style="height: 18px;width: 19px;" class="form-check-input">
-                                            <span style="margin-right:5%">@item.CrCasLessorMembershipConditionsNavigation.CrMasSupRenterMembershipArName</span>
+                                        </div>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-auto">
+                                                <img src="~/CasSys/images/membership/Frame.svg" class="">
+                                            </div>
+                                            <div class="col-auto">
+                                                <span>خاصة</span>
+                                            </div>
 
-                                        </td>
-                                        <td>
-                                            <input type="text" id="CrCasLessorMembershipConditionsAmount-@item.CrCasLessorMembershipConditions"
-                                                   name="CrCasLessorMembershipConditionsAmount-@item.CrCasLessorMembershipConditions" class="form-control"
-                                                   value="@item.CrCasLessorMembershipConditionsAmount.GetValueOrDefault()"
-                                                   onfocusout="calc('CrCasLessorMembershipConditionsAmount-@item.CrCasLessorMembershipConditions')" oninput="validateInput9Digit(this)">
-                                        </td>
-                                        <td>
-                                            @{
-                                                var cnd1 = new List<SelectListItem> {
-                                                        new SelectListItem {Value="3",Text="",Selected=item.CrCasLessorMembershipConditionsLink1=="3"},
-                                                        new SelectListItem {Value="1",Text="و" ,Selected=item.CrCasLessorMembershipConditionsLink1=="1"},
-                                                        new SelectListItem {Value="2",Text="أو",Selected=item.CrCasLessorMembershipConditionsLink1=="2"},
-                                                        };
-                                            }
-                                            @Html.DropDownList("Conditions1", cnd1,  htmlAttributes: new
-                                                        {
-                                                        id = "Conditions1_" + item.CrCasLessorMembershipConditions,
-                                                        name = "Conditions1_" + item.CrCasLessorMembershipConditions,
-                                                        @class = "form-select",
-                                                        style = "float:right;",
-                                                        onchange = "calc('Conditions1-" + item.CrCasLessorMembershipConditions + "')"
-                                                        })
-                                        </td>
-                                        <td>
-                                            <input type="text" id="CrCasLessorMembershipConditionsKm-@item.CrCasLessorMembershipConditions"
-                                                   name="CrCasLessorMembershipConditionsKm-@item.CrCasLessorMembershipConditions" class="form-control"
-                                                   value="@item.CrCasLessorMembershipConditionsKm.GetValueOrDefault()"
-                                                   onfocusout="calc('CrCasLessorMembershipConditionsKm-@item.CrCasLessorMembershipConditions')" maxlength="7" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                                        </td>
-                                        <td>
-                                            @{
-                                                var cnd2 = new List<SelectListItem> {
-                                    new SelectListItem {Value="3",Text="",Selected=item.CrCasLessorMembershipConditionsLink2=="3"},
-                                    new SelectListItem {Value="1",Text="و" ,Selected=item.CrCasLessorMembershipConditionsLink2=="1"},
-                                    new SelectListItem {Value="2",Text="أو",Selected=item.CrCasLessorMembershipConditionsLink2=="2"},
-                                    };
-                                            }
-                                            @Html.DropDownList("Conditions2", cnd2,  htmlAttributes: new
-                                    {
-                                    id = "Conditions2_" + item.CrCasLessorMembershipConditions,
-                                    name = "Conditions2_" + item.CrCasLessorMembershipConditions,
-                                    @class = "form-select",
-                                    style = "float:right",
-                                    onchange = "calc('Conditions2-" + item.CrCasLessorMembershipConditions + "')"
-                                    })
-                                        </td>
-                                        <td>
-                                            <input type="text" id="CrCasLessorMembershipConditionsContractNo-@item.CrCasLessorMembershipConditions"
-                                                   name="CrCasLessorMembershipConditionsContractNo-@item.CrCasLessorMembershipConditions" class="form-control"
-                                                   value="@item.CrCasLessorMembershipConditionsContractNo.GetValueOrDefault()"
-                                                   onfocusout="calc('CrCasLessorMembershipConditionsContractNo-@item.CrCasLessorMembershipConditions')" maxlength="7" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                                        </td>
-                                        <td>
-                                            <input type="text" id="result-@item.CrCasLessorMembershipConditions" name="result-@item.CrCasLessorMembershipConditions"
-                                                   class=" form-control" readonly hidden />
-                                        </td>
-                                        <td>
-                                            <input type="text" id="Group-@item.CrCasLessorMembershipConditions" name="Group-@item.CrCasLessorMembershipConditions"
-                                                   class=" form-control" readonly hidden />
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="Membership-card">
+                                    <div class="container">
+                                        <div class="row align-items-center">
+                                            <div class="col img-Membership-card">
+                                                <div class="card-radio">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input membership-checkbox " type="checkbox" value="Bronze" name="membership">
+                                                    </div>
+
+                                                </div>
+                                                <img src="~/CasSys/images/membership/Bronze Card.svg " class=" Membership-img ">
+                                                <i class="fa-solid fa-chevron-left membership-chevron"></i>
+                                            </div>
+                                            <div class="col-md-8 Data-Membership-card " style="display: none;">
+                                                <div class="row ">
+                                                    <div class="col-md-4">
+                                                        مبالغ متداولة
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control Membership-input number-input" type="number" name="Current-amounts-Bronze">
+                                                    </div>
+                                                    <div class="col d-flex ">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="AndCase-Current-amounts-Bronze" value="and" name="and-or-Current-amounts-Bronze">
+                                                            <label class="form-check-label" for="AndCase-Current-amounts-Bronze">و</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="OrCase-Current-amounts-Bronze" value="or" name="and-or-Current-amounts-Bronze">
+                                                            <label class="form-check-label" for="OrCase-Current-amounts-Bronze">او</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-2 ">
+                                                    <div class="col-md-4">
+                                                        كيلوات مقطوعة
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control Membership-input number-input" type="number" name="kilos-amounts-Bronze">
+                                                    </div>
+                                                    <div class="col d-flex ">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="AndCase-kilos-amounts-Bronze" value="and" name="and-or-kilos-amounts-Bronze">
+                                                            <label class="form-check-label" for="AndCase-kilos-amounts-Bronze">و</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="OrCase-kilos-amounts-Bronze" value="or" name="and-or-kilos-amounts-Bronze">
+                                                            <label class="form-check-label" for="OrCase-kilos-amounts-Bronze">او</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-2 ">
+                                                    <div class="col-md-4">
+                                                        عدد العقود
+                                                    </div>
+                                                    <div class="col-6 col-md-4">
+                                                        <input class="form-control Membership-input number-input" type="number" name="contracts-amounts-Bronze">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-auto">
+                                                <img src="~/CasSys/images/membership/Frame.svg" class="">
+                                            </div>
+                                            <div class="col-auto">
+                                                <span>برونزية</span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center g-3 my-3">
+                            <div class="col-auto">
+                                <div class="Membership-card">
+                                    <div class="container">
+                                        <div class="row align-items-center">
+                                            <div class="col img-Membership-card">
+                                                <div class="card-radio">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input membership-checkbox " type="checkbox" value="Silver" name="membership">
+                                                    </div>
+
+                                                </div>
+                                                <img src="~/CasSys/images/membership/Silver Card.svg " class=" Membership-img ">
+                                                <i class="fa-solid fa-chevron-left membership-chevron"></i>
+                                            </div>
+                                            <div class="col-md-8 Data-Membership-card " style="display: none;">
+                                                <div class="row ">
+                                                    <div class="col-md-4">
+                                                        مبالغ متداولة
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control Membership-input number-input" type="number" name="Current-amounts-Silver">
+                                                    </div>
+                                                    <div class="col d-flex ">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="AndCase-Current-amounts-Silver" value="and" name="and-or-Current-amounts-Silver">
+                                                            <label class="form-check-label" for="AndCase-Current-amounts-Silver">و</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="OrCase-Current-amounts-Silver" value="or" name="and-or-Current-amounts-Silver">
+                                                            <label class="form-check-label" for="OrCase-Current-amounts-Silver">او</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-2 ">
+                                                    <div class="col-md-4">
+                                                        كيلوات مقطوعة
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control Membership-input number-input" type="number" name="kilos-amounts-Silver">
+                                                    </div>
+                                                    <div class="col d-flex ">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="AndCase-kilos-amounts-Silver" value="and" name="and-or-kilos-amounts-Silver">
+                                                            <label class="form-check-label" for="AndCase-kilos-amounts-Silver">و</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="OrCase-kilos-amounts-Silver" value="or" name="and-or-kilos-amounts-Silver">
+                                                            <label class="form-check-label" for="OrCase-kilos-amounts-Silver">او</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-2 ">
+                                                    <div class="col-md-4">
+                                                        عدد العقود
+                                                    </div>
+                                                    <div class="col-6 col-md-4">
+                                                        <input class="form-control Membership-input number-input" type="number" name="contracts-amounts-Silver">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-auto">
+                                                <img src="~/CasSys/images/membership/Frame.svg" class="">
+                                            </div>
+                                            <div class="col-auto">
+                                                <span>فضية</span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="Membership-card">
+                                    <div class="container">
+                                        <div class="row align-items-center">
+                                            <div class="col img-Membership-card">
+                                                <div class="card-radio">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input membership-checkbox " type="checkbox" value="Gold" name="membership">
+                                                    </div>
+
+                                                </div>
+                                                <img src="~/CasSys/images/membership/Gold Card.svg " class=" Membership-img ">
+                                                <i class="fa-solid fa-chevron-left membership-chevron"></i>
+                                            </div>
+                                            <div class="col-md-8 Data-Membership-card " style="display: none;">
+                                                <div class="row ">
+                                                    <div class="col-md-4">
+                                                        مبالغ متداولة
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control Membership-input number-input" type="number" name="Current-amounts-Gold">
+                                                    </div>
+                                                    <div class="col d-flex ">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="AndCase-Current-amounts-Gold" value="and" name="and-or-Current-amounts-Gold">
+                                                            <label class="form-check-label" for="AndCase-Current-amounts-Gold">و</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="OrCase-Current-amounts-Gold" value="or" name="and-or-Current-amounts-Gold">
+                                                            <label class="form-check-label" for="OrCase-Current-amounts-Gold">او</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-2 ">
+                                                    <div class="col-md-4">
+                                                        كيلوات مقطوعة
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control Membership-input number-input" type="number" name="kilos-amounts-Gold">
+                                                    </div>
+                                                    <div class="col d-flex ">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="AndCase-kilos-amounts-Gold" value="and" name="and-or-kilos-amounts-Gold">
+                                                            <label class="form-check-label" for="AndCase-kilos-amounts-Gold">و</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="OrCase-kilos-amounts-Gold" value="or" name="and-or-kilos-amounts-Gold">
+                                                            <label class="form-check-label" for="OrCase-kilos-amounts-Gold">او</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-2 ">
+                                                    <div class="col-md-4">
+                                                        عدد العقود
+                                                    </div>
+                                                    <div class="col-6 col-md-4">
+                                                        <input class="form-control Membership-input number-input" type="number" name="contracts-amounts-Gold">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-auto">
+                                                <img src="~/CasSys/images/membership/Frame.svg" class="">
+                                            </div>
+                                            <div class="col-auto">
+                                                <span>ذهبية</span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center g-3 my-3">
+                            <div class="col-auto">
+                                <div class="Membership-card">
+                                    <div class="container">
+                                        <div class="row align-items-center">
+                                            <div class="col img-Membership-card">
+                                                <div class="card-radio">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input membership-checkbox " type="checkbox" value="Diamond " name="membership">
+                                                    </div>
+
+                                                </div>
+                                                <img src="~/CasSys/images/membership/Diamond card.svg " class=" Membership-img ">
+                                                <i class="fa-solid fa-chevron-left membership-chevron"></i>
+                                            </div>
+                                            <div class="col-md-8 Data-Membership-card " style="display: none;">
+                                                <div class="row ">
+                                                    <div class="col-md-4">
+                                                        مبالغ متداولة
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control Membership-input number-input" type="number" name="Current-amounts-Diamond ">
+                                                    </div>
+                                                    <div class="col d-flex ">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="AndCase-Current-amounts-Diamond" value="and" name="and-or-Current-amounts-Diamond ">
+                                                            <label class="form-check-label" for="AndCase-Current-amounts-Diamond">و</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="OrCase-Current-amounts-Diamond" value="or" name="and-or-Current-amounts-Diamond ">
+                                                            <label class="form-check-label" for="OrCase-Current-amounts-Diamond">او</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-2 ">
+                                                    <div class="col-md-4">
+                                                        كيلوات مقطوعة
+                                                    </div>
+                                                    <div class="col">
+                                                        <input class="form-control Membership-input number-input" type="number" name="kilos-amounts-Diamond ">
+                                                    </div>
+                                                    <div class="col d-flex ">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="AndCase-kilos-amounts-Diamond" value="and" name="and-or-kilos-amounts-Diamond ">
+                                                            <label class="form-check-label" for="AndCase-kilos-amounts-Diamond">و</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox" id="OrCase-kilos-amounts-Diamond" value="or" name="and-or-kilos-amounts-Diamond ">
+                                                            <label class="form-check-label" for="OrCase-kilos-amounts-Diamond">او</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-2 ">
+                                                    <div class="col-md-4">
+                                                        عدد العقود
+                                                    </div>
+                                                    <div class="col-6 col-md-4">
+                                                        <input class="form-control Membership-input number-input" type="number" name="contracts-amounts-Diamond ">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-auto">
+                                                <img src="~/CasSys/images/membership/Frame.svg" class="">
+                                            </div>
+                                            <div class="col-auto">
+                                                <span>ماسية</span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="Membership-card">
+                                    <div class="container">
+                                        <div class="row align-items-center">
+                                            <div class="col img-Membership-card">
+                                                <img src="~/CasSys/images/membership/regular Card.svg" class=" Membership-img ">
+                                            </div>
+
+
+                                        </div>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-auto">
+                                                <img src="~/CasSys/images/membership/Frame.svg" class="">
+                                            </div>
+                                            <div class="col-auto">
+                                                <span>مشترك</span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                }
+                    <a href="~/CAS/Home/Index" data-bs-toggle="tooltip" data-bs-placement="top"
+                       data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["CompanyMessages_BackToHome"]"
+                       class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
+                </div>
             </div>
-        </div>
-        <div class="mt-3">
-            <button class="btn btn-primary ms-2" type="submit">@localizer["Save"]</button>
-            <a type="button" class="btn btn-danger ms-2" title="@localizer["Back"]" asp-area="CAS" asp-controller="Home" asp-action="Index">
-                @localizer["Back"]
-            </a>
-        </div>
-    </form>
+        </form>
+
+    </div>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-
+@section Scripts{
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('.membership-checkbox');
+            const chevrons = document.querySelectorAll('.membership-chevron');
 
-        window.onload = function () {
-            var array = ["1600000001", "1600000002", "1600000003", "1600000004", "1600000005"]
-            console.log(array);
-            for (var i = 0; i < array.length; i++) {
-                calc('element-' + array[i]);
-                console.log(array[i]);
-            }
-        }
-        function calc(id) {
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    const membershipCard = this.closest('.Membership-card');
+                    const chevron = membershipCard.querySelector('.membership-chevron');
+                    const dataMembershipCard = membershipCard.querySelector('.Data-Membership-card');
 
-            //var ColName = id.split("-")[0];
-            var result = "";
-            var RowNumber = id.split("-")[1];
-            //alert(RowNumber);
-            var amount = document.getElementById('CrCasLessorMembershipConditionsAmount-' + RowNumber).value;
-            if (Number(amount) > 0) {
-                //alert(amount);
-                result = result + "V";
-            } else {
-                result = result + "E";
-            }
-
-            var cond1 = document.getElementById('Conditions1_' + RowNumber).value;
-            result = result + cond1;
-
-            var Km = document.getElementById('CrCasLessorMembershipConditionsKm-' + RowNumber).value;
-            if (Number(Km) > 0) {
-                //alert(amount);
-                result = result + "V";
-            } else {
-                result = result + "E";
-            }
-
-            var cond2 = document.getElementById('Conditions2_' + RowNumber).value;
-            result = result + cond2;
-
-
-            var ContractNo = document.getElementById('CrCasLessorMembershipConditionsContractNo-' + RowNumber).value;
-            if (Number(ContractNo) > 0) {
-                //alert(amount);
-                result = result + "V";
-            } else {
-                result = result + "E";
-            }
-            document.getElementById('result-' + RowNumber).value = result;
-            var group = "";
-            if (result.length == 5) {
-                $.ajax({
-                    url: "/CAS/LessorMembership/GetMembershipGroup",
-                    type: "GET",
-                    data: { No: result },
-                    success: function (Info) {
-                        if (Info != " ") {
-                            group = Info;
-                            document.getElementById('Group-' + RowNumber).value = group;
-                        }
-                        else {
-                            document.getElementById('Group-' + RowNumber).value = "N";
-                        }
-
+                    if (!this.checked) {
+                        chevron.classList.add('disabled');
+                        chevron.style.color = '#969494';
+                        dataMembershipCard.style.display = 'none';
+                        chevron.style.transform = '';
+                    } else {
+                        chevron.classList.remove('disabled');
+                        chevron.style.color = '#000000';
+                        chevron.style.transform = '';
                     }
                 });
-            }
-        }
-
-    </script>
-    @*Intialize DataTable*@
-    <script>
-        function set_basic_datatable() {
-            var table = $("#basic-datatable1").DataTable({
-                scrollY: "48vh",
-                pageLength: 7,
-                scrollCollapse: true,
-                paging: false,
-                paginate: false,
-                ordering: false,
-                searching: false, // Disable the search box
-                info: false
             });
 
+            chevrons.forEach(chevron => {
+                chevron.addEventListener('click', function () {
+                    const membershipCard = this.closest('div[class^="Membership-card"]');
+                    const dataMembershipCard = membershipCard.querySelector('.Data-Membership-card');
+                    const checkbox = membershipCard.querySelector('.membership-checkbox');
+                    const ImgMembershipCard = this.closest('.img-Membership-card');
 
-        }
-        set_basic_datatable();
+                    if (checkbox.checked) {
+                        if (dataMembershipCard.style.display === 'none' || dataMembershipCard.style.display === '') {
+                            document.querySelectorAll('.Data-Membership-card').forEach(card => {
+                                card.style.display = 'none';
+                            });
+
+                            document.querySelectorAll('.membership-chevron').forEach(otherChevron => {
+                                otherChevron.style.transform = 'rotate(0deg)';
+                            });
+
+                            dataMembershipCard.style.display = 'block';
+                            ImgMembershipCard.style.width = "33.33333333%";
+                            chevron.style.transform = "rotate(180deg)";
+
+                            if (window.innerWidth < 768) {
+                                chevron.style.transform = "rotate(-270deg)";
+                            }
+                        } else {
+                            dataMembershipCard.style.display = 'none';
+                            chevron.style.transform = '';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxPairs = [
+                {
+                    first: document.getElementById('AndCase-Current-amounts-vip'),
+                    second: document.getElementById('OrCase-Current-amounts-vip')
+                },
+                {
+                    first: document.getElementById('AndCase-kilos-amounts-vip'),
+                    second: document.getElementById('OrCase-kilos-amounts-vip')
+                },
+                {
+                    first: document.getElementById('AndCase-Current-amounts-Bronze'),
+                    second: document.getElementById('OrCase-Current-amounts-Bronze')
+                },
+                {
+                    first: document.getElementById('AndCase-kilos-amounts-Bronze'),
+                    second: document.getElementById('OrCase-kilos-amounts-Bronze')
+                },
+                {
+                    first: document.getElementById('AndCase-Current-amounts-Silver'),
+                    second: document.getElementById('OrCase-Current-amounts-Silver')
+                },
+                {
+                    first: document.getElementById('AndCase-kilos-amounts-Silver'),
+                    second: document.getElementById('OrCase-kilos-amounts-Silver')
+                },
+                {
+                    first: document.getElementById('AndCase-Current-amounts-Gold'),
+                    second: document.getElementById('OrCase-Current-amounts-Gold')
+                },
+                {
+                    first: document.getElementById('AndCase-kilos-amounts-Gold'),
+                    second: document.getElementById('OrCase-kilos-amounts-Gold')
+                }
+                ,
+                {
+                    first: document.getElementById('AndCase-Current-amounts-Diamond'),
+                    second: document.getElementById('OrCase-Current-amounts-Diamond')
+                },
+                {
+                    first: document.getElementById('AndCase-kilos-amounts-Diamond'),
+                    second: document.getElementById('OrCase-kilos-amounts-Diamond')
+                }
+            ];
+
+            checkboxPairs.forEach(pair => {
+                pair.first.addEventListener('change', function () {
+                    pair.second.disabled = this.checked;
+                });
+
+                pair.second.addEventListener('change', function () {
+                    pair.first.disabled = this.checked;
+                });
+            });
+        });
     </script>
 }

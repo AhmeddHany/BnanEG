@@ -66,7 +66,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 return RedirectToAction("Index", "Home");
             }
             var usersInfo = await _unitOfWork.CrMasUserInformation
-                .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && x.CrMasUserInformationCode != "CAS" + user.CrMasUserInformationLessor &&
+                .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && !x.CrMasUserInformationCode.StartsWith("CAS") &&
                                                   x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
                                                   x.CrMasUserInformationStatus != Status.Deleted);
 
@@ -78,7 +78,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             var user = await _userManager.GetUserAsync(User);
             var lessorCode = user.CrMasUserInformationLessor;
 
-            var employeesInfo = await _unitOfWork.CrMasUserInformation.FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && x.CrMasUserInformationCode != "CAS" + user.CrMasUserInformationLessor &&
+            var employeesInfo = await _unitOfWork.CrMasUserInformation.FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && !x.CrMasUserInformationCode.StartsWith("CAS") &&
                                                                                                  x.CrMasUserInformationCode != user.CrMasUserInformationCode && x.CrMasUserInformationStatus != Status.Deleted &&
                                                                                                  (x.CrMasUserInformationArName.Contains(search) ||
                                                                                                   x.CrMasUserInformationEnName.ToLower().Contains(search.ToLower()) ||
@@ -103,9 +103,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "EmployeesSystemValiditions");
             }
-            var EditedUser = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == id &&
-                                                                                   x.CrMasUserInformationLessor == user.CrMasUserInformationLessor &&
-                                                                                  !x.CrMasUserInformationCode.Contains("CAS"));
+            var EditedUser = await _unitOfWork.CrMasUserInformation.FindAsync(x => !id.StartsWith("CAS") && x.CrMasUserInformationCode == id &&
+                                                                                   x.CrMasUserInformationLessor == user.CrMasUserInformationLessor  );
             if (EditedUser == null || user == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });

@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 
-namespace Bnan.Ui.Areas.CAS.Controllers
+namespace Bnan.Ui.Areas.CAS.Controllers.Services
 {
     [Area("CAS")]
     [Authorize(Roles = "CAS")]
@@ -23,7 +26,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         private readonly IStringLocalizer<LessorMembershipController> _localizer;
         private readonly IAdminstritiveProcedures _adminstritiveProcedures;
         private readonly IMembershipConditions _membershipConditions;
-        public LessorMembershipController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, IUserLoginsService userLoginsService, IUserService userService, IToastNotification toastNotification, IStringLocalizer<LessorMembershipController> localizer, IAdminstritiveProcedures adminstritiveProcedures, IMembershipConditions membershipConditions) : base(userManager, unitOfWork, mapper)
+        private readonly IBaseRepo _baseRepo;
+
+        private readonly string pageNumber = SubTasks.LessorMembershipCAS;
+
+        public LessorMembershipController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, IUserLoginsService userLoginsService, IUserService userService, IToastNotification toastNotification, IStringLocalizer<LessorMembershipController> localizer, IAdminstritiveProcedures adminstritiveProcedures, IMembershipConditions membershipConditions, IBaseRepo baseRepo) : base(userManager, unitOfWork, mapper)
         {
             _userLoginsService = userLoginsService;
             _userService = userService;
@@ -31,26 +38,22 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             _localizer = localizer;
             _adminstritiveProcedures = adminstritiveProcedures;
             _membershipConditions = membershipConditions;
+            _baseRepo = baseRepo;
         }
 
         public async Task<IActionResult> LessorMembership()
         {
-            //save Tracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("207", "2207002", "2");
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
 
-
-            //sidebar Active
-            ViewBag.id = "#sidebarServices";
-            ViewBag.no = "1";
-            var userLogin = await _userManager.GetUserAsync(User);
-            var titles = await setTitle("207", "2207002", "2");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var lessorMemberships = _unitOfWork.CrCasLessorMembership.FindAll(x => x.CrCasLessorMembershipConditionsLessor == userLogin.CrMasUserInformationLessor &&
+            var lessorMemberships = _unitOfWork.CrCasLessorMembership.FindAll(x => x.CrCasLessorMembershipConditionsLessor == user.CrMasUserInformationLessor &&
                                                                                    x.CrCasLessorMembershipConditions != "1600000006", new[] { "CrCasLessorMembershipConditionsNavigation" })
                                                            .OrderBy(x => x.CrCasLessorMembershipConditions).ToList();
 
@@ -60,7 +63,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         [HttpGet]
         public JsonResult GetMembershipGroup(string No)
         {
-            var group =_unitOfWork.CrMasSysProbabilityMembership.Find(g => g.CrMasSysProbabilityMembershipCode == No);
+            var group = _unitOfWork.CrMasSysProbabilityMembership.Find(g => g.CrMasSysProbabilityMembershipCode == No);
             if (group != null) return Json(group.CrMasSysProbabilityMembershipGroup);
             else return Json(" ");
         }
@@ -69,10 +72,16 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         public async Task<IActionResult> Edit(IFormCollection collection)
         {
             var userLogin = await _userManager.GetUserAsync(User);
-           
+
             var lessorMemberships = _unitOfWork.CrCasLessorMembership.FindAll(x => x.CrCasLessorMembershipConditionsLessor == userLogin.CrMasUserInformationLessor &&
                                                                                    x.CrCasLessorMembershipConditions != "1600000006", new[] { "CrCasLessorMembershipConditionsNavigation" }).ToList();
-            if (collection.Keys!=null)
+
+            if (userLogin == null && lessorMemberships == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Home");
+            }
+            if (collection.Keys != null)
             {
                 foreach (string item in collection.Keys)
                 {
@@ -94,7 +103,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                             var link2 = result[3].ToString();
                             var isActivate = false;
                             if (ConditionInsert == "on") isActivate = true;
-                            if (Group!="N")
+                            if (Group != "N")
                             {
                                 if (!await _membershipConditions.AddRenterMembership(userLogin?.CrMasUserInformationLessor, code, amount, link1, KM, link2, NoContract, isActivate, Group))
                                 {
@@ -110,7 +119,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                                     return RedirectToAction("Index", "Home");
                                 }
                             }
-                            
+
                         }
                     }
                 }
@@ -131,7 +140,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     return RedirectToAction("LessorMembership");
                 }
             }
-            
+
             _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             return RedirectToAction("Index", "Home");
         }

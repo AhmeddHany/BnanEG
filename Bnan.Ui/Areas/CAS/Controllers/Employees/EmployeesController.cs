@@ -79,14 +79,14 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 return RedirectToAction("Index", "Home");
             }
             var usersInfo = await _unitOfWork.CrMasUserInformation
-                .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && x.CrMasUserInformationCode != "CAS" + user.CrMasUserInformationLessor &&
+                .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && !x.CrMasUserInformationCode.StartsWith("CAS") &&
                                                   x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
                                                   x.CrMasUserInformationStatus == Status.Active);
 
             if (!usersInfo.Any())
             {
                 usersInfo = await _unitOfWork.CrMasUserInformation
-                .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && x.CrMasUserInformationCode != "CAS" + user.CrMasUserInformationLessor &&
+                .FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && !x.CrMasUserInformationCode.StartsWith("CAS") &&
                                                   x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
                                                   x.CrMasUserInformationStatus == Status.Hold);
                 ViewBag.radio = "All";
@@ -101,7 +101,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             var lessorCode = user.CrMasUserInformationLessor;
             if (!string.IsNullOrEmpty(status))
             {
-                var employeesInfo = await _unitOfWork.CrMasUserInformation.FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && x.CrMasUserInformationCode != "CAS" + user.CrMasUserInformationLessor &&
+                var employeesInfo = await _unitOfWork.CrMasUserInformation.FindAllAsNoTrackingAsync(x => x.CrMasUserInformationLessor == lessorCode && !x.CrMasUserInformationCode.StartsWith("CAS") &&
                                                                                                      x.CrMasUserInformationCode != user.CrMasUserInformationCode &&
                                                                                                     (x.CrMasUserInformationStatus == Status.Active ||
                                                                                                      x.CrMasUserInformationStatus == Status.Deleted ||
@@ -287,7 +287,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
         {
             var userLogin = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Update, pageNumber);
-            var userUpdated = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == id);
+            var userUpdated = await _unitOfWork.CrMasUserInformation.FindAsync(x => !id.StartsWith("CAS") && x.CrMasUserInformationCode == id);
             if (userUpdated == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -513,7 +513,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 return RedirectToAction("Login", "Account");
             }
 
-            string foldername = $"{"images\\Bnan\\Users"}\\{model.CrMasUserInformationCode}";
+
+            string foldername = $"{"images\\Company"}\\{user.CrMasUserInformationLessor}\\{"Users"}\\{model.CrMasUserInformationCode}";
+
             string filePathImage;
             string filePathSignture;
             var oldPathImage = model.CrMasUserInformationPicture;
