@@ -19,7 +19,7 @@ namespace Bnan.Ui.ViewModels.CAS
         public string? CrCasAccountSalesPointBank { get; set; }
         [Required(ErrorMessage = "requiredFiled"), MaxLength(3, ErrorMessage = "requiredFiled")] // branch
         public string? CrCasAccountSalesPointBrn { get; set; } // branch
-        [MaxLength(8, ErrorMessage = "requiredNoLengthFiled8")]
+        [Required(ErrorMessage = "requiredFiled"), MaxLength(8, ErrorMessage = "requiredNoLengthFiled8")]
         public string? CrCasAccountSalesPointAccountBank { get; set; } // Code of AccountBank another Table
         //[ MaxLength(2, ErrorMessage = "requiredFiled")]
         public string? CrCasAccountSalesPointSerial { get; set; }
@@ -49,10 +49,11 @@ namespace Bnan.Ui.ViewModels.CAS
         public List<CrCasAccountSalesPoint>? list_CrCasAccountSalesPoint = new List<CrCasAccountSalesPoint>();
         public List<CrMasSupAccountBank>? all_BanksName = new List<CrMasSupAccountBank>();
         public CrMasSupAccountBank? This_BankName = new CrMasSupAccountBank();
-
+        public CrCasAccountBank? this_AccountData = new CrCasAccountBank();
+        
         public List<TResult2> all_SalesPointsCount = new List<TResult2>();
         public List<cas_list_String_4> all_branchesNames = new List<cas_list_String_4>();
-        public List<cas_list_String_4> all_AccountsNames = new List<cas_list_String_4>();
+        public List<CrCasAccountBank> all_AccountsNames = new List<CrCasAccountBank>();
         public List<cas_list_String_4> all_BanksNames = new List<cas_list_String_4>();
         
     }

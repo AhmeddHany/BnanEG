@@ -1,9 +1,10 @@
 ﻿
 
 @using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS;
 @* @model IEnumerable<CrCasRenterLessor>
 *@
-@model IEnumerable<CrCasRenterLessor>
+@model RenterLessorInformation_CASVM
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
@@ -12,126 +13,145 @@
     ViewData["Page-title"] = @localizer["RenterInformations Data"];
     ViewData["Page-Hint"] = @localizer["RenterInformations Hint"];
 }
-<style>
-    body {
-        overflow: hidden
-    }
+<div class="container main-container">
 
-    @@media (max-width: 600px) {
-        #basic-datatable1_wrapper .row:first-child > div {
-            text-align: left;
-            overflow: scroll;
-            text-overflow: ellipsis;
-        }
-
-            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
-                text-align: right;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-    }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f9f9f9;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-    /*     td,th {
-            text-align: center;
-        } */
-
-    #_Nc {
-        text-align: center;
-    }
-
-    
-</style>
-
-<div class="sub-container">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div class="col-sm-12 col-md-9">
-                <div class="col-sm-12 col-md-4 p-0">
-                    <a type="button" class="btn btn-danger" title="@localizer["Back"]" asp-area="CAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
-                    @*<a class="btn btn-secondary InsertBtn" onclick="CheckValidation('1103001', '@Status.Insert', '@Url.Action("AddRenterLessorInformation", "RenterLessorInformation")')">
-                        @localizer["Add RenterInformations Data"]
-                    </a>*@ 
-                </div>
+    <form action="">
+        <div class="row g-3 mb-2">
+            <div class="col">
+                <h3> بيانات المستأجرين </h3>
             </div>
+            <div class="col-12 col-lg-6 d-flex justify-content-end">
 
-            @*search And Fitler Radio Button*@
-            <div class="col-sm-12 col-md-3 p-0">
-                <div class="input-group" style="width: 95%;">
-                    <input class="form-control dropdown-toggle" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
-                    <span class="mdi mdi-magnify search-icon" style="color:#a7a4a4;"></span>
+                <div class="col-12 col-md-8 search-input-col">
+                    <div class="form-outline w-100" data-mdb-input-init>
+                        <span class="fa fa-search"></span>
+                        <input type="search" id="search2" class="form-control inputs search-input"
+                               name="search2" aria-label="Search" autofocus autocomplete="off" />
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-12 col-md-12 mt-3" id="status-filter">
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioAll" name="customRadio" value="All" class="form-check-input">
-                    <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioActive" name="customRadio" value="A" class="form-check-input">
-                    <label class="form-check-label" for="customRadioActive">@localizer["Active"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioRented" name="customRadio" value="R" class="form-check-input">
-                    <label class="form-check-label" for="customRadioRented">@localizer["Rented_n"]</label>
-                </div>
+
             </div>
         </div>
-        <div class="dataTable " id="dataTableR1" >
-            <partial name="_DataTableRenterLessorInformation" />
+        <div class="row mb-3">
+            <div class="col-12 filters-col">
+                <div class="filters-custom-order">
+
+                    <label class="form-check-label" for="all">@localizer["All"]</label>
+                    <input class="form-check-input custom" type="radio" id="all" name="customRadio" value="All" checked />
+                </div>
+
+                <div class="filters-custom-order">
+
+                    <label class="form-check-label filter2" for="NotRenter">@localizer["NotRented"]</label>
+                    <input class="form-check-input custom" type="radio" id="NotRenter" name="customRadio" value="@Status.Active" />
+                </div>
+
+                <div class="filters-custom-order">
+
+                    <label class="form-check-label filter6" for="Renter" style="color:Green">@localizer["Rented_n"]</label>
+                    <input class="form-check-input custom" type="radio" id="Renter" name="customRadio" value="@Status.Rented" />
+                </div>
+
+            </div>
         </div>
-    </div>
+        <div class="row table-row px-3">
+            <div class="col  scroll-table-div  table-responsive-sm  w-100  ">
+                <table class=" tables-style table table-borderless " id="Table">
+                    <thead class="sticky-top">
+                        <tr>
+                            <th scope="col" class="DifferAlign">@localizer["RenterInformationAddress"]</th>
+                            <th scope="col"> @localizer["Rates"] </th>
+                            <th scope="col"> @localizer["RenterInformationJop"] </th>
+                            <th scope="col"> @localizer["RenterInformationNationality"] </th>
+                            <th scope="col">@localizer["DateLastContract"]</th>
+                            <th scope="col" class="DifferAlign" style="max-width:185px;"> @localizer["RenterInformationName"]</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{var no = 0;}
+                        @foreach(var single in Model.all_RentersData)
+                        {
+                            var address = " ";
+                            var Rate = " ";
+                            var job = " ";
+                            var nationality = " ";
+                            var RenterName = " ";
+                            var lastDateContract = " ";
+                            if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                            {
+                                address = single.CrCasRenterLessorNavigation?.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateEnName;
+                                Rate = Model.all_Rates?.Find(x=>x.CrMasSysEvaluationsCode?.Trim()==single.CrCasRenterLessorDealingMechanism?.Trim()).CrMasSysEvaluationsEnDescription;
+                                nationality  = single.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesEnName;
+                                job = single.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsEnName;
+                                RenterName = single.CrCasRenterLessorNavigation.CrMasRenterInformationEnName;
+                                lastDateContract = single.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                address = single.CrCasRenterLessorNavigation?.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateArName;
+                                Rate = Model.all_Rates?.Find(x => x.CrMasSysEvaluationsCode?.Trim() == single.CrCasRenterLessorDealingMechanism?.Trim()).CrMasSysEvaluationsArDescription;
+                                nationality = single.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesArName;
+                                job = single.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsArName;
+                                RenterName = single.CrCasRenterLessorNavigation.CrMasRenterInformationArName;
+                                RenterName = single.CrCasRenterLessorNavigation.CrMasRenterInformationArName;
+                                lastDateContract = single.CrCasRenterLessorDateLastContractual?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+                            }
+
+                        <tr>
+                            <td class="DifferAlign">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <div class="col">
+                                            <p class="FirstLineP"> @address    </p>
+                                            <p class="secondLineP"> @single.CrCasRenterLessorNavigation?.CrMasRenterInformationEmail </p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <p class="FirstLineP">@Rate</p>
+                            </td>
+                            <td>
+                                <p class="FirstLineP">@job</p>
+                            </td>
+                            <td>
+                                <p>@nationality</p>
+                            </td>
+                            <td>
+                                    <p>@lastDateContract</p>
+                            </td>
+                            <td class="DifferAlign">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <div class="col">
+                                        <p class="FirstLineP"> @RenterName </p>
+                                        <p class="secondLineP"> @single.CrCasRenterLessorId </p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="filter-number-td">
+
+                                        @{
+                                            var filterColor = "";
+                                            if (single.CrCasRenterLessorStatus == Status.Active) filterColor = "filter2-div";
+                                            else if (single.CrCasRenterLessorStatus == Status.Rented) filterColor = "filter1-div";
+                                        }
+                                        <div class="filters @filterColor"></div>
+                                    <div>@no</div>
+
+                                </div>
+                            </td>
+                            </tr>
+                            no += 1;
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </form>
+    <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+       data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Back"]"
+       class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
 </div>
-
-@section scripts {
-    @*Get RenterLessorInformation Using filter*@
-    <script>
-        //get RenterLessorInformation By Status function
-        function GetRenterLessorInformationFitler(status) {
-            $.ajax({
-                type: "GET",
-                data: {
-                    status: status
-                },
-                url: "@Url.Action("GetRenterLessorInformationByStatus", "RenterLessorInformation", new { Area = "CAS" })",
-                success: function (response) {
-                    $(".dataTable").html(response);
-                    set_basic_datatable();
-                },
-            })
-        }
-
-        //on Click Filter Radio Button GetRenterLessorInformationByStatus
-        $("input[name='customRadio']").on("click", function () {
-            // Clear the value from the search input
-            $("#top-search").val("");
-            GetRenterLessorInformationFitler($(this).val())
-        })
-    </script>
-}
-
-
-<style>
-    .wrapper {
-        margin-bottom: 60px;
-        overflow: hidden;
-        background-image: url("~/Pictures/bg.jpg") !important;
-    }
-
-    .table-bordered td,
-    .table-bordered th {
-        border: none;
-    }
-</style>
+                </div>
 

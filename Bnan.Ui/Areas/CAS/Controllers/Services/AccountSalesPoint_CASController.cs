@@ -74,14 +74,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                     nameAr = x.CrCasBranchInformationArShortName,
                     nameEn = x.CrCasBranchInformationEnShortName,
                 }));
-            var all_AccountsNames = await _unitOfWork.CrCasAccountBank.FindAllWithSelectAsNoTrackingAsync(
-                predicate: x => x.CrCasAccountBankStatus == Status.Active && x.CrCasAccountBankLessor == user.CrMasUserInformationLessor,
-                selectProjection: query => query.Select(x => new cas_list_String_4
-                {
-                    id_key = x.CrCasAccountBankCode,
-                    nameAr = x.CrCasAccountBankArName,
-                    nameEn = x.CrCasAccountBankEnName,
-                }));
+            var all_AccountsNames = await _unitOfWork.CrCasAccountBank.FindAllAsync(x => x.CrCasAccountBankStatus == Status.Active && x.CrCasAccountBankLessor == user.CrMasUserInformationLessor);
+
 
             //var all_SalesPointsCount = await _unitOfWork.CrCasAccountSalesPoint.FindCountByColumnAsync<CrCasAccountSalesPoint>(
             //   predicate: x => x.CrCasAccountSalesPointLessor == user.CrMasUserInformationLessor && x.CrCasAccountSalesPointStatus != Status.Deleted,
@@ -100,7 +94,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
             else ViewBag.radio = "A";
             CAS_AccountSalesPointVM vm = new CAS_AccountSalesPointVM();
             vm.all_branchesNames = all_branchesNames;
-            vm.all_AccountsNames = all_AccountsNames;
+            vm.all_AccountsNames = all_AccountsNames?.ToList() ?? new List<CrCasAccountBank>();
             vm.all_BanksName = all_BanksName?.ToList() ?? new List<CrMasSupAccountBank>();
             vm.list_CrCasAccountSalesPoint = SalesPoints?.ToList() ?? new List<CrCasAccountSalesPoint>();
             //vm.all_SalesPointsCount = all_SalesPointsCount;
@@ -133,18 +127,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                         nameAr = x.CrCasBranchInformationArShortName,
                         nameEn = x.CrCasBranchInformationEnShortName,
                     }));
-                var all_AccountsNames = await _unitOfWork.CrCasAccountBank.FindAllWithSelectAsNoTrackingAsync(
-                    predicate: x => x.CrCasAccountBankLessor == user.CrMasUserInformationLessor,
-                    selectProjection: query => query.Select(x => new cas_list_String_4
-                    {
-                        id_key = x.CrCasAccountBankCode,
-                        nameAr = x.CrCasAccountBankArName,
-                        nameEn = x.CrCasAccountBankEnName,
-                    }));
+                var all_AccountsNames = await _unitOfWork.CrCasAccountBank.FindAllAsync(x => x.CrCasAccountBankStatus == Status.Active && x.CrCasAccountBankLessor == user.CrMasUserInformationLessor);
+
 
                 CAS_AccountSalesPointVM vm = new CAS_AccountSalesPointVM();
                 vm.all_branchesNames = all_branchesNames;
-                vm.all_AccountsNames = all_AccountsNames;             
+                vm.all_AccountsNames = all_AccountsNames?.ToList() ?? new List<CrCasAccountBank>();
                 if (status == Status.All)
                 {
                     var FilterAll = AccountSalesPoint_CASsAll.FindAll(x => x.CrCasAccountSalesPointStatus != Status.Deleted &&
@@ -203,14 +191,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                     nameAr = x.CrCasBranchInformationArShortName,
                     nameEn = x.CrCasBranchInformationEnShortName,
                 }));
-            var all_AccountsNames = await _unitOfWork.CrCasAccountBank.FindAllWithSelectAsNoTrackingAsync(
-                predicate: x => x.CrCasAccountBankStatus == Status.Active && x.CrCasAccountBankLessor == user.CrMasUserInformationLessor,
-                selectProjection: query => query.Select(x => new cas_list_String_4
-                {
-                    id_key = x.CrCasAccountBankNo,
-                    nameAr = x.CrCasAccountBankArName,
-                    nameEn = x.CrCasAccountBankEnName,
-                }));
+            var all_AccountsNames = await _unitOfWork.CrCasAccountBank.FindAllAsync(x => x.CrCasAccountBankStatus == Status.Active && x.CrCasAccountBankLessor == user.CrMasUserInformationLessor);
+
 
             var all_BanksNames = await _unitOfWork.CrMasSupAccountBanks.FindAllWithSelectAsNoTrackingAsync(
                 predicate: x => x.CrMasSupAccountBankStatus == Status.Active,
@@ -225,7 +207,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
             //Acc_SalesPointVM.CrCasAccountSalesPointCode = await GenerateLicenseCodeAsync(user.CrMasUserInformationLessor);
             Acc_SalesPointVM.CrCasAccountSalesPointLessor = user.CrMasUserInformationLessor;
             Acc_SalesPointVM.all_BanksName = all_BanksName;
-            Acc_SalesPointVM.all_AccountsNames = all_AccountsNames;
+            Acc_SalesPointVM.all_AccountsNames = all_AccountsNames?.ToList() ?? new List<CrCasAccountBank>();
             Acc_SalesPointVM.all_branchesNames = all_branchesNames;
             Acc_SalesPointVM.all_BanksNames = all_BanksNames;
             return View(Acc_SalesPointVM);
@@ -250,15 +232,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                     nameAr = x.CrCasBranchInformationArShortName,
                     nameEn = x.CrCasBranchInformationEnShortName,
                 }));
-            var all_AccountsNames = await _unitOfWork.CrCasAccountBank.FindAllWithSelectAsNoTrackingAsync(
-                predicate: x => x.CrCasAccountBankStatus == Status.Active && x.CrCasAccountBankLessor == user.CrMasUserInformationLessor,
-                selectProjection: query => query.Select(x => new cas_list_String_4
-                {
-                    id_key = x.CrCasAccountBankNo,
-                    nameAr = x.CrCasAccountBankArName,
-                    nameEn = x.CrCasAccountBankEnName,
-                    str4 = x.CrCasAccountBankIban,
-                }));
+            var all_AccountsNames = await _unitOfWork.CrCasAccountBank.FindAllAsync( x => x.CrCasAccountBankStatus == Status.Active && x.CrCasAccountBankLessor == user.CrMasUserInformationLessor);
 
             var all_BanksNames = await _unitOfWork.CrMasSupAccountBanks.FindAllWithSelectAsNoTrackingAsync(
                 predicate: x => x.CrMasSupAccountBankStatus == Status.Active,
@@ -271,7 +245,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
 
 
             Acc_SalesPointVM.all_branchesNames = all_branchesNames;
-            Acc_SalesPointVM.all_AccountsNames = all_AccountsNames;
+            Acc_SalesPointVM.all_AccountsNames = all_AccountsNames?.ToList()?? new List<CrCasAccountBank>();
             Acc_SalesPointVM.all_BanksNames = all_BanksNames;
 
             if (!ModelState.IsValid || Acc_SalesPointVM == null)
@@ -336,16 +310,26 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
 
             await SetPageTitleAsync(Status.Update, pageNumber);
 
-            var contract = await _unitOfWork.CrCasAccountSalesPoint.FindAsync(x => x.CrCasAccountSalesPointCode == id);
+            var contract = await _unitOfWork.CrCasAccountSalesPoint.FindAsync(x => x.CrCasAccountSalesPointCode == id );
             if (contract == null || user==null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "AccountSalesPoint_CAS");
             }
+            var this_AccountData = await _unitOfWork.CrCasAccountBank.FindAsync(x => x.CrCasAccountBankCode == contract.CrCasAccountSalesPointAccountBank);
             var This_BankName = await _unitOfWork.CrMasSupAccountBanks.FindAsync(x => x.CrMasSupAccountBankCode == contract.CrCasAccountSalesPointBank);
-
+            var all_branchesNames = await _unitOfWork.CrCasBranchInformation.FindAllWithSelectAsNoTrackingAsync(
+                predicate: x => x.CrCasBranchInformationStatus == Status.Active && x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor && x.CrCasBranchInformationCode== contract.CrCasAccountSalesPointBrn,
+                selectProjection: query => query.Select(x => new cas_list_String_4
+                {
+                    id_key = x.CrCasBranchInformationCode,
+                    nameAr = x.CrCasBranchInformationArShortName,
+                    nameEn = x.CrCasBranchInformationEnShortName,
+                }));
             var model = _mapper.Map<CAS_AccountSalesPointVM>(contract);
             model.This_BankName = This_BankName;
+            model.this_AccountData = this_AccountData;
+            model.all_branchesNames = all_branchesNames;
             //model.countForSales = await _unitOfWork.CrCasAccountSalesPoint.CountAsync(x => x.CrCasAccountSalesPointLessor == user.CrMasUserInformationLessor && x.CrCasAccountSalesPointStatus != Status.Deleted && x.CrCasAccountSalesPointAccountSalesPoint== contract.CrCasAccountSalesPointCode);
             return View(model);
         }
@@ -509,6 +493,22 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
             }
 
             return Json(new { errors });
+        }
+        //Error exist message when change input without run post action >> help us in front end
+        [HttpGet]
+        public async Task<JsonResult> Get_Bank_Data(string bankAccount)
+        {
+            var this_AccountData = await _unitOfWork.CrCasAccountBank.FindAsync(x => x.CrCasAccountBankCode == bankAccount);
+            var bankNo = this_AccountData?.CrCasAccountBankNo ?? "0";
+            var This_BankName = await _unitOfWork.CrMasSupAccountBanks.FindAsync(x => x.CrMasSupAccountBankCode == bankNo);
+
+            return Json(new {
+                bank_Iban = this_AccountData?.CrCasAccountBankIban ?? " ",
+                bank_No = bankNo ?? " ",
+                bank_Ar = This_BankName?.CrMasSupAccountBankArName ?? " ",
+                bank_En = This_BankName?.CrMasSupAccountBankEnName ?? " ",
+            });
+
         }
 
         //Helper Methods 

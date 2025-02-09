@@ -13,11 +13,13 @@
                     <div class="container NewUpdate-container">
         <form asp-area="CAS" asp-controller="AccountSalesPoint_CAS" asp-action="AddAccountSalesPoint_CAS" class="needs-validation" novalidate>
                             <div class="row mt-3 g-3">
+                <input hidden asp-for="CrCasAccountSalesPointBank" id="Bank_2_No"/>
+
                                 <div class="row justify-content-center">
                                     <div class="col-lg-9">
                                         <div class="row g-3 my-2">
                                             <div class="col-md-6">
-                                                <h3>إضافة نقطة بيع </h3>
+                                <h3> @localizer["Add SalesPoint Data"] </h3>
                                             </div>
                                             <div class="col-md-6 save-col">
                                                 <button type="submit" class="custom-img-btn">
@@ -32,8 +34,9 @@
                                             <div class="row">
                                                 <div class="col-md-12 ">
                                                     <label for="Branch" class="form-label">
-                                                        الفرع  <i class="fa-solid fa-star-of-life RequirdStar"></i></label>
-                                            <select class="form-select select-style " id="CrCasAccountSalesPointBrn" asp-for="CrCasAccountSalesPointBrn" onchange="changed_BranchNoSelect()" required>
+                                                @localizer["Branch"]  <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <select class="form-select select-style " id="CrCasAccountSalesPointBrn" asp-for="CrCasAccountSalesPointBrn" required>
 
                                                 <option value=""></option>
                                                 @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
@@ -66,30 +69,31 @@
                                             <div class="row">
                                                 <div class="col-md-12 ">
                                                     <label for="Account" class="form-label">
-                                                        الحساب  <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
-                                                <select class="form-select select-style " id="CrCasAccountSalesPointBank" asp-for="CrCasAccountSalesPointBank" onchange="changed_BankAccountNoSelect()" required>
+                                                @localizer["AccountBank_new"]  <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                                <select class="form-select select-style " id="CrCasAccountSalesPointAccountBank" asp-for="CrCasAccountSalesPointAccountBank" onchange="changed_BankAccountNoSelect()" required>
 
                                                     <option value=""></option>
                                                     @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
                                                     {
                                                         @foreach (var single in Model.all_AccountsNames)
                                                         {
-                                                            <option value="@single.id_key" id="@single.id_key">@single.nameAr</option>
+                                                        <option value="@single.CrCasAccountBankCode" id="@single.CrCasAccountBankCode">@single.CrCasAccountBankArName</option>
                                                         }
                                                     }
                                                     else
                                                     {
                                                         @foreach (var single in Model.all_AccountsNames)
                                                         {
-                                                            <option value="@single.id_key" id="@single.id_key">@single.nameEn</option>
+                                                        <option value="@single.CrCasAccountBankCode" id="@single.CrCasAccountBankCode">@single.CrCasAccountBankEnName</option>
                                                         }
                                                     }
 
                                                 </select>
                                                 <div class="invaild">
                                                     <div class="invalid-feedback">
-                                                    <span class="text-danger" asp-validation-for="CrCasAccountSalesPointBank"></span>
-                                                    <span class="text-danger" id="CrCasAccountSalesPointBank-Error"></span>
+                                                    <span class="text-danger" asp-validation-for="CrCasAccountSalesPointAccountBank"></span>
+                                                    <span class="text-danger" id="CrCasAccountSalesPointAccountBank-Error"></span>
                                                     </div>
                                                 </div>
                                                 </div>
@@ -102,10 +106,10 @@
                                                 <div class="col-md-6">
                                                     <div class="row">
                                                         <div class="col-auto">
-                                                            <p> رقم الحساب  </p>
+                                                    <p> @localizer["AccountBank_NNo"]  </p>
                                                         </div>
-                                                        <div class=" col-md-auto Saved-data hidden-data">
-                                                            <p> SA67004004100400001 </p>
+                                                        <div class=" col-md-auto Saved-data ">
+                                                    <p id="Bank_Iban_text" name="Bank_Iban_text">  </p>
                                                         </div>
                                                     </div>
                                                    
@@ -113,10 +117,10 @@
                                                    <div class="col-md-6">
                                                     <div class="row">
                                                         <div class="col-auto">
-                                                            <p> البنك    </p>
+                                                    <p> @localizer["BankName_new"]    </p>
                                                         </div>
-                                                        <div class=" col-md-auto Saved-data hidden-data">
-                                                            <p> البلاد </p>
+                                                        <div class=" col-md-auto Saved-data ">
+                                                    <p id="BankName_text" name="BankName_text">  </p>
                                                         </div>
                                                     </div>
                                                    </div>
@@ -125,9 +129,9 @@
                                             <div class="col-md-12">
                                                 <div class="row">
                                                     <div class="col-md-6">
-                                                        <label for="salePointNumber"
-                                                            class="form-label"> رقم نقطة البيع  <i class="fa-solid fa-star-of-life RequirdStar"></i></label>
-                                                        <input type="text" id="salePointNumber"
+                                            <label for="CrCasAccountSalesPointNo"
+                                                   class="form-label"> @localizer["SalesPointCode"]  <i class="fa-solid fa-star-of-life RequirdStar"></i></label>
+                                            <input type="text" id="CrCasAccountSalesPointNo"
                                                    class="form-control inputs " oninput="this.value = this.value.replace(/[^a-zA-Z\s\/\.\-0-9]/g, '')" autoComplete="off"
                                                    asp-for="CrCasAccountSalesPointNo" maxlength="50" required>
                                                         <div class="invaild">
@@ -142,9 +146,9 @@
                                             <div class="col-md-12">
                                                 <div class="row">
                                                     <div class="col-md-6">
-                                                        <label for="salePointAR"
-                                                            class="form-label"> اسم نقطة البيع عربي    <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
-                                                        <input type="text" id="salePointAR"
+                                            <label for="CrCasAccountSalesPointArName"
+                                                   class="form-label">  @localizer["SalesPointNameAr"]    <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
+                                            <input type="text" id="CrCasAccountSalesPointArName"
                                                    class="form-control inputs arabic-input" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s\/\.\-0-9]/g, '')" autoComplete="off"
                                                    asp-for="CrCasAccountSalesPointArName" maxlength="50" required>
                                                         <div class="invaild">
@@ -155,10 +159,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label for="salePointEN"
-                                                            class="form-label"> 
-                                                            اسم نقطة البيع إنجليزي  <i class="fa-solid fa-star-of-life RequirdStar"></i></label>
-                                                        <input type="text" id="salePointEN"
+                                            <label for="CrCasAccountSalesPointEnName"
+                                                            class="form-label">
+                                                @localizer["SalesPointNameEn"]  <i class="fa-solid fa-star-of-life RequirdStar"></i>
+                                            </label>
+                                            <input type="text" id="CrCasAccountSalesPointEnName"
                                                    class="form-control inputs english-input" oninput="this.value = this.value.replace(/[^a-zA-Z\s\/\.\-0-9]/g, '')" autoComplete="off"
                                                    asp-for="CrCasAccountSalesPointEnName" maxlength="50" required>
                                                         <div class="invaild">
@@ -178,6 +183,12 @@
                                                     <textarea class=" form-control textarea-inputs"
                                                         rows="1" maxlength="100" asp-for="CrCasAccountSalesPointReasons"
                                                         type="text"></textarea>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span class="text-danger" asp-validation-for="CrCasAccountSalesPointReasons"></span>
+                                                    <span class="text-danger" id="CrCasAccountSalesPointReasons-Error"></span>
+                                                </div>
+                                            </div>
                                                 </div>
                                             </div>
                                            </div>
@@ -241,6 +252,34 @@
             });
         });
     </script>*@
+    <script>
+        function changed_BankAccountNoSelect(){
+            var bankAccount = $("#CrCasAccountSalesPointAccountBank").val()
+            $.ajax({
+                type: "GET",
+                url: "/CAS/AccountSalesPoint_CAS/Get_Bank_Data",
+                data: { bankAccount: bankAccount },
+                success: function (result) {
+                    // Show new error messages if they exist
+                    if (result != null ) {
+                        console.log(result);
+                        $("#Bank_2_No").val(result.bank_No);
+                        $("#Bank_Iban_text").text(result.bank_Iban);
+                        if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
+                            $("#BankName_text").text(result.bank_En);
+                        }else{
+                            $("#BankName_text").text(result.bank_Ar);
+                        }
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+
+    </script>
     <script>
         $(document).ready(function () {
 

@@ -9,27 +9,33 @@
 }
 <link href="~/css/toastr.css" rel="stylesheet" />
 
-
-    <div class="col my-2 d-flex align-items-center justify-content-center">
-        <div class="container NewUpdate-container">
+     <div class="col my-2 d-flex align-items-center justify-content-center">
+                    <div class="container NewUpdate-container">
             <form asp-area="CAS" asp-controller="AccountSalesPoint_CAS" asp-action="Edit" class="needs-validation" novalidate>
                 <input hidden asp-for="CrCasAccountSalesPointCode" />
                 <input hidden asp-for="CrCasAccountSalesPointLessor" />
+                <input hidden asp-for="CrCasAccountSalesPointBrn" />
+                <input hidden asp-for="CrCasAccountSalesPointAccountBank" />
+                <input hidden asp-for="CrCasAccountSalesPointTotalBalance" />
+                <input hidden asp-for="CrCasAccountSalesPointTotalReserved" />
+                <input hidden asp-for="CrCasAccountSalesPointTotalAvailable" />
+                <input hidden asp-for="CrCasAccountSalesPointBranchStatus" />
+                <input hidden asp-for="CrCasAccountSalesPointBankStatus" />
                 <input hidden asp-for="CrCasAccountSalesPointArName" />
                 <input hidden asp-for="CrCasAccountSalesPointEnName" />
                 <input hidden asp-for="CrCasAccountSalesPointNo" />
                 <input hidden asp-for="CrCasAccountSalesPointBank" />
-            <input hidden asp-for="CrCasAccountSalesPointSerial" />
-            <input hidden asp-for="CrCasAccountSalesPointStatus" id="CrCasAccountSalesPointStatus" />
-                <div class="row mt-3 g-3">
+                <input hidden asp-for="CrCasAccountSalesPointSerial" />
+                <input hidden asp-for="CrCasAccountSalesPointStatus" id="CrCasAccountSalesPointStatus" />
 
-                    <div class="row justify-content-center">
-                        <div class="col-lg-9">
-                            <div class="row g-3 my-2">
-                                <div class="col-md-6">
-                                <h3> @localizer["Edit AccountSalesPoint Data"]</h3>
-                                </div>
-                                <div class="col-md-6 save-col">
+            <div class="row mt-3 g-3">
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-9">
+                                        <div class="row g-3 my-2">
+                                            <div class="col-md-6">
+                                <h3>@localizer["Edit SalesPoint Data"] </h3>
+                            </div>
+                            <div class="col-md-6 save-col">
                                 <button type="submit" class="custom-img-btn" id="SaveEdit">
                                     <img src="~/CasSys/images/save.svg" />
                                 </button>
@@ -40,84 +46,100 @@
                                     <img id="modalIcon" src="~/MasSystem/images/delete.svg" />
                                 </button>
                                 <button type="button" class="custom-img-btn"> <a href="/CAS/AccountSalesPoint_CAS/Index"><img class="Chevron" src="~/CasSys/images/Chevron_Left.svg" /></a></button>
+                                            </div>
+                                        </div>
+                                        <div class="container-fluid">
+                                            <div class="row mt-3 g-3">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-auto">
+                                            <p> @localizer["Branch"]</p>
+                                                        </div>
+                                                        <div class=" col-md-auto Saved-data">
+                                            <p> @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.all_branchesNames?.FirstOrDefault()?.nameEn : Model.all_branchesNames?.FirstOrDefault()?.nameAr) </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-auto">
+                                            <p> @localizer["AccountBank_NNo"]</p>
+                                                        </div>
+                                                        <div class=" col-md-auto Saved-data">
+                                                            <p> @(Model.this_AccountData?.CrCasAccountBankIban) </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-auto">
+                                            <p> @localizer["AccountBank_new"]</p>
+                                                        </div>
+                                                        <div class=" col-md-auto Saved-data">
+                                            <p> @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.this_AccountData?.CrCasAccountBankEnName : Model.this_AccountData?.CrCasAccountBankArName) </p>
+                                        </div>
+                                                    </div>
+                                                </div>
+
+                                           
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-auto">
+                                            <p> @localizer["SalesPointCode"]</p>
+                                                        </div>
+                                                        <div class=" col-md-auto Saved-data">
+                                                            <p> @(Model.CrCasAccountSalesPointNo) </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                              
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-auto">
+                                            <p> @localizer["SalesPointName_new"]</p>
+                                                            </div>
+                                                            <div class=" col-md-auto Saved-data">
+                                            <p> @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.CrCasAccountSalesPointEnName : Model.CrCasAccountSalesPointArName) </p>
+                                            @*<p> @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.CrCasAccountSalesPointEnName : Model.CrCasAccountSalesPointArName),@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.This_BankName?.CrMasSupAccountBankEnName : Model.This_BankName?.CrMasSupAccountBankArName) </p>*@
+                                        </div>
+                                                        </div>
+                                                    </div>
+
+                                           
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-auto">
+                                            <p> @localizer["TotalBalance"]</p>
+                                                        </div>
+                                                        <div class=" col-md-auto Saved-data">
+                                                            <p> @Model.CrCasAccountSalesPointTotalBalance?.ToString("N2",CultureInfo.InvariantCulture) </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                           
+                                                <div class="col-md-10">
+                                    <label>@localizer["Reason_s"]</label>
+                                                    <textarea class=" form-control textarea-inputs"
+                                                        rows="1" maxlength="100" asp-for="CrCasAccountSalesPointReasons"
+                                                        type="text"></textarea>
+                                    <div class="invaild">
+                                        <div class="invalid-feedback">
+                                            <span class="text-danger" asp-validation-for="CrCasAccountSalesPointReasons"></span>
+                                            <span class="text-danger" id="CrCasAccountSalesPointReasons-Error"></span>
+                                        </div>
+                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="container-fluid">
-
-                                <div class="row g-3 mt-3">
-                                    <div class="col-md-12">
-                                        <div class="row ">
-                                            <div class="col-md-12">
-                                                <div class="row">
-                                                    <div class="col-auto">
-                                                    <p>@localizer["SalesPointNameArAccount"]</p>
-                                                    </div>
-                                                    <div class=" col-md-auto Saved-data">
-                                                    <p> @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.This_BankName?.CrMasSupAccountBankEnName : Model.This_BankName?.CrMasSupAccountBankArName) </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="row">
-                                                    <div class="col-auto">
-                                                    <p>@localizer["AccountSalesPointCode"]</p>
-                                                    </div>
-                                                    <div class=" col-md-auto Saved-data">
-                                                        <p>@Model.CrCasAccountSalesPointNo</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <div class="row">
-                                            <div class="col-auto">
-                                            <p> @localizer["AccountSalesPointName"]</p>
-                                            </div>
-                                            <div class=" col-md-auto Saved-data">
-                                            <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.CrCasAccountSalesPointEnName : Model.CrCasAccountSalesPointArName)</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    @*<div class="col-md-12">
-                                        <div class="row align-items-center mb-3 ">
-                                            <div class="col-md-10">
-                                                <div class="d-flex gap-3 align-items-center">
-                                                    <input class="form-check-input checkbox" type="checkbox"
-                                                           value="checked" id="Sdad-Account"
-                                                           name="Sdad-Account">
-                                                    <label class="form-check-label" for="Sdad-Account">
-                                                        حساب سداد
-                                                    </label>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>*@
-                                    <div class="col-md-12">
-                                        <div class="row align-items-center ">
-                                            <div class="col-md-10">
-                                            <label>@localizer["Reason_s"]</label>
-                                                <textarea class=" form-control textarea-inputs" rows="1"
-                                                          maxlength="100" asp-for="CrCasAccountSalesPointReasons" type="text"></textarea>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>  
 
 
 
@@ -174,8 +196,7 @@
         var statusInput = $("#CrCasAccountSalesPointStatus");
         var OldArName = $("#CrCasAccountSalesPointArName").val();
         var OldEnName = $("#CrCasAccountSalesPointEnName").val();
-        var OldEmail = $("#CrCasAccountSalesPointEmail").val();
-        var OldMobile = $("#CrCasAccountSalesPointMobile").val();
+
 
 
         function Check_onChange_input(existName, dataField, oldValue) {

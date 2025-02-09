@@ -152,6 +152,12 @@
         public static string ServicesCas_TechnicalConnectivity { get; set; } = "2208004";
         public static string ServicesCas_Alerts { get; set; } = "2208005";
         public static string ServicesCas_Memberships { get; set; } = "2208006";
+
+        // CAS Renters
+        public static string RentersCas_RentersData { get; set; } = "2203001";
+        public static string RentersCas_RentersContracts { get; set; } = "2203002";
+        public static string RentersCas_RentersDebits { get; set; } = "2203003";
+        public static string RentersCas_RentersMessages { get; set; } = "2203004";
     }
 }
 

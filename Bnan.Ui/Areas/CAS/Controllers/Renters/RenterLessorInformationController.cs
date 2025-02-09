@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.CAS;
+using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
+using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
@@ -18,94 +22,96 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
     [Area("CAS")]
     [Authorize(Roles = "CAS")]
+    [ServiceFilter(typeof(SetCurrentPathCASFilter))]
+
     public class RenterLessorInformationController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
-        private readonly UserManager<CrMasUserInformation> userManager;
-        private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly IUserService _userService;
         private readonly IRenterLessorInformation _RenterLessorInformation;
+        private readonly IBaseRepo _baseRepo;
+        private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<RenterLessorInformationController> _localizer;
-        private readonly IAdminstritiveProcedures _adminstritiveProcedures;
+        private readonly string pageNumber = SubTasks.RentersCas_RentersData;
 
 
         public RenterLessorInformationController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IRenterLessorInformation RenterLessorInformation, IAdminstritiveProcedures AdminstritiveProcedures,
-        IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterLessorInformationController> localizer) : base(userManager, unitOfWork, mapper)
+            IMapper mapper, IUserService userService, IRenterLessorInformation lessorOwners_CAS, IBaseRepo BaseRepo, IMasBase masBase,
+            IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterLessorInformationController> localizer) : base(userManager, unitOfWork, mapper)
         {
-            this.userManager = userManager;
-            this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             _userService = userService;
-            _RenterLessorInformation = RenterLessorInformation;
+            _RenterLessorInformation = lessorOwners_CAS;
             _userLoginsService = userLoginsService;
+            _baseRepo = BaseRepo;
+            _masBase = masBase;
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
-            _adminstritiveProcedures = AdminstritiveProcedures;
         }
+
 
         [HttpGet]
 
         public async Task<IActionResult> Index()
         {
 
-            //sidebar Active
-            ViewBag.id = "#sidebarRenter";
-            ViewBag.no = "0";
+            // Set page titles
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
+            // Retrieve active driving licenses
+            var RenterLessorInformationAll = await _unitOfWork.CrCasRenterLessor.FindAllAsync(x => x.CrCasRenterLessorCode == user.CrMasUserInformationLessor && x.CrCasRenterLessorStatus==Status.Active, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" });
 
-            var (mainTask, subTask, system, currentUser) = await SetTrace("203", "2203001", "2");
+            // If no active licenses, retrieve all licenses
+            if (RenterLessorInformationAll.Count() == 0)
+            {
+                RenterLessorInformationAll = await _unitOfWork.CrCasRenterLessor.FindAllAsync(x => x.CrCasRenterLessorCode == user.CrMasUserInformationLessor && x.CrCasRenterLessorStatus == Status.Rented, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" });
 
-
-            var titles = await setTitle("203", "2203001", "2");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-            var RenterLessorInformationAll = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }).ToList();
-
-            //if (RenterLessorInformationAll?.Count() < 1)
-            //{
-            //    ViewBag.Data = "0";
-            //    return RedirectToAction("FailedMessageReport_NoData");
-            //}
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
 
             var rates = _unitOfWork.CrMasSysEvaluation.FindAll(x => x.CrMasSysEvaluationsClassification == "1").ToList();
-            ViewData["Rates"] = rates;
-
-
-
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-           subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-           subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-            return View(RenterLessorInformationAll);
+            //ViewData["Rates"] = rates;
+            RenterLessorInformation_CASVM VM = new RenterLessorInformation_CASVM();
+            VM.all_Rates = rates;
+            VM.all_RentersData = RenterLessorInformationAll?.ToList()?? new List<CrCasRenterLessor>();
+            return View(VM);
         }
 
         [HttpGet]
         public async Task<PartialViewResult> GetRenterLessorInformationByStatusAsync(string status)
         {
 
+            var user = await _userManager.GetUserAsync(User);
             //sidebar Active
-            ViewBag.id = "#sidebarRenter";
-            ViewBag.no = "0";
-
-            var (mainTask, subTask, system, currentUser) = await SetTrace("203", "2203001", "2");
 
             if (!string.IsNullOrEmpty(status))
             {
                 var rates = _unitOfWork.CrMasSysEvaluation.FindAll(x => x.CrMasSysEvaluationsClassification == "1").ToList();
 
-                ViewData["Rates"] = rates;
+                var RenterLessorInformationAll = await _unitOfWork.CrCasRenterLessor.FindAllAsync(x => x.CrCasRenterLessorCode == user.CrMasUserInformationLessor && x.CrCasRenterLessorStatus == Status.Rented, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" });
 
+              
+                RenterLessorInformation_CASVM vm = new RenterLessorInformation_CASVM();
                 if (status == Status.All)
                 {
-                    var RenterLessorInformationbyStatusAll = _unitOfWork.CrCasRenterLessor.FindAll(l => (l.CrCasRenterLessorStatus == Status.Active || l.CrCasRenterLessorStatus == Status.Rented) && l.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }).ToList();
-                    return PartialView("_DataTableRenterLessorInformation", RenterLessorInformationbyStatusAll);
+                    var FilterAll = RenterLessorInformationAll.Where(x => x.CrCasRenterLessorStatus != Status.Deleted);
+                    vm.all_RentersData = FilterAll?.ToList() ?? new List<CrCasRenterLessor>();
+                    vm.all_Rates = rates;
+                    return PartialView("_DataTableRenterLessorInformation", vm);
                 }
-                var RenterLessorInformationbyStatus = _unitOfWork.CrCasRenterLessor.FindAll(l => l.CrCasRenterLessorStatus == status && l.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }).ToList();
-                return PartialView("_DataTableRenterLessorInformation", RenterLessorInformationbyStatus);
+                var FilterByStatus = RenterLessorInformationAll.Where(x => x.CrCasRenterLessorStatus == status);
+                vm.all_RentersData = FilterByStatus?.ToList() ?? new List<CrCasRenterLessor>();
+                vm.all_Rates = rates;
+                return PartialView("_DataTableRenterLessorInformation", vm);
             }
             return PartialView();
         }
@@ -124,10 +130,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             //To Set Title !!!!!!!!!!!!!
             var titles = await setTitle("203", "2203001", "2");
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
-            var (mainTask, subTask, system, currentUser) = await SetTrace("203", "2203001", "2");
+            var (mainTask, subTask, system, user) = await SetTrace("203", "2203001", "2");
 
 
-            var contract = _unitOfWork.CrCasRenterLessor.Find(x => x.CrCasRenterLessorId == id && x.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterLessorStatisticsNationalitiesNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorIdtrypeNavigation", "CrCasRenterLessorSectorNavigation", "CrCasRenterLessorStatisticsGenderNavigation", "CrCasRenterLessorMembershipNavigation" });
+            var contract = _unitOfWork.CrCasRenterLessor.Find(x => x.CrCasRenterLessorId == id && x.CrCasRenterLessorCode == user.CrMasUserInformationLessor, new[] { "CrCasRenterLessorStatisticsNationalitiesNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorIdtrypeNavigation", "CrCasRenterLessorSectorNavigation", "CrCasRenterLessorStatisticsGenderNavigation", "CrCasRenterLessorMembershipNavigation" });
             if (contract == null)
             {
                 ModelState.AddModelError("Exist", "SomeThing Wrong is happened");
@@ -168,13 +174,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             if (user != null)
             {
-                var (mainTask, subTask, system, currentUser) = await SetTrace("203", "2203001", "2");
+                //var (mainTask, subTask, system, user) = await SetTrace("203", "2203001", "2");
 
                 if (model != null)
                 {
                     var contract = _mapper.Map<CrCasRenterLessor>(model);
 
-                    var singlExist = _unitOfWork.CrCasRenterLessor.Find(x => x.CrCasRenterLessorId == contract.CrCasRenterLessorId && x.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor);
+                    var singlExist = _unitOfWork.CrCasRenterLessor.Find(x => x.CrCasRenterLessorId == contract.CrCasRenterLessorId && x.CrCasRenterLessorCode == user.CrMasUserInformationLessor);
                     if (singlExist != null)
                     {
                         singlExist.CrCasRenterLessorDealingMechanism = contract.CrCasRenterLessorDealingMechanism;
@@ -186,13 +192,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     // SaveTracing
                     var RecordAr = contract.CrCasRenterLessorNavigation.CrMasRenterInformationArName;
                     var RecordEn = contract.CrCasRenterLessorNavigation.CrMasRenterInformationEnName;
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
+                    //await _userLoginsService.SaveTracing(user.CrMasUserInformationCode, RecordAr, RecordEn, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
+                    //subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
+                    //subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
 
-                    // Save Adminstrive Procedures
-                    await _adminstritiveProcedures.SaveAdminstritive(currentUser.CrMasUserInformationCode, "1", "247", "20", currentUser.CrMasUserInformationLessor, "100",
-                    model.CrCasRenterLessorId, null, null, null, null, null, null, null, null, "تعديل", "Edit", "U", null);
+                    //// Save Adminstrive Procedures
+                    //await _adminstritiveProcedures.SaveAdminstritive(user.CrMasUserInformationCode, "1", "247", "20", user.CrMasUserInformationLessor, "100",
+                    //model.CrCasRenterLessorId, null, null, null, null, null, null, null, null, "تعديل", "Edit", "U", null);
 
                     _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
 
@@ -210,9 +216,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             ViewBag.no = "0";
             var titles = await setTitle("205", "2203001", "2");
             await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-            //var (mainTask, subTask, system, currentUser) = await SetTrace("203", "2203001", "2");
+            //var (mainTask, subTask, system, user) = await SetTrace("203", "2203001", "2");
 
-            //var RenterLessorInformationAll = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == currentUser.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost" }).ToList();
+            //var RenterLessorInformationAll = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == user.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost" }).ToList();
 
             ViewBag.Data = "0";
             //_toastNotification.AddErrorToastMessage(_localizer["NoDataToShow"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });

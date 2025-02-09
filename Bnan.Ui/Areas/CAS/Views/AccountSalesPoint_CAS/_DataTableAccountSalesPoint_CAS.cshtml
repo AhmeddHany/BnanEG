@@ -15,10 +15,10 @@
             <th class="DifferAlign"> @localizer["AccountSalesPointName"]</th>
             <th class="DifferAlign"> @localizer["AccountSalesPointCode"]</th>
             <th></th>*@
-            <th scope="col" class="DifferAlign"> الحساب </th>
-            <th scope="col"> البنك  </th>
-            <th scope="col"> الفرع  </th>
-            <th scope="col" class="DifferAlign"> نقطة البيع</th>
+            <th scope="col" class="DifferAlign"> @localizer["AccountBank_new"] </th>
+            <th scope="col"> @localizer["BankName_new"]  </th>
+            <th scope="col"> @localizer["Branch"]  </th>
+            <th scope="col" class="DifferAlign"> @localizer["SalesPointName_new"]</th>
             <th></th>
 
         </tr>
@@ -31,7 +31,7 @@
         {
             <tr onclick="location.href='@Url.Action("Edit", "AccountSalesPoint_CAS", new { id = item.CrCasAccountSalesPointCode })'">
                 <td class="DifferAlign">
-                    <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.all_AccountsNames?.Find(x => x.id_key == item?.CrCasAccountSalesPointAccountBank)?.nameEn : Model.all_AccountsNames?.Find(x => x.id_key == item?.CrCasAccountSalesPointAccountBank)?.nameAr)</p>
+                    <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.all_AccountsNames?.Find(x => x.CrCasAccountBankCode == item?.CrCasAccountSalesPointAccountBank)?.CrCasAccountBankEnName : Model.all_AccountsNames?.Find(x => x.CrCasAccountBankCode == item?.CrCasAccountSalesPointAccountBank)?.CrCasAccountBankArName)</p>
                 </td>
                 <td>
                     <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.all_BanksName?.Find(x => x.CrMasSupAccountBankCode == item?.CrCasAccountSalesPointBank)?.CrMasSupAccountBankEnName : Model.all_BanksName?.Find(x => x.CrMasSupAccountBankCode == item?.CrCasAccountSalesPointBank)?.CrMasSupAccountBankArName)</p>

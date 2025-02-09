@@ -1,8 +1,7 @@
 ﻿
 
 @using Bnan.Core.Extensions
-@using Bnan.Ui.ViewModels.CAS;
-@model RenterLessorInformation_CASVM
+@model IEnumerable<CrCasRenterLessor>
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
@@ -45,11 +44,11 @@
                 @{
                     int no = 1;
                 }
-                @foreach (var item in Model.all_RentersData)
+                @foreach (var item in Model)
                 {
                     @if (item.CrCasRenterLessorDealingMechanism == "15" )
                     {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterLessorInformation", new { id = item.CrCasRenterLessorId })'" style="color:red">
+                        <tr onclick="location.href='@Url.Action("Edit", "RenterLessorInformation22", new { id = item.CrCasRenterLessorId })'" style="color:red">
                             <td id="_Nc">@no</td>
                             <td id="_Nc">@item.CrCasRenterLessorId</td>
                             <td>@item.CrCasRenterLessorNavigation.CrMasRenterInformationEnName</td>
@@ -65,7 +64,7 @@
                                 <td> @localizer["notfound"]</td>
                             }
                             <td style="text-align:start">
-                                @foreach (var item2 in Model.all_Rates)
+                                @foreach (var item2 in ViewData["Rates"] as List<CrMasSysEvaluation>)
                                 {
                                     if (item2.CrMasSysEvaluationsCode == @item.CrCasRenterLessorDealingMechanism)
                                     {
@@ -95,7 +94,7 @@
                     }
                     else
                     {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterLessorInformation", new { id = item.CrCasRenterLessorId })'">
+                        <tr onclick="location.href='@Url.Action("Edit", "RenterLessorInformation22", new { id = item.CrCasRenterLessorId })'">
                             <td id="_Nc">@no</td>
                             <td id="_Nc">@item.CrCasRenterLessorId</td>
                             <td>@item.CrCasRenterLessorNavigation.CrMasRenterInformationEnName</td>
@@ -112,7 +111,7 @@
                             }
 
                             <td style="text-align:start">
-                                @foreach (var item2 in Model.all_Rates)
+                                @foreach (var item2 in ViewData["Rates"] as List<CrMasSysEvaluation>)
                                 {
                                     if (item2.CrMasSysEvaluationsCode == @item.CrCasRenterLessorDealingMechanism)
                                     {
@@ -168,11 +167,11 @@ else
                 @{
                     int no = 1;
                 }
-                @foreach (var item in Model.all_RentersData)
+                @foreach (var item in Model)
                 {
                     @if (item.CrCasRenterLessorDealingMechanism == "15")
                     {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterLessorInformation", new { id = item.CrCasRenterLessorId })'" style="color:red">
+                        <tr onclick="location.href='@Url.Action("Edit", "RenterLessorInformation22", new { id = item.CrCasRenterLessorId })'" style="color:red">
                             <td id="_Nc">@no</td>
                             <td id="_Nc">@item.CrCasRenterLessorId</td>
                             <td>@item.CrCasRenterLessorNavigation.CrMasRenterInformationArName</td>
@@ -190,7 +189,7 @@ else
 
 
                             <td>
-                                @foreach (var item2 in Model.all_Rates)
+                                @foreach (var item2 in ViewData["Rates"] as List<CrMasSysEvaluation>)
                                 {
                                     if (item2.CrMasSysEvaluationsCode == @item.CrCasRenterLessorDealingMechanism)
                                     {
@@ -218,7 +217,7 @@ else
                     }
                     else
                     {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterLessorInformation", new { id = item.CrCasRenterLessorId })'">
+                        <tr onclick="location.href='@Url.Action("Edit", "RenterLessorInformation22", new { id = item.CrCasRenterLessorId })'">
                             <td id="_Nc">@no</td>
                             <td id="_Nc">@item.CrCasRenterLessorId</td>
                             <td>@item.CrCasRenterLessorNavigation.CrMasRenterInformationArName</td>
@@ -236,7 +235,7 @@ else
                             
                             
                         <td>
-                                @foreach (var item2 in Model.all_Rates)
+                                @foreach (var item2 in ViewData["Rates"] as List<CrMasSysEvaluation>)
                                 {
                                     if (item2.CrMasSysEvaluationsCode == @item.CrCasRenterLessorDealingMechanism)
                                     {
