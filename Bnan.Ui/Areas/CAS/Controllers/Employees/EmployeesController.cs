@@ -514,7 +514,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             }
 
 
-            string foldername = $"{"images\\Company"}\\{user.CrMasUserInformationLessor}\\{"Users"}\\{model.CrMasUserInformationCode}";
+            string foldername = $"{"images\\Company"}\\{user.CrMasUserInformationLessor}\\{"Users"}\\{user.CrMasUserInformationCode}";
 
             string filePathImage;
             string filePathSignture;
@@ -540,7 +540,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             if (!string.IsNullOrEmpty(UserSignatureFile))
             {
                 string fileNameSignture = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقتs
-                filePathSignture = await _hostingEnvironment.SaveSigntureImage(UserSignatureFile, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, "Users");
+                filePathSignture = await _hostingEnvironment.SaveSigntureImage(UserSignatureFile, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, foldername);
             }
             else if (string.IsNullOrEmpty(oldPathSignture))
             {
