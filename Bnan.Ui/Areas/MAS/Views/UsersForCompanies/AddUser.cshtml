@@ -1,14 +1,25 @@
-﻿@model Bnan.Ui.ViewModels.MAS.Users.CompanyUserVM
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@model Bnan.Ui.ViewModels.MAS.Users.CompanyUserVM
 
 @inject IViewLocalizer localizer
+@inject UserManager<CrMasUserInformation> userManager
 
 @{
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var user = await userManager.GetUserAsync(User);
+    var userInfo = await userManager.Users
+        .Include(l => l.CrMasUserInformationLessorNavigation)
+            .ThenInclude(l => l.CrMasLessorImage) // دمج استعلام المؤجر
+        .FirstOrDefaultAsync(l => l.UserName == user.UserName);
 }
+<link rel="stylesheet" href="@Url.Content("~/PdfJS/style/style/style.css")">
+
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
-        <form class="needs-validation" novalidate asp-area="MAS" asp-controller="UsersForCompanies" asp-action="AddUser" enctype="multipart/form-data">
+        <form class="needs-validation" novalidate asp-area="MAS" asp-controller="UsersForCompanies" asp-action="AddUser" id="userForm" enctype="multipart/form-data">
+            <input hidden id="WelcomeCardMessage" name="WelcomeCardMessage" />
             <div class="row  mt-3 g-3">
                 <div class="row justify-content-center">
                     <div class="col-lg-9">
@@ -17,7 +28,7 @@
                                 <h3>@localizer["AddCompanyUser"]</h3>
                             </div>
                             <div class="col-md-auto save-col">
-                                <button type="submit" class="custom-img-btn"><img src="~/MasSystem/images/save.svg" /></button>
+                                <button type="button" id="submitButton" class="custom-img-btn"><img src="~/MasSystem/images/save.svg" /></button>
                                 <button type="button" class="custom-img-btn">
                                     <a href="/MAS/UsersForCompanies/Index">
                                         <img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" />
@@ -169,11 +180,12 @@
     </div>
 </div>
 
-
+<canvas id="myCanvasCard" hidden></canvas>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
+    <script src="~/PdfJS/WelcomeImgs/WelcomeUserCompany.js"></script>
+    <script src="~/PdfJS/PdfAndImages.js"></script>
     <script>
         // السماح فقط بالأحرف الإنجليزية والأرقام
         function isEnglishAndNumbers(event) {
@@ -240,6 +252,45 @@
 
         });
 
+    </script>
+    <script>
+        const CreateWelcome = async () => {
+            try{
+              const canvas = document.getElementById("myCanvasCard");
+              const dynamicData = {
+                Employee_AR_Name: $("#CrMasUserInformationArName").val(),
+                Employee_EN_Name: $("#CrMasUserInformationEnName").val(),
+                Employee_No: `CAS${$("#CrMasUserInformationCode").val()}`,
+                Password: `CAS${$("#CrMasUserInformationCode").val()}`,
+                images: {
+                    background: "/images/Bnan/Support Image/Regestration Messege.png",
+                    qr: "/images/Bnan/Support Image/QR.png"
+                },
+              };
+              const loadedImages = await loadDynamicImages(dynamicData.images);
+              const dataWithImages = { ...dynamicData, images: loadedImages };
+              console.log("dataWithImages",dataWithImages);
+              await drawWelcomeCard(canvas, dataWithImages);
+
+              const base64Image = canvas.toDataURL("image/png");
+              const inputPdf = document.getElementById("WelcomeCardMessage");
+              inputPdf.value = base64Image;
+              console.log("Base64 Image:", base64Image);
+            }
+            catch (error) {
+              console.error("خطأ في إنشاء بطاقة الترحيب:", error);
+            }
+        };
+       
+        document.getElementById("submitButton").addEventListener("click", async (event) => {
+            event.preventDefault(); 
+            const form = $("#userForm"); 
+            if (form.valid()) {
+                $("#min-loader").removeClass("d-none");
+                const isSuccess = await CreateWelcome();
+                form.submit(); // إرسال الفورم بعد التأكد من نجاح العملية
+            }
+        });
     </script>
 }
 

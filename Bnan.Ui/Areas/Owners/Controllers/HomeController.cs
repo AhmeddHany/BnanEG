@@ -106,7 +106,9 @@ namespace Bnan.Ui.Areas.Owners.Controllers
                 branch.ClosedContractsCount = ContractBasics.Count(x => x.CrCasRenterContractBasicStatus == Status.Closed);
                 branch.SavedContractsCount = ContractBasics.Count(x => x.CrCasRenterContractBasicStatus == Status.Saved);
                 branch.SuspendedContractsCount = ContractBasics.Count(x => x.CrCasRenterContractBasicStatus == Status.Suspend);
-                branch.ExpiredContractsCount = await _unitOfWork.CrCasRenterContractAlert.CountAsync(x => x.CrCasRenterContractAlertContractStatus == Status.Expire);
+                branch.ExpiredContractsCount = await _unitOfWork.CrCasRenterContractAlert.CountAsync(x => x.CrCasRenterContractAlertContractStatus == Status.Expire &&
+                                                                                                          x.CrCasRenterContractAlertLessor==branch.CrCasBranchInformationLessor&&
+                                                                                                          x.CrCasRenterContractAlertBranch==branch.CrCasBranchInformationCode);
 
                 var docsCompany = await _unitOfWork.CrCasBranchDocument.FindAllAsNoTrackingAsync(x => x.CrCasBranchDocumentsLessor == lessorCode && x.CrCasBranchDocumentsBranch == branch.CrCasBranchInformationCode);
                 branch.DocsForCompanyExpireCount = docsCompany.Where(x => x.CrCasBranchDocumentsStatus == Status.Expire|| x.CrCasBranchDocumentsStatus == Status.Renewed).Count();

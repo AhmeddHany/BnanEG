@@ -157,7 +157,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddUser(CompanyUserVM model)
+        public async Task<IActionResult> AddUser(CompanyUserVM model,string WelcomeCardMessage)
         {
 
             var pageNumber = SubTasks.CrMasUserInformationFromMASToCAS;
@@ -201,7 +201,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
                 var newUser = await _userService.GetUserByUserNameAsync(userCode);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", });
                 await SaveTracingForUserChange(newUser, Status.Insert);
-                await SendMessageToWhatsup(newUser, user.CrMasUserInformationLessor);
+                if (WelcomeCardMessage != null) await WhatsAppServicesExtension.SendMediaAsync(newUser.CrMasUserInformationCallingKey + newUser.CrMasUserInformationMobileNo, " ", user.CrMasUserInformationLessor, WelcomeCardMessage, "WelcomeCard.png");
+                //await SendMessageToWhatsup(newUser, user.CrMasUserInformationLessor);
                 return RedirectToAction("Index", "UsersForCompanies");
             }
             catch (Exception ex)

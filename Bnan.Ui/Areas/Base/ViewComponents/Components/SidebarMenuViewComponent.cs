@@ -285,8 +285,8 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                             ("2208002", "AccountSalesPoint_CAS", "Index"),
                                             ("2208003", "RenterDriver", "Index"),
                                             ("2208004", "TechnicalConnectivity", "Connect"),
-                                            ("2208005", "#", "#"),
-                                            ("2208006", "#", "#"),
+                                            ("2208005", "LessorMechanism", "Mechanism"),
+                                            ("2208006", "LessorMembership", "LessorMembership"),
                                         })
                                      };
 

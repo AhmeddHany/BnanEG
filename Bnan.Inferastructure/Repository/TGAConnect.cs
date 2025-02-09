@@ -27,7 +27,9 @@ namespace Bnan.Inferastructure.Repository
             var TgaConnect = await _unitOfWork.CrCasLessorTgaConnect.FindAsync(x => x.CrMasLessorTgaConnectLessor == model.CrMasLessorTgaConnectLessor);
             if (TgaConnect != null) return false;
 
-
+            model.CrMasLessorTgaConnectContentType = "application/json";
+            model.CrMasLessorTgaConnectAppId = "c49fda9f";
+            model.CrMasLessorTgaConnectAppKey = "0a0ecdd133cbda8414c36b1d9f8f8f51";
             // Some Check and we delete it 
             if (!string.IsNullOrWhiteSpace(model.CrMasLessorTgaConnectAppId) &&
                !string.IsNullOrWhiteSpace(model.CrMasLessorTgaConnectAuthorization) &&
@@ -47,10 +49,10 @@ namespace Bnan.Inferastructure.Repository
         {
             var TgaConnect = await _unitOfWork.CrCasLessorTgaConnect.FindAsync(x => x.CrMasLessorTgaConnectLessor == model.CrMasLessorTgaConnectLessor);
             if (TgaConnect == null) return false;
-            TgaConnect.CrMasLessorTgaConnectAppId = model.CrMasLessorTgaConnectAppId;
+            //TgaConnect.CrMasLessorTgaConnectAppId = model.CrMasLessorTgaConnectAppId;
             TgaConnect.CrMasLessorTgaConnectAuthorization = model.CrMasLessorTgaConnectAuthorization;
-            TgaConnect.CrMasLessorTgaConnectAppKey = model.CrMasLessorTgaConnectAppKey;
-            TgaConnect.CrMasLessorTgaConnectContentType = model.CrMasLessorTgaConnectContentType;
+            //TgaConnect.CrMasLessorTgaConnectAppKey = model.CrMasLessorTgaConnectAppKey;
+            //TgaConnect.CrMasLessorTgaConnectContentType = model.CrMasLessorTgaConnectContentType;
             // Some Check and we delete it 
             if (!string.IsNullOrWhiteSpace(TgaConnect.CrMasLessorTgaConnectAppId) &&
                !string.IsNullOrWhiteSpace(TgaConnect.CrMasLessorTgaConnectAuthorization) &&

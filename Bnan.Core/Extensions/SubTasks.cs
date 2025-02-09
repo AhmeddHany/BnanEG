@@ -121,6 +121,8 @@
 
         //MAS  Services
         public static string TechnicalConnectivityCAS { get; set; } = "2208004";
+        public static string LessorMechanizmCAS { get; set; } = "2208005";
+        public static string LessorMembershipCAS { get; set; } = "2208006";
         //public static string CrMasUserInformationFromMASToCAS { get; set; } = "1106003";
 
         // CAS Reports
