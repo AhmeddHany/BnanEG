@@ -85,7 +85,7 @@
                                                 <!-- <i class="fa-solid fa-star-of-life RequirdStar"></i>  -->
                                             </label>
                                             <div class="input-group">
-                                                <input type="tel" class="form-control inputs tel-input" id="CrMasUserInformationMobileNo" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10">
+                                                <input type="tel" class="form-control inputs tel-input" id="CrMasUserInformationMobileNo" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="15">
                                                 <select class="input-group-text select-style counterCode" asp-for="CrMasUserInformationCallingKey">
                                                     @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
                                                     {

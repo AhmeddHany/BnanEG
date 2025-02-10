@@ -63,15 +63,13 @@ namespace Bnan.Ui.ViewModels.MAS
 
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrMasLessorInformationDirectorEnName { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
 
-        //[RegularExpression(@"^\d{10}$")]
-        [Required(ErrorMessage = "requiredNoStartWithFiled5")]
-        //[StartsWith5Attribute(ErrorMessage = "Must Start With Number 5")]
+        [RegularExpression(@"^\d{1,15}$", ErrorMessage = "MobilePatternError")]
         public string? CrMasLessorInformationCommunicationMobile { get; set; }
         public string? CrMasLessorInformationCommunicationMobileKey { get; set; }
 
-        //[RegularExpression(@"^\d{9}$")]
-        //[Required(ErrorMessage = "requiredNoStartWithFiled1")]
+        [RegularExpression(@"^\d{1,15}$", ErrorMessage = "MobilePatternError")]
         public string? CrMasLessorInformationCallFree { get; set; }
         public string? CrMasLessorInformationCallFreeKey { get; set; }
 

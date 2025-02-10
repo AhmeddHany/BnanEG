@@ -1227,7 +1227,12 @@
 
     // Cas Report ClosedContract
     "ReportClosedContract_Cas_Data": "Closed Contract",
-    "ReportClosedContract_Cas_Details": "Additional Details"
+    "ReportClosedContract_Cas_Details": "Additional Details",
+    // LessorMemberShip
+    "And": "And",
+    "Or": "Or",
+    "Memberships": "Memberships"
+
   },
   "ModalAutoLogout": "Your session is about to end!",
   "Arabic": "Arabic",

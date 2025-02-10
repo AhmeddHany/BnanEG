@@ -1191,7 +1191,11 @@
 
     // Cas Report ClosedContract
     "ReportClosedContract_Cas_Data": "العقود المغلقة",
-    "ReportClosedContract_Cas_Details": "بيانات إضافية"
+    "ReportClosedContract_Cas_Details": "بيانات إضافية",
+    // LessorMemberShip
+    "And": "و",
+    "Or": "أو",
+    "Memberships": "العضويات"
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 

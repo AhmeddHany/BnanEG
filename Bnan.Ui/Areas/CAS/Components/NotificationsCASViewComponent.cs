@@ -161,15 +161,15 @@ namespace Bnan.Ui.Areas.CAS.Components
 
             contractStatus.SuspendCount = await _unitOfWork.CrCasRenterContractBasic.CountAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicStatus == Status.Suspend);
             contractStatus.SavedCount = await _unitOfWork.CrCasRenterContractBasic.CountAsync(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicStatus == Status.Saved);
-            contractStatus.ExpiredCount = await _unitOfWork.CrCasRenterContractAlert.CountAsync(x => x.CrCasRenterContractAlertLessor == lessorCode && x.CrCasRenterContractAlertStatus == Status.Expire);
+            contractStatus.ExpiredCount = await _unitOfWork.CrCasRenterContractAlert.CountAsync(x => x.CrCasRenterContractAlertLessor == lessorCode && x.CrCasRenterContractAlertContractStatus == Status.Expire);
             contractStatus.ExpireLaterCount = await _unitOfWork.CrCasRenterContractAlert.CountAsync(x => x.CrCasRenterContractAlertLessor == lessorCode &&
-                                                                                                      x.CrCasRenterContractAlertStatus == Status.Active &&
+                                                                                                      x.CrCasRenterContractAlertContractStatus == Status.Active &&
                                                                                                       x.CrCasRenterContractAlertContractActiviteStatus == "0");
             contractStatus.ExpireTommorrowCount = await _unitOfWork.CrCasRenterContractAlert.CountAsync(x => x.CrCasRenterContractAlertLessor == lessorCode &&
-                                                                                                          x.CrCasRenterContractAlertStatus == Status.Active &&
+                                                                                                          x.CrCasRenterContractAlertContractStatus == Status.Active &&
                                                                                                           x.CrCasRenterContractAlertContractActiviteStatus == "1");
             contractStatus.ExpireTodayCount = await _unitOfWork.CrCasRenterContractAlert.CountAsync(x => x.CrCasRenterContractAlertLessor == lessorCode &&
-                                                                                                          x.CrCasRenterContractAlertStatus == Status.Active &&
+                                                                                                          x.CrCasRenterContractAlertContractStatus == Status.Active &&
                                                                                                           x.CrCasRenterContractAlertContractActiviteStatus == "2");
             contractStatus.HaveExpireOrNot = contractStatus.SuspendCount > 0 || contractStatus.SavedCount > 0 || contractStatus.ExpiredCount > 0;
             return contractStatus;

@@ -30,7 +30,7 @@ namespace Bnan.Ui.ViewModels.MAS.Users
         public string? CrMasUserInformationDefaultBranch { get; set; }
         public string? CrMasUserInformationDefaultLanguage { get; set; }
         public string? CrMasUserInformationCallingKey { get; set; }
-        [RegularExpression(@"^\d{10}$", ErrorMessage = "MobilePatternError")]
+        [RegularExpression(@"^\d{1,15}$", ErrorMessage = "MobilePatternError")]
         public string? CrMasUserInformationMobileNo { get; set; }
         public string? CrMasUserInformationEmail { get; set; }
         public DateTime? CrMasUserInformationChangePassWordLastDate { get; set; }
