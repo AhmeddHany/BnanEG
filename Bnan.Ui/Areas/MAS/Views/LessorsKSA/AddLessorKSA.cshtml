@@ -194,11 +194,8 @@
                                                             @localizer["TelePhone"]
                                                         </label>
                                                         <div class="input-group has-validation">
-                                                            <input type="tel" asp-for="CrMasLessorInformationCallFree"
-                                                                   class="form-control inputs tel-input"
-                                                                   id="phone1" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="15">
-                                                            <select class="input-group-text select-style counterCode"
-                                                                    asp-for="CrMasLessorInformationCallFreeKey">
+                                                            <input type="tel" asp-for="CrMasLessorInformationCallFree" class="form-control inputs tel-input" id="phone1" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="15">
+                                                            <select class="input-group-text select-style counterCode" asp-for="CrMasLessorInformationCallFreeKey">
                                                                 @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
                                                                 {
                                                                     <option value="@callingKey.Text">@callingKey.Text</option>
@@ -216,11 +213,8 @@
                                                             @localizer["LessorPhone"] <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                                         </label>
                                                         <div class="input-group ">
-                                                            <input type="tel"
-                                                                   class="form-control inputs tel-input"
-                                                                   id="phone2" asp-for="CrMasLessorInformationCommunicationMobile" maxlength="10" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
-                                                            <select class="input-group-text select-style counterCode"
-                                                                    asp-for="CrMasLessorInformationCommunicationMobileKey">
+                                                            <input type="tel" class="form-control inputs tel-input" id="phone2" asp-for="CrMasLessorInformationCommunicationMobile" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                                                            <select class="input-group-text select-style counterCode" asp-for="CrMasLessorInformationCommunicationMobileKey">
                                                                 @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
                                                                 {
                                                                     <option value="@callingKey.Text">@callingKey.Text</option>

@@ -393,7 +393,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
                 return RedirectToAction("Login", "Account");
             }
 
-            string foldername = $"{"images\\Bnan\\Users"}\\{model.CrMasUserInformationCode}";
+            string foldername = $"{"images\\Bnan\\Users"}\\{user.CrMasUserInformationCode}";
             string filePathImage;
             string filePathSignture;
             var oldPathImage = model.CrMasUserInformationPicture;
@@ -418,7 +418,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             if (!string.IsNullOrEmpty(UserSignatureFile))
             {
                 string fileNameSignture = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقتs
-                filePathSignture = await FileExtensions.SaveSigntureImage(_hostingEnvironment, UserSignatureFile, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, "Users");
+                filePathSignture = await FileExtensions.SaveSigntureImage(_hostingEnvironment, UserSignatureFile, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, foldername);
             }
             else if (string.IsNullOrEmpty(oldPathSignture))
             {

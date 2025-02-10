@@ -146,8 +146,7 @@ namespace Bnan.Inferastructure.Extensions
             byte[] imgBytes = Convert.FromBase64String(img.Split(",")[1]); // Split to remove the prefix "data:application/pdf;base64,"
             string wwwrootPath = webHostEnvironment.WebRootPath;
             string fileNameImg = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
-            string foldername = Path.Combine("images", "Bnan", folderName, RenterId);
-            string fullPath = Path.Combine(wwwrootPath, foldername);
+            string fullPath = Path.Combine(wwwrootPath, folderName);
             // Ensure the directory exists
             if (!Directory.Exists(fullPath)) Directory.CreateDirectory(fullPath);
             string filePath = Path.Combine(fullPath, fileNameImg + ".png");

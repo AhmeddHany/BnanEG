@@ -78,7 +78,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             // Signture 
             if (!string.IsNullOrEmpty(signatureImg1))
             {
-                filePathSignture = await FileExtensions.SaveSigntureImage(_webHostEnvironment, signatureImg1, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, "Users");
+                filePathSignture = await FileExtensions.SaveSigntureImage(_webHostEnvironment, signatureImg1, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, foldername);
             }
             else
             {

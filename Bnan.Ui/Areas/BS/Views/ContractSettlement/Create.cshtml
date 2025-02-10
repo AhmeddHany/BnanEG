@@ -4742,38 +4742,38 @@
                     CheckIfCanPayLessThanTotalAmount();
                     if (somethingIsNotOkay) {
                         $("#ContainerLoader").show();
-                        await sendStaticImageToWhatsApp();
-                        console.log("StaticImageToWhatsApp sent successfully.");
+                        // await sendStaticImageToWhatsApp();
+                        // console.log("StaticImageToWhatsApp sent successfully.");
 
-                        await sendArInvoiceToWhatsApp();
-                        console.log("Arabic invoice sent successfully.");
+                        // await sendArInvoiceToWhatsApp();
+                        // console.log("Arabic invoice sent successfully.");
 
-                        await sendEnInvoiceToWhatsApp();
-                        console.log("English invoice sent successfully.");
+                        // await sendEnInvoiceToWhatsApp();
+                        // console.log("English invoice sent successfully.");
 
-                        if (AmountRequired >= 0 && parseFloat(AmountPayed) > 0) {
-                            await sendArCatchReceiptToWhatsApp();
-                            console.log("Arabic receipt sent successfully.");
+                        // if (AmountRequired >= 0 && parseFloat(AmountPayed) > 0) {
+                        //     await sendArCatchReceiptToWhatsApp();
+                        //     console.log("Arabic receipt sent successfully.");
 
-                            await sendEnCatchReceiptToWhatsApp();
-                            console.log("English receipt sent successfully.");
+                        //     await sendEnCatchReceiptToWhatsApp();
+                        //     console.log("English receipt sent successfully.");
 
-                        }
-                        else if (AmountRequired < 0 && parseFloat(AmountPayed) > 0) {
-                            await sendArPaymentReceiptToWhatsApp();
-                            console.log("Arabic receipt sent successfully.");
+                        // }
+                        // else if (AmountRequired < 0 && parseFloat(AmountPayed) > 0) {
+                        //     await sendArPaymentReceiptToWhatsApp();
+                        //     console.log("Arabic receipt sent successfully.");
 
-                            await sendEnPaymentReceiptToWhatsApp();
-                            console.log("English receipt sent successfully.");
+                        //     await sendEnPaymentReceiptToWhatsApp();
+                        //     console.log("English receipt sent successfully.");
 
-                        }
+                        // }
 
 
-                        await getPictureAndCreateArPdfContract();
-                        console.log("Arabic PDF contract creation completed successfully.");
+                        // await getPictureAndCreateArPdfContract();
+                        // console.log("Arabic PDF contract creation completed successfully.");
 
-                        await getPictureAndCreateEnPdfContract();
-                        console.log("English PDF contract creation completed successfully.");
+                        // await getPictureAndCreateEnPdfContract();
+                        // console.log("English PDF contract creation completed successfully.");
 
                         document.getElementById('ContractSettlement_PaymentMethod').disabled = false;
                         document.getElementById('ContractSettlement_SalesPoint').disabled = false;
