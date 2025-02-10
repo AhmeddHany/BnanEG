@@ -2220,6 +2220,7 @@
 
   //validation on input
   "requiredFiled": "الحقل مطلوب",
+  "requiredFiledGreaterThan0": "الحقل مطلوب ويجب أن يكون أكبر من 0",
   "requiredValidDate": "من فضلك ادخل تاريخ صحيح",
   "requiredAgeAtLeast15": "المستأجر يجب ان يكون 15 سنة على الاقل",
   "requiredNoLengthFiled": "هذا الحقل يلازم {0} ارقام",

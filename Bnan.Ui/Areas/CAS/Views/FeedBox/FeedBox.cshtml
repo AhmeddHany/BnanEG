@@ -5,68 +5,221 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["FeedBox Data"];
-    ViewData["Page-Hint"] = @localizer["FeedBox Hint"];
 }
-<style>
-    body {
-        overflow: hidden
-    }
+<div class="col d-flex align-items-center justify-content-center">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3 mb-3">
+                <div class="col">
+                    <h3> تغذية الصندوق </h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
 
-    @@media (max-width: 600px) {
-        #basic-datatable1_wrapper .row:first-child > div {
-            text-align: center;
-        }
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search" class="form-control inputs search-input"
+                                   name="search" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
 
-            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
-                text-align: center;
-            }
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-</style>
-
-<div class="sub-container">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div class="col-sm-12 col-md-9">
-                <div class="col-sm-12 col-md-4 p-0">
-                    <a type="button" class="btn btn-danger" asp-area="CAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
                 </div>
             </div>
 
-            @*search*@
-            <div class="col-sm-12 col-md-3 p-0">
-                <input class="form-control" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm  w-100 dataTable ">
+                    <partial name="_DataTableFeedBoxForUsers" />
+                </div>
             </div>
-        </div>
-        <div class="dataTable">
-            <partial name="_DataTableFeedBoxForUsers" />
+        </form>
+
+        <a href="~/CasSys/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
+           class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="FeedModal" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="FeedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content Feed-modal-content">
+            <form asp-area="CAS" asp-action="Send" asp-controller="FeedBox" id="feedForm" method="post" class="needs-validation" novalidate>
+                <div class="modal-header justify-content-center border-0">
+                    <div class="row w-100">
+                        <div class="col-md-12 d-flex justify-content-end">
+                            <button type="button" class="modalClose" data-bs-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="col-md-12 text-center">
+                            <h5 class="modal-title card-title m-auto">تغذية الصندوق</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="data-details">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-auto d-flex justify-content-end">
+                                    <div class="employee">
+                                        <img src="~/CasSys/images/pic (3).svg"
+                                             alt="empolyee-photo" class="employee border-0 w-100 h-100">
+                                        <div class="active_statue bg-sucss"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-auto">
+                                    <p class="FirstLineP" id="employeeName"></p>
+                                    <div class="d-flex  gap-4">
+                                        <p class="secondLineP time" id="employeeLastActionTime"></p>
+                                        <p class="secondLineP" id="employeeLastActionDate"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="row mt-4">
+                                <div class="col-md-auto">
+                                    <p>التاريخ</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="Saved-data">@DateTime.Now.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row align-items-baseline">
+                                <div class="col-md-auto">
+                                    <label for="FeedAmount" class="form-label">مبلغ التغذية</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" id="FeedValue" class="form-control inputs number-input"
+                                           name="FeedValue" required min="0.01"
+                                           oninput="validateInput9Digit(this); validateFeedValue(this)" data-error-message="@localizer["requiredFiledGreaterThan0"]">
+                                    <div class="invalid-feedback" id="FeedValueError">
+                                       
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <div class="row align-items-baseline">
+                                <div class="col-md-auto">
+                                    <label for="notes" class="form-label">@localizer["reasons"]</label>
+                                </div>
+                                <div class="col">
+                                    <textarea class="form-control textarea-inputs" rows="1" maxlength="100"
+                                              name="Reasons" type="text"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden input for Employee Code -->
+                        <input type="hidden" id="employeeCode" name="Model.CrMasUserInformationCode" />
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center mx-1">
+                    <div class="row w-100 g-2">
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-standard w-100" id="Accept">موافق</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">
+                                إلغاء الأمر
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 @section scripts {
-   
+    <script>
+        
+
+        function validateFeedValue(input) {
+            let errorDiv = document.getElementById("FeedValueError");
+
+            if (!input.value || Number(input.value) <= 0) {
+                errorDiv.style.display = "block"; // إظهار الخطأ
+                errorDiv.textContent = "@localizer["requiredFiledGreaterThan0"]";
+                input.classList.add("is-invalid"); // إضافة الكلاس الأحمر
+            } else {
+                errorDiv.style.display = "none"; // إخفاء الخطأ
+                errorDiv.textContent = "";
+                input.classList.remove("is-invalid"); // إزالة الكلاس الأحمر
+            }
+        }
+
+        document.getElementById("feedForm").addEventListener("submit", function (event) {
+            let feedValue = document.getElementById("FeedValue");
+            let errorDiv = document.getElementById("FeedValueError");
+
+            validateFeedValue(feedValue); // تحقق عند الإرسال
+
+            if (!feedValue.value || Number(feedValue.value) <= 0) {
+                errorDiv.textContent = feedValue.getAttribute("data-error-message"); // جلب النص المترجم
+                errorDiv.style.display = "block"; // تأكيد إظهار الخطأ
+                feedValue.classList.add("is-invalid"); // إضافة الكلاس الأحمر
+                event.preventDefault(); // منع الإرسال
+                feedValue.focus();
+            }
+        });
+    </script>
+    <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        //get AccountBank By Status function
+        function GetEmployeesFitler(search) {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetEmployeesBySearch", "FeedBox", new { Area = "CAS" })", // تأكد أن الرابط صحيح
+                data: {
+                    search: search
+                },
+                success: function (response) {
+                    $(".dataTable").html(response); // إدراج المحتوى الجديد
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", xhr.responseText);
+                }
+            });
+        }
+
+
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#search").on("keyup", function () {
+            const search = $(this).val(); // الحصول على قيمة البحث
+            GetEmployeesFitler(search);
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // عند الضغط على أي صف
+            $("tr[data-bs-toggle='modal']").on('click', function() {
+                
+                var employeeName = $(this).find(".FirstLineP").text();
+                var lastActionDate = $(this).find("#dateCol").text();
+                var lastActionTime = $(this).find("#timeCol").text();
+                
+                $("#FeedModal #employeeName").text(employeeName);
+                $("#FeedModal #employeeLastActionDate").text(lastActionDate);
+                $("#FeedModal #employeeLastActionTime").text(lastActionTime);
+
+                // إضافة قيمة Code الموظف إلى الحقل المخفي لتحديد الموظف في الـ POST method
+                var employeeCode = $(this).data("employee-code"); // تأكد من إضافة هذا الكود إلى الـ <tr> باستخدام data-attribute
+                $("#FeedModal #employeeCode").val(employeeCode);
+
+                // فتح المودال
+                $('#FeedModal').modal('show');
+            });
+        });
+    </script>
+
 }
-
-
-<style>
-    .wrapper {
-        margin-bottom: 60px;
-        overflow: hidden;
-        background-image: url("~/Pictures/bg.jpg") !important;
-    }
-
-    .table-bordered td,
-    .table-bordered th {
-        border: none;
-    }
-</style>

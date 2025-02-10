@@ -2288,6 +2288,7 @@
   "HintSureTodeleteDoc": "Deleting the document will result in its status being returned to 'not registered' while maintaining all previous administrative procedures.",
   //validation on input
   "requiredFiled": "This Field Is Required",
+  "requiredFiledGreaterThan0": "This Field Is Required And Must Be Greater Than 0",
   "requiredValidDate": "Please select a valid date.",
   "requiredAgeAtLeast15": "Renter must be at least 15 years old.",
   "requiredNoLengthFiled": "Please enter exactly {0} numbers.",

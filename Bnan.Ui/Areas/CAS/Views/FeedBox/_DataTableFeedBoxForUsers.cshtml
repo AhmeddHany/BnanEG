@@ -1,15 +1,78 @@
 ﻿@using System.Globalization;
 @inject IViewLocalizer localizer
+@model IEnumerable<CrMasUserInformation>
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = @localizer["FeedBox Data"];
-    ViewData["Page-Hint"] = @localizer["FeedBox Hint"];
 }
 
 
 
+<table class=" tables-style table table-borderless " id="Branches-table">
+    <thead class="sticky-top">
+        <tr>
+            <th scope="col">@localizer["Email"]</th>
+            <th scope="col">@localizer["MobilePhone"]</th>
+            <th scope="col">@localizer["Employement"]</th>
+            <th scope="col"> @localizer["Balance"]</th>
+            <th scope="col" class="DifferAlign">@localizer["UserName_view"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr data-bs-toggle="modal" data-bs-target="#FeedModal" data-employee-code="@item.CrMasUserInformationCode">
+                <td>@item.CrMasUserInformationEmail</td>
+                <td>@item.CrMasUserInformationCallingKey@item.CrMasUserInformationMobileNo</td>
+                <td>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasUserInformationTasksEnName : item.CrMasUserInformationTasksArName)</td>
+                <td>@item.CrMasUserInformationAvailableBalance?.ToString("N2",CultureInfo.InvariantCulture)</td>
+                <td class="DifferAlign">
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="col">
+                            <p class="FirstLineP">@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasUserInformationEnName : item.CrMasUserInformationArName)</p>
+                            <div class="d-flex justify-content-end gap-4">
+                                <p class="secondLineP" id="dateCol">@item.CrMasUserInformationLastActionDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</p>
+                                <p class="secondLineP time" id="timeCol">@item.CrMasUserInformationLastActionDate?.ToString("HH:mm")</p>
+                            </div>
+                        </div>
+                        <div class="col-auto d-flex justify-content-end">
+                            <div class="employee">
+                                <img src="@Url.Content(item.CrMasUserInformationPicture)"
+                                     class="employee border-0 w-100 h-100">
+                                @{
+                                    bool OnlineOrOflline = false;
+                                    if (item.CrMasUserInformationLastActionDate == null) OnlineOrOflline = false;
+                                    else
+                                    {
+                                        var timeDifference = DateTime.Now - item.CrMasUserInformationLastActionDate;
+                                        if (timeDifference?.TotalMinutes > 10) OnlineOrOflline = false;
+                                        else OnlineOrOflline = true;
+
+                                    }
+                                }
+                                <div class="active_statue @((bool) OnlineOrOflline ? "bg-success" : "bg-danger")"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </td>
+                <td>
+                    @no
+                </td>
+
+            </tr>
+            no++;
+        }
+       
+        
+    </tbody>
+</table>
 
 
 
@@ -37,87 +100,3 @@
 
 
 
-<style>
-    .email {
-        text-align: end;
-    }
-</style>
-@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-{
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" style="width:100%">
-            <thead>
-                <tr role="row">
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["UserNo"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["UserName"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Balance"]</th>
-                    <th aria-label="Office: activate to sort column ascending">@localizer["Employement"]</th>
-                    <th aria-label="Age: activate to sort column ascending">@localizer["MobilePhone"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Email"]</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model)
-                {
-
-                    <tr onclick="location.href='@Url.Action("Send", "FeedBox", new { id = item.CrMasUserInformationCode })'">
-                        <td>@no</td>
-                        <td>@item.CrMasUserInformationCode</td>
-                        <td>@item.CrMasUserInformationEnName</td>
-                        <td>@item.CrMasUserInformationAvailableBalance</td>
-                        <td>@item.CrMasUserInformationTasksEnName</td>
-                        <td>@item.CrMasUserInformationCallingKey@item.CrMasUserInformationMobileNo</td>
-                        <td>@item.CrMasUserInformationEmail</td>
-                    </tr>
-
-
-                    no++;
-
-                }
-
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-            <thead>
-                <tr role="row">
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["UserNo"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["UserName"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Balance"]</th>
-                    <th aria-label="Office: activate to sort column ascending">@localizer["Employement"]</th>
-                    <th aria-label="Age: activate to sort column ascending">@localizer["MobilePhone"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Email"]</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model)
-                {
-                    <tr onclick="location.href='@Url.Action("Send", "FeedBox", new { id = item.CrMasUserInformationCode })'">
-                        <td>@no</td>
-                        <td>@item.CrMasUserInformationCode</td>
-                        <td>@item.CrMasUserInformationArName</td>
-                        <td>@item.CrMasUserInformationAvailableBalance</td>
-                        <td>@item.CrMasUserInformationTasksArName</td>
-                        <td>@item.CrMasUserInformationCallingKey@item.CrMasUserInformationMobileNo</td>
-                        <td class="email">@item.CrMasUserInformationEmail</td>
-                    </tr>
-                    no++;
-                }
-            </tbody>
-        </table>
-    </div>
-}

@@ -160,6 +160,10 @@
         public static string RentersCas_RentersContracts { get; set; } = "2203002";
         public static string RentersCas_RentersDebits { get; set; } = "2203003";
         public static string RentersCas_RentersMessages { get; set; } = "2203004";
+
+        //CAs Accounts
+        public static string FeedBoxCAS { get; set; } = "2204001";
+
     }
 }
 

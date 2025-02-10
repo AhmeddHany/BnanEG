@@ -241,7 +241,7 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
 
                                         ("204", "/CasSys/images/accounts.svg", "accounts-items", new List<(string, string, string)>
                                         {
-                                            ("2204001", "#", "#"),
+                                            ("2204001", "FeedBox", "FeedBox"),
                                             ("2204002", "#", "#"),
                                             ("2204003", "#", "#"),
                                             ("2204004", "#", "#"),
