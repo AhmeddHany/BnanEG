@@ -11,6 +11,30 @@
 }
 <link href="~/css/toastr.css" rel="stylesheet" />
 
+<style>
+
+    /* العنصر الذي سيتم محاذاته */
+    .LoaderRun_Center_div {
+        width: 1900px;
+        height: 950px;
+        /*background-color: #3498db;*/
+        text-align: center;
+        /*color: white;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        z-index: 4;
+    }
+</style>
+
+@*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
+
+<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
+    <div class="content LoaderRun_Center_div">
+        <div class="loader"></div>
+    </div>
+
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container main-container">
@@ -24,7 +48,7 @@
                     <div class="col-12 col-md-8 search-input-col">
                         <div class="form-outline w-100" data-mdb-input-init>
                             <span class="fa fa-search"></span>
-                            <input type="search" id="search" class="form-control inputs search-input" name="search" aria-label="Search" autofocus autocomplete="off" />
+                            <input type="search" id="search2" class="form-control inputs search-input" name="search2" aria-label="Search" autofocus autocomplete="off" />
                         </div>
                     </div>
 
@@ -68,6 +92,7 @@
             <img src="~/MasSystem/images/back to main.svg" alt="man">
         </a>
     </div>
+    </div>
 </div>
 
 @section scripts {
@@ -77,6 +102,7 @@
         // لجعل الحالة حسب ما هي جاية من index نشط او الكل
         $(document).ready(function () {
             $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
         });
         ///////
 
@@ -109,6 +135,7 @@
     <script>
         //get LessorOwners_CAS By Status function
         function GetLessorOwners_CASFitler(status, search) {
+            $(".LoaderRun_Center_div").css("display", "flex"); //  loader بحميل الصفحة
             $.ajax({
                 type: "GET",
                 data: {
@@ -119,16 +146,17 @@
                     $(".dataTable").html(response);
                 },
             })
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
         }
 
         $("input[name='customRadio']").on("click", function () {
             const status = $(this).val();
-            const search = $("#search").val(); // الحصول على قيمة البحث
+            const search = $("#search2").val(); // الحصول على قيمة البحث
             GetLessorOwners_CASFitler(status, search);
         });
 
         // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
-        $("#search").on("keyup", function () {
+        $("#search2").on("keyup", function () {
             const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
             const search = $(this).val(); // الحصول على قيمة البحث
             GetLessorOwners_CASFitler(status, search);
