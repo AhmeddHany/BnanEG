@@ -686,6 +686,9 @@
     //RenterInformations------
     "RenterInformations Hint": "تمكنك هذه الصفحة من عرض والبحث عن بيانات المستأجرين والدخول الى البيانات التفصيلية للمستأجر",
     "RenterInformations_Data": "بيانات المستأجرين",
+    "RenterInformations_Details": "بيانات المستأجر",
+    "hisNum": "رقمها",
+    "blockUser": "حظر المستخدم",
     "RenterInformationNameEn": "اسم المستأجر بالانجليزي",
     "RenterInformationName": "المستأجر",
     "RenterInformationName_Car": "السيارة",
@@ -724,6 +727,7 @@
     "DrivingPhoto": "صورة رخصة القيادة",
     "Mechanism_Renter": "التقييم",
     "Mechanism_Rent": "التقييم",
+
 
 
     //MAS Lessor_renter Rate

@@ -13,12 +13,38 @@
     ViewData["Page-title"] = @localizer["RenterInformations Data"];
     ViewData["Page-Hint"] = @localizer["RenterInformations Hint"];
 }
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+<style>
+
+    /* العنصر الذي سيتم محاذاته */
+    .LoaderRun_Center_div {
+        width: 1900px;
+        height: 950px;
+        /*background-color: #3498db;*/
+        text-align: center;
+        /*color: white;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        z-index: 4;
+    }
+</style>
+
+@*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
+
+<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
+    <div class="content LoaderRun_Center_div">
+        <div class="loader"></div>
+    </div>
+
 <div class="container main-container">
 
     <form action="">
         <div class="row g-3 mb-2">
             <div class="col">
-                <h3> بيانات المستأجرين </h3>
+                    <h3> @localizer["RenterInformations_Data"] </h3>
             </div>
             <div class="col-12 col-lg-6 d-flex justify-content-end">
 
@@ -55,99 +81,11 @@
             </div>
         </div>
         <div class="row table-row px-3">
-            <div class="col  scroll-table-div  table-responsive-sm  w-100  ">
-                <table class=" tables-style table table-borderless " id="Table">
-                    <thead class="sticky-top">
-                        <tr>
-                            <th scope="col" class="DifferAlign">@localizer["RenterInformationAddress"]</th>
-                            <th scope="col"> @localizer["Rates"] </th>
-                            <th scope="col"> @localizer["RenterInformationJop"] </th>
-                            <th scope="col"> @localizer["RenterInformationNationality"] </th>
-                            <th scope="col">@localizer["DateLastContract"]</th>
-                            <th scope="col" class="DifferAlign" style="max-width:185px;"> @localizer["RenterInformationName"]</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @{var no = 0;}
-                        @foreach(var single in Model.all_RentersData)
-                        {
-                            var address = " ";
-                            var Rate = " ";
-                            var job = " ";
-                            var nationality = " ";
-                            var RenterName = " ";
-                            var lastDateContract = " ";
-                            if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-                            {
-                                address = single.CrCasRenterLessorNavigation?.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateEnName;
-                                Rate = Model.all_Rates?.Find(x=>x.CrMasSysEvaluationsCode?.Trim()==single.CrCasRenterLessorDealingMechanism?.Trim()).CrMasSysEvaluationsEnDescription;
-                                nationality  = single.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesEnName;
-                                job = single.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsEnName;
-                                RenterName = single.CrCasRenterLessorNavigation.CrMasRenterInformationEnName;
-                                lastDateContract = single.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-                            }
-                            else
-                            {
-                                address = single.CrCasRenterLessorNavigation?.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateArName;
-                                Rate = Model.all_Rates?.Find(x => x.CrMasSysEvaluationsCode?.Trim() == single.CrCasRenterLessorDealingMechanism?.Trim()).CrMasSysEvaluationsArDescription;
-                                nationality = single.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesArName;
-                                job = single.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsArName;
-                                RenterName = single.CrCasRenterLessorNavigation.CrMasRenterInformationArName;
-                                RenterName = single.CrCasRenterLessorNavigation.CrMasRenterInformationArName;
-                                lastDateContract = single.CrCasRenterLessorDateLastContractual?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
-                            }
-
-                        <tr>
-                            <td class="DifferAlign">
-                                <div class="d-flex gap-2 align-items-center">
-                                    <div class="col">
-                                            <p class="FirstLineP"> @address    </p>
-                                            <p class="secondLineP"> @single.CrCasRenterLessorNavigation?.CrMasRenterInformationEmail </p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <p class="FirstLineP">@Rate</p>
-                            </td>
-                            <td>
-                                <p class="FirstLineP">@job</p>
-                            </td>
-                            <td>
-                                <p>@nationality</p>
-                            </td>
-                            <td>
-                                    <p>@lastDateContract</p>
-                            </td>
-                            <td class="DifferAlign">
-                                <div class="d-flex gap-2 align-items-center">
-                                    <div class="col">
-                                        <p class="FirstLineP"> @RenterName </p>
-                                        <p class="secondLineP"> @single.CrCasRenterLessorId </p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="filter-number-td">
-
-                                        @{
-                                            var filterColor = "";
-                                            if (single.CrCasRenterLessorStatus == Status.Active) filterColor = "filter2-div";
-                                            else if (single.CrCasRenterLessorStatus == Status.Rented) filterColor = "filter1-div";
-                                        }
-                                        <div class="filters @filterColor"></div>
-                                    <div>@no</div>
-
-                                </div>
-                            </td>
-                            </tr>
-                            no += 1;
-                        }
-                    </tbody>
-                </table>
-
+            <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
+                <partial name="_DataTableRenterLessorInformation" />
             </div>
-        </div>
+        </div>             
+
     </form>
     <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
        data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Back"]"
@@ -155,3 +93,73 @@
 </div>
                 </div>
 
+
+
+@section scripts {
+    <script src="~/js/toastr.js"></script>
+
+    <script>
+        // لجعل الحالة حسب ما هي جاية من index نشط او الكل
+        $(document).ready(function () {
+            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+        });
+        ///////
+
+        function showErrorToast_NoUpdate() {
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+            toastr.error("@localizer["AuthEmplpoyee_NoUpdate"]");
+        }
+
+        function showErrorToast_whitController(messageText) {
+            $.ajax({
+                url: '@Url.Action("DisplayToastError_NoUpdate", "RenterLessorInformation")',
+                type: 'POST',
+                data: { messageText: messageText },
+                success: function (response) {
+                    if (response.success) {
+                        console.log('showErrorToast_whitController : ', messageText);
+                    }
+                },
+                error: function () {
+                    toastr.error('تعذر الاتصال بالخادم');
+                }
+            });
+        }
+    </script>
+    @*Get RenterLessorInformation Using filter*@
+    <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        //get RenterLessorInformation By Status function
+        function GetRenterLessorInformationFitler(status, search) {
+            $(".LoaderRun_Center_div").css("display", "flex");// اظهار loader تحميل
+            $.ajax({
+                type: "GET",
+                data: {
+                    status: status, search: search
+                },
+                url: "@Url.Action("GetRenterLessorInformationByStatus", "RenterLessorInformation", new { Area = "CAS" })",
+                success: function (response) {
+                    $(".dataTable").html(response);
+                },
+            })
+            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+        }
+
+        $("input[name='customRadio']").on("click", function () {
+            const status = $(this).val();
+            const search = $("#search2").val(); // الحصول على قيمة البحث
+            GetRenterLessorInformationFitler(status, search);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#search2").on("keyup", function () {
+            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+            const search = $(this).val(); // الحصول على قيمة البحث
+            GetRenterLessorInformationFitler(status, search);
+        });
+    </script>
+}

@@ -474,6 +474,9 @@
     //RenterInformation------
     "RenterInformations Hint": "This page allows you to display Renter information  and display more detailed data.",
     "RenterInformations_Data": "Renter Informations",
+    "RenterInformations_Details": "This Renter Information",
+    "hisNum": "it's No.",
+    "blockUser": "Block This Renter",
     "RenterInformationNameEn": "Renter Name in English",
     "RenterInformationNameAr": "Renter Name in Arabic",
     "RenterInformationName": "Renter",
@@ -506,7 +509,7 @@
     "Profession": "Profession",
     "Employer": "Work Place",
     "Bank_name": "Bank",
-    "Account_bank_numper": "Account Num",
+    "Account_bank_numper": "Account No",
     "Membership": "Membership",
     "DrivingType": "Driving License",
     "Mechanism_Renter": "Rate",
