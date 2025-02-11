@@ -16,7 +16,7 @@ namespace Bnan.Inferastructure.Repository
         public async Task<bool> AddBranchDocument(string lessorCode, string branchCode)
         {
             var lessor = await _unitOfWork.CrMasLessorInformation.GetByIdAsync(lessorCode);
-            var sysProcedures = _unitOfWork.CrMasSysProcedure.FindAll(l => l.CrMasSysProceduresClassification == "10" && l.CrMasSysProceduresStatus == "A");
+            var sysProcedures = await _unitOfWork.CrMasSysProcedure.FindAllAsNoTrackingAsync(l => l.CrMasSysProceduresClassification == "10" && l.CrMasSysProceduresStatus == "A");
             if (lessor != null)
             {
                 foreach (var item in sysProcedures)

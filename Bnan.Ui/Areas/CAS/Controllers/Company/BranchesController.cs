@@ -2,6 +2,7 @@
 using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Models;
 using Bnan.Inferastructure;
 using Bnan.Inferastructure.Extensions;
@@ -9,6 +10,7 @@ using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.Areas.MAS.Controllers.Companies;
 using Bnan.Ui.ViewModels.CAS;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -22,7 +24,7 @@ using NToastNotify;
 using System.Globalization;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace Bnan.Ui.Areas.CAS.Controllers
+namespace Bnan.Ui.Areas.CAS.Controllers.Company
 {
     [Area("CAS")]
     [Authorize(Roles = "CAS")]
@@ -38,8 +40,14 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         private readonly IStringLocalizer<LessorsKSAController> _localizer;
         private readonly IAdminstritiveProcedures _adminstritiveProcedures;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IBaseRepo _baseRepo;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public BranchesController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, IUserService userService, IBranchInformation branchInformation, IUserLoginsService userLoginsService, IStringLocalizer<LessorsKSAController> localizer, IToastNotification toastNotification, IPostBranch postBranch, IBranchDocument branchDocument, ISalesPoint salesPoint, IAdminstritiveProcedures adminstritiveProcedures, IWebHostEnvironment webHostEnvironment) : base(userManager, unitOfWork, mapper)
+
+        private readonly string pageNumber = SubTasks.Branches_CAS;
+
+
+        public BranchesController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, IUserService userService, IBranchInformation branchInformation, IUserLoginsService userLoginsService, IStringLocalizer<LessorsKSAController> localizer, IToastNotification toastNotification, IPostBranch postBranch, IBranchDocument branchDocument, ISalesPoint salesPoint, IAdminstritiveProcedures adminstritiveProcedures, IWebHostEnvironment webHostEnvironment, IBaseRepo baseRepo, IWebHostEnvironment hostingEnvironment) : base(userManager, unitOfWork, mapper)
         {
             _UserService = userService;
             _BranchInformation = branchInformation;
@@ -51,49 +59,57 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             _SalesPoint = salesPoint;
             _adminstritiveProcedures = adminstritiveProcedures;
             _webHostEnvironment = webHostEnvironment;
+            _baseRepo = baseRepo;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [HttpGet]
         public async Task<IActionResult> Branches()
         {
-            //save Tracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("201", "2201001", "2");
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
 
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-            //sidebar Active
-            ViewBag.id = "#sidebarCompany";
-            ViewBag.no = "0";
-
-
-            // Set Title
-            var titles = await setTitle("201", "2201001", "2");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-
-            var lessor = await _UserService.GetUserLessor(User);
-            var lessornumber = lessor?.CrMasUserInformationLessorNavigation?.CrMasLessorInformationCode;
-            var Bracnhes = _unitOfWork?.CrCasBranchInformation.FindAll(l => l.CrCasBranchInformationLessor == lessornumber, new[] { "CrCasCarInformations" });
-            var BranchPost = _unitOfWork?.CrCasBranchPost.FindAll(l => l.CrCasBranchPostLessor == lessor.CrMasUserInformationLessor, new[] { "CrCasBranchPostCityNavigation", "CrCasBranchPostNavigation" }).ToList();
-
-            return View(BranchPost?.Where(x=>x.CrCasBranchPostNavigation.CrCasBranchInformationStatus==Status.Active));
+            var Branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(l => l.CrCasBranchInformationLessor == user.CrMasUserInformationLessor,
+                                                                                                  new[] { "CrCasCarInformations", "CrCasBranchPost.CrCasBranchPostCityNavigation", "CrCasBranchDocuments.CrCasBranchDocumentsProceduresNavigation" });
+            if (!Branches.Any())
+            {
+                Branches = Branches.Where(x => x.CrCasBranchInformationStatus == Status.Hold).ToList();
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
+            return View(Branches);
         }
         [HttpGet]
-        public async Task<PartialViewResult> GetBranchesByStatus(string status)
+        public async Task<PartialViewResult> GetBranchesByStatus(string status, string search)
         {
-            var lessor = await _UserService.GetUserLessor(User);
-            var lessornumber = lessor.CrMasUserInformationLessorNavigation.CrMasLessorInformationCode;
-            var Bracnhes = _unitOfWork?.CrCasBranchInformation.FindAll(l => l.CrCasBranchInformationLessor == lessornumber, new[] { "CrCasCarInformations" });
+            var user = await _userManager.GetUserAsync(User);
+
             if (!string.IsNullOrEmpty(status))
             {
+                var Branches = await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(l => l.CrCasBranchInformationLessor == user.CrMasUserInformationLessor,
+                                                                                                              new[] { "CrCasCarInformations", "CrCasBranchPost.CrCasBranchPostCityNavigation", "CrCasBranchDocuments.CrCasBranchDocumentsProceduresNavigation" });
                 if (status == Status.All)
                 {
-                    var BranchbyStatusAll = _unitOfWork.CrCasBranchPost.FindAll(l => l.CrCasBranchPostLessor == lessor.CrMasUserInformationLessor, new[] { "CrCasBranchPostCityNavigation", "CrCasBranchPostNavigation" }).ToList();
-                    return PartialView("_DataTableBranches", BranchbyStatusAll.Where(x=>x.CrCasBranchPostNavigation.CrCasBranchInformationStatus!=Status.Deleted));
+                    var BranchbyStatusAll = Branches.FindAll(x => x.CrCasBranchInformationStatus != Status.Deleted &&
+                                                                         (x.CrCasBranchInformationArName.Contains(search) ||
+                                                                          x.CrCasBranchInformationEnName.ToLower().Contains(search.ToLower()) ||
+                                                                          x.CrCasBranchPost.CrCasBranchPostArConcatenate.Contains(search) ||
+                                                                          x.CrCasBranchPost.CrCasBranchPostEnConcatenate.Contains(search.ToLower()) ||
+                                                                          x.CrCasBranchInformationCode.Contains(search)));
+                    return PartialView("_DataTableBranches", BranchbyStatusAll);
                 }
-                var BranchbyStatus = _unitOfWork.CrCasBranchPost.FindAll(l => l.CrCasBranchPostNavigation.CrCasBranchInformationStatus == status && l.CrCasBranchPostLessor == lessor.CrMasUserInformationLessor, new[] { "CrCasBranchPostCityNavigation", "CrCasBranchPostNavigation" }).ToList();
+                var BranchbyStatus = Branches.FindAll(x => x.CrCasBranchInformationStatus == status &&
+                                                                                        (x.CrCasBranchInformationArName.Contains(search) ||
+                                                                                         x.CrCasBranchInformationEnName.ToLower().Contains(search.ToLower()) ||
+                                                                                         x.CrCasBranchPost.CrCasBranchPostArConcatenate.Contains(search) ||
+                                                                                         x.CrCasBranchPost.CrCasBranchPostEnConcatenate.Contains(search.ToLower()) ||
+                                                                                         x.CrCasBranchInformationCode.Contains(search)));
                 return PartialView("_DataTableBranches", BranchbyStatus);
             }
             return PartialView();
@@ -102,106 +118,114 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         [HttpGet]
         public async Task<IActionResult> AddBranch()
         {
-            //sidebar Active
-            ViewBag.id = "#sidebarCompany";
-            ViewBag.no = "0";
-
-            // Set Title
-            var titles = await setTitle("201", "2201001", "2");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(Status.Insert, pageNumber);
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Branches", "Branches");
+            }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Branches", "Branches");
+            }
             // Pass the KSA callingKeys to the view 
             var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active);
             var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo }).ToList();
             ViewData["CallingKeys"] = callingKeyList;
-
-            var lessor = await _UserService.GetUserLessor(User);
-            var lessornumber = lessor.CrMasUserInformationLessorNavigation.CrMasLessorInformationCode;
-
-            var branch = _unitOfWork.CrCasBranchInformation.FindAll(l => l.CrCasBranchInformationLessor == lessornumber).LastOrDefault();
-            var branchNumber = (Int32.Parse(branch?.CrCasBranchInformationCode) + 1).ToString();
-
-            ViewBag.branchnumber = branchNumber;
-            ViewBag.lessornumber = lessornumber;
-
+            var isArabic = CultureInfo.CurrentCulture.Name == "ar-EG";
+            var Cities = await _unitOfWork.CrMasSupPostCity.FindAllAsNoTrackingAsync(l => l.CrMasSupPostCityStatus != Status.Deleted);
+            var citiesArray = Cities.Select(c => new { text = isArabic ? c.CrMasSupPostCityConcatenateArName : c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode }).ToList();
+            ViewData["Cities"] = citiesArray;
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddBranch(BranchVM branchVM, IFormFile? SigntureFile)
+        public async Task<IActionResult> AddBranch(BranchVM branchVM, string SigntureFile)
         {
-            var user = await _UserService.GetUserLessor(User);
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null || branchVM == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Branches", "Branches");
+            }
 
-            var IsValidCity = _unitOfWork.CrMasSupPostCity.FindAll(l => l.CrMasSupPostCityConcatenateArName == branchVM.BranchPostVM.CrCasBranchPostCity || l.CrMasSupPostCityConcatenateEnName == branchVM.BranchPostVM.CrCasBranchPostCity).FirstOrDefault();
-            var IsGovNo = _unitOfWork.CrCasBranchInformation.FindAll(l => l.CrCasBranchInformationGovernmentNo == branchVM.CrCasBranchInformationGovernmentNo).Count() > 0;
-            var IsTaxNo = _unitOfWork.CrCasBranchInformation.FindAll(l => l.CrCasBranchInformationTaxNo == branchVM.CrCasBranchInformationTaxNo).Count() > 0;
-            bool NameArIsExist = _unitOfWork.CrCasBranchInformation.FindAll(x => x.CrCasBranchInformationArName == branchVM.CrCasBranchInformationArName && x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor).Count() > 0;
-            bool NameArShortIsExist = _unitOfWork.CrCasBranchInformation.FindAll(x => x.CrCasBranchInformationArShortName == branchVM.CrCasBranchInformationArShortName && x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor).Count() > 0;
-            bool NameEnIsExist = _unitOfWork.CrCasBranchInformation.FindAll(x => x.CrCasBranchInformationEnName == branchVM.CrCasBranchInformationEnName && x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor).Count() > 0;
-            bool NameEnShortIsExist = _unitOfWork.CrCasBranchInformation.FindAll(x => x.CrCasBranchInformationEnShortName == branchVM.CrCasBranchInformationEnShortName && x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor).Count() > 0;
+            // Check Validation
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Branches", "Branches");
+            }
+
+            var IsValidCity = await _unitOfWork.CrMasSupPostCity.FindAsync(l => l.CrMasSupPostCityCode == branchVM.BranchPostVM.CrCasBranchPostCity);
+            bool NameArIsExist = (await _unitOfWork.CrCasBranchInformation.FindAsync(x => x.CrCasBranchInformationArName == branchVM.CrCasBranchInformationArName && x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor))!=null;
+            bool NameArShortIsExist = (await _unitOfWork.CrCasBranchInformation.FindAsync(x => x.CrCasBranchInformationArShortName == branchVM.CrCasBranchInformationArShortName && x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor))!= null;
+            bool NameEnIsExist = (await _unitOfWork.CrCasBranchInformation.FindAsync(x => x.CrCasBranchInformationEnName == branchVM.CrCasBranchInformationEnName && x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor))!= null;
+            bool NameEnShortIsExist = (await _unitOfWork.CrCasBranchInformation.FindAsync(x => x.CrCasBranchInformationEnShortName == branchVM.CrCasBranchInformationEnShortName && x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor))!= null;
+
             if (IsValidCity == null) ModelState.AddModelError("BranchPostVM.CrCasBranchPostCity", _localizer["IsNotValidCity"]);
-            if (IsGovNo) ModelState.AddModelError("CrCasBranchInformationGovernmentNo", _localizer["IsTakenGov"]);
-            if (IsTaxNo) ModelState.AddModelError("CrCasBranchInformationTaxNo", _localizer["IsTakenTax"]);
             if (NameArIsExist) ModelState.AddModelError("CrCasBranchInformationArName", _localizer["IsExist"]);
             if (NameArShortIsExist) ModelState.AddModelError("CrCasBranchInformationArShortName", _localizer["IsExist"]);
             if (NameEnIsExist) ModelState.AddModelError("CrCasBranchInformationEnName", _localizer["IsExist"]);
             if (NameEnShortIsExist) ModelState.AddModelError("CrCasBranchInformationEnShortName", _localizer["IsExist"]);
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active && x.CrMasSysCallingKeysNo == "966");
+                ViewData["CallingKeys"] = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo }).ToList();
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View(branchVM);
+            }
+
+            try
             {
                 var BranchInformaiton = _mapper.Map<CrCasBranchInformation>(branchVM);
+                BranchInformaiton.CrCasBranchInformationLessor = user.CrMasUserInformationLessor;
+                BranchInformaiton.CrCasBranchInformationCode = await getNextBranchCode(user.CrMasUserInformationLessor);
+                BranchInformaiton.CrCasBranchInformationTgaCode = int.Parse(branchVM.CrCasBranchInformationTgaCode);
+
                 var BranchPost = _mapper.Map<CrCasBranchPost>(branchVM.BranchPostVM);
                 BranchPost.CrCasBranchPostLessor = user.CrMasUserInformationLessor;
                 BranchPost.CrCasBranchPostBranch = BranchInformaiton.CrCasBranchInformationCode;
-                BranchInformaiton.CrCasBranchInformationLessor = user.CrMasUserInformationLessor;
 
-                string foldername = $"{"images\\Company"}\\{BranchInformaiton.CrCasBranchInformationLessor}\\{"Branches"}\\{BranchInformaiton.CrCasBranchInformationCode}";
-                string filePathSignture;
+                string foldername = $"images/Company/{BranchInformaiton.CrCasBranchInformationLessor}/Branches/{BranchInformaiton.CrCasBranchInformationCode}";
+                string filePathSignture = string.IsNullOrEmpty(SigntureFile)
+                    ? "~/images/common/DefualtUserSignature.png"
+                    : await FileExtensions.SaveSigntureImage(_hostingEnvironment, SigntureFile, BranchInformaiton.CrCasBranchInformationCode, string.Empty, foldername);
 
-                if (SigntureFile != null)
-                {
-                    string Name = "DirectorSignature";
-                    var fileNameImg = Name + "_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
-                    filePathSignture = await SigntureFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png", BranchInformaiton.CrCasBranchInformationDirectorSignature);
-                }
-                else
-                {
-                    filePathSignture = "~/images/common/DefualtUserSignature.png";
-                }
                 BranchInformaiton.CrCasBranchInformationDirectorSignature = filePathSignture;
 
                 await _BranchInformation.AddBranchInformation(BranchInformaiton);
                 await _PostBranch.AddPostBranch(BranchPost, IsValidCity);
-                await _BranchDocument.AddBranchDocument(branchVM.CrCasBranchInformationLessor, branchVM.CrCasBranchInformationCode);
+                await _BranchDocument.AddBranchDocument(BranchInformaiton.CrCasBranchInformationLessor, BranchInformaiton.CrCasBranchInformationCode);
                 await _SalesPoint.AddSalesPoint(BranchInformaiton);
-                await _unitOfWork.CompleteAsync();
-                FileExtensions.CreateFolderBranch(_webHostEnvironment, user.CrMasUserInformationLessor, BranchInformaiton.CrCasBranchInformationCode);
-                var (mainTask, subTask, system, currentUser) = await SetTrace("201", "2201001", "2");
-                await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "اضافة فرع", "Add branch", mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                // Save Adminstrive Procedures
-                await _adminstritiveProcedures.SaveAdminstritive(currentUser.CrMasUserInformationCode, "1", "201", "20", currentUser.CrMasUserInformationLessor, "100",
-                BranchInformaiton.CrCasBranchInformationCode, null, null, null, null, null, null, null, null, "اضافة", "Insert", "I", null);
-                _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+
+                if (await _unitOfWork.CompleteAsync() > 0)
+                {
+                    await FileExtensions.CreateFolderBranch(_webHostEnvironment, user.CrMasUserInformationLessor, BranchInformaiton.CrCasBranchInformationCode);
+                    await SaveTracingForBranchChange(user, branchVM.CrCasBranchInformationArShortName, branchVM.CrCasBranchInformationEnShortName, Status.Insert);
+                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                }
+                else
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                }
+
                 return RedirectToAction("Branches");
             }
-
-
-
-            // Pass the KSA callingKeys to the view 
-            var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active && x.CrMasSysCallingKeysNo == "966");
-            var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo }).ToList();
-            ViewData["CallingKeys"] = callingKeyList;
-            var lessornumber = user.CrMasUserInformationLessorNavigation.CrMasLessorInformationCode;
-            var branch = _unitOfWork.CrCasBranchInformation.FindAll(l => l.CrCasBranchInformationLessor == lessornumber).LastOrDefault();
-            var branchNumber = (Int32.Parse(branch?.CrCasBranchInformationCode) + 1).ToString();
-            ViewBag.branchnumber = branchNumber;
-            ViewBag.lessornumber = lessornumber;
-
-            return View(branchVM);
+            catch (Exception)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Branches");
+            }
         }
-
+        private async Task<string> getNextBranchCode(string lessor)
+        {
+            var branch = (await _unitOfWork.CrCasBranchInformation.FindAllAsNoTrackingAsync(l => l.CrCasBranchInformationLessor == lessor)).OrderByDescending(x => x.CrCasBranchInformationCode).FirstOrDefault();
+            return (int.Parse(branch?.CrCasBranchInformationCode) + 1).ToString();
+        }
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -222,8 +246,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var lessor = await _UserService.GetUserLessor(User);
             var branchinformation = _unitOfWork.CrCasBranchInformation.Find(l => l.CrCasBranchInformationLessor == lessor.CrMasUserInformationLessor && l.CrCasBranchInformationCode == id);
             var BranchPost = _unitOfWork.CrCasBranchPost.Find(l => l.CrCasBranchPostLessor == lessor.CrMasUserInformationLessor && l.CrCasBranchPostBranch == id, new[] { "CrCasBranchPostNavigation", "CrCasBranchPostCityNavigation" });
-            ViewBag.SalesPointCount = _unitOfWork.CrCasAccountSalesPoint.FindAll(l => l.CrCasAccountSalesPointLessor == lessor.CrMasUserInformationLessor && l.CrCasAccountSalesPointBrn == id&&l.CrCasAccountSalesPointStatus!=Status.Deleted&&l.CrCasAccountSalesPointBank!="00").Count();
-            ViewBag.CarsCount = _unitOfWork.CrCasCarInformation.FindAll(l => l.CrCasCarInformationLessor == lessor.CrMasUserInformationLessor && l.CrCasCarInformationBranch == id&&l.CrCasCarInformationStatus!=Status.Deleted&&l.CrCasCarInformationStatus!=Status.Sold).Count();
+            ViewBag.SalesPointCount = _unitOfWork.CrCasAccountSalesPoint.FindAll(l => l.CrCasAccountSalesPointLessor == lessor.CrMasUserInformationLessor && l.CrCasAccountSalesPointBrn == id && l.CrCasAccountSalesPointStatus != Status.Deleted && l.CrCasAccountSalesPointBank != "00").Count();
+            ViewBag.CarsCount = _unitOfWork.CrCasCarInformation.FindAll(l => l.CrCasCarInformationLessor == lessor.CrMasUserInformationLessor && l.CrCasCarInformationBranch == id && l.CrCasCarInformationStatus != Status.Deleted && l.CrCasCarInformationStatus != Status.Sold).Count();
 
             BranchVM branchVM = _mapper.Map<BranchVM>(branchinformation);
             branchVM.BranchPostVM = _mapper.Map<BranchPost1VM>(BranchPost);
@@ -258,7 +282,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 string filePathSignture;
                 if (SigntureFile != null)
                 {
-                     string Name = "DirectorSignature";
+                    string Name = "DirectorSignature";
                     var fileNameImg = Name + "_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
                     filePathSignture = await SigntureFile.SaveImageAsync(_webHostEnvironment, foldername, fileNameImg, ".png", BranchInformaiton.CrCasBranchInformationDirectorSignature);
                 }
@@ -271,13 +295,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     filePathSignture = "~/images/common/DefualtUserSignature.png";
                 }
                 BranchInformaiton.CrCasBranchInformationDirectorSignature = filePathSignture;
-                if (BranchInformaiton.CrCasBranchInformationAvailableBalance==null) BranchInformaiton.CrCasBranchInformationAvailableBalance = 0;
-                if (BranchInformaiton.CrCasBranchInformationTotalBalance== null) BranchInformaiton.CrCasBranchInformationTotalBalance = 0;
+                if (BranchInformaiton.CrCasBranchInformationAvailableBalance == null) BranchInformaiton.CrCasBranchInformationAvailableBalance = 0;
+                if (BranchInformaiton.CrCasBranchInformationTotalBalance == null) BranchInformaiton.CrCasBranchInformationTotalBalance = 0;
                 if (BranchInformaiton.CrCasBranchInformationReservedBalance == null) BranchInformaiton.CrCasBranchInformationReservedBalance = 0;
                 var checkBranch = _unitOfWork.CrCasBranchInformation.Update(BranchInformaiton);
 
-                var checkBranchPost =  _PostBranch.UpdatePostBranch(BranchPost, IsValidCity);
-                if (checkBranch !=null&& checkBranchPost==true && await _unitOfWork.CompleteAsync()>0)
+                var checkBranchPost = _PostBranch.UpdatePostBranch(BranchPost, IsValidCity);
+                if (checkBranch != null && checkBranchPost == true && await _unitOfWork.CompleteAsync() > 0)
                 {
                     var (mainTask, subTask, system, currentUser) = await SetTrace("201", "2201001", "2");
 
@@ -328,7 +352,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             var branch = _unitOfWork.CrCasBranchInformation.Find(l => l.CrCasBranchInformationLessor == lessorCode && l.CrCasBranchInformationCode == Branchcode);
             var docs = _unitOfWork.CrCasBranchDocument.FindAll(l => l.CrCasBranchDocumentsLessor == lessorCode && l.CrCasBranchDocumentsBranch == Branchcode);
             var salesPoints = _unitOfWork.CrCasAccountSalesPoint.FindAll(l => l.CrCasAccountSalesPointLessor == lessorCode && l.CrCasAccountSalesPointBrn == Branchcode);
-            var cars = _unitOfWork.CrCasCarInformation.FindAll(l => l.CrCasCarInformationLessor == lessorCode && l.CrCasCarInformationBranch == Branchcode&&l.CrCasCarInformationStatus!=Status.Sold);
+            var cars = _unitOfWork.CrCasCarInformation.FindAll(l => l.CrCasCarInformationLessor == lessorCode && l.CrCasCarInformationBranch == Branchcode && l.CrCasCarInformationStatus != Status.Sold);
             var userBranchValidity = _unitOfWork.CrMasUserBranchValidity.FindAll(l => l.CrMasUserBranchValidityLessor == lessorCode && l.CrMasUserBranchValidityBranch == Branchcode);
             if (branch != null)
             {
@@ -373,7 +397,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
                     // Save Adminstrive Procedures
                     await _adminstritiveProcedures.SaveAdminstritive(currentUser.CrMasUserInformationCode, "1", "201", "20", currentUser.CrMasUserInformationLessor, "100",
-                   branch.CrCasBranchInformationCode, null, null, null, null, null, null, null, null, sAr,  sEn, "U", null);
+                   branch.CrCasBranchInformationCode, null, null, null, null, null, null, null, null, sAr, sEn, "U", null);
 
                     return RedirectToAction("Index", "LessorsKSA");
                 }
@@ -383,6 +407,27 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
         }
 
+        private async Task SaveTracingForBranchChange(CrMasUserInformation user, string arBranch, string enBranch, string status)
+        {
+            var (operationAr, operationEn) = GetStatusTranslation(status);
 
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                arBranch,
+                enBranch,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
     }
 }

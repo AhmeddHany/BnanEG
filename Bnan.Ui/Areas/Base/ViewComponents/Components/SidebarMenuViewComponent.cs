@@ -238,7 +238,7 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                     {
                                         ("201", "/CasSys/images/comany .svg", "company-items", new List<(string, string, string)>
                                         {
-                                            ("2201001", "#", "#"),
+                                            ("2201001", "Branches", "Branches"),
                                             ("2201002", "#", "#"),
                                             ("2201003", "LessorOwners_CAS", "Index"),
                                             ("2201004", "#", "#"),

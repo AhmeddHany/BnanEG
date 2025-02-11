@@ -1199,7 +1199,10 @@
     // LessorMemberShip
     "And": "و",
     "Or": "أو",
-    "Memberships": "العضويات"
+    "Memberships": "العضويات",
+    //Branches
+    "RentedSystem": "نظام التأجير",
+    "RentedSystemNo": "رقم الفرع بنظام التأجير"
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 

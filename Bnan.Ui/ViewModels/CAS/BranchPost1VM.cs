@@ -11,6 +11,8 @@ namespace Bnan.Ui.ViewModels.CAS
         public string? CrCasBranchPostRegions { get; set; }
 
         [Required(ErrorMessage = "requiredFiled")]
+        public string? CrCasBranchPostCityText { get; set; }
+
         public string? CrCasBranchPostCity { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchPostArDistrict { get; set; }

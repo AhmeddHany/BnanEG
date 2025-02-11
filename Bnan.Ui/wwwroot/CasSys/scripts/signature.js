@@ -168,13 +168,14 @@ function SaveUplodedSignature() {
 
 document.getElementById("save").addEventListener("click", function () {
     var signtureInput = document.getElementById('UserSignatureFile');
-
+    var imgUrl = null;
     if (saveSignatureBtn === "UploadSigntaurePic") {
-        signtureInput.value = SaveUplodedSignature();
+        imgUrl = SaveUplodedSignature();
     } else if (saveSignatureBtn === "WriteSignature") {
-        signtureInput.value = SaveWrittenSignature();
-    } else {
-        console.log("No button has been clicked yet");
-        signtureInput.value = null;
+        imgUrl = SaveWrittenSignature();
+    }
+    if (imgUrl) {
+        $("#SigntureFile").val(imgUrl);
+        console.log("img", imgUrl);
     }
 });

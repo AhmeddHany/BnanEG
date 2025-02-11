@@ -1234,8 +1234,10 @@
     // LessorMemberShip
     "And": "And",
     "Or": "Or",
-    "Memberships": "Memberships"
-
+    "Memberships": "Memberships",
+    //Branches
+    "RentedSystem": "Rental System",
+    "RentedSystemNo": "Rental System Code"
   },
   "ModalAutoLogout": "Your session is about to end!",
   "Arabic": "Arabic",
