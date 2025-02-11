@@ -68,17 +68,37 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
             ("1101003", "CompanyContracts", "CompanyContracts"),
             ("1101004", "CompanyDues", "Index"),
             ("1101005", "CompanyOwed", "Index"),
-            ("1101006", "CompanyMessages", "Index")
+            ("1101006", "#", "#"),
+            ("1101007", "#", "#"),
+            ("1101008", "#", "#"),
+            ("1101009", "#", "#"),
+            ("1101010", "#", "#")
         }),
         ("102", "/MasSystem/images/Bnan.svg", "sidebarcars", new List<(string, string, string)>
         {
-            ("1102001", "#", null),
-            ("1102002", "LessorMarketing", "Index")
+            ("1102001", "#", "#"),
+            ("1102002", "LessorMarketing", "Index"),
+            ("1102003", "#", "#"),
+            ("1102004", "#", "#"),
+            ("1102005", "#", "#"),
+            ("1102006", "#", "#"),
+            ("1102007", "#", "#"),
+            ("1102008", "#", "#"),
+            ("1102009", "#", "#"),
+            ("1102010", "#", "#")
         }),
         ("103", "/MasSystem/images/tenants2.svg", "sidebarRenter", new List<(string, string, string)>
         {
             ("1103001", "RenterInformation", "Index"),
-            ("1103002", "RenterContract", "Index")
+            ("1103002", "RenterContract", "Index"),
+            ("1103003", "#", "#"),
+            ("1103004", "#", "#"),
+            ("1103005", "#", "#"),
+            ("1103006", "#", "#"),
+            ("1103007", "#", "#"),
+            ("1103008", "#", "#"),
+            ("1103009", "#", "#"),
+            ("1103010", "#", "#")
         }),
         ("104", "/MasSystem/images/reports.svg", "sidebarReport", new List<(string, string, string)>
         {
@@ -89,14 +109,14 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
             ("1104005", "ReportCarContract", "Index"),
             ("1104006", "ReportFTPemployee", "Index"),
             ("1104007", "ReportFTPrenter", "Index"),
-            ("1104008", "#", null),
-            ("1104009", "#", null),
-            ("1104010", "#", null),
-            ("1104011", "#", null),
-            ("1104012", "#", null),
-            ("1104013", "#", null),
-            ("1104014", "#", null),
-            ("1104015", "#", null)
+            ("1104008", "#", "#"),
+            ("1104009", "#", "#"),
+            ("1104010", "#", "#"),
+            ("1104011", "#", "#"),
+            ("1104012", "#", "#"),
+            ("1104013", "#", "#"),
+            ("1104014", "#", "#"),
+            ("1104015", "#", "#")
         }),
         ("105", "/MasSystem/images/stat.svg", "sidebarStatistics", new List<(string, string, string)>
         {
@@ -105,24 +125,24 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
             ("1105003", "ContractStatistics", "Index"),
             ("1105004", "RenterContractStatistics", "Index"),
             ("1105005", "CarContractStatistics", "Index"),
-            ("1105006", "#", null),
-            ("1105007", "#", null),
-            ("1105008", "#", null),
-            ("1105009", "#", null),
-            ("1105010", "#", null)
+            ("1105006", "#", "#"),
+            ("1105007", "#", "#"),
+            ("1105008", "#", "#"),
+            ("1105009", "#", "#"),
+            ("1105010", "#", "#")
         }),
         ("106", "/MasSystem/images/employees.svg", "sidebarUsers", new List<(string, string, string)>
         {
             ("1106001", "Users", "Users"),
             ("1106002", "UsersSystemValiditions", "SystemValiditions"),
             ("1106003", "UsersForCompanies", "Index"),
-            ("1106004", "#", null),
-            ("1106005", "#", null),
-            ("1106006", "#", null),
-            ("1106007", "#", null),
-            ("1106008", "#", null),
-            ("1106009", "#", null),
-            ("1106010", "#", null)
+            ("1106004", "#", "#"),
+            ("1106005", "#", "#"),
+            ("1106006", "#", "#"),
+            ("1106007", "#", "#"),
+            ("1106008", "#", "#"),
+            ("1106009", "#", "#"),
+            ("1106010", "#", "#")
         }),
         ("107", "/MasSystem/images/tenants2.svg", "sidebarUsersServices", new List<(string, string, string)>
         {
@@ -134,8 +154,8 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
             ("1107006", "RenterEmployer", "Index"),
             ("1107007", "RenterMembership", "Index"),
             ("1107008", "RenterSector", "Index"),
-            ("1107009", "#", null),
-            ("1107010", "#", null)
+            ("1107009", "#", "#"),
+            ("1107010", "#", "#")
         }),
         ("108", "/MasSystem/images/cars.svg", "sidebarCarsServices", new List<(string, string, string)>
         {
@@ -149,37 +169,37 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
             ("1108008", "CarDistribution", "CarDistribution"),
             ("1108009", "CarAdvantage", "Index"),
             ("1108010", "CarColor", "Index"),
-            ("1108011", "#", null),
-            ("1108012", "#", null),
-            ("1108013", "#", null),
-            ("1108014", "#", null),
-            ("1108015", "#", null),
+            ("1108011", "#", "#"),
+            ("1108012", "#", "#"),
+            ("1108013", "#", "#"),
+            ("1108014", "#", "#"),
+            ("1108015", "#", "#"),
         }),
         ("109", "/MasSystem/images/Mail (2).svg", "sidebarMailsServices", new List<(string, string, string)>
         {
             ("1109001", "Countries", "Index"),
             ("1109002", "PostRegions", "Index"),
             ("1109003", "PostCity", "Index"),
-            ("1109004", "#", null),
-            ("1109005", "#", null),
-            ("1109006", "#", null),
-            ("1109007", "#", null),
-            ("1109008", "#", null),
-            ("1109009", "#", null),
-            ("1109010", "#", null),
+            ("1109004", "#", "#"),
+            ("1109005", "#", "#"),
+            ("1109006", "#", "#"),
+            ("1109007", "#", "#"),
+            ("1109008", "#", "#"),
+            ("1109009", "#", "#"),
+            ("1109010", "#", "#"),
         }),
         ("110", "/MasSystem/images/calc.svg", "sidebarAccountsServices", new List<(string, string, string)>
         {
             ("1110001", "Bank", "Index"),
             ("1110002", "AccountPaymentMethod", "Index"),
             ("1110003", "AccountReference", "Index"),
-            ("1110004", "#", null),
-            ("1110005", "#", null),
-            ("1110006", "#", null),
-            ("1110007", "#", null),
-            ("1110008", "#", null),
-            ("1110009", "#", null),
-            ("1110010", "#", null),
+            ("1110004", "#", "#"),
+            ("1110005", "#", "#"),
+            ("1110006", "#", "#"),
+            ("1110007", "#", "#"),
+            ("1110008", "#", "#"),
+            ("1110009", "#", "#"),
+            ("1110010", "#", "#"),
         }),
         ("111", "/MasSystem/images/ContractIcon.svg", "sidebarRentalContracts", new List<(string, string, string)>
         {
@@ -187,12 +207,12 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
             ("1111002", "ContractOptions", "Index"),
             ("1111003", "ContractCarCheckup", "Index"),
             ("1111004", "ContractCarCheckupDetails", "Index"),
-            ("1111005", "#", null),
-            ("1111006", "#", null),
-            ("1111007", "#", null),
-            ("1111008", "#", null),
-            ("1111009", "#", null),
-            ("1111010", "#", null),
+            ("1111005", "#", "#"),
+            ("1111006", "#", "#"),
+            ("1111007", "#", "#"),
+            ("1111008", "#", "#"),
+            ("1111009", "#", "#"),
+            ("1111010", "#", "#"),
         }),
         ("112", "/MasSystem/images/services.svg", "services-items", new List<(string, string, string)>
         {
@@ -202,10 +222,10 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
             ("1112004", "Rate", "Edit"),
             ("1112005", "Currency", "Edit"),
             ("1112006", "QuestionsAnswer", "Index"),
-            ("1112007", "#", null),
-            ("1112008", "#", null),
-            ("1112009", "#", null),
-            ("1112010", "#", null),
+            ("1112007", "#", "#"),
+            ("1112008", "#", "#"),
+            ("1112009", "#", "#"),
+            ("1112010", "#", "#"),
         })
     };
 
@@ -221,6 +241,14 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                             ("2201001", "#", "#"),
                                             ("2201002", "#", "#"),
                                             ("2201003", "LessorOwners_CAS", "Index"),
+                                            ("2201004", "#", "#"),
+                                            ("2201005", "#", "#"),
+                                            ("2201006", "#", "#"),
+                                            ("2201007", "#", "#"),
+                                            ("2201008", "#", "#"),
+                                            ("2201009", "#", "#"),
+                                            ("2201010", "#", "#"),
+
                                         }),
                                         ("202", "/CasSys/images/cars.svg", "cars-items", new List<(string, string, string)>
                                         {
@@ -231,12 +259,22 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                             ("2202005", "#", "#"),
                                             ("2202006", "#", "#"),
                                             ("2202007", "#", "#"),
+                                            ("2202008", "#", "#"),
+                                            ("2202009", "#", "#"),
+                                            ("2202010", "#", "#"),
                                         }),
                                         ("203", "/CasSys/images/tenants.svg", "tenants-items", new List<(string, string, string)>
                                         {
                                             ("2203001", "RenterLessorInformation", "Index"),
                                             ("2203002", "#", "#"),
                                             ("2203003", "#", "#"),
+                                            ("2203004", "#", "#"),
+                                            ("2203005", "#", "#"),
+                                            ("2203006", "#", "#"),
+                                            ("2203007", "#", "#"),
+                                            ("2203008", "#", "#"),
+                                            ("2203009", "#", "#"),
+                                            ("2203010", "#", "#"),
                                         }),
 
                                         ("204", "/CasSys/images/accounts.svg", "accounts-items", new List<(string, string, string)>
@@ -249,6 +287,8 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                             ("2204006", "#", "#"),
                                             ("2204007", "#", "#"),
                                             ("2204008", "#", "#"),
+                                            ("2204009", "#", "#"),
+                                            ("2204010", "#", "#"),
                                         }),
                                         ("205", "/CasSys/images/reports.svg", "reports-items", new List<(string, string, string)>
                                         {
@@ -264,6 +304,9 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                             ("2205010", "ReportFTPemployee", "Index"),
                                             ("2205011", "ReportFTPRenter", "Index"),
                                             ("2205012", "ReportFTPsalesPoint", "Index"),
+                                            ("2205013", "#", "#"),
+                                            ("2205014", "#", "#"),
+                                            ("2205015", "#", "#"),
                                         }),
                                         ("206", "/CasSys/images/statics.svg", "statics-items", new List<(string, string, string)>
                                         {
@@ -272,12 +315,24 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                             ("2206003", "CasStatistics_Contracts", "Index"),
                                             ("2206004", "CasStatistics_CarContracts", "Index"),
                                             ("2206005", "CasStatistics_RenterContracts", "Index"),
+                                            ("2206006", "#", "#"),
+                                            ("2206007", "#", "#"),
+                                            ("2206008", "#", "#"),
+                                            ("2206009", "#", "#"),
+                                            ("2206010", "#", "#"),
                                         }),
                                         ("207", "/CasSys/images/employees.svg", "employees-items", new List<(string, string, string)>
                                         {
                                             ("2207001", "Employees", "Index"),
                                             ("2207002", "EmployeesSystemValiditions", "Index"),
                                             ("2207003", "EmployeesContractValiditions", "Index"),
+                                            ("2207004", "#", "#"),
+                                            ("2207005", "#", "#"),
+                                            ("2207006", "#", "#"),
+                                            ("2207007", "#", "#"),
+                                            ("2207008", "#", "#"),
+                                            ("2207009", "#", "#"),
+                                            ("2207010", "#", "#"),
                                         }),
                                         ("208", "/CasSys/images/services.svg", "services-items", new List<(string, string, string)>
                                         {
@@ -287,6 +342,10 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                             ("2208004", "TechnicalConnectivity", "Connect"),
                                             ("2208005", "LessorMechanism", "Mechanism"),
                                             ("2208006", "LessorMembership", "LessorMembership"),
+                                            ("2208007", "#", "#"),
+                                            ("2208008", "#", "#"),
+                                            ("2208009", "#", "#"),
+                                            ("2208010", "#", "#"),
                                         })
                                      };
 

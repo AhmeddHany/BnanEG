@@ -78,6 +78,7 @@ namespace Bnan.Ui.Areas.Base.Controllers
             else if (status == Status.UnDeleted) return ("استرجاع الحذف", "Retrieve Delete");
             else if (status == Status.ResetPassword) return ("استرجاع كلمة السر", "Retrieve Password");
             else if (status == Status.ChangePassword) return ("تغيير كلمة السر", "Change Password");
+            else if (status == Status.UpdateValidtions) return ("تحديث صلاحيات موظف", "Change Employee Validitions");
             else return ("", "");
         }
 

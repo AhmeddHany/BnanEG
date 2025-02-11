@@ -32,6 +32,7 @@
         public static string ResetPassword { get; set; } = "RP";
         public static string ChangePassword { get; set; } = "CP";
         public static string UpdateStatus { get; set; } = "US";
+        public static string UpdateValidtions { get; set; } = "UV";
         public static string Update { get; set; } = "U";
         public static string Custody { get; set; } = "1";
         public static string Booked { get; set; } = "2";
