@@ -58,6 +58,7 @@
                                                         <div class="invaild">
                                                             <div class="invalid-feedback">
                                                                 <span asp-validation-for="@Model.CrCasBranchInformationArName" class="text-danger"></span>
+                                                                <span class="text-danger" id="CrCasBranchInformationArName-Error"></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -73,6 +74,7 @@
                                                         <div class="invaild">
                                                             <div class="invalid-feedback">
                                                                 <span asp-validation-for="@Model.CrCasBranchInformationArShortName" class="text-danger"></span>
+                                                                <span class="text-danger" id="CrCasBranchInformationArShortName-Error"></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -91,6 +93,8 @@
                                                         <div class="invaild">
                                                             <div class="invalid-feedback">
                                                                 <span asp-validation-for="@Model.CrCasBranchInformationEnName" class="text-danger"></span>
+                                                                <span class="text-danger" id="CrCasBranchInformationEnName-Error"></span>
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -106,6 +110,7 @@
                                                         <div class="invaild">
                                                             <div class="invalid-feedback">
                                                                 <span asp-validation-for="@Model.CrCasBranchInformationEnShortName" class="text-danger"></span>
+                                                                <span class="text-danger" id="CrCasBranchInformationEnShortName-Error"></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -155,6 +160,7 @@
                                                         <div class="invaild">
                                                             <div class="invalid-feedback">
                                                                 <span asp-validation-for="@Model.CrCasBranchInformationTgaCode" class="text-danger"></span>
+                                                                <span class="text-danger" id="CrCasBranchInformationTgaCode-Error"></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -253,7 +259,7 @@
                                                             @localizer["PostCityConcateAr"]
                                                             <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                                         </label>
-                                                        <input type="text" id="City-Area" class="form-control inputs" asp-for="BranchPostVM.CrCasBranchPostCityText" maxlength="50" autocomplete="off" required>
+                                                        <input type="text" id="City-Area" class="form-control inputs" maxlength="50" autocomplete="off" required>
                                                         <div id="autocomplete-Cities" class="autocomplete-items autocomplete-Cities"> </div>
                                                         <input type="text" id="City-Area-code" asp-for="BranchPostVM.CrCasBranchPostCity" hidden>
                                                         <div class="invaild">
@@ -573,6 +579,46 @@
             // setupAutocomplete("City-Area", "autocomplete-Cities", dataLists.Cities);
             setupAutocomplete("City-Area", "autocomplete-Cities", dataLists.Cities, "Region-city-tenant-error", "listsIsTrueOrNotBranch", true);
 
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            function Check_onChange_input(existName, dataField) {
+                $.ajax({
+                    type: "GET",
+                    url: "/CAS/Branches/CheckChangedField",
+                    data: { existName: existName, dataField: dataField },
+                    success: function (result) {
+                        console.log("feedback", result);
+                        // Hide all previous error messages
+                        $('.invalid-feedback').show();
+
+                        // Show new error messages if they exist
+                        if (result.errors && result.errors.length > 0) {
+                            result.errors.forEach(function (error) {
+                                // Use the ID from the error object to find the correct element
+                                $(`#${error.field}-Error`).text(error.message).show();
+                            });
+                        } else {
+                            // Hide the error message if no errors
+                            $(`#${existName}-Error`).text("");
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+
+            // جلب جميع العناصر التي تحتوي على خاصية name معينة
+            $('[name="CrCasBranchInformationArName"], [name="CrCasBranchInformationEnName"], [name="CrCasBranchInformationArShortName"], [name="CrCasBranchInformationEnShortName"],[name="CrCasBranchInformationTgaCode"]')
+                .on('change', function () {
+                    var fieldName = $(this).attr('name'); // الحصول على قيمة الخاصية name
+                    var newValue = $(this).val(); // الحصول على القيمة الجديدة
+                    Check_onChange_input(fieldName, newValue); // استدعاء الدالة
+                });
         });
     </script>
 }

@@ -16,6 +16,7 @@ using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Numerics;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Bnan.Ui.ViewModels.MAS;
 
 namespace Bnan.Ui.Areas.CAS.Controllers.Services
 {
@@ -233,7 +234,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
             var user = await _userManager.GetUserAsync(User);
 
             await SetPageTitleAsync(Status.Update, pageNumber);
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "AccountBank_CAS");
+            }
             var contract = await _unitOfWork.CrCasAccountBank.FindAsync(x => x.CrCasAccountBankCode == id);
             if (contract == null || user==null)
             {
@@ -252,6 +258,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
         {
 
             var user = await _userManager.GetUserAsync(User);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "AccountBank_CAS");
+            }
             if (user == null && Acc_BankVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });

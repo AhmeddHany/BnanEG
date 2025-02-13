@@ -1202,7 +1202,15 @@
     "Memberships": "العضويات",
     //Branches
     "RentedSystem": "نظام التأجير",
-    "RentedSystemNo": "رقم الفرع بنظام التأجير"
+    "RentedSystemNo": "رقم الفرع بنظام التأجير",
+    "ModalFirstMessage_Branches_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_Branches_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_Branches_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_Branches_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_Branches_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_Branches_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_Branches_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_Branches_UnHold": "ارجاع بيانات ونتائج2"
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 
@@ -1370,7 +1378,7 @@
   "Document Hint": "تمكنك هذه الصفحة من البحث و عرض بيانات مستندات الفروع",
   "Document Type": "نوع المستند",
   "Maintaince_Type": "نوع الصيانة",
-  "TheNumber": "الرقم",
+  "TheNumber": "رقم المستند",
   "Date": "تاريخه",
   "StartDate": "بدايته",
   "EndDate": "نهايته",
@@ -3467,7 +3475,7 @@
     "Active": "قائمة",
     "Closed": "مغلقة",
     "Executed": "منفذة",
-    "Documents": "المستندات",
+    "Documents": "مستندات",
     "Expiredd": "منتهي",
     "EndingSoon": "على وشك",
     "Document": "المستند",

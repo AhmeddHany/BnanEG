@@ -66,6 +66,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(currentUser.CrMasUserInformationCode, pageNumber, Status.Update))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             var lessorMechanisms = _unitOfWork.CrCasLessorMechanism.FindAll(x => x.CrCasLessorMechanismCode == currentUser.CrMasUserInformationLessor,
                 new[] { "CrCasLessorMechanismCodeNavigation", "CrCasLessorMechanismProceduresNavigation" });
             if (lessorMechanisms == null)

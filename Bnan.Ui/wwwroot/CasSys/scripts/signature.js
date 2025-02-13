@@ -167,7 +167,6 @@ function SaveUplodedSignature() {
 }
 
 document.getElementById("save").addEventListener("click", function () {
-    var signtureInput = document.getElementById('UserSignatureFile');
     var imgUrl = null;
     if (saveSignatureBtn === "UploadSigntaurePic") {
         imgUrl = SaveUplodedSignature();

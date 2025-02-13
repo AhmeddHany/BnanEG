@@ -1,4 +1,5 @@
-﻿using Bnan.Ui.ViewModels.MAS;
+﻿using Bnan.Core.Models;
+using Bnan.Ui.ViewModels.MAS;
 using System.ComponentModel.DataAnnotations;
 
 namespace Bnan.Ui.ViewModels.CAS
@@ -45,6 +46,7 @@ namespace Bnan.Ui.ViewModels.CAS
         public int? UnAvaliableCarsCount { get; set; }
         public int? RentedCarsCount { get; set; }
         public BranchPost1VM? BranchPostVM { get; set; }
+        public List<BranchDocsVM>? BranchDocsVM { get; set; }
 
     }
 }

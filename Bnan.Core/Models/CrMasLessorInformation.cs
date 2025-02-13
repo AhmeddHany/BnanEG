@@ -1,4 +1,7 @@
-﻿namespace Bnan.Core.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace Bnan.Core.Models
 {
     public partial class CrMasLessorInformation
     {
@@ -13,6 +16,7 @@
             CrCasCarAdvantages = new HashSet<CrCasCarAdvantage>();
             CrCasLessorMechanisms = new HashSet<CrCasLessorMechanism>();
             CrCasLessorMemberships = new HashSet<CrCasLessorMembership>();
+            CrCasLessorPolicies = new HashSet<CrCasLessorPolicy>();
             CrCasLessorWhatsupConnects = new HashSet<CrCasLessorWhatsupConnect>();
             CrCasOwners = new HashSet<CrCasOwner>();
             CrCasPriceCarBasics = new HashSet<CrCasPriceCarBasic>();
@@ -68,6 +72,7 @@
         public virtual ICollection<CrCasCarAdvantage> CrCasCarAdvantages { get; set; }
         public virtual ICollection<CrCasLessorMechanism> CrCasLessorMechanisms { get; set; }
         public virtual ICollection<CrCasLessorMembership> CrCasLessorMemberships { get; set; }
+        public virtual ICollection<CrCasLessorPolicy> CrCasLessorPolicies { get; set; }
         public virtual ICollection<CrCasLessorWhatsupConnect> CrCasLessorWhatsupConnects { get; set; }
         public virtual ICollection<CrCasOwner> CrCasOwners { get; set; }
         public virtual ICollection<CrCasPriceCarBasic> CrCasPriceCarBasics { get; set; }

@@ -10,8 +10,8 @@ namespace Bnan.Core.Interfaces
     public interface IPostBranch
     {
         Task<bool> AddPostBranchDefault(string LessorCode, CrCasBranchPost CrCasBranchPost, CrMasSupPostCity City);
-        Task<bool> AddPostBranch(CrCasBranchPost CrCasBranchPost, CrMasSupPostCity city);
-        bool UpdatePostBranch(CrCasBranchPost CrCasBranchPost, CrMasSupPostCity City);
+        Task<bool> AddPostBranch(CrCasBranchPost CrCasBranchPost);
+        Task<bool> UpdatePostBranch(CrCasBranchPost CrCasBranchPost);
         List<CrCasBranchPost> GetAllByLessor(string LessorCode);
 
     }

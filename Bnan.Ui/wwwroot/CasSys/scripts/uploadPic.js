@@ -123,6 +123,7 @@ function SaveUplodedIDphoto() {
     const base64 = canvas.toDataURL("image/png");
     console.log(base64);
     $("#Doc-photo-modal").modal("hide");
+    return base64;
 }
 
 // Save the camera ID photo image
@@ -134,19 +135,19 @@ function SaveCameraIDphoto() {
     const context = canvas.getContext("2d");
     context.drawImage(img, 0, 0, canvas.width, canvas.height);
     const base64 = canvas.toDataURL("image/png");
-    console.log(base64);
     $("#Doc-photo-modal").modal("hide");
+    return base64;
+    console.log(base64);
 }
 
 document.getElementById("Doc-photo-save").addEventListener("click", function () {
+    var imgInput = document.getElementById("DocImg");
     if (saveIDBtn === "UploadPic") {
-        SaveUplodedIDphoto();
+       imgInput.value= SaveUplodedIDphoto();
     } else if (saveIDBtn === "CameraID") {
-        SaveCameraIDphoto();
+       imgInput.value= SaveCameraIDphoto();
     }else {
         $("#Doc-photo-modal").modal("hide");
-
     }
-    // Update systems-check background after saving the image
     updateSystemsCheckBackground();
 });

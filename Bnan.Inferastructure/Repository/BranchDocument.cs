@@ -73,52 +73,68 @@ namespace Bnan.Inferastructure.Repository
         {
             return await _unitOfWork.CrCasBranchDocument.FindAsync(l => l.CrCasBranchDocumentsLessor == DocumentsLessor && l.CrCasBranchDocumentsBranch == DocumentsBranch && l.CrCasBranchDocumentsProcedures == DocumentsProcedures);
         }
-
-        public async Task<bool> UpdateBranchDocument(CrCasBranchDocument CrCasBranchDocument)
+        public async Task<bool> UpdateBranchDocument(CrCasBranchDocument model)
         {
-            if (CrCasBranchDocument != null)
-            {
-                var document = await _unitOfWork.CrCasBranchDocument.FindAsync(l => l.CrCasBranchDocumentsBranch == CrCasBranchDocument.CrCasBranchDocumentsBranch
-                                                                               && l.CrCasBranchDocumentsLessor == CrCasBranchDocument.CrCasBranchDocumentsLessor
-                                                                               && l.CrCasBranchDocumentsProcedures == CrCasBranchDocument.CrCasBranchDocumentsProcedures);
+            var branchDocument = await _unitOfWork.CrCasBranchDocument.FindAsync(l => l.CrCasBranchDocumentsBranch == model.CrCasBranchDocumentsBranch
+                                                                           && l.CrCasBranchDocumentsLessor == model.CrCasBranchDocumentsLessor
+                                                                           && l.CrCasBranchDocumentsProcedures == model.CrCasBranchDocumentsProcedures);
+            if (branchDocument == null) return false;
+            
 
-                var AboutToExpire = _unitOfWork.CrCasLessorMechanism.FindAsync(l => l.CrCasLessorMechanismCode == document.CrCasBranchDocumentsLessor
-                                                                                 && l.CrCasLessorMechanismProcedures == document.CrCasBranchDocumentsProcedures
-                                                                                 && l.CrCasLessorMechanismProceduresClassification == document.CrCasBranchDocumentsProceduresClassification).Result.CrCasLessorMechanismDaysAlertAboutExpire;
-                if (CrCasBranchDocument.CrCasBranchDocumentsStatus == Status.Renewed || CrCasBranchDocument.CrCasBranchDocumentsStatus == Status.Expire)
-                {
-                    document.CrCasBranchDocumentsStartDate = CrCasBranchDocument.CrCasBranchDocumentsStartDate;
-                    document.CrCasBranchDocumentsEndDate = CrCasBranchDocument.CrCasBranchDocumentsEndDate;
-                    document.CrCasBranchDocumentsDate = CrCasBranchDocument.CrCasBranchDocumentsDate;
-                    document.CrCasBranchDocumentsNo = CrCasBranchDocument.CrCasBranchDocumentsNo;
-                    document.CrCasBranchDocumentsImage = CrCasBranchDocument.CrCasBranchDocumentsImage;
-                    document.CrCasBranchDocumentsReasons = CrCasBranchDocument.CrCasBranchDocumentsReasons;
-                    document.CrCasBranchDocumentsDateAboutToFinish = CrCasBranchDocument.CrCasBranchDocumentsEndDate?.AddDays(-(double)AboutToExpire);
-                    document.CrCasBranchDocumentsStatus = Status.Active;
-                }
-                else if (CrCasBranchDocument.CrCasBranchDocumentsStatus == Status.Deleted)
-                {
-                    document.CrCasBranchDocumentsStartDate = null;
-                    document.CrCasBranchDocumentsEndDate = null;
-                    document.CrCasBranchDocumentsDate = null;
-                    document.CrCasBranchDocumentsNo = null;
-                    document.CrCasBranchDocumentsImage = null;
-                    document.CrCasBranchDocumentsReasons = null;
-                    document.CrCasBranchDocumentsDateAboutToFinish = null;
-                    document.CrCasBranchDocumentsStatus = Status.Renewed;
-                }
-                else
-                {
-                    document.CrCasBranchDocumentsImage = CrCasBranchDocument.CrCasBranchDocumentsImage;
-                    document.CrCasBranchDocumentsReasons = CrCasBranchDocument.CrCasBranchDocumentsReasons;
-                }
-
-
-                _unitOfWork.CrCasBranchDocument.Update(document);
-                await _unitOfWork.CompleteAsync();
-                return true;
-            }
+            branchDocument.CrCasBranchDocumentsNo = model.CrCasBranchDocumentsNo;
+            branchDocument.CrCasBranchDocumentsDate = model.CrCasBranchDocumentsDate;
+            branchDocument.CrCasBranchDocumentsStartDate = model.CrCasBranchDocumentsStartDate;
+            branchDocument.CrCasBranchDocumentsEndDate = model.CrCasBranchDocumentsEndDate;
+            branchDocument.CrCasBranchDocumentsImage = model.CrCasBranchDocumentsImage;
+            branchDocument.CrCasBranchDocumentsReasons = model.CrCasBranchDocumentsReasons;
+            if (_unitOfWork.CrCasBranchDocument.Update(branchDocument)!=null) return true;
             return false;
         }
+        //public async Task<bool> UpdateBranchDocument(CrCasBranchDocument CrCasBranchDocument)
+        //{
+        //    if (CrCasBranchDocument != null)
+        //    {
+        //        var document = await _unitOfWork.CrCasBranchDocument.FindAsync(l => l.CrCasBranchDocumentsBranch == CrCasBranchDocument.CrCasBranchDocumentsBranch
+        //                                                                       && l.CrCasBranchDocumentsLessor == CrCasBranchDocument.CrCasBranchDocumentsLessor
+        //                                                                       && l.CrCasBranchDocumentsProcedures == CrCasBranchDocument.CrCasBranchDocumentsProcedures);
+
+        //        var AboutToExpire = _unitOfWork.CrCasLessorMechanism.FindAsync(l => l.CrCasLessorMechanismCode == document.CrCasBranchDocumentsLessor
+        //                                                                         && l.CrCasLessorMechanismProcedures == document.CrCasBranchDocumentsProcedures
+        //                                                                         && l.CrCasLessorMechanismProceduresClassification == document.CrCasBranchDocumentsProceduresClassification).Result.CrCasLessorMechanismDaysAlertAboutExpire;
+        //        if (CrCasBranchDocument.CrCasBranchDocumentsStatus == Status.Renewed || CrCasBranchDocument.CrCasBranchDocumentsStatus == Status.Expire)
+        //        {
+        //            document.CrCasBranchDocumentsStartDate = CrCasBranchDocument.CrCasBranchDocumentsStartDate;
+        //            document.CrCasBranchDocumentsEndDate = CrCasBranchDocument.CrCasBranchDocumentsEndDate;
+        //            document.CrCasBranchDocumentsDate = CrCasBranchDocument.CrCasBranchDocumentsDate;
+        //            document.CrCasBranchDocumentsNo = CrCasBranchDocument.CrCasBranchDocumentsNo;
+        //            document.CrCasBranchDocumentsImage = CrCasBranchDocument.CrCasBranchDocumentsImage;
+        //            document.CrCasBranchDocumentsReasons = CrCasBranchDocument.CrCasBranchDocumentsReasons;
+        //            document.CrCasBranchDocumentsDateAboutToFinish = CrCasBranchDocument.CrCasBranchDocumentsEndDate?.AddDays(-(double)AboutToExpire);
+        //            document.CrCasBranchDocumentsStatus = Status.Active;
+        //        }
+        //        else if (CrCasBranchDocument.CrCasBranchDocumentsStatus == Status.Deleted)
+        //        {
+        //            document.CrCasBranchDocumentsStartDate = null;
+        //            document.CrCasBranchDocumentsEndDate = null;
+        //            document.CrCasBranchDocumentsDate = null;
+        //            document.CrCasBranchDocumentsNo = null;
+        //            document.CrCasBranchDocumentsImage = null;
+        //            document.CrCasBranchDocumentsReasons = null;
+        //            document.CrCasBranchDocumentsDateAboutToFinish = null;
+        //            document.CrCasBranchDocumentsStatus = Status.Renewed;
+        //        }
+        //        else
+        //        {
+        //            document.CrCasBranchDocumentsImage = CrCasBranchDocument.CrCasBranchDocumentsImage;
+        //            document.CrCasBranchDocumentsReasons = CrCasBranchDocument.CrCasBranchDocumentsReasons;
+        //        }
+
+
+        //        _unitOfWork.CrCasBranchDocument.Update(document);
+        //        await _unitOfWork.CompleteAsync();
+        //        return true;
+        //    }
+        //    return false;
+        //}
     }
 }

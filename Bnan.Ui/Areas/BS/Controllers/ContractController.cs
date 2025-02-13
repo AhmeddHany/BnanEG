@@ -726,12 +726,13 @@ namespace Bnan.Ui.Areas.BS.Controllers
             string pathSignature = string.Empty;
             if (renter != null) return false;
 
-            string foldername = $"{"images\\Bnan\\Renters"}\\{renterVM.CrMasRenterInformationId}";
-
+            
             // Handle signature saving
             if (!string.IsNullOrEmpty(renterVM.CrMasRenterInformationSignature))
             {
-                pathSignature = await FileExtensions.SaveSigntureImage(_hostingEnvironment, renterVM.CrMasRenterInformationSignature, renterVM.CrMasRenterInformationId, string.Empty, foldername);
+                string foldername = $"{"images\\Bnan\\Renters"}\\{renterVM.CrMasRenterInformationId}";
+                string fileName = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                pathSignature = await FileExtensions.SaveSigntureImage(_hostingEnvironment, renterVM.CrMasRenterInformationSignature, string.Empty, foldername, fileName);
                 if (!string.IsNullOrEmpty(pathSignature)) renterVM.CrMasRenterInformationSignature = pathSignature;
             }
 
@@ -1146,10 +1147,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var Renter = await _unitOfWork.CrMasRenterInformation.FindAsync(x => x.CrMasRenterInformationId == renterId);
-            string foldername = $"{"images\\Bnan\\Renters"}\\{Renter.CrMasRenterInformationId}";
+            
             if (Renter != null && !string.IsNullOrEmpty(img))
             {
-                var path = await FileExtensions.SaveSigntureImage(_hostingEnvironment, img, Renter.CrMasRenterInformationId, Renter.CrMasRenterInformationSignature, foldername);
+                string foldername = $"{"images\\Bnan\\Renters"}\\{Renter.CrMasRenterInformationId}";
+                string fileName = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                var path = await FileExtensions.SaveSigntureImage(_hostingEnvironment, img, Renter.CrMasRenterInformationSignature, foldername,fileName);
                 if (!string.IsNullOrEmpty(path) && await _ContractServices.UpdateRenterSignture(Renter.CrMasRenterInformationId, path) && await _unitOfWork.CompleteAsync() > 0) return Json(path);
             }
             return Json(null);

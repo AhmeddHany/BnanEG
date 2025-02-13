@@ -141,11 +141,11 @@ namespace Bnan.Inferastructure.Extensions
             Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
             return Convert.TryFromBase64String(base64, buffer, out _);
         }
-        public static async Task<string?> SaveSigntureImage(this IWebHostEnvironment webHostEnvironment, string img, string RenterId, string oldPath, string folderName)
+        public static async Task<string?> SaveSigntureImage(this IWebHostEnvironment webHostEnvironment, string img, string oldPath, string folderName,string fileNameImg)
         {
             byte[] imgBytes = Convert.FromBase64String(img.Split(",")[1]); // Split to remove the prefix "data:application/pdf;base64,"
             string wwwrootPath = webHostEnvironment.WebRootPath;
-            string fileNameImg = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
+            //string fileNameImg = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
             string fullPath = Path.Combine(wwwrootPath, folderName);
             // Ensure the directory exists
             if (!Directory.Exists(fullPath)) Directory.CreateDirectory(fullPath);

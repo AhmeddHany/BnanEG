@@ -53,6 +53,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var LessorCode = user?.CrMasUserInformationLessor;
             var UserModel = model.UserInformation;
             string foldername = $"{"images\\Company"}\\{user?.CrMasUserInformationLessor}\\{"Users"}\\{user?.CrMasUserInformationCode}";
+            string fileName = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss");
 
             string filePathImage;
             string filePathSignture;
@@ -78,7 +79,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             // Signture 
             if (!string.IsNullOrEmpty(signatureImg1))
             {
-                filePathSignture = await FileExtensions.SaveSigntureImage(_webHostEnvironment, signatureImg1, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, foldername);
+                filePathSignture = await FileExtensions.SaveSigntureImage(_webHostEnvironment, signatureImg1, user.CrMasUserInformationSignature, foldername, fileName);
             }
             else
             {
