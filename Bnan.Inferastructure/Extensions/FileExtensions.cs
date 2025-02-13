@@ -141,11 +141,11 @@ namespace Bnan.Inferastructure.Extensions
             Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
             return Convert.TryFromBase64String(base64, buffer, out _);
         }
-        public static async Task<string?> SaveSigntureImage(this IWebHostEnvironment webHostEnvironment, string img, string RenterId, string oldPath, string folderName)
+        public static async Task<string?> SaveSigntureImage(this IWebHostEnvironment webHostEnvironment, string img, string oldPath, string folderName,string fileNameImg)
         {
             byte[] imgBytes = Convert.FromBase64String(img.Split(",")[1]); // Split to remove the prefix "data:application/pdf;base64,"
             string wwwrootPath = webHostEnvironment.WebRootPath;
-            string fileNameImg = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
+            //string fileNameImg = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
             string fullPath = Path.Combine(wwwrootPath, folderName);
             // Ensure the directory exists
             if (!Directory.Exists(fullPath)) Directory.CreateDirectory(fullPath);
@@ -218,13 +218,12 @@ namespace Bnan.Inferastructure.Extensions
                         GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Users","CAS"+lessorCode),
                         GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches"),
                         GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "Arabic Contract"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "English Contract"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "Arabic Receipt"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "English Receipt"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "Arabic Invoice"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "English Invoice"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "Documentions")
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "Bnan Contract"),
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "Documentions"),
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "Receipt"),
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "Proforma Invoice"),
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "Tax Invoice"),
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches", "100", "Tga Contract"),
                     };
 
             foreach (var path in directoryPaths)
@@ -245,13 +244,12 @@ namespace Bnan.Inferastructure.Extensions
                         GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode),
                         GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches"),
                         GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "Arabic Contract"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "English Contract"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "Arabic Receipt"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "English Receipt"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "Arabic Invoice"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "English Invoice"),
-                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "Documentions")
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "Bnan Contract"),
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "Documentions"),
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "Proforma Invoice"),
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "Receipt"),
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "Tax Invoice"),
+                        GetDirectoryPath(webHostEnvironment.WebRootPath,"images","Company",lessorCode, "Branches",branchCode, "Tga Contract"),
                     };
 
             foreach (var path in directoryPaths)

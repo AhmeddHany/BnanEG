@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Bnan.Core.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bnan.Ui.ViewModels.CAS
 {
@@ -10,6 +11,7 @@ namespace Bnan.Ui.ViewModels.CAS
         public string? CrCasBranchPostShortCode { get; set; }
         public string? CrCasBranchPostRegions { get; set; }
 
+        public string? CrCasBranchPostCityText { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchPostCity { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
@@ -40,5 +42,6 @@ namespace Bnan.Ui.ViewModels.CAS
         public decimal? CrCasBranchInformationLatitude { get; set; }
         public string? CrCasBranchPostStatus { get; set; }
         public string? CrCasBranchPostReasons { get; set; }
+        public CrMasSupPostCity? CrCasBranchPostCityNavigation { get; set; }
     }
 }

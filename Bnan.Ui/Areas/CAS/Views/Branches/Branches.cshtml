@@ -1,106 +1,177 @@
 ﻿@using Bnan.Core.Extensions;
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
+@model List<CrCasBranchInformation>
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = localizer["Branch Data"];
-    ViewData["Page-Hint"] = localizer["Branch Hint"];
 }
 
 
-<style>
-    body {
-        overflow: hidden
-    }
+<div class="col d-flex align-items-center justify-content-center flex-column">
+    <div class="container main-container">
 
-    @@media (max-width: 600px) {
-        #basic-datatable_wrapper .row:first-child > div {
-            text-align: center;
-        }
+        <form action="">
+            <div class="row g-3 mb-2">
+                <div class="col">
+                    <h3> @localizer["Branches"] </h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
 
-            #basic-datatable_wrapper .row:first-child > div:last-child > * {
-                text-align: center;
-            }
-    }
-</style>
-<div class="sub-container">
-    <div class="row mb-2">
-        @*filter*@
-        <div class="col-sm-12 col-md-9">
-            <div class="col-sm-12 col-md-4 p-0">
-                <a type="button" class="btn btn-danger" asp-controller="Home" asp-action="Index"><i class="mdi mdi-window-close"></i> </a>
-                <a onclick="CheckValidation('2201001', '@Status.Insert', '@Url.Action("AddBranch", "Branches")')" class="btn btn-secondary">@localizer["Add Branch Data"]</a>
-            </div>
-        </div>
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search" class="form-control inputs search-input"
+                                   name="search" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
 
-        @*search*@
-        <div class="col-sm-12 col-md-3 p-0">
-            <div class="input-group" style="width: 95%;">
-                <input class="form-control dropdown-toggle" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
-                <span class="mdi mdi-magnify search-icon" style="color:#a7a4a4;"></span>
+                </div>
             </div>
-        </div>
-        <div class="col-sm-12 col-md-12 mt-3" id="status-filter">
-            <div class="form-check form-check-inline">
-                <input type="radio" id="customRadioAll" name="customRadio" value="All" class="form-check-input">
-                <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
+            <div class="row mb-3">
+                <div class="col-12 filters-col">
+                    <div class="filters-custom-order">
+                        <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioAll" name="customRadio" value="All" />
+                    </div>
+
+                    <div class="filters-custom-order">
+                        <label class="form-check-label filter2" for="customRadioActive">@localizer["Active"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioActive" name="customRadio" value="A" checked />
+                    </div>
+
+                    <div class="filters-custom-order">
+                        <label class="form-check-label  filter1" for="customRadioStoped">@localizer["Stoped"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioStoped" name="customRadio" value="H" />
+                    </div>
+                    <div class="filters-custom-order">
+                        <label class="form-check-label filter3" for="customRadioRemoved">@localizer["Deleted"]</label>
+                        <input class="form-check-input custom" type="radio" id="customRadioRemoved" name="customRadio" value="D" />
+                    </div>
+                </div>
             </div>
-            <div class="form-check form-check-inline">
-                <input type="radio" id="customRadioActive" name="customRadio" value="A" class="form-check-input">
-                <label class="form-check-label" for="customRadioActive">@localizer["Active"]</label>
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm  w-100  dataTable">
+                    <partial name="_DataTableBranches">
+                </div>
             </div>
-            <div class="form-check form-check-inline">
-                <input type="radio" id="customRadioStoped" name="customRadio" value="H" class="form-check-input">
-                <label class="form-check-label" for="customRadioStoped">@localizer["Stoped"]</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input type="radio" id="customRadioRemoved" name="customRadio" value="D" class="form-check-input">
-                <label class="form-check-label" for="customRadioRemoved">@localizer["Deleted"]</label>
-            </div>
-        </div>
-    </div>
-    <div class="dataTable">
-        <partial name="_DataTableBranches" />
+        </form>
+        <a href="/CAS/Branches/AddBranch" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Add Branch Data"]" class="new-Page-icon">
+            <img src="~/CasSys/images/new branch.svg" alt="new Branch">
+        </a>
+        <a href="/CAS/Home/Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
+           class="main-page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
     </div>
 </div>
+
 @section scripts {
+    <script src="~/js/toastr.js"></script>
+
     <script>
-        //get lessor By Status function
-        function GetBranchFitler(status) {
+        // لجعل الحالة حسب ما هي جاية من index نشط او الكل
+        $(document).ready(function () {
+            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+        });
+        ///////
+
+        function showErrorToast_NoUpdate() {
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+            toastr.error("@localizer["AuthEmplpoyee_NoUpdate"]");
+        }
+
+        function showErrorToast_whitController(messageText) {
+            $.ajax({
+                url: '@Url.Action("DisplayToastError_NoUpdate", "Users")',
+                type: 'POST',
+                data: { messageText: messageText },
+                success: function (response) {
+                    if (response.success) {
+                        console.log('showErrorToast_whitController : ', messageText);
+                    }
+                },
+                error: function () {
+                    toastr.error('تعذر الاتصال بالخادم');
+                }
+            });
+        }
+    </script>
+    @*Get AccountBank Using filter*@
+    <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        //get AccountBank By Status function
+        function GetBranchFitler(status, search) {
             $.ajax({
                 type: "GET",
                 data: {
-                    status: status
+                    status: status, search: search
                 },
                 url: "@Url.Action("GetBranchesByStatus", "Branches", new { Area = "CAS" })",
                 success: function (response) {
-                    console.log(response)
                     $(".dataTable").html(response);
-                    set_basic_datatable();
                 },
             })
         }
 
-        //on Click Filter Radio Button GetLessorsByStatus
         $("input[name='customRadio']").on("click", function () {
-            // Clear the value from the search input
-            $("#top-search").val("");
-            GetBranchFitler($(this).val())
-        })
+            const status = $(this).val();
+            const search = $("#search").val(); // الحصول على قيمة البحث
+            GetBranchFitler(status, search);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#search").on("keyup", function () {
+            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+            const search = $(this).val(); // الحصول على قيمة البحث
+            GetBranchFitler(status, search);
+        });
     </script>
+   @*  <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var table = document.getElementById("Branches-table");
+            var rows = table.getElementsByTagName("tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName("td");
+
+                for (var j = 1; j < cells.length; j++) {
+                    cells[j].addEventListener("click", function () {
+                        window.location.href = "UpdateBranch.html";
+                        localStorage.setItem('clickedAnchorText', "السجل التجاري");
+                        localStorage.setItem('imageStatus', "existing");
+                    });
+                }
+            }
+        });
+    </script> *@
+    <script>
+       document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector(".dataTable").addEventListener("click", function (event) {
+                if (event.target.classList.contains("Documents")) {
+                    console.log("click");
+                    const currentDropdown = event.target.closest('td')?.querySelector('.dropdown-content');
+
+                    if (!currentDropdown) return; // تجنب الأخطاء إذا لم يكن هناك dropdown
+
+                    const isCurrentlyVisible = currentDropdown.style.display === 'block';
+
+                    document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                        dropdown.style.display = 'none';
+                        console.log("dn");
+                    });
+
+                    if (!isCurrentlyVisible) {
+                        currentDropdown.style.display = 'block';
+                    }
+                }
+            });
+        });
+
+
+    </script>
+
 }
-
-
-<style>
-    .wrapper {
-        margin-bottom: 60px;
-        overflow: hidden;
-        background-image: url("~/Pictures/bg.jpg") !important;
-    }
-
-    .table-bordered td,
-    .table-bordered th {
-        border: none;
-    }
-</style>

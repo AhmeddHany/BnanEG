@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
 
 namespace Bnan.Core.Models
 {
-    public partial class CrMasUserInformation : IdentityUser
+    public partial class CrMasUserInformation:IdentityUser
     {
         public CrMasUserInformation()
         {
@@ -23,7 +25,6 @@ namespace Bnan.Core.Models
             CrMasUserMessageCrMasUserMessageUserSenderNavigations = new HashSet<CrMasUserMessage>();
             CrMasUserProceduresValidations = new HashSet<CrMasUserProceduresValidation>();
             CrMasUserSubValidations = new HashSet<CrMasUserSubValidation>();
-
         }
 
         public string CrMasUserInformationCode { get; set; } = null!;
@@ -64,6 +65,7 @@ namespace Bnan.Core.Models
         public bool? CrMasUserInformationOperationStatus { get; set; }
         public string? CrMasUserInformationStatus { get; set; }
         public string? CrMasUserInformationReasons { get; set; }
+       
 
         public virtual CrMasLessorInformation? CrMasUserInformationLessorNavigation { get; set; }
         public virtual CrMasUserContractValidity CrMasUserContractValidity { get; set; } = null!;
@@ -84,5 +86,6 @@ namespace Bnan.Core.Models
         public virtual ICollection<CrMasUserMessage> CrMasUserMessageCrMasUserMessageUserSenderNavigations { get; set; }
         public virtual ICollection<CrMasUserProceduresValidation> CrMasUserProceduresValidations { get; set; }
         public virtual ICollection<CrMasUserSubValidation> CrMasUserSubValidations { get; set; }
+        
     }
 }

@@ -56,7 +56,8 @@ namespace Bnan.Inferastructure
             CreateMap<CrCasAccountBank, CAS_AccountBankVM>().ReverseMap();
             CreateMap<CrCasAccountSalesPoint, CAS_AccountSalesPointVM>().ReverseMap();
             CreateMap<CrCasOwner, CASContractSourceVM>().ReverseMap();
-            
+            CreateMap<CrCasBranchDocument, BranchDocsVM>().ReverseMap();
+
 
 
 

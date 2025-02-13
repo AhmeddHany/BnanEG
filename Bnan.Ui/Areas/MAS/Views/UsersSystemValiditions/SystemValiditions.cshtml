@@ -26,7 +26,7 @@
 
                 </div>
             </div>
-            <div class="row mb-3">
+            @* <div class="row mb-3">
                 <div class="col-12 filters-col">
                     <div class="filters-custom-order">
                         <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
@@ -45,7 +45,7 @@
                         <input class="form-check-input custom" type="radio" id="customRadioRemoved" name="customRadio" value="D" />
                     </div>
                 </div>
-            </div>
+            </div> *@
             <div class="row table-row px-3">
                 <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
                     <partial name="_DataTableSystemValiditions">
@@ -64,9 +64,9 @@
 
     <script>
         // لجعل الحالة حسب ما هي جاية من index نشط او الكل
-        $(document).ready(function () {
-            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
-        });
+        // $(document).ready(function () {
+        //     $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+        // });
     </script>
     @*Get AccountBank Using filter*@
     <script>
@@ -75,11 +75,11 @@
     </script>
     <script>
         //get AccountBank By Status function
-        function GetUserFitler(status, search) {
+        function GetUserFitler(search) {
             $.ajax({
                 type: "GET",
                 data: {
-                    status: status, search: search
+                    search: search
                 },
                 url: "@Url.Action("GetUserSystemValiditionsByStatus", "UsersSystemValiditions", new { Area = "MAS" })",
                 success: function (response) {
@@ -88,17 +88,12 @@
             })
         }
 
-        $("input[name='customRadio']").on("click", function () {
-            const status = $(this).val();
-            const search = $("#search").val(); // الحصول على قيمة البحث
-            GetUserFitler(status, search);
-        });
+        
 
         // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
         $("#search").on("keyup", function () {
-            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
             const search = $(this).val(); // الحصول على قيمة البحث
-            GetUserFitler(status, search);
+            GetUserFitler(search);
         });
     </script>
 }

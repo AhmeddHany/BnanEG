@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Numerics;
+using Bnan.Ui.ViewModels.MAS;
 namespace Bnan.Ui.Areas.CAS.Controllers
 {
     [Area("CAS")]
@@ -223,9 +224,14 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-
+            var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Update, pageNumber);
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "LessorOwners_CAS");
+            }
             var contract = await _unitOfWork.CrCasOwners.FindAsync(x => x.CrCasOwnersCode == id);
             if (contract == null)
             {
@@ -248,6 +254,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(CASContractSourceVM lessorMarketingVM)
         {
+            var user = await _userManager.GetUserAsync(User);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "LessorOwners_CAS");
+            }
             var all_keys = await _unitOfWork.CrMasSysCallingKeys.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                 predicate: null,
@@ -258,7 +271,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 );
             lessorMarketingVM.keys = all_keys;
 
-            var user = await _userManager.GetUserAsync(User);
             if (user == null && lessorMarketingVM == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });

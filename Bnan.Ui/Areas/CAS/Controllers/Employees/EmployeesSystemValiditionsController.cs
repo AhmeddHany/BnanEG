@@ -158,13 +158,24 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 {
                     var mainTask = _unitOfWork.CrMasUserMainValidations.Find(x => x.CrMasUserMainValidationUser == model.UserId && x.CrMasUserMainValidationMainTasks == checkboxSub.mainTaskId);
                     var subTask = _unitOfWork.CrMasUserSubValidations.Find(x => x.CrMasUserSubValidationUser == model.UserId && x.CrMasUserSubValidationMain == checkboxSub.mainTaskId && x.CrMasUserSubValidationSubTasks == checkboxSub.subTaskId);
+                    var subTaskNoExpand = await _unitOfWork.CrMasSysSubTasks.FindAsync(x => x.CrMasSysSubTasksCode == checkboxSub.subTaskId);
+                    var procedureTask = await _unitOfWork.CrMasUserProceduresValidations.FindAsync(x => x.CrMasUserProceduresValidationCode == model.UserId &&
+                                                                                                        x.CrMasUserProceduresValidationMainTask == checkboxSub.mainTaskId &&
+                                                                                                        x.CrMasUserProceduresValidationSubTasks == checkboxSub.subTaskId);
+
                     if (mainTask.CrMasUserMainValidationAuthorization == true)
                     {
-                        if (subTask != null) subTask.CrMasUserSubValidationAuthorization = checkboxSub.value;
+                        if (subTask != null)
+                        {
+                            subTask.CrMasUserSubValidationAuthorization = checkboxSub.value;
+                            if (subTask.CrMasUserSubValidationAuthorization == true && subTaskNoExpand.CrMasSysSubTasksProceduresExpanded == false) procedureTask.CrMasUserProceduresValidationUpDateAuthorization = true;
+                            else procedureTask.CrMasUserProceduresValidationUpDateAuthorization = false;
+                        }
                     }
                     else
                     {
                         subTask.CrMasUserSubValidationAuthorization = false;
+                        procedureTask.CrMasUserProceduresValidationUpDateAuthorization = false;
                     }
 
                 }
@@ -197,20 +208,20 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                     }
                 }
                 //Save Adminstrive Procedures
-                await _unitOfWork.CompleteAsync();
-                await SaveTracingForUserChange(user, Status.Update);
+                if (await _unitOfWork.CompleteAsync() > 0) await SaveTracingForUserChange(model.UserId, Status.UpdateValidtions);
                 return Json(new { success = true });
             }
             catch (Exception ex)
             {
                 return Json(new { success = false });
             }
-
         }
 
-        private async Task SaveTracingForUserChange(CrMasUserInformation userCreated, string status)
+        private async Task SaveTracingForUserChange(string userCode, string status)
         {
 
+
+            var userCreated = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == userCode);
 
             var recordAr = $"{userCreated.CrMasUserInformationArName} - {userCreated.CrMasUserInformationTasksArName}";
             var recordEn = $"{userCreated.CrMasUserInformationEnName} - {userCreated.CrMasUserInformationTasksEnName}";

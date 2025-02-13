@@ -16,6 +16,7 @@ using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Numerics;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Bnan.Ui.ViewModels.MAS;
 
 namespace Bnan.Ui.Areas.CAS.Controllers.Services
 {
@@ -316,6 +317,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "AccountSalesPoint_CAS");
             }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "AccountSalesPoint_CAS");
+            }
             var this_AccountData = await _unitOfWork.CrCasAccountBank.FindAsync(x => x.CrCasAccountBankCode == contract.CrCasAccountSalesPointAccountBank);
             var This_BankName = await _unitOfWork.CrMasSupAccountBanks.FindAsync(x => x.CrMasSupAccountBankCode == contract.CrCasAccountSalesPointBank);
             var all_branchesNames = await _unitOfWork.CrCasBranchInformation.FindAllWithSelectAsNoTrackingAsync(
@@ -344,7 +351,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 await SetPageTitleAsync(Status.Update, pageNumber);
                 return RedirectToAction("Index", "AccountSalesPoint_CAS");
             }
-
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "AccountSalesPoint_CAS");
+            }
             try
             {
                 var This_BankName = await _unitOfWork.CrMasSupAccountBanks.FindAsync(x=>x.CrMasSupAccountBankCode==Acc_SalesPointVM.CrCasAccountSalesPointBank);

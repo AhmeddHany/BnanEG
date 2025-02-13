@@ -1212,7 +1212,18 @@
     // LessorMemberShip
     "And": "و",
     "Or": "أو",
-    "Memberships": "العضويات"
+    "Memberships": "العضويات",
+    //Branches
+    "RentedSystem": "نظام التأجير",
+    "RentedSystemNo": "رقم الفرع بنظام التأجير",
+    "ModalFirstMessage_Branches_Delete": "حذف بيانات ونتائج1",
+    "ModalSecondMessage_Branches_Delete": "حذف بيانات ونتائج2",
+    "ModalFirstMessage_Branches_UnDelete": "استعادة بيانات ونتائج1",
+    "ModalSecondMessage_Branches_UnDelete": "استعادة بيانات ونتائج2",
+    "ModalFirstMessage_Branches_Hold": "ايقاف بيانات ونتائج1",
+    "ModalSecondMessage_Branches_Hold": "ايقاف بيانات ونتائج2",
+    "ModalFirstMessage_Branches_UnHold": "ارجاع بيانات ونتائج1",
+    "ModalSecondMessage_Branches_UnHold": "ارجاع بيانات ونتائج2"
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 
@@ -1380,7 +1391,7 @@
   "Document Hint": "تمكنك هذه الصفحة من البحث و عرض بيانات مستندات الفروع",
   "Document Type": "نوع المستند",
   "Maintaince_Type": "نوع الصيانة",
-  "TheNumber": "الرقم",
+  "TheNumber": "رقم المستند",
   "Date": "تاريخه",
   "StartDate": "بدايته",
   "EndDate": "نهايته",
@@ -2237,6 +2248,7 @@
 
   //validation on input
   "requiredFiled": "الحقل مطلوب",
+  "requiredFiledGreaterThan0": "الحقل مطلوب ويجب أن يكون أكبر من 0",
   "requiredValidDate": "من فضلك ادخل تاريخ صحيح",
   "requiredAgeAtLeast15": "المستأجر يجب ان يكون 15 سنة على الاقل",
   "requiredNoLengthFiled": "هذا الحقل يلازم {0} ارقام",
@@ -3476,7 +3488,7 @@
     "Active": "قائمة",
     "Closed": "مغلقة",
     "Executed": "منفذة",
-    "Documents": "المستندات",
+    "Documents": "مستندات",
     "Expiredd": "منتهي",
     "EndingSoon": "على وشك",
     "Document": "المستند",

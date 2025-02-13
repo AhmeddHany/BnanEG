@@ -1250,8 +1250,10 @@
     // LessorMemberShip
     "And": "And",
     "Or": "Or",
-    "Memberships": "Memberships"
-
+    "Memberships": "Memberships",
+    //Branches
+    "RentedSystem": "Rental System",
+    "RentedSystemNo": "Rental System Code"
   },
   "ModalAutoLogout": "Your session is about to end!",
   "Arabic": "Arabic",
@@ -1408,7 +1410,7 @@
   "Document Hint": "The page allows you to search and edit branch documents data .",
   "Document Type": "Document Type",
   "Maintaince_Type": "Maintaince Type",
-  "TheNumber": "The Number",
+  "TheNumber": "Document No.",
   "Date": "Document Date",
   "StartDate": "Start Date",
   "EndDate": "End Date",
@@ -2307,6 +2309,7 @@
   "HintSureTodeleteDoc": "Deleting the document will result in its status being returned to 'not registered' while maintaining all previous administrative procedures.",
   //validation on input
   "requiredFiled": "This Field Is Required",
+  "requiredFiledGreaterThan0": "This Field Is Required And Must Be Greater Than 0",
   "requiredValidDate": "Please select a valid date.",
   "requiredAgeAtLeast15": "Renter must be at least 15 years old.",
   "requiredNoLengthFiled": "Please enter exactly {0} numbers.",

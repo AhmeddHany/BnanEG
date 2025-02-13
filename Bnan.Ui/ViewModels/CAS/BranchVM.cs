@@ -1,13 +1,16 @@
-﻿using Bnan.Ui.ViewModels.MAS;
+﻿using Bnan.Core.Models;
+using Bnan.Ui.ViewModels.MAS;
 using System.ComponentModel.DataAnnotations;
 
 namespace Bnan.Ui.ViewModels.CAS
 {
     public class BranchVM
     {
-        public string CrCasBranchInformationLessor { get; set; } = null!;
-        public string CrCasBranchInformationCode { get; set; } = null!;
+        public string? CrCasBranchInformationLessor { get; set; } 
+        public string? CrCasBranchInformationCode { get; set; } 
         public string? CrCasBranchInformationArTga { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
+        public string? CrCasBranchInformationTgaCode { get; set; }
         public string? CrCasBranchInformationEnTga { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchInformationArName { get; set; }
@@ -17,11 +20,11 @@ namespace Bnan.Ui.ViewModels.CAS
         public string? CrCasBranchInformationEnName { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchInformationEnShortName { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
-        [RegularExpression(@"^7\d{9}$", ErrorMessage = "requiredNoLengthFiled10")]
+        //[Required(ErrorMessage = "requiredFiled")]
+        //[RegularExpression(@"^7\d{9}$", ErrorMessage = "requiredNoLengthFiled10")]
         public string? CrCasBranchInformationGovernmentNo { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
-        [StringLength(15, MinimumLength = 15, ErrorMessage = "requiredNoLengthFiled15")]
+        //[Required(ErrorMessage = "requiredFiled")]
+        //[StringLength(15, MinimumLength = 15, ErrorMessage = "requiredNoLengthFiled15")]
         public string? CrCasBranchInformationTaxNo { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrCasBranchInformationDirectorArName { get; set; }
@@ -38,7 +41,12 @@ namespace Bnan.Ui.ViewModels.CAS
         public decimal? CrCasBranchInformationAvailableBalance { get; set; }
         public string? CrCasBranchInformationDirectorSignature { get; set; }
 
-        public BranchPost1VM BranchPostVM { get; set; }
+        public int? CarsCount { get; set; }
+        public int? AvaliableCarsCount { get; set; }
+        public int? UnAvaliableCarsCount { get; set; }
+        public int? RentedCarsCount { get; set; }
+        public BranchPost1VM? BranchPostVM { get; set; }
+        public List<BranchDocsVM>? BranchDocsVM { get; set; }
 
     }
 }

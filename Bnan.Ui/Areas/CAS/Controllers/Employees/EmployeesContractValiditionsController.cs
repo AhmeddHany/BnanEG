@@ -6,6 +6,7 @@ using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -144,6 +145,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
         [HttpPost]
         public async Task<IActionResult> Edit(ContractValiditionsVM contractValiditionsVM)
         {
+            var userLogin = await _userManager.GetUserAsync(User);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(userLogin.CrMasUserInformationCode, pageNumber, Status.Update))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "EmployeesContractValiditions");
+            }
             // التحقق فقط من الحقول التي تحتوي على Range
             var validationResults = new List<ValidationResult>();
 
@@ -164,7 +172,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             }
 
             // معالجة باقي البيانات بعد التحقق من الحقول
-            var userLogin = await _userManager.GetUserAsync(User);
             var userEdited = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == contractValiditionsVM.CrMasUserContractValidityUserId);
             var contractValidition = await _unitOfWork.CrMasUserContractValidity.FindAsync(x => x.CrMasUserContractValidityUserId == contractValiditionsVM.CrMasUserContractValidityUserId);
 

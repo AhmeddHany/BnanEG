@@ -11,8 +11,11 @@ namespace Bnan.Inferastructure.Repository
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> AddPostBranch(CrCasBranchPost CrCasBranchPost, CrMasSupPostCity City)
+        public async Task<bool> AddPostBranch(CrCasBranchPost CrCasBranchPost)
         {
+            var City = await _unitOfWork.CrMasSupPostCity.FindAsync(l => l.CrMasSupPostCityCode == CrCasBranchPost.CrCasBranchPostCity);
+            if (City == null) return false;
+            
             var concatenatedArAddress = "";
             var concatenatedEnAddress = "";
             var concatenatedArAddressShort = "";
@@ -134,8 +137,10 @@ namespace Bnan.Inferastructure.Repository
             return branches;
         }
 
-        public bool UpdatePostBranch(CrCasBranchPost CrCasBranchPost, CrMasSupPostCity City)
+        public async Task<bool> UpdatePostBranch(CrCasBranchPost CrCasBranchPost)
         {
+            var City = await _unitOfWork.CrMasSupPostCity.FindAsync(l => l.CrMasSupPostCityCode == CrCasBranchPost.CrCasBranchPostCity);
+            if (City == null) return false;
             var BranchPost = _unitOfWork.CrCasBranchPost.Find(x => x.CrCasBranchPostLessor == CrCasBranchPost.CrCasBranchPostLessor && x.CrCasBranchPostBranch == CrCasBranchPost.CrCasBranchPostBranch);
             var Branch = _unitOfWork.CrCasBranchInformation.Find(x => x.CrCasBranchInformationLessor == CrCasBranchPost.CrCasBranchPostLessor && x.CrCasBranchInformationCode == CrCasBranchPost.CrCasBranchPostBranch);
             var concatenatedArAddress = "";

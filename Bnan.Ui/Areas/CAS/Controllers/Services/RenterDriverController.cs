@@ -10,6 +10,7 @@ using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
 using Bnan.Ui.ViewModels.CAS.Services;
+using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,6 @@ using NToastNotify;
 using Pipelines.Sockets.Unofficial.Buffers;
 using System.Globalization;
 using System.Numerics;
-using ErrorResponse = Bnan.Ui.ViewModels.CAS.ErrorResponse;
 
 namespace Bnan.Ui.Areas.CAS.Controllers.Services
 {

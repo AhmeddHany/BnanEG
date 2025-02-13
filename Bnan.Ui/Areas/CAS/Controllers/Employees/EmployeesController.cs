@@ -10,6 +10,7 @@ using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS.Employees;
 using Bnan.Ui.ViewModels.Identitiy;
 using Bnan.Ui.ViewModels.MAS;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -287,6 +288,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
         {
             var userLogin = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(Status.Update, pageNumber);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(userLogin.CrMasUserInformationCode, pageNumber, Status.Update))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Employees");
+            }
             var userUpdated = await _unitOfWork.CrMasUserInformation.FindAsync(x => !id.StartsWith("CAS") && x.CrMasUserInformationCode == id);
             if (userUpdated == null)
             {
@@ -356,7 +363,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 {
                     var userLogin = await _userManager.GetUserAsync(User);
                     await SetPageTitleAsync(Status.Update, pageNumber);
-
+                    // Check Validition
+                    if (!await _baseRepo.CheckValidation(userLogin.CrMasUserInformationCode, pageNumber, Status.Update))
+                    {
+                        _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                        return RedirectToAction("Index", "Employees");
+                    }
                     var user = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == model.CrMasUserInformationCode);
                     if (user == null || user.CrMasUserInformationCode == userLogin.CrMasUserInformationCode)
                     {
@@ -504,7 +516,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
         }
 
         [HttpPost]
-        public async Task<IActionResult> MyAccount(RegisterViewModel model, string UserSignatureFile, IFormFile UserImgFile)
+        public async Task<IActionResult> MyAccount(RegisterViewModel model, string SigntureFile, IFormFile UserImgFile)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -537,10 +549,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
 
             }
 
-            if (!string.IsNullOrEmpty(UserSignatureFile))
+            if (!string.IsNullOrEmpty(SigntureFile))
             {
-                string fileNameSignture = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقتs
-                filePathSignture = await _hostingEnvironment.SaveSigntureImage(UserSignatureFile, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, foldername);
+                filePathSignture = await _hostingEnvironment.SaveSigntureImage(SigntureFile, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, foldername);
             }
             else if (string.IsNullOrEmpty(oldPathSignture))
             {
