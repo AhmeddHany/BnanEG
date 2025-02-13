@@ -11,29 +11,8 @@
 }
 <link href="~/css/toastr.css" rel="stylesheet" />
 
-<style>
-
-    /* العنصر الذي سيتم محاذاته */
-    .LoaderRun_Center_div {
-        width: 1900px;
-        height: 950px;
-        /*background-color: #3498db;*/
-        text-align: center;
-        /*color: white;*/
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        z-index: 4;
-    }
-</style>
-
 @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
 
-<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
-    <div class="content LoaderRun_Center_div">
-        <div class="loader"></div>
-    </div>
 
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
@@ -93,7 +72,6 @@
         </a>
     </div>
     </div>
-</div>
 
 @section scripts {
     <script src="~/js/toastr.js"></script>
@@ -102,7 +80,7 @@
         // لجعل الحالة حسب ما هي جاية من index نشط او الكل
         $(document).ready(function () {
             $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
         });
         ///////
 
@@ -135,7 +113,7 @@
     <script>
         //get LessorOwners_CAS By Status function
         function GetLessorOwners_CASFitler(status, search) {
-            $(".LoaderRun_Center_div").css("display", "flex"); //  loader بحميل الصفحة
+            $("#min-loader").removeClass("d-none"); //  loader بحميل الصفحة
             $.ajax({
                 type: "GET",
                 data: {
@@ -146,7 +124,7 @@
                     $(".dataTable").html(response);
                 },
             })
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
         }
 
         $("input[name='customRadio']").on("click", function () {

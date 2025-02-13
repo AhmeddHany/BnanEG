@@ -41,7 +41,8 @@
                 var nationality = " ";
                 var RenterName = " ";
                 var lastDateContract = " ";
-                var SignatureImage = single.SignatureImage?.Replace("~", "") ?? "/CasSys/images/توقيع.svg";
+                var SignatureImage = single.SignatureImage?.Replace("~", "") ?? "/MasSystem/images/توقيع.svg";
+                //var SignatureImage = "/MasSystem/images/توقيع.svg";
                 if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                 {
 
@@ -112,7 +113,7 @@
                                                         <div class="row align-items-center justify-content-end">
                                                             <div class="col-auto">
                                                                 <div class="signatureee">
-                                                                    <img src="@SignatureImage">
+                                                        <img src="@SignatureImage" style="max-height:45px;">
                                                                 </div>
                                                             </div>
                                                         </div>

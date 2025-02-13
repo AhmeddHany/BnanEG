@@ -1,0 +1,588 @@
+﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.CAS;
+@using Bnan.Ui.ViewModels.CAS.Renters;
+@using Microsoft.AspNetCore.Identity;
+@using Newtonsoft.Json;
+﻿@using Microsoft.AspNetCore.Builder;
+@using Microsoft.AspNetCore.Localization;
+@using Microsoft.AspNetCore.Http.Features;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.EntityFrameworkCore;
+@using Microsoft.Extensions.Options;
+@using System.Globalization;
+@model Cas_RenterMessages_VM
+@inject UserManager<CrMasUserInformation> userManager
+@inject SignInManager<CrMasUserInformation> signinManager
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    ViewData["Page-title"] = @localizer["RenterMessages Data"];
+    ViewData["Page-Hint"] = @localizer["RenterMessages Hint"];
+}
+
+@*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">*@
+
+
+
+<div class="col d-flex align-items-center justify-content-center">
+    <div class="container main-container">
+        <form action="">
+            <td hidden> <input type="text" id="This_Company_Mail" name="This_Company_Mail" value="@(Model.thisCompanyData?.CrMasLessorInformationContEmail?.Trim())" hidden /></td>
+            <div class="row g-3 mb-2">
+                <div class="col">
+                    <h3>@localizer["RenterMessages_Companies"]</h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
+
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                                <input type="search" id="search2" class="form-control inputs search-input"
+                                       name="search2" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row table-row px-3">
+                    <div class="col  scroll-table-div  table-responsive-sm  w-100  dataTable">
+                        <table class=" tables-style table table-borderless " id="Table">
+                        <thead class="sticky-top">
+                            <tr>
+                                <th class="DifferAlign"> @localizer["Email"]</th>
+                                <th> @localizer["FTR_All_Total_Money_Transaction"]</th>
+                                <th> @localizer["FTR_Balance"]</th>
+                                <th class="DifferAlign"> @localizer["Evaluation"]</th>
+                                <th class="DifferAlign"> @localizer["RenterInformationAddress"]</th>
+                                <th class="DifferAlign"> @localizer["Renter_Name"]</th>
+                                <th>
+                                    <div class="d-flex gap-2 flex-row-reverse align-items-end">
+                                        <input class="form-check-input checkbox"
+                                               type="checkbox" value="checked"
+                                               id="All"
+                                               name="All"
+                                               onclick="toggleAllCheckboxes(this)">
+                                        <label class="form-check-label"
+                                               for="All">
+                                            @localizer["RenterMessages_All"]
+                                        </label>
+                                    </div>
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(var x=1;x<Model.all_Renters.Count;x++){
+                                var item = Model.all_Renters[x];
+                                var status_sms = Model.all_status_sms.Find(x => x.Renter_Code == item.CrCasRenterLessorId);
+                                <tr>
+                                    <td hidden> <input type="text" id="mob_@(item.CrCasRenterLessorId)" name="mob_@(item.CrCasRenterLessorId)" value="@(item.CrCasRenterLessorNavigation.CrMasRenterInformationCountreyKey?.Trim() + item.CrCasRenterLessorNavigation.CrMasRenterInformationMobile?.Trim())" hidden /></td>
+                                    <td hidden> <input type="text" id="mail_@(item.CrCasRenterLessorId)" name="mail_@(item.CrCasRenterLessorId)" value="@(item.CrCasRenterLessorNavigation.CrMasRenterInformationEmail?.Trim())" hidden /></td>
+                                    <td hidden> <input type="text" id="sms_@(item.CrCasRenterLessorId)" name="sms_@(item.CrCasRenterLessorId)" value="@(status_sms?.sms_Status?.Trim()??"0")" hidden /></td>
+                                    <td class="DifferAlign">
+                                        <p>@item.CrCasRenterLessorNavigation.CrMasRenterInformationEmail</p>
+                                    </td>
+                                    @*<td class="DifferAlign">@(item.CrCasRenterLessorNavigation.CrMasRenterInformationCountreyKey?.Trim() + item.CrCasRenterLessorNavigation.CrMasRenterInformationMobile?.Trim())</td>*@
+                                    <td>
+                                        <p>@item.CrCasRenterLessorContractTradedAmount?.ToString("N2",CultureInfo.InvariantCulture)</p>
+                                    </td>
+                                    <td>
+                                        <p>@item.CrCasRenterLessorBalance?.ToString("N2",CultureInfo.InvariantCulture)</p>
+                                    </td>
+                                    <td class="DifferAlign">
+                                        <p>
+                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.Rates?.Find(x=>x.CrMasSysEvaluationsCode == item.CrCasRenterLessorDealingMechanism?.Trim())?.CrMasSysEvaluationsEnDescription :
+                                                Model.Rates?.Find(x => x.CrMasSysEvaluationsCode == item.CrCasRenterLessorDealingMechanism?.Trim())?.CrMasSysEvaluationsArDescription)
+                                        </p>
+                                    </td>
+                                    <td class="DifferAlign" style="  max-width:180px;">
+                                        <p>
+                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrCasRenterLessorNavigation?.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateEnName :
+                                                item.CrCasRenterLessorNavigation?.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateArName)
+                                        </p>
+                                    </td>
+                                    <td class="DifferAlign" style="  max-width:200px;">
+                                        <p class="FirstLineP">
+                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName : item.CrCasRenterLessorNavigation?.CrMasRenterInformationArName)
+                                        </p>
+                                        <p class="secondLineP"> @item.CrCasRenterLessorId </p>
+                                    </td>
+                            <td style="width: 10px;">
+                                <div class="d-flex justify-content-end">
+                                    <input class="form-check-input checkbox"
+                                            type="checkbox" value="checked"
+                                            name="@item.CrCasRenterLessorId">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="filter-number-td">
+                                    <div>@(x)</div>
+                                </div>
+                            </td>
+                        </tr>
+                            }                               
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </form>
+        @*<button class="bg-transparent border-0 new-Page-icon" data-bs-toggle="modal" id="MessagesModalBtn" data-bs-target="#MessagesModal">*@
+        <button class="bg-transparent border-0 new-Page-icon" data-bs-toggle="modal" id="MessagesModalBtn">
+                <img data-bs-toggle="tooltip" data-bs-placement="top"
+                 data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["RenterMessages_CreateNewMessage"]"
+                 src="~/MasSystem/images/new messeges.svg" alt="new Branch">
+        </button>
+        <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["RenterMessages_BackToHome"]"
+           class="main-page-icon"><img src="~/MasSystem/images/back to main.svg" alt="man"></a>
+    </div>
+</div>
+
+<!--Messages Modal -->
+<div class="modal fade" id="MessagesModal" tabindex="-1" aria-labelledby="MessagesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered  modal-lg">
+        <div class="modal-content pb-5" style="border: 2px solid var(--main-color);">
+            <div class="modal-header border-0">
+                <h1 class="modal-title fs-5 m-auto" id="MessagesModalLabel">@localizer["RenterMessages_CompaniesMessages"]</h1>
+                <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="MessageForm">
+                    <div class="row justify-content-evenly">
+                        <div class="col-auto">
+                            <div class="row flex-column g-3">
+                                <div class="col-auto">
+                                    <div class="messageWay" id="div_sms">
+                                        <input class="form-check-input" type="radio" name="sendway" value="sms" id="sms">
+                                        <label class="form-check-label" for="sms">
+                                            <img src="~/MasSystem/images/sms.svg">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="messageWay" id="div_whatsapp">
+                                        <input class="form-check-input" type="radio" name="sendway" value="whatsapp" id="whatsapp">
+                                        <label class="form-check-label" for="whatsapp">
+                                            <img src="~/MasSystem/images/whatsup.svg">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="messageWay" id="div_email">
+                                        <input class="form-check-input" type="radio" name="sendway" value="email" id="email">
+                                        <label class="form-check-label" for="email">
+                                            <img src="~/MasSystem/images/email.svg">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col col-md-9 d-flex align-items-end">
+                            <div class="d-flex gap-3 w-100 align-items-end">
+                                <div class="d-flex flex-column w-100 gap-3">
+                                    <!-- Files to be selected -->
+                                    <input type="file" class="file-input hide" name="file-input" id="file-input" multiple>
+                                    <div class="row">
+                                        <div class="col-md-6 d-flex align-items-end" id="TitleSubjectContainer">
+                                            <!-- Email Subject input will be appended dynamically here -->
+                                        </div>
+                                        <div class="col-md-6 d-flex align-items-end justify-content-end">
+                                            <div class="filename-container hide"></div> <!-- This will hold the file items (images) -->
+                                        </div>
+                                    </div>
+                                    <div class="input-container">
+                                        <input type="text" id="messageContent" class="form-control messageinput" name="messageContent" placeholder="@localizer["RenterMessages_Chating"]">
+                                        <label for="file-input" id="clip" class="d-none">
+                                            <i class="fa fa-paperclip" aria-hidden="true"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="sendmessage bg-transparent border-0">
+                                    <img src="~/MasSystem/images/Frame (10).svg" alt="Send">
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+
+@*    <!-- تحميل مكتبة jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- تحميل مكتبة DataTables -->
+    <script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    <!-- script to display the inputs based on the send way -->*@
+    
+
+
+    <!-- local script -->
+    <script>
+        function toggleAllCheckboxes(allCheckbox) {
+            const checkboxes = document.querySelectorAll('.checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = allCheckbox.checked;
+            });
+        }
+
+        function showErrorToast_No_Company() {
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+            toastr.error("@localizer["No_Renter_choosed"]");
+        }
+        function showErrorToast_No_Ways() {
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+            toastr.error("@localizer["No_connect_way"]");
+        }
+        function showToast_successfuly() {
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+            toastr.success("@localizer["ToastSave"]");
+        }
+        function showErrorToast_any_error(messageText) {
+            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+            toastr.error("" + messageText + "");
+        }
+    </script>
+    <!-- script to store the checked checboks before open message modal  -->
+    <script>
+        document.getElementById('MessagesModalBtn').addEventListener('click', function () {
+            $("#sms").prop("disabled", true);
+            $("#WhatsApp").prop("disabled", true);
+            $("#email").prop("disabled", true);
+            $("#div_sms").css("opacity", 0.5);
+            $("#div_whatsapp").css("opacity", 0.5);
+            $("#div_email").css("opacity", 0.5);
+            $('#clip').removeClass('d-none');
+            console.log("page2");
+
+            const checkedValues = Array.from(document.querySelectorAll('.checkbox:checked')).map(checkbox => checkbox.name);
+            console.log(checkedValues);
+            var sms = true;
+            var mobile = true;
+            var mail = true;
+            if (checkedValues.length > 0) {
+                if (checkedValues[0]=="All"){
+                    checkedValues.splice(0, 1);
+                }
+                for (let i = 0; i < checkedValues.length;i+=1) {
+                    var this_sms = $("#sms_" + checkedValues[i] + "").val();
+                    console.log(this_sms);
+                    if (this_sms != "A") sms = false;
+                    var this_mobile = $("#mob_" + checkedValues[i]+ "").val();
+                    if (this_mobile.length < 5) mobile = false;
+                    var this_mail = $("#mail_" + checkedValues[i] + "").val();
+                    if (this_mail.length < 5) mail = false;
+                    console.log({ this_sms, this_mobile, this_mail });
+                }
+                let This_Company_Mail = $("#This_Company_Mail").val();
+                if (This_Company_Mail.length < 5) mail = false;
+                if (sms == true) {
+                    $("#sms").prop("disabled", false);
+                    $("#div_sms").css("opacity", 1);
+                }
+                if (mobile == true) {
+                    $("#WhatsApp").prop("disabled", false);
+                    $("#div_whatsapp").css("opacity", 1);
+                }
+                if (mail == true) {
+                    $("#email").prop("disabled", false);
+                    $("#div_email").css("opacity", 1);
+                }
+                
+                if (sms == true || mobile == true || mail == true){
+                    $('input[name="sendway"]:not(:disabled)').prop('checked', true);
+                    $('input[name="sendway"]:checked').closest('.messageWay').addClass('active');
+                    let selectedOption3 = $('input[name="sendway"]:checked').val();
+                    $('input[name="sendway"]:checked').trigger('change');
+                    if (selectedOption3 === 'sms') { $('#clip').addClass('d-none'); }
+                    $("#MessagesModal").modal("show");
+                }
+                else{
+                    showErrorToast_No_Ways();
+                }
+            }
+            else{
+                showErrorToast_No_Company();
+            }
+        });
+    </script>
+    <!-- adding active to the slected send way  -->
+    <script>
+        const radioButtons = document.querySelectorAll('input[name="sendway"]');
+
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function () {
+                document.querySelectorAll('.messageWay').forEach(el => el.classList.remove('active'));
+
+                if (this.checked) {
+                    this.closest('.messageWay').classList.add('active');
+                }
+            });
+        });
+    </script>
+
+    <!-- script to display the inputs based on the send way -->
+    <script>
+        $(document).ready(function () {
+            var this_comb_mail = $('#This_Company_Mail').val();
+            console.log(this_comb_mail);
+            $('input[name="sendway"]').change(function () {
+                var selectedOption = $('input[name="sendway"]:checked').val();
+                $('#file-input').val('');
+                $('.filename-container').empty().addClass('hide');
+                console.log("page1");
+                if (selectedOption === 'whatsapp') {
+
+                    $('#clip').removeClass('d-none');
+                    $('#TitleSubjectContainer').empty();
+                } else if (selectedOption === 'email') {
+
+                    $('#clip').removeClass('d-none');
+
+                    if ($('#TitleSubjectContainer').children().length === 0) {
+                        var TitleSubjectInput = $('<input>', {
+                            type: 'text',
+                            id: 'TitleSubject',
+                            class: 'form-control TitleInput',
+                            name: 'TitleSubject',
+                            placeholder: '@localizer["RenterMessages_address"]',
+                        });
+                        $('#TitleSubjectContainer').append(TitleSubjectInput);
+                    }
+                } else {
+                    $('#clip').addClass('d-none');
+                    $('#TitleSubjectContainer').empty();
+                }
+            });
+
+            $('input[name="sendway"]:checked').trigger('change');
+        });
+    </script>
+   
+
+    <!-- script for uploding and display images , files using the clip inside the message input -->
+    <script>
+        $(document).ready(function () {
+            var selectedFiles = [];
+
+            $('.file-input').change(function (e) {
+                var files = e.target.files;
+                var filenameContainer = $('.filename-container');
+                filenameContainer.empty();
+                selectedFiles = [];
+
+                for (var i = 0; i < files.length; i++) {
+                    (function (file) {
+                        selectedFiles.push(file);
+
+                        var fileWrapper = $('<div>').addClass('file-item');
+
+                        if (file) {
+                            if (file.type.startsWith('image/')) {
+                                var reader = new FileReader();
+                                reader.onload = function (event) {
+                                    var imgElement = $('<img>').attr('src', event.target.result).addClass('file-thumbnail');
+                                    var overlay = $('<div>').addClass('overlay');
+                                    var removeButton = $('<span>').addClass('remove-file-btn');
+                                    removeButton.html('<i class="fa-solid fa-xmark"></i>');
+
+                                    removeButton.on('click', function () {
+                                        fileWrapper.remove();
+                                        selectedFiles = selectedFiles.filter(f => f !== file);
+                                    });
+
+                                    fileWrapper.append(overlay);
+                                    fileWrapper.append(removeButton);
+                                    fileWrapper.append(imgElement);
+                                    filenameContainer.append(fileWrapper);
+                                };
+                                reader.readAsDataURL(file);
+                            } else {
+                                var icon = $('<i>').addClass('fa fa-file file-icon');
+                                var overlay = $('<div>').addClass('overlay');
+                                var fileName = $('<div>').addClass('file-name').text(file.name);
+                                var removeButton = $('<span>').addClass('remove-file-btn');
+                                removeButton.html('<i class="fa-solid fa-xmark"></i>');
+
+                                removeButton.on('click', function () {
+                                    fileWrapper.remove();
+                                    selectedFiles = selectedFiles.filter(f => f !== file);
+                                });
+                                fileWrapper.append(overlay);
+                                fileWrapper.append(icon).append(fileName).append(removeButton);
+                                filenameContainer.append(fileWrapper);
+                            }
+                        }
+                    })(files[i]);
+                }
+            });
+
+            // Handle form submission
+            $('#MessageForm').submit(async function (event) {
+                event.preventDefault();
+
+                // //const checkedValues2 = Array.from(document.querySelectorAll('.checkbox:checked')).map(checkbox => checkbox.name);
+                // Create a new FormData object to hold the files
+                var formData = new FormData();
+                selectedFiles.forEach(function (file) {
+                    formData.append('files', file);
+                });
+
+
+                // Log the files being sent
+                console.log('Files to be submitted:');
+                selectedFiles.forEach(function (file) {
+                    console.log('File Name:', file.name, 'File Size:', file.size, 'File Type:', file.type);
+                });
+
+                const text = $("#messageContent").val();
+                const address = $("#TitleSubject").val();
+                formData.append('text', text);
+                formData.append('address', address);
+
+
+                // الحصول على كل القيم المحددة
+                const selectedValues = Array.from(document.querySelectorAll('.checkbox:checked')).map(checkbox => checkbox.name);
+
+                // عرض القيم المحددة
+                console.log(selectedValues);
+                formData.append('selectedValues', selectedValues);
+
+                var all_mobiles = [];
+                var all_mails = [];
+
+                selectedValues.forEach(function (company) {
+                    var this_mobile2 = $("#mob_" + company + "").val();
+                    var this_mail2 = $("#mail_" + company + "").val();
+                    all_mobiles.push(this_mobile2);
+                    all_mails.push(this_mail2);
+                });
+                formData.append('all_mobiles', all_mobiles);
+                formData.append('all_mails', all_mails);
+
+
+                // Uncomment this section to perform the actual AJAX request
+                /*
+                $.ajax({
+                    url: 'your-submit-url', // Replace with your URL
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // Handle success
+                        console.log('Files submitted successfully:', response);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error
+                        console.error('Submission failed:', error);
+                    }
+                });
+                */
+                
+        //$.ajax({
+        //url: "@Url.Action("send_ToAll_Whatsapp", "RenterMessages", new { Area = "CAS" })", // Replace with your URL
+        //type: 'POST',
+        //data: formData,
+        //processData: false,  // مهم جدًا لرفع الملفات
+        //contentType: false,  // مهم جدًا لرفع الملفات
+        //success: function(response) {
+        // // Handle success
+        // console.log('Files submitted successfully:', response);
+        //},
+        //error: function(xhr, status, error) {
+        // // Handle error
+        // console.error('Submission failed:', error);
+        //}
+        //});
+                var selectedOption2 = $('input[name="sendway"]:checked').val();
+                if (selectedOption2 === 'sms') {
+                    //await send_ToAll_Whatsapp(formData);
+                }
+                else if (selectedOption2 === 'whatsapp') {
+                    await send_ToAll_Whatsapp(formData);
+                }
+                else if (selectedOption2 === 'email') {
+                    await send_ToAll_Email(formData);
+                }
+                $("#MessagesModal").modal("hide");
+            });
+        });
+    </script>
+    <script>
+
+
+        async function send_ToAll_Whatsapp(formData) {
+            return new Promise((resolve, reject) => {
+
+            $.ajax({
+                type: "post",
+                data: formData,
+                processData: false,  // مهم جدًا لرفع الملفات
+                contentType: false,  // مهم جدًا لرفع الملفات
+                    url: "@Url.Action("send_ToAll_Whatsapp", "RenterMessages", new { Area = "CAS" })",
+                success: function (response) {
+                    //$("#min-loader").toggleClass("d-none", true);
+                    //$(".chart22").html(response);
+                    console.log(response);
+                        if (response.status == true && response.message == '@ApiResponseStatus.Success') {
+                            showToast_successfuly();
+                    }
+                    else{
+                            showErrorToast_any_error(response.message);
+                    }
+                    resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                },
+                error: function (error) {
+                        showErrorToast_any_error("@localizer["ToastFailed"]");
+                    reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                }
+            });
+            });
+        }
+        async function send_ToAll_Email(formData) {
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    type: "post",
+                    data: formData,
+                    processData: false,  // مهم جدًا لرفع الملفات
+                    contentType: false,  // مهم جدًا لرفع الملفات
+                    url: "@Url.Action("send_ToAll_Email", "RenterMessages", new { Area = "CAS" })",
+                    success: function (response) {
+                        //$("#min-loader").toggleClass("d-none", true);
+                        //$(".chart22").html(response);
+                        console.log(response);
+                        if (response.status == true && response.message == '@ApiResponseStatus.Success') {
+                            showToast_successfuly();
+                        }
+                        else {
+                            showErrorToast_any_error(response.message);
+                        }
+                        resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
+                    },
+                    error: function (error) {
+                        showErrorToast_any_error("@localizer["ToastFailed"]");
+                        reject(error); // إذا حدث خطأ في الطلب، نستخدم reject
+                    }
+                });
+            });
+        }
+        
+    </script>
+    
+}
+

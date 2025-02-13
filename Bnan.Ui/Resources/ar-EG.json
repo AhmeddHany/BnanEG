@@ -477,7 +477,7 @@
     "the_Renter": "المستأجر",
     "RenterInformation_one_Data": "بيانات المستأجر",
     "the_no": "رقمها",
-    "LastVisit_s": "اخر زيارة",
+    "LastVisit_s": "آخر زيارة",
     "FirstVisit_s": "اول زيارة",
     "LastContract_s": "اخر عقد",
     "ContractCount_s": "عدد العقود",
@@ -688,7 +688,7 @@
     "RenterInformations_Data": "بيانات المستأجرين",
     "RenterInformations_Details": "بيانات المستأجر",
     "hisNum": "رقمها",
-    "blockUser": "حظر المستخدم",
+    "blockUser": "حظر المستأجر",
     "RenterInformationNameEn": "اسم المستأجر بالانجليزي",
     "RenterInformationName": "المستأجر",
     "RenterInformationName_Car": "السيارة",
@@ -1172,6 +1172,19 @@
     "SMSNotConnect": "يرجى توصيل خدمة الرسائل القصيرة للاستفادة من المميزات.",
     "WhatsupNotConnect": "يرجى توصيل خدمة واتساب للاستفادة من المميزات.",
 
+    //CAS RenterMessages
+    "RenterMessages_Companies": "قائمة المستأجرين",
+    "RenterMessages_All": "الكل",
+    "RenterMessages_CreateNewMessage": "إنشاء رسالة جديدة",
+    "RenterMessages_BackToHome": "العودة الي الرئيسية",
+    "RenterMessages_CompaniesMessages": "رسائل للمستأجرين",
+    "RenterMessages_Chating": "مراسلة",
+    "RenterMessages_address": "العنوان",
+    "RenterMessages_M_phoneAndMessageRequired": "رقم الهاتف والرسالة مطلوبان",
+    "RenterMessages_address_M_ErrorPart1": "حدث خطأ أثناء إرسال الرسالة للمستأجر رقم:",
+    "RenterMessages_address_M_ErrorPart2": "وكل ما بعدها",
+    "RenterMessages_address_M_Error_BnanPhone_notConnected": "جوال الشركة غير متصل",
+    "No_Renter_choosed": "الرجاء اختيار مستأجر",
 
     // CAS Owners
     "ModalFirstMessage_LessorOwners_CAS_Delete": "سيترتب على حذف بيانات المالك حذفه من قائمة الملاك مع الاحتفاظ بجميع الاجراءات المالية والإدراية والعقود",
@@ -1988,7 +2001,7 @@
   //RenterBalances --------
   "RenterBalances Hint": "تمكنك الصفحة من الإطلاع والبحث وعرض المستأجرين ومديوناتهم",
   "RenterBalances_New Hint": "تمكنك هذه الصفحة من البحث وعرض بيانات مديونات المستأجرين وليس لديهم عقود قائمة",
-  "RenterBalances Data": "مديونات المستأجرين",
+  "RenterBalances Data": "مديونيات المستأجرين",
   "Edit RenterBalances Data": "البيانات التفصيلية لمديونات المستأجر",
   "Edit RenterBalances Hint": "تمكنك هذه الصفحة من البحث والإطلاع على تفاصيل مديونات المستأجرين",
 

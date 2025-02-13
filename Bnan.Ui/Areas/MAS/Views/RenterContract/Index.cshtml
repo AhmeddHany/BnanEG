@@ -1,6 +1,7 @@
 ﻿
 
 @using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.MAS
 @* @model IEnumerable<CrMasRenterInformation>
 *@
 @model RenterContractVM
@@ -12,33 +13,7 @@
     ViewData["Page-title"] = @localizer["RenterInformations Data"];
     ViewData["Page-Hint"] = @localizer["RenterInformations Hint"];
 }
-<style>
 
-    /* العنصر الذي سيتم محاذاته */
-    .LoaderRun_Center_div {
-        width: 1900px;
-        height: 850px;
-        /*background-color: #3498db;*/
-        text-align: center;
-        /*color: white;*/
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position:fixed;
-        z-index: 4;
-    }
-</style>
-@*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">*@
-
-@*<div class="container-fluid sec-loader-container h-100" style="position: fixed" id="ContainerLoader">
-    <div class="content">
-        <div class="loader"></div>
-    </div>
-</div>*@
-<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
-    <div class="content LoaderRun_Center_div">
-        <div class="loader"></div>
-    </div>
     <div class="col my-2 d-flex align-items-center justify-content-center" style="z-index: 2;">
     <div class="container main-container">
         <form action="">
@@ -72,7 +47,6 @@
     </div>
 </div>
 
-</div>
     @section Scripts{
     <!-- تحميل مكتبة jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -122,6 +96,7 @@
 </script>*@
 <script>
         $(document).ready(function () {
+            $("#min-loader").removeClass("d-none") // تشغيل لودر
             // تهيئة DataTable
             var table = $('#Table').DataTable({
                 ordering: false, // تعطيل الترتيب التلقائي للصفوف
@@ -131,7 +106,6 @@
             $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
             //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
             $("select[name='Table_length']").val('10000').change();
-            $(".LoaderRun_Center_div").css("display", "none");
             $("#Table_info").css("display", "none");
             $("#Table_previous").css("display", "none");
             $("#Table_next").css("display", "none");
@@ -139,7 +113,8 @@
             $("#Table_filter").css("display", "none");
             $(".paginate_button").css("display", "none");
             $(".ellipsis").css("display", "none");
-            
+            $("#min-loader").toggleClass("d-none", true);
+
             // دالة للبحث عن كلمة في جميع الصفوف
             function searchRows() {
                 var keyword = $('#search2').val().toLowerCase(); // الكلمة المدخلة للبحث (تحويلها إلى حروف صغيرة)

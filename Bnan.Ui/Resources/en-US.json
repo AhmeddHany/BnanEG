@@ -1208,6 +1208,22 @@
     "SMSNotConnect": "Please connect the SMS service to benefit from the features.",
     "WhatsupNotConnect": "Please connect the WhatsApp service to benefit from the features.",
 
+    //MAS RenterMessages
+    "RenterMessages_Companies": "List Of Renters",
+    "RenterMessages_All": "All",
+    "RenterMessages_CreateNewMessage": "Create a New Message",
+    "RenterMessages_BackToHome": "Back To Home",
+    "RenterMessages_CompaniesMessages": "Messages For Renters",
+    "RenterMessages_Chating": "Texting",
+    "RenterMessages_address": "Address",
+    "RenterMessages_M_phoneAndMessageRequired": "Phone Number and Message Required",
+    "RenterMessages_address_M_ErrorPart1": "An error occurred while sending this message to This Renter :",
+    "RenterMessages_address_M_ErrorPart2": " and all of The Next",
+    "RenterMessages_address_M_Error_BnanPhone_notConnected": "Company's Phone Not Connected",
+    "No_Renter_choosed": "Please, Choose Renter",
+
+
+
     // CAS Owners 
     "ModalFirstMessage_LessorOwners_CAS_Delete": "Deleting the owner's data will result in deleting it from the landlords list while maintaining all financial, administrative and contract procedures",
     // "ModalSecondMessage_LessorOwners_CAS_Delete": "Delete Data And Results2",

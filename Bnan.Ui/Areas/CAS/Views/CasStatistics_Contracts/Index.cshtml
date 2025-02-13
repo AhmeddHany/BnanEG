@@ -20,27 +20,7 @@
     ViewData["Page-title"] = @localizer["ContractStatistics Data"];
     ViewData["Page-Hint"] = @localizer["ContractStatistics Hint"];
 }
-<style>
 
-    /* العنصر الذي سيتم محاذاته */
-    .LoaderRun_Center_div {
-        width: 2200px;
-        height: 650px;
-        /*background-color: #3498db;*/
-        text-align: center;
-        /*color: white;*/
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        z-index: 4;
-    }
-</style>
-
-<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
-    <div class="content LoaderRun_Center_div">
-        <div class="loader"></div>
-    </div>
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
         <div class="row justify-content-center">
@@ -144,7 +124,6 @@
            class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
     </div>
 </div>
-</div>
 
 
 
@@ -166,7 +145,7 @@
         $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
         $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
 
-        $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+        $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
 
         });
     </script>
@@ -208,7 +187,7 @@
 
     <script>
         async function GetAllBy_Branches() {  // -- 1
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -219,7 +198,7 @@
                     },
                     url: "@Url.Action("GetAllBy_Branches", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
@@ -235,7 +214,7 @@
         }
 
         async function GetAllBy_Days() {  // -- 1
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -246,7 +225,7 @@
                     },
                     url: "@Url.Action("GetAllBy_Days", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
@@ -262,7 +241,7 @@
         }
 
         async function GetAllBy_Time() {  // -- 1
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -273,7 +252,7 @@
                     },
                     url: "@Url.Action("GetAllBy_Time", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
@@ -289,7 +268,7 @@
         }
 
         async function GetAllBy_ContractLimit() {  // -- 1
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -300,7 +279,7 @@
                     },
                     url: "@Url.Action("GetAllBy_ContractLimit", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
@@ -316,7 +295,7 @@
         }
 
         async function GetAllBy_HigritsMonths() {  // -- 1
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -327,7 +306,7 @@
                     },
                     url: "@Url.Action("GetAllBy_HigritsMonths", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
@@ -343,7 +322,7 @@
         }
 
         async function GetAllBy_GregorianMonths() {  // -- 1
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -354,7 +333,7 @@
                     },
                     url: "@Url.Action("GetAllBy_GregorianMonths", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
@@ -370,7 +349,7 @@
         }
 
         async function GetAllBy_ValueNo() {  // -- 1
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -381,7 +360,7 @@
                     },
                     url: "@Url.Action("GetAllBy_ValueNo", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
@@ -397,7 +376,7 @@
         }
 
         async function GetAllBy_KM() {  // -- 1
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
                 const start = $("#start_date").val(); // الحصول على قيمة البداية
                 const end = $("#end_date").val(); // الحصول على قيمة النهاية
@@ -408,7 +387,7 @@
                     },
                     url: "@Url.Action("GetAllBy_KM", "CasStatistics_Contracts", new { Area = "CAS" })", // -- 2
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         //$(".chart22").html(response);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count + " " + "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p

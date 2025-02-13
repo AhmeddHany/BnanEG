@@ -19,36 +19,7 @@
     <input hidden asp-for="UserId" id="UserId000" />
                     <div class="container main-container">
                     <form action="" >
-                            @*<div class="row g-3 ">
-                                <div class="col">
-                                    <div class="row g-3 my-2">  
-                                        <div class="col-md-6">
-                                <h3>@localizer["Edit FinancialTransactionOfEmployee Data"]</h3>
-                                    </div>
-                                    <div class="col-md-6 save-col">
-                            <a href="/MAS/ReportFTPemployee/Index"><img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" /></a>
-                                    </div>
-                                  </div>
-                                </div>*@
-                              @*<div class="row gap-lg-3 g-2">
-
-                    <h5 class="subtitle">
-                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.ThisUserData?.CrMasUserInformationEnName : Model.ThisUserData?.CrMasUserInformationArName)
-                    </h5> 
-                                    <div class="col-lg-12 col-xl-8">
-                                        <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
-                                            <div class="col-xl-4 d-flex  gap-3 align-items-center">
-                                                <label for="start-date">@localizer["From_n"]</label>
-                                                <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required>
-                                            </div>
-                                          <div class="col-xl-4 d-flex  gap-3 align-items-center">
-                                           <label for="end-date">@localizer["To_n"]</label>
-                                           <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required>
-                                          </div>
-                                           
-                                            <button type="button" id="btn_view" name="btn_view" class="btn btn-standard">@localizer["View_n"]</button>
-                                        </div>
-                                    </div>*@
+                            
 
 
                     <div class="row g-3 ">
@@ -288,7 +259,6 @@
 
             </div>
         </div> 
-    </div>
 
 
 
@@ -340,7 +310,7 @@
 
             // لجعل الحالة حسب ما هي جاية من index نشط او الكل
             //$("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
 
             // Close modal when close button is clicked
             $('.close').click(function () {
@@ -368,7 +338,7 @@
         });
 
         function end_init_ShowDatatable() {
-            $(".LoaderRun_Center_div").css("display", "none");
+            $("#min-loader").toggleClass("d-none", true);
             $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
             //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
             $("select[name='Table_length']").val('10000').change();
@@ -437,7 +407,7 @@
                     var debit1=$("#in_debit").val();
                     $("#p_credit").text(credit1);
                     $("#p_debit").text(debit1);
-                    $(".LoaderRun_Center_div").css("display", "none");
+                    $("#min-loader").toggleClass("d-none", true);
 
                 },
             })
@@ -457,7 +427,7 @@
             //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
             //var end = formattedDate2;// الحصول على قيمة النهاية
 
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             //$("#search2").val("");
             GetContractsByStatusFitler(status, start, end);
         });
@@ -477,7 +447,7 @@
             //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
             //var end = formattedDate2;// الحصول على قيمة النهاية
 
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             //$("#search2").val("");
             GetContractsByStatusFitler(status,start, end);
         });

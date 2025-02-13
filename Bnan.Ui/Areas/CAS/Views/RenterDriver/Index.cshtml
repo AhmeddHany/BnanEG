@@ -10,27 +10,8 @@
 }
 <link href="~/css/toastr.css" rel="stylesheet" />
 
-<style>
 
-    /* العنصر الذي سيتم محاذاته */
-    .LoaderRun_Center_div {
-        width: 1900px;
-        height: 850px;
-        /*background-color: #3498db;*/
-        text-align: center;
-        /*color: white;*/
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        z-index: 4;
-    }
-</style>
 
-<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
-    <div class="content LoaderRun_Center_div">
-        <div class="loader"></div>
-    </div>
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container main-container">
         <form action="">
@@ -88,7 +69,6 @@
         </a>
     </div>
     </div>
-</div>
 
 @section scripts {
     <!-- تحميل مكتبة jQuery -->
@@ -102,7 +82,7 @@
         // لجعل الحالة حسب ما هي جاية من index نشط او الكل
         $(document).ready(function () {
             $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
 
         ///////
         // تهيئة DataTable
@@ -115,7 +95,7 @@
         });
 
         function end_init_ShowDatatable() {
-            $(".LoaderRun_Center_div").css("display", "none");
+            $("#min-loader").toggleClass("d-none", true);
             $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
             //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
             $("select[name='Table_length']").val('10000').change();
@@ -131,7 +111,7 @@
 
         // دالة للبحث عن كلمة في جميع الصفوف
         function searchRows() {
-            $(".LoaderRun_Center_div").css("display", "flex");// اظهار loader تحميل
+            $("#min-loader").removeClass("d-none");// اظهار loader تحميل
 
             var table = $('#Table').DataTable();
             end_init_ShowDatatable();
@@ -161,7 +141,7 @@
             });
 
 
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
         }
 
 
@@ -200,7 +180,7 @@
     <script>
         //get RenterDriver By Status function
         function GetRenterDriverFitler(status, search) {
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             $.ajax({
                 type: "GET",
                 data: {
@@ -209,7 +189,7 @@
                 url: "@Url.Action("GetRenterDriverByStatus", "RenterDriver", new { Area = "CAS" })",
                 success: function (response) {
                     $(".dataTable").html(response);
-                    $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+                    $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
                 },
             })
         }

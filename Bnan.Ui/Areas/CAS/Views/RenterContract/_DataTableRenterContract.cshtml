@@ -1,254 +1,83 @@
-﻿
+﻿@using Bnan.Ui.ViewModels.CAS.Renters
 
 @using Bnan.Core.Extensions
-@model IEnumerable<CrCasRenterLessor>
+@model RenterContractVM
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
-@* 
-  "RenterInformationCode": "Code",
-  "RenterInformationId": "ID",
-  "RenterInformationNationality": "Nationality",
-  "RenterInformationAddress": "Address",
-  "RenterInformationProfession": "Profession",
-  "RenterInformationWorkPlace": "Work Place",
- 
-  
- *@
-@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-{
-    
-       <div class="col-sm-12">
-        @* For-scrolling *@
-        <table id="basic-datatable" class="table table-bordered dt-responsive w-100 nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
 
-            <thead>
-                <tr role="row">
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["RenterInformationId"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["RenterInformationName"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["DateFrist_Contract"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["DateLast_Contract"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Contract_Count"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Days_Count"]</th>
-                    <th aria-label="Position: activate to sort column ascending">&emsp;&emsp; @localizer["KM_Count"]</th>
-                    <th id="_Nc" aria-label="Position: activate to sort column ascending">@localizer["RenterContract_Points"]</th>
 
-                </tr>
-            </thead>
-            <tbody>
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["KilometersCut_s"]</th>
+            <th>@localizer["RentalDay_s"]</th>
+            <th>@localizer["ContractCount_s"]</th>
+            <th >@localizer["LastVisit_s"]</th>
+            <th >@localizer["FirstVisit_s"]</th>
+            <th class="DifferAlign" style="max-width:240px;">@localizer["the_Renter"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model.allCasRenterIds)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "RenterContract", new { id = item.CrCasRenterLessorId })'">
 
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model)
+
+                <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Sum(x => x.CrCasRenterLessorContractKm)?.ToString("N2") ?? "0")</p></td>
+                <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Sum(x => x.CrCasRenterLessorContractDays)?.ToString("0") ?? "0")</p></td>
+                <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Sum(x => x.CrCasRenterLessorContractCount)?.ToString("0") ?? "0")</p></td>
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                 {
-                    @if (item.CrCasRenterLessorStatus == @Status.Deleted || item.CrCasRenterLessorStatus == @Status.Hold)
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterContract", new { id = item.CrCasRenterLessorId })'" style="cursor:pointer;color:red">
-                            <td id="_Nc">@no</td>
-                            <td id="_Nc">@item.CrCasRenterLessorId</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorNavigation.CrMasRenterInformationEnName</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorDateFirstInteraction?.ToString("dd/MM/yyyy")</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy")</td>
-
-                            @*<td id="_Nc">&#160;&#160; @item.CrCasRenterContractStatistics.Count(x=>x.CrCasRenterContractStatisticsRenter==item.CrCasRenterLessorId)</td>
-                            <td id="_Nc">@item.CrCasRenterContractStatistics.Sum(x=>x.CrCasRenterContractStatisicsDays)</td>*@
-                            <td id="_Nc">&#160;&#160; @item.CrCasRenterLessorContractCount</td>
-
-                            <td id="_Nc">@item.CrCasRenterLessorContractDays?.ToString("N0",CultureInfo.InvariantCulture)</td>
-                            <td id="_Nc">@item.CrCasRenterLessorContractKm?.ToString("N2",CultureInfo.InvariantCulture)</td>
-
-
-                            <td id="_Nc">@item.CrCasRenterLessorEvaluationValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
-
-                            }
-                            @*<td>
-
-                                @if (@item.CrCasRenterLessorStatus == Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Rented)
-                                {
-                                    @localizer["Rented_n"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Hold)
-                                {
-                                    @localizer["Hold"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else
-                                {
-
-                                }
-                            </td>*@
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterContract", new { id = item.CrCasRenterLessorId })'">
-                            <td id="_Nc">@no</td>
-                            <td id="_Nc">@item.CrCasRenterLessorId</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorNavigation.CrMasRenterInformationEnName</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorDateFirstInteraction?.ToString("dd/MM/yyyy")</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy")</td>
-
-                            @*<td id="_Nc">&#160;&#160; @item.CrCasRenterContractStatistics.Count(x=>x.CrCasRenterContractStatisticsRenter==item.CrCasRenterLessorId)</td>
-                <td id="_Nc">@item.CrCasRenterContractStatistics.Sum(x=>x.CrCasRenterContractStatisicsDays)</td>*@
-                            <td id="_Nc">&#160;&#160; @item.CrCasRenterLessorContractCount</td>
-                            <td id="_Nc">@item.CrCasRenterLessorContractDays?.ToString("N0",CultureInfo.InvariantCulture)</td>
-                            <td id="_Nc">@item.CrCasRenterLessorContractKm?.ToString("N2",CultureInfo.InvariantCulture)</td>
-                            <td id="_Nc">@item.CrCasRenterLessorEvaluationValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
-
-                            @*<td>
-
-                                @if (@item.CrCasRenterLessorStatus == Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Rented)
-                                {
-                                    @localizer["Rented_n"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Hold)
-                                {
-                                    @localizer["Hold"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else
-                                {
-
-                                }
-                            </td>*@
-                        </tr>
-                    }
-                    no++;
+                    <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Max(x => x.CrCasRenterLessorDateLastContractual)?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) ?? " ")</p></td>
+                    <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Min(x => x.CrCasRenterLessorDateFirstInteraction)?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) ?? " ")</p></td>
                 }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <div class="col-sm-12">
-        @* For-scrolling *@
-        <table id="basic-datatable" class="table table-bordered dt-responsive w-100 nowrap dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px; ">
-            <thead >
-                <tr role="row">
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th id="_Nc" aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["RenterInformationId"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["RenterInformationName"]</th>
-                    <th style="text-align:start">@localizer["DateFrist_Contract"]</th>
-                    <th style="text-align:start">@localizer["DateLast_Contract"]</th>
-                    <th id="_Nc" >@localizer["Contract_Count"]</th>
-                    <th id="_Nc" >@localizer["Days_Count"]</th>
-                    <th class=" text-end" id="_Nc">&emsp;&emsp;&emsp;&emsp;&emsp; @localizer["KM_Count"]</th>
-                    <th id="_Nc" data-orderable="false" >@localizer["RenterContract_Points"] </th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model)
+                else
                 {
-                    @if (item.CrCasRenterLessorStatus == @Status.Deleted || item.CrCasRenterLessorStatus == @Status.Hold)
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterContract", new { id = item.CrCasRenterLessorId })'" style="cursor:pointer;color:red">
-                            <td id="_Nc">@no</td>
-                            <td id="_Nc">@item.CrCasRenterLessorId</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorNavigation.CrMasRenterInformationArName</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorDateFirstInteraction?.ToString("dd/MM/yyyy")</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy")</td>
-
-                            @*<td id="_Nc">&#160;&#160; @item.CrCasRenterContractStatistics.Count(x=>x.CrCasRenterContractStatisticsRenter==item.CrCasRenterLessorId)</td>
-                            <td id="_Nc">@item.CrCasRenterContractStatistics.Sum(x=>x.CrCasRenterContractStatisicsDays)</td>*@
-                            <td id="_Nc">&#160;&#160; @item.CrCasRenterLessorContractCount</td>
-                            <td id="_Nc">@item.CrCasRenterLessorContractDays?.ToString("N0",CultureInfo.InvariantCulture)</td>
-                            <td id="_Nc">@item.CrCasRenterLessorContractKm?.ToString("N2",CultureInfo.InvariantCulture)</td>
-                            <td id="_Nc">@item.CrCasRenterLessorEvaluationValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
-
-                            @*<td>
-
-                                @if (@item.CrCasRenterLessorStatus == Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Rented)
-                                {
-                                    @localizer["Rented_n"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Hold)
-                                {
-                                    @localizer["Hold"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else
-                                {
-
-                                }
-                            </td>*@
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "RenterContract", new { id = item.CrCasRenterLessorId })'">
-                            <td id="_Nc">@no</td>
-                            <td id="_Nc">@item.CrCasRenterLessorId</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorNavigation.CrMasRenterInformationArName</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorDateFirstInteraction?.ToString("dd/MM/yyyy")</td>
-                            <td style="text-align:start">@item.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy")</td>
-
-                            @*<td id="_Nc">&#160;&#160; @item.CrCasRenterContractStatistics.Count(x=>x.CrCasRenterContractStatisticsRenter==item.CrCasRenterLessorId)</td>
-                            <td id="_Nc">@item.CrCasRenterContractStatistics.Sum(x=>x.CrCasRenterContractStatisicsDays)</td>*@
-                            <td id="_Nc">&#160;&#160; @item.CrCasRenterLessorContractCount</td>
-                            <td id="_Nc">@item.CrCasRenterLessorContractDays?.ToString("N0",CultureInfo.InvariantCulture)</td>
-                            <td id="_Nc">@item.CrCasRenterLessorContractKm?.ToString("N2",CultureInfo.InvariantCulture)</td>
-                            <td id="_Nc">@item.CrCasRenterLessorEvaluationValue?.ToString("N2",CultureInfo.InvariantCulture)</td>
-
-                            @*<td>
-
-                                @if (@item.CrCasRenterLessorStatus == Status.Active)
-                                {
-                                    @localizer["Active"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Rented)
-                                {
-                                    @localizer["Rented_n"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Hold)
-                                {
-                                    @localizer["Hold"]
-                                }
-                                else if (@item.CrCasRenterLessorStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else
-                                {
-                                    
-                                }
-                            </td>*@
-                        </tr>
-                    }
-                    no++;
+                    <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Max(x => x.CrCasRenterLessorDateLastContractual)?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture) ?? " ")</p></td>
+                    <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Min(x => x.CrCasRenterLessorDateFirstInteraction)?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture) ?? " ")</p></td>
                 }
-            </tbody>
-        </table>
-    </div>
-}
 
+                @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                {
+                    <td class="DifferAlign" style="  max-width:200px;">
+                        <p class="FirstLineP">@(Model.all_Renters?.Find(x => x.CrMasRenterInformationId == item.CrCasRenterLessorId)?.CrMasRenterInformationEnName ??" ")</p>
+                        <p class="secondLineP"> @item.CrCasRenterLessorId </p>
+                    </td>
+                }
+                else
+                {
+                    <td class="DifferAlign" style="  max-width:200px;">
+                        <p class="FirstLineP">@(Model.all_Renters?.Find(x => x.CrMasRenterInformationId == item.CrCasRenterLessorId)?.CrMasRenterInformationArName ?? " ")</p>
+                        <p class="secondLineP"> @item.CrCasRenterLessorId </p>
+                    </td>
+                }
+
+                <td><p>@no</p></td>
+                
+                @*<td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrMasRenterInformationStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrMasRenterInformationStatus == Status.Hold) filterColor = "filter1-div";
+                            else if (item.CrMasRenterInformationStatus == Status.Deleted) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>*@
+            </tr>
+            no++;
+        }
+
+    </tbody>
+
+</table>

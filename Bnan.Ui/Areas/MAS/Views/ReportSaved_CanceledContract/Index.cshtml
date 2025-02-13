@@ -12,29 +12,11 @@
     ViewData["Page-title"] = @localizer["RenterInformations Data"];
     ViewData["Page-Hint"] = @localizer["RenterInformations Hint"];
 }
-<style>
 
-    /* العنصر الذي سيتم محاذاته */
-    .LoaderRun_Center_div {
-        width: 1900px;
-        height: 850px;
-        /*background-color: #3498db;*/
-        text-align: center;
-        /*color: white;*/
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position:fixed;
-        z-index: 4;
-    }
-</style>
 
 @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
 
-<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
-    <div class="content LoaderRun_Center_div">
-        <div class="loader"></div>
-    </div>
+
 <div class="col d-flex align-items-center justify-content-center" style=" z-index:2;">
     <div class="container main-container">
         <form action="">
@@ -90,12 +72,10 @@
         </a>
     </div>
     </div>
-</div>
 @*////////////////////////////*@@*////////////////////////////*@@*////////////////////////////*@
 @*////////////////////////////*@@*////////////////////////////*@@*////////////////////////////*@
 
 
-</div>
     @section Scripts{
     <!-- تحميل مكتبة jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -108,7 +88,7 @@
 
             // لجعل الحالة حسب ما هي جاية من index نشط او الكل
             $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
                         
 
 
@@ -123,7 +103,7 @@
         });
 
         function end_init_ShowDatatable(){
-            $(".LoaderRun_Center_div").css("display", "none");
+            $("#min-loader").toggleClass("d-none", true);
             $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
             //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
             $("select[name='Table_length']").val('10000').change();
@@ -187,7 +167,7 @@
                     $(".dataTable").html(response);
                     var table3 = $('#Table').DataTable();
                     end_init_ShowDatatable();
-                    $(".LoaderRun_Center_div").css("display", "none");
+                    $("#min-loader").toggleClass("d-none", true);
                 },
             })
         }
@@ -195,7 +175,7 @@
         $("input[name='customRadio']").on("click", function () {
             const status = $(this).val();
             
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             $("#search2").val("");
             GetContractsByStatusFitler(status);
         });
@@ -205,7 +185,7 @@
             const status = $(this).val();
 
             
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             $("#search2").val("");
             GetContractsByStatusFitler(status);
         });

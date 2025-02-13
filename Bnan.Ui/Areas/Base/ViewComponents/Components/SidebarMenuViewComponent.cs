@@ -235,8 +235,9 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                         ("203", "/CasSys/images/tenants.svg", "tenants-items", new List<(string, string, string)>
                                         {
                                             ("2203001", "RenterLessorInformation", "Index"),
-                                            ("2203002", "#", "#"),
-                                            ("2203003", "#", "#"),
+                                            ("2203002", "RenterContract", "Index"),
+                                            ("2203003", "RenterBalances", "Index"),
+                                            ("2203004", "RenterMessages", "Index"),
                                         }),
 
                                         ("204", "/CasSys/images/accounts.svg", "accounts-items", new List<(string, string, string)>

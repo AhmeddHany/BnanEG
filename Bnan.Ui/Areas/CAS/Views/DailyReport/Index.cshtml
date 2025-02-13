@@ -13,29 +13,11 @@
     ViewData["Page-title"] = localizer["Edit RenterInformations Data"];
     ViewData["Page-Hint"] = localizer["Edit RenterInformations Hint"];
 }
-<style>
 
-    /* العنصر الذي سيتم محاذاته */
-    .LoaderRun_Center_div {
-        width: 1900px;
-        height: 950px;
-        /*background-color: #3498db;*/
-        text-align: center;
-        /*color: white;*/
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position:fixed;
-        z-index: 4;
-    }
-</style>
 
 @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
 
-<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
-    <div class="content LoaderRun_Center_div">
-        <div class="loader"></div>
-    </div>
+
 
    <div class="col d-flex align-items-center justify-content-center"  style=" z-index:2;">
     <input hidden asp-for="UserId" id="UserId000" />
@@ -188,7 +170,6 @@
 
 </div>
 </div>
-</div>
 
 
 
@@ -218,7 +199,7 @@
             $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
 
             // لجعل الحالة حسب ما هي جاية من index نشط او الكل
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
 
             //var today = new Date();
             //$("#start_date").datepicker({
@@ -245,7 +226,7 @@
         });
 
         function end_init_ShowDatatable() {
-            $(".LoaderRun_Center_div").css("display", "none");
+            $("#min-loader").toggleClass("d-none", true);
             $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
             //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
             $("select[name='Table_length']").val('10000').change();
@@ -261,7 +242,7 @@
 
         // دالة للبحث عن كلمة في جميع الصفوف
         function searchRows() {
-            $(".LoaderRun_Center_div").css("display", "flex");// اظهار loader تحميل
+            $("#min-loader").removeClass("d-none");// اظهار loader تحميل
 
             var table = $('#Table').DataTable();
             end_init_ShowDatatable();
@@ -337,7 +318,7 @@
             $('#p_credit').text(formattedNumber_Sum_Credits); // N2  546,767.77
             $('#p_debit').text(formattedNumber_Sum_Debits); // N2  546,767.77
 
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
             //$("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
         }
 
@@ -371,7 +352,7 @@
                     $("#p_balance").text(balance1);
                     $("#p_avilableBalance").text(avilableBalance1);
                     $("#p_reservedBalance").text(reservedBalance1);
-                    $(".LoaderRun_Center_div").css("display", "none");
+                    $("#min-loader").toggleClass("d-none", true);
 
                 },
             })
@@ -392,7 +373,7 @@
             //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
             //var end = formattedDate2;// الحصول على قيمة النهاية
 
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             $("#search2").val("");
             GetContractsByStatusFitler(status, start, end);
         });
@@ -412,7 +393,7 @@
             //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
             //var end = formattedDate2;// الحصول على قيمة النهاية
 
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             $("#search2").val("");
             GetContractsByStatusFitler(status,start, end);
         });
@@ -422,7 +403,7 @@
 
         // دالة للبحث عن كلمة في جميع الصفوف
         function retrive_serials_ids_From_Datatable() {
-            $(".LoaderRun_Center_div").css("display", "flex");// اظهار loader تحميل
+            $("#min-loader").removeClass("d-none");// اظهار loader تحميل
 
             var table4 = $('#Table').DataTable();
             end_init_ShowDatatable();
@@ -500,7 +481,7 @@
             $('#p_credit').text(formattedNumber_Sum_Credits2); // N2  546,767.77
             $('#p_debit').text(formattedNumber_Sum_Debits2); // N2  546,767.77
 
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
             //$("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
 
             CreateExcelFile(recipts_ids_Data, recipts_serials_Data, formattedNumber_Sum_Debits2, formattedNumber_Sum_Credits2);
@@ -530,7 +511,7 @@
                     $("#p_balance").text(balance1);
                     $("#p_avilableBalance").text(avilableBalance1);
                     $("#p_reservedBalance").text(reservedBalance1);
-                    $(".LoaderRun_Center_div").css("display", "none");
+                    $("#min-loader").toggleClass("d-none", true);
 
                 },
                 error: function (xhr, status, error) {

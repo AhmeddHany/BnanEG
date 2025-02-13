@@ -20,27 +20,8 @@
     ViewData["Page-title"] = @localizer["RenterStatistics Data"];
     ViewData["Page-Hint"] = @localizer["RenterStatistics Hint"];
 }
-<style>
 
-    /* العنصر الذي سيتم محاذاته */
-    .LoaderRun_Center_div {
-        width: 2200px;
-        height: 550px;
-        /*background-color: #3498db;*/
-        text-align: center;
-        /*color: white;*/
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        z-index: 4;
-    }
-</style>
 
-<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
-    <div class="content LoaderRun_Center_div">
-        <div class="loader"></div>
-    </div>
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
         <input type="text" id="nationality_counts" value="@(Model.Renters_Count?.ToString("0") ?? "0")" hidden />
@@ -122,7 +103,6 @@
            class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
     </div>
 </div>
-</div>
 
 
 
@@ -140,7 +120,7 @@
     <script src="~/CasSys/scripts/Scripts.js"></script>>*@--->
     <script>
         window.addEventListener('load', function () {
-            $(".LoaderRun_Center_div").css("display", "none");
+            $("#min-loader").toggleClass("d-none", true);
             NationalityChart()
         })
     </script>
@@ -170,7 +150,7 @@
         }
 
         async function GetAllBy_Profession() {
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
 
             $.ajax({
@@ -180,7 +160,7 @@
                 //},
                 url: "@Url.Action("GetAllBy_Profession", "CasStatistics_Renters", new { Area = "CAS" })",
                 success: function (response) {
-                    $(".LoaderRun_Center_div").css("display", "none");
+                    $("#min-loader").toggleClass("d-none", true);
                     console.log(response.list_chartBranchDataVM);
                     //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
                     $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
@@ -194,14 +174,14 @@
         }
 
         async function GetAllBy_MemberShip() {
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
 
                 $.ajax({
                     type: "GET",
                     url: "@Url.Action("GetAllBy_MemberShip", "CasStatistics_Renters", new { Area = "CAS" })",
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
                         $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
@@ -215,14 +195,14 @@
         }
 
         async function GetAllBy_City() {
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
 
                 $.ajax({
                     type: "GET",
                     url: "@Url.Action("GetAllBy_City", "CasStatistics_Renters", new { Area = "CAS" })",
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
                         $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
@@ -236,14 +216,14 @@
         }
 
         async function GetAllBy_Region() {
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
 
                 $.ajax({
                     type: "GET",
                     url: "@Url.Action("GetAllBy_Region", "CasStatistics_Renters", new { Area = "CAS" })",
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
                         $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
@@ -257,14 +237,14 @@
         }
 
         async function GetAllBy_Age() {
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
 
                 $.ajax({
                     type: "GET",
                     url: "@Url.Action("GetAllBy_Age", "CasStatistics_Renters", new { Area = "CAS" })",
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
                         $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p
@@ -278,14 +258,14 @@
         }
 
         async function GetAllBy_Rates() {
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             return new Promise((resolve, reject) => {
 
                 $.ajax({
                     type: "GET",
                     url: "@Url.Action("GetAllBy_Rates", "CasStatistics_Renters", new { Area = "CAS" })",
                     success: function (response) {
-                        $(".LoaderRun_Center_div").css("display", "none");
+                        $("#min-loader").toggleClass("d-none", true);
                         console.log(response.list_chartBranchDataVM);
                         //$("#Count_var").text(response.count +" "+ "@localizer["ContractStatistics_Contract"]"); // لتعديل عدد العقود في p
                         $("#Count_var").text(" " + response.count + " "); // لتعديل عدد العقود في p

@@ -10,89 +10,203 @@
     ViewData["Page-title"] = @localizer["RenterBalances Data"];
     ViewData["Page-Hint"] = @localizer["RenterBalances_New Hint"];
 }
-<style>
-    body {
-        overflow: hidden
-    }
 
-    @@media (max-width: 600px) {
-        #basic-datatable1_wrapper .row:first-child > div {
-            text-align: left;
-            overflow: scroll;
-            text-overflow: ellipsis;
-        }
+<link href="~/css/toastr.css" rel="stylesheet" />
 
-            #basic-datatable1_wrapper .row:first-child > div:last-child > * {
-                text-align: right;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-    }
 
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f9f9f9;
-    }
 
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
+@*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
 
-    /*     td,th {
-            text-align: center;
-        } */
 
-    #_Nc {
-        text-align: center;
-    }
 
-    
-</style>
+<div class="container main-container">
 
-<div class="sub-container">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div class="col-sm-12 col-md-9">
-                <div class="col-sm-12 col-md-4 p-0">
-                    <a type="button" class="btn btn-danger" title="@localizer["Back"]" asp-area="CAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
-                    @*<a class="btn btn-secondary InsertBtn" onclick="CheckValidation('1103002', '@Status.Insert', '@Url.Action("AddRenterContract", "RenterContract")')">
-                        @localizer["Add RenterContract Data"]
-                    </a> *@
-                </div>
+    <form action="">
+        <div class="row g-3 mb-5">
+            <div class="col">
+                    <h3> @localizer["RenterBalances Data"]  </h3>
             </div>
+            <div class="col-12 col-lg-6 d-flex justify-content-end">
 
-            @*search And Fitler Radio Button*@
-            <div class="col-sm-12 col-md-3 p-0">
-                <div class="input-group" style="width: 95%;">
-                    <input class="form-control dropdown-toggle" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
-                    <span class="mdi mdi-magnify search-icon" style="color:#a7a4a4;"></span>
+                <div class="col-12 col-md-8 search-input-col">
+                    <div class="form-outline w-100" data-mdb-input-init>
+                        <span class="fa fa-search"></span>
+                        <input type="search" id="search2" class="form-control inputs search-input"
+                               name="search2" aria-label="Search" autofocus autocomplete="off" />
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-12 col-md-12 mt-3" id="status-filter">
+
             </div>
         </div>
-        <div class="dataTable " id="dataTableR1" >
-            <partial name="_DataTableContract" />
+
+        <div class="row table-row px-3">
+            <div class="col  scroll-table-div  table-responsive-sm  w-100  dataTable">
+                
+                <partial name="_DataTableRenterBalances" />
+
+            </div>
         </div>
-    </div>
+    </form>
+    <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
+       class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
 </div>
 
 
+@section Scripts{
+    <!-- تحميل مكتبة jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- تحميل مكتبة DataTables -->
+    <script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    @*    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+    // تهيئة flatpickr مع التنسيق المطلوب
+    flatpickr("#start_date", {
+        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
+    });
+        // تهيئة flatpickr مع التنسيق المطلوب
+    flatpickr("#end_date", {
+        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
+    });
+</script>*@
 
 
-<style>
-    .wrapper {
-        margin-bottom: 60px;
-        overflow: hidden;
-        background-image: url("~/Pictures/bg.jpg") !important;
-    }
+    <script>
+        $(document).ready(function () {
 
-    .table-bordered td,
-    .table-bordered th {
-        border: none;
-    }
-</style>
+            // لجعل الحالة حسب ما هي جاية من index نشط او الكل
+            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+            //$("#min-loader").removeClass("d-none"); // تشغيل اللودر loader
+            //$("#min-loader").removeClass("d-none"); // تشغيل اللودر loader
 
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
+
+            //var today = new Date();
+            //$("#start_date").datepicker({
+            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
+            //    maxDate: today,
+            //});
+            //$("#end_date").datepicker({
+            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
+            //    maxDate: today,
+            //});
+
+
+            ///////
+            // تهيئة DataTable
+            var table2 = $('#Table').DataTable({
+                ordering: false, // تعطيل الترتيب التلقائي للصفوف
+                stateSave: true,   // حفظ حالة الجدول
+            });
+            end_init_ShowDatatable();
+        });
+
+        function end_init_ShowDatatable() {
+            $("#min-loader").toggleClass("d-none", true);
+            //$("#min-loader").addClass("d-none"); // ايقاف loader
+            $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+            //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
+            $("select[name='Table_length']").val('10000').change();
+            $("#Table_info").css("display", "none");
+            $("#Table_previous").css("display", "none");
+            $("#Table_next").css("display", "none");
+            $("#Table_length").css("display", "none");
+            $("#Table_filter").css("display", "none");
+            $(".paginate_button").css("display", "none");
+            $(".ellipsis").css("display", "none");
+            $("select[name='Table_length'] option[value='10000']").prop("selected", true);
+        }
+
+        // دالة للبحث عن كلمة في جميع الصفوف
+        function searchRows() {
+            var table = $('#Table').DataTable();
+            end_init_ShowDatatable();
+            var keyword = $('#search2').val().toLowerCase(); // الكلمة المدخلة للبحث (تحويلها إلى حروف صغيرة)
+
+            // إخفاء كل الصفوف أولاً
+            table.rows().every(function () {
+                this.nodes().to$().hide(); // إخفاء الصف
+            });
+
+            // التكرار عبر كل الصفوف
+            table.rows().every(function () {
+                var row = this.data();
+                var found = false;
+
+                // التكرار عبر كل الخلايا في الصف
+                row.forEach(function (cell) {
+                    if (cell.toString().toLowerCase().includes(keyword)) {
+                        found = true; // إذا تم العثور على الكلمة في أي خلية
+                    }
+                });
+
+                // إذا تم العثور على الكلمة في الصف، نظهره
+                if (found) {
+                    this.nodes().to$().show();
+                }
+            });
+            //$("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+        }
+
+        // يمكن إضافة وظيفة البحث تلقائيًا عند كتابة النص
+        $('#search2').on('keyup', function () {
+            $("#min-loader").removeClass("d-none");
+            searchRows();
+            $("#min-loader").toggleClass("d-none", true);
+        });
+
+    </script>
+    <script>
+        //get RenterBalances By Status function
+        function GetContractsByStatusFitler(status) {
+            $.ajax({
+                type: "GET",
+                data: {
+                    status: status
+                },
+                url: "@Url.Action("GetContractsByStatus", "RenterBalances", new { Area = "CAS" })",
+                success: function (response) {
+                    $("#min-loader").toggleClass("d-none", true);
+                    $(".dataTable").html(response);
+                },
+            })
+        }
+
+        $("input[name='customRadio']").on("click", function () {
+            const status = $(this).val();
+
+            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
+            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var start = formattedDate1;// الحصول على قيمة النهاية
+            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
+            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var end = formattedDate2;// الحصول على قيمة النهاية
+
+            $("#min-loader").removeClass("d-none");
+            $("#search2").val("");
+            GetContractsByStatusFitler(status);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#btn_view").on("click", function () {
+            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+
+            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
+            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var start = formattedDate1;// الحصول على قيمة النهاية
+            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
+            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
+            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
+            //var end = formattedDate2;// الحصول على قيمة النهاية
+
+            $("#min-loader").removeClass("d-none");
+            $("#search2").val("");
+            GetContractsByStatusFitler(status);
+        });
+    </script>
+}

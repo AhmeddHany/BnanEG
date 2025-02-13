@@ -130,7 +130,7 @@
 
             // لجعل الحالة حسب ما هي جاية من index نشط او الكل
             //$("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
 
             //var today = new Date();
             //$("#start_date").datepicker({
@@ -153,7 +153,7 @@
         });
 
         function end_init_ShowDatatable() {
-            $(".LoaderRun_Center_div").css("display", "none");
+            $("#min-loader").toggleClass("d-none", true);
             $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
             //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
             $("select[name='Table_length']").val('10000').change();
@@ -215,7 +215,7 @@
                 },
                 url: "@Url.Action("GetContractsByStatus", "ReportCarContract_cas", new { Area = "CAS" })",
                 success: function (response) {
-                    $(".LoaderRun_Center_div").css("display", "none");
+                    $("#min-loader").toggleClass("d-none", true);
                     $(".dataTable22").html(response);
                 },
             })
@@ -235,7 +235,7 @@
             //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
             //var end = formattedDate2;// الحصول على قيمة النهاية
 
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             //$("#search2").val("");
             GetContractsByStatusFitler(start, end);
         });
@@ -255,7 +255,7 @@
             //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
             //var end = formattedDate2;// الحصول على قيمة النهاية
 
-            $(".LoaderRun_Center_div").css("display", "flex");
+            $("#min-loader").removeClass("d-none");
             //$("#search2").val("");
             GetContractsByStatusFitler(start, end);
         });

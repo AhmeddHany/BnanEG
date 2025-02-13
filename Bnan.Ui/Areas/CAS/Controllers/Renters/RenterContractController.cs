@@ -2,13 +2,14 @@
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.Base;
+using Bnan.Core.Interfaces.CAS;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
-using Bnan.Inferastructure.Repository.MAS;
+using Bnan.Inferastructure.Repository.CAS;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.Areas.CAS.Controllers;
-using Bnan.Ui.ViewModels.MAS;
+using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,30 +17,30 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Numerics;
-namespace Bnan.Ui.Areas.MAS.Controllers.MasRentersOnly2
+using Bnan.Ui.ViewModels.CAS.Renters;
+
+namespace Bnan.Ui.Areas.CAS.Controllers.Renters
 {
-    [Area("MAS")]
-    [Authorize(Roles = "MAS")]
-    [ServiceFilter(typeof(SetCurrentPathMASFilter))]
+    [Area("CAS")]
+    [Authorize(Roles = "CAS")]
+    [ServiceFilter(typeof(SetCurrentPathCASFilter))]
     public class RenterContractController : BaseController
     {
         private readonly IUserLoginsService _userLoginsService;
         private readonly IUserService _userService;
-        private readonly IMasRenterInformation _masRenterInformation;
         private readonly IBaseRepo _baseRepo;
         private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<RenterContractController> _localizer;
-        private readonly string pageNumber = SubTasks.CrCasRenterContractBasic;
+        private readonly string pageNumber = SubTasks.RentersCas_RentersContracts;
 
 
         public RenterContractController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
-            IMapper mapper, IUserService userService, IMasRenterInformation masRenterInformation, IBaseRepo BaseRepo, IMasBase masBase,
+            IMapper mapper, IUserService userService,  IBaseRepo BaseRepo, IMasBase masBase,
             IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterContractController> localizer) : base(userManager, unitOfWork, mapper)
         {
             _userService = userService;
-            _masRenterInformation = masRenterInformation;
             _userLoginsService = userLoginsService;
             _baseRepo = BaseRepo;
             _masBase = masBase;
@@ -78,8 +79,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasRentersOnly2
                 );
 
             var allCasRenterLessor = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
-                //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: x=> x.CrCasRenterLessorStatus != Status.Deleted,
+                predicate: x=>x.CrCasRenterLessorCode== user.CrMasUserInformationLessor && x.CrCasRenterLessorStatus!=Status.Deleted,
                 selectProjection: query => query.Select(x => new CrCasRenterLessor
                 {
                     CrCasRenterLessorId = x.CrCasRenterLessorId,
@@ -92,8 +92,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasRentersOnly2
                 })
                 );
             var allCasRenterIds = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
-                //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
+                predicate: x => x.CrCasRenterLessorCode == user.CrMasUserInformationLessor && x.CrCasRenterLessorStatus != Status.Deleted,
                 selectProjection: query => query.Select(x => new CrCasRenterLessor
                 {
                     CrCasRenterLessorId = x.CrCasRenterLessorId,
@@ -123,12 +122,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasRentersOnly2
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
+            var user = await _userManager.GetUserAsync(User);
+
             listRenterContractVM VM = new listRenterContractVM();
 
             await SetPageTitleAsync(Status.Update, pageNumber);
             var thisRenterBasicContract = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: x => x.CrCasRenterContractBasicRenterId == id
+                predicate: x => x.CrCasRenterContractBasicRenterId == id && x.CrCasRenterContractBasicLessor == user.CrMasUserInformationLessor
                 && (x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Closed || x.CrCasRenterContractBasicStatus == Status.Expire)
                 ,
                 selectProjection: query => query.Select(x => new RenterContractVM
@@ -137,6 +138,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasRentersOnly2
                     CrCasRenterContractBasicCopy = x.CrCasRenterContractBasicCopy,
                     CrCasRenterContractBasicLessor = x.CrCasRenterContractBasicLessor,
                     CrCasRenterContractBasicRenterId = x.CrCasRenterContractBasicRenterId,
+                    CrCasRenterContractBasicBranch = x.CrCasRenterContractBasicBranch,
                     CrCasRenterContractBasicCarSerailNo = x.CrCasRenterContractBasicCarSerailNo,
                     CrCasRenterContractBasicCurrentReadingMeter = x.CrCasRenterContractBasicCurrentReadingMeter,
                     CrCasRenterContractBasicActualCurrentReadingMeter = x.CrCasRenterContractBasicActualCurrentReadingMeter,
@@ -167,15 +169,27 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasRentersOnly2
                 //,includes: new string[] { "" } 
                 );
 
-            var allLessors = await _unitOfWork.CrMasLessorInformation.FindAllWithSelectAsNoTrackingAsync(
+            var all_Branches = await _unitOfWork.CrCasBranchInformation.FindAllWithSelectAsNoTrackingAsync(
                 predicate: null,
-                selectProjection: query => query.Select(x => new CrMasLessorInformation
+                selectProjection: query => query.Select(x => new cas_list_String_4
                 {
-                    CrMasLessorInformationCode = x.CrMasLessorInformationCode,
-                    CrMasLessorInformationArShortName = x.CrMasLessorInformationArShortName,
-                    CrMasLessorInformationEnShortName = x.CrMasLessorInformationEnShortName,
+                    id_key = x.CrCasBranchInformationCode,
+                    nameAr = x.CrCasBranchInformationArShortName,
+                    nameEn = x.CrCasBranchInformationEnShortName,
                 })
                 );
+            var all_Invoices = await _unitOfWork.CrCasAccountInvoice.FindAllWithSelectAsNoTrackingAsync(
+                //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                predicate: x => x.CrCasAccountInvoiceLessorCode == user.CrMasUserInformationLessor,
+                selectProjection: query => query.Select(x => new cas_list_String_4
+                {
+                    id_key = x.CrCasAccountInvoiceReferenceContract,
+                    nameAr = x.CrCasAccountInvoicePdfFile,
+                    str4 = x.CrCasAccountInvoiceUserCode,
+                })
+                //,includes: new string[] { "" } 
+                );
+
 
             if (ThisRenterData.Count == 0 || thisRenterBasicContract.Count == 0)
             {
@@ -183,7 +197,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasRentersOnly2
                 return RedirectToAction("Index", "RenterContract");
             }
             VM.CrMasRenterInformationId = id;
-            VM.all_lessors = allLessors;
+            VM.all_Branches = all_Branches;
+            VM.all_Invoices = all_Invoices;
             VM.all_contractBasic = thisRenterBasicContract;
             VM.thisRenterData = ThisRenterData?.FirstOrDefault();
 

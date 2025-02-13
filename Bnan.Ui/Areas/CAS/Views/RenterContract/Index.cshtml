@@ -1,145 +1,153 @@
 ﻿
 
 @using Bnan.Core.Extensions
-@* @model IEnumerable<CrCasRenterLessor>
+@using Bnan.Ui.ViewModels.CAS.Renters
+@* @model IEnumerable<CrMasRenterInformation>
 *@
-@model IEnumerable<CrCasRenterLessor>
+@model RenterContractVM
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
        ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}"; 
-    ViewData["Page-title"] = @localizer["RenterContract Data"];
-    ViewData["Page-Hint"] = @localizer["RenterContract Hint"];
+    ViewData["Page-title"] = @localizer["RenterInformations Data"];
+    ViewData["Page-Hint"] = @localizer["RenterInformations Hint"];
 }
-<style>
-    body {
-        overflow: hidden
-    }
 
-    @@media (max-width: 600px) {
-        #example_datable1_wrapper .row:first-child > div {
-            text-align: left;
-            overflow: scroll;
-            text-overflow: ellipsis;
-        }
+    <div class="col my-2 d-flex align-items-center justify-content-center" >
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3 mb-4">
+                <div class="col">
+                        <h3>@localizer["RenterContract_Data"]</h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
 
-            #example_datable .row:first-child > div:last-child > * {
-                text-align: right;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-    }
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search2" class="form-control inputs search-input"
+                                   name="search" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
 
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f9f9f9;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-    }
-
-    /*     td,th {
-            text-align: center;
-        } */
-
-    #_Nc {
-        text-align: center;
-    }
-
-    
-</style>
-
-<div class="sub-container">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div class="col-sm-12 col-md-9">
-                <div class="col-sm-12 col-md-4 p-0">
-                    <a type="button" class="btn btn-danger" title="@localizer["Back"]" asp-area="CAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
-                    @*<a class="btn btn-secondary InsertBtn" onclick="CheckValidation('1103002', '@Status.Insert', '@Url.Action("AddRenterContract", "RenterContract")')">
-                        @localizer["Add RenterContract Data"]
-                    </a> *@
                 </div>
             </div>
 
-            @*search And Fitler Radio Button*@
-            <div class="col-sm-12 col-md-3 p-0">
-                <div class="input-group" style="width: 95%;">
-                    <input class="form-control dropdown-toggle" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
-                    <span class="mdi mdi-magnify search-icon" style="color:#a7a4a4;"></span>
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
+                    <partial name="_DataTableRenterContract" />
                 </div>
             </div>
-            @*<div class="col-sm-12 col-md-12 mt-3" id="status-filter">
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioAll" name="customRadio" value="All" class="form-check-input">
-                    <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioActive" name="customRadio" value="A" class="form-check-input">
-                    <label class="form-check-label" for="customRadioActive">@localizer["Active"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioRented" name="customRadio" value="R" class="form-check-input">
-                    <label class="form-check-label" for="customRadioRented">@localizer["Rented_n"]</label>
-                </div>
-            </div>*@
-        </div>
-        <div class="dataTable " id="dataTableR1" >
-            <partial name="_DataTableRenterContract" />
-        </div>
+        </form>
+            <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+            data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="new-Page-icon">
+            <img src="~/CasSys/images/back to main.svg" alt="man">
+        </a>
     </div>
 </div>
 
-@section scripts {
-    @*Get RenterLessorInformation Using filter*@
-    <script>
-        //get RenterLessorInformation By Status function
-        function GetRenterContractFitler(status) {
+    @section Scripts{
+    <!-- تحميل مكتبة jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- تحميل مكتبة DataTables -->
+    <script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+
+
+@*<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var table = document.getElementById("Table");
+        var rows = table.getElementsByTagName("tr");
+
+        for (var i = 0; i < rows.length; i++) {
+            var cells = rows[i].getElementsByTagName("td");
+
+            for (var j = 0; j < cells.length; j++) {
+                cells[j].addEventListener("click", function () {
+                    window.location.href = "DetaildData.html";
+                });
+            }
+        }
+    });
+</script>*@
+@*<script>
+        function GetRenterIdtypeFitler(search) {
             $.ajax({
                 type: "GET",
                 data: {
-                    status: status
+                    search: search
                 },
-                url: "@Url.Action("GetRenterContractByStatus", "RenterContract", new { Area = "CAS" })",
+                url: "@Url.Action("GetRenterIdtypeByStatus", "RenterContract", new { Area = "CAS" })",
                 success: function (response) {
                     $(".dataTable").html(response);
-                    set_basic_datatable();
                 },
             })
         }
-
-        //on Click Filter Radio Button GetRenterLessorInformationByStatus
-        $("input[name='customRadio']").on("click", function () {
-            // Clear the value from the search input
-            $("#top-search").val("");
-            GetRenterContractFitler($(this).val())
-        })
-    </script>
-    @*<script>
-        var oTable = $('#example_datable').dataTable({
-            "aoColumnDefs": [
-                { "bSortable": false, "aTargets": [ 2, 3] },
-                { "bSearchable": false, "aTargets": [ 2, 3] }
-            ]
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#search").on("change", function () {
+            const search = $(this).val(); // الحصول على قيمة البحث
+            GetRenterIdtypeFitler(search);
         });
-    </script>*@
+    async function getSearch(){
+           var search1 = $('search').val();
+    }
+</script>*@
+<script>
+        $(document).ready(function () {
+            // تهيئة DataTable
+            var table = $('#Table').DataTable({
+                ordering: false, // تعطيل الترتيب التلقائي للصفوف
+                stateSave: true,   // حفظ حالة الجدول
+            });
+
+            $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+            //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
+            $("select[name='Table_length']").val('10000').change();
+            $("#min-loader").toggleClass("d-none", true);
+            $("#Table_info").css("display", "none");
+            $("#Table_previous").css("display", "none");
+            $("#Table_next").css("display", "none");
+            $("#Table_length").css("display", "none");
+            $("#Table_filter").css("display", "none");
+            $(".paginate_button").css("display", "none");
+            $(".ellipsis").css("display", "none");
+            
+            // دالة للبحث عن كلمة في جميع الصفوف
+            function searchRows() {
+                var keyword = $('#search2').val().toLowerCase(); // الكلمة المدخلة للبحث (تحويلها إلى حروف صغيرة)
+
+                // إخفاء كل الصفوف أولاً
+                table.rows().every(function () {
+                    this.nodes().to$().hide(); // إخفاء الصف
+                });
+
+                // التكرار عبر كل الصفوف
+                table.rows().every(function () {
+                    var row = this.data();
+                    var found = false;
+
+                    // التكرار عبر كل الخلايا في الصف
+                    row.forEach(function (cell) {
+                        if (cell.toString().toLowerCase().includes(keyword)) {
+                            found = true; // إذا تم العثور على الكلمة في أي خلية
+                        }
+                    });
+
+                    // إذا تم العثور على الكلمة في الصف، نظهره
+                    if (found) {
+                        this.nodes().to$().show();
+                    }
+                });
+                //$("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+                $("select[name='Table_length'] option[value='10000']").prop("selected", true);
+            }
+
+            // يمكن إضافة وظيفة البحث تلقائيًا عند كتابة النص
+            $('#search2').on('keyup', function () {
+                searchRows();
+            });
+        });
+</script>
 }
-
-
-<style>
-    .wrapper {
-        margin-bottom: 60px;
-        overflow: hidden;
-        background-image: url("~/Pictures/bg.jpg") !important;
-    }
-
-    .table-bordered td,
-    .table-bordered th {
-        border: none;
-    }
-</style>
-

@@ -15,29 +15,9 @@
 }
 <link href="~/css/toastr.css" rel="stylesheet" />
 
-<style>
-
-    /* العنصر الذي سيتم محاذاته */
-    .LoaderRun_Center_div {
-        width: 1900px;
-        height: 950px;
-        /*background-color: #3498db;*/
-        text-align: center;
-        /*color: white;*/
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        z-index: 4;
-    }
-</style>
 
 @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
 
-<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
-    <div class="content LoaderRun_Center_div">
-        <div class="loader"></div>
-    </div>
 
 <div class="container main-container">
 
@@ -88,10 +68,9 @@
 
     </form>
     <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
-       data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["Back"]"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
        class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
 </div>
-                </div>
 
 
 
@@ -102,7 +81,7 @@
         // لجعل الحالة حسب ما هي جاية من index نشط او الكل
         $(document).ready(function () {
             $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
         });
         ///////
 
@@ -135,7 +114,7 @@
     <script>
         //get RenterLessorInformation By Status function
         function GetRenterLessorInformationFitler(status, search) {
-            $(".LoaderRun_Center_div").css("display", "flex");// اظهار loader تحميل
+            $("#min-loader").removeClass("d-none");// اظهار loader تحميل
             $.ajax({
                 type: "GET",
                 data: {
@@ -146,7 +125,7 @@
                     $(".dataTable").html(response);
                 },
             })
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
         }
 
         $("input[name='customRadio']").on("click", function () {

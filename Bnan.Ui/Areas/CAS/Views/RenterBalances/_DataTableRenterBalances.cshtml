@@ -1,0 +1,85 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS
+
+@model FinancialTransactionOfRenterVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th scope="col">@localizer["Amountstraded"]</th>
+            <th scope="col">@localizer["FTR_Balance"]</th>
+            <th scope="col"> @localizer["LastVisit_s"] </th>
+            <th scope="col"> @localizer["RenterInformationJop"] </th>
+            <th scope="col"> @localizer["RenterInformationNationality"] </th>
+            <th scope="col" class="DifferAlign"> @localizer["the_Renter"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+            @{
+                int no = 1;
+            }
+            @foreach (var item in Model.FinancialTransactionOfRente_Filtered)
+            {
+            var lastVisit = " ";
+            string? job = " ";
+            var nationality = " ";
+            var RenterName = " ";
+            var singleRenter_Balances = Model.crCasRenterLessor?.Find(x => x.CrCasRenterLessorId == item.CrCasAccountReceiptRenterId);
+            var singleRenter = item.CrCasAccountReceiptRenter;
+            var CasRenterLessor = Model.crCasRenterLessor?.FirstOrDefault(x => x.CrCasRenterLessorId == item.CrCasAccountReceiptRenterId);
+            if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+            {
+                //Rate = Model.all_Rates?.Find(x => x.CrMasSysEvaluationsCode == singleRenter_Balances?.CrCasRenterLessorDealingMechanism?.Trim())?.CrMasSysEvaluationsEnDescription ?? " ";
+                nationality = CasRenterLessor?.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesEnName;
+                job = CasRenterLessor?.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsEnName;
+                RenterName = CasRenterLessor?.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName;
+                lastVisit = singleRenter_Balances?.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                //Rate = Model.all_Rates?.Find(x => x.CrMasSysEvaluationsCode == singleRenter_Balances?.CrCasRenterLessorDealingMechanism?.Trim())?.CrMasSysEvaluationsEnDescription ?? " ";
+                nationality = CasRenterLessor?.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesArName;
+                job = CasRenterLessor?.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsArName;
+                RenterName = CasRenterLessor?.CrCasRenterLessorNavigation?.CrMasRenterInformationArName;
+                lastVisit = singleRenter_Balances?.CrCasRenterLessorDateLastContractual?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            }
+
+            <tr>
+                <td>
+                    <p>@(singleRenter_Balances?.CrCasRenterLessorContractTradedAmount?.ToString("N2", CultureInfo.InvariantCulture) ?? " ")</p>
+                </td>
+            <td>
+                    <p>@(singleRenter_Balances?.CrCasRenterLessorBalance?.ToString("N2",CultureInfo.InvariantCulture)??" ")</p>
+            </td>
+            <td>
+                    <p>@(lastVisit)</p>
+            </td>
+            <td>
+                    <p class="FirstLineP">@job</p>
+            </td>
+
+            <td>
+                    <p>@nationality</p>
+            </td>
+                <td class="DifferAlign" style="  max-width:200px;">
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="col">
+                            <p class="FirstLineP"> @RenterName </p>
+                            <p class="secondLineP"> @item.CrCasAccountReceiptRenterId </p>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div>@no</div>
+            </td>
+        </tr>
+        no++;
+        }
+    </tbody>
+</table>

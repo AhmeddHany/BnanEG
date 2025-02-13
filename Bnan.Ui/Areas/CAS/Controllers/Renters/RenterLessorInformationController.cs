@@ -17,7 +17,6 @@ using Microsoft.Extensions.Localization;
 using NToastNotify;
 
 
-
 namespace Bnan.Ui.Areas.CAS.Controllers
 {
 
@@ -36,9 +35,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<RenterLessorInformationController> _localizer;
         private readonly string pageNumber = SubTasks.RentersCas_RentersData;
+        private readonly IWebHostEnvironment _env;
 
 
-        public RenterLessorInformationController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork,
+
+        public RenterLessorInformationController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IWebHostEnvironment env,
             IMapper mapper, IUserService userService, IRenterLessorInformation lessorOwners_CAS, IBaseRepo BaseRepo, IMasBase masBase,
             IUserLoginsService userLoginsService, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment, IStringLocalizer<RenterLessorInformationController> localizer) : base(userManager, unitOfWork, mapper)
         {
@@ -50,6 +51,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             _toastNotification = toastNotification;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
+            _env = env;
         }
 
 
@@ -97,10 +99,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         RenterNameEn = x.CrCasRenterLessorNavigation.CrMasRenterInformationEnName,
         Email = x.CrCasRenterLessorNavigation.CrMasRenterInformationEmail,
 
-        WorkPlaceAr = x.CrCasRenterLessorSectorNavigation.CrMasSupRenterSectorArName,
-        WorkPlaceEn = x.CrCasRenterLessorSectorNavigation.CrMasSupRenterSectorEnName,
     })
-    , includes: new string[] { "CrCasRenterLessorSectorNavigation", "CrCasRenterLessorNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }
+    , includes: new string[] { "CrCasRenterLessorNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }
     );
 
             // If no active licenses, retrieve all licenses
@@ -135,10 +135,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                         RenterNameEn = x.CrCasRenterLessorNavigation.CrMasRenterInformationEnName,
                         Email = x.CrCasRenterLessorNavigation.CrMasRenterInformationEmail,
 
-                        WorkPlaceAr = x.CrCasRenterLessorSectorNavigation.CrMasSupRenterSectorArName,
-                        WorkPlaceEn = x.CrCasRenterLessorSectorNavigation.CrMasSupRenterSectorEnName,
                     })
-                    , includes: new string[] { "CrCasRenterLessorSectorNavigation", "CrCasRenterLessorNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }
+                    , includes: new string[] {  "CrCasRenterLessorNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }
                     );
                 ViewBag.radio = "All";
             }
@@ -194,10 +192,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                         RenterNameEn = x.CrCasRenterLessorNavigation.CrMasRenterInformationEnName,
                         Email = x.CrCasRenterLessorNavigation.CrMasRenterInformationEmail,
 
-                        WorkPlaceAr = x.CrCasRenterLessorSectorNavigation.CrMasSupRenterSectorArName,
-                        WorkPlaceEn = x.CrCasRenterLessorSectorNavigation.CrMasSupRenterSectorEnName,
                     })
-                    , includes: new string[] { "CrCasRenterLessorSectorNavigation", "CrCasRenterLessorNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }
+                    , includes: new string[] { "CrCasRenterLessorNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }
                     );
                 IEnumerable<RenterLessorInformation_SingleVM>? enumerable = RenterLessorInformationAll;
                 if (!string.IsNullOrEmpty(search))
@@ -267,8 +263,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     SignatureImage = x.CrCasRenterLessorNavigation.CrMasRenterInformationSignature,
                     IdTypeAr = x.CrCasRenterLessorIdtrypeNavigation.CrMasSupRenterIdtypeArName,
                     IdTypeEn = x.CrCasRenterLessorIdtrypeNavigation.CrMasSupRenterIdtypeEnName,
-                    WorkPlaceAr = x.CrCasRenterLessorSectorNavigation.CrMasSupRenterSectorArName,
-                    WorkPlaceEn = x.CrCasRenterLessorSectorNavigation.CrMasSupRenterSectorEnName,
+                    WorkPlaceAr = x.CrCasRenterLessorNavigation.CrMasRenterInformationEmployerNavigation.CrMasSupRenterEmployerArName,
+                    WorkPlaceEn = x.CrCasRenterLessorNavigation.CrMasRenterInformationEmployerNavigation.CrMasSupRenterEmployerEnName,
 
                     License_Ar = x.CrCasRenterLessorNavigation.CrMasRenterInformationDrivingLicenseTypeNavigation.CrMasSupRenterDrivingLicenseArName,
                     License_En = x.CrCasRenterLessorNavigation.CrMasRenterInformationDrivingLicenseTypeNavigation.CrMasSupRenterDrivingLicenseEnName,
@@ -284,13 +280,31 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     birthDate = x.CrCasRenterLessorNavigation.CrMasRenterInformationBirthDate,
                     License_ExpiryDate = x.CrCasRenterLessorNavigation.CrMasRenterInformationExpiryDrivingLicenseDate,
                 })
-                , includes: new string[] { "CrCasRenterLessorCodeNavigation.CrCasAccountBanks", "CrCasRenterLessorNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorIdtrypeNavigation", "CrCasRenterLessorSectorNavigation", "CrCasRenterLessorStatisticsGenderNavigation", "CrCasRenterLessorMembershipNavigation" }
+                , includes: new string[] { "CrCasRenterLessorCodeNavigation.CrCasAccountBanks", "CrCasRenterLessorNavigation.CrMasRenterInformationEmployerNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorIdtrypeNavigation", "CrCasRenterLessorStatisticsGenderNavigation", "CrCasRenterLessorMembershipNavigation" }
                 );
             
             if (ThisRenterData == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "RenterLessorInformation");
+            }
+
+            // الحصول على المسار لحد المجلد wwwroot
+            string wwwrootPath = _env.WebRootPath;
+
+            var image = ThisRenterData?.FirstOrDefault()?.SignatureImage?.Replace("~","") ?? " ";
+
+            // تحديد المسار  الكامل 
+            string filePath = wwwrootPath + image;
+
+            if (System.IO.File.Exists(filePath))
+            {
+                //Console.WriteLine("الملف موجود.");
+            }
+            else
+            {
+                //Console.WriteLine("الملف غير موجود.");
+                ThisRenterData.FirstOrDefault().SignatureImage = null;
             }
 
             RenterLessorInformation_CASVM VM = new RenterLessorInformation_CASVM();

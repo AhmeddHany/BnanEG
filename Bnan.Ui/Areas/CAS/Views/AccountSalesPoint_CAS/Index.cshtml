@@ -11,29 +11,9 @@
 }
 <link href="~/css/toastr.css" rel="stylesheet" />
 
-<style>
-
-    /* العنصر الذي سيتم محاذاته */
-    .LoaderRun_Center_div {
-        width: 1900px;
-        height: 950px;
-        /*background-color: #3498db;*/
-        text-align: center;
-        /*color: white;*/
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        z-index: 4;
-    }
-</style>
 
 @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
 
-<div class="container-fluid sec-loader-container h-100" id="ContainerLoader">
-    <div class="content LoaderRun_Center_div">
-        <div class="loader"></div>
-    </div>
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container main-container">
@@ -92,7 +72,6 @@
         </a>
     </div>
 </div>
-</div>
 
 @section scripts {
     <script src="~/js/toastr.js"></script>
@@ -101,7 +80,7 @@
         // لجعل الحالة حسب ما هي جاية من index نشط او الكل
         $(document).ready(function () {
             $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
             ///////
             // تهيئة DataTable
             var table2 = $('#Table').DataTable({
@@ -113,7 +92,7 @@
         ///////
 
         function end_init_ShowDatatable() {
-            $(".LoaderRun_Center_div").css("display", "none");
+            $("#min-loader").toggleClass("d-none", true);
             $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
             //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
             $("select[name='Table_length']").val('10000').change();
@@ -129,7 +108,7 @@
 
         // دالة للبحث عن كلمة في جميع الصفوف
         function searchRows() {
-            $(".LoaderRun_Center_div").css("display", "flex");// اظهار loader تحميل
+            $("#min-loader").removeClass("d-none");// اظهار loader تحميل
 
             var table = $('#Table').DataTable();
             end_init_ShowDatatable();
@@ -157,7 +136,7 @@
                     this.nodes().to$().show();// إظهار الصف
                 }
             });
-            $(".LoaderRun_Center_div").css("display", "none"); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
             //$("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
         }
 
@@ -196,7 +175,7 @@
     <script>
         //get AccountSalesPoint_CAS By Status function
         function GetAccountSalesPoint_CASFitler(status, search) {
-            $(".LoaderRun_Center_div").css("display", "flex");// اظهار loader تحميل
+            $("#min-loader").removeClass("d-none");// اظهار loader تحميل
             $.ajax({
                 type: "GET",
                 data: {
@@ -207,7 +186,7 @@
                     $(".dataTable").html(response);
                 },
             })
-            $(".LoaderRun_Center_div").css("display", "none");
+            $("#min-loader").toggleClass("d-none", true);
         }
 
         $("input[name='customRadio']").on("click", function () {

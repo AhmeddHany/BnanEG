@@ -7,12 +7,17 @@ namespace Bnan.Ui.ViewModels.CAS
     {
         public List<CrCasAccountReceipt>? crCasAccountReceipt { get; set; }
         public List<CrCasRenterLessor>? crCasRenterLessor { get; set; }
-        public List<CrCasRenterContractBasic>? crCasRenterContractBasics { get; set; }
-        public List<CrMasRenterInformation>? crMasRenterInformation { get; set; }
 
-        public List<List<string>>? All_Counts = new List<List<string>>(); 
+        public List<CrCasRenterContractBasic>? crCasRenterContractBasics { get; set; }
+
+        public List<CrMasRenterInformation>? crMasRenterInformation  { get; set; }
+
+    public List<List<string>>? All_Counts = new List<List<string>>(); 
+
         public List<CrCasAccountReceipt>? FinancialTransactionOfRente_Filtered { get; set; }
 
+        public List<CrMasSysEvaluation>? Rates { get; set; }
 
+        
     }
 }
