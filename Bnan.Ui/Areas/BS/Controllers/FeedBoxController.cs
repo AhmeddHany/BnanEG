@@ -20,6 +20,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
         private readonly IFeedBoxBS _feedBox;
         private readonly IStringLocalizer<FeedBoxController> _localizer;
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly string pageNumber = SubTasks.FeedBoxBranches;
 
         public FeedBoxController(IStringLocalizer<FeedBoxController> localizer, IUnitOfWork unitOfWork, UserManager<CrMasUserInformation> userManager, IMapper mapper, IToastNotification toastNotification, IFeedBoxBS feedBox, IWebHostEnvironment hostingEnvironment) : base(userManager, unitOfWork, mapper)
         {
@@ -32,9 +33,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             //To Set Title 
             var userLogin = await _userManager.GetUserAsync(User);
-            //To Set Title 
-            var titles = await setTitle("508", "5508001", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
+            if (userLogin == null) return RedirectToAction("Login", "Account");
+            await SetPageTitleAsync(string.Empty, pageNumber);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bSLayoutVM = await GetBranchesAndLayout();
 

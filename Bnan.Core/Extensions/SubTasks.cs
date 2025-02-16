@@ -164,6 +164,22 @@
         //CAs Accounts
         public static string FeedBoxCAS { get; set; } = "2204001";
 
+
+
+
+        //BS Contract
+        public static string StatisticsBranches { get; set; } = "5501001";
+        public static string MyAccountInBranches { get; set; } = "5501005";
+        public static string ChangePasswordInBranches { get; set; } = "5501006";
+        public static string CreateContract { get; set; } = "5502001";
+        public static string SettementContract { get; set; } = "5503001";
+        public static string ExtensionContract { get; set; } = "5504001";
+        public static string RentersInBranches { get; set; } = "5506001";
+        public static string FinancelReport { get; set; } = "5507001";
+        public static string FeedBoxBranches { get; set; } = "5508001";
+        public static string ReceiveCustodyBranches { get; set; } = "5509001";
+
+
     }
 }
 

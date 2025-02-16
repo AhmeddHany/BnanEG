@@ -84,6 +84,8 @@ namespace Bnan.Ui.ViewModels.BS
         public string? ChoicesValueTotal { get; set; }
         public string? ChoicesValue { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
+        public string? SettlementType { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
         public string? SettlementMechanism { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? ExpensesValue { get; set; }

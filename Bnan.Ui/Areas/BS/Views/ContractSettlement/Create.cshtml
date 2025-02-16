@@ -79,13 +79,12 @@
                                 <input hidden asp-for="ContractSettlement.PreviousBalance" />
                                 <input hidden asp-for="ContractSettlement.AmountRequired" />
                                 <input hidden asp-for="ContractSettlement.AdvantagesValueTotal" />
+                                <input hidden asp-for="ContractSettlement.CompensationValue" />
+                                <input hidden asp-for="ContractSettlement.ExpensesValue" />
                                 <input hidden id="StaticContractCardImg" name="StaticContractCardImg" />
-                                <input hidden id="SavePdfArInvoice" name="SavePdfArInvoice" />
-                                <input hidden id="SavePdfEnInvoice" name="SavePdfEnInvoice" />
-                                <input hidden id="SavePdfArReceipt" name="SavePdfArReceipt" />
-                                <input hidden id="SavePdfEnReceipt" name="SavePdfEnReceipt" />
-                                <input hidden id="SavePdfEnContract" name="SavePdfEnContract" />
-                                <input hidden id="SavePdfArContract" name="SavePdfArContract" />
+                                <input hidden id="SavePdfInvoice" name="SavePdfInvoice" />
+                                <input hidden id="SavePdfReceipt" name="SavePdfReceipt" />
+                                <input hidden id="SavePdfContract" name="SavePdfContract" />
                                 <input hidden asp-for="ContractSettlement.AccountReceiptNo" />
                                 <input hidden asp-for="ContractSettlement.InitialInvoiceNo" />
                                 <input hidden id="language" name="language" />
@@ -102,31 +101,9 @@
                                 <fieldset id="firstFieldset">
                                     <div class="form-card SettlementCard1 ">
                                         <div class="d-flex mb-3 gap-3">
-                                            
-                                                <a href="@Url.Content(Model.ContractSettlement?.CrCasRenterContractBasicPdfFile?.ToString())" target="_blank" class="pdf-anchor"><img src="~/BranchSys/Pages/img/contract.svg" alt="pdf for contract details" class="pdf_img"></a>
-                                            
-                                            
-
-                                           
-                                                <a href="@Url.Content(Model.ContractSettlement?.InvoicePdfPath?.ToString())" target="_blank" class="pdf-anchor2"><img src="~/BranchSys/Pages/img/Invoice.svg" alt="pdf for contract details" class="pdf_img2"></a>
-                                            
-                                            
-                                            @if (requestCulture?.RequestCulture.UICulture.Name != "ar-EG")
-                                            {
-                                                <a href="https://drive.google.com/file/d/1q2Mb1uLGjLIvRphej_9X4zHhc9OuCcyB/view"
-                                                   target="_blank" class="pdf-anchor3">
-                                                    <img src="~/BranchSys/Pages/img/naql.svg"
-                                                         alt="pdf for contract details" class="pdf_img3">
-                                                </a>
-                                            }
-                                            else
-                                            {
-                                                <a href="https://drive.google.com/file/d/1q2Mb1uLGjLIvRphej_9X4zHhc9OuCcyB/view"
-                                                   target="_blank" class="pdf-anchor3">
-                                                    <img src="~/BranchSys/Pages/img/naql.svg"
-                                                         alt="pdf for contract details" class="pdf_img3">
-                                                </a>
-                                            }
+                                            <a href="@Url.Content(Model.ContractSettlement?.CrCasRenterContractBasicPdfFile?.ToString())" target="_blank" class="pdf-anchor"><img src="~/BranchSys/Pages/img/contract.svg" alt="pdf" class="pdf_img"></a>
+                                            <a href="@Url.Content(Model.ContractSettlement?.InvoicePdfPath?.ToString())" target="_blank" class="pdf-anchor2"><img src="~/BranchSys/Pages/img/Invoice.svg" alt="pdf" class="pdf_img2"></a>
+                                            <a href="@Url.Content(Model.ContractSettlement?.CrCasRenterContractBasicPdfTga?.ToString())" target="_blank" class="pdf-anchor2"><img src="~/BranchSys/Pages/img/naql.svg" alt="pdf" class="pdf_img3"></a>
                                         </div>
                                         <div class="row data-row-Settl ">
                                             <div class=" col-md-12 col-lg-7 data-col-Settl flex-wrap ">
@@ -142,7 +119,7 @@
                                                     </div>
                                                     <div class="dropdown-content dropdown-content-extension" id="dropdown-content-Settlement">
                                                         <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
+                                                            <div class="col-12 col-md-auto">
                                                                 <p>: @localizer["Renterr"] </p>
                                                             </div>
                                                             <div class="col personal-data">
@@ -158,7 +135,7 @@
 
                                                         </div>
                                                         <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
+                                                            <div class="col-12 col-md-auto">
                                                                 <p>: @localizer["Car"]</p>
                                                             </div>
                                                             <div class="col personal-data">
@@ -175,7 +152,7 @@
                                                         </div>
 
                                                         <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
+                                                            <div class="col-12 col-md-auto ">
                                                                 <p>: @localizer["StartContract"]</p>
                                                             </div>
                                                             <div class="col personal-data">
@@ -185,7 +162,7 @@
                                                         </div>
 
                                                         <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
+                                                            <div class="col-12 col-md-auto ">
                                                                 <p>: @localizer["ExpectedEndContract"]</p>
                                                             </div>
                                                             <div class="col personal-data">
@@ -194,7 +171,7 @@
 
                                                         </div>
                                                         <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
+                                                            <div class="col-12 col-md-auto ">
                                                                 <p> : @localizer["ExpectedDaysNo"]</p>
                                                             </div>
                                                             <div class="col personal-data">
@@ -203,7 +180,7 @@
 
                                                         </div>
                                                         <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
+                                                            <div class="col-12 col-md-auto ">
                                                                 <p> : @localizer["FreeAdditionalHours"]</p>
                                                             </div>
                                                             <div class="col personal-data">
@@ -213,7 +190,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
+                                                            <div class="col-12 col-md-auto ">
                                                                 <p> : @localizer["HourMax"]</p>
                                                             </div>
                                                             <div class="col personal-data">
@@ -221,7 +198,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
+                                                            <div class="col-12 col-md-auto ">
                                                                 <p> : @localizer["DailyFreeKm"]</p>
                                                             </div>
                                                             <div class="col personal-data">
@@ -254,100 +231,176 @@
                                                     <div class="col-sm-12  d-flex justify-content-end">
                                                         <img src="~/BranchSys/Pages/img/Rectangle 129.svg" alt="seacrh-icon Image" id="contract-value-Settlement2">
                                                     </div>
-                                                    <div class="dropdown-content  dropdown-content-extension" id="dropdown-content-Settlement2">
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p>: @localizer["Rent"]</p>
+                                                    <div class="dropdown-content dropdown-content-extension" id="dropdown-content-Settlement2">
+                                                        @if (Model?.ContractSettlement?.CrCasRenterContractBasicExpectedRentValue != null && Model.ContractSettlement.CrCasRenterContractBasicExpectedRentValue != 0)
+                                                        {
+                                                            <div class="row dropdown-content-row">
+                                                                <div class="col-md-auto">
+                                                                    <p>: @localizer["Rent"]</p>
+                                                                </div>
+                                                                <div class="col personal-data">
+                                                                    <p>@Model.ContractSettlement.CrCasRenterContractBasicExpectedRentValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                                </div>
                                                             </div>
-                                                            <div class="col personal-data">
-                                                                <p>@Model.ContractSettlement.CrCasRenterContractBasicExpectedRentValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
-                                                            </div>
+                                                        }
 
-                                                        </div>
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p>: @localizer["Delegationn"]</p>
+                                                        @if (Model?.ContractSettlement?.CrCasRenterContractBasicAuthorizationValue != null && Model.ContractSettlement.CrCasRenterContractBasicAuthorizationValue != 0)
+                                                        {
+                                                            <div class="row dropdown-content-row">
+                                                                <div class="col-md-auto">
+                                                                    <p>: @localizer["Delegationn"]</p>
+                                                                </div>
+                                                                <div class="col personal-data">
+                                                                    <p>@Model.ContractSettlement.CrCasRenterContractBasicAuthorizationValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                                </div>
                                                             </div>
-                                                            <div class="col personal-data">
-                                                                <p>@Model.ContractSettlement.CrCasRenterContractBasicAuthorizationValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
-                                                            </div>
-                                                        </div>
+                                                        }
 
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p>: @localizer["Features"]</p>
+                                                        @if (decimal.TryParse(Model?.ContractSettlement?.AdvantagesValueTotal, out var advantagesValue) && advantagesValue != 0)
+                                                        {
+                                                            <div class="row dropdown-content-row">
+                                                                <div class="col-md-auto">
+                                                                    <p>: @localizer["Features"]</p>
+                                                                </div>
+                                                                <div class="col personal-data">
+                                                                    <p>@Model.ContractSettlement.AdvantagesValueTotal</p>
+                                                                </div>
                                                             </div>
-                                                            <div class="col personal-data">
-                                                                <p>@Model.ContractSettlement.AdvantagesValueTotal</p>
-                                                            </div>
-                                                        </div>
+                                                        }
 
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p>: @localizer["AdditionalDriverr"]</p>
+                                                        @if (Model?.ContractSettlement?.CrCasRenterContractBasicAdditionalDriverValue != null && Model.ContractSettlement.CrCasRenterContractBasicAdditionalDriverValue != 0)
+                                                        {
+                                                            <div class="row dropdown-content-row">
+                                                                <div class="col-md-auto">
+                                                                    <p>: @localizer["AdditionalDriverr"]</p>
+                                                                </div>
+                                                                <div class="col personal-data">
+                                                                    <p>@Model.ContractSettlement.CrCasRenterContractBasicAdditionalDriverValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                                </div>
                                                             </div>
-                                                            <div class="col personal-data">
-                                                                <p>@Model.ContractSettlement.CrCasRenterContractBasicAdditionalDriverValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
-                                                            </div>
+                                                        }
 
-                                                        </div>
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p>: @localizer["PrivateDriver"] </p>
+                                                        @if (Model?.ContractSettlement?.CrCasRenterContractBasicExpectedPrivateDriverValue != null && Model.ContractSettlement.CrCasRenterContractBasicExpectedPrivateDriverValue != 0)
+                                                        {
+                                                            <div class="row dropdown-content-row">
+                                                                <div class="col-md-auto">
+                                                                    <p>: @localizer["PrivateDriver"]</p>
+                                                                </div>
+                                                                <div class="col personal-data">
+                                                                    <p>@Model.ContractSettlement.CrCasRenterContractBasicExpectedPrivateDriverValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                                </div>
                                                             </div>
-                                                            <div class="col personal-data">
-                                                                <p>@Model.ContractSettlement.CrCasRenterContractBasicExpectedPrivateDriverValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
-                                                            </div>
+                                                        }
 
-                                                        </div>
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p>: @localizer["Choicess"]</p>
+                                                        @if (Model?.ContractSettlement?.CrCasRenterContractBasicExpectedOptionsValue != null && Model.ContractSettlement.CrCasRenterContractBasicExpectedOptionsValue != 0)
+                                                        {
+                                                            <div class="row dropdown-content-row">
+                                                                <div class="col-md-auto">
+                                                                    <p>: @localizer["Choicess"]</p>
+                                                                </div>
+                                                                <div class="col personal-data">
+                                                                    <p>@Model.ContractSettlement.CrCasRenterContractBasicExpectedOptionsValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                                </div>
                                                             </div>
-                                                            <div class="col personal-data">
-                                                                <p>@Model.ContractSettlement.CrCasRenterContractBasicExpectedOptionsValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
-                                                            </div>
+                                                        }
 
-                                                        </div>
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p>: @localizer["Additionalss"]</p>
+                                                        @if (Model?.ContractSettlement?.CrCasRenterContractBasicAdditionalValue != null && Model.ContractSettlement.CrCasRenterContractBasicAdditionalValue != 0)
+                                                        {
+                                                            <div class="row dropdown-content-row">
+                                                                <div class="col-md-auto">
+                                                                    <p>: @localizer["Additionalss"]</p>
+                                                                </div>
+                                                                <div class="col personal-data">
+                                                                    <p>@Model.ContractSettlement.CrCasRenterContractBasicAdditionalValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                                </div>
                                                             </div>
-                                                            <div class="col personal-data">
-                                                                <p> @Model.ContractSettlement.CrCasRenterContractBasicAdditionalValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                                        }
+
+                                                        @if (Model?.ContractSettlement?.CrCasRenterContractBasicExpectedDiscountValue != null && Model.ContractSettlement.CrCasRenterContractBasicExpectedDiscountValue != 0)
+                                                        {
+                                                            <div class="row dropdown-content-row">
+                                                                <div class="col-md-auto">
+                                                                    <p>: @localizer["Discount"]</p>
+                                                                </div>
+                                                                <div class="col personal-data">
+                                                                    <p>@Model.ContractSettlement.CrCasRenterContractBasicExpectedDiscountValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p>: @localizer["Discount"]</p>
+                                                        }
+
+                                                        @if (Model?.ContractSettlement?.CrCasRenterContractBasicExpectedTaxValue != null && Model.ContractSettlement.CrCasRenterContractBasicExpectedTaxValue != 0)
+                                                        {
+                                                            <div class="row dropdown-content-row">
+                                                                <div class="col-md-auto">
+                                                                    <p>: @localizer["Tax"]</p>
+                                                                </div>
+                                                                <div class="col personal-data">
+                                                                    <p>@Model.ContractSettlement.CrCasRenterContractBasicExpectedTaxValue?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                                </div>
                                                             </div>
-                                                            <div class="col personal-data">
-                                                                <p> @Model.ContractSettlement.CrCasRenterContractBasicExpectedDiscountValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row dropdown-content-row">
-                                                            <div class="col-auto ">
-                                                                <p>: @localizer["Tax"]</p>
-                                                            </div>
-                                                            <div class="col personal-data">
-                                                                <p> @Model.ContractSettlement.CrCasRenterContractBasicExpectedTaxValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
-                                                            </div>
-                                                        </div>
+                                                        }
                                                     </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row data-row-Settl">
+                                            <div class="col-md-10 col-lg-6   data-col-Settl flex-wrap align-items-start">
+                                                <div class="col-auto">
+                                                    <label for="Settlement-type">
+                                                        @localizer["TypeOfSettlement"]
+                                                    </label>
+                                                </div>
+                                                <div class="col-12 col-md-7 col-lg-5">
+                                                    <select class="form-select form-select-settel" id="Settlement-type" asp-for="ContractSettlement.SettlementType">
+                                                        <option selected disabled>
+                                                        </option>
+                                                        <option value="1">@localizer["WithCompensation"]</option>
+                                                        <option value="0">@localizer["WithoutCompensation"]</option>
+                                                    </select>
+                                                    <div class="row requird-field-row-last">
+                                                        <span class="requird-field" asp-validation-for="@Model.ContractSettlement.SettlementType"></span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-auto  seacrh-icon-col">
+                                                    <div class="col-sm-12 d-flex justify-content-end ">
+                                                        <img src="~/BranchSys/Pages/img/Rectangle 129.svg" alt="seacrh-icon Image" id="Settlement-type-Data" style="cursor: pointer;">
+                                                    </div>
+                                                    <!-- edited -->
+                                                    <div class="dropdown-content dropdown-content-extension"
+                                                         id="dropdown-content-Settlement5">
+                                                        <div class="row dropdown-content-row">
+                                                            <div class="col-12 col-md-auto ">
+                                                                <p> نوع التسوية </p>
+                                                            </div>
+                                                            <div class="col personal-data">
+                                                                <p>نوع التسوية</p>
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5 data-col-Settl ">
+                                                <div class="col-auto  d-flex align-items-end gap-1">
+                                                    <label class="form-check-label" for="expenses">@localizer["Expense"]</label>
+                                                    <input class="form-check-input Settlement-input-checkbox" type="checkbox" value="checked" id="expenses-check" name="checked-expenses">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row data-row-Settl g-3">
-                                            <div class=" col-lg-5  data-col-Settl flex-wrap">
+                                            <div class=" col-lg-6  data-col-Settl flex-wrap align-items-baseline">
                                                 <div class="col-auto">
                                                     <label for="contract_real_endTime">
                                                         @localizer["EndOfSettlement"]
                                                     </label>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-5">
                                                     <input type="date" id="contract_real_endTime" class="form-control inputs" asp-for="ContractSettlement.ActualEndContractDate" aria-describedby="inputGroupPrepend" required>
                                                     <div class="row requird-field-row-last">
-                                                        <span class="requird-field" id="requird_field_SettlementMechanism" asp-validation-for="@Model.ContractSettlement.ActualEndContractDate"></span>
+                                                        <span class="requird-field" asp-validation-for="@Model.ContractSettlement.ActualEndContractDate"></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -362,7 +415,7 @@
                                             </div>
                                         </div>
                                         <div class="row data-row-Settl">
-                                            <div class="col-md-5 data-col-Settl" id="divLateHours" style="display:none">
+                                            <div class="col-md-6 data-col-Settl" id="divLateHours" style="display:none">
                                                 <div class="col-auto">
                                                     <p id="AddOrLateHoursText">@localizer["FreeHourss"]</p>
                                                 </div>
@@ -380,6 +433,7 @@
                                                     <select class="form-select form-select-settel" id="Settlement-mechanism" asp-for="ContractSettlement.SettlementMechanism">
                                                         <option selected disabled>
                                                         </option>
+                                                        <option value="5">@localizer["CompanyPolicy"]</option>
                                                         <option value="0">@localizer["Without"]</option>
                                                         <option value="1">@localizer["Day"]</option>
                                                         <option value="2">@localizer["DayHalf"]</option>
@@ -392,7 +446,7 @@
                                             </div>
                                         </div>
                                         <div class="row data-row-Settl">
-                                            <div class=" col-lg-5  data-col-Settl flex-wrap">
+                                            <div class=" col-lg-6  data-col-Settl flex-wrap">
                                                 <div class="col-auto">
                                                     <p>@localizer["ReceivingBranch"] </p>
                                                 </div>
@@ -424,7 +478,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row data-row-Settl ">
+                                        @* <div class="row data-row-Settl ">
                                             <div class=" col-lg-5  data-col-Settl flex-wrap">
                                                 <div class="col-auto ">
                                                     <label class="form-check-label" for="expenses-check">@localizer["Expense"]</label>
@@ -437,7 +491,7 @@
                                                     <input class="form-check-input Settlement-input-checkbox" type="checkbox" value="checked" id="compensation-check" name="checked-compensation">
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> *@
                                         <div class="row p-2" style="flex-direction:row-reverse">
                                             <div class="col-auto">
                                                 <label id="notes" for="FormControl-last-Textarea">@localizer["reasons"]</label>
@@ -463,7 +517,100 @@
                                 </fieldset>
                                 <fieldset id="SecondFieldset">
                                     <div class="form-card form-card1">
-                                        <div class="row flex-row-reverse">
+
+                                        <div class="row expensesRow flex-lg-row-reverse flex-column-reverse g-2 ">
+                                            <div class="col-lg-6">
+                                                <div class="TablesReferenceDiv">
+                                                    <div>
+                                                        <table class="table Expenses-compensation-Table" id="Expenses-Data-Table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="min-width: 250px;"> @localizer["Statement"] </th>
+                                                                    <th style="width: 110px;min-width: 110px;"> @localizer["TheValue"]</th>
+                                                                    <th> @localizer["Service"] </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td><textarea class="check-table-notes" id="Expenses1" maxlength="100" name="Expenses1"></textarea> </td>
+                                                                    <td><input type="text" class="Table-inputs" name="ChangeOil" oninput="handleAmountPayed(this)"></td>
+                                                                    <td>@localizer["ChangeOilValue"]</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><textarea class="check-table-notes" id="Expenses2" maxlength="100" name="Expenses2"></textarea></td>
+                                                                    <td><input type="text" class="Table-inputs" name="TiresExpenses" oninput="handleAmountPayed(this)"></td>
+                                                                    <td>@localizer["TiresValue"]</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td> <textarea class="check-table-notes" id="Expenses3" maxlength="100" name="Expenses3"></textarea> </td>
+                                                                    <td> <input type="text" class="Table-inputs" name="Transportation" oninput="handleAmountPayed(this)"> </td>
+                                                                    <td> @localizer["TransportValue"]</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td> <textarea class="check-table-notes" id="Expenses4" maxlength="100" name="Expenses4"></textarea></td>
+                                                                    <td><input type="text" class="Table-inputs" name="otherExpenses" oninput="handleAmountPayed(this)"></td>
+                                                                    <td> @localizer["OthersValue"] </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><textarea class="check-table-notes" id="Expenses5" maxlength="100" name="Expenses5" disabled></textarea></td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                                <tr class="total">
+                                                                    <td colspan="2"><p id="TotalExpenses"></p></td>
+                                                                    <td scope="row"><p>@localizer["Total"]</p></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <div class="TablesReferenceDiv">
+                                                    <table class="table Expenses-compensation-Table attatchments-table " id="Expenses-Attatchments-Table">
+                                                        <thead>
+                                                            <tr> <th colspan="2" class="text-center"> @localizer["Attachments"] </th></tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="upload__box  upload__box2 d-flex ">
+                                                                        <div class="upload_img-wrap_inner">
+                                                                            <div class="upload__btn-box" id="Expenses-upload-box">
+                                                                                <label class="upload__btn">
+                                                                                    <div class="upload-container-checking Expenses-compensation-Upload">
+                                                                                        <img class="upload-icon" src="~/BranchSys/Pages/img/Add.svg" alt="Upload Icon" id="addImage">
+                                                                                        <input type="file" multiple accept="image/*" id="Expenses-images" class="upload__inputfile ">
+                                                                                    </div>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                </td>
+
+                                                                <td>
+                                                                </td>
+
+
+
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                </td>
+                                                                <td>
+                                                                </td>
+
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        @* <div class="row flex-row-reverse">
                                             <div class="row">
                                                 <div class="expensesDiv align-items-baseline ">
                                                     <div class="col-auto">
@@ -518,7 +665,7 @@
                                             </div>
 
                                         </div>
-
+ *@
                                     </div>
                                     <div class="row button-row">
                                         <div class="button-card">
@@ -542,7 +689,103 @@
                                 </fieldset>
                                 <fieldset id="ThirdFieldset">
                                     <div class="form-card form-card1">
-                                        <div class="row flex-row-reverse">
+                                        <div class="row expensesRow flex-lg-row-reverse flex-column-reverse g-2 ">
+                                            <div class="col-lg-6">
+                                                <div class="TablesReferenceDiv">
+                                                    <div>
+                                                        <table class="table Expenses-compensation-Table " id="compensation-Data-Table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="min-width: 250px;"> @localizer["Statement"] </th>
+                                                                    <th style="width: 110px;min-width: 110px;"> @localizer["TheValue"]</th>
+                                                                    <th> @localizer["Service"] </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>  <textarea class="check-table-notes" id="compensation1" maxlength="100" name="compensation1"></textarea> </td>
+                                                                    <td> <input type="text" class="Table-inputs" name="SpareParts" oninput="handleAmountPayed(this)"> </td>
+                                                                    <td> @localizer["SpareParts"] </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><textarea class="check-table-notes" id="compensation2" maxlength="100" name="compensation2"></textarea></td>
+                                                                    <td> <input type="text" class="Table-inputs" name="HandFare" oninput="handleAmountPayed(this)"> </td>
+                                                                    <td>  @localizer["FareOfTheHand"]</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td> <textarea class="check-table-notes" id="compensation3" maxlength="100" name="compensation3"></textarea> </td>
+                                                                    <td> <input type="text" class="Table-inputs" name="Transportation" oninput="handleAmountPayed(this)"> </td>
+                                                                    <td> @localizer["TransportValue"]</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><textarea class="check-table-notes" id="compensation4" maxlength="100" name="compensation4"></textarea></td>
+                                                                    <td> <input type="text" class="Table-inputs " name="AdministrativeFees" oninput="handleAmountPayed(this)"></td>
+                                                                    <td> @localizer["AdministrativeFees"] </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td> <textarea class="check-table-notes" id="compensation5" maxlength="100" name="compensation5"></textarea></td>
+                                                                    <td> <input type="text" class="Table-inputs" name="otherCompensation" oninput="handleAmountPayed(this)"> </td>
+                                                                    <td> @localizer["OthersValue"] </td>
+                                                                </tr>
+                                                                <tr class="total">
+                                                                    <td colspan="2"><p id="TotalCompensation"></p></td>
+                                                                    <td scope="row"> <p>@localizer["Total"]</p></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <div class="TablesReferenceDiv">
+                                                    <table class="table Expenses-compensation-Table attatchments-table " id="compensation-Attatchments-Table">
+                                                        <thead>
+                                                            <tr> <th colspan="2" class="text-center"> @localizer["Attachments"] </th> </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="upload__box  upload__box2 d-flex ">
+                                                                        <div class="upload_img-wrap_inner">
+                                                                            <div class="upload__btn-box" id="compensation-upload-box">
+                                                                                <label class="upload__btn">
+                                                                                    <div class="upload-container-checking Expenses-compensation-Upload">
+                                                                                        <img class="upload-icon" src="~/BranchSys/Pages/img/Add.svg" alt="Upload Icon" id="addImage">
+                                                                                        <input type="file" multiple accept="image/*" id="compensation-images" class="upload__inputfile ">
+                                                                                    </div>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                </td>
+                                                            </tr>
+                                                            <tr> <td> </td> <td> </td> </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row justify-content-end">
+                                            <div class="col-md-auto">
+                                                <p style="color:#D92626;margin: 0;">
+                                                    @{
+                                                        var choice = Model.ContractSettlement.ContractChoices?
+                                                        .FirstOrDefault(x => x.CrCasRenterContractChoiceCode == "5100000003" || x.CrCasRenterContractChoiceCode == "5100000004");
+
+                                                        string titleString = (choice?.CrCasRenterContractChoiceCodeNavigation != null)
+                                                        ? (requestCulture?.RequestCulture.UICulture.Name == "en-US"
+                                                        ? choice.CrCasRenterContractChoiceCodeNavigation.CrMasSupContractOptionsEnName
+                                                        : choice.CrCasRenterContractChoiceCodeNavigation.CrMasSupContractOptionsArName)
+                                                        : localizer["AgainstOthers"].Value;
+                                                    }
+                                                    @titleString
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        @*   <div class="row flex-row-reverse">
                                             <div class="row">
                                                 <div class="expensesDiv align-items-baseline ">
                                                     <div class="col-auto">
@@ -640,7 +883,7 @@
                                             </div>
 
                                         </div>
-
+ *@
                                     </div>
                                     <div class="row button-row">
                                         <div class="button-card">
@@ -744,33 +987,35 @@
                                                 </div>
                                             </div>
                                             <div class="col-xl-6 virtual-check-table">
-                                                <div class="table-scroll" id="SettlementTable">
-                                                    <table class="table table-bordered  table-hover Checkup-table ">
-                                                        <thead>
-                                                            <tr>
-                                                                <th scope="col"
-                                                                    class="value-tabel-header">
-                                                                    @localizer["reasons"]
-                                                                </th>
-                                                                <th scope="col">
-                                                                    @localizer["TheCheck"]
-                                                                </th>
-                                                                <th scope="col">
-                                                                    <div class="d-flex justify-content-center gap-3">
-                                                                        <div class="col">
-                                                                            @localizer["CheckUpNames"]
+                                                <div id="referenceDiv">
+                                                    <div class="table-scroll" id="tableContainer">
+                                                        <table class="table table-bordered  table-hover Checkup-table ">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col"
+                                                                        class="value-tabel-header">
+                                                                        @localizer["reasons"]
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        @localizer["TheCheck"]
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        <div class="d-flex justify-content-center gap-3">
+                                                                            <div class="col">
+                                                                                @localizer["CheckUpNames"]
+                                                                            </div>
+                                                                            <div class="col-auto p-0">
+                                                                                <input type="checkbox" id="CheckAll" />
+                                                                            </div>
                                                                         </div>
-                                                                        <div class="col-auto p-0">
-                                                                            <input type="checkbox" id="CheckAll" />
-                                                                        </div>
-                                                                    </div>
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="CheckBody">
-                                                            <partial name="_CheckUpListSettlement" />
-                                                        </tbody>
-                                                    </table>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="CheckBody">
+                                                                <partial name="_CheckUpListSettlement" />
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -1095,7 +1340,7 @@
                                                     </label>
                                                 </div>
                                                 <div class="col-auto">
-                                                    <input type="text" class="form-control form-control2" asp-for="ContractSettlement.AmountPayed" id="AmountPayed" oninput="handleAmountPayed(this)" oninput="handleAmountPayed(this)" autocomplete="off" autofocus>
+                                                    <input type="text" class="form-control form-control2" asp-for="ContractSettlement.AmountPayed" id="AmountPayed" oninput="handleAmountPayed(this)" autocomplete="off" autofocus>
                                                     <div class="row requird-field-row-last">
                                                         <p class="requird_field_AmountPayed"></p>
                                                     </div>
@@ -1333,12 +1578,10 @@
 </footer>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/BranchSys/Pages/js/Settlement.js"></script>
     <script src="~/BranchSys/js/javascript/LoaderByPercent.js"></script>
     <script src="~/BranchSys/Pages/js/settlement/Settlement.js"></script>
     <script src="~/BranchSys/CreateContract/js/TechnicalCheckUp.js"></script>
-    @*     <script src="~/BranchSys/Pages/js/Loader.js"></script>
- *@    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" integrity="sha512-u3fPA7V8qQmhBPNT5quvaXVa1mnnLSXUep5PS1qo5NRzHwG19aHmNJnj1Q8hpA/nBWZtZD4r4AX6YOt5ynLN2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -1793,24 +2036,21 @@
     </script>
     <script>
         function clearExpensesData() {
-            $("#expensesValue-input").val('');
-            $("#Expense-statement-input").val('');
-            $("#requird_field_ExpensesValue").text('').css("color", "");
-            $("#requird_field_ExpensesReasons").text('').css("color", "");
-            $("#ExpensesError").text('');
-            ExpensesArray.splice(0, ExpensesArray.length);
+            $("#Expenses-Data-Table textarea").val('');
+            $("#Expenses-Data-Table input[type='text']").val('');
+            $("#TotalExpenses").text('');
             $('#SecondFieldset .upload__img-box').remove();
+            expensesArray.splice(0, expensesArray.length);
         }
 
         function clearCompensationData() {
-            $("#compensation-input").val('');
-            $("#compensation-statement-input").val('');
-            $("#requird_field_CompensationValue").text('').css("color", "");
-            $("#requird_field_CompensationReasons").text('').css("color", "");
-            $("#compensationError").text('');
-            compensationArray.splice(0, compensationArray.length);
+            $("#compensation-Data-Table textarea").val('');
+            $("#compensation-Data-Table input[type='text']").val('');
+            $("#TotalCompensation").text('');
             $('#ThirdFieldset .upload__img-box').remove();
+            compensationArray.splice(0, compensationArray.length);
         }
+
 
         function clearPaymentData() {
             $("#AmountPayed").val('');
@@ -1922,7 +2162,9 @@
             nextBtn.addEventListener("click", (event) => {
                 var field = nextBtn.closest("fieldset");
                 const ExpensesCheckbox = document.getElementById('expenses-check');
-                const CompensationCheckbox = document.getElementById('compensation-check');
+                // const CompensationCheckbox = document.getElementById('compensation-check');
+                const CompensationSelected = GetCompensationSelect();
+
                 const firsetfield = document.getElementById('firstFieldset');
                 const fieldsets = document.querySelectorAll("fieldset");
                 if ($("#SettlementForm").valid()) {
@@ -1931,21 +2173,17 @@
                     CaculateSettelementDay();
                     CalculateKmFree();
                     if (current_fs.id === 'firstFieldset') {
-                        $("#ExpensesError").text('');
+                        // $("#ExpensesError").text('');
                         $("#requird_field_ExpensesValue").text('').css("color", "");
                         $("#requird_field_ExpensesReasons").text('').css("color", "");
-                        if (!ExpensesCheckbox.checked && CompensationCheckbox.checked) {
+                        if (!ExpensesCheckbox.checked && CompensationSelected) {
                             clearExpensesData();
-                            $("#requird_field_CompensationValue").text('').css("color", "");
-                            $("#requird_field_CompensationReasons").text('').css("color", "");
-                            $("#compensationError").text('');
                             next_fs = current_fs.nextElementSibling.nextElementSibling;
                             $("#progressbar li").eq($("fieldset").index(current_fs.nextElementSibling)).addClass("active");
                             $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                             next_fs.style.display = "flex";
                             current_fs.style.display = "none";
-                            $("#compensation-input").focus();
-                        } else if (!ExpensesCheckbox.checked && !CompensationCheckbox.checked) {
+                        } else if (!ExpensesCheckbox.checked && !CompensationSelected) {
                             clearExpensesData();
                             clearCompensationData();
                             next_fs = current_fs.nextElementSibling.nextElementSibling.nextElementSibling;
@@ -1965,10 +2203,10 @@
                         }
                     }
                     if (current_fs.id === 'SecondFieldset') {
-                        $("#ExpensesError").text('');
+                        // $("#ExpensesError").text('');
                         var imgs = true;
 
-                        if (ExpensesCheckbox.checked && !CompensationCheckbox.checked) {
+                        if (ExpensesCheckbox.checked && !CompensationSelected) {
                             clearCompensationData();
                             next_fs = current_fs.nextElementSibling.nextElementSibling;
                             $("#progressbar li").eq($("fieldset").index(current_fs.nextElementSibling)).addClass("active");
@@ -1978,17 +2216,16 @@
                             $("#CurrentMeter").focus();
                         }
                         else {
-                            $("#requird_field_CompensationValue").text('').css("color", "");
-                            $("#requird_field_CompensationReasons").text('').css("color", "");
-                            $("#compensationError").text('');
+                            // $("#requird_field_CompensationValue").text('').css("color", "");
+                            // $("#requird_field_CompensationReasons").text('').css("color", "");
+                            // $("#compensationError").text('');
                             $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                             next_fs.style.display = "flex";
                             current_fs.style.display = "none";
-                            $("#compensation-input").focus();
                         }
                     }
                     if (current_fs.id === 'ThirdFieldset') {
-                        $("#compensationError").text('');
+                        // $("#compensationError").text('');
                         $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
                         next_fs.style.display = "flex";
                         current_fs.style.display = "none";
@@ -2027,6 +2264,8 @@
                             current_fs.style.display = "none";
                             clearPaymentData();
                             CaculateContractSettelement();
+                            UpdateTotalValuesExpensesAndCompensation();
+                            setTimeout(HideZeroValuesFromDetailsContract, 100); // 🔹 التأكد من تنفيذ التحديث قبل الإخفاء
                             $("#AmountPayed").focus();
                         }
                         else {
@@ -2043,18 +2282,20 @@
         Array.from(previousButtons).forEach((prevBtn) => {
             prevBtn.addEventListener("click", (event) => {
                 const ExpensesCheckbox = document.getElementById('expenses-check');
-                const CompensationCheckbox = document.getElementById('compensation-check');
+                // const CompensationCheckbox = document.getElementById('compensation-check');
+                const CompensationSelected = GetCompensationSelect();
+
                 const current_fs = prevBtn.closest("fieldset");
                 let previous_fs = current_fs.previousElementSibling;
                 if (current_fs.id === 'FourthFieldset') {
 
-                    if (ExpensesCheckbox.checked && CompensationCheckbox.checked) {
+                    if (ExpensesCheckbox.checked && CompensationSelected) {
                         previous_fs = current_fs.previousElementSibling;
-                    } else if (!ExpensesCheckbox.checked && !CompensationCheckbox.checked) {
+                    } else if (!ExpensesCheckbox.checked && !CompensationSelected) {
                         previous_fs = current_fs.previousElementSibling.previousElementSibling.previousElementSibling;
                         $("#progressbar li").eq($("fieldset").index(current_fs.previousElementSibling)).removeClass("active");
                         $("#progressbar li").eq($("fieldset").index(current_fs.previousElementSibling.previousElementSibling)).removeClass("active");
-                    } else if (ExpensesCheckbox.checked && !CompensationCheckbox.checked) {
+                    } else if (ExpensesCheckbox.checked && !CompensationSelected) {
                         previous_fs = current_fs.previousElementSibling.previousElementSibling;
                         $("#progressbar li").eq($("fieldset").index(current_fs.previousElementSibling)).removeClass("active");
                     }
@@ -2062,7 +2303,7 @@
 
                 if (current_fs.id === 'ThirdFieldset') {
 
-                    if (!ExpensesCheckbox.checked && CompensationCheckbox.checked) {
+                    if (!ExpensesCheckbox.checked && CompensationSelected) {
                         previous_fs = current_fs.previousElementSibling.previousElementSibling;
                         $("#progressbar li").eq($("fieldset").index(current_fs.previousElementSibling)).removeClass("active");
 
@@ -2084,6 +2325,31 @@
             var AdditionalKmFreeDaily = '@Model.ContractSettlement.CrCasRenterContractBasicTotalDailyFreeKm';
             var TotalAdditionalKM = parseInt(totalDaysNo) * parseInt(AdditionalKmFreeDaily);
             $("#FreeKM").text(TotalAdditionalKM.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }));
+        }
+        function GetCompensationSelect() {
+            const CompensationSelect = document.getElementById('Settlement-type');
+            return CompensationSelect && CompensationSelect.value === "1";
+        }
+        function UpdateTotalValuesExpensesAndCompensation() {
+            var expensesInput = $("#TotalExpenses").text().trim();
+            var compensationInput = $("#TotalCompensation").text().trim();
+            var expensesValue = parseFloat(expensesInput.replace(/,/g, '')) || 0;
+            var compensationValue = parseFloat(compensationInput.replace(/,/g, '')) || 0;
+            $("input[name='ContractSettlement.ExpensesValue']").val(expensesValue);
+            $("input[name='ContractSettlement.CompensationValue']").val(compensationValue);
+        }
+        function HideZeroValuesFromDetailsContract() {
+            $("#dropdown-content-Settlement4 .dropdown-content-row").each(function () {
+                var valueElement = $(this).find(".personal-data p");
+                var valueText = valueElement.text().trim();
+                var numericValue = parseFloat(valueText.replace(/,/g, '')) || 0;
+
+                if (numericValue === 0) {
+                    $(this).hide(); // إخفاء الصف إذا كانت القيمة 0 أو فارغة
+                } else {
+                    $(this).show(); // التأكد من ظهور الصف إذا كانت القيمة غير 0
+                }
+            });
         }
     </script>
     <script>
@@ -2183,22 +2449,15 @@
             document.getElementById('TotalContract').textContent = TotalContract.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             // expenses Value
-            var expensesInput = $("#expensesValue-input").val();
-            if (parseFloat(expensesInput) > 0) {
-                ExpensesValue = parseFloat(expensesInput);
-            } else {
-                ExpensesValue = 0;
-            }
-            document.getElementById('TotalExpenseValue').textContent = ExpensesValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            var expensesInput = $("#TotalExpenses").text().trim();
+            var expensesValue = parseFloat(expensesInput.replace(/,/g, '')) || 0;
+            document.getElementById('TotalExpenseValue').textContent = expensesValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
             // compensation Value
-            var compensationInput = $("#compensation-input").val();
-            if (parseFloat(compensationInput) > 0) {
-                compensationValue = parseFloat(compensationInput);
-            } else {
-                compensationValue = 0;
-            }
-            document.getElementById('TotalCompensationValue').textContent = compensationValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            var compensationInput = $("#TotalCompensation").text().trim();
+            var compensationValue = parseFloat(compensationInput.replace(/,/g, '')) || 0;
+            document.getElementById('TotalCompensationValue').textContent = compensationValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2});
+
 
             // AmountRequired
             var previousBalance = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasic5.CrCasRenterLessorAvailableBalance));

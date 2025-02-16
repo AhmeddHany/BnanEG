@@ -22,6 +22,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
         private readonly IStringLocalizer<CustodyController> _localizer;
         private readonly IToastNotification _toastNotification;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly string pageNumber = SubTasks.MyAccountInBranches;
 
 
         public EmployeesController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, IUserService userService, IAuthService authService, IStringLocalizer<CustodyController> localizer, IToastNotification toastNotification, IWebHostEnvironment webHostEnvironment) : base(userManager, unitOfWork, mapper)
@@ -34,11 +35,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
         }
 
         public async Task<IActionResult> MyAccount()
-        { //To Set Title 
-            var titles = await setTitle("501", "5501005", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
-            var bsLayoutVM = await GetBranchesAndLayout();
+        {  //To Set Title 
             var userLogin = await _userManager.GetUserAsync(User);
+            if (userLogin == null) return RedirectToAction("Login", "Account");
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            var bsLayoutVM = await GetBranchesAndLayout();
             var user = await _userService.GetUserByUserNameAsync(userLogin.CrMasUserInformationCode);
             var CallingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active).ToList();
             bsLayoutVM.UserInformation = user;

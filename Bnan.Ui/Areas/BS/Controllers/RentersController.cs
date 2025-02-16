@@ -5,6 +5,7 @@ using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.BS;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IStringLocalizer<RentersController> _localizer;
         private readonly IContract _ContractServices;
+        private readonly string pageNumber = SubTasks.RentersInBranches;
+
         public RentersController(IStringLocalizer<RentersController> localizer, IUnitOfWork unitOfWork, UserManager<CrMasUserInformation> userManager, IMapper mapper, IToastNotification toastNotification, IContract contractServices) : base(userManager, unitOfWork, mapper)
         {
             _localizer = localizer;
@@ -30,9 +33,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             //To Set Title 
             var userLogin = await _userManager.GetUserAsync(User);
-            //To Set Title 
-            var titles = await setTitle("506", "5506001", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
+            if (userLogin == null) return RedirectToAction("Login", "Account");
+            await SetPageTitleAsync(string.Empty, pageNumber);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bSLayoutVM = await GetBranchesAndLayout();
             var RenterAll = _unitOfWork.CrCasRenterLessor.FindAll(x => x.CrCasRenterLessorCode == userLogin.CrMasUserInformationLessor, new[] { "CrCasRenterLessorNavigation" }).OrderByDescending(x => x.CrCasRenterLessorDateLastContractual).ToList();
@@ -88,11 +90,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
         }
         public async Task<IActionResult> Details(string id)
         {
-            var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
             //To Set Title 
-            var titles = await setTitle("506", "5506001", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
+            var userLogin = await _userManager.GetUserAsync(User);
+            if (userLogin == null) return RedirectToAction("Login", "Account");
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            var lessorCode = userLogin.CrMasUserInformationLessor;
             var Renter = await _unitOfWork.CrCasRenterLessor.FindAsync(x => x.CrCasRenterLessorId == id && x.CrCasRenterLessorCode == lessorCode,
                                                                        new[] { "CrCasRenterLessorNavigation.CrMasRenterInformationEmployerNavigation",
                                                                                "CrCasRenterLessorNavigation.CrMasRenterInformationDrivingLicenseTypeNavigation",

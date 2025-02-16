@@ -6,6 +6,7 @@ using Bnan.Inferastructure.Extensions;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.CAS;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
         private readonly IContractExtension _contractExtension;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IConvertedText _convertedText;
+        private readonly string pageNumber = SubTasks.ExtensionContract;
 
 
         public ContractExtensionController(IStringLocalizer<ContractExtensionController> localizer, IUnitOfWork unitOfWork, UserManager<CrMasUserInformation> userManager, IMapper mapper, IToastNotification toastNotification, IAdminstritiveProcedures adminstritiveProcedures, IContractExtension contractExtension, IWebHostEnvironment hostingEnvironment, IConvertedText convertedText) : base(userManager, unitOfWork, mapper)
@@ -39,10 +41,9 @@ namespace Bnan.Ui.Areas.BS.Controllers
         public async Task<IActionResult> Index()
         {
             //To Set Title 
-            var titles = await setTitle("504", "5504001", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
-
             var userLogin = await _userManager.GetUserAsync(User);
+            if (userLogin == null) return RedirectToAction("Login", "Account");
+            await SetPageTitleAsync(string.Empty, pageNumber);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bsLayoutVM = await GetBranchesAndLayout();
             var contracts = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicBranch == bsLayoutVM.SelectedBranch &&
@@ -96,9 +97,9 @@ namespace Bnan.Ui.Areas.BS.Controllers
         public async Task<IActionResult> Create(string id)
         {
             //To Set Title 
-            var titles = await setTitle("504", "5504001", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
             var userLogin = await _userManager.GetUserAsync(User);
+            if (userLogin == null) return RedirectToAction("Login", "Account");
+            await SetPageTitleAsync(string.Empty, pageNumber);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bsLayoutVM = await GetBranchesAndLayout();
             var contract = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicNo == id,

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
 using Bnan.Ui.Areas.Base.Controllers;
@@ -26,7 +27,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IContractSettlement _contractSettlement;
         private readonly IConvertedText _convertedText;
-        public ContractSettlementController(IStringLocalizer<ContractSettlementController> localizer, IUnitOfWork unitOfWork, UserManager<CrMasUserInformation> userManager, IMapper mapper, IToastNotification toastNotification, IContract contractServices, IWebHostEnvironment hostingEnvironment, IContractSettlement contractSettlement, IConvertedText convertedText) : base(userManager, unitOfWork, mapper)
+        private readonly string pageNumber = SubTasks.SettementContract;
+
+        public ContractSettlementController(IStringLocalizer<ContractSettlementController> localizer, IUnitOfWork unitOfWork, 
+            UserManager<CrMasUserInformation> userManager, IMapper mapper, IToastNotification toastNotification, IContract contractServices,
+            IWebHostEnvironment hostingEnvironment, IContractSettlement contractSettlement, IConvertedText convertedText) : base(userManager, unitOfWork, mapper)
         {
             _localizer = localizer;
             _toastNotification = toastNotification;
@@ -37,12 +42,13 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //To Set Title 
-            var titles = await setTitle("503", "5503001", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
 
-            var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
+            var lessorCode = user.CrMasUserInformationLessor;
+
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            
             var bsLayoutVM = await GetBranchesAndLayout();
             var contracts = _unitOfWork.CrCasRenterContractBasic.FindAll(x => (x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire) &&
                                                                                x.CrCasRenterContractBasicLessor == lessorCode && x.CrCasRenterContractBasicBranch == bsLayoutVM.SelectedBranch,
@@ -116,11 +122,10 @@ namespace Bnan.Ui.Areas.BS.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(string id)
         {
-            //To Set Title 
-            var titles = await setTitle("503", "5503001", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
-            var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
+            var lessorCode = user.CrMasUserInformationLessor;
+            await SetPageTitleAsync(string.Empty, pageNumber);
             var bsLayoutVM = await GetBranchesAndLayout();
             var contractList = await _unitOfWork.CrCasRenterContractBasic.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractBasicNo == id,
                                                                                      new[] { "CrCasRenterContractBasic5.CrCasRenterLessorNavigation",
