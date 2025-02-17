@@ -355,8 +355,15 @@
                                                     <select class="form-select form-select-settel" id="Settlement-type" asp-for="ContractSettlement.SettlementType">
                                                         <option selected disabled>
                                                         </option>
-                                                        <option value="1">@localizer["WithCompensation"]</option>
-                                                        <option value="0">@localizer["WithoutCompensation"]</option>
+                                                        @foreach (var item in Model.ContractCloseSuspensions)
+                                                        {
+                                                            <option value="@item.CrMasSupContractCloseSuspensionCode"
+                                                                    data-type="@item.CrMasSupContractCloseSuspensionType"
+                                                                    data-naqlMain="@item.CrMasSupContractCloseSuspensionNaqlMain"
+                                                                    data-naqlSub="@item.CrMasSupContractCloseSuspensionNaqlSub">
+                                                                @(requestCulture?.RequestCulture.UICulture.Name != "ar-EG" ? item.CrMasSupContractCloseSuspensionEnName : item.CrMasSupContractCloseSuspensionArName)
+                                                            </option>
+                                                        }
                                                     </select>
                                                     <div class="row requird-field-row-last">
                                                         <span class="requird-field" asp-validation-for="@Model.ContractSettlement.SettlementType"></span>
@@ -420,7 +427,7 @@
                                                     <p id="AddOrLateHoursText">@localizer["FreeHourss"]</p>
                                                 </div>
                                                 <div class="col-auto personal-data">
-                                                    <span id="diffHours">00</span>:<span id="diffMinutes">00</span>
+                                                    <span id="diffHours">00</span><span id="diffMinutes">00</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-lg-5  data-col-Settl flex-wrap " id="mechanismSettlement" style="display:none">
@@ -433,11 +440,10 @@
                                                     <select class="form-select form-select-settel" id="Settlement-mechanism" asp-for="ContractSettlement.SettlementMechanism">
                                                         <option selected disabled>
                                                         </option>
-                                                        <option value="5">@localizer["CompanyPolicy"]</option>
                                                         <option value="0">@localizer["Without"]</option>
+                                                        <option value="2">@localizer["CompanyPolicy"]</option>
                                                         <option value="1">@localizer["Day"]</option>
-                                                        <option value="2">@localizer["DayHalf"]</option>
-                                                        <option value="3">@localizer["DayQuarter"]</option>
+                                                        <option value=".5">@localizer["DayHalf"]</option>
                                                     </select>
                                                     <div class="row requird-field-row-last">
                                                         <span class="requird-field" id="requird_field_SettlementMechanism" asp-validation-for="@Model.ContractSettlement.SettlementMechanism"></span>
@@ -1153,6 +1159,14 @@
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p>@Model.ContractSettlement?.CrCasRenterContractBasicKmValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row dropdown-content-row">
+                                                            <div class="col-auto ">
+                                                                <p> : @localizer["LateDays"]  </p>
+                                                            </div>
+                                                            <div class="col personal-data">
+                                                                <p id="LateDays">0</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1882,6 +1896,7 @@
                 console.error("Invalid end date provided.");
             }
         }
+        var diffDays = 0;
         var diffMinutes = 0;
         var diffHours = 0;
         var diff = 0;
@@ -1890,6 +1905,7 @@
         var roundedHours = 0;
         var roundedLateAddHours = 0;
         var roundedLateSettelmentHours = 0;
+        var caseSettelement=0;
         document.addEventListener("DOMContentLoaded", function () {
             customizeDate();
             const elementToHide = document.getElementById("mechanismSettlement");
@@ -1919,34 +1935,45 @@
                 const settlementDateTime = new Date(settlementDateTimeString);
 
                 const timeDiff = Math.abs(settlementDateTime.getTime() - startContractDate.getTime());
-                let diffDays = Math.floor(timeDiff / (1000 * 3600 * 24)); // Difference in days
+                diffDays = Math.floor(timeDiff / (1000 * 3600 * 24)); // Difference in days
                 const remainingTime = timeDiff % (1000 * 3600 * 24);
                 let diffHours = Math.ceil(remainingTime / (1000 * 3600)); // احتساب الساعات مع أي ثانية كساعة كاملة
 
                 if (settlementDateTime > endContractDate) {
                     // إذا تجاوزت تاريخ النهاية المتوقع
-                    console.log("Settlement date is after the expected end date.");
+                    console.log("نهاية العقد تجاوزت الوقت المتوقع.");
+                    const maxAllowedHours = parseInt(TotalFreeHours) + parseInt(MaxHours);
                     const overtime = settlementDateTime.getTime() - endContractDate.getTime(); // الوقت بعد نهاية العقد
                     const overtimeHours = Math.ceil(overtime / (1000 * 3600)); // الساعات الإضافية مع احتساب أول ثانية كساعة
-                    console.log("overtimeHours.", overtimeHours);
-
-                    // إذا تجاوزت ساعات التأخير 24 ساعة
-                    if (overtimeHours >= 24) {
-                        // diffDays += Math.floor(overtimeHours / 24); // إضافة يوم/أيام بناءً على عدد الساعات
-                        diffHours = overtimeHours % 24; // إعادة حساب الساعات المتبقية بعد الـ 24 ساعة
-                    } else {
-                        diffHours = overtimeHours; // الساعات الإضافية فقط إذا لم تتجاوز 24 ساعة
+                    console.log("الساعات الزيادة:", overtimeHours);
+                    if(diffDays == parseInt(expectedDays)){
+                        console.log("نهاية العقد تجاوزت الوقت المتوقع بس لسه عدد الايام المتوقع وعدد الايام الفعلية متساويين.");
+                        // إذا تجاوزت ساعات التأخير الساعات المجانية والحد الاعلي للساعات
+                        if (overtimeHours > maxAllowedHours) {
+                            console.log("تعدي عدد الساعات المسموح به");
+                            diffDays += 1;
+                        } else {
+                            diffHours = overtimeHours; 
+                            console.log("لم يتعدي عدد الساعات المسموح به");
+                        }
                     }
-                } else if (settlementDateTime <= endContractDate) {
-                    // إذا لم نتجاوز نهاية العقد
-                    console.log("Settlement date is within or exactly at the expected end date.");
+                    else{
+                        console.log("نهاية العقد تجاوزت الوقت المتوقع و عدد الايام المتوقع ولذلك اي ثانية زيادة تحسب يوم كامل .");
+                        if(remainingTime > 0) {
+                        console.log("تم اضافة يوم اضافي لتعدي الوقت المحدد له .");
+                            diffDays += 1;
+                        }
+                    }
+                    
+                } 
+                else 
+                { 
+                    console.log("نهاية العقد لم تتجاوز الوقت المتوقع.");
                     if (remainingTime > 0) {
-                        // إذا دخل اليوم الجديد، نضيف يومًا كاملًا
+                        console.log("تم اضافة يوم اضافي لتعدي الوقت المحدد له .");
                         diffDays += 1;
                     }
                 }
-                console.log("settlementDateTime", settlementDateTime)
-                console.log("timeDiff", timeDiff)
                 console.log("diffDays", diffDays)
                 console.log("diffHours", diffHours)
                 // diff = parseInt(diffHours) - parseInt(TotalFreeHours);
@@ -1960,11 +1987,7 @@
                     ('0' + actualEndContractDate.getHours()).slice(-2) + ':' + ('0' + actualEndContractDate.getMinutes()).slice(-2) + ':00';
                 $("#DaysNoContract").text(diffDays);
                 $("#EndContract").text(formattedEndContractDate);
-
                 console.log("totalDaysNo", totalDaysNo)
-
-
-
                 const isSettlementAuthValid = SettelmentAuth && SettelmentAuth.toLowerCase() !== "false";
                 ////////////////////////////////////////////////////////////
                 if (endContractDate < now && (diffHours > 0 || (diffHours === 0 && diffMinutes > 0))) {
@@ -1979,43 +2002,54 @@
                         handleSettlementAuth(roundedHours);
                     }
                 } else {
+                    console.log("CASE 1 ......")
+                    caseSettelement=1;
                     resetTimeDisplay();
                 }
 
-                function updateTimeDisplay(roundedHoursVal) {
-                    $("#divLateHours").css("display", ""); // أو أي قيمة أخرى تناسبك
-                    $("#diffHours").text(roundedHoursVal.toString().padStart(2, '0'));
-                    $("#diffMinutes").text('00');
+                function updateTimeDisplay(diffValue, isDays = false) {
+                    $("#divLateHours").css("display", "");
+
+                    if (isDays) {
+                        $("#diffHours").text(diffValue.toString().padStart(2, '0'));
+                        $("#diffMinutes").text("").hide();
+                    } else {
+                        $("#diffHours").text(diffValue.toString().padStart(2, '0'));
+                        $("#diffMinutes").text(':00').show();
+                    }
                 }
 
                 function handleSettlementAuth(roundedHoursVal) {
-                    let displayHour = 0;
-                    if (roundedHoursVal <= parseInt(TotalFreeHours)) {
-                        $("#AddOrLateHoursText").text("@localizer["FreeHourss"]");
-                        displayHour = roundedHoursVal;
-                        roundedLateAddHours = 0;
-                        roundedLateSettelmentHours = 0;
-                    } else if ((roundedHoursVal - parseInt(TotalFreeHours)) <= parseInt(MaxHours)) {
-                        roundedLateAddHours -= parseInt(TotalFreeHours);
-                        displayHour = roundedLateAddHours;
-                        roundedLateSettelmentHours = 0;
-                        $("#AddOrLateHoursText").text("@localizer["AddHourslate"]");
-                    } else if (elementToHide && roundedHoursVal > (parseInt(MaxHours) + parseInt(TotalFreeHours))) {
-                        roundedLateAddHours -= parseInt(TotalFreeHours);
-                        displayHour = roundedLateAddHours;
-                        roundedLateSettelmentHours = roundedLateAddHours - parseInt(MaxHours);
-                        roundedLateAddHours -= roundedLateSettelmentHours;
-                        elementToHide.style.display = "";
-                        $("#AddOrLateHoursText").text("@localizer["AddHourslate"]");
-                    } else {
-                        $("#AddOrLateHoursText").text("@localizer["AddHourslate"]");
+                    console.log("first:roundedHoursVal:",roundedHoursVal)
+                    let display = 0;
+                    let isDays = false;
+                    if(diffDays == parseInt(expectedDays)){
+                        if (roundedHoursVal <= parseInt(TotalFreeHours)) {
+                            console.log("CASE 2 ......")
+                            $("#AddOrLateHoursText").text("@localizer["FreeHourss"]");
+                            display = roundedHoursVal;
+                            roundedLateAddHours = 0;
+                            roundedLateSettelmentHours = 0;
+                            caseSettelement=2;
+                        } else {
+                            console.log("CASE 3 ......")
+                            roundedLateAddHours -= parseInt(TotalFreeHours);
+                            display = roundedLateAddHours;
+                            roundedLateSettelmentHours = 0;
+                            $("#AddOrLateHoursText").text("@localizer["AddHourslate"]");
+                            hideSettlementSomeOptions("hour");
+                            caseSettelement=3;
+                        }
                     }
-                    updateTimeDisplay(displayHour);
-                    console.log("roundedHoursVal", roundedHoursVal);
-                    console.log("roundedHours", roundedHours);
-                    console.log("roundedLateAddHours", roundedLateAddHours);
-                    console.log("roundedLateSettelmentHours", roundedLateSettelmentHours);
-                    console.log("displayHour", displayHour);
+                    else {
+                        console.log("CASE 4 ......")
+                        display = diffDays - parseInt(expectedDays);
+                        hideSettlementSomeOptions("day");
+                        isDays = true;
+                        $("#AddOrLateHoursText").text("@localizer["LateDays"]");
+                        caseSettelement=4;
+                    } 
+                    updateTimeDisplay(display,isDays);
                 }
 
                 function resetTimeDisplay() {
@@ -2033,6 +2067,21 @@
             calculateDifference();
             customizeDate();
         });
+        function hideSettlementSomeOptions(type) {
+            const elementToHide = document.getElementById("mechanismSettlement");
+            const settlementSelect = document.getElementById("Settlement-mechanism");
+            elementToHide.style.display = "";
+                if(type==="hour"){
+                    if (settlementSelect) {
+                    // إخفاء الخيارات غير المرغوبة (Day و DayHalf)
+                    Array.from(settlementSelect.options).forEach(option => {
+                        if (option.value === "1" || option.value === ".5") {
+                            option.style.display = "none"; // إخفاء الاختيار
+                        }
+                    });
+                }
+            }
+        }
     </script>
     <script>
         function clearExpensesData() {
@@ -2069,27 +2118,7 @@
             const endContractDateString = "@Model.ContractSettlement.CrCasRenterContractBasicExpectedEndDate?.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture)";
             const now = new Date();
             const endContractDate = new Date(endContractDateString);
-            var settlementMechanismValue = parseInt($("#Settlement-mechanism").val());
-            if (settlementMechanismValue == 0) {
-                settlementDay = 0;
-            }
-            else if (settlementMechanismValue == 1) {
-                settlementDay = 1;
-            }
-            else if (settlementMechanismValue == 2) {
-                settlementDay = (1 / 2);
-            }
-            else if (settlementMechanismValue == 3) {
-                settlementDay = 1 / 4;
-            }
-            else {
-                if (endContractDate < now && roundedLateSettelmentHours > 0) {
-                    settlementDay = 1;
-                }
-                else {
-                    settlementDay = 0;
-                }
-            }
+            settlementDay = parseFloat($("#Settlement-mechanism").val()) || 0;
             $("#ContractSettlement_ActualDaysNo").val(totalDaysNo);
         }
 
@@ -2099,7 +2128,8 @@
             var PreviousMeterInput = '@Model.ContractSettlement.CrCasRenterContractBasicCurrentReadingMeter';
             var PreviousMeterValue = parseInt(PreviousMeterInput) || 0;
             var AdditionalKmFreeDaily = '@Model.ContractSettlement.CrCasRenterContractBasicTotalDailyFreeKm';
-            var TotalAdditionalKM = parseFloat(totalDaysNo) * parseInt(AdditionalKmFreeDaily);
+            var expectedDays =parseInt("@Model.ContractSettlement.CrCasRenterContractBasicExpectedRentalDays");
+            var TotalAdditionalKM = parseFloat(expectedDays) * parseInt(AdditionalKmFreeDaily);
             if (enteredValue <= PreviousMeterValue) {
                 $("#Error_CurrentMeter").text("@localizer["requirdfieldCurrentMeter"]" + " " + PreviousMeterValue);
             } else {
@@ -2323,12 +2353,14 @@
 
         function CalculateKmFree() {
             var AdditionalKmFreeDaily = '@Model.ContractSettlement.CrCasRenterContractBasicTotalDailyFreeKm';
-            var TotalAdditionalKM = parseInt(totalDaysNo) * parseInt(AdditionalKmFreeDaily);
+            var expectedDays = "@Model.ContractSettlement.CrCasRenterContractBasicExpectedRentalDays";
+            var TotalAdditionalKM = parseInt(expectedDays) * parseInt(AdditionalKmFreeDaily);
             $("#FreeKM").text(TotalAdditionalKM.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }));
         }
         function GetCompensationSelect() {
             const CompensationSelect = document.getElementById('Settlement-type');
-            return CompensationSelect && CompensationSelect.value === "1";
+            const allowedValues = ["35", "32", "10", "12"]; // القيم المسموح بها
+            return CompensationSelect && allowedValues.includes(CompensationSelect.value);
         }
         function UpdateTotalValuesExpensesAndCompensation() {
             var expensesInput = $("#TotalExpenses").text().trim();
@@ -2373,10 +2405,17 @@
         function CaculateContractSettelement() {
 
             //Rental Price
+            var expectedDays =parseInt("@Model.ContractSettlement.CrCasRenterContractBasicExpectedRentalDays");
             var rentalPricePerDay = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicDailyRent));
-            var rentValue = totalDaysNo * parseFloat(rentalPricePerDay);
-            var settelementRentValue = settlementDay * parseFloat(rentalPricePerDay)
+            var rentValue = expectedDays * parseFloat(rentalPricePerDay);
+            // غرامة التاخير
+            console.log("settlementDay:",settlementDay)
+            console.log("lateDaysToSettlement:",diffDays - parseInt(expectedDays))
+            var lateDaysToSettlement = diffDays - parseInt(expectedDays);
+            var settelementRentValue = settlementDay * lateDaysToSettlement * parseFloat(rentalPricePerDay)
+            console.log("settelementRentValue:",settelementRentValue)
             rentValueTotal = rentValue + settelementRentValue;
+            document.getElementById('LateDays').textContent=lateDaysToSettlement.toString().padStart(2, '0');
             document.getElementById('RentalValue').textContent = rentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('LateSettlement').textContent = settelementRentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -2509,9 +2548,13 @@
             $("#ContractSettlement_ExtraHoursValue").val(AdditionalHoursValueTotal.toFixed(2));
         }
         function getAdditionalKmValue() {
-            const KMValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicKmValue));
-            AdditionalKMValueTotal = parseInt(AdditionalKm) * parseFloat(KMValue);
-            document.getElementById('ExtraKMsValue').textContent = AdditionalKMValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const UnlimitedKm = "@Model.ContractSettlement.UnlimitedKm";  // قيمة Boolean من الخادم
+            console.log("Unlimited:", UnlimitedKm)
+            if (UnlimitedKm === "false") {  // التحقق من القيمة بـ "false" على اعتبار أنها تأتي كـ string
+                const KMValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicKmValue));
+                AdditionalKMValueTotal = parseInt(AdditionalKm) * parseFloat(KMValue);
+                document.getElementById('ExtraKMsValue').textContent = AdditionalKMValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
         }
     </script>
     <script>

@@ -110,6 +110,8 @@ namespace Bnan.Ui.ViewModels.BS
         public string? PrivateDriverValueTotal { get; set; }
         public string? PreviousBalance { get; set; }
         public string? AmountRequired { get; set; }
+        public string? FuelStatusCheckUp { get; set; }
+        public bool? UnlimitedKm { get; set; }
         public string? AccountReceiptNo { get; set; }
         public string? InitialInvoiceNo { get; set; }
 

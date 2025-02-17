@@ -143,6 +143,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
                                                                              x.CrCasAccountSalesPointBankStatus == Status.Active &&
                                                                              x.CrCasAccountSalesPointStatus == Status.Active &&
                                                                              x.CrCasAccountSalesPointBranchStatus == Status.Active);
+
+            var CloseSuspendedContract= await _unitOfWork.CrMasSupContractCloseSuspension.FindAllAsNoTrackingAsync(x => x.CrMasSupContractCloseSuspensionStatus == Status.Active);
+
+            var FuelCheckUpStatus= (await _unitOfWork.CrCasRenterContractCarCheckup.FindAsync(x => x.CrCasRenterContractCarCheckupNo == contract.CrCasRenterContractBasicNo && x.CrCasRenterContractCarCheckupCode== Procedures.FuelCodeInCheckUp)).CrCasRenterContractCarCheckupCheck;
+            var UnlimitedKm= (await _unitOfWork.CrCasRenterContractChoice.FindAsync(x => x.CrCasRenterContractChoiceNo == contract.CrCasRenterContractBasicNo && x.CrCasRenterContractChoiceCode== Procedures.UnlimitedKm));
             //Get ACcount Catch Receipt
             DateTime year = DateTime.Now;
             var y = year.ToString("yy");
@@ -181,10 +186,13 @@ namespace Bnan.Ui.Areas.BS.Controllers
             contractMap.ChoicesValue = ChoicesValuesAll.Sum(x => x.CrCasContractChoiceValue)?.ToString("N2", CultureInfo.InvariantCulture);
             var ContractChoicesAll = await _unitOfWork.CrCasRenterContractChoice.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractChoiceNo == contract.CrCasRenterContractBasicNo && (x.CrCasRenterContractChoiceCode == "5100000003" || x.CrCasRenterContractChoiceCode == "5100000004"), new[] { "CrCasRenterContractChoiceCodeNavigation" });
             contractMap.ContractChoices = ContractChoicesAll;
+            contractMap.FuelStatusCheckUp = !string.IsNullOrEmpty(FuelCheckUpStatus)? FuelCheckUpStatus : "5";
+            contractMap.UnlimitedKm = UnlimitedKm!=null;
             bsLayoutVM.ContractSettlement = contractMap;
             bsLayoutVM.SalesPoint = SalesPoint;
             bsLayoutVM.PaymentMethods = PaymentMethod;
             bsLayoutVM.CarsCheckUp = CheckupCars;
+            bsLayoutVM.ContractCloseSuspensions = CloseSuspendedContract;
             return View(bsLayoutVM);
         }
         [HttpPost]

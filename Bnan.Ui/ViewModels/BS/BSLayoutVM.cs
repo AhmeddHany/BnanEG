@@ -29,6 +29,7 @@ namespace Bnan.Ui.ViewModels.BS
         public List<CrMasSupRenterProfession>? RenterProfession { get; set; }
         public List<CrMasSupRenterGender>? RenterGender { get; set; }
         public List<CrCasLessorPolicy>? Policies { get; set; }
+        public List<CrMasSupContractCloseSuspension>? ContractCloseSuspensions { get; set; }
         public CrMasUserInformation UserInformation { get; set; }
         //Renter Lessor PAge
         public List<CrCasRenterLessor>? RentersLessor { get; set; }
