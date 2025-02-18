@@ -2086,7 +2086,7 @@
                     diffMinutes = 0;
                 }
 
-                CaculateSettelementDay();
+                CalculateSettelementDay();
             }
 
             document.getElementById("contract_real_endTime").addEventListener("change", calculateDifference);
@@ -2141,7 +2141,7 @@
 
 
 
-        function CaculateSettelementDay() {
+        function CalculateSettelementDay() {
             const endContractDateString = "@Model.ContractSettlement.CrCasRenterContractBasicExpectedEndDate?.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture)";
             const now = new Date();
             const endContractDate = new Date(endContractDateString);
@@ -2227,7 +2227,7 @@
                 if ($("#SettlementForm").valid()) {
                     const current_fs = nextBtn.closest("fieldset");
                     let next_fs = current_fs.nextElementSibling;
-                    CaculateSettelementDay();
+                    CalculateSettelementDay();
                     CalculateKmFree();
                     if (current_fs.id === 'firstFieldset') {
                         // $("#ExpensesError").text('');
@@ -2320,7 +2320,7 @@
                             next_fs.style.display = "flex";
                             current_fs.style.display = "none";
                             clearPaymentData();
-                            CaculateContractSettelement();
+                            CalculateContractSettelement();
                             UpdateTotalValuesExpensesAndCompensation();
                             setTimeout(HideZeroValuesFromDetailsContract, 100); // 🔹 التأكد من تنفيذ التحديث قبل الإخفاء
                             $("#AmountPayed").focus();
@@ -2430,7 +2430,7 @@
         var compensationValue = 0;
         var AmountRequired = 0;
         var somethingIsNotOkay = true;
-        function CaculateContractSettelement() {
+        function CalculateContractSettelement() {
 
             //Rental Price
             var expectedDays =parseInt("@Model.ContractSettlement.CrCasRenterContractBasicExpectedRentalDays");
@@ -2481,10 +2481,10 @@
             $("#ContractSettlement_ChoicesValueTotal").val(ChoicesValueTotal.toFixed(2));
 
             // Additional Hours Value Total
-            if(caseSettelement!=4){
+            if(caseSettelement==3){
                 GetAdditionalHoursValue();
             }
-            else{
+            else {
                 $("#ContractSettlement_MaxHours").val(0);
                 $("#ContractSettlement_ExtraHoursValue").val(0);
             }
@@ -2563,11 +2563,8 @@
             var AdditionalHourValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourValue));
             var AdditionalHour = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourMax));
 
-            // التأكد أن عدد الساعات الإضافية أكبر من 0
             if (AdditionalHour > 0) {
-                AdditionalHoursValueTotal = 0; // للتأكد من أنها فارغة في البداية
-
-                // إذا كانت الفرق الزمني أكبر أو يساوي الساعات القصوى
+                AdditionalHoursValueTotal = 0; 
                 if (roundedLateAddHours == AdditionalHour) {
                     AdditionalHoursValueTotal = parseInt(AdditionalHour) * parseFloat(AdditionalHourValue);
                 } else {
@@ -2578,8 +2575,9 @@
             }
             console.log("AdditionalHour", AdditionalHour)
             console.log("AdditionalHoursValueTotal", AdditionalHoursValueTotal)
+            AdditionalHoursValueTotal= AdditionalHoursValueTotal*settlementDay;
             // تحديث القيم المعروضة
-            document.getElementById('ExtraHoursValue').textContent = AdditionalHoursValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('LateSettlement').textContent = AdditionalHoursValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $("#ContractSettlement_MaxHours").val(AdditionalHour);
             $("#ContractSettlement_ExtraHoursValue").val(AdditionalHoursValueTotal.toFixed(2));
         }
