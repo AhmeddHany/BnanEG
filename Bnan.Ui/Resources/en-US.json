@@ -3369,6 +3369,8 @@
   "AddHours": "Additional Hours",
   "AddHourslate": "Late Hours",
   "LateDays": "Late Days",
+  "FuelValue": "Fuel Value",
+  "TankStatus": "Tank Status",
   "SettlementDate": "SettlementDate",
   "ReceivingBranch": "Receiving Branch",
   "DeliveryBranch": "Delivery Branch",

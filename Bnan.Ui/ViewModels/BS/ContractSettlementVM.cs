@@ -27,6 +27,7 @@ namespace Bnan.Ui.ViewModels.BS
         public int? CrCasRenterContractBasicTotalFreeHours { get; set; }
         public int? CrCasRenterContractBasicHourMax { get; set; }
         public decimal? CrCasRenterContractBasicHourValue { get; set; }
+        public decimal? CrCasRenterContractBasicFuelValue { get; set; }
         public int? CrCasRenterContractBasicDailyFreeKm { get; set; }
         public int? CrCasRenterContractBasicDailyFreeKmUser { get; set; }
         public int? CrCasRenterContractBasicTotalDailyFreeKm { get; set; }
@@ -60,6 +61,8 @@ namespace Bnan.Ui.ViewModels.BS
         public string? CrCasRenterContractUserReference { get; set; }
         public string? CrCasRenterContractBasicUserInsert { get; set; }
         public string? CrCasRenterContractBasicStatus { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
+        public string? CrCasRenterContractBasicCloseStatus { get; set; }
         public string? CrCasRenterContractBasicReasons { get; set; }
         public string? ReasonsPayment { get; set; }
         public string? InvoicePdfPath { get; set; }
@@ -83,8 +86,6 @@ namespace Bnan.Ui.ViewModels.BS
         public string? AdvantagesValueTotal { get; set; }
         public string? ChoicesValueTotal { get; set; }
         public string? ChoicesValue { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
-        public string? SettlementType { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? SettlementMechanism { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
@@ -110,7 +111,6 @@ namespace Bnan.Ui.ViewModels.BS
         public string? PrivateDriverValueTotal { get; set; }
         public string? PreviousBalance { get; set; }
         public string? AmountRequired { get; set; }
-        public string? FuelStatusCheckUp { get; set; }
         public bool? UnlimitedKm { get; set; }
         public string? AccountReceiptNo { get; set; }
         public string? InitialInvoiceNo { get; set; }
@@ -119,6 +119,7 @@ namespace Bnan.Ui.ViewModels.BS
         public virtual CrCasRenterLessor? CrCasRenterContractBasic5 { get; set; }
         public virtual CrCasCarInformation? CrCasRenterContractBasicCarSerailNoNavigation { get; set; }
         public virtual CrCasBranchInformation? CrCasRenterContractBasic1 { get; set; }
+        public virtual CrCasRenterContractCarCheckup? CarCheckUpFuel { get; set; }
         public virtual List<CrCasRenterContractChoice>? ContractChoices { get; set; }
 
 

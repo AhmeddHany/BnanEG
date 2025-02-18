@@ -1490,9 +1490,9 @@ namespace Bnan.Core.Models
 
                 entity.Property(e => e.CrCasCarInformationCurrentMeter).HasColumnName("CR_Cas_Car_Information_Current_Meter");
 
-                entity.Property(e => e.CrCasCarInformationCustomsNo)
+                entity.Property(e => e.CrCasCarInformationNo)
                     .HasMaxLength(20)
-                    .HasColumnName("CR_Cas_Car_Information_Customs_No");
+                    .HasColumnName("CR_Cas_Car_Information_No");
 
                 entity.Property(e => e.CrCasCarInformationCvt)
                     .HasMaxLength(2)
@@ -1561,6 +1561,7 @@ namespace Bnan.Core.Models
                     .IsFixedLength();
 
                 entity.Property(e => e.CrCasCarInformationMaintenanceStatus).HasColumnName("CR_Cas_Car_Information_Maintenance_Status");
+                entity.Property(e => e.CrCasCarInformationMarketing).HasColumnName("CR_Cas_Car_Information_Marketing");
 
                 entity.Property(e => e.CrCasCarInformationModel)
                     .HasMaxLength(10)
@@ -2991,6 +2992,9 @@ namespace Bnan.Core.Models
                 entity.Property(e => e.CrCasRenterContractBasicHourValue)
                     .HasColumnType("decimal(7, 2)")
                     .HasColumnName("CR_Cas_Renter_Contract_Basic_Hour_Value");
+                entity.Property(e => e.CrCasRenterContractBasicFuelValue)
+                   .HasColumnType("decimal(10, 2)")
+                   .HasColumnName("CR_Cas_Renter_Contract_Basic_Fuel_Value");
 
                 entity.Property(e => e.CrCasRenterContractBasicIssuedDate)
                     .HasColumnType("datetime")
@@ -4497,6 +4501,10 @@ namespace Bnan.Core.Models
                 entity.Property(e => e.CrMasLessorImageExchange)
                     .HasMaxLength(100)
                     .HasColumnName("CR_Mas_Lessor_Image_Exchange");
+
+                entity.Property(e => e.CrMasLessorImageSales)
+                    .HasMaxLength(100)
+                    .HasColumnName("CR_Mas_Lessor_Image_Sales");
 
                 entity.Property(e => e.CrMasLessorImageLoaderLogo)
                     .HasMaxLength(100)

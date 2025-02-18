@@ -352,7 +352,7 @@
                                                     </label>
                                                 </div>
                                                 <div class="col-12 col-md-7 col-lg-5">
-                                                    <select class="form-select form-select-settel" id="Settlement-type" asp-for="ContractSettlement.SettlementType">
+                                                    <select class="form-select form-select-settel" id="Settlement-type" asp-for="ContractSettlement.CrCasRenterContractBasicCloseStatus">
                                                         <option selected disabled>
                                                         </option>
                                                         @foreach (var item in Model.ContractCloseSuspensions)
@@ -366,7 +366,7 @@
                                                         }
                                                     </select>
                                                     <div class="row requird-field-row-last">
-                                                        <span class="requird-field" asp-validation-for="@Model.ContractSettlement.SettlementType"></span>
+                                                        <span class="requird-field" asp-validation-for="@Model.ContractSettlement.CrCasRenterContractBasicCloseStatus"></span>
                                                     </div>
 
                                                 </div>
@@ -1163,6 +1163,25 @@
                                                         </div>
                                                         <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
+                                                                <p> : @localizer["FuelValue"]  </p>
+                                                            </div>
+                                                            <div class="col personal-data">
+                                                                <p>@Model.ContractSettlement?.CrCasRenterContractBasicFuelValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row dropdown-content-row">
+                                                            <div class="col-auto ">
+                                                                <p> : @localizer["TankStatus"]  </p>
+                                                            </div>
+                                                            <div class="col personal-data">
+                                                                <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ?
+                                                                    Model.ContractSettlement?.CarCheckUpFuel?.CrCasRenterContractCarCheckupC?.CrMasSupContractCarCheckupDetailsEnName : 
+                                                                    Model.ContractSettlement?.CarCheckUpFuel?.CrCasRenterContractCarCheckupC?.CrMasSupContractCarCheckupDetailsArName)
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row dropdown-content-row">
+                                                            <div class="col-auto ">
                                                                 <p> : @localizer["LateDays"]  </p>
                                                             </div>
                                                             <div class="col personal-data">
@@ -1251,7 +1270,7 @@
                                                             </div>
 
                                                         </div>
-                                                        <div class="row dropdown-content-row">
+                                                        @* <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
                                                                 <p> :@localizer["ExtraHours"]</p>
                                                             </div>
@@ -1259,13 +1278,21 @@
                                                                 <p id="ExtraHoursValue">0.00</p>
                                                             </div>
 
-                                                        </div>
+                                                        </div> *@
                                                         <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
                                                                 <p> :@localizer["ExcessKilos"]</p>
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p id="ExtraKMsValue">0.00</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row dropdown-content-row">
+                                                            <div class="col-auto ">
+                                                                <p> :@localizer["FuelValue"]</p>
+                                                            </div>
+                                                            <div class="col personal-data">
+                                                                <p id="FuelValue">0.00</p>
                                                             </div>
                                                         </div>
                                                         <div class="row dropdown-content-row">
@@ -2397,6 +2424,7 @@
         var ContractValue = 0;
         var ContractValueAfterDiscount = 0;
         var taxValue = 0;
+        var fuelValue = 0;
         var TotalContract = 0;
         var ExpensesValue = 0;
         var compensationValue = 0;
@@ -2453,17 +2481,25 @@
             $("#ContractSettlement_ChoicesValueTotal").val(ChoicesValueTotal.toFixed(2));
 
             // Additional Hours Value Total
-            getAdditionalHoursValue();
-
+            if(caseSettelement!=4){
+                GetAdditionalHoursValue();
+            }
+            else{
+                $("#ContractSettlement_MaxHours").val(0);
+                $("#ContractSettlement_ExtraHoursValue").val(0);
+            }
+            
+            GetDifferentFuelValue();
             // Additional KMs Value Total
             if (AdditionalKm != null && AdditionalKm.toString() != "" && AdditionalKm != undefined) {
-                getAdditionalKmValue();
+                GetAdditionalKmValue();
                 $("#ExcessKilos").text(AdditionalKm.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }));
                 $("#ContractSettlement_AdditionalKm").val(AdditionalKm);
             }
             //Get ContractValue
 
-            ContractValue = rentValueTotal + FeesTammValue + advantagesValueTotal + AdditionalDriverValue + PrivateDriverValueTotal + AdditionalValue + ChoicesValueTotal + AdditionalHoursValueTotal + AdditionalKMValueTotal;
+            ContractValue = rentValueTotal + FeesTammValue + advantagesValueTotal + AdditionalDriverValue + fuelValue +
+                            PrivateDriverValueTotal + AdditionalValue + ChoicesValueTotal + AdditionalHoursValueTotal + AdditionalKMValueTotal;
             document.getElementById('ContractValue').textContent = ContractValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $("#ContractSettlement_ContractValue").val(ContractValue.toFixed(2));
 
@@ -2521,7 +2557,7 @@
             console.log("AmountRequired Check Minis", AmountRequired)
 
         }
-        function getAdditionalHoursValue() {
+        function GetAdditionalHoursValue() {
             // استرجاع القيم المطلوبة
             const TotalFreeHours = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicTotalFreeHours));
             var AdditionalHourValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourValue));
@@ -2547,15 +2583,27 @@
             $("#ContractSettlement_MaxHours").val(AdditionalHour);
             $("#ContractSettlement_ExtraHoursValue").val(AdditionalHoursValueTotal.toFixed(2));
         }
-        function getAdditionalKmValue() {
-            const UnlimitedKm = "@Model.ContractSettlement.UnlimitedKm";  // قيمة Boolean من الخادم
-            console.log("Unlimited:", UnlimitedKm)
-            if (UnlimitedKm === "false") {  // التحقق من القيمة بـ "false" على اعتبار أنها تأتي كـ string
+        function GetAdditionalKmValue() {
+            const UnlimitedKm = @Json.Serialize(Model?.ContractSettlement?.UnlimitedKm); // جلب القيمة الحقيقية من الخادم
+            console.log("Unlimited:", UnlimitedKm);
+            if (!UnlimitedKm) {
                 const KMValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicKmValue));
                 AdditionalKMValueTotal = parseInt(AdditionalKm) * parseFloat(KMValue);
                 document.getElementById('ExtraKMsValue').textContent = AdditionalKMValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             }
         }
+        function GetDifferentFuelValue() {
+            const oldStatusCodeFuel = parseInt(@Html.Raw(Json.Serialize(Model?.ContractSettlement?.CarCheckUpFuel?.CrCasRenterContractCarCheckupCheck)));
+            const fuelValueContract = parseFloat(@Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicFuelValue)));
+            const newStatusCodeFuel = parseInt(document.querySelector('select[name="CheckupDetails[20].ReasonCheckCode"]').value.trim());
+            console.log("oldStatusCodeFuel", oldStatusCodeFuel)
+            const fuelLevels = { 1: 1.0, 2: 0.75,  3: 0.5,  4: 0.25, 5: 0.0};
+            const oldFuelPercentage = fuelLevels[oldStatusCodeFuel] || 0;
+            const newFuelPercentage = fuelLevels[newStatusCodeFuel] || 0;
+            fuelValue = (oldFuelPercentage-newFuelPercentage) * fuelValueContract;
+            document.getElementById('FuelValue').textContent = fuelValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
     </script>
     <script>
         function CheckIfCanPayLessThanTotalAmount() {

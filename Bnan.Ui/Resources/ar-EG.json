@@ -3412,6 +3412,8 @@
   "AddHours": "ساعات إضافية",
   "AddHourslate": "ساعات التأخير",
   "LateDays": "ايام التأخير",
+  "FuelValue": "قيمة الوقود",
+  "TankStatus": "حالة الخزان",
   "ReceivingBranch": "فرع الاستلام",
   "DeliveryBranch": "فرع التسليم",
   "Without": "اعفاء",
