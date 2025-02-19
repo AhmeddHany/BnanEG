@@ -1628,8 +1628,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" integrity="sha512-u3fPA7V8qQmhBPNT5quvaXVa1mnnLSXUep5PS1qo5NRzHwG19aHmNJnj1Q8hpA/nBWZtZD4r4AX6YOt5ynLN2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="~/js/toastr.js"></script>
     <!--Pdf-->
-    @* <script src="~/PdfJS/Receipts/Receipt.js"></script>
-    <script src="~/PdfJS/Invoices/ProformaInvoice.js"></script> *@
+    <script src="~/PdfJS/Receipts/Receipt.js"></script>
+    <script src="~/PdfJS/Invoices/ProformaInvoice.js"></script>
     <script src="~/PdfJS/Card/Card.js"></script>
     <script src="~/PdfJS/PdfAndImages.js"></script>
     <!--Contract-->
@@ -2714,21 +2714,22 @@
     <script>
         const CreateCardContract = async () => {
              try {
-               const contractNo ='@Html.Raw(Model.ContractSettlement?.CrCasRenterContractBasicNo)';
+               const contractNo ='@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasicNo)';
                const canvas = document.getElementById("myCanvasCard");
                var dates = getDates();
+               const contractStatus = getSelectedContractStatus();
                const dynamicData = {
-                  CARD_TITLE_AR: "عقد إيجار سيارة",
-                  CARD_TITLE_EN: "Car Rental Contract",
-                  RENTAR_NAME_AR: '@Html.Raw(Model.ContractSettlement?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationArName)',
-                  RENTAR_NAME_EN: '@Html.Raw(Model.ContractSettlement?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName)',
-                  CAR_NAME_AR: '@Html.Raw(Model.ContractSettlement?.CrCasRenterContractBasicCarSerailNoNavigation?.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionConcatenateArName)',
-                  CAR_NAME_EN: '@Html.Raw(Model.ContractSettlement?.CrCasRenterContractBasicCarSerailNoNavigation?.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionConcatenateEnName)',
+                  CARD_TITLE_AR: contractStatus.AR,
+                  CARD_TITLE_EN: contractStatus.EN,
+                  RENTAR_NAME_AR: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationArName)',
+                  RENTAR_NAME_EN: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName)',
+                  CAR_NAME_AR: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasicCarSerailNoNavigation?.CrCasCarInformationConcatenateArName)',
+                  CAR_NAME_EN: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasicCarSerailNoNavigation?.CrCasCarInformationConcatenateEnName)',
                   CONTRACT_DATE_AR: dates.start.startHijri,
                   CONTRACT_DATE_EN: dates.start.startMiladi,
                   CONTRACT_END_DATE_AR: dates.end.endHijri,
                   CONTRACT_END_DATE_EN: dates.end.endMiladi,
-                  ADDRESS: '@Html.Raw(Model.CrCasBranchInformation?.CrCasBranchPost?.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateArName)' + ' - ' + '@Html.Raw(Model.CrCasBranchInformation?.CrCasBranchInformationArShortName)',
+                  ADDRESS: '@Html.Raw(Model?.CrCasBranchInformation?.CrCasBranchPost?.CrCasBranchPostCityNavigation?.CrMasSupPostCityConcatenateArName)' + ' - ' + '@Html.Raw(Model?.CrCasBranchInformation?.CrCasBranchInformationArShortName)',
                   CONTRACT_NUMBER: contractNo,
                    images: {
                        background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractCard)",
@@ -2753,7 +2754,7 @@
                   console.error("خطأ في إنشاء الفاتورة:", error);
               }
           }
-          function getDates() {
+        function getDates() {
                 // تحديد خيارات التنسيق
                 var options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
 
@@ -2801,6 +2802,378 @@
                     },
                 };
             }
+        function getSelectedContractStatus() {
+            const settlementSelect = document.getElementById("Settlement-type");
+            const selectedOption = settlementSelect.options[settlementSelect.selectedIndex]; // جلب العنصر المحدد
+            const dataType = selectedOption.getAttribute("data-type"); // استخراج data-type
+
+            const statuses = {
+                "1": { AR: "تم إغلاق العقد", EN: "Contract Closed" },
+                "2": { AR: "تم تعليق العقد", EN: "Contract Suspended" }
+            };
+
+            return statuses[dataType] || { AR: "حالة غير معروفة", EN: "Unknown Status" };
+        }
+    </script>
+    <!--Create invoice -->
+    <script>
+        async function CreateInvoicePdf() {
+            const accountInvoiceNo = "@Model?.ContractSettlement?.CrCasRenterContractBasicNo";
+            const canvas = document.getElementById("myCanvasInvoice");
+            const dates = getFormattedDatesMiliadiAndHijri();
+            var rentDailyValue= GetRentDailyValue();
+            var delegationValue= GetDelegationValue();
+            var addDriverValue = GetAddDriverValue();
+            var privateDriverValue = GetPrivateDriverValue();
+            var choicesValue = GetChoicesValue();
+            var additionalsValue = GetAdditionalsValue();
+            var AdditionalHourValue =parseFloat('@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasicHourValue)')||0;
+            var discountInput = parseFloat('@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasicUserDiscountRate)') || 0;
+            var daysNo = totalDaysNo;
+            var taxPercent = parseFloat('@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasicTaxRate)') || 0;
+            var advantagesValue = parseFloat('@Model?.ContractSettlement?.AdvantagesValue') || 0;
+            const KMValue =parseFloat(@Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicKmValue)));
+            const expectedDays = "@Model?.ContractSettlement?.CrCasRenterContractBasicExpectedRentalDays";
+            var lateDaysToSettlement = diffDays - parseInt(expectedDays);
+            const itemsData = [
+                {
+                    arabic: "الإيجار",
+                    english: "Rent",
+                    value: rentDailyValue,
+                    number: parseInt(expectedDays),
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "التفويض",
+                    english: "Delegation",
+                    value: delegationValue,
+                    number: 1,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "السائق الاضافي",
+                    english: "Add Driver",
+                    value: addDriverValue,
+                    number: 1,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "السائق الخاص",
+                    english: "Private Driver",
+                    value: privateDriverValue,
+                    number: 1,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "الخيارات",
+                    english: "Choices",
+                    value: choicesValue,
+                    number: daysNo,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "الاضافات",
+                    english: "Additionals",
+                    value: additionalsValue,
+                    number: 1,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "الكيلوات الزائدة",
+                    english: "Extra Kilos",
+                    value: KMValue,
+                    number: parseInt(AdditionalKm),
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "الوقود",
+                    english: "Fuel",
+                    value: fuelValue,
+                    number: 1,
+                    discount: discountInput,
+                    vat: taxPercent,
+                },
+                {
+                    arabic: "غرامة التأخير",
+                    english: "late fee",
+                    value: caseSettelement === 4 ? rentDailyValue : (caseSettelement === 3 ? AdditionalHourValue : 0),
+                    number: caseSettelement === 4 ? lateDaysToSettlement*settlementDay : (caseSettelement === 3 ? roundedLateAddHours*settlementDay : 0),
+                    discount: discountInput,
+                    vat: taxPercent,
+                }
+            ];
+
+            const processedData = generateInvoiceItems(itemsData);
+
+            const dynamicData = {
+                CONTRACT_NUMBER: accountInvoiceNo,
+                DATE_AR:dates.hijriDate.ar,
+                DATE_EN: dates.miladiDate.en,
+                DATE_EN_LONG: dates.hijriDate.en,
+                CONTRACT_CREATE_AR: "تسوية عقد",
+                CONTRACT_CREATE_EN: "Settelement Contract",
+                TENANT_NAME_AR: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationArName)',
+                TENANT_NAME_EN: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName)',
+                CAR_DESCRIPTION_AR: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasicCarSerailNoNavigation?.CrCasCarInformationConcatenateArName)',
+                CAR_DESCRIPTION_EN: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasicCarSerailNoNavigation?.CrCasCarInformationConcatenateEnName)',
+                EMPLOYEE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                EMPLOYEE_EN:decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                images: {
+                    background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageTaxInvoice)",
+                    signature: "@Url.Content(user?.CrMasUserInformationSignature)",
+                    qr: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                    stamp: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                },
+                Serviceitems: processedData.Serviceitems,
+                Valueitems: processedData.Valueitems,
+                Numberitems: processedData.Numberitems,
+                Amountitems: processedData.Amountitems,
+                Discountitems: processedData.Discountitems,
+                AfterDiscountitems: processedData.AfterDiscountitems,
+                VATitems: processedData.VATitems,
+                Totalitems: processedData.Totalitems,
+            };
+
+            const loadedImages = await loadDynamicImages(dynamicData.images);
+            const dataWithImages = { ...dynamicData, images: loadedImages };
+            console.log("dataWithImages", dataWithImages);
+            await drawInvoice(canvas, dataWithImages);
+            await createPdf(accountInvoiceNo, canvas, "SavePdfInvoice", "ContractSettlement_InitialInvoiceNo");
+        }
+        function generateInvoiceItems(itemsData) {
+            const processedItems = itemsData
+                .filter(item => item.value !== 0 && item.number !== 0) // تصفية القيم الصفرية
+                .map(item => {
+                    var totalBeforeDiscount = item.value * item.number; // إجمالي السعر قبل الخصم
+                    var discountAmount = (item.discount / 100) * totalBeforeDiscount; // قيمة الخصم
+                    var afterDiscount = totalBeforeDiscount - discountAmount; // القيمة بعد الخصم
+                    var vatAmount = (item.vat / 100) * afterDiscount; // الضريبة
+                    var totalAfterVAT = afterDiscount + vatAmount; // الإجمالي بعد الضريبة
+                    if (discountAmount === 0) discountAmount = 0;
+                    if (vatAmount === 0) vatAmount = 0;
+
+                    return {
+                        arabic: item.arabic,
+                        english: item.english,
+                        value: item.value, // تخزين القيمة الأصلية كرقم
+                        number: item.number, // العدد
+                        amount: totalBeforeDiscount, // إجمالي السعر قبل الخصم
+                        discount: discountAmount, // قيمة الخصم
+                        afterDiscount: afterDiscount, // القيمة بعد الخصم
+                        vat: vatAmount, // الضريبة
+                        total: totalAfterVAT, // الإجمالي بعد الضريبة
+                    };
+                });
+
+            // حساب المجموع لكل عمود
+            var sumColumn = (key) =>
+                processedItems.reduce((sum, item) => sum + item[key], 0).toFixed(2);
+
+            return {
+                Serviceitems: [
+                    ...processedItems.map(item => ({
+                        arabic: item.arabic,
+                        english: item.english,
+                        textAlign: "center",
+                    }))
+                ],
+                Valueitems: [
+                    ...processedItems.map(item => ({ content: item.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("value").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                ],
+                Numberitems: [
+                    ...processedItems.map(item => ({ content: item.number })),
+                    { sum: "-" }
+                ],
+                Amountitems: [
+                    ...processedItems.map(item => ({ content: item.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("amount").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                ],
+                Discountitems: [
+                    ...processedItems.map(item => ({ content: item.discount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("discount").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                ],
+                AfterDiscountitems: [
+                    ...processedItems.map(item => ({ content: item.afterDiscount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("afterDiscount").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                ],
+                VATitems: [
+                    ...processedItems.map(item => ({ content: item.vat.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("vat").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                ],
+                Totalitems: [
+                    ...processedItems.map(item => ({ content: item.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })),
+                    { sum: sumColumn("total").toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                ],
+            };
+        }
+        function GetDelegationValue(){
+            var FeesTamm = '@Html.Raw(Model.ContractSettlement?.CrCasRenterContractBasicAuthorizationValue)';
+            var FeesTammValue = 0;
+            if (parseFloat(FeesTamm) != null) {
+                FeesTammValue = parseFloat(FeesTamm);
+            }
+            else {
+                FeesTammValue = 0;
+            }
+            return FeesTammValue;
+        }
+        function GetRentDailyValue(){
+            return parseFloat('@Html.Raw(Model.ContractSettlement?.CrCasRenterContractBasicDailyRent)');
+        }
+        function GetAddDriverValue(){
+            var additionalDriver = '@Html.Raw(Model.ContractSettlement?.CrCasRenterContractBasicAdditionalDriverId)';
+            var additionalDriverValue = 0;
+            if (additionalDriver != null || additionalDriver != "") {
+                var AddDriverValue = '@Html.Raw(Model.ContractSettlement?.CrCasRenterContractBasicAdditionalDriverValue)';
+                if (parseInt(AddDriverValue) != null) {
+                    additionalDriverValue = parseFloat(AddDriverValue);
+                }
+                else {
+                    additionalDriverValue = 0;
+                }
+            }
+            return additionalDriverValue;
+        }
+        function GetPrivateDriverValue(){
+            var privateDriverValue = 0;
+            var privateDriver = '@Html.Raw(Model.ContractSettlement?.CrCasRenterContractBasicPrivateDriverValue)';
+            if (parseFloat(privateDriver) != null) {
+                privateDriverValue = parseFloat(privateDriver);
+            }
+            else {
+                privateDriverValue = 0;
+            }
+            return privateDriverValue;
+        }
+        function GetChoicesValue(){
+             var TotalChoices = parseFloat('@Html.Raw(Model.ContractSettlement?.ChoicesValue)');
+             var choicesValue = 0;
+             if (TotalChoices != null && TotalChoices != 0 && TotalChoices != "" && TotalChoices != undefined) {
+                 choicesValue = parseFloat(TotalChoices);
+             }
+             else {
+                 choicesValue = 0;
+             }
+             return choicesValue;
+        }
+        function GetAdditionalsValue(){
+            var TotalAdditionals = '@Html.Raw(Model.ContractSettlement?.CrCasRenterContractBasicAdditionalValue)';
+            var additionalValue = 0;
+            if (TotalAdditionals != null && TotalAdditionals != 0 && TotalAdditionals != "" && TotalAdditionals != undefined) {
+                additionalValue = parseFloat(TotalAdditionals);
+            }
+            else {
+                additionalValue = 0;
+            }
+            return additionalValue;
+        }
+    </script>
+    <!--Create Receipt PDf-->
+    <script>
+        async function CreateReceiptPdf() {
+                const AccountPaymentReceiptNo = "@ViewBag.AccountPaymentReceiptNo";
+                const AccountCatchReceiptNo = "@ViewBag.AccountCatchReceiptNo";
+                var background="";
+                var accountReceiptNo = "";
+                if (AmountRequired >= 0){
+                    accountReceiptNo=AccountCatchReceiptNo;
+                    background="@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageReceipt)";
+                }
+                else if (AmountRequired<0){
+                    accountReceiptNo=AccountPaymentReceiptNo;
+                    background="@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageExchange)";
+                }
+                const canvas = document.getElementById("myCanvasReceipt");
+                const dates = getFormattedDatesMiliadiAndHijri();
+                var namesOfPaymentMethod = getSelectedOptionDataPaymentMethod();
+                var getAfterAndBeforeDecimalAmountPayed =await getFormattedAmount();
+                console.log("getAfterAndBeforeDecimalAmountPayed",getAfterAndBeforeDecimalAmountPayed);
+                const contractNo = "@Model?.ContractSettlement?.CrCasRenterContractBasicNo";
+                const dynamicData = {
+                    DATE_AR:dates.hijriDate.ar,
+                    DATE_EN: dates.miladiDate.en,
+                    HIJRI_DATE_AR: dates.hijriDate.en,
+                    HIJRI_DATE_EN: dates.miladiDate.ar ,
+                    CONTRACT_NUMBER: accountReceiptNo,
+                    AMOUNT: getAfterAndBeforeDecimalAmountPayed.beforeDecimal,
+                    HALALAS: getAfterAndBeforeDecimalAmountPayed.afterDecimal,
+                    TENANT_NAME_AR: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationArName)',
+                    TENANT_NAME_EN: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName)',
+                    AMOUNT_AR: getAfterAndBeforeDecimalAmountPayed.arabicText,
+                    AMOUNT_EN: getAfterAndBeforeDecimalAmountPayed.englishText,
+                    PAYMENT_METHOD_AR: namesOfPaymentMethod.ar,
+                    PAYMENT_METHOD_EN: namesOfPaymentMethod.en,
+                    PAYMENT_DESC_AR: `${contractNo}  دفعة تحت الحساب لعقد ايجار السيارة لعقد`,
+                    PAYMENT_DESC_EN: `Payment to extend the car rental contract ${contractNo}`,
+                    NOTES_AR: document.getElementById("ContractSettlement_ReasonsPayment").value,
+                    APPROVER_NAME_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                    APPROVER_NAME_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                    images: {
+                        background: background,
+                        signature: "@Url.Content(user?.CrMasUserInformationSignature)",
+                        qr: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                        stamp: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                    },
+                };
+                const loadedImages = await loadDynamicImages(dynamicData.images);
+                const dataWithImages = { ...dynamicData, images: loadedImages };
+                console.log("dataWithImages",dataWithImages);
+                await drawReceipt(canvas, dataWithImages);
+                await createPdf(accountReceiptNo, canvas, "SavePdfReceipt", "ContractSettlement_AccountReceiptNo");
+        };
+        function getSelectedOptionDataPaymentMethod() {
+                var selectElement = document.getElementById("ContractSettlement_PaymentMethod");
+                var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+                // Get the text of the selected option
+                const selectedText = selectedOption.textContent || selectedOption.innerText;
+
+                // Get the Arabic and English names from data attributes
+                var selectedArabicName = selectedOption.dataset.ar;
+                var selectedEnglishName = selectedOption.dataset.en;
+
+                // Return the data as an object
+                return {
+                    ar: selectedArabicName,
+                    en: selectedEnglishName,
+                };
+        }
+        async function getFormattedAmount() {
+                        // الحصول على قيمة الإدخال من العنصر
+            var AmountPayedInput = document.getElementById("AmountPayed").value;
+
+            // تحويل القيمة إلى رقم والتأكد من وجود خانتين عشريتين
+            const rawAmountPayed = parseFloat(AmountPayedInput).toFixed(2);
+
+            // تقسيم الرقم إلى جزأين: الجزء الصحيح والجزء العشري
+            const [beforeDecimalll, afterDecimal] = rawAmountPayed.split(".");
+
+            // تنسيق الجزء الصحيح ليشمل فاصلة الآلاف
+                const beforeDecimal = parseInt(beforeDecimalll).toLocaleString('en-US');
+
+                    // استدعاء البيانات لتغيير الرقم إلى نص
+                        const numberToText = await dataChanged(rawAmountPayed);
+
+                    // النص بالعربية والإنجليزية
+                    const arabicText = numberToText.ar_concatenate;
+                    const englishText = numberToText.en_concatenate;
+
+                    // إرجاع النتيجة
+                    return {
+                        beforeDecimal,
+                        afterDecimal,
+                        arabicText,
+                        englishText
+                    };
+            }
     </script>
     <script>
         // submit Form
@@ -2819,39 +3192,20 @@
                             console.log("⏳ بدء إنشاء صورة البطاقة...");
                             await CreateCardContract();
                             console.log("✅ البطاقة تم إنشاؤها بنجاح.");
-                        // await sendArInvoiceToWhatsApp();
-                        // console.log("Arabic invoice sent successfully.");
-
-                        // await sendEnInvoiceToWhatsApp();
-                        // console.log("English invoice sent successfully.");
-
-                        // if (AmountRequired >= 0 && parseFloat(AmountPayed) > 0) {
-                        //     await sendArCatchReceiptToWhatsApp();
-                        //     console.log("Arabic receipt sent successfully.");
-
-                        //     await sendEnCatchReceiptToWhatsApp();
-                        //     console.log("English receipt sent successfully.");
-
-                        // }
-                        // else if (AmountRequired < 0 && parseFloat(AmountPayed) > 0) {
-                        //     await sendArPaymentReceiptToWhatsApp();
-                        //     console.log("Arabic receipt sent successfully.");
-
-                        //     await sendEnPaymentReceiptToWhatsApp();
-                        //     console.log("English receipt sent successfully.");
-
-                        // }
+                            console.log("⏳ بدء إنشاء الفاتورة...");
+                            await CreateInvoicePdf();
+                            console.log("✅ الفاتورة تم إنشاؤها بنجاح.");
+                            if (parseFloat(AmountPayed) > 0) {
+                                console.log("⏳ بدء إنشاء الإيصال...");
+                                await CreateReceiptPdf();
+                                console.log("✅ الإيصال تم إنشاؤه بنجاح.");
+                            }
+                       
 
 
-                        // await getPictureAndCreateArPdfContract();
-                        // console.log("Arabic PDF contract creation completed successfully.");
-
-                        // await getPictureAndCreateEnPdfContract();
-                        // console.log("English PDF contract creation completed successfully.");
-
-                        document.getElementById('ContractSettlement_PaymentMethod').disabled = false;
-                        document.getElementById('ContractSettlement_SalesPoint').disabled = false;
-                        form.submit();
+                            document.getElementById('ContractSettlement_PaymentMethod').disabled = false;
+                            document.getElementById('ContractSettlement_SalesPoint').disabled = false;
+                            form.submit();
                     }
                     else {
                         CheckIfCanPayLessThanTotalAmount();
@@ -2906,26 +3260,23 @@
             return textArea.value;
         }
         // Function to format Hijri date
-        function formatHijriDate(date) {
-            const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long', calendar: 'islamic-umalqura' };
-            return date.toLocaleDateString('ar-SA', options).replace(/هـ/g, ''); // Remove "هـ" suffix
-        }
-        function formatHijriEnDate(date) {
-            const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long', calendar: 'islamic-umalqura' };
-            return date.toLocaleDateString('en-US-u-ca-islamic-umalqura', options).replace(/AH/g, ''); // Remove "AH" suffix
-        }
-        function getFormatDate(date) {
+        function formatHijriDate(date, language) {
             const parsedDate = new Date(date);
-            if (!isNaN(parsedDate) && parsedDate != null && parsedDate != "") {
-                var dateFormat = parsedDate.getFullYear() + '/' +
-                    (parsedDate.getMonth() + 1).toString().padStart(2, '0') + '/' +
-                    parsedDate.getDate().toString().padStart(2, '0') + ' ' +
-                    parsedDate.getHours().toString().padStart(2, '0') + ':' +
-                    parsedDate.getMinutes().toString().padStart(2, '0') + ':' +
-                    parsedDate.getSeconds().toString().padStart(2, '0');
-                return dateFormat;
+            const options = { weekday: 'long', day: 'numeric', year: 'numeric', month: 'long', calendar: 'islamic-umalqura' };
+            if (language === 'ar') {
+                return parsedDate.toLocaleDateString('ar-SA', options).replace(/هـ/g, ''); // إزالة "هـ" من التاريخ العربي
+            } else {
+                return parsedDate.toLocaleDateString('en-US-u-ca-islamic-umalqura', options).replace(/AH/g, ''); // إزالة "AH" من التاريخ الإنجليزي
             }
-            return "";
+        }
+               // دالة تنسيق التاريخ الميلادي
+        function formatMiladiDate(date) {
+            return date.toLocaleDateString('en-GB'); // يعطي الصيغة DD/MM/YYYY
+        }
+
+        // دالة تنسيق الوقت
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-GB'); // يعطي الصيغة HH:MM:SS
         }
         function splitTextInHalf(text) {
             // Check if text is null, empty, or less than or equal to 100 characters
@@ -2987,30 +3338,40 @@
             }
             button.classList.remove('spinner-payment-check');
         }
-        function getFormattedDatesMiliadiAndHijri(language) {
-            // Get the current Miladi date from the server (assuming server provides the date in a specific format)
-            var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")'); // or "@DateTime.Now" if you prefer local server time
-            const miladiDate = new Date(dateTimeNow);
+        function getFormattedDatesMiliadiAndHijri() {
+             // الحصول على التاريخ الميلادي الحالي من الخادم
+             var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
+             const miladiDate = new Date(dateTimeNow);
 
-            // Format the Miladi date
-            const miladiOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
-            const miladiDateString = miladiDate.toLocaleDateString('en-US', miladiOptions).split('/').join('/');
+             // تنسيق التاريخ الميلادي
+             const miladiOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+             const miladiDateString = miladiDate.toLocaleDateString('en-US', miladiOptions).split('/').join('/');
 
-            // Initialize hijriDateString
-            let hijriDateString;
+             // تنسيق التاريخ الهجري
+             const hijriDateStringAr = formatHijriDate(miladiDate, 'ar');
+             const hijriDateStringEn = formatHijriDate(miladiDate, 'en');
 
-            // Format the Hijri date based on the language
-            if (language === "ar") {
-                hijriDateString = formatHijriDate(miladiDate);
-            } else {
-                hijriDateString = formatHijriEnDate(miladiDate);
-            }
-
-            return {
-                miladiDate: miladiDateString,
-                hijriDate: hijriDateString
-            };
-        }
+             return {
+                 miladiDate: {
+                     en: miladiDateString,
+                     ar: miladiDateString // يمكن تنسيق التاريخ الميلادي بالعربية إذا أردت
+                 },
+                 hijriDate: {
+                     ar: hijriDateStringAr,
+                     en: hijriDateStringEn
+                 }
+             };
+         }
+        function getFormatDate(date) {
+             const parsedDate = new Date(date);
+             if (!isNaN(parsedDate) && parsedDate != null && parsedDate != "") {
+                 var dateFormat = parsedDate.getFullYear() + '/' +
+                     (parsedDate.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                     parsedDate.getDate().toString().padStart(2, '0') ;
+                 return dateFormat;
+             }
+             return "";
+         }
 
     </script>
 

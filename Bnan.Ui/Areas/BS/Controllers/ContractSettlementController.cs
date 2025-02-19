@@ -225,7 +225,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
                 //Account Receipt
                 var CheckAccountReceipt = new CrCasAccountReceipt();
-                //var pdfReceipt = "";
+                var pdfReceipt = "";
                 var CheckBalances = true;
                 var CheckSalesPoint = true;
                 var CheckBranchValidity = true;
@@ -233,16 +233,16 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 // Account Receipt
                 if (UpdateSettlementContract.CrCasRenterContractBasicAmountPaid > 0)
                 {
-                    //SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
-                    //if (!string.IsNullOrEmpty(SavePdfReceipt)) pdfReceipt = await SavePdfAsync(SavePdfReceipt, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.AccountReceiptNo, "Receipt");
-                    CheckAccountReceipt = await AddAccountReceiptAsync(UpdateSettlementContract, lessorCode, Branch, ContractInfo, userLogin, /*pdfReceipt*/"");
+                    SavePdfReceipt = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfReceipt);
+                    if (!string.IsNullOrEmpty(SavePdfReceipt)) pdfReceipt = await SavePdfAsync(SavePdfReceipt, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.AccountReceiptNo, "Receipt");
+                    CheckAccountReceipt = await AddAccountReceiptAsync(UpdateSettlementContract, lessorCode, Branch, ContractInfo, userLogin, pdfReceipt);
                     CheckBalances = await UpdateBalancesAsync(Branch, UpdateSettlementContract, userLogin, ContractInfo);
                 }
 
                 // Invoice 
-                //SavePdfInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfInvoice);
-                //var pdfInvoice = await SavePdfAsync(SavePdfInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "TaxInvoice");
-                var checkAccountInvoiceNo = await AddAccountInvoiceAsync(UpdateSettlementContract, CheckAccountReceipt, /*pdfInvoice*/"");
+                SavePdfInvoice = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfInvoice);
+                var pdfInvoice = await SavePdfAsync(SavePdfInvoice, lessorCode, Branch.CrCasBranchInformationCode, ContractInfo.InitialInvoiceNo, "TaxInvoice");
+                var checkAccountInvoiceNo = await AddAccountInvoiceAsync(UpdateSettlementContract, CheckAccountReceipt, pdfInvoice);
 
                 // Renter Balance 
                 var TotalContractValue = UpdateSettlementContract.CrCasRenterContractBasicActualTotal - UpdateSettlementContract.CrCasRenterContractBasicExpensesValue + UpdateSettlementContract.CrCasRenterContractBasicCompensationValue;
