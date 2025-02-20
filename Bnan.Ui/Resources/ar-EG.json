@@ -11,10 +11,13 @@
     "AuthEmplpoyee_NoDelete": "لا يمكن حذفه",
     "AuthEmplpoyee_NoEdit": "لا يمكن تعديله",
     "AuthEmplpoyee_NoUpdateStatus": "لا يمكن تحديث حالته",
+    "AuthEmplpoyee_NoHoldStatus": "لا يمكن إيقافه",
     "toastor_Exist": "هذا السجل مسجل من قبل",
     "NoDataToShow": "لا توجد بيانات لعرضها !!",
     "No_company_choosed": "الرجاء اختيار شركة",
     "No_connect_way": "لا توجد وسيلة تواصل",
+    "No_Branches_Toview": "لا توجد فروع",
+    "No_Owners_Toview": "لا توجد ملاك",
 
     "toasterForWhats_Success": "تم التنفيذ",
     "toasterForWhats_Failure": "فشل ارسال الرسالة",
@@ -1197,13 +1200,13 @@
     //"ModalSecondMessage_LessorOwners_CAS_UnHold": "ارجاع بيانات ونتائج2",
 
     // CAS Private Drivers
-    "ModalFirstMessage_RenterDriver_Delete": "سيترتب على حذف بيانات السائق الخاص حذفه من قائمة السائقين مع الاحتفاظ بجميع الاجراءات الادارية والعقود",
+    "ModalFirstMessage_RenterDriver_Delete": "سيترتب على حذف بيانات السائق حذفه من قائمة السائقين مع الاحتفاظ بجميع الاجراءات الادارية والمالية",
     //"ModalSecondMessage_RenterDriver_Delete": "حذف بيانات ونتائج2",
-    "ModalFirstMessage_RenterDriver_UnDelete": "سيترتب على إرجاع بيانات السائق الخاص ادراج البيانات بقائمة السائقين بالعقود",
+    "ModalFirstMessage_RenterDriver_UnDelete": "سيترتب على إرجاع بيانات السائق ادراجه بقائمة السائقين",
     //"ModalSecondMessage_RenterDriver_UnDelete": "استعادة بيانات ونتائج2",
-    "ModalFirstMessage_RenterDriver_Hold": "سيترتب على إيقاف بيانات السائق الخاص إيقاف إدراجه بقائمة السائقين بعقود التأجير",
+    "ModalFirstMessage_RenterDriver_Hold": "سيترتب على إيقاف بيانات السائق إيقاف إدراجه بقائمة السائقين",
     //"ModalSecondMessage_RenterDriver_Hold": "ايقاف بيانات ونتائج2",
-    "ModalFirstMessage_RenterDriver_UnHold": "سيترتب على تفعيل بيانات السائق الخاص ادراج بيانات السائق بقائمة عقود التأجير",
+    "ModalFirstMessage_RenterDriver_UnHold": "سيترتب على تفعيل بيانات السائق ادراجه بقائمة السائقين",
     //"ModalSecondMessage_RenterDriver_UnHold": "ارجاع بيانات ونتائج2",
 
     // Cas Report ClosedContract
@@ -1363,6 +1366,12 @@
   //CAS Edit Branch
   "Edit Branch Hint": "تمكنك هذه الصفحة من الاطلاع على بيانات الفرع و تحديثها",
   "Edit Branch Data": "تحديث بيانات الفرع",
+
+  "TransferCarStatus_New Data": "تصليح السيارة",
+  "TransferCarStatusToActive_New_Data": "العودة من الصيانة",
+  "CarRepairDate": "التاريخ",
+  "CarRepairReasons": "الوصف",
+
 
   //table  filter
   "All": "الكل",
@@ -1560,7 +1569,7 @@
   "IsNotValidCity": "المنطقة او المدينه غير صحيح",
 
   //Procedure Page
-  "Procedures Data": "بينات الإجراءات",
+  "Procedures_Data": "الإجراءات الإدارية",
   "Procedures Hint": "تمكنك الصفحة من عرض و إضافة و تعديل بيانات الإجراءات",
   "ProcedureNo": "رقم لإجراء",
   "ProcedureName": "إسم لإجراء",
@@ -1572,7 +1581,9 @@
   "Add Procdure Data": "إضافة إجراء",
 
   //Add Procdure
+  "Procdure_the": "الإجراء",
   "ProcdureCode": "رقم الإجراء",
+  "ProcdureType": "نوع الإجراء",
   "Alert": "التنبيهات",
   "ProcduresEnName": "إسم الإجراء إنجليزى",
   "ProcduresArName": "إسم الإجراء عربى",
@@ -2785,7 +2796,8 @@
   //"ModalSecondMessage_AccountBank_CAS_Hold": "ايقاف بيانات ونتائج2",
   "ModalFirstMessage_AccountBank_CAS_UnHold": "سيترتب على تفعيل الحساب البنكي إدراجه بقائمة الحسابات البنكية وتفعيل نقاط البيع",
   //"ModalSecondMessage_AccountBank_CAS_UnHold": "ارجاع بيانات ونتائج2",
-
+  "ModalFirstMessage_AccountBank_NoUpdateStatus": "لا يمكن إيقاف الحساب البنكي لديه نقاط بيع",
+  "ModalFirstMessage_AccountBank_SureTo_Cannot_delete": "لا يمكن حذف الحساب البنكي لديه نقاط بيع",
   "View_AccountBank_CAS_PageTitle": "البنوك",
   "AccountBankName": "الحساب",
 
@@ -3052,8 +3064,8 @@
   "RepairCar_New Data": "إصلاح السيارات",
   "RepairCar_New Hint": "تمكنك هذه الصفحة من البحث وعرض و تحديث بيانات اصلاح السيارات",
   "TransferCar_New Data": "نقل السيارات",
-  "TransferCar_New Hint": "تمكنك هذه الصفحة من البحث وعرض بيانات السيارات ونقل السيارة من فرع إلى فرع",
-  "TransferCarOwner_New Data": "تغيير الملاك",
+  "TransferCar_New Hint": "نقل السيارة من فرع إلى فرع",
+  "TransferCarOwner_New Data": "تغيير المالك",
   "CarForSale Edit Data": "تحديث بيانات إجراءات البيع",
   "CarForSale Edit Hint": "تمكنك هذه الصفحة من تحديث بيانات إجراءات بيع السيارة",
   "reasonsForRepair": "وصف الاصلاح",

@@ -2,6 +2,7 @@
 using Bnan.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Globalization;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -113,6 +114,131 @@ namespace Bnan.Inferastructure.Repository
                 .FirstOrDefault(x => x.CrMasUserLoginNo != null);
 
             return lastUserLogin?.CrMasUserLoginNo + 1 ?? 1;
+        }
+        public async Task SaveAdminstrative_with_Set_Date(DateTime SetedDate ,string sector, string ProcedureCode, string lessorCode, string branchCode, string Classification, string? Target, string? operationAr, string? operationEn
+            , string UserInsert, string? Status, string? Reasons, string? CarFrom, string? CarTo, decimal? Debit, decimal? Credit, string? Doc_No, DateTime? Doc_Date, DateTime? Doc_Start, DateTime? Doc_End)
+        {
+            var thisProcedure = new CrCasSysAdministrativeProcedure();
+            var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+
+            if (currentUser == null) return;
+
+            // إعداد تاريخ ووقت الدخول الحالي
+            var currentDate = DateTime.Now;
+
+            var year = currentDate.ToString("yy", CultureInfo.InvariantCulture);
+
+            var CodeWithout_serial = (year + "-" + sector + ProcedureCode + "-" + lessorCode + branchCode + "-") ?? "";
+
+            // تعيين رقم الدخول (Login No) الجديد
+            thisProcedure.CrCasSysAdministrativeProceduresNo = await GetNewAdminstrativeNumberAsync(CodeWithout_serial);
+
+
+            thisProcedure.CrCasSysAdministrativeProceduresDate = SetedDate.Date;
+            thisProcedure.CrCasSysAdministrativeProceduresTime = new TimeSpan(currentDate.Hour, currentDate.Minute, currentDate.Second);
+
+            // تعبئة الحقول بالمعلومات الضرورية
+            thisProcedure.CrCasSysAdministrativeProceduresYear = year;
+            thisProcedure.CrCasSysAdministrativeProceduresSector = sector;
+            thisProcedure.CrCasSysAdministrativeProceduresCode = ProcedureCode;
+            thisProcedure.CrCasSysAdministrativeProceduresClassification = Classification;
+
+            thisProcedure.CrCasSysAdministrativeProceduresLessor = lessorCode;
+            thisProcedure.CrCasSysAdministrativeProceduresBranch = branchCode;
+
+            thisProcedure.CrCasSysAdministrativeProceduresTargeted = Target;
+            thisProcedure.CrCasSysAdministrativeProceduresDebit = Debit;
+            thisProcedure.CrCasSysAdministrativeProceduresCreditor = Credit;
+            thisProcedure.CrCasSysAdministrativeProceduresDocNo = Doc_No;
+            thisProcedure.CrCasSysAdministrativeProceduresDocDate = Doc_Date;
+            thisProcedure.CrCasSysAdministrativeProceduresDocStartDate = Doc_Start;
+            thisProcedure.CrCasSysAdministrativeProceduresDocEndDate = Doc_End;
+
+            thisProcedure.CrCasSysAdministrativeProceduresCarFrom = CarFrom;
+            thisProcedure.CrCasSysAdministrativeProceduresCarTo = CarTo;
+
+            thisProcedure.CrCasSysAdministrativeProceduresUserInsert = UserInsert;
+            thisProcedure.CrCasSysAdministrativeProceduresArDescription = operationAr;
+            thisProcedure.CrCasSysAdministrativeProceduresEnDescription = operationEn;
+
+            thisProcedure.CrCasSysAdministrativeProceduresStatus = Status;
+            thisProcedure.CrCasSysAdministrativeProceduresReasons = Reasons;
+
+            //// وصف العملية باللغة العربية والإنجليزية
+            //thisProcedure.CrMasUserLoginConcatenateOperationArDescription = $"{systemAr} - {mainTaskAr} - {subTaskAr} - {operationAr} - {recordAr}";
+            //thisProcedure.CrMasUserLoginConcatenateOperationEnDescription = $"{systemEn} - {mainTaskEn} - {subTaskEn} - {operationEn} - {recordEn}";
+
+            // حفظ في قاعدة البيانات
+            await _unitOfWork.CrCasSysAdministrativeProcedure.AddAsync(thisProcedure);
+            await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task SaveAdminstrative(string sector, string ProcedureCode, string lessorCode, string branchCode, string Classification, string? Target, string? operationAr, string? operationEn
+            , string UserInsert, string? Status, string? Reasons, string? CarFrom, string? CarTo, decimal? Debit, decimal? Credit, string? Doc_No, DateTime? Doc_Date, DateTime? Doc_Start, DateTime? Doc_End)      
+        {
+            var thisProcedure = new CrCasSysAdministrativeProcedure();
+            var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+
+            if (currentUser == null) return;
+
+            // إعداد تاريخ ووقت الدخول الحالي
+            var currentDate = DateTime.Now;
+
+            var year = currentDate.ToString("yy",CultureInfo.InvariantCulture);
+
+            var CodeWithout_serial = (year+"-"+ sector+ ProcedureCode+"-"+ lessorCode+ branchCode+"-") ??"";
+
+            // تعيين رقم الدخول (Login No) الجديد
+            thisProcedure.CrCasSysAdministrativeProceduresNo = await GetNewAdminstrativeNumberAsync(CodeWithout_serial);
+
+
+            thisProcedure.CrCasSysAdministrativeProceduresDate = currentDate.Date;
+            thisProcedure.CrCasSysAdministrativeProceduresTime = new TimeSpan(currentDate.Hour, currentDate.Minute, currentDate.Second);
+
+            // تعبئة الحقول بالمعلومات الضرورية
+            thisProcedure.CrCasSysAdministrativeProceduresYear = year;
+            thisProcedure.CrCasSysAdministrativeProceduresSector = sector;
+            thisProcedure.CrCasSysAdministrativeProceduresCode = ProcedureCode;
+            thisProcedure.CrCasSysAdministrativeProceduresClassification = Classification;
+
+            thisProcedure.CrCasSysAdministrativeProceduresLessor = lessorCode;
+            thisProcedure.CrCasSysAdministrativeProceduresBranch = branchCode;
+
+            thisProcedure.CrCasSysAdministrativeProceduresTargeted = Target;
+            thisProcedure.CrCasSysAdministrativeProceduresDebit = Debit;
+            thisProcedure.CrCasSysAdministrativeProceduresCreditor = Credit;
+            thisProcedure.CrCasSysAdministrativeProceduresDocNo = Doc_No;
+            thisProcedure.CrCasSysAdministrativeProceduresDocDate = Doc_Date;
+            thisProcedure.CrCasSysAdministrativeProceduresDocStartDate = Doc_Start;
+            thisProcedure.CrCasSysAdministrativeProceduresDocEndDate = Doc_End;
+
+            thisProcedure.CrCasSysAdministrativeProceduresCarFrom = CarFrom;
+            thisProcedure.CrCasSysAdministrativeProceduresCarTo = CarTo;
+
+            thisProcedure.CrCasSysAdministrativeProceduresUserInsert = UserInsert;
+            thisProcedure.CrCasSysAdministrativeProceduresArDescription = operationAr;
+            thisProcedure.CrCasSysAdministrativeProceduresEnDescription = operationEn;
+
+            thisProcedure.CrCasSysAdministrativeProceduresStatus = Status;
+            thisProcedure.CrCasSysAdministrativeProceduresReasons = Reasons;
+
+            //// وصف العملية باللغة العربية والإنجليزية
+            //thisProcedure.CrMasUserLoginConcatenateOperationArDescription = $"{systemAr} - {mainTaskAr} - {subTaskAr} - {operationAr} - {recordAr}";
+            //thisProcedure.CrMasUserLoginConcatenateOperationEnDescription = $"{systemEn} - {mainTaskEn} - {subTaskEn} - {operationEn} - {recordEn}";
+
+            // حفظ في قاعدة البيانات
+            await _unitOfWork.CrCasSysAdministrativeProcedure.AddAsync(thisProcedure);
+            await _unitOfWork.CompleteAsync();
+        }
+
+
+        private async Task<string> GetNewAdminstrativeNumberAsync(string AdminstrativeId_withoutSerial)
+        {
+            var AdminstrativeCount = await _unitOfWork.CrCasSysAdministrativeProcedure.FindAllAsync(x=>x.CrCasSysAdministrativeProceduresNo.StartsWith(AdminstrativeId_withoutSerial));
+
+            var serial = (AdminstrativeCount.Count()+1).ToString("000000", CultureInfo.InvariantCulture)??"000001";
+
+            return (AdminstrativeId_withoutSerial + serial);
         }
     }
 }

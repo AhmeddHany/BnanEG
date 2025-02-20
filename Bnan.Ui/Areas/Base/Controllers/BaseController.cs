@@ -74,12 +74,15 @@ namespace Bnan.Ui.Areas.Base.Controllers
             else if (status == Status.Insert) return ("اضافة", "Insert");
             else if (status == Status.Update) return ("تحديث", "Update");
             else if (status == Status.Deleted) return ("حذف", "Remove");
+            else if (status == Status.Hold) return ("إيقاف", "Hold");
             else if (status == Status.UnHold) return ("استرجاع الايقاف", "Retrieve Hold");
             else if (status == Status.UnDeleted) return ("استرجاع الحذف", "Retrieve Delete");
             else if (status == Status.ResetPassword) return ("استرجاع كلمة السر", "Retrieve Password");
             else if (status == Status.ChangePassword) return ("تغيير كلمة السر", "Change Password");
             else if (status == Status.UpdateValidtions) return ("تحديث صلاحيات موظف", "Change Employee Validitions");
-            else return ("", "");
+            else if (status == Status.Blocked) return ("تم الحظر", "Blocked");
+            else if (status == Status.unBlocked) return ("فك الحظر", "Un Blocked");
+            else return (" ", " ");
         }
 
 

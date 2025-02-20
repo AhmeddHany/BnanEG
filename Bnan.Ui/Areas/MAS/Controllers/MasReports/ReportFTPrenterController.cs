@@ -58,12 +58,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             // Set page titles
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
 
             var all_RenterInfo = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
                 predicate: x => x.CrCasRenterLessorStatus != Status.Deleted,
@@ -94,31 +88,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 r.CrCasRenterLessorContractTradedAmount = theseSingles.Sum(x => x.CrCasRenterLessorContractTradedAmount);
             }
             var all_RenterInfo3 = all_RenterInfo2?.ToList();
-
-
-
-            ////var all_RenterIds = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
-            ////    predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
-            ////    //x.CrCasCarInformationLastContractDate > start && x.CrCasCarInformationLastContractDate <= end,
-            ////    selectProjection: query => query.Select(x => new list_String_4
-            ////    {
-            ////        id_key = x.CrMasRenterInformationId,
-            ////        nameAr = x.CrMasRenterInformationArName,
-            ////        nameEn = x.CrMasRenterInformationEnName,
-            ////        str4 = x.CrMasRenterInformationStatus,
-            ////    })
-            ////    //, includes: new string[] { "CrCasRenterLessorNavigation" }
-            ////    );
-
-
-            //var all_RentersIds_recipt = await _unitOfWork.CrCasAccountReceipt.FindAllWithSelectAsNoTrackingAsync(
-            //    predicate: x=>x.CrCasAccountReceiptType =="301" || x.CrCasAccountReceiptType == "302",
-            //    selectProjection: query => query.Select(x => new list_String_2
-            //    {
-            //        id_key = x.CrCasAccountReceiptRenterId,
-            //    })
-            //    );
-            // //all_RentersIds_recipt.DistinctBy(x => x.id_key).ToList();
 
             var all_bonds = await _unitOfWork.CrCasAccountReceipt.FindCountByColumnAsync<CrCasAccountReceipt>(
                    predicate: x => x.CrCasAccountReceiptType == "301",

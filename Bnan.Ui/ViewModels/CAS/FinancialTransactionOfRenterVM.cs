@@ -12,11 +12,11 @@ namespace Bnan.Ui.ViewModels.CAS
 
         public List<CrMasRenterInformation>? crMasRenterInformation  { get; set; }
 
-    public List<List<string>>? All_Counts = new List<List<string>>(); 
+        public List<List<string>>? All_Counts = new List<List<string>>(); 
 
         public List<CrCasAccountReceipt>? FinancialTransactionOfRente_Filtered { get; set; }
 
-        public List<CrMasSysEvaluation>? Rates { get; set; }
+        public List<CrMasSysEvaluation>? all_Rates { get; set; }
 
         
     }

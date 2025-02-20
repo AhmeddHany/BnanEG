@@ -12,9 +12,12 @@
     "AuthEmplpoyee_NoDelete": "You can't Delete it.",
     "AuthEmplpoyee_NoEdit": "You can't Update it.",
     "AuthEmplpoyee_NoUpdateStatus": "You can't Update its Status.",
+    "AuthEmplpoyee_NoHoldStatus": "You can't Stop it.",
     "NoDataToShow": "!! No Data To Show",
     "No_company_choosed": "select a company ,please",
-    "No_connect_way": "There's no way to communicate",
+    "No_connect_way": "There's No way to communicate",
+    "No_Branches_Toview": "There's No Branches",
+    "No_Owners_Toview": "There's No Owners",
     "toastor_Exist": "This Record is Recorded before",
     "MobilePatternError": "Enter a valid mobile number",
     "error_Codestart50": "This Code should start with 50 and add another 8 numbers",
@@ -1235,13 +1238,13 @@
     //"ModalSecondMessage_LessorOwners_CAS_UnHold": "UnHold Data And Results2",
 
     // CAS Private Drivers
-    "ModalFirstMessage_RenterDriver_Delete": "Deleting Private Driver's Data will result in deletion from the list of drivers while maintaining all administrative procedures and contracts",
+    "ModalFirstMessage_RenterDriver_Delete": "Deleting Driver's Data will result in deletion from the list of drivers while maintaining all administrative and Financial procedures",
     // "ModalSecondMessage_RenterDriver_Delete": "Delete Data And Results2",
-    "ModalFirstMessage_RenterDriver_UnDelete": "Activating Private Driver's Data will result in entail the inclusion of data on the drivers' list of contracts",
+    "ModalFirstMessage_RenterDriver_UnDelete": "Retreaving Driver's data will result in inserting it the driver's list",
     // "ModalSecondMessage_RenterDriver_UnDelete": "UnDelete Data And Results2",
-    "ModalFirstMessage_RenterDriver_Hold": "Stopping the private driver's data will have to stop its listing of drivers on lease contracts",
+    "ModalFirstMessage_RenterDriver_Hold": "Stopping Driver's data will have to stop it from driver's list.",
     //"ModalSecondMessage_RenterDriver_Hold": "Hold Data And Results2",
-    "ModalFirstMessage_RenterDriver_UnHold": "Activation of private driver data will entail the inclusion of driver data in the lease list",
+    "ModalFirstMessage_RenterDriver_UnHold": "Activating Driver's data will result in inserting it the driver's list",
     //"ModalSecondMessage_RenterDriver_UnHold": "UnHold Data And Results2",
 
     // Cas Report ClosedContract
@@ -1405,6 +1408,11 @@
   "Edit Branch Hint": "The page allows you to view and update Branch Data.",
   "Edit Branch Data": "Edit Branch Data",
 
+  "TransferCarStatus_New Data": "Repair of Car",
+  "TransferCarStatusToActive_New_Data": "Retrive From Repair",
+
+  "CarRepairDate": "Date",
+  "CarRepairReasons": "Description",
   //CAS Branch Doucment
   "Document Data": "Branch Documents",
   "Document Hint": "The page allows you to search and edit branch documents data .",
@@ -1594,7 +1602,7 @@
   "IsNotValidCity": "The City Name Is InValid",
 
   //Procedure Page
-  "Procedures Data": "Procedures Data",
+  "Procedures_Data": "Adminstrative Procedures",
   "Procedures Hint": "The page allows you to display, add, and modify Procedures data.",
   "ProcedureNo": "Procedure Code",
   "ProcedureName": "Procedure Name",
@@ -1606,7 +1614,9 @@
   "Add Procdure Data": "Add Procedure",
 
   //Add Procdure
+  "Procdure_the": "Procdure",
   "ProcdureCode": "Procdure Code",
+  "ProcdureType": "Procdure Type",
   "Alert": "Alert",
   "ProcduresEnName": "Procdures English Name",
   "ProcduresArName": "Procdures arabic Name",
@@ -2732,7 +2742,8 @@
   //"ModalSecondMessage_AccountBank_CAS_Hold": "Hold Data And Results2",
   "ModalFirstMessage_AccountBank_CAS_UnHold": "Activation of the bank account will entail inclusion in the list of bank accounts and activation of POS",
   //"ModalSecondMessage_AccountBank_CAS_UnHold": "UnHold Data And Results2",
-
+  "ModalFirstMessage_AccountBank_NoUpdateStatus": "Bank account cannot be Stopped with points of sale",
+  "ModalFirstMessage_AccountBank_SureTo_Cannot_delete": "Bank account cannot be Deleted with points of sale",
   "View_AccountBank_CAS_PageTitle": "Banks",
   "AccountBankName": "Account",
 
@@ -3005,8 +3016,8 @@
   "RepairCar_New Data": "Cars Repair",
   "RepairCar_New Hint": "This Page Enables You to Search , View and Update Cars Repair Data",
   "TransferCar_New Data": "Transfer Cars",
-  "TransferCar_New Hint": "This Page Enables You to Search , View Cars Data and Transfer The Car from Branch To Branch",
-  "TransferCarOwner_New Data": "Change The Owners",
+  "TransferCar_New Hint": "Transfer The Car from Branch To Branch",
+  "TransferCarOwner_New Data": "Change The Owner",
   "CarForSale Edit Data": "Updating sales procedures data",
   "CarForSale Edit Hint": "This page allows you to update the vehicle selling procedures data",
   "reasonsForRepair": "Description repair",

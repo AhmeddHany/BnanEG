@@ -11,6 +11,7 @@
 <table class=" tables-style table table-borderless " id="Table">
     <thead class="sticky-top">
         <tr>
+            <th scope="col" class="DifferAlign"> @localizer["Rates"]</th>
             <th scope="col">@localizer["Amountstraded"]</th>
             <th scope="col">@localizer["FTR_Balance"]</th>
             <th scope="col"> @localizer["LastVisit_s"] </th>
@@ -26,19 +27,23 @@
             }
             @foreach (var item in Model.FinancialTransactionOfRente_Filtered)
             {
+            var ColorRow = " ";
             var lastVisit = " ";
             string? job = " ";
             var nationality = " ";
             var RenterName = " ";
+            string? Rate = " ";
             var singleRenter_Balances = Model.crCasRenterLessor?.Find(x => x.CrCasRenterLessorId == item.CrCasAccountReceiptRenterId);
             var singleRenter = item.CrCasAccountReceiptRenter;
             var CasRenterLessor = Model.crCasRenterLessor?.FirstOrDefault(x => x.CrCasRenterLessorId == item.CrCasAccountReceiptRenterId);
+            string Dealing = CasRenterLessor?.CrCasRenterLessorDealingMechanism ?? " ";
             if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
             {
                 //Rate = Model.all_Rates?.Find(x => x.CrMasSysEvaluationsCode == singleRenter_Balances?.CrCasRenterLessorDealingMechanism?.Trim())?.CrMasSysEvaluationsEnDescription ?? " ";
                 nationality = CasRenterLessor?.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesEnName;
                 job = CasRenterLessor?.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsEnName;
                 RenterName = CasRenterLessor?.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName;
+                Rate = Model.all_Rates?.Find(x => x.CrMasSysEvaluationsCode == Dealing.Trim())?.CrMasSysEvaluationsEnDescription ?? " ";
                 lastVisit = singleRenter_Balances?.CrCasRenterLessorDateLastContractual?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
             }
             else
@@ -47,27 +52,35 @@
                 nationality = CasRenterLessor?.CrCasRenterLessorStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesArName;
                 job = CasRenterLessor?.CrCasRenterLessorStatisticsJobsNavigation?.CrMasSupRenterProfessionsArName;
                 RenterName = CasRenterLessor?.CrCasRenterLessorNavigation?.CrMasRenterInformationArName;
+                Rate = Model.all_Rates?.Find(x => x.CrMasSysEvaluationsCode == Dealing.Trim())?.CrMasSysEvaluationsArDescription ?? " ";
                 lastVisit = singleRenter_Balances?.CrCasRenterLessorDateLastContractual?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            }
+            if (Dealing.Trim()=="16")
+            {
+                ColorRow = "color:Red;";
             }
 
             <tr>
-                <td>
+            <td class="DifferAlign" style="@ColorRow max-width:60px;">                            
+                    <p> @Rate </p>
+                </td>
+            <td style="@ColorRow">
                     <p>@(singleRenter_Balances?.CrCasRenterLessorContractTradedAmount?.ToString("N2", CultureInfo.InvariantCulture) ?? " ")</p>
                 </td>
-            <td>
+            <td style="@ColorRow">
                     <p>@(singleRenter_Balances?.CrCasRenterLessorBalance?.ToString("N2",CultureInfo.InvariantCulture)??" ")</p>
             </td>
-            <td>
+                <td style="@ColorRow">
                     <p>@(lastVisit)</p>
             </td>
-            <td>
+                <td style="@ColorRow">
                     <p class="FirstLineP">@job</p>
             </td>
 
-            <td>
+                <td style="@ColorRow">
                     <p>@nationality</p>
             </td>
-                <td class="DifferAlign" style="  max-width:200px;">
+                <td class="DifferAlign" style="@ColorRow  max-width:200px;">
                 <div class="d-flex gap-2 align-items-center">
                     <div class="col">
                             <p class="FirstLineP"> @RenterName </p>
@@ -75,7 +88,7 @@
                     </div>
                 </div>
             </td>
-            <td>
+                <td style="@ColorRow">
                 <div>@no</div>
             </td>
         </tr>

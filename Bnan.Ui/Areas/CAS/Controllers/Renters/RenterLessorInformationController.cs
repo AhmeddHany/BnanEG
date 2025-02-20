@@ -337,6 +337,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 await SetPageTitleAsync(Status.Update, pageNumber);
                 return RedirectToAction("Index", "RenterLessorInformation");
             }
+            var AdminStatus = " ";
 
             try
             {
@@ -344,30 +345,39 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return View("Edit", model);
+                    return RedirectToAction("Edit", new {id= singlExist.CrCasRenterLessorId });
                 }
-                singlExist.CrCasRenterLessorDealingMechanism = model.CrCasRenterLessorDealingMechanism;
-                singlExist.CrCasRenterLessorReasons = model.CrCasRenterLessorReasons;
+                if (singlExist.CrCasRenterLessorDealingMechanism == model.CrCasRenterLessorDealingMechanism && model.CrCasRenterLessorReasons?.Length < 1) return RedirectToAction("Edit", new { id = singlExist.CrCasRenterLessorId });
+                
+                if (model?.CrCasRenterLessorDealingMechanism == "16") { AdminStatus = Status.Blocked; }
+                else { AdminStatus = Status.unBlocked; }
 
+                if (singlExist.CrCasRenterLessorDealingMechanism == model?.CrCasRenterLessorDealingMechanism) AdminStatus = Status.Update;
+                singlExist.CrCasRenterLessorDealingMechanism = model.CrCasRenterLessorDealingMechanism;
+                //singlExist.CrCasRenterLessorReasons = model.CrCasRenterLessorReasons;
+                var reasons = model?.CrCasRenterLessorReasons??" ";
+                var RenterId = model?.CrCasRenterLessorId??" ";
                 _unitOfWork.CrCasRenterLessor.Update(singlExist);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
                 await SaveTracingForLicenseChange(user, model, Status.Update);
+                var Target = RenterId ?? " ";
+                await SaveAdminstrative(user, AdminStatus, Target, reasons);
                 return RedirectToAction("Index", "RenterLessorInformation");
             }
             catch (Exception ex)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 await SetPageTitleAsync(Status.Update, pageNumber);
-                return View("Edit", model);
+                return RedirectToAction("Edit", new { id = singlExist.CrCasRenterLessorId });
             }
         }
 
-        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, RenterLessorInformation_CASVM thisRenter, string status)
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, RenterLessorInformation_CASVM? thisRenter, string status)
         {
 
-            var recordAr = thisRenter.RenterNameAr;
-            var recordEn = thisRenter.RenterNameEn;
+            var recordAr = thisRenter?.RenterNameAr;
+            var recordEn = thisRenter?.RenterNameEn;
             var (operationAr, operationEn) = GetStatusTranslation(status);
 
             var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
@@ -387,6 +397,60 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 system.CrMasSysSystemCode,
                 system.CrMasSysSystemArName,
                 system.CrMasSysSystemEnName);
+        }
+
+        private async Task SaveAdminstrative(CrMasUserInformation user, string status, string? Target, string? reasons)
+        {
+            // change ProcedureCode and Classification (30 == Financial) , (20 == Admin)
+            string procedure_Code = "247";
+            string procedure_Classification = "20";
+            //var procedureData = await _unitOfWork.CrMasSysProcedure.FindAsync(x => x.CrMasSysProceduresCode == procedure_Code && x.CrMasSysProceduresClassification == procedure_Classification);
+            //var recordAr = procedureData?.CrMasSysProceduresArName ?? " ";
+            //var recordEn = procedureData?.CrMasSysProceduresEnName ?? " ";
+            var (recordAr, recordEn) = GetStatusTranslation(status);
+            if (status?.Length > 1) status = Status.Active;
+
+            if (recordAr.Length > 29) recordAr = recordAr?.Substring(0, 30);
+            if (recordEn.Length > 29) recordEn = recordEn?.Substring(0, 30);
+
+            string sector = "1";
+            var lessorCode = user?.CrMasUserInformationLessor ?? " ";
+            var branchCode = "100";
+            var target = Target;
+            var UserInsert = user?.CrMasUserInformationCode ?? " ";
+
+            string? CarFrom = null;
+            string? CarTo = null;
+
+            string? Reasons = reasons;
+            if (Reasons?.Length > 99) Reasons = Reasons?.Substring(0, 100);
+            if (CarFrom?.Length > 19) CarFrom = CarFrom?.Substring(0, 20);
+            if (CarTo?.Length > 19) CarTo = CarTo?.Substring(0, 20);
+            decimal? Debit = null;
+            decimal? Credit = null;
+            string? Doc_No = null;
+            DateTime? Doc_Date = null;
+            DateTime? Doc_Start = null;
+            DateTime? Doc_End = null;
+
+
+            await _userLoginsService.SaveAdminstrative(
+            sector,
+            procedure_Code,
+            lessorCode,
+            branchCode,
+            procedure_Classification,
+            target,
+            recordAr,
+            recordEn,
+            UserInsert,
+            status,
+            Reasons,
+            CarFrom,
+            CarTo,
+            Debit, Credit, Doc_No, Doc_Date, Doc_Start, Doc_End
+            );
+
         }
 
         [HttpPost]

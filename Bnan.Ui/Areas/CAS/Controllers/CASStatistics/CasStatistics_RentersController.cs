@@ -66,13 +66,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
             // Set page titles
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
-
 
             //var Most_Frequance_Company_list = _unitOfWork.CrMasRenterInformation.GetAll()
             //                        .GroupBy(q => q.CrMasRenterInformationCode)
@@ -105,32 +98,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
 
                 return View(CasStatistics_RentersVM4);
             }
-
-            //var Nationality_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsNationalities).Count();
-            //var MemperShip_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationMembership).Count();
-            //var profession_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsJobs).Count();
-            //var Rigon_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsRegions).Count();
-            //var City_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsCity).Count();
-            //var Age_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsAge).Count();
-            //var Traded_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsTraded).Count();
-            //var Dealing_Mechanism_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationDealingMechanism).Count();
-            //var Status_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatus).Count();
-
-            //if (Status_count < 2 && Nationality_count < 2 && MemperShip_count < 2 && profession_count < 2 && Rigon_count < 2 && City_count < 2 && Age_count < 2 && City_count < 2 && Traded_count < 2 && Dealing_Mechanism_count < 2 && Status_count < 2)
-            //{
-            //    return RedirectToAction("FailedMessageReport_NoData");
-            //}
-
-            //string concate_DropDown = "";
-            //if (Nationality_count > 1) concate_DropDown = concate_DropDown + "0";
-            //if (MemperShip_count > 1) concate_DropDown = concate_DropDown + "1";
-            //if (profession_count > 1) concate_DropDown = concate_DropDown + "2";
-            //if (Rigon_count > 1) concate_DropDown = concate_DropDown + "3";
-            //if (City_count > 1) concate_DropDown = concate_DropDown + "4";
-            //if (Age_count > 1) concate_DropDown = concate_DropDown + "5";
-            //if (Traded_count > 1) concate_DropDown = concate_DropDown + "6";
-            //if (Dealing_Mechanism_count > 1) concate_DropDown = concate_DropDown + "7";
-            //ViewBag.concate_DropDown = concate_DropDown;
 
             List<CASChartBranchDataVM> listCaschartBranchDataVM = new List<CASChartBranchDataVM>();
             var count_Renters = 0;
@@ -166,20 +133,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
 
             var listCaschartBranchDataVM2 = await Cas_statistics_other(listCaschartBranchDataVM, count_Renters);
 
-            //if (listCaschartBranchDataVM2.Count > 0)
-            //{
-            //    listCaschartBranchDataVM2 = listCaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
-            //}
 
             // pass --> 1  if no Other --> 2 if were other
 
             //ViewBag.singleType = "0";
             //ViewBag.singleType = concate_DropDown[0].ToString();
             CasStatistics_RentersVM CasStatistics_RentersVM = new CasStatistics_RentersVM();
-            //if (listCaschartBranchDataVM2.Count > 0)
-            //{
-            //    listCaschartBranchDataVM2 = listCaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
-            //}
+
 
             //// pass --> 1  if no Other --> 2 if were other
             CasStatistics_RentersVM.listCasChartdataVM = listCaschartBranchDataVM2;
@@ -496,15 +456,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
             var listCaschartBranchDataVM2 = await Cas_statistics_other(listCaschartBranchDataVM, count_Renters);
 
             CasStatistics_RentersVM CasStatistics_RentersVM = new CasStatistics_RentersVM();
-            //if (listCaschartBranchDataVM2.Count > 0)
-            //{
-            //    listCaschartBranchDataVM2 = listCaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
-            //}
-            //// pass --> 1  if no Other --> 2 if were other
-            //CasStatistics_RentersVM.listCasChartdataVM = listCaschartBranchDataVM2;
-            //CasStatistics_RentersVM.Renters_Count = count_Renters;
-
-            //return Json(CasStatistics_RentersVM.listCasChartdataVM);
+     
 
             var response = new
             {
@@ -595,16 +547,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
 
             CasStatistics_CarsVM CasStatistics_CarsVM = new CasStatistics_CarsVM();
 
-            //if (listCaschartBranchDataVM2.Count > 0)
-            //{
-            //    listCaschartBranchDataVM2 = listCaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
-            //}
 
-            //// pass --> 1  if no Other --> 2 if were other
-            //CasStatistics_CarsVM.listCasChartdataVM = listCaschartBranchDataVM2;
-            //CasStatistics_CarsVM.Cars_Count = count_Renters;
-
-            //return Json(listCaschartBranchDataVM2);
             var response = new
             {
                 list_chartBranchDataVM = listCaschartBranchDataVM2,
@@ -681,11 +624,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
 
 
             CasStatistics_RentersVM CasStatistics_RentersVM = new CasStatistics_RentersVM();
-            //// pass --> 1  if no Other --> 2 if were other
-            //CasStatistics_RentersVM.listCasChartdataVM = list_chartBranchDataVM;
-            //CasStatistics_RentersVM.Renters_Count = all_Renter_Age?.Count;
 
-            //return Json(CasStatistics_RentersVM.listCasChartdataVM);
             var count_Contracts = 0;
             if (list_chartBranchDataVM.Count > 0)
             {
@@ -707,7 +646,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
             //// Set page titles
             var user = await _userManager.GetUserAsync(User);
             //await SetPageTitleAsync(string.Empty, pageNumber);
-            //// Check Validition
 
             var all_Renter_rate = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasRenterLessorCode == user.CrMasUserInformationLessor && x.CrCasRenterLessorStatus != Status.Deleted,
@@ -780,16 +718,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
 
             CasStatistics_CarsVM CasStatistics_CarsVM = new CasStatistics_CarsVM();
 
-            //if (listCaschartBranchDataVM2.Count > 0)
-            //{
-            //    listCaschartBranchDataVM2 = listCaschartBranchDataVM2.OrderBy(x => x.Code).ToList();
-            //}
-
-            //// pass --> 1  if no Other --> 2 if were other
-            //CasStatistics_CarsVM.listCasChartdataVM = listCaschartBranchDataVM2;
-            //CasStatistics_CarsVM.Cars_Count = count_Renters;
-
-            //return Json(listCaschartBranchDataVM2);
             var response = new
             {
                 list_chartBranchDataVM = listCaschartBranchDataVM2,
@@ -802,382 +730,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
         }
 
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAllByType(string Type, string listDrop, string singleNo, string company_now)
-        //{
-        //    var company = company_now?.Replace("-1", "") ?? "";
-
-        //    if (listDrop == "" || listDrop == null)
-        //    {
-        //        return RedirectToAction("Index");
-        //    }
-        //    //sidebar Active
-        //    ViewBag.id = "#sidebarReport";
-        //     ViewBag.no = "7";
-        //    ViewBag.concate_DropDown = listDrop;
-        //    ViewBag.singleType = singleNo;
-
-
-        //    var (mainTask, subTask, system, currentCar) = await SetTrace("205", "2205014", "2");
-
-        //    var titles = await setTitle("205", "2205014", "2");
-        //    await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-
-        //    var AllRenters = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).ToList();
-
-
-        //    var AllLessor = _unitOfWork.CrCasLessorInformation.FindAll(x => x.CrCasLessorInformationCode != "0000").ToList();
-
-        //    List<ChartBranchDataVM> chartBranchDataVMs = new List<ChartBranchDataVM>();
-        //    var count_Renters = 0;
-
-        //    string concate_DropDown = listDrop;
-        //    if (company_now != null && !company_now.StartsWith("-1"))
-        //    {
-        //        var Nationality_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsNationalities).Count();
-        //        var MemperShip_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationMembership).Count();
-        //        var profession_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsJobs).Count();
-        //        var Rigon_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsRegions).Count();
-        //        var City_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsCity).Count();
-        //        var Age_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsAge).Count();
-        //        var Traded_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsTraded).Count();
-        //        var Dealing_Mechanism_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationDealingMechanism).Count();
-        //        var Status_count = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatus).Count();
-
-        //        if (Status_count < 2 && Nationality_count < 2 && MemperShip_count < 2 && profession_count < 2 && Rigon_count < 2 && City_count < 2 && Age_count < 2 && City_count < 2 && Traded_count < 2 && Dealing_Mechanism_count < 2 && Status_count < 2)
-        //        {
-        //            return RedirectToAction("FailedMessageReport_NoData");
-        //        }
-
-        //        concate_DropDown = "";
-        //        if (Nationality_count > 1) concate_DropDown = concate_DropDown + "0";
-        //        if (MemperShip_count > 1) concate_DropDown = concate_DropDown + "1";
-        //        if (profession_count > 1) concate_DropDown = concate_DropDown + "2";
-        //        if (Rigon_count > 1) concate_DropDown = concate_DropDown + "3";
-        //        if (City_count > 1) concate_DropDown = concate_DropDown + "4";
-        //        if (Age_count > 1) concate_DropDown = concate_DropDown + "5";
-        //        if (Traded_count > 1) concate_DropDown = concate_DropDown + "6";
-        //        if (Dealing_Mechanism_count > 1) concate_DropDown = concate_DropDown + "7";
-        //        //if (Status_count > 1) concate_DropDown = concate_DropDown + "8";
-        //        ViewBag.concate_DropDown = concate_DropDown;
-        //    }
-
-        //        if (Type == "Nationality")
-        //    {
-        //        var AllNationality = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode, new[] { "CrMasRenterInformationStatisticsNationalitiesNavigation" }).Where(x => x.CrMasRenterInformationStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesStatus != Status.Deleted).DistinctBy(x => x.CrMasRenterInformationStatisticsNationalities).ToList();
-
-        //        foreach (var single in AllNationality)
-        //        {
-        //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsNationalities == single.CrMasRenterInformationStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesCode);
-        //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            chartBranchDataVM.ArName = single.CrMasRenterInformationStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesArName;
-        //            chartBranchDataVM.EnName = single.CrMasRenterInformationStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesEnName;
-        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsNationalitiesNavigation?.CrMasSupRenterNationalitiesCode;
-        //            chartBranchDataVM.Value = CategoryCount;
-        //            chartBranchDataVMs.Add(chartBranchDataVM);
-        //            count_Renters = CategoryCount + count_Renters;
-        //        }
-        //        ViewBag.count_Renters = count_Renters;
-        //    }
-        //    if (Type == "MemperShip")
-        //    {
-        //        var AllRenters2_MemperShip = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode, new[] { "CrMasRenterInformationMembershipNavigation" }).Where(x => x.CrMasRenterInformationMembershipNavigation?.CrCasSupRenterMembershipStatus != Status.Deleted).DistinctBy(x => x.CrMasRenterInformationMembership).ToList();
-
-        //        foreach (var single in AllRenters2_MemperShip)
-        //        {
-        //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationMembership == single.CrMasRenterInformationMembershipNavigation?.CrCasSupRenterMembershipCode);
-        //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            chartBranchDataVM.ArName = single.CrMasRenterInformationMembershipNavigation?.CrCasSupRenterMembershipArName;
-        //            chartBranchDataVM.EnName = single.CrMasRenterInformationMembershipNavigation?.CrCasSupRenterMembershipEnName;
-        //            chartBranchDataVM.Code = single.CrMasRenterInformationMembershipNavigation?.CrCasSupRenterMembershipCode;
-        //            chartBranchDataVM.Value = CategoryCount;
-        //            chartBranchDataVMs.Add(chartBranchDataVM);
-        //            count_Renters = CategoryCount + count_Renters;
-        //        }
-        //        ViewBag.count_Renters = count_Renters;
-        //    }
-        //    if (Type == "profession")
-        //    {
-        //        var AllRenters2_profession = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode, new[] { "CrMasRenterInformationStatisticsJobsNavigation" }).Where(x => x.CrMasRenterInformationStatisticsJobsNavigation?.CrCasSupRenterProfessionsStatus != Status.Deleted).DistinctBy(x => x.CrMasRenterInformationStatisticsJobs).ToList();
-
-        //        foreach (var single in AllRenters2_profession)
-        //        {
-        //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsJobs == single.CrMasRenterInformationStatisticsJobsNavigation?.CrCasSupRenterProfessionsCode);
-        //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            chartBranchDataVM.ArName = single.CrMasRenterInformationStatisticsJobsNavigation?.CrCasSupRenterProfessionsArName;
-        //            chartBranchDataVM.EnName = single.CrMasRenterInformationStatisticsJobsNavigation?.CrCasSupRenterProfessionsEnName;
-        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsJobsNavigation?.CrCasSupRenterProfessionsCode;
-        //            chartBranchDataVM.Value = CategoryCount;
-        //            chartBranchDataVMs.Add(chartBranchDataVM);
-        //            count_Renters = CategoryCount + count_Renters;
-        //        }
-        //        ViewBag.count_Renters = count_Renters;
-        //    }
-        //    if (Type == "Rigon")
-        //    {
-        //        var AllRenters2_Rigon = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode, new[] { "CrMasRenterInformationStatisticsRegionsNavigation" }).Where(x => x.CrMasRenterInformationStatisticsRegionsNavigation?.CrCasSupPostRegionsStatus != Status.Deleted).DistinctBy(x => x.CrMasRenterInformationStatisticsRegions).ToList();
-
-        //        foreach (var single in AllRenters2_Rigon)
-        //        {
-        //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsRegions == single.CrMasRenterInformationStatisticsRegionsNavigation?.CrCasSupPostRegionsCode);
-        //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            chartBranchDataVM.ArName = single.CrMasRenterInformationStatisticsRegionsNavigation?.CrCasSupPostRegionsArName;
-        //            chartBranchDataVM.EnName = single.CrMasRenterInformationStatisticsRegionsNavigation?.CrCasSupPostRegionsEnName;
-        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsRegionsNavigation?.CrCasSupPostRegionsCode;
-        //            chartBranchDataVM.Value = CategoryCount;
-        //            chartBranchDataVMs.Add(chartBranchDataVM);
-        //            count_Renters = CategoryCount + count_Renters;
-        //        }
-        //        ViewBag.count_Renters = count_Renters;
-        //    }
-        //    if (Type == "City")
-        //    {
-        //        var AllRenters2_City = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode, new[] { "CrMasRenterInformationStatisticsCityNavigation" }).Where(x => x.CrMasRenterInformationStatisticsCityNavigation?.CrCasSupPostCityStatus != Status.Deleted).DistinctBy(x => x.CrMasRenterInformationStatisticsCity).ToList();
-
-        //        foreach (var single in AllRenters2_City)
-        //        {
-        //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsCity == single.CrMasRenterInformationStatisticsCityNavigation?.CrCasSupPostCityCode);
-        //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            chartBranchDataVM.ArName = single.CrMasRenterInformationStatisticsCityNavigation?.CrCasSupPostCityArName;
-        //            chartBranchDataVM.EnName = single.CrMasRenterInformationStatisticsCityNavigation?.CrCasSupPostCityEnName;
-        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsCityNavigation?.CrCasSupPostCityCode;
-        //            chartBranchDataVM.Value = CategoryCount;
-        //            chartBranchDataVMs.Add(chartBranchDataVM);
-        //            count_Renters = CategoryCount + count_Renters;
-        //        }
-        //        ViewBag.count_Renters = count_Renters;
-        //    }
-
-        //    if (Type == "Age")
-        //    {
-        //        var AllRenters2_Age = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsAge).ToList();
-
-        //        foreach (var single in AllRenters2_Age)
-        //        {
-        //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsAge == single.CrMasRenterInformationStatisticsAge);
-        //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            switch (single.CrMasRenterInformationStatisticsAge)
-        //            {
-        //                case "1":
-        //                    chartBranchDataVM.ArName = "أقل من 20";
-        //                    chartBranchDataVM.EnName = "Less Than 20";
-        //                    break;
-        //                case "2":
-        //                    chartBranchDataVM.ArName = "من 21 إلى 30";
-        //                    chartBranchDataVM.EnName = "From 21 To 30";
-        //                    break;
-        //                case "3":
-        //                    chartBranchDataVM.ArName = "من 31 إلى 40";
-        //                    chartBranchDataVM.EnName = "From 31 To 40";
-        //                    break;
-        //                case "4":
-        //                    chartBranchDataVM.ArName = "من 41 إلى 50";
-        //                    chartBranchDataVM.EnName = "From 41 To 50";
-        //                    break;
-        //                case "5":
-        //                    chartBranchDataVM.ArName = "من 51 إلى 60";
-        //                    chartBranchDataVM.EnName = "From 51 To 60";
-        //                    break;
-        //                case "6":
-        //                    chartBranchDataVM.ArName = "أكثر من 60";
-        //                    chartBranchDataVM.EnName = "More Than 60";
-        //                    break;
-        //                default:
-        //                    chartBranchDataVM.ArName = "أقل من 20";
-        //                    chartBranchDataVM.EnName = "Less Than 20";
-        //                    break;
-        //            }
-
-        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsAge;
-        //            chartBranchDataVM.Value = CategoryCount;
-        //            chartBranchDataVMs.Add(chartBranchDataVM);
-        //            count_Renters = CategoryCount + count_Renters;
-        //        }
-        //        ViewBag.count_Renters = count_Renters;
-        //    }
-
-        //    if (Type == "Traded")
-        //    {
-        //        var AllRenters2_Traded = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatisticsTraded).ToList();
-
-        //        foreach (var single in AllRenters2_Traded)
-        //        {
-        //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatisticsTraded == single.CrMasRenterInformationStatisticsTraded);
-        //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            switch (single.CrMasRenterInformationStatisticsTraded)
-        //            {
-        //                case "1":
-        //                    chartBranchDataVM.ArName = "أقل من 1000";
-        //                    chartBranchDataVM.EnName = "Less Than 1000";
-        //                    break;
-        //                case "2":
-        //                    chartBranchDataVM.ArName = "من 1001 إلى 2000";
-        //                    chartBranchDataVM.EnName = "From 1001 To 2000";
-        //                    break;
-        //                case "3":
-        //                    chartBranchDataVM.ArName = "من 2001 إلى 3000";
-        //                    chartBranchDataVM.EnName = "From 2001 To 3000";
-        //                    break;
-        //                case "4":
-        //                    chartBranchDataVM.ArName = "من 3001 إلى 5000";
-        //                    chartBranchDataVM.EnName = "From 3001 To 5000";
-        //                    break;
-        //                case "5":
-        //                    chartBranchDataVM.ArName = "من 5001 إلى 7000";
-        //                    chartBranchDataVM.EnName = "From 5001 To 7000";
-        //                    break;
-        //                case "6":
-        //                    chartBranchDataVM.ArName = "من 7001 إلى 10,000";
-        //                    chartBranchDataVM.EnName = "From 7001 To 10,000";
-        //                    break;
-        //                case "7":
-        //                    chartBranchDataVM.ArName = "من 10,001 إلى 15,000";
-        //                    chartBranchDataVM.EnName = "From 10,001 To 15,000";
-        //                    break;
-        //                case "8":
-        //                    chartBranchDataVM.ArName = "من 15,001 إلى 20,000";
-        //                    chartBranchDataVM.EnName = "From 15,001 To 20,000";
-        //                    break;
-        //                case "9":
-        //                    chartBranchDataVM.ArName = "أكثر من 20,000";
-        //                    chartBranchDataVM.EnName = "More Than 20,000";
-        //                    break;
-        //                default:
-        //                    chartBranchDataVM.ArName = "أقل من 1000";
-        //                    chartBranchDataVM.EnName = "Less Than 1000";
-        //                    break;
-        //            }
-
-        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatisticsTraded;
-        //            chartBranchDataVM.Value = CategoryCount;
-        //            chartBranchDataVMs.Add(chartBranchDataVM);
-        //            count_Renters = CategoryCount + count_Renters;
-        //        }
-        //        ViewBag.count_Renters = count_Renters;
-        //    }
-
-        //    if (Type == "Dealing_Mechanism")
-        //    {
-        //        var AllDealing_Mechanism = _unitOfWork.CrCasSysEvaluation.GetAll().Where(x => x.CrCasSysEvaluationsStatus != Status.Deleted).ToList();
-
-        //        foreach (var single in AllDealing_Mechanism)
-        //        {
-        //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationDealingMechanism == single.CrCasSysEvaluationsCode);
-        //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            chartBranchDataVM.ArName = single.CrCasSysEvaluationsArDescription;
-        //            chartBranchDataVM.EnName = single.CrCasSysEvaluationsEnDescription;
-        //            chartBranchDataVM.Code = single.CrCasSysEvaluationsCode;
-        //            chartBranchDataVM.Value = CategoryCount;
-        //            chartBranchDataVMs.Add(chartBranchDataVM);
-        //            count_Renters = CategoryCount + count_Renters;
-        //        }
-        //        ViewBag.count_Renters = count_Renters;
-        //    }
-
-        //    if (Type == "Status")
-        //    {
-        //        var AllRenters2_Status = _unitOfWork.CrMasRenterInformation.FindAll(x => company == x.CrMasRenterInformationCode).DistinctBy(x => x.CrMasRenterInformationStatus).ToList();
-
-        //        foreach (var single in AllRenters2_Status)
-        //        {
-        //            var CategoryCount = 0;
-        //            CategoryCount = AllRenters.Count(x => x.CrMasRenterInformationStatus == single.CrMasRenterInformationStatus);
-        //            ChartBranchDataVM chartBranchDataVM = new ChartBranchDataVM();
-        //            switch (single.CrMasRenterInformationStatus)
-        //            {
-        //                case "A":
-        //                    chartBranchDataVM.ArName = "نشط";
-        //                    chartBranchDataVM.EnName = "Active";
-        //                    break;
-        //                case "R":
-        //                    chartBranchDataVM.ArName = "مؤجر";
-        //                    chartBranchDataVM.EnName = "Rented";
-        //                    break;
-        //                default:
-        //                    chartBranchDataVM.ArName = "نشط";
-        //                    chartBranchDataVM.EnName = "Active";
-        //                    break;
-        //            }
-
-        //            chartBranchDataVM.Code = single.CrMasRenterInformationStatus;
-        //            chartBranchDataVM.Value = CategoryCount;
-        //            chartBranchDataVMs.Add(chartBranchDataVM);
-        //            count_Renters = CategoryCount + count_Renters;
-        //        }
-        //        ViewBag.count_Renters = count_Renters;
-        //    }
-
-        //    chartBranchDataVMs = chartBranchDataVMs.OrderByDescending(x => x.Value).ToList();
-        //    var Type_Avarage = chartBranchDataVMs.Average(x => x.Value);
-        //    var Type_Sum = chartBranchDataVMs.Sum(x => x.Value);
-        //    var Type_Count = chartBranchDataVMs.Count();
-        //    var Type_Avarage_percentage = Type_Avarage / Type_Sum;
-        //    var Static_Percentage_rate = 0.10;
-
-        //    //ViewBag.count_Renters = count_Renters;
-        //    var max_Colomns = 15;
-        //    var max = chartBranchDataVMs.Max(x => x.Value);
-        //    var max1 = (int)max;
-        //    ChartBranchDataVM other = new ChartBranchDataVM();
-        //    other.Value = 0;
-        //    other.ArName = "أخرى  ";
-        //    other.EnName = "  Others";
-        //    other.Code = "Aa";
-
-        //    List<ChartBranchDataVM> chartBranchDataVMs_2 = new List<ChartBranchDataVM>(chartBranchDataVMs);
-        //    int counter_For_max_Colomn = 0;
-
-        //    foreach (var branch_1 in chartBranchDataVMs_2)
-        //    {
-        //        counter_For_max_Colomn++;
-        //        if (counter_For_max_Colomn <= max_Colomns)
-        //        {
-        //            branch_1.IsTrue = true;
-        //        }
-        //        else
-        //        {
-        //            branch_1.IsTrue = false;
-        //        }
-        //        if (chartBranchDataVMs_2.Count() > 5)
-        //        {
-        //            if ((int)branch_1.Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage) || (int)branch_1.Value <= max1 * (double)Type_Avarage_percentage)
-        //            {
-        //                branch_1.IsTrue = false;
-        //            }
-        //        }
-
-        //    }
-        //    foreach (var branch_1 in chartBranchDataVMs_2)
-        //    {
-        //        if (branch_1.IsTrue == false)
-        //        {
-        //            other.Value = branch_1.Value + other.Value;
-        //            chartBranchDataVMs.Remove(branch_1);
-        //        }
-        //    }
-        //    if ((int)other.Value > 0)
-        //    {
-        //        chartBranchDataVMs.Add(other);
-        //        int listCount = 0;
-        //        listCount = chartBranchDataVMs.Count() - 1;
-        //        chartBranchDataVMs_2.Insert(listCount, other);
-        //    }
-
-        //    CasStatisticLayoutCAS_VM casStatisticLayoutVM = new CasStatisticLayoutCAS_VM();
-        //    casStatisticLayoutVM.ChartBranchDataVM = chartBranchDataVMs;
-        //    casStatisticLayoutVM.ChartBranchDataVM_2ForAll = chartBranchDataVMs;
-        //    casStatisticLayoutVM.All_Lessors = AllLessor;
-
-        //    return View(casStatisticLayoutVM);
-        //}
 
         public async Task<List<CASChartBranchDataVM>?> Cas_statistics_other(List<CASChartBranchDataVM> listCaschartBranchDataVM, int count_Cars)
         {
@@ -1210,9 +762,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
             }
             // till here //  //  //  //
 
-
-            //ViewBag.singleType = "0";
-            //ViewBag.singleType = concate_DropDown[0].ToString();
             CasStatistics_CarsVM CasStatistics_CarsVM = new CasStatistics_CarsVM();
             if (listCaschartBranchDataVM2.Count > 0)
             {

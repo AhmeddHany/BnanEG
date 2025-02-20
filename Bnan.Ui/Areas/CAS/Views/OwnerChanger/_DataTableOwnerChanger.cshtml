@@ -1,0 +1,127 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS.Cars;
+
+@model Cas_CarsChangeOwnerVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+<table class=" tables-style table table-borderless " id="Table">
+    <thead class="sticky-top">
+        <tr>
+            <th class="DifferAlign"> @localizer["CarCvtName_view"] </th>
+            <th class="DifferAlign"> @localizer["CarFuelName_view"]</th>
+            <th> @localizer["CarRegistrationName_view"]</th>
+            <th class="DifferAlign"> @localizer["Owner_one_New"] </th>
+            <th class="DifferAlign"> @localizer["the_Car_n"] </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+                    @{
+                int no = 1;
+            }
+            @foreach (var item in Model.all_CarsData)
+            {
+            var ColorRow = " ";
+            var lastVisit = " ";
+            string? job = " ";
+
+            string CarImage = "/CasSys/images/2021000022.png";
+            var ImageStyleHidden = " ";
+            var carName = " ";
+            string? BranchName = " ";
+            var carRegistration = " ";
+            var carFuel = " ";
+            var carCVT = " ";
+            var ownerName = " ";
+            
+            CarImage = item?.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionImage?.Replace("~", "") ?? " ";
+
+            if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+            {
+                //Rate = Model.all_Rates?.Find(x => x.CrMasSysEvaluationsCode == singleRenter_Balances?.CrCasRenterLessorDealingMechanism?.Trim())?.CrMasSysEvaluationsEnDescription ?? " ";
+                carName = item?.CrCasCarInformationConcatenateEnName??" ";
+                carRegistration = item?.CrCasCarInformationRegistrationNavigation?.CrMasSupCarRegistrationEnName;
+                carFuel = item?.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelEnName;
+                carCVT = item?.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtEnName;
+                ownerName = item?.CrCasCarInformation2?.CrCasOwnersEnName;
+                BranchName = Model.all_BranchesData?.Find(x => x.CrCasBranchInformationCode == item?.CrCasCarInformationBranch?.Trim())?.CrCasBranchInformationEnShortName ?? " ";
+            }
+            else
+            {
+                //Rate = Model.all_Rates?.Find(x => x.CrMasSysEvaluationsCode == singleRenter_Balances?.CrCasRenterLessorDealingMechanism?.Trim())?.CrMasSysEvaluationsEnDescription ?? " ";
+                carName = item?.CrCasCarInformationConcatenateArName ?? " ";
+                carRegistration = item?.CrCasCarInformationRegistrationNavigation?.CrMasSupCarRegistrationArName;
+                carFuel = item?.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelArName;
+                carCVT = item?.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtArName;
+                ownerName = item?.CrCasCarInformation2?.CrCasOwnersArName;
+                BranchName = Model.all_BranchesData?.Find(x => x.CrCasBranchInformationCode == item?.CrCasCarInformationBranch?.Trim())?.CrCasBranchInformationArShortName ?? " ";
+            }
+            
+            if (CarImage == " " || CarImage == "")
+            {
+                ImageStyleHidden = "display:none;";
+            }
+
+
+
+            @*<tr data-bs-toggle="modal" data-bs-target="#TransferModal">*@
+            <tr onclick="getDetails(@item.CrCasCarInformationSerailNo)">
+
+            <td class="DifferAlign">
+                    <p>@carCVT</p>
+            </td>
+            <td class="DifferAlign">
+                <p>@carFuel</p>
+            </td>
+            <td>
+                <p>@carRegistration</p>
+            </td>
+                <td class="DifferAlign">
+                    <p>@(ownerName??" ")</p>
+            </td>
+            <td class="DifferAlign car-name">
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="col">
+                        <div class="row justify-content-end">
+                            <div class="col-auto">
+                                <div class="CarColorDiv"
+                                        style="background-color: rgb(0, 0, 0);"></div>
+                            </div>
+                            <div class="col-auto">
+                                <p class="FirstLineP">
+                                        @carName
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row justify-content-end">
+                            <div class="col-auto">
+                                    <p class="secondLineP">@BranchName</p>
+                            </div>
+                            <div class="col-auto">
+                                    <p class="secondLineP">@item?.CrCasCarInformationCustomsNo</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto d-flex justify-content-end">
+                        <div class="CarBorder-CarData">
+                            <img src="@CarImage" style="@ImageStyleHidden max-width:100px;" class="CarPhoto">
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="filter-number-td">
+                        <div>@no</div>
+
+                </div>
+            </td>
+        </tr>
+        no++;
+        }
+
+    </tbody>
+</table>

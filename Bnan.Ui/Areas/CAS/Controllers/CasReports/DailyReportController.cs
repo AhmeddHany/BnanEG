@@ -58,13 +58,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
             var user = await _userManager.GetUserAsync(User);
 
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
-
 
             listDailyReportVM VM = new listDailyReportVM();
 
@@ -76,13 +69,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                     {
                         dates = x.CrCasAccountReceiptDate,
                     }));
-
-            ////if (listmaxDate?.Count == 0 || string.IsNullOrEmpty(id))
-            //if (string.IsNullOrEmpty(id))
-            //{
-            //    _toastNotification.AddErrorToastMessage(_localizer["NoDataToShow"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-            //    return RedirectToAction("Index", "Home");
-            //}
 
             var maxDate = listmaxDate.Max(x => x.dates)?.ToString("yyyy-MM-dd");
             //var minDate = listmaxDate.Min(x => x.dates)?.ToString("yyyy-MM-dd");

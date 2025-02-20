@@ -66,12 +66,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             // Set page titles
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
+
             MasStatistics_ContractsVM MasStatistics_ContractsVM = new MasStatistics_ContractsVM();
 
             //var Most_Frequance_Company_list = _unitOfWork.CrCasRenterContractStatistic.GetAll()
@@ -127,7 +122,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //// Set page titles
             //var user = await _userManager.GetUserAsync(User);
             //await SetPageTitleAsync(string.Empty, pageNumber);
-            //// Check Validition
 
             if (start == "undefined-undefined-") start = "";
             if (end == "undefined-undefined-") end = "";
@@ -430,8 +424,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
                     listMaschartBranchDataVM2[v].borderColor = colorBorder[v];
                 }
 
-                //ViewBag.singleType = "0";
-                //ViewBag.singleType = concate_DropDown[0].ToString();
+
                 MasStatistics_RentersVM MasStatistics_RentersVM = new MasStatistics_RentersVM();
                 // pass --> 1  if no Other --> 2 if were other
                 //MasStatistics_RentersVM.listMasChartdataVM = listMaschartBranchDataVM2;
@@ -467,7 +460,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //// Set page titles
             //var user = await _userManager.GetUserAsync(User);
             //await SetPageTitleAsync(string.Empty, pageNumber);
-            //// Check Validition
 
             if (start == "undefined-undefined-") start = "";
             if (end == "undefined-undefined-") end = "";
@@ -769,7 +761,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //// Set page titles
             //var user = await _userManager.GetUserAsync(User);
             //await SetPageTitleAsync(string.Empty, pageNumber);
-            //// Check Validition
 
             if (start == "undefined-undefined-") start = "";
             if (end == "undefined-undefined-") end = "";

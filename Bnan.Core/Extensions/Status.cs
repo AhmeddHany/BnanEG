@@ -42,5 +42,7 @@
         public static string PaymentReceipt { get; set; } = "302";
         public static string MASLessorCode { get; set; } = "0000";
         public static string MASUserCode { get; set; } = "MAS0000";
+        public static string Blocked { get; set; } = "8";
+        public static string unBlocked { get; set; } = "9";
     }
 }

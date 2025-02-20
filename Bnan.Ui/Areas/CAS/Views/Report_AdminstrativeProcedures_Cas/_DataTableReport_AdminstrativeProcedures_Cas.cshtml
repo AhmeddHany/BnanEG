@@ -1,0 +1,99 @@
+﻿
+
+@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS;
+@model listReport_AdminstrativeProcedures_CasVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+
+<table class=" tables-style table table-borderless " id="Table">
+
+    <thead class="sticky-top">
+        <tr>
+
+            <th scope="col" class="DifferAlign"> @localizer["UserName_view"] </th>
+            <th scope="col" class="DifferAlign"> @localizer["ProcdureType"]</th>
+            <th scope="col" class="DifferAlign"> @localizer["Procdure_the"]</th>
+            <th scope="col" id="max" class="DifferAlign" style="max-width:270px;"> @localizer["ProcdureCode"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var no = 1;
+        }
+        @foreach (var item in Model.all_Adminstrative_procedures)
+        {
+
+            var userName = " ";
+            var reasons = " ";
+            var ProcedureName = " ";
+            var interDescription = " ";
+            var TargetName = " ";
+
+            if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+            {
+                userName = item.UserEnName;
+                reasons = "Remarks : " + (item.CrCasSysAdministrativeProceduresReasons ?? " ");
+                ProcedureName = item.procedure_EnName;
+                interDescription = item.CrCasSysAdministrativeProceduresEnDescription;
+                TargetName = item.Target_EnName;
+
+            }
+            else
+            {
+                userName = item.UserArName;
+                reasons = "ملاحظات : " + (item.CrCasSysAdministrativeProceduresReasons??" ");
+                ProcedureName = item.procedure_ArName;
+                interDescription = item.CrCasSysAdministrativeProceduresArDescription;
+                TargetName = item.Target_ArName;
+            }
+
+
+            @*<tr onclick="GetContractDetails('@item.CrCasRenterContractBasicNo')" style="cursor:pointer;">*@
+            <tr>
+                <td class="DifferAlign">
+                    <p class="FirstLineP"> @userName </p>
+                    <p class="secondLineP"> @reasons </p>
+                    <span class="secondLineP"> </span>
+                </td>
+                <td class="DifferAlign">
+                    <P class="FirstLineP">@interDescription</P>
+                </td>
+                <td class="DifferAlign">
+                    <p class="FirstLineP"> @ProcedureName</p>
+                    <p class="secondLineP">@TargetName</p>
+                </td>
+                <td class="DifferAlign">
+                    <p class="FirstLineP"> @item.CrCasSysAdministrativeProceduresNo</p>
+                    @*<p class="secondLineP">19/09/2024</p>*@
+                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                        {
+                        <div class="d-flex justify-content-end gap-1">
+                            <p class="secondLineP"> <span class="time">@item.CrCasSysAdministrativeProceduresTime?.ToString(@"hh\:mm") </span> @item.CrCasSysAdministrativeProceduresDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture)</p>
+                        </div>
+                        }
+                        else
+                        {
+                        <div class="d-flex justify-content-end gap-1">
+                            <p class="secondLineP">@item.CrCasSysAdministrativeProceduresDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture) <span class="time">  @item.CrCasSysAdministrativeProceduresTime?.ToString(@"hh\:mm") </span></p>
+                        </div>
+                        }
+
+
+                </td>
+                <td>
+                    <div>@no</div>
+                </td>
+            </tr>
+            no++;
+            }
+
+    </tbody>
+
+</table>
