@@ -191,7 +191,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Company
                 string fileName = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss");
 
                 string filePathSignture = string.IsNullOrEmpty(SigntureFile)
-                    ? "~/images/common/DefualtUserSignature.png"
+                    ? "~/images/common/DefaultSignture.jpg"
                     : await FileExtensions.SaveSigntureImage(_hostingEnvironment, SigntureFile, string.Empty, foldername, fileName);
 
                 BranchInformaiton.CrCasBranchInformationDirectorSignature = filePathSignture;
@@ -305,7 +305,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Company
                     filePathSignture = await FileExtensions.SaveSigntureImage(_hostingEnvironment, SigntureFile, branch.CrCasBranchInformationDirectorSignature, foldername, fileName);
                 }
                 else if (branchVM.CrCasBranchInformationDirectorSignature != null) filePathSignture = branchVM.CrCasBranchInformationDirectorSignature;
-                else filePathSignture = "~/images/common/DefualtUserSignature.png";
+                else filePathSignture = "~/images/common/DefaultSignture.jpg";
                 
                 BranchInformaiton.CrCasBranchInformationDirectorSignature = filePathSignture;
                 

@@ -172,6 +172,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             }
             try
             {
+                model.CrMasUserInformationSignature= "~/images/common/DefaultSignture.jpg";
+                model.CrMasUserInformationPicture= "~/images/common/DefaultUser.jpg";
                 var crMasUserInformation = _mapper.Map<CrMasUserInformation>(model);
                 // Check if the entity already exists
                 if (await _masUser.ExistsByDetailsAsync(crMasUserInformation))
@@ -398,8 +400,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             string filePathSignture;
             var oldPathImage = model.CrMasUserInformationPicture;
             var oldPathSignture = model.CrMasUserInformationSignature;
-            if (oldPathImage == "~/images/common/user.jpg") oldPathImage = "";
-            if (oldPathSignture == "~/images/common/DefualtUserSignature.png") oldPathSignture = "";
+            if (oldPathImage == "~/images/common/DefaultUser.jpg") oldPathImage = "";
+            if (oldPathSignture == "~/images/common/DefaultSignture.jpg") oldPathSignture = "";
             if (UserImgFile != null)
             {
                 string fileNameImg = "Image_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
@@ -407,7 +409,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             }
             else if (string.IsNullOrEmpty(oldPathImage))
             {
-                filePathImage = "~/images/common/user.jpg";
+                filePathImage = "~/images/common/DefaultUser.jpg";
             }
             else
             {
@@ -418,11 +420,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             if (!string.IsNullOrEmpty(UserSignatureFile))
             {
                 string fileNameSignture = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقتs
-                filePathSignture = await FileExtensions.SaveSigntureImage(_hostingEnvironment, UserSignatureFile, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, foldername);
+                filePathSignture = await FileExtensions.SaveSigntureImage(_hostingEnvironment, UserSignatureFile, user.CrMasUserInformationSignature, foldername, fileNameSignture);
             }
             else if (string.IsNullOrEmpty(oldPathSignture))
             {
-                filePathSignture = "~/images/common/DefualtUserSignature.png";
+                filePathSignture = "~/images/common/DefaultSignture.jpg";
             }
             else
             {

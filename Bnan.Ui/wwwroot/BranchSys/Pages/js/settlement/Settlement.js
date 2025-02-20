@@ -58,7 +58,7 @@ var expensesTdIndex = 0;
 function compensationImgUpload() {
     var maxLength = 4;
     var uploadBtnBox = document.getElementById('compensation-upload-box');
-
+    console.log(compensationArray);
     $('#compensation-images').on('change', function (e) {
         handleImageUpload(e, '#compensation-Attatchments-Table', compensationArray, maxLength, uploadBtnBox, 'compensation');
     });
@@ -67,7 +67,7 @@ function compensationImgUpload() {
 function ExpensesImgUpload() {
     var maxLength = 4;
     var uploadBtnBox = document.getElementById('Expenses-upload-box');
-
+    console.log(expensesArray);
     $('#Expenses-images').on('change', function (e) {
         handleImageUpload(e, '#Expenses-Attatchments-Table', expensesArray, maxLength, uploadBtnBox, 'expenses');
     });
@@ -77,7 +77,7 @@ function handleImageUpload(event, tableSelector, array, maxLength, uploadBtnBox,
     var uploadBox = $(event.target).closest('.upload__box');
     var files = event.target.files;
     var filesArr = Array.prototype.slice.call(files);
-
+    console.log(array);
     for (var i = 0; i < Math.min(filesArr.length, maxLength - array.length); i++) {
         (function (f) {
             if (f.type === 'image/heic' || f.type === 'image/heif' || f.name.endsWith('.heic') || f.name.endsWith('.heif')) {

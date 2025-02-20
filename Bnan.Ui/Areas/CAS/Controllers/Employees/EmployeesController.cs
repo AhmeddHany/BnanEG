@@ -532,8 +532,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             string filePathSignture;
             var oldPathImage = model.CrMasUserInformationPicture;
             var oldPathSignture = model.CrMasUserInformationSignature;
-            if (oldPathImage == "~/images/common/user.jpg") oldPathImage = "";
-            if (oldPathSignture == "~/images/common/DefualtUserSignature.png") oldPathSignture = "";
+            if (oldPathImage == "~/images/common/DefaultUser.jpg") oldPathImage = "";
+            if (oldPathSignture == "~/images/common/DefaultSignture.jpg") oldPathSignture = "";
             if (UserImgFile != null)
             {
                 string fileNameImg = "Image_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
@@ -541,7 +541,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             }
             else if (string.IsNullOrEmpty(oldPathImage))
             {
-                filePathImage = "~/images/common/user.jpg";
+                filePathImage = "~/images/common/DefaultUser.jpg";
             }
             else
             {
@@ -555,7 +555,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             }
             else if (string.IsNullOrEmpty(oldPathSignture))
             {
-                filePathSignture = "~/images/common/DefualtUserSignature.png";
+                filePathSignture = "~/images/common/DefaultSignture.jpg";
             }
             else
             {

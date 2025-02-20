@@ -213,12 +213,13 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             if (userLogin != null && Renter != null && Car != null && CarPrice != null && Branch != null)
             {
-                //SavePdfContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfContract);
-                //var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, Branch.CrCasBranchInformationCode, OldContract.CrCasRenterContractBasicNo, "BnanContract");
-                var UpdateSettlementContract = await UpdateRenterContractBasicAsync(lessorCode, Branch, OldContract.CrCasRenterContractBasicNo, ContractInfo, userLogin, /*pdfContract*/"", (decimal)RenterLessor.CrCasRenterLessorAvailableBalance);
+                SavePdfContract = FileExtensions.CleanAndCheckBase64StringPdf(SavePdfContract);
+                var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, Branch.CrCasBranchInformationCode, OldContract.CrCasRenterContractBasicNo, "BnanContract");
+                var UpdateSettlementContract = await UpdateRenterContractBasicAsync(lessorCode, Branch, OldContract.CrCasRenterContractBasicNo, ContractInfo, userLogin,
+                                                                                    pdfContract, (decimal)RenterLessor.CrCasRenterLessorAvailableBalance);
                 if (UpdateSettlementContract == null)
                 {
-                    //await RemovePdfs(new[] { pdfContract });
+                    await RemovePdfs(new[] { pdfContract });
                     _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return RedirectToAction("Index", "Home");
                 }
@@ -273,16 +274,15 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     ChechAddAccountContractCompanyOwed = await _contractSettlement.AddAccountContractCompanyOwed(UpdateSettlementContract.CrCasRenterContractBasicNo, ContractInfo.ActualDaysNo, (decimal)UpdateSettlementContract.CrCasRenterContractBasicActualDailyRent);
                 }
 
-                //var pdfDictionary = GetPdfDictionary(CultureInfo.CurrentCulture.Name, pdfContract, pdfInvoice, pdfReceipt, (decimal)UpdateSettlementContract.CrCasRenterContractBasicAmountPaid);
                 var ChechUpdateRenterStatistics = await _contractSettlement.UpdateRenterStatistics(UpdateSettlementContract, userLogin.CrMasUserInformationCode, CheckAddAccountContractTaxOwed);
-
-                //bool checkPdf = CheckPdfs(pdfDictionary.Keys.ToArray());
-                //if (!checkPdf)
-                //{
-                //    await RemovePdfs(pdfDictionary.Keys.ToArray());
-                //    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                //    return RedirectToAction("Index", "Home");
-                //}
+                var pdfDictionaryPaths = GetPdfDictionaryWithPath(pdfContract, pdfInvoice, pdfReceipt, (decimal)UpdateSettlementContract.CrCasRenterContractBasicAmountPaid);
+                bool checkPdf = CheckPdfs(pdfDictionaryPaths.Keys.ToArray());
+                if (!checkPdf)
+                {
+                    await RemovePdfs(pdfDictionaryPaths.Keys.ToArray());
+                    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return RedirectToAction("Index", "Home");
+                }
 
                 if (UpdateSettlementContract != null && CheckAccountReceipt != null && CheckBalances && CheckSalesPoint && CheckBranchValidity && CheckUserInformation && checkAccountInvoiceNo != null &&
                     CheckMasRenter && CheckUpdateAuthrization && CheckUpdateAlert && CheckAddAccountContractTaxOwed != null && CheckUpdateRenterBalance && CheckDrivers
@@ -290,22 +290,24 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 {
                     if (await _unitOfWork.CompleteAsync() > 0)
                     {
-                        //if (StaticContractCardImg != null) await WhatsupExtension.SendBase64StringAsImageToWhatsUp(StaticContractCardImg, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ");
-                        //await SendPdfsToWhatsAppAsync(pdfDictionary, userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter);
+                        if (StaticContractCardImg != null) await WhatsAppServicesExtension.SendMediaAsync(userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ", lessorCode, StaticContractCardImg, "ContractCard.png");
+                        var pdfDictionaryBase64 = GetPdfDictionaryBase64(SavePdfContract, SavePdfInvoice, SavePdfReceipt, (decimal)UpdateSettlementContract.CrCasRenterContractBasicAmountPaid);
+                        await SendPdfsToWhatsAppAsync(pdfDictionaryBase64, lessorCode, CheckAccountReceipt.CrCasAccountReceiptNo, checkAccountInvoiceNo, UpdateSettlementContract.CrCasRenterContractBasicNo,
+                                                      userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, Renter.CrMasRenterInformationArName, Renter.CrMasRenterInformationEnName);
                         _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                         this.SetRenterTempData(Renter.CrMasRenterInformationId, ContractInfo.CrCasRenterContractBasicNo);
                         return RedirectToAction("Index", "Home");
 
                     }
-                    //else
-                    //{
-                    //    await RemovePdfs(pdfDictionary.Keys.ToArray());
-                    //}
+                    else
+                    {
+                        await RemovePdfs(pdfDictionaryPaths.Keys.ToArray());
+                    }
                 }
-                //else
-                //{
-                //    await RemovePdfs(pdfDictionary.Keys.ToArray());
-                //}
+                else
+                {
+                    await RemovePdfs(pdfDictionaryPaths.Keys.ToArray());
+                }
             }
             _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             return RedirectToAction("Index", "Home");
@@ -367,21 +369,38 @@ namespace Bnan.Ui.Areas.BS.Controllers
             //}
             return true;
         }
-        private async Task<bool> SendPdfsToWhatsAppAsync(Dictionary<string, string> pdfDictionary, string toNumber, CrMasRenterInformation renter)
+        private async Task<bool> SendPdfsToWhatsAppAsync(Dictionary<string, string> pdfDictionary, string lessorCode, string receiptNo, string invoiceNo, string contractNo, string toNumber, string renterArName, string renterEnName)
         {
             if (pdfDictionary != null)
             {
                 foreach (var kvp in pdfDictionary)
                 {
+                    var fileNo = "";
                     string pdf = kvp.Key;
                     string documentType = kvp.Value;
-                    string message = WhatsupExtension.GetMessage(documentType, renter.CrMasRenterInformationArName, renter.CrMasRenterInformationEnName);
-                    await WhatsupExtension.SendFile(_hostingEnvironment, pdf, toNumber, message);
+                    string message = WhatsupExtension.GetMessage(documentType, renterArName, renterEnName);
+                    if (documentType == "Receipt" && !string.IsNullOrEmpty(pdf)) fileNo = receiptNo;
+                    else if (documentType == "Invoice" && !string.IsNullOrEmpty(pdf)) fileNo = invoiceNo;
+                    else if (documentType == "Contract" && !string.IsNullOrEmpty(pdf)) fileNo = contractNo;
+                    if (!string.IsNullOrEmpty(fileNo)) await WhatsAppServicesExtension.SendMediaAsync(toNumber, message, lessorCode, pdf, $"{fileNo}.pdf");
                 };
                 return true;
             }
-
             return false;
+        }
+        private Dictionary<string, string> GetPdfDictionaryWithPath(string Contract, string Invoice, string Receipt, decimal amountPaid)
+        {
+            var pdfDictionary = new Dictionary<string, string>();
+            pdfDictionary = new Dictionary<string, string> { { Contract, "Contract" }, { Invoice, "Invoice" } };
+            if (amountPaid > 0) pdfDictionary.Add(Receipt, "Receipt");
+            return pdfDictionary;
+        }
+        private Dictionary<string, string> GetPdfDictionaryBase64(string Contract, string Invoice, string Receipt, decimal amountPaid)
+        {
+            var pdfDictionary = new Dictionary<string, string>();
+            pdfDictionary = new Dictionary<string, string> { { Contract, "Contract" }, { Invoice, "Invoice" } };
+            if (amountPaid > 0) pdfDictionary.Add(Receipt, "Receipt");
+            return pdfDictionary;
         }
         private async Task<bool> UpdateBalancesAsync(CrCasBranchInformation Branch, CrCasRenterContractBasic UpdateSettlementContract, CrMasUserInformation userLogin, ContractSettlementVM ContractInfo)
         {
