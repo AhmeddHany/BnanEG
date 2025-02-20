@@ -34,6 +34,7 @@ namespace Bnan.Core.Models
         public int? CrCasRenterContractBasicTotalFreeHours { get; set; }
         public int? CrCasRenterContractBasicHourMax { get; set; }
         public decimal? CrCasRenterContractBasicHourValue { get; set; }
+        public decimal? CrCasRenterContractBasicFuelValue { get; set; }
         public int? CrCasRenterContractBasicDailyFreeKm { get; set; }
         public int? CrCasRenterContractBasicDailyFreeKmUser { get; set; }
         public int? CrCasRenterContractBasicTotalDailyFreeKm { get; set; }

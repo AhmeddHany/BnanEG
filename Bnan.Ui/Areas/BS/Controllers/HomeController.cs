@@ -20,6 +20,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
     {
         private readonly IToastNotification _toastNotification;
         private readonly IStringLocalizer<HomeController> _localizer;
+
         public HomeController(IStringLocalizer<HomeController> localizer, IUnitOfWork unitOfWork, UserManager<CrMasUserInformation> userManager, IMapper mapper, IToastNotification toastNotification) : base(userManager, unitOfWork, mapper)
         {
             _localizer = localizer;
@@ -30,9 +31,9 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             //To Set Title 
             var userLogin = await _userManager.GetUserAsync(User);
-            var titles = await setTitle("501", "5501001", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
+            if (userLogin == null) return RedirectToAction("Login", "Account");
             var lessorCode = userLogin.CrMasUserInformationLessor;
+            await SetPageTitleAsync(string.Empty, "5501001");
             var bSLayoutVM = await GetBranchesAndLayout();
             var Cars = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode &&
                                                                                              x.CrCasCarInformationStatus != Status.Deleted &&
@@ -139,13 +140,13 @@ namespace Bnan.Ui.Areas.BS.Controllers
         {
             try
             {
+               
+                //To Set Title 
                 var userLogin = await _userManager.GetUserAsync(User);
                 if (userLogin == null) throw new Exception("User not found.");
-
-
+                await SetPageTitleAsync(string.Empty, "5501002");
                 var lessorCode = userLogin.CrMasUserInformationLessor;
                 var BranchCode = userLogin.CrMasUserInformationDefaultBranch;
-
                 var RentedCars = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && x.CrCasCarInformationStatus == Status.Rented,
                     new[] { "CrCasCarInformationDistributionNavigation","CrCasCarInformationDistributionNavigation.CrCasPriceCarBasics", "CrCasRenterContractBasics.CrCasRenterContractBasic5.CrCasRenterLessorNavigation",
                 "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation", "CrCasCarInformationCategoryNavigation" });
@@ -211,7 +212,10 @@ namespace Bnan.Ui.Areas.BS.Controllers
         [HttpGet]
         public async Task<PartialViewResult> GetUnAvaliableCars()
         {
+            //To Set Title 
             var userLogin = await _userManager.GetUserAsync(User);
+            if (userLogin == null) throw new Exception("User not found.");
+            await SetPageTitleAsync(string.Empty, "5501004");
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var BranchCode = userLogin.CrMasUserInformationDefaultBranch;
             var carsUnAvailable = await _unitOfWork.CrCasCarInformation.FindAllAsNoTrackingAsync(x => x.CrCasCarInformationLessor == lessorCode && x.CrCasCarInformationBranch == BranchCode && (x.CrCasCarInformationStatus == Status.Hold ||
@@ -267,7 +271,10 @@ namespace Bnan.Ui.Areas.BS.Controllers
         [HttpGet]
         public async Task<PartialViewResult> GetAvaliableCars()
         {
+            //To Set Title 
             var userLogin = await _userManager.GetUserAsync(User);
+            if (userLogin == null) throw new Exception("User not found.");
+            await SetPageTitleAsync(string.Empty, "5501003");
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var BranchCode = userLogin.CrMasUserInformationDefaultBranch;
 

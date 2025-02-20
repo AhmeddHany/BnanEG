@@ -21,6 +21,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IStringLocalizer<ReportController> _localizer;
         private readonly IContract _ContractServices;
+        private readonly string pageNumber = SubTasks.FinancelReport;
+
         public ReportController(IStringLocalizer<ReportController> localizer, IUnitOfWork unitOfWork, UserManager<CrMasUserInformation> userManager, IMapper mapper, IToastNotification toastNotification, IContract contractServices) : base(userManager, unitOfWork, mapper)
         {
             _localizer = localizer;
@@ -30,10 +32,9 @@ namespace Bnan.Ui.Areas.BS.Controllers
         public async Task<IActionResult> Index()
         {
             //To Set Title 
-            var titles = await setTitle("507", "5507001", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
-
             var userLogin = await _userManager.GetUserAsync(User);
+            if (userLogin == null) return RedirectToAction("Login", "Account");
+            await SetPageTitleAsync(string.Empty, pageNumber);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bsLayoutVM = await GetBranchesAndLayout();
 

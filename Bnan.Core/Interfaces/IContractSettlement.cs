@@ -7,7 +7,7 @@ namespace Bnan.Core.Interfaces
         Task<CrCasRenterContractBasic> UpdateRenterSettlementContract(string ContractNo, string UserInsert, string ActualDaysNo, string Mechanizm, string CurrentMeter, string AdditionalKm,
                                                                           string TaxValue, string DiscountValue, string RequiredValue, string AmountPaid, string ExpensesValue, string ExpensesReasons, string CompensationValue,
                                                                              string CompensationReasons, string MaxHours, string MaxMinutes, string ExtraValueHours, string PrivateDriverValueTotal, string ChoicesValueTotal, string AdvantagesValueTotal, string ContractValue,
-                                                                             string ContractValueAfterDiscount, string TotalContract, decimal PreviousBalance, string PdfContract, string Reasons);
+                                                                             string ContractValueAfterDiscount, string TotalContract, decimal PreviousBalance,string CloseStatus, string PdfContract, string Reasons);
 
 
         Task<CrCasAccountReceipt> AddAccountReceipt(string ContractNo, string LessorCode, string BranchCode, string PaymentMethod, string Account, string SerialNo, string SalesPointNo,
@@ -27,7 +27,7 @@ namespace Bnan.Core.Interfaces
         Task<bool> UpdatePrivateDriverStatus(string PrivateDriverId, string LessorCode);
         Task<bool> UpdateCarInformation(string SerialNo, string LessorCode, string BranchCode, int CurrentMeter, string ExpireMaintainceCount, int DaysNo);
         Task<string> UpdateCarDocMaintainance(string SerialNo, string LessorCode, string BranchCode, int CurrentMeter);
-        Task<bool> UpdateRenterContractCheckUp(string LessorCode, string ContractNo, string SerialNo, string PriceNo, string CheckUpCode, string Reasons);
+        Task<bool> UpdateRenterContractCheckUp(string LessorCode, string ContractNo, string SerialNo, string PriceNo, string CheckUpCode, string ReasonCheckCode, bool Status, string Reasons);
         Task<bool> UpdateRenterStatistics(CrCasRenterContractBasic Contract, string userCodeClose, string BnanValue);
         Task<bool> UpdateRateForRenter(string RenterId, string LessorCode, string Rate);
         Task<bool> UpdateRateForRenterToEvalution(string ContractNo, string RenterId, string LessorCode, string Rate);

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
@@ -21,6 +22,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
         private readonly IStringLocalizer<CustodyController> _localizer;
         private readonly IAdminstritiveProcedures _adminstritiveProcedures;
         private readonly ICustody _custodyService;
+        private readonly string pageNumber = SubTasks.ReceiveCustodyBranches;
 
         public CustodyController(IStringLocalizer<CustodyController> localizer, IUnitOfWork unitOfWork, UserManager<CrMasUserInformation> userManager, IMapper mapper, IToastNotification toastNotification, IAdminstritiveProcedures adminstritiveProcedures, ICustody custodyService) : base(userManager, unitOfWork, mapper)
         {
@@ -32,10 +34,9 @@ namespace Bnan.Ui.Areas.BS.Controllers
         public async Task<IActionResult> Index()
         {
             //To Set Title 
-            var titles = await setTitle("509", "5509001", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
-
             var userLogin = await _userManager.GetUserAsync(User);
+            if (userLogin == null) return RedirectToAction("Login", "Account");
+            await SetPageTitleAsync(string.Empty, pageNumber);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var bsLayoutVM = await GetBranchesAndLayout();
 

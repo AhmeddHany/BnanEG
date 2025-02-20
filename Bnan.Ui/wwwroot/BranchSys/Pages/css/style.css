@@ -2538,3 +2538,106 @@ height: 47vh;
         gap: 40px;  
     }
 }
+
+
+/* *******************************************************************************تعديل  المصروفات ****************************************************************************************************** */
+.TablesReferenceDiv {
+    height: 35vh;
+    min-height: 415px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+    .TablesReferenceDiv::-webkit-scrollbar {
+        width: 10px;
+        height: 5px;
+    }
+
+    .TablesReferenceDiv::-webkit-scrollbar-track {
+        background: rgba(255, 150, 38, 0.16);
+        border-radius: 5px;
+    }
+
+    .TablesReferenceDiv::-webkit-scrollbar-thumb {
+        background: rgba(255, 150, 38, 0.40);
+        border-radius: 5px;
+        height: 10px;
+    }
+
+.Expenses-compensation-Table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #f1b16c;
+    height: 100%;
+    white-space: nowrap;
+}
+
+    .Expenses-compensation-Table td {
+        border: 1px solid #f1b16c;
+        vertical-align: middle;
+        padding: 5px 10px;
+    }
+
+    .Expenses-compensation-Table thead th {
+        background-color: #fdc28214;
+        border: 1px solid #f1b16c;
+    }
+
+.upload__box2 {
+    align-items: center;
+    justify-content: center;
+}
+
+.attatchments-table {
+    table-layout: fixed;
+    direction: rtl;
+}
+
+    .attatchments-table td {
+        height: 120px;
+        text-align: center;
+    }
+
+.expensesRow {
+    justify-content: space-evenly;
+}
+
+#Expenses-upload-box, #compensation-upload-box {
+    justify-content: center;
+}
+
+.upload__img-close1 i {
+    font-size: 20px;
+    background: white;
+    padding: 1px;
+    border-radius: 4px;
+}
+
+.Attatchments-img-box {
+    background-color: transparent;
+    width: 100px;
+    height: 100px;
+}
+
+.Expenses-compensation-Upload {
+    background-color: transparent;
+}
+
+.Table-inputs {
+    border: none;
+    text-align: end;
+    width: 100%;
+}
+
+.total p {
+    margin-bottom: .9rem;
+}
+
+/* *******************************************************************************تعديل  ستايل الدروب داون  ****************************************************************************************************** */
+.form-select {
+    background-position: left .75rem center;
+    padding: .375rem .75rem .375rem 2.25rem !important;
+}

@@ -8,6 +8,7 @@ using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.BS.CreateContract;
 using Bnan.Ui.ViewModels.CAS;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
         private readonly IContract _ContractServices;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IConvertedText _convertedText;
+        private readonly string pageNumber = SubTasks.CreateContract;
 
         public ContractController(IStringLocalizer<ContractController> localizer, IUnitOfWork unitOfWork, UserManager<CrMasUserInformation> userManager, IMapper mapper, IToastNotification toastNotification, IContract contractServices, IWebHostEnvironment hostingEnvironment, IConvertedText convertedText) : base(userManager, unitOfWork, mapper)
         {
@@ -38,13 +40,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
         }
         public async Task<IActionResult> CreateContract()
         {
-            //To Set Title 
-            var titles = await setTitle("502", "5502001", "5");
-            await ViewData.SetPageTitleAsync(titles[0], "", titles[2], "", "", titles[3]);
-            var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
-            var cultureName = CultureInfo.CurrentCulture.Name;
-            var isArabic = cultureName == "ar-EG";
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            var lessorCode = user.CrMasUserInformationLessor;
+
+            await SetPageTitleAsync(string.Empty, pageNumber);
             var bSLayoutVM = await GetBranchesAndLayout();
 
             var drivers = await _unitOfWork.CrCasRenterPrivateDriverInformation.FindAllAsNoTrackingAsync(x => x.CrCasRenterPrivateDriverInformationLessor == lessorCode && x.CrCasRenterPrivateDriverInformationStatus == Status.Active);

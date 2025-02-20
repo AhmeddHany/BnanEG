@@ -15,6 +15,7 @@ namespace Bnan.Core.Models
         }
 
         public string CrCasCarInformationSerailNo { get; set; } = null!;
+        public string? CrCasCarInformationNo { get; set; }
         public string? CrCasCarInformationLessor { get; set; }
         public string? CrCasCarInformationBranch { get; set; }
         public string? CrCasCarInformationLocation { get; set; }
@@ -28,7 +29,6 @@ namespace Bnan.Core.Models
         public string? CrCasCarInformationCategory { get; set; }
         public string? CrCasCarInformationDistribution { get; set; }
         public string? CrCasCarInformationYear { get; set; }
-        public string? CrCasCarInformationCustomsNo { get; set; }
         public string? CrCasCarInformationStructureNo { get; set; }
         public string? CrCasCarInformationMainColor { get; set; }
         public string? CrCasCarInformationSecondaryColor { get; set; }
@@ -59,6 +59,7 @@ namespace Bnan.Core.Models
         public string? CrCasCarInformationOwnerStatus { get; set; }
         public string? CrCasCarInformationForSaleStatus { get; set; }
         public string? CrCasCarInformationStatus { get; set; }
+        public bool? CrCasCarInformationMarketing { get; set; }
         public string? CrCasCarInformationReasons { get; set; }
 
         public virtual CrCasBranchInformation? CrCasCarInformation1 { get; set; }

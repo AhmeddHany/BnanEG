@@ -101,6 +101,7 @@ namespace Bnan.Core.Interfaces
         public IGenric<CrCasLessorSmsConnect> CrCasLessorSmsConnect { get; }
         public IGenric<CrCasLessorShomoosConnect> CrCasLessorShomoosConnect { get; }
         public IGenric<CrCasLessorPolicy> CrCasLessorPolicy { get; }
+        public IGenric<CrMasSupContractCloseSuspension> CrMasSupContractCloseSuspension { get; }
         int Complete();
         Task<int> CompleteAsync();
     }

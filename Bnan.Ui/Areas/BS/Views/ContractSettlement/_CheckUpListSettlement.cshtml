@@ -5,79 +5,45 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    var isEnglish = requestCulture?.RequestCulture.UICulture.Name == "en-US";
 }
 @if (Model.CarsCheckUp != null)
 {
-    @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+    @foreach (var item in Model.CarsCheckUp)
     {
-        @foreach (var item in Model.CarsCheckUp)
-        {
-            <tr>
-                <td class="text-center">
-                    <textarea class="check-table-notes text-start" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].Reason" maxlength="50" autocomplete="off"></textarea>
+        <tr>
+            <td class="text-center">
+                <textarea class="check-table-notes" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].Reason" maxlength="50" autocomplete="off"></textarea>
+            </td>
+            @{
+                var CarCheckupDetails = item.CrMasSupContractCarCheckupDetails.Where(x => x.CrMasSupContractCarCheckupDetailsStatus == Status.Active);
+            }
+            @if (CarCheckupDetails.Any())
+            {
+                <td>
+                    <select class="form-select table-select-style" aria-label="Default select example" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].ReasonCheckCode" data-code="@item.CrMasSupContractCarCheckupCode">
+                        @foreach (var CheckupDetail in CarCheckupDetails)
+                        {
+                            <option value="@CheckupDetail.CrMasSupContractCarCheckupDetailsNo"
+                                    data-en="@CheckupDetail.CrMasSupContractCarCheckupDetailsEnName"
+                                    data-ar="@CheckupDetail.CrMasSupContractCarCheckupDetailsArName">
+                                @(isEnglish ? CheckupDetail.CrMasSupContractCarCheckupDetailsEnName : CheckupDetail.CrMasSupContractCarCheckupDetailsArName)
+                            </option>
+                        }
+                    </select>
                 </td>
-                @{
-                    var CarCheckupDetails = item.CrMasSupContractCarCheckupDetails.Where(x => x.CrMasSupContractCarCheckupDetailsStatus == Status.Active);
-                }
-                @if (CarCheckupDetails.Count() > 0)
-                {
-                    <td>
-                        <select class="form-select table-select-style" aria-label="Default select example" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].ReasonCheck">
-                            @foreach (var CheckupDetail in CarCheckupDetails)
-                            {
-                                <option value="@CheckupDetail.CrMasSupContractCarCheckupDetailsEnName">
-                                    @CheckupDetail.CrMasSupContractCarCheckupDetailsEnName
-                                </option>
-                            }
-                        </select>
-                    </td>
-                }
-                <td class="tabel-data-checkbox-td">
-                    <div class="options-col">
-                        <label class="form-check-label Tires" for="Tires" data-en="@item.CrMasSupContractCarCheckupEnName" data-ar="@item.CrMasSupContractCarCheckupArName">
-                            @item.CrMasSupContractCarCheckupEnName
-                            </label>
-                        <input class="form-check-input Settlement-input-checkbox CheckUp" type="checkbox" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].CheckUp" value="Tires" id="CheckUp_@item.CrMasSupContractCarCheckupCode">
-                        <input type="hidden" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].CheckUp" value="false" />
-                    </div>
-                </td>
-            </tr>
-        }
-    }
-    else
-    {
-        @foreach (var item in Model.CarsCheckUp)
-        {
-            <tr>
-                <td class="text-center">
-                    <textarea class="check-table-notes text-end" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].Reason" maxlength="50" autocomplete="off"></textarea>
-                </td>
-                @{
-                    var CarCheckupDetails = item.CrMasSupContractCarCheckupDetails.Where(x => x.CrMasSupContractCarCheckupDetailsStatus == Status.Active);
-                }
-                @if (CarCheckupDetails.Count() > 0)
-                {
-                    <td>
-                        <select class="form-select table-select-style" aria-label="Default select example" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].ReasonCheck">
-                            @foreach (var CheckupDetail in CarCheckupDetails)
-                            {
-                                <option value="@CheckupDetail.CrMasSupContractCarCheckupDetailsArName">
-                                    @CheckupDetail.CrMasSupContractCarCheckupDetailsArName
-                                </option>
-                            }
-                        </select>
-                    </td>
-                }
-                <td class="tabel-data-checkbox-td">
-                    <div class="options-col">
-                        <label class="form-check-label Tires" for="Tires" data-en="@item.CrMasSupContractCarCheckupEnName" data-ar="@item.CrMasSupContractCarCheckupArName">
-                            @item.CrMasSupContractCarCheckupArName
-                        </label>
-                        <input class="form-check-input Settlement-input-checkbox CheckUp" type="checkbox" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].CheckUp" value="Tires" id="CheckUp_@item.CrMasSupContractCarCheckupCode">
-                        <input type="hidden" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].CheckUp" value="false" />
-                    </div>
-                </td>
-            </tr>
-        }
+            }
+            <td class="tabel-data-checkbox-td">
+                <div class="options-col">
+                    <label class="Tires" for="Tires"
+                           data-en="@item.CrMasSupContractCarCheckupEnName"
+                           data-ar="@item.CrMasSupContractCarCheckupArName">
+                        @(isEnglish ? item.CrMasSupContractCarCheckupEnName : item.CrMasSupContractCarCheckupArName)
+                    </label>
+                    <input class="Tires-input CheckUp" type="checkbox" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].CheckUp" value="true" id="CheckUp_@item.CrMasSupContractCarCheckupCode">
+                    <input type="hidden" name="CheckupDetails[@item.CrMasSupContractCarCheckupCode].CheckUp" value="false" />
+                </div>
+            </td>
+        </tr>
     }
 }

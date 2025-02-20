@@ -19,6 +19,7 @@ namespace Bnan.Core.Models
         public string? CrMasLessorImageTaxInvoice { get; set; }
         public string? CrMasLessorImageReceipt { get; set; }
         public string? CrMasLessorImageExchange { get; set; }
+        public string? CrMasLessorImageSales { get; set; }
         public string? CrMasLessorImageContractPage1 { get; set; }
         public string? CrMasLessorImageContractPage2 { get; set; }
         public string? CrMasLessorImageContractPage3 { get; set; }

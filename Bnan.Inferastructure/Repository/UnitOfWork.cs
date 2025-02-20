@@ -109,6 +109,7 @@ namespace Bnan.Inferastructure.Repository
         public IGenric<CrCasLessorSmsConnect> CrCasLessorSmsConnect { get; private set; }
         public IGenric<CrCasLessorTgaConnect> CrCasLessorTgaConnect { get; private set; }
         public IGenric<CrCasLessorPolicy> CrCasLessorPolicy { get; private set; }
+        public IGenric<CrMasSupContractCloseSuspension> CrMasSupContractCloseSuspension { get; private set; }
 
 
         public UnitOfWork(BnanSCContext context)
@@ -205,6 +206,7 @@ namespace Bnan.Inferastructure.Repository
             CrCasLessorSmsConnect = new BaseRepository<CrCasLessorSmsConnect>(_context);
             CrCasLessorShomoosConnect = new BaseRepository<CrCasLessorShomoosConnect>(_context);
             CrCasLessorPolicy = new BaseRepository<CrCasLessorPolicy>(_context);
+            CrMasSupContractCloseSuspension = new BaseRepository<CrMasSupContractCloseSuspension>(_context);
         }
         public int Complete()
         {
