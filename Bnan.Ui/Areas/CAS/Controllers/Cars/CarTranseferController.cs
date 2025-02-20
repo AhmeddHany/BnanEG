@@ -98,7 +98,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
             CarDetails_Transefer CarDetails = new CarDetails_Transefer();
 
             CarDetails.serialNo = SerialNo;
-            CarDetails.customNo = thisCar?.CrCasCarInformationCustomsNo;
+            CarDetails.customNo = thisCar?.CrCasCarInformationNo;
             CarDetails.carImage = thisCar?.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionImage?.Replace("~", "") ?? "";
             CarDetails.carNameAr = thisCar?.CrCasCarInformationConcatenateArName;
             CarDetails.carNameEn = thisCar?.CrCasCarInformationConcatenateEnName;

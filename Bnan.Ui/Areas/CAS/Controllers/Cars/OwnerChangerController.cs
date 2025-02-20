@@ -101,7 +101,7 @@ namespace Bnan.Ui.Areas.CAS.Cars
             CarDetails_Owner CarDetails = new CarDetails_Owner();
 
             CarDetails.serialNo = SerialNo;
-            CarDetails.customNo = thisCar?.CrCasCarInformationCustomsNo;
+            CarDetails.customNo = thisCar?.CrCasCarInformationNo;
             CarDetails.carImage = thisCar?.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionImage?.Replace("~","") ?? "";
             CarDetails.carNameAr = thisCar?.CrCasCarInformationConcatenateArName;
             CarDetails.carNameEn = thisCar?.CrCasCarInformationConcatenateEnName;

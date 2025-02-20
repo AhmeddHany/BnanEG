@@ -43,7 +43,7 @@ namespace Bnan.Ui.ViewModels.CAS
         //public string? CrCasCarInformationCategory { get; set; }
         //public string? CrCasCarInformationDistribution { get; set; }
         //public string? CrCasCarInformationYear { get; set; }
-        //public string? CrCasCarInformationCustomsNo { get; set; }
+        //public string? CrCasCarInformationNo { get; set; }
         //public string? CrCasCarInformationStructureNo { get; set; }
         //public string? CrCasCarInformationMainColor { get; set; }
         //public string? CrCasCarInformationSecondaryColor { get; set; }

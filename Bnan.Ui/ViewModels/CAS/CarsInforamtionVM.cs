@@ -22,7 +22,7 @@ namespace Bnan.Ui.ViewModels.CAS
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrCasCarInformationDistribution { get; set; }
         public string? CrCasCarInformationYear { get; set; }
-        public string? CrCasCarInformationCustomsNo { get; set; }
+        public string? CrCasCarInformationNo { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrCasCarInformationStructureNo { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
