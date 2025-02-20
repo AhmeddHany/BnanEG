@@ -67,12 +67,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
             // Set page titles
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
 
             var all_Car_branch = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasCarInformationLessor == user.CrMasUserInformationLessor && x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationBranchStatus != Status.Deleted,
@@ -105,7 +99,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
             //// Set page titles
             var user = await _userManager.GetUserAsync(User);
             //await SetPageTitleAsync(string.Empty, pageNumber);
-            //// Check Validition
 
             var all_Car_branch = await _unitOfWork.CrCasCarInformation.FindAllWithSelectAsNoTrackingAsync(
               predicate: x => x.CrCasCarInformationLessor == user.CrMasUserInformationLessor && x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationBranchStatus!= Status.Deleted,

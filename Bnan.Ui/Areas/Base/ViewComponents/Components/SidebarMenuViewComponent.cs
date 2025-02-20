@@ -255,9 +255,9 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                             ("2202001", "#", "#"),
                                             ("2202002", "#", "#"),
                                             ("2202003", "#", "#"),
-                                            ("2202004", "#", "#"),
-                                            ("2202005", "#", "#"),
-                                            ("2202006", "#", "#"),
+                                            ("2202004", "CarRepair", "Index"),
+                                            ("2202005", "CarTransefer", "Index"),
+                                            ("2202006", "OwnerChanger", "Index"),
                                             ("2202007", "#", "#"),
                                             ("2202008", "#", "#"),
                                             ("2202009", "#", "#"),
@@ -292,7 +292,7 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                         }),
                                         ("205", "/CasSys/images/reports.svg", "reports-items", new List<(string, string, string)>
                                         {
-                                            ("2205001", "#", "#"),
+                                            ("2205001", "Report_AdminstrativeProcedures_Cas", "Index"),
                                             ("2205002", "DailyReport", "Index"),
                                             ("2205003", "ReportActiveContract_Cas", "Index"),
                                             ("2205004", "ReportClosedContract_Cas", "Index"),

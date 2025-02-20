@@ -59,12 +59,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             // Set page titles
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
 
             var all_userInfo = await _unitOfWork.CrMasUserInformation.FindAllWithSelectAsNoTrackingAsync(
                 predicate: x => x.CrMasUserInformationStatus != Status.Deleted,

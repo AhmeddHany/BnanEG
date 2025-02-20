@@ -1,0 +1,382 @@
+﻿@using Bnan.Core.Extensions
+@using Bnan.Ui.ViewModels.CAS.Cars;
+
+@model Cas_CarsChangeOwnerVM
+@inject IViewLocalizer localizer
+@inject IOptions<RequestLocalizationOptions> options
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+    ViewData["Page-title"] = @localizer["OwnerChanger Data"];
+    ViewData["Page-Hint"] = @localizer["OwnerChanger_New Hint"];
+}
+
+<link href="~/css/toastr.css" rel="stylesheet" />
+
+
+
+@*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
+<div class="col d-flex align-items-center justify-content-center">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3 mb-3">
+                <div class="col">
+                    <h3> @localizer["TransferCarOwner_New Data"] </h3>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
+
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search2" class="form-control inputs search-input"
+                                   name="search2" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm  w-100 dataTable ">
+                    <partial name="_DataTableOwnerChanger" />
+                </div>
+            </div>
+        </form>
+        <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["CompanyMessages_BackToHome"]"
+           class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
+    </div>
+</div>
+
+
+ <!-- Modal -->
+        <div class="modal fade" id="TransferModal" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="TransferModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content cars-modal-content">
+                    <form action="" class="needs-validation" novalidate>
+                        <div class="modal-header justify-content-center border-0">
+                            <div class="row w-100">
+                                <div class="col-md-12 d-flex justify-content-end">
+                                    <button type="button" class="modalClose" data-bs-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="col-md-12 text-center">
+                            <h5 class="modal-title card-title m-auto"> @localizer["TransferCarOwner_New Data"] </h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-body p-0">
+                            <div class="data-details">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-sm-auto">
+                                            <div class="CarBorder-CarData">
+                                        <img src="" id="CarImage" class="CarPhoto" style="max-width:70px;">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="row align-items-baseline">
+                                                <div class="col">
+                                            <p id="carName" class="carName"> </p>
+                                                </div>
+                                                <div class="col-sm-auto">
+                                                    <div class="CarColorDiv"
+                                                        style="background-color: rgba(12, 69, 154, 1);"></div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-auto">
+                                            <p id="customNo" class="m-0"></p>
+                                            <p id="SerialNo" hidden class="m-0"></p>
+                                        </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row mt-4 OwnerName">
+                                        <div class="col-md-auto">
+                                    <p>@localizer["CurrentOwner"]</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                    <p id="ownerId" hidden></p>
+                                    <p id="OwnerName" class="Saved-data"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row  align-items-baseline">
+                                        <div class="col-md-auto">
+                                    <label for="NewOwner" class="form-label">@localizer["NewOwner"]</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                    <select class="form-select select-style " asp-for="brnachCode" id="NewOwner" required>
+                                        <option> </option>
+                                        @if(requestCulture?.RequestCulture.UICulture.Name == "en-US"){
+                                            @foreach (var owner in Model.all_OwnersData)
+                                            {
+                                                <option id="@owner.CrCasOwnersCode" value="@owner.CrCasOwnersCode"> @owner.CrCasOwnersEnName</option>
+                                            }
+                                            }
+                                            else
+                                            {
+                                            @foreach (var owner in Model.all_OwnersData)
+                                            {
+                                                <option id="@owner.CrCasOwnersCode" value="@owner.CrCasOwnersCode"> @owner.CrCasOwnersArName</option>
+                                            }
+                                            }
+                                            </select>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                            <span asp-validation-for="@Model.brnachCode" class="text-danger"></span>
+                                            <span class="text-danger" id="brnachCode-Error"></span>
+                                        </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <div class="row  align-items-baseline">
+                                        <div class="col-md-auto">
+                                            <label for="notes" class="form-label">
+                                                @localizer["Reason_s"]
+                                            </label>
+                                        </div>
+                                        <div class="col">
+                                            <textarea class=" form-control textarea-inputs" rows="1" maxlength="100"
+                                              id="reasons" asp-for="Reasons" type="text"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 justify-content-center mx-1">
+                            <div class="row w-100 g-2">
+                                <div class="col-md-6">
+                            <button type="button" class="btn btn-standard w-100" id="Accept">@localizer["Okay"]</button>
+                                </div>
+                                <div class="col-md-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">
+                                @localizer["Cancel"]
+                                        </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="SuccessModal" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="SuccessModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content Success-modal-content">
+                    <div class="modal-body p-0">
+                       <div class="container">
+                        <div class="row flex-column align-items-center justify-content-center my-4 g-3">
+                            <div class="col-md-auto text-center">
+                            <img src="" id="CarImage_after" style="max-width:70px;">
+                            </div>
+                            <div class="col-md-auto text-center">
+                              <p>تم نقل السيارة إلى الفرع الرئيسي</p>
+                            </div>
+                          </div>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+@section Scripts{
+
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="~/CasSys/scripts/Scripts.js"></script>
+
+        <script>
+            const AcceptBtn = document.getElementById("Accept");
+            AcceptBtn.addEventListener("click",async function () {
+                //$('#TransferModal').modal('hide');
+                //////
+                await PostData();
+                //setTimeout(() => {
+                //    $('#SuccessModal').modal('show');
+                //}, 500)
+            });
+
+            $("#NewOwner").on('change', function () {
+                var newOwner1 = $("#NewOwner").val();
+                $("#ownerId").text(newOwner1);
+            });
+        </script>
+    <!-- تحميل مكتبة jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- تحميل مكتبة DataTables -->
+    <script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
+
+            // Close modal when close button is clicked
+            $('.close').click(function () {
+                $('#TransferModal').modal('hide');
+            });
+
+            ///////
+            // تهيئة DataTable
+            var table2 = $('#Table').DataTable({
+                ordering: false, // تعطيل الترتيب التلقائي للصفوف
+                stateSave: true,   // حفظ حالة الجدول
+            });
+            end_init_ShowDatatable();
+        });
+
+        function end_init_ShowDatatable() {
+            $("#min-loader").toggleClass("d-none", true);
+            $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+            //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
+            $("select[name='Table_length']").val('10000').change();
+            $("#Table_info").css("display", "none");
+            $("#Table_previous").css("display", "none");
+            $("#Table_next").css("display", "none");
+            $("#Table_length").css("display", "none");
+            $("#Table_filter").css("display", "none");
+            $(".paginate_button").css("display", "none");
+            $(".ellipsis").css("display", "none");
+            $("select[name='Table_length'] option[value='10000']").prop("selected", true);
+        }
+
+        // دالة للبحث عن كلمة في جميع الصفوف
+        function searchRows() {
+            var table = $('#Table').DataTable();
+            end_init_ShowDatatable();
+            var keyword = $('#search2').val().toLowerCase(); // الكلمة المدخلة للبحث (تحويلها إلى حروف صغيرة)
+
+            // إخفاء كل الصفوف أولاً
+            table.rows().every(function () {
+                this.nodes().to$().hide(); // إخفاء الصف
+            });
+
+            // التكرار عبر كل الصفوف
+            table.rows().every(function () {
+                var row = this.data();
+                var found = false;
+
+                // التكرار عبر كل الخلايا في الصف
+                row.forEach(function (cell) {
+                    if (cell.toString().toLowerCase().includes(keyword)) {
+                        found = true; // إذا تم العثور على الكلمة في أي خلية
+                    }
+                });
+
+                // إذا تم العثور على الكلمة في الصف، نظهره
+                if (found) {
+                    this.nodes().to$().show();
+                }
+            });
+            //$("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+        }
+
+        // يمكن إضافة وظيفة البحث تلقائيًا عند كتابة النص
+        $('#search2').on('keyup', function () {
+            searchRows();
+        });
+
+    </script>
+
+
+    <script>
+        function getDetails(SerialNo) {
+            //console.log("Mazzen1")
+            if (SerialNo != null && SerialNo != "" & SerialNo != undefined) {
+                //console.log("Mazzen2")
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        SerialNo: SerialNo,
+                    },
+                    url: "@Url.Action("GetDetails", "OwnerChanger", new { Area = "CAS" })",
+                    success: function (response) {
+                        if (response != null) {
+                            console.log(response)
+                            $("#customNo").text(response.customNo);
+                            $("#SerialNo").text(response.serialNo);
+                            $("#CarImage").attr('src',response.carImage);
+                            $("#CarImage_after").attr('src', response.carImage);
+                            
+                            $("#reasons").text(response.reasons);
+                            $("#ownerId").text(response.ownerId);
+
+                            if ("@requestCulture?.RequestCulture.UICulture.Name" == "ar-EG") {
+                                $("#carName").text(response.carNameAr);
+                                $("#OwnerName").text(response.ownerNameAr);
+                            }
+                            else {
+                                $("#carName").text(response.carNameEn);
+                                $("#OwnerName").text(response.ownerNameEn);
+                            }
+                            var thisowner = $("#ownerId").text();
+                            // إظهار جميع الخيارات الأخرى
+                            $('#NewOwner option').show();
+                            // إخفاء الخيار الذي يحتوي على value معين
+                            $('#NewOwner option[value="' + thisowner + '"]').hide();
+
+                        }
+                        $('#TransferModal').modal('show');
+                    },
+                });
+            }
+        }
+
+    </script>
+
+    <script>
+        async function PostData() {
+            var SerialNo = $("#SerialNo").text();
+            var ownerIdNew = $("#ownerId").text();
+            var reasons = $("#reasons").val();
+            if ((SerialNo != null && SerialNo != "" && SerialNo != undefined) && (ownerIdNew != null && ownerIdNew != "" && ownerIdNew != undefined)) {
+                $.ajax({
+                    type: "Post",
+                    data: {
+                        SerialNo:SerialNo, ownerIdNew: ownerIdNew, reasons: reasons,
+                    },
+                    url: "@Url.Action("PostData", "OwnerChanger", new { Area = "CAS" })",
+                    success: await function (response) {
+                        if (response == true) {
+                            console.log(response)
+                            $('#TransferModal').modal('hide');
+
+                            //setTimeout(() => {
+                            //    $('#SuccessModal').modal('show');
+                            //}, 500)
+
+                            //setTimeout(() => {
+                            //    window.location.href = '/CAS/OwnerChanger/Index';
+                            //}, 1500)
+
+                            window.location.href = '/CAS/OwnerChanger/DisplayToastSuccess_withIndex';
+                                                  
+                        }
+                        else{
+                            $('#TransferModal').modal('show');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        $('#TransferModal').modal('show');
+                    }
+                });
+            }
+        }
+
+    </script>
+
+   }
+   

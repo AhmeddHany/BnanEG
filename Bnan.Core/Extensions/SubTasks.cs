@@ -161,6 +161,15 @@
         public static string RentersCas_RentersDebits { get; set; } = "2203003";
         public static string RentersCas_RentersMessages { get; set; } = "2203004";
 
+        // CAS Cars
+        public static string Cas_CarsData { get; set; } = "2202001";
+        public static string Cas_CarsDocuments { get; set; } = "2202002";
+        public static string Cas_CarsMentaince { get; set; } = "2202003";
+        public static string Cas_CarsRepair { get; set; } = "2202004";
+        public static string Cas_CarsTransefer_Branch { get; set; } = "2202005";
+        public static string Cas_CarsChangeOwner { get; set; } = "2202006";
+        public static string Cas_CarsPrices { get; set; } = "2202007";
+
         //CAs Accounts
         public static string FeedBoxCAS { get; set; } = "2204001";
 

@@ -6,20 +6,15 @@ using Bnan.Core.Interfaces.CAS;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.CAS;
 using Bnan.Ui.ViewModels.CAS.Services;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using Pipelines.Sockets.Unofficial.Buffers;
 using System.Globalization;
-using System.Numerics;
 
 namespace Bnan.Ui.Areas.CAS.Controllers.Services
 {
@@ -304,7 +299,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
 
+                var Target = RenterDriverEntity.CrCasRenterPrivateDriverInformationId;
+                var reasons = RenterDriverEntity.CrCasRenterPrivateDriverInformationReasons;
                 await SaveTracingForLicenseChange(user, RenterDriverEntity, Status.Insert);
+                await SaveAdminstrative(user, Status.Insert, Target, reasons);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -469,7 +467,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                     _unitOfWork.CrCasRenterPrivateDriverInformation.Update(driver);
                     if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
+                    var Target = RenterDriver.CrCasRenterPrivateDriverInformationId;
+                    var reasons = RenterDriver.CrCasRenterPrivateDriverInformationReasons;
                     await SaveTracingForLicenseChange(user, RenterDriver, Status.Update);
+                    await SaveAdminstrative(user, Status.Update, Target, reasons);
                     return RedirectToAction("Index", "RenterDriver");
                 }
             }
@@ -491,7 +492,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
 
             var licence = await _unitOfWork.CrCasRenterPrivateDriverInformation.FindAsync(x => x.CrCasRenterPrivateDriverInformationId == code && x.CrCasRenterPrivateDriverInformationLessor == user.CrMasUserInformationLessor);
             if (licence == null) return "false";
-
+            var status1 = status;
             try
             {
 
@@ -503,7 +504,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 licence.CrCasRenterPrivateDriverInformationStatus = status;
                 _unitOfWork.CrCasRenterPrivateDriverInformation.Update(licence);
                 _unitOfWork.Complete();
-                await SaveTracingForLicenseChange(user, licence, status);
+
+                var Target = licence.CrCasRenterPrivateDriverInformationId;
+                var reasons = licence.CrCasRenterPrivateDriverInformationReasons;
+                await SaveTracingForLicenseChange(user, licence, status1);
+                await SaveAdminstrative(user, status1, Target, reasons);
                 return "true";
             }
             catch (Exception ex)
@@ -594,6 +599,62 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 system.CrMasSysSystemCode,
                 system.CrMasSysSystemArName,
                 system.CrMasSysSystemEnName);
+        }
+
+
+        private async Task SaveAdminstrative(CrMasUserInformation user, string status, string? Target, string? reasons)
+        {
+            // change ProcedureCode and Classification (30 == Financial) , (20 == Admin)
+            string procedure_Code = "246";
+            string procedure_Classification = "20";
+            //var procedureData = await _unitOfWork.CrMasSysProcedure.FindAsync(x=>x.CrMasSysProceduresCode== procedure_Code && x.CrMasSysProceduresClassification== procedure_Classification);
+
+            var (recordAr, recordEn) = GetStatusTranslation(status);
+            if (status?.Length > 1) status = Status.Active;
+
+            if (recordAr.Length > 29) recordAr = recordAr?.Substring(0, 30);
+            if (recordEn.Length > 29) recordEn = recordEn?.Substring(0, 30);
+            //var recordAr = "نقل سيارة";
+            //var recordEn = "Transefer Car";
+
+
+            string sector = "1";
+            var lessorCode = user?.CrMasUserInformationLessor ?? " ";
+            var branchCode = "100";
+            var target = Target;
+            var UserInsert = user?.CrMasUserInformationCode ?? " ";
+
+            string? CarFrom = null;
+            string? CarTo = null;
+            string? Reasons = reasons;
+            if (Reasons?.Length > 99) Reasons = Reasons?.Substring(0, 100);
+            if (CarFrom?.Length > 19) CarFrom = CarFrom?.Substring(0, 20);
+            if (CarTo?.Length > 19) CarTo = CarTo?.Substring(0, 20);
+            decimal? Debit = null;
+            decimal? Credit = null;
+            string? Doc_No = null;
+            DateTime? Doc_Date = null;
+            DateTime? Doc_Start = null;
+            DateTime? Doc_End = null;
+
+
+            await _userLoginsService.SaveAdminstrative(
+            sector,
+            procedure_Code,
+            lessorCode,
+            branchCode,
+            procedure_Classification,
+            target,
+            recordAr,
+            recordEn,
+            UserInsert,
+            status,
+            Reasons,
+            CarFrom,
+            CarTo,
+            Debit, Credit, Doc_No, Doc_Date, Doc_Start, Doc_End
+            );
+
         }
 
         [HttpPost]

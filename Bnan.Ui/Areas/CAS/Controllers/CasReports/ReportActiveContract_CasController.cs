@@ -56,12 +56,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
             // Set page titles
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
 
             var listmaxDate = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                     predicate: x => x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire,
@@ -114,18 +108,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                 })
                 , includes: new string[] { "CrCasRenterContractBasic1" }
                 );
-            //var allRenters = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
-            //    //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-            //    predicate: x=>x.CrMasRenterInformationStatus != Status.Deleted,
-            //    selectProjection: query => query.Select(x => new CrMasRenterInformation
-            //    {
-            //        CrMasRenterInformationId = x.CrMasRenterInformationId,
-            //        CrMasRenterInformationArName = x.CrMasRenterInformationArName,
-            //        CrMasRenterInformationEnName = x.CrMasRenterInformationEnName,
-            //        CrMasRenterInformationStatus = x.CrMasRenterInformationStatus,
-            //    })
-            //    //,includes: new string[] { "CrMasRenterInformationNationalityNavigation", "CrMasRenterInformationProfessionNavigation" } 
-            //    );
 
             var allStatus_contracts = await _unitOfWork.CrCasRenterContractAlert.FindAllWithSelectAsNoTrackingAsync(
                 predicate: x => x.CrCasRenterContractAlertLessor == user.CrMasUserInformationLessor,
@@ -150,40 +132,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                 //,includes: new string[] { "" } 
                 );
 
-            //// If no active licenses, retrieve all licenses
-            //if (!all_RenterBasicContract.Any())
-            //{
-            //    all_RenterBasicContract = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
-            //       //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-            //       predicate: x => x.CrCasRenterContractBasicLessor == user.CrMasUserInformationLessor
-            //       && x.CrCasRenterContractBasicStatus == Status.Expire
-            //       && x.CrCasRenterContractBasicExpectedStartDate > start && x.CrCasRenterContractBasicExpectedStartDate <= end,
-            //       selectProjection: query => query.Select(x => new ReportActiveContract_CasVM
-            //{
-            //    CrCasRenterContractBasicNo = x.CrCasRenterContractBasicNo,
-            //        CrCasRenterContractBasicCopy = x.CrCasRenterContractBasicCopy,
-            //        CrCasRenterContractBasicLessor = x.CrCasRenterContractBasicLessor,
-            //        CrCasRenterContractBasicRenterId = x.CrCasRenterContractBasicRenterId,
-            //        //CrCasRenterContractBasicCarSerailNo = x.CrCasRenterContractBasicCarSerailNo,
-            //        CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
-            //        CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
-            //        CrCasRenterContractBasicExpectedRentalDays = x.CrCasRenterContractBasicExpectedRentalDays,
-            //        CrCasRenterContractBasicExpectedTotal = x.CrCasRenterContractBasicExpectedTotal,
-            //        branchAr = x.CrCasRenterContractBasic1.CrCasBranchInformationArShortName,
-            //        branchEn = x.CrCasRenterContractBasic1.CrCasBranchInformationEnShortName,
-            //        CrCasRenterContractBasicAmountPaidAdvance = x.CrCasRenterContractBasicAmountPaidAdvance,
-            //        CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
-            //        CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
-            //        //CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
-            //        //CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
-            //        CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
-            //        CrCasRenterContractBasicStatus = x.CrCasRenterContractBasicStatus,
-            //    })
-            //    , includes: new string[] { "CrCasRenterContractBasic1" }
-            //       );
-            //    ViewBag.radio = "All";
-            //}
-            //else ViewBag.radio = "A";
             ViewBag.radio = "All";
 
 
@@ -243,17 +191,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                     })
                 , includes: new string[] { "CrCasRenterContractBasic1" }
                     );
-                //var allRenters = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
-                //    predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
-                //    selectProjection: query => query.Select(x => new CrMasRenterInformation
-                //    {
-                //        CrMasRenterInformationId = x.CrMasRenterInformationId,
-                //        CrMasRenterInformationArName = x.CrMasRenterInformationArName,
-                //        CrMasRenterInformationEnName = x.CrMasRenterInformationEnName,
-                //        CrMasRenterInformationStatus = x.CrMasRenterInformationStatus,
-                //    })
-                //    //,includes: new string[] { "CrMasRenterInformationNationalityNavigation", "CrMasRenterInformationProfessionNavigation" } 
-                //    );
 
                 var allStatus_contracts = await _unitOfWork.CrCasRenterContractAlert.FindAllWithSelectAsNoTrackingAsync(
                     predicate: x => x.CrCasRenterContractAlertLessor == user.CrMasUserInformationLessor,

@@ -67,12 +67,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
             // Set page titles
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
+
             CasStatistics_ContractsVM CasStatistics_ContractsVM = new CasStatistics_ContractsVM();
 
             //var Most_Frequance_Company_list = _unitOfWork.CrCasRenterContractStatistic.GetAll()
@@ -128,7 +123,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CASStatistics
             //// Set page titles
             var user = await _userManager.GetUserAsync(User);
             //await SetPageTitleAsync(string.Empty, pageNumber);
-            //// Check Validition
 
             if (start == "undefined-undefined-") start = "";
             if (end == "undefined-undefined-") end = "";

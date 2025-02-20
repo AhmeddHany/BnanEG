@@ -60,12 +60,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
             // Set page titles
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
 
             var all_CasRenterLessor = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
                 predicate: x => x.CrCasRenterLessorCode == user.CrMasUserInformationLessor
@@ -87,17 +81,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
 
             all_CasRenterLessor = all_CasRenterLessor.DistinctBy(x => x.CrCasRenterLessorId).ToList();
 
-            //var all_bonds = await _unitOfWork.CrCasAccountReceipt.FindCountByColumnAsync<CrCasAccountReceipt>(
-            //       predicate: x => x.CrCasAccountReceiptLessorCode == user.CrMasUserInformationLessor && x.CrCasAccountReceiptType == "301",
-            //       columnSelector: x => x.CrCasAccountReceiptRenterId  // تحديد العمود الذي نريد التجميع بناءً عليه
-            //                                                       //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
-            //       );
-            //var all_exchanges = await _unitOfWork.CrCasAccountReceipt.FindCountByColumnAsync<CrCasAccountReceipt>(
-            //   predicate: x => x.CrCasAccountReceiptLessorCode == user.CrMasUserInformationLessor && x.CrCasAccountReceiptType == "302",
-            //   columnSelector: x => x.CrCasAccountReceiptRenterId  // تحديد العمود الذي نريد التجميع بناءً عليه
-            //                                                       //,includes: new string[] { "RelatedEntity1", "RelatedEntity2" } 
-            //   );
-
 
             if (all_CasRenterLessor?.Count == 0)
             {
@@ -109,8 +92,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
 
             listReportFTPRenterVM VM = new listReportFTPRenterVM();
             VM.all_CasRenterLessor = all_CasRenterLessor;
-            //VM.all_bonds = all_bonds;
-            //VM.all_exchanges = all_exchanges;
             return View(VM);
         }
 

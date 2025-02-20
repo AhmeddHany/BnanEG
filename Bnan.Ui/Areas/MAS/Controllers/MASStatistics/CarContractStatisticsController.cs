@@ -66,12 +66,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             // Set page titles
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
+
             MasStatistics_ContractsVM MasStatistics_ContractsVM = new MasStatistics_ContractsVM();
 
             //var Most_Frequance_Company_list = _unitOfWork.CrCasRenterContractStatistic.GetAll()
@@ -127,7 +122,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             //// Set page titles
             //var user = await _userManager.GetUserAsync(User);
             //await SetPageTitleAsync(string.Empty, pageNumber);
-            //// Check Validition
 
             if (start == "undefined-undefined-") start = "";
             if (end == "undefined-undefined-") end = "";

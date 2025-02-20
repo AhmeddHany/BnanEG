@@ -65,13 +65,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             // Set page titles
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
-            // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
-
 
             //var Most_Frequance_Company_list = _unitOfWork.CrCasCarInformation.GetAll()
             //                        .GroupBy(q => q.CrCasCarInformationCode)
@@ -864,30 +857,13 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             other.EnName = "  Others";
             other.Code = "Aa";
 
-            //var Type_Avarage = listMaschartBranchDataVM.Average(x => x.Value);
-            //var Type_Sum = listMaschartBranchDataVM.Sum(x => x.Value);
-            //var Type_Count = listMaschartBranchDataVM.Count();
-            //var Type_Avarage_percentage = Type_Avarage / Type_Sum;
-            //var Static_Percentage_rate = 0.10;
+
 
             var max = listMaschartBranchDataVM.Max(x => x.Value);
             var max1 = (int)max;
 
             List<MASChartBranchDataVM>? listMaschartBranchDataVM2 = new List<MASChartBranchDataVM>();
-            //var x = true;
-            //for (var i = 0; i < listMaschartBranchData22VM.Count; i++)
-            //{
 
-            //    if ((int)listMaschartBranchDataVM[i].Value <= max1 * (Static_Percentage_rate + (double)Type_Avarage_percentage))
-            //    {
-            //        listMaschartBranchDataVM[i].IsTrue = false;
-            //        x = false;
-            //        listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(i).ToList();
-            //        other.Value = count_Cars - listMaschartBranchDataVM2.Sum(x => x.Value);
-            //        listMaschartBranchDataVM2.Add(other);
-            //        break;
-            //    }
-            //}
             if (listMaschartBranchDataVM2.Count > 14)
             {
                 listMaschartBranchDataVM2 = listMaschartBranchDataVM.Take(14).ToList();
@@ -912,53 +888,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MASStatistics
             return Json(MasStatistics_CarsVM.listMasChartdataVM);
         }
 
-
-        //        if (Type == "Status")
-        //            {
-        //                List<ChartBranchDataVM> chartBranchDataVMs_Alls = new List<ChartBranchDataVM>();
-
-        //        var AllCars2_Rigon = _unitOfWork.CrCasCarInformation.FindAll(x => company == x.CrCasCarInformationLessor).ToList();
-
-        //                foreach (var single in AllCars2_Rigon)
-        //                {
-        //                    ChartBranchDataVM chartBranchDataVM_All = new ChartBranchDataVM();
-
-        //                    if (single.CrCasCarInformationStatus == "H" || single.CrCasCarInformationOwnerStatus == "H" || single.CrCasCarInformationBranchStatus == "H")
-        //                    {
-        //                        chartBranchDataVM_All.ArName = "موقوفة";
-        //                        chartBranchDataVM_All.EnName = "Hold";
-        //                    }
-        //                    else if (single.CrCasCarInformationStatus == "A" && single.CrCasCarInformationForSaleStatus == "A" && single.CrCasCarInformationOwnerStatus == "A" && single.CrCasCarInformationBranchStatus == "A" && single.CrCasCarInformationPriceStatus == true)
-        //                    {
-        //                        chartBranchDataVM_All.ArName = "نشطة";
-        //                        chartBranchDataVM_All.EnName = "Active";
-        //                    }
-        //                    else if (single.CrCasCarInformationStatus == "A" && (single.CrCasCarInformationForSaleStatus == "T" || single.CrCasCarInformationForSaleStatus == "V"))
-        //{
-        //    chartBranchDataVM_All.ArName = "للبيع";
-        //    chartBranchDataVM_All.EnName = "ForSale";
-        //}
-        //else if (single.CrCasCarInformationStatus == "A" && single.CrCasCarInformationOwnerStatus == "A" && single.CrCasCarInformationBranchStatus == "A" && single.CrCasCarInformationPriceStatus == false)
-        //{
-        //    chartBranchDataVM_All.ArName = "بدون سعر";
-        //    chartBranchDataVM_All.EnName = "Without Price";
-        //}
-        //else if (single.CrCasCarInformationStatus == "R")
-        //{
-        //    chartBranchDataVM_All.ArName = "مؤجرة";
-        //    chartBranchDataVM_All.EnName = "Rented";
-        //}
-        //else if (single.CrCasCarInformationStatus == "M")
-        //{
-        //    chartBranchDataVM_All.ArName = "إصلاح";
-        //    chartBranchDataVM_All.EnName = "Fix";
-        //}
-
-        //chartBranchDataVM_All.Code = single.CrCasCarInformationStatus;
-        //chartBranchDataVM_All.Value = 0;
-        //chartBranchDataVMs_Alls.Add(chartBranchDataVM_All);
-
-        //                }
 
 
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasRenterInformation licence, string status)

@@ -87,7 +87,7 @@ namespace Bnan.Inferastructure.Repository.CAS
 
         public async Task<bool> CheckIfCanDeleteIt(string code, string lessor)
         {
-            var countForSales = await _unitOfWork.CrCasAccountSalesPoint.CountAsync(x => x.CrCasAccountSalesPointLessor == lessor && x.CrCasAccountSalesPointStatus != Status.Deleted && x.CrCasAccountSalesPointAccountBank == code && x.CrCasAccountSalesPointTotalBalance >0);
+            var countForSales = await _unitOfWork.CrCasAccountSalesPoint.CountAsync(x => x.CrCasAccountSalesPointLessor == lessor && x.CrCasAccountSalesPointStatus != Status.Deleted && x.CrCasAccountSalesPointAccountBank == code);
             return countForSales == 0;
         }
         public async Task<bool> CheckIfCanEdit_It(string code, string lessor)
