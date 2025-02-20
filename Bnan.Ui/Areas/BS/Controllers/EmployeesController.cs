@@ -61,8 +61,8 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             var oldPathImage = user.CrMasUserInformationPicture;
             var oldPathSignture = user.CrMasUserInformationSignature;
-            if (oldPathImage == "~/images/common/user.jpg") oldPathImage = "";
-            if (oldPathSignture == "~/images/common/DefualtUserSignature.png") oldPathSignture = "";
+            if (oldPathImage == "~/images/common/DefaultUser.jpg") oldPathImage = "";
+            if (oldPathSignture == "~/images/common/DefaultSignture.jpg") oldPathSignture = "";
 
             if (Profile_Photo != null)
             {
@@ -71,7 +71,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             }
             else if (Profile_Photo == null && string.IsNullOrEmpty(user.CrMasUserInformationPicture))
             {
-                filePathImage = "~/images/common/user.jpg";
+                filePathImage = "~/images/common/DefaultUser.jpg";
             }
             else
             {

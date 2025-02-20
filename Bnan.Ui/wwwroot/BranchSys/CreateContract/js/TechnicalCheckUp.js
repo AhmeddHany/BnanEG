@@ -1,4 +1,4 @@
-// Get references to the necessary elements
+﻿// Get references to the necessary elements
 const shapeCanvas = document.getElementById('shape-canvas');
 const BendInBodyBtn = document.getElementById('bend-in-body-btn');
 const veryDeepScratch = document.getElementById('very-deep-scratch-btn');
@@ -8,6 +8,9 @@ const smallScratch = document.getElementById('small-scratch-btn');
 const undoBtn = document.getElementById('undo-btn');
 const redoBtn = document.getElementById('redo-btn');
 const saveBtn = document.getElementById('save-btn');
+var imgTechnicalCheckup;
+shapeCanvas.width = 893;
+shapeCanvas.height = 429;
 
 window.addEventListener('load', function () {
     // Get the canvas context
@@ -155,18 +158,28 @@ function updateSketchRepresentation() {
 }
 
 saveBtn.addEventListener('click', () => {
-    console.log(SketchRepresentation); // This will log the current shapes' type and coordinates
+    console.log(SketchRepresentation);
     $('#TechnicalCheckUp').modal('hide');
-    
-    // const dataURL = shapeCanvas.toDataURL('image/png');
-    // const downloadLink = document.createElement('a');
-    // downloadLink.download = 'car-damage-image.png';
-    // downloadLink.href = dataURL;
-    // downloadLink.click();
+
+    const ctx = shapeCanvas.getContext('2d');
+
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = shapeCanvas.width;
+    tempCanvas.height = shapeCanvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    // إضافة خلفية بيضاء للصورة 
+    tempCtx.fillStyle = 'white';
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+    tempCtx.drawImage(shapeCanvas, 0, 0);
+
+    imgTechnicalCheckup = tempCanvas.toDataURL('image/png');
+    console.log(imgTechnicalCheckup);
 });
 
+
 // Add active class toggle functionality
-document.getElementById('TechnicalCheckUp-container').addEventListener('click', function(event) {
+document.getElementById('TechnicalCheckUp-container').addEventListener('click', function (event) {
     if (event.target.classList.contains('TechnicalCheckUp-Btn')) {
         const buttons = document.querySelectorAll('.TechnicalCheckUp-Btn');
         buttons.forEach(btn => btn.classList.remove('TechnicalCheckUp-Btn-active'));

@@ -177,6 +177,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             }
             try
             {
+                model.CrMasUserInformationSignature = "~/images/common/DefaultSignture.jpg";
+                model.CrMasUserInformationPicture = "~/images/common/DefaultUser.jpg";
                 var crMasUserInformation = _mapper.Map<CrMasUserInformation>(model);
                 crMasUserInformation.CrMasUserInformationCode = $"CAS{model.CrMasUserInformationCode}";
                 if (crMasUserInformation.CrMasUserInformationCode.Length > 10)

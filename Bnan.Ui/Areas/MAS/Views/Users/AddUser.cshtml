@@ -9,7 +9,7 @@
 }
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
-        <form class="needs-validation" novalidate asp-area="MAS" asp-controller="Users" asp-action="AddUser" enctype="multipart/form-data">
+        <form id="msform" class="needs-validation" novalidate asp-area="MAS" asp-controller="Users" asp-action="AddUser" enctype="multipart/form-data">
             <div class="row  mt-3 g-3">
                 <div class="row justify-content-center">
                     <div class="col-lg-9">
@@ -242,6 +242,24 @@
             
         });
 
+    </script>
+    <script>
+        $(document).ready(function () {
+             $("#msform").on("submit", function (event) {
+                 if (!$("#msform").valid()) {
+                     event.preventDefault(); // منع الإرسال إذا لم يكن التحقق ناجحًا
+                     return;
+                 }
+
+                 // إظهار اللودر قبل الإرسال
+                 $("#min-loader").removeClass("d-none");
+
+                 // إرسال الفورم بعد تأخير قصير لضمان ظهور اللودر
+                 setTimeout(() => {
+                     this.submit();
+                 }, 500);
+             });
+         });
     </script>
 }
 

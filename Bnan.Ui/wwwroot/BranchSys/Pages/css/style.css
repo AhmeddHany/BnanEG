@@ -2185,17 +2185,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /************************************************************************* الفحص الفني * */
 .car-container {
     position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    overflow: auto;
 }
 
 #shape-canvas {
     border: none;
     background-color: rgba(255, 255, 255, 0);
-    width: 100%;
-    height: 100%;
-
 }
 
 .TechnicalCheckUp-Btn {
@@ -2205,10 +2200,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     border-radius: 8px;
 }
 
-.TechnicalCheckUp-Btn:hover {
-    background-color: #FF992E;
-    color: white;
-}
+    .TechnicalCheckUp-Btn:hover {
+        background-color: #FF992E;
+        color: white;
+    }
 
 .TechnicalCheckUp-Btn-active {
     background-color: #FF992E !important;

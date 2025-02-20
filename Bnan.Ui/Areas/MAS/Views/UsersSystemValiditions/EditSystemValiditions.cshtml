@@ -221,6 +221,7 @@
 
         function getCheckboxValues() {
             event.preventDefault();
+            $("#min-loader").removeClass("d-none")
             // Main Tasks
             var checkboxesMainTask = document.getElementsByClassName("mainTasksCheckbox");
             var checkboxMainTaskValues = [];

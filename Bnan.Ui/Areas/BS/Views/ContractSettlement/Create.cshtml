@@ -485,20 +485,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @* <div class="row data-row-Settl ">
-                                            <div class=" col-lg-5  data-col-Settl flex-wrap">
-                                                <div class="col-auto ">
-                                                    <label class="form-check-label" for="expenses-check">@localizer["Expense"]</label>
-                                                    <input class="form-check-input Settlement-input-checkbox" type="checkbox" value="checked" id="expenses-check" name="checked-expenses">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-5 data-col-Settl mb-4 ">
-                                                <div class="col-auto ">
-                                                    <label class="form-check-label" for="compensation-check">@localizer["Compensation"]</label>
-                                                    <input class="form-check-input Settlement-input-checkbox" type="checkbox" value="checked" id="compensation-check" name="checked-compensation">
-                                                </div>
-                                            </div>
-                                        </div> *@
                                         <div class="row p-2" style="flex-direction:row-reverse">
                                             <div class="col-auto">
                                                 <label id="notes" for="FormControl-last-Textarea">@localizer["reasons"]</label>
@@ -617,62 +603,6 @@
                                             </div>
 
                                         </div>
-                                        @* <div class="row flex-row-reverse">
-                                            <div class="row">
-                                                <div class="expensesDiv align-items-baseline ">
-                                                    <div class="col-auto">
-                                                        <label id="expensesValue" for="expensesValue-input">@localizer["ExpenseValue"]</label>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <input type="tel" class="form-control form-control1" style="width: 130px;" id="expensesValue-input" asp-for="ContractSettlement.ExpensesValue" oninput="handleAmountPayed(this)" aria-describedby="inputGroupPrepend" autocomplete="off" required>
-                                                        <div class="row requird-field-row-last">
-                                                            <span class="requird-field" id="requird_field_ExpensesValue" asp-validation-for="@Model.ContractSettlement.ExpensesValue"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                        <div class="row flex-row-reverse expensesRow g-5">
-                                            <div class="col-lg-5">
-
-                                                <div class="row expensesDiv expensesDiv-textarea ">
-                                                    <div class="col-auto">
-                                                        <label id="Expense-statement" for="Expense-statement-input">@localizer["ExpenseStatement"]</label>
-                                                    </div>
-                                                    <div class="col-lg-9" style="height: 100%;">
-                                                        <textarea class="form-control textarea-inputs h-100 @(requestCulture?.RequestCulture.UICulture.Name != "ar-EG" ? "text-start" : "text-end")" cols="25" asp-for="ContractSettlement.ExpensesReasons" id="Expense-statement-input" aria-describedby="inputGroupPrepend" maxlength="200"></textarea>
-                                                        <div class="row requird-field-row-last">
-                                                            <span class="requird-field" id="requird_field_ExpensesReasons" asp-validation-for="@Model.ContractSettlement.ExpensesReasons"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="upload__box d-flex gap-3">
-                                                    <div class="upload_img-wrap_inner" style="display: flex;
-                                                                  flex-wrap: wrap;
-                                                                  gap: 10px ">
-                                                        <div class="upload__img-box " id="FirstUpload-img">
-                                                        </div>
-                                                        <div class="upload__btn-box" id="upload__btn-box">
-                                                            <label class="upload__btn">
-                                                                <div class="upload-container-checking" id="btn_expense">
-                                                                    <img class="upload-icon" src="~/BranchSys/Pages/img/Group (1).png" alt="Upload Icon" id="addImage">
-                                                                    <input type="file" multiple accept="image/*" id="Expenses-images" class="upload__inputfile ">
-                                                                </div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <span class="@(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "ms-3" : "me-3") ">@localizer["Attachments"]</span>
-                                                </div>
-                                                <div class="row">
-                                                    <p style="color: red;" id="ExpensesError">  </p>
-                                                </div>
-                                            </div>
-
-                                        </div>
- *@
                                     </div>
                                     <div class="row button-row">
                                         <div class="button-card">
@@ -791,106 +721,6 @@
                                                 </p>
                                             </div>
                                         </div>
-
-                                        @*   <div class="row flex-row-reverse">
-                                            <div class="row">
-                                                <div class="expensesDiv align-items-baseline ">
-                                                    <div class="col-auto">
-                                                        <p> @localizer["CrMasUserContractValidityInsurance"] </p>
-                                                    </div>
-
-                                                    <div class="col-auto personal-data">
-                                                        @if (Model.ContractSettlement.ContractChoices.Find(x => x.CrCasRenterContractChoiceCode == "5100000003") != null)
-                                                        {
-                                                            if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
-                                                            {
-                                                                <p>@Model.ContractSettlement.ContractChoices?.Find(x => x.CrCasRenterContractChoiceCode == "5100000003").CrCasRenterContractChoiceCodeNavigation.CrMasSupContractOptionsArName</p>
-
-                                                            }
-                                                            else
-                                                            {
-                                                                <p>@Model.ContractSettlement.ContractChoices?.Find(x => x.CrCasRenterContractChoiceCode == "5100000003").CrCasRenterContractChoiceCodeNavigation.CrMasSupContractOptionsEnName</p>
-
-                                                            }
-                                                        }
-                                                        else if (Model.ContractSettlement.ContractChoices.Find(x => x.CrCasRenterContractChoiceCode == "5100000004") != null)
-                                                        {
-                                                            // Code to execute if the list contains "5100000004"
-                                                            if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
-                                                            {
-                                                                <p>@Model.ContractSettlement.ContractChoices?.Find(x => x.CrCasRenterContractChoiceCode == "5100000004").CrCasRenterContractChoiceCodeNavigation.CrMasSupContractOptionsArName</p>
-
-                                                            }
-                                                            else
-                                                            {
-                                                                <p>@Model.ContractSettlement.ContractChoices?.Find(x => x.CrCasRenterContractChoiceCode == "5100000004").CrCasRenterContractChoiceCodeNavigation.CrMasSupContractOptionsEnName</p>
-
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            <p>@localizer["AgainstOthers"]</p>
-                                                        }
-
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="compensation-Div align-items-baseline ">
-                                                <div class="col-auto">
-                                                    <label for="compensation-input">@localizer["CompensationValue"]</label>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <input type="tel" class="form-control form-control1" style="width: 130px;" id="compensation-input" asp-for="ContractSettlement.CompensationValue" oninput="handleAmountPayed(this)" aria-describedby="inputGroupPrepend" autocomplete="off" required>
-                                                    <div class="row requird-field-row-last">
-                                                        <span class="requird-field" id="requird_field_CompensationValue" asp-validation-for="@Model.ContractSettlement.CompensationValue"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="row flex-row-reverse compensation-Row  g-5">
-                                            <div class="col-lg-5">
-
-                                                <div class="row compensation-Div compensation-Div-textarea ">
-                                                    <div class="col-auto">
-                                                        <label for="compensation-statement-input">@localizer["CompensationStatement"]</label>
-                                                    </div>
-                                                    <div class="col-lg-9" style="height: 100%;">
-                                                        <textarea class="form-control textarea-inputs h-100 @(requestCulture?.RequestCulture.UICulture.Name != "ar-EG" ? "text-start" : "text-end")" cols="25" asp-for="ContractSettlement.CompensationReasons" id="compensation-statement-input" aria-describedby="inputGroupPrepend" maxlength="200"></textarea>
-                                                        <div class="row requird-field-row-last">
-                                                            <span class="requird-field" id="requird_field_CompensationReasons" asp-validation-for="@Model.ContractSettlement.CompensationReasons"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="upload__box d-flex">
-                                                    <div class="upload_img-wrap_inner" style="display: flex;flex-wrap: wrap; gap: 10px ">
-                                                        <div class="upload__img-box " id="FirstUpload-img2">
-                                                        </div>
-                                                        <div class="upload__btn-box">
-                                                            <label class="upload__btn">
-                                                                <div class="upload-container-checking" id="btn_compensation">
-                                                                    <img class="upload-icon" src="~/BranchSys/Pages/img/Group (1).png" alt="Upload Icon" id="AddImageCompensation">
-                                                                    <input type="file" multiple accept="image/*" id="compensation-images" class="upload__inputfile ">
-                                                                </div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <span class="@(requestCulture?.RequestCulture.UICulture.Name == "ar-EG" ? "ms-3" : "me-3")">@localizer["Attachments"]</span>
-                                                </div>
-                                                <div class="row">
-                                                    <p style="color: red;" id='compensationError'> </p>
-                                                </div>
-                                            </div>
-
-                                        </div>
- *@
                                     </div>
                                     <div class="row button-row">
                                         <div class="button-card">
@@ -1175,9 +1005,10 @@
                                                                 <p> : @localizer["TankStatus"]  </p>
                                                             </div>
                                                             <div class="col personal-data">
-                                                                <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ?
-                                                                    Model.ContractSettlement?.CarCheckUpFuel?.CrCasRenterContractCarCheckupC?.CrMasSupContractCarCheckupDetailsEnName : 
-                                                                    Model.ContractSettlement?.CarCheckUpFuel?.CrCasRenterContractCarCheckupC?.CrMasSupContractCarCheckupDetailsArName)
+                                                                <p>
+                                                                    @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ?
+                                                                        Model.ContractSettlement?.CarCheckUpFuel?.CrCasRenterContractCarCheckupC?.CrMasSupContractCarCheckupDetailsEnName :
+                                                                        Model.ContractSettlement?.CarCheckUpFuel?.CrCasRenterContractCarCheckupC?.CrMasSupContractCarCheckupDetailsArName)
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -1488,8 +1319,7 @@
                 <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%% TechnicalCheckUp %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
                 <div class="modal fade" id="TechnicalCheckUp" aria-hidden="true"
                      aria-labelledby="TechnicalCheckUpLabel" tabindex="-1">
-                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable "
-                         style="max-width: 800px !important;">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" >
                         <div class="modal-content">
                             <div class="modal-header text-center">
                                 <p class="modal-title w-100"></p>
@@ -1533,7 +1363,7 @@
                                             </div>
                                         </div>
                                         <div class="col-12 d-flex justify-content-center">
-                                            <div class="car-container mt-3">
+                                            <div class="car-container m-3">
                                                 <canvas id="shape-canvas"></canvas>
                                             </div>
                                         </div>
@@ -1609,6 +1439,12 @@
 <canvas id="myCanvasReceipt" hidden></canvas>
 <canvas id="myCanvasInvoice" hidden></canvas>
 <canvas id="myCanvasCard" hidden></canvas>
+<canvas id="myCanvasPage7" hidden></canvas>
+<canvas id="myCanvasPage8" hidden></canvas>
+<canvas id="myCanvasPage9" hidden></canvas>
+<canvas id="myCanvasPage10" hidden></canvas>
+<canvas id="myCanvasPage11" hidden></canvas>
+<canvas id="myCanvasPage12" hidden></canvas>
 <footer class="fixed-bottom-xl">
     <div class="before-footer-widget">
         <svg width: 100%; height:auto viewbox="0 0 2444 132">
@@ -1633,13 +1469,12 @@
     <script src="~/PdfJS/Card/Card.js"></script>
     <script src="~/PdfJS/PdfAndImages.js"></script>
     <!--Contract-->
-    @* <script src="~/PdfJS/Contract/page1.js"></script>
-    <script src="~/PdfJS/Contract/page2.js"></script>
-    <script src="~/PdfJS/Contract/page3.js"></script>
-    <script src="~/PdfJS/Contract/page4.js"></script>
-    <script src="~/PdfJS/Contract/page5.js"></script>
-    <script src="~/PdfJS/Contract/page6.js"></script>
-    <script src="~/PdfJS/Contract/conditions.js"></script> *@
+    <script src="~/PdfJS/Contract/page7.js"></script>
+    <script src="~/PdfJS/Contract/page8.js"></script>
+    <script src="~/PdfJS/Contract/page9.js"></script>
+    <script src="~/PdfJS/Contract/page10.js"></script>
+    <script src="~/PdfJS/Contract/page11.js"></script>
+    <script src="~/PdfJS/Contract/page12.js"></script>
     <!--Contract-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
     <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
@@ -1997,7 +1832,7 @@
                             console.log("تعدي عدد الساعات المسموح به");
                             diffDays += 1;
                         } else {
-                            diffHours = overtimeHours; 
+                            diffHours = overtimeHours;
                             console.log("لم يتعدي عدد الساعات المسموح به");
                         }
                     }
@@ -2008,10 +1843,10 @@
                             diffDays += 1;
                         }
                     }
-                    
-                } 
-                else 
-                { 
+
+                }
+                else
+                {
                     console.log("نهاية العقد لم تتجاوز الوقت المتوقع.");
                     if (remainingTime > 0) {
                         console.log("تم اضافة يوم اضافي لتعدي الوقت المحدد له .");
@@ -2088,11 +1923,12 @@
                     else {
                         console.log("CASE 4 ......")
                         display = diffDays - parseInt(expectedDays);
+                        roundedLateAddHours = 0;
                         hideSettlementSomeOptions("day");
                         isDays = true;
                         $("#AddOrLateHoursText").text("@localizer["LateDays"]");
                         caseSettelement=4;
-                    } 
+                    }
                     updateTimeDisplay(display,isDays);
                 }
 
@@ -2195,38 +2031,42 @@
             calculateAdditionalKM(enteredValue);
             $("#ContractSettlement_AdditionalKm").val(AdditionalKm);
         });
-        var CarCheckUp;
         function GetCheckUp() {
-            // Initialize an empty array to store the data
-            var checkUpData = [];
-            // Iterate over each table row
-            $(".tabel-data-checkbox-td").each(function () {
-                var $row = $(this).closest("tr"); // Get the closest <tr> element
-                // Extract data from the row
-                var notes = $row.find(".check-table-notes").val().trim();
-                var $label = $row.find(".Tires");
-                var dataEn = $label.data('en'); // Get the data-en attribute
-                var dataAr = $label.data('ar'); // Get the data-ar attribute
-                var isChecked = $row.find(".CheckUp").is(":checked");
-                var selectedReasonCheck = $row.find(".form-select").val(); // Get the selected value from the <select>
+             var checkUpData = [];
+             $(".tabel-data-checkbox-td").each(function () {
+                 var $row = $(this).closest("tr");
 
-                // Check if the checkbox is checked
-                if (isChecked) {
-                    // Create an object to store the extracted data
-                    var rowData = {
-                        reason: notes,
-                        enName: dataEn,
-                        arName: dataAr,
-                        reasonCheck: selectedReasonCheck // Add the selected value to the object
-                    };
+                 var notes = $row.find(".check-table-notes").val().trim();
+                 var $label = $row.find(".Tires");
+                 var dataEn = $label.data('en'); // الاسم بالإنجليزية
+                 var dataAr = $label.data('ar'); // الاسم بالعربية
+                 var isChecked = $row.find(".CheckUp").is(":checked");
 
-                    // Push the object into the array
-                    checkUpData.push(rowData);
-                    CarCheckUp = checkUpData;
-                    console.log("CarCheckUp", CarCheckUp);
-                }
-            });
-        }
+                 var $select = $row.find(".form-select");
+                 var selectedReasonCheckCode = $select.data('code'); // كود الفحص
+                 var selectedReasonCheckId = $select.val(); // رقم الفحص المختار
+                 var selectedOption = $select.find("option:selected");
+
+                 var selectedReasonCheckEnName = selectedOption.data('en') || selectedOption.text(); // الاسم الإنجليزي للفحص المختار
+                 var selectedReasonCheckArName = selectedOption.data('ar') || selectedOption.text(); // الاسم العربي للفحص المختار
+
+                 if (isChecked) {
+                     var rowData = {
+                         reason: notes,
+                         code: selectedReasonCheckCode,
+                         no: selectedReasonCheckId,
+                         enName: dataEn,
+                         arName: dataAr,
+                         reasonCheckEnName: selectedReasonCheckEnName,
+                         reasonCheckArName: selectedReasonCheckArName
+                     };
+                     checkUpData.push(rowData);
+                 }
+             });
+
+             console.log("CheckUp Data:", checkUpData);
+             return checkUpData; // إرجاع البيانات لاستخدامها في `ContractPage4`
+         }
 
     </script>
     <script>
@@ -2442,6 +2282,7 @@
         var ContractValueAfterDiscount = 0;
         var taxValue = 0;
         var fuelValue = 0;
+        var diffFuelConsume = 0;
         var TotalContract = 0;
         var ExpensesValue = 0;
         var compensationValue = 0;
@@ -2456,7 +2297,7 @@
             // غرامة التاخير
             console.log("settlementDay:",settlementDay)
             console.log("lateDaysToSettlement:",diffDays - parseInt(expectedDays))
-            var lateDaysToSettlement = diffDays - parseInt(expectedDays);
+            var lateDaysToSettlement = Math.max(0, diffDays - parseInt(expectedDays));
             var settelementRentValue = settlementDay * lateDaysToSettlement * parseFloat(rentalPricePerDay)
             console.log("settelementRentValue:",settelementRentValue)
             rentValueTotal = rentValue + settelementRentValue;
@@ -2505,7 +2346,7 @@
                 $("#ContractSettlement_MaxHours").val(0);
                 $("#ContractSettlement_ExtraHoursValue").val(0);
             }
-            
+
             GetDifferentFuelValue();
             // Additional KMs Value Total
             if (AdditionalKm != null && AdditionalKm.toString() != "" && AdditionalKm != undefined) {
@@ -2581,7 +2422,7 @@
             var AdditionalHour = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicHourMax));
 
             if (AdditionalHour > 0) {
-                AdditionalHoursValueTotal = 0; 
+                AdditionalHoursValueTotal = 0;
                 if (roundedLateAddHours == AdditionalHour) {
                     AdditionalHoursValueTotal = parseInt(AdditionalHour) * parseFloat(AdditionalHourValue);
                 } else {
@@ -2615,7 +2456,8 @@
             const fuelLevels = { 1: 1.0, 2: 0.75,  3: 0.5,  4: 0.25, 5: 0.0};
             const oldFuelPercentage = fuelLevels[oldStatusCodeFuel] || 0;
             const newFuelPercentage = fuelLevels[newStatusCodeFuel] || 0;
-            fuelValue = (oldFuelPercentage-newFuelPercentage) * fuelValueContract;
+            diffFuelConsume = oldFuelPercentage - newFuelPercentage;
+            fuelValue = diffFuelConsume * fuelValueContract;
             document.getElementById('FuelValue').textContent = fuelValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
@@ -2709,7 +2551,7 @@
             });
         }
     </script>
-    
+
     <!--Create Card Contract PDf-->
     <script>
         const CreateCardContract = async () => {
@@ -2733,7 +2575,7 @@
                   CONTRACT_NUMBER: contractNo,
                    images: {
                        background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractCard)",
-                       QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                       QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeAuthenticated)",
                    },
                };
 
@@ -2782,7 +2624,7 @@
                 // حساب تاريخ نهاية العقد بناءً على الوقت الحالي مع إضافة عدد الأيام إلى تاريخ البدء
                 var endDate = new Date();  // الحصول على التاريخ والوقت الحالي
                 endDate.setDate(startDate.getDate() + totalDaysNo);  // إضافة عدد الأيام إلى تاريخ البدء
-                endDate.setHours(new Date().getHours(), new Date().getMinutes()); 
+                endDate.setHours(new Date().getHours(), new Date().getMinutes());
 
                 // تنسيق التاريخ الميلادي لآخر تاريخ
                 var formattedEndDate = endDate.toLocaleDateString('ja-JP', options);
@@ -2808,8 +2650,8 @@
             const dataType = selectedOption.getAttribute("data-type"); // استخراج data-type
 
             const statuses = {
-                "1": { AR: "تم إغلاق العقد", EN: "Contract Closed" },
-                "2": { AR: "تم تعليق العقد", EN: "Contract Suspended" }
+                "1": { AR: "إغلاق العقد", EN: "Contract Closed" },
+                "2": { AR: "تعليق العقد", EN: "Contract Suspended" }
             };
 
             return statuses[dataType] || { AR: "حالة غير معروفة", EN: "Unknown Status" };
@@ -2818,7 +2660,8 @@
     <!--Create invoice -->
     <script>
         async function CreateInvoicePdf() {
-            const accountInvoiceNo = "@Model?.ContractSettlement?.CrCasRenterContractBasicNo";
+            const accountInvoiceNo = "@ViewBag.InvoiceAccount";
+            const contractNo = "@Model?.ContractSettlement?.CrCasRenterContractBasicNo";
             const canvas = document.getElementById("myCanvasInvoice");
             const dates = getFormattedDatesMiliadiAndHijri();
             var rentDailyValue= GetRentDailyValue();
@@ -2834,7 +2677,8 @@
             var advantagesValue = parseFloat('@Model?.ContractSettlement?.AdvantagesValue') || 0;
             const KMValue =parseFloat(@Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicKmValue)));
             const expectedDays = "@Model?.ContractSettlement?.CrCasRenterContractBasicExpectedRentalDays";
-            var lateDaysToSettlement = diffDays - parseInt(expectedDays);
+            var lateDaysToSettlement = Math.max(0, diffDays - parseInt(expectedDays));
+            var settelementRentValue = settlementDay * lateDaysToSettlement * rentDailyValue;
             const itemsData = [
                 {
                     arabic: "الإيجار",
@@ -2903,8 +2747,8 @@
                 {
                     arabic: "غرامة التأخير",
                     english: "late fee",
-                    value: caseSettelement === 4 ? rentDailyValue : (caseSettelement === 3 ? AdditionalHourValue : 0),
-                    number: caseSettelement === 4 ? lateDaysToSettlement*settlementDay : (caseSettelement === 3 ? roundedLateAddHours*settlementDay : 0),
+                    value: caseSettelement === 4 ? settelementRentValue : (caseSettelement === 3 ? AdditionalHoursValueTotal : 0),
+                    number: 1,
                     discount: discountInput,
                     vat: taxPercent,
                 }
@@ -2917,8 +2761,8 @@
                 DATE_AR:dates.hijriDate.ar,
                 DATE_EN: dates.miladiDate.en,
                 DATE_EN_LONG: dates.hijriDate.en,
-                CONTRACT_CREATE_AR: "تسوية عقد",
-                CONTRACT_CREATE_EN: "Settelement Contract",
+                CONTRACT_CREATE_AR: `تسوية عقد (${contractNo})`,
+                CONTRACT_CREATE_EN: `Settelement Contract (${contractNo})`,
                 TENANT_NAME_AR: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationArName)',
                 TENANT_NAME_EN: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasic5?.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName)',
                 CAR_DESCRIPTION_AR: '@Html.Raw(Model?.ContractSettlement?.CrCasRenterContractBasicCarSerailNoNavigation?.CrCasCarInformationConcatenateArName)',
@@ -2928,7 +2772,7 @@
                 images: {
                     background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageTaxInvoice)",
                     signature: "@Url.Content(user?.CrMasUserInformationSignature)",
-                    qr: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                    qr: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeAuthenticated)",
                     stamp: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
                 },
                 Serviceitems: processedData.Serviceitems,
@@ -3119,7 +2963,7 @@
                     images: {
                         background: background,
                         signature: "@Url.Content(user?.CrMasUserInformationSignature)",
-                        qr: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeSite)",
+                        qr: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeAuthenticated)",
                         stamp: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
                     },
                 };
@@ -3175,6 +3019,413 @@
                     };
             }
     </script>
+    <!--Create Contract PDf-->
+    <script>
+         // Page7
+        const ContractPage7 = async (canvas) => {
+              try {
+                    console.log("الصفحة السابعة بتحمل .....")
+                    var dateTimeNow = decodeHTMLEntities('@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")');
+                    var startDateExpected = "@Model?.ContractSettlement?.CrCasRenterContractBasicExpectedStartDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffK")";
+                    var dateTimeFromInput= document.getElementById("contract_real_endTime").value;
+                    var startDate = new Date(startDateExpected);
+                    var daysNo = totalDaysNo;
+                    const expectedDays = "@Model?.ContractSettlement?.CrCasRenterContractBasicExpectedRentalDays";
+                    var dateTimeFromInput = document.getElementById("contract_real_endTime").value;
+
+                    var inputDate = new Date(dateTimeFromInput); // تحويل المدخل إلى كائن تاريخ
+                    var nowDate = new Date(dateTimeNow); // تحويل الوقت الحالي إلى كائن تاريخ
+
+                    // إنشاء التاريخ النهائي باستخدام تاريخ المدخل ووقت الآن
+                    var endDate = new Date(inputDate.getFullYear(), inputDate.getMonth(),inputDate.getDate(),
+                                            nowDate.getHours(),  nowDate.getMinutes(), nowDate.getSeconds());
+                    
+                    // var endDate = new Date(startDate);
+                    // endDate.setDate(endDate.getDate() + daysNo);
+                    const miladiDate = new Date(dateTimeNow);
+                    const contractStatus = getSelectedContractStatus();
+                    var lateDaysToSettlement = Math.max(0, diffDays - parseInt(expectedDays));
+                    const dynamicData = {
+                        NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicTgaNo",
+                        CONTRACT_NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicNo",
+                        CONTRACT_DATE_AR: formatHijriDate(startDate,"ar"),
+                        CONTRACT_DATE_EN: formatHijriDate(startDate,"en"),
+                        CONTRACT_START_AR: formatHijriDate(startDate,"ar"),
+                        CONTRACT_START_EN: formatHijriDate(startDate,"en"),
+                        CONTRACT_END_AR: formatHijriDate(endDate,"ar"),
+                        CONTRACT_END_EN: formatHijriDate(endDate,"en"),
+                        DAYSNUMBER: daysNo,
+                        DATE_1: formatMiladiDate(startDate),
+                        TIME_1: formatTime(startDate),
+                        DATE_2: formatMiladiDate(startDate),
+                        TIME_2: formatTime(startDate),
+                        DATE_3: formatMiladiDate(endDate),
+                        TIME_3: formatTime(endDate),
+                        CONTRACT_STATUE_AR: contractStatus.AR,
+                        CONTRACT_STATUE_EN: contractStatus.EN,
+                        //  بنود التأجير
+                        Delivery_Branch_AR: decodeHTMLEntities("@ViewBag.ArBranch") || "",
+                        Delivery_Branch_EN: decodeHTMLEntities("@ViewBag.EnBranch") || "",
+                        Receiving_Branch_AR: decodeHTMLEntities("@Model?.CrCasBranchInformation?.CrCasBranchInformationArShortName") || "",
+                        Receiving_Branch_EN: decodeHTMLEntities("@Model?.CrCasBranchInformation?.CrCasBranchInformationEnShortName") || "",
+                        Delay_hours: roundedLateAddHours,
+                        Delay_days: lateDaysToSettlement,
+                        Extra_KM: parseInt(AdditionalKm),
+                        consumed_Fuel: diffFuelConsume,
+                        Total_actual_contract: TotalContract.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                        SIGNATURE_AR: decodeHTMLEntities("@user?.CrMasUserInformationArName"),
+                        SIGNATURE_EN: decodeHTMLEntities("@user?.CrMasUserInformationEnName"),
+                        images: {
+                              background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage7)",
+                              EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                              TENANT_SIGN: "@Url.Content(Model?.ContractSettlement?.CrCasRenterContractBasic5.CrCasRenterLessorNavigation.CrMasRenterInformationSignature)",
+                              QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeAuthenticated)",
+                              STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                              Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                      },
+                    };
+                    const loadedImages = await loadDynamicImages(dynamicData.images);
+                    const dataWithImages = { ...dynamicData, images: loadedImages };
+                    console.log("dataWithImages",dataWithImages);
+                    await DrawContractPage7(canvas, dataWithImages);
+              }
+              catch (error) {
+                  console.error("خطأ في إنشاء صفحة رقم 7 :", error);
+              }
+        };
+        function GetContractStatus() {
+            const settlementSelect = document.getElementById("Settlement-type");
+            const selectedOption = settlementSelect.options[settlementSelect.selectedIndex]; // جلب العنصر المحدد
+            const dataType = selectedOption.getAttribute("data-type"); // استخراج data-type
+            const statuses = {
+                "1": { AR: "مغلق", EN: "Closed" },
+                "2": { AR: "معلق", EN: "Suspended" }
+            };
+
+            return statuses[dataType] || { AR: "حالة غير معروفة", EN: "Unknown Status" };
+        }
+        //Page 8
+        const ContractPage8 = async (canvas) => {
+             try {
+                    console.log("الصفحة التامنة بتحمل .....")
+                    const imageArray = expensesArray;
+                    const extractedUrls = imageArray.map(item => item.url);
+                    const { AmountItems, StatementItems } = getTableDataExpenses();
+                    const dynamicData = {
+                        NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicTgaNo",
+                        CONTRACT_NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicNo",
+                        SIGNATURE_AR: decodeHTMLEntities("@user?.CrMasUserInformationArName"),
+                        SIGNATURE_EN: decodeHTMLEntities("@user?.CrMasUserInformationEnName"),
+                        images: {
+                            background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage8)",
+                            EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                            TENANT_SIGN: "@Url.Content(Model?.ContractSettlement?.CrCasRenterContractBasic5.CrCasRenterLessorNavigation.CrMasRenterInformationSignature)",
+                            QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeAuthenticated)",
+                            STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                            Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                            VisualImage1: extractedUrls[0],
+                            VisualImage2: extractedUrls[1],
+                            VisualImage3: extractedUrls[2],
+                            VisualImage4: extractedUrls[3],
+                        },
+                        // عناصر الجدول
+                        AmountItems: AmountItems,
+                        StatementItems: StatementItems,
+                    };
+
+                    const loadedImages = await loadDynamicImages(dynamicData.images);
+                    const dataWithImages = { ...dynamicData, images: loadedImages };
+                    console.log("dataWithImages", dataWithImages);
+                    await DrawContractPage8(canvas, dataWithImages);
+               }
+               catch (error) {
+                   console.error("خطأ في إنشاء صفحة رقم 8 :", error);
+               }
+        };
+        function getTableDataExpenses() {
+            const tableRows = document.querySelectorAll("#Expenses-Data-Table tbody tr:not(.total)");
+
+            let AmountItems = [];
+            let StatementItems = [];
+
+            tableRows.forEach(row => {
+                const textarea = row.querySelector(".check-table-notes");
+                const input = row.querySelector(".Table-inputs");
+
+                if (textarea && textarea.value.trim() !== "") {
+                    StatementItems.push({ content: textarea.value.trim() });
+                }
+
+                if (input && input.value.trim() !== "") {
+                    AmountItems.push({ content: input.value.trim() });
+                }
+            });
+
+            // الحصول على إجمالي المصروفات من العنصر المحدد
+            const totalElement = document.getElementById("TotalExpenses");
+            if (totalElement && totalElement.textContent.trim() !== "") {
+                AmountItems.push({ sum: totalElement.textContent.trim() });
+            }
+
+            return { AmountItems, StatementItems };
+        }
+        //Page 9
+        const ContractPage9 = async (canvas) => {
+             try {
+                    console.log("الصفحة التاسعة بتحمل .....")
+                    const imageArray = compensationArray;
+                    const extractedUrls = imageArray.map(item => item.url);
+                    const { AmountItems, StatementItems } = getTableDataCompensation();
+                    const dynamicData = {
+                        NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicTgaNo",
+                        CONTRACT_NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicNo",
+                        SIGNATURE_AR: decodeHTMLEntities("@user?.CrMasUserInformationArName"),
+                        SIGNATURE_EN: decodeHTMLEntities("@user?.CrMasUserInformationEnName"),
+                        images: {
+                            background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage9)",
+                            EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                            TENANT_SIGN: "@Url.Content(Model?.ContractSettlement?.CrCasRenterContractBasic5.CrCasRenterLessorNavigation.CrMasRenterInformationSignature)",
+                            QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeAuthenticated)",
+                            STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                            Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                            VisualImage1: extractedUrls[0],
+                            VisualImage2: extractedUrls[1],
+                            VisualImage3: extractedUrls[2],
+                            VisualImage4: extractedUrls[3],
+                        },
+                        // عناصر الجدول
+                        AmountItems: AmountItems,
+                        StatementItems: StatementItems,
+                    };
+
+                    const loadedImages = await loadDynamicImages(dynamicData.images);
+                    const dataWithImages = { ...dynamicData, images: loadedImages };
+                    console.log("dataWithImages", dataWithImages);
+                    await DrawContractPage9(canvas, dataWithImages);
+               }
+               catch (error) {
+                   console.error("خطأ في إنشاء صفحة رقم 9 :", error);
+               }
+        };
+        function getTableDataCompensation() {
+            const tableRows = document.querySelectorAll("#compensation-Data-Table tbody tr:not(.total)");
+
+            let AmountItems = [];
+            let StatementItems = [];
+
+            tableRows.forEach(row => {
+                const textarea = row.querySelector(".check-table-notes");
+                const input = row.querySelector(".Table-inputs");
+
+                if (textarea && textarea.value.trim() !== "") {
+                    StatementItems.push({ content: textarea.value.trim() });
+                }
+
+                if (input && input.value.trim() !== "") {
+                    AmountItems.push({ content: input.value.trim() });
+                }
+            });
+
+            // الحصول على إجمالي المصروفات من العنصر المحدد
+            const totalElement = document.getElementById("TotalCompensation");
+            if (totalElement && totalElement.textContent.trim() !== "") {
+                AmountItems.push({ sum: totalElement.textContent.trim() });
+            }
+
+            return { AmountItems, StatementItems };
+        }
+        //Page 10
+        const ContractPage10 = async (canvas) => {
+        try {
+            console.log("الصفحة العاشرة بتحمل .....")
+            const checkUpData = GetCheckUp(); // جلب البيانات من `GetCheckUp`
+
+            // تحويل البيانات إلى التنسيق المطلوب
+            const Inspection_Items = checkUpData.map(item => ({
+                arabic: item.arName,
+                english: item.enName,
+                textAlign: "right"
+            }));
+
+            const Inspection_Status = checkUpData.map(item => ({
+                arabic: item.reasonCheckArName,
+                english: item.reasonCheckEnName,
+                textAlign: "right"
+            }));
+
+            const Notes_Items = checkUpData.map(item => ({
+                content: item.reason || " "
+            }));
+            console.log("Inspection_Items",Inspection_Items)
+            console.log("Inspection_Status",Inspection_Status)
+            console.log("Notes_Items",Notes_Items)
+            const dynamicData = {
+                NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicTgaNo",
+                CONTRACT_NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicNo",
+                SIGNATURE_AR: decodeHTMLEntities("@user?.CrMasUserInformationArName"),
+                SIGNATURE_EN: decodeHTMLEntities("@user?.CrMasUserInformationEnName"),
+                images: {
+                   background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage10)",
+                   EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                   TENANT_SIGN: "@Url.Content(Model?.ContractSettlement?.CrCasRenterContractBasic5.CrCasRenterLessorNavigation.CrMasRenterInformationSignature)",
+                   QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeAuthenticated)",
+                   STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                   Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                },
+                Inspection_Items,  // عناصر الفحص
+                Inspection_Status, // حالة الفحص
+                Notes_Items     // الملاحظات
+            };
+
+            const loadedImages = await loadDynamicImages(dynamicData.images);
+            const dataWithImages = { ...dynamicData, images: loadedImages };
+            console.log("dataWithImages", dataWithImages);
+            await DrawContractPage10(canvas, dataWithImages);
+        }
+        catch (error) {
+                   console.error("خطأ في إنشاء صفحة رقم 10 :", error);
+               }
+        };
+
+        //Page 11
+        const ContractPage11 = async (canvas) => {
+        try {
+             console.log("الصفحة الاحدى عشر بتحمل .....")
+             const ExtractedUrls = imgCheckUpArray.map(item => item.url);
+             console.log("📸 صور الفحص المحملة:", ExtractedUrls);
+             const dynamicData = {
+                NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicTgaNo",
+                CONTRACT_NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicNo",
+                SIGNATURE_AR: decodeHTMLEntities("@user?.CrMasUserInformationArName"),
+                SIGNATURE_EN: decodeHTMLEntities("@user?.CrMasUserInformationEnName"),
+                images: {
+                     background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage11)",
+                     EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                     TENANT_SIGN: "@Url.Content(Model?.ContractSettlement?.CrCasRenterContractBasic5.CrCasRenterLessorNavigation.CrMasRenterInformationSignature)",
+                     QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeAuthenticated)",
+                     STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                     Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                     defaultTechnicalImage: "/images/common/Frame 2608609.png",
+                     TechnicalImage: imgTechnicalCheckup,
+                     VisualImage1: ExtractedUrls[0] || null,
+                     VisualImage2: ExtractedUrls[1] || null,
+                     VisualImage3: ExtractedUrls[2] || null,
+                     VisualImage4: ExtractedUrls[3] || null,
+                },
+             };
+
+             const loadedImages = await loadDynamicImages(dynamicData.images);
+             const dataWithImages = { ...dynamicData, images: loadedImages };
+             console.log("dataWithImages", dataWithImages);
+             await DrawContractPage11(canvas, dataWithImages);
+        }
+        catch (error) {
+                   console.error("خطأ في إنشاء صفحة رقم 11 :", error);
+               }
+        };
+
+        //Page 12
+        const ContractPage12 = async (canvas) => {
+        try {
+                console.log("الصفحة الثانية عشر بتحمل .....")
+               
+                const ExtractedUrls = imgCheckUpArray.map(item => item.url);
+                console.log("📸 صور الفحص المحملة:", ExtractedUrls);
+                const dynamicData = {
+                NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicTgaNo",
+                CONTRACT_NUMBER: "@Model?.ContractSettlement?.CrCasRenterContractBasicNo",
+                SIGNATURE_AR: decodeHTMLEntities("@user?.CrMasUserInformationArName"),
+                SIGNATURE_EN: decodeHTMLEntities("@user?.CrMasUserInformationEnName"),
+                images: {
+                     background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage12)",
+                     EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                     TENANT_SIGN: "@Url.Content(Model?.ContractSettlement?.CrCasRenterContractBasic5.CrCasRenterLessorNavigation.CrMasRenterInformationSignature)",
+                     QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeAuthenticated)",
+                     STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                     Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)",
+                     VisualImage1: ExtractedUrls[4] || null,
+                     VisualImage2: ExtractedUrls[5] || null,
+                     VisualImage3: ExtractedUrls[6] || null,
+                     VisualImage4: ExtractedUrls[7] || null,
+                     VisualImage5: ExtractedUrls[8] || null,
+                     VisualImage6: ExtractedUrls[9] || null,
+                    },
+                };
+
+                const loadedImages = await loadDynamicImages(dynamicData.images);
+                const dataWithImages = { ...dynamicData, images: loadedImages };
+                console.log("dataWithImages", dataWithImages);
+                await DrawContractPage12(canvas, dataWithImages);
+        }
+        catch (error) {
+                   console.error("خطأ في إنشاء صفحة رقم 12 :", error);
+               }
+        };
+    </script>
+        <!--handle Create Contract Pdf-->
+    <script>
+            // دالة لدمج كل الصفحات وتحويلها إلى PDF
+            const CreateContractPdf = async () => {
+                console.log("⏳ بدء إنشاء الصفحات...");
+                // الصفحات من 7 إلى 12
+                const canvas7 = document.getElementById("myCanvasPage7");
+                const canvas8 = document.getElementById("myCanvasPage8");
+                const canvas9 = document.getElementById("myCanvasPage9");
+                const canvas10 = document.getElementById("myCanvasPage10");
+                const canvas11 = document.getElementById("myCanvasPage11");
+                const canvas12 = document.getElementById("myCanvasPage12");
+
+                // مصفوفة الـ canvas التي سيتم إضافتها
+                const canvasArray = [];
+
+                // تنفيذ الدوال الخاصة بكل صفحة
+                console.log("⏳ بدء إنشاء الصفحة 7...");
+                await ContractPage7(canvas7);
+                console.log("✅ صفحة 1 تم إنشاؤها بنجاح.");
+                canvasArray.push(canvas7);  // إضافة الصفحة 7 إذا تم إنشاؤها بنجاح
+
+                if ($("#expenses-check").prop("checked")) {
+                    console.log("⏳ بدء إنشاء الصفحة 8...");
+                    await ContractPage8(canvas8);
+                    console.log("✅ صفحة 8 تم إنشاؤها بنجاح.");
+                    canvasArray.push(canvas8); // إضافة الصفحة 8 إذا تم إنشاؤها بنجاح
+                }
+                
+                const CompensationSelected = GetCompensationSelect();
+                if(CompensationSelected){
+                    console.log("⏳ بدء إنشاء الصفحة 9...");
+                    await ContractPage9(canvas9);
+                    console.log("✅ صفحة 9 تم إنشاؤها بنجاح.");
+                    canvasArray.push(canvas9);  // إضافة الصفحة 9 إذا تم إنشاؤها بنجاح
+                }
+                
+
+                console.log("⏳ بدء إنشاء الصفحة 10...");
+                await ContractPage10(canvas10);
+                console.log("✅ صفحة 10 تم إنشاؤها بنجاح.");
+                canvasArray.push(canvas10);  // إضافة الصفحة 10 إذا تم إنشاؤها بنجاح
+
+                console.log("⏳ بدء إنشاء الصفحة 11...");
+                await ContractPage11(canvas11);
+                console.log("✅ صفحة 11 تم إنشاؤها بنجاح.");
+                canvasArray.push(canvas11);  // إضافة الصفحة 11 إذا تم إنشاؤها بنجاح
+
+                console.log("⏳ بدء إنشاء الصفحة 12...");
+                if(imgCheckUpArray.length>4){
+                    await ContractPage12(canvas12);
+                    console.log("✅ صفحة 12 تم إنشاؤها بنجاح.");
+                    canvasArray.push(canvas12);  // إضافة الصفحة 12 إذا تم إنشاؤها بنجاح
+                }
+                else{
+                   console.log("✅ صفحة 12 لم يتم إنشاء لعدم وجود مزيد من الصور.");
+                }
+
+                // إنشاء الـ PDF من الصفحات
+                console.log("⏳ بدء إنشاء ملف PDF...");
+                await generateContractPdf(canvasArray, "SavePdfContract");
+                console.log("✅ تم الانتهاء من إنشاء ملف العقد.");
+            };
+    </script>
     <script>
         // submit Form
         document.addEventListener('DOMContentLoaded', function () {
@@ -3200,8 +3451,11 @@
                                 await CreateReceiptPdf();
                                 console.log("✅ الإيصال تم إنشاؤه بنجاح.");
                             }
-                       
-
+                            console.log("⏳ بدء إنشاء العقد...");
+                            await CreateContractPdf();
+                            console.log("✅ العقد تم إنشاؤه بنجاح.");
+                            console.log("كل العمليات انتهت، يتم الآن إرسال النموذج.");
+                            console.log("🚀 يتم الآن إرسال النموذج فعليًا...");
 
                             document.getElementById('ContractSettlement_PaymentMethod').disabled = false;
                             document.getElementById('ContractSettlement_SalesPoint').disabled = false;
