@@ -26,9 +26,8 @@ namespace Bnan.Ui.ViewModels.CAS
         public bool? CrMasUserContractValidityMaintenance { get; set; } = false;
         public bool? CrMasUserContractValidityFbrake { get; set; } = false;
         public bool? CrMasUserContractValidityBbrake { get; set; } = false;
-
-        [Range(0, 100, ErrorMessage = "NumberBetween0To100")]
         public decimal CrMasUserContractValidityDiscountRate { get; set; } = 0;
+        public string? DiscountRateString { get; set; }
 
         [Range(0, 500, ErrorMessage = "NumberBetween0To500")]
         public int CrMasUserContractValidityKm { get; set; } = 0;

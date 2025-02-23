@@ -4,7 +4,6 @@ using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
@@ -149,7 +148,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
                     return RedirectToAction("Index", "LessorImages");
                 }
 
-            };
+            }
+            ;
             _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             return RedirectToAction("Index", "LessorImages");
         }
@@ -171,6 +171,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
                     ("CrMasLessorImageTaxInvoice", model.FileCrMasLessorImageTaxInvoice),
                     ("CrMasLessorImageReceipt", model.FileCrMasLessorImageReceipt),
                     ("CrMasLessorImageExchange", model.FileCrMasLessorImageExchange),
+                    ("CrMasLessorImageSales", model.FileCrMasLessorImageSales),
                     ("CrMasLessorImageContractPage1", model.FileCrMasLessorImageContractPage1),
                     ("CrMasLessorImageContractPage2", model.FileCrMasLessorImageContractPage2),
                     ("CrMasLessorImageContractPage3", model.FileCrMasLessorImageContractPage3),
@@ -194,7 +195,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
                 };
             return files;
         }
-        
+
         public IActionResult SuccesssMessageForLessorImages()
         {
             _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });

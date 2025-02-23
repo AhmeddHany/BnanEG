@@ -17,7 +17,7 @@
 
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
-        <form asp-area="CAS" asp-controller="Employees" asp-action="Edit" class="needs-validation" novalidate id="myForm">
+        <form asp-area="CAS" asp-controller="Employees" asp-action="Edit" class="needs-validation" novalidate id="msform">
             <input id="CrMasUserInformationStatus" asp-for="CrMasUserInformationStatus" hidden />
             <input id="CrMasUserInformationCode" asp-for="CrMasUserInformationCode" hidden />
             <div class="row">
@@ -31,7 +31,7 @@
                                 <button type="button" class="custom-img-btn" id="ChangePassword" onclick="ResetPassword()">
                                     <img src="~/CasSys/images/Frame (5).svg" />
                                 </button>
-                                <button type="submit" class="custom-img-btn" id="SaveEdit">
+                                <button type="button" class="custom-img-btn" id="saveBtn">
                                     <img src="~/CasSys/images/save.svg" />
                                 </button>
                                 <button type="button" class="custom-img-btn" id="HoldBtn" data-bs-toggle="modal" data-bs-target="#Stop-Modal">
@@ -128,7 +128,7 @@
                                                              <i class="fa-solid fa-star-of-life RequirdStar"></i> 
                                                         </label>
                                                         <div class="input-group has-validation">
-                                                            <input type="tel" class="form-control inputs tel-input" id="CrMasUserInformationMobileNo" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10" required>
+                                                            <input type="tel" class="form-control inputs tel-input" id="CrMasUserInformationMobileNo" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="15" required>
                                                             <select class="input-group-text select-style counterCode" asp-for="CrMasUserInformationCallingKey">
                                                                 @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
                                                                 {
@@ -185,11 +185,14 @@
                                             <div class="container-fluid ">
                                                 <div class="row">
                                                     <div class="col-md-6">
-                                                        <label for="CrMasUserInformationCreditLimit" class="form-label">@localizer["CreditLimitCAS"]<i class="fa-solid fa-star-of-life RequirdStar"></i></label>
-                                                        <input type="text" id="CrMasUserInformationCreditLimit" class="form-control inputs" asp-for="CrMasUserInformationCreditLimit" maxlength="10" min="0" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                                                        <label for="formattedCreditLimit" class="form-label">@localizer["CreditLimitCAS"]<i class="fa-solid fa-star-of-life RequirdStar"></i></label>
+                                                        <input type="text" id="CreditLimitString" name="CreditLimitString" class="form-control inputs"
+                                                               value="@(Model?.CrMasUserInformationCreditLimit?.ToString("N2", CultureInfo.InvariantCulture))"
+                                                               oninput="formatNumberWithCommas(this)">
+
                                                         <div class="invaild">
-                                                            <div class="invalid-feedback zero-feedback">
-                                                                <span asp-validation-for="@Model.CrMasUserInformationCreditLimit" class="text-danger"></span>
+                                                            <div class="invalid-feedback">
+                                                                <span asp-validation-for="@Model.CreditLimitString" class="text-danger"></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -347,11 +350,12 @@
     <script>
         function updateUserStatus(status) {
             var code = "@Model.CrMasUserInformationCode";
+            var reasons = document.getElementById("CrMasUserInformationReasons").value;
             return new Promise((resolve, reject) => {
                 $.ajax({
                     type: "POST",
                     url: "/CAS/Employees/EditStatus",
-                    data: { status: status, code: code },
+                    data: { status: status, code: code,reasons:reasons },
                     success: function (result) {
                         toastr.options = { "positionClass": "@localizer["toastPostion"]" };
 
@@ -376,6 +380,19 @@
                 });
             });
         }
+        $(document).ready(function () {
+            $("#saveBtn").on("click", function (event) {
+                if (!$("#msform").valid()) { 
+                    event.preventDefault();
+                    return;
+                }
+                $(this).prop("disabled", true);
+                $("#min-loader").removeClass("d-none");
+                setTimeout(() => {
+                    $("#msform").submit();
+                }, 500);
+            });
+        });
     </script>
     <script>
         let isDeleted = false;
@@ -609,6 +626,29 @@
         function removeInvalidChars(input) {
             input.value = input.value.replace(/[^A-Za-z0-9]/g, '');
         }
+        function formatNumberWithCommas(input) {
+            let value = input.value.replace(/,/g, ''); // إزالة الفواصل القديمة
+            value = value.replace(/[^0-9.]/g, ''); // السماح فقط بالأرقام والعلامة العشرية
+
+            let parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+            if (value.startsWith(".")) {
+                value = "0" + value;
+            }
+            if (parts.length === 2) {
+                parts[1] = parts[1].substring(0, 2); // السماح فقط برقمين بعد العلامة العشرية
+            }
+
+            let integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            let decimalPart = parts.length > 1 ? "." + parts[1] : "";
+
+            input.value = integerPart + decimalPart;
+        }
+
+
+
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {

@@ -75,7 +75,7 @@
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="input-group">
-                                                                <input type="tel" class="form-control inputs tel-input" id="phone" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                                                <input type="tel" class="form-control inputs tel-input" id="phone" asp-for="CrMasUserInformationMobileNo" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                                                 <select class="input-group-text select-style counterCode" asp-for="CrMasUserInformationCallingKey">
                                                                     @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
                                                                     {
@@ -199,7 +199,7 @@
 
             </div>
         </form>
-        <a href="~/CasSys/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+        <a href="/CAS/Home/Index" data-bs-toggle="tooltip" data-bs-placement="top"
            data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
            class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
     </div>
@@ -250,7 +250,10 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/CasSys/scripts/signature.js"></script>
-
+    <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
     <script>
         const changeProfileBtn = document.getElementById('change-profile-btn');
         const ProfilePhotoInput = document.getElementById('Profile-photo-input');

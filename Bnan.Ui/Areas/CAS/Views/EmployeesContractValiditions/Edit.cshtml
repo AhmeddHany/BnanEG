@@ -509,23 +509,23 @@
                                             <div class="col-md-7">
                                                 <div class="row mb-3">
                                                     <div class="col-xl-3">
-                                                        <label asp-for="CrMasUserContractValidityDiscountRate" class="form-label">
+                                                        <label for="DiscountRateString" class="form-label">
                                                             @localizer["CrMasUserContractValidityDiscountRate"]
                                                         </label>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input class="form-control inputs text-center"
                                                                type="text"
-                                                               asp-for="CrMasUserContractValidityDiscountRate"
+                                                               value="@(Model?.CrMasUserContractValidityDiscountRate.ToString("N2", CultureInfo.InvariantCulture))" id="DiscountRateString" name="DiscountRateString"
                                                                maxlength="5"
                                                                max="100">
-                                                        <span asp-validation-for="CrMasUserContractValidityDiscountRate" class="text-danger"></span>
+                                                        <span asp-validation-for="DiscountRateString" class="text-danger"></span>
                                                     </div>
                                                 </div>
 
                                                 <div class="row mb-3">
                                                     <div class="col-xl-3">
-                                                        <label asp-for="CrMasUserContractValidityKm" class="form-label">
+                                                        <label for="CrMasUserContractValidityKm" class="form-label">
                                                             @localizer["CrMasUserContractValidityKm"]
                                                         </label>
                                                     </div>
@@ -541,7 +541,7 @@
 
                                                 <div class="row mb-3">
                                                     <div class="col-xl-3">
-                                                        <label asp-for="CrMasUserContractValidityHour" class="form-label">
+                                                        <label for="CrMasUserContractValidityHour" class="form-label">
                                                             @localizer["CrMasUserContractValidityHour"]
                                                         </label>
                                                     </div>
@@ -570,21 +570,33 @@
 </div>
 @section scripts {
     <script>
-        $(document).ready(function () {
-            var checkboxs = document.querySelectorAll("input[type='checkbox']");
-            checkboxs.forEach(function (checkbox) {
-                // التحقق إذا كان الـ checkbox محددًا أم لا عند التحميل
-                checkbox.checked = checkbox.checked !== null ? checkbox.checked : false;
-            });
-        });
+        // $(document).ready(function () {
+        //     var checkboxs = document.querySelectorAll("input[type='checkbox']");
+        //     checkboxs.forEach(function (checkbox) {
+        //         // التحقق إذا كان الـ checkbox محددًا أم لا عند التحميل
+        //         checkbox.checked = checkbox.checked !== null ? checkbox.checked : false;
+        //     });
+        // });
 
-        $(document).on("click", "[type='checkbox']", function (e) {
-            // تحديث قيمة الـ checkbox عند التحديد أو الإلغاء
-            if (this.checked) {
-                $(this).val("true"); // حددها كـ true عند التحديد
-            } else {
-                $(this).val("false"); // حددها كـ false عند الإلغاء
-            }
+        // $(document).on("click", "[type='checkbox']", function (e) {
+        //     // تحديث قيمة الـ checkbox عند التحديد أو الإلغاء
+        //     if (this.checked) {
+        //         $(this).val("true"); // حددها كـ true عند التحديد
+        //     } else {
+        //         $(this).val("false"); // حددها كـ false عند الإلغاء
+        //     }
+        // });
+        $(document).ready(function () {
+            $("form").on("submit", function () {
+                $("input[type='checkbox']").each(function () {
+                    if (!this.checked) {
+                        // إضافة حقل مخفي بنفس الاسم وإعطائه قيمة false
+                        $(this).after($('<input type="hidden">').attr("name", this.name).val("false"));
+                    } else {
+                        $(this).val("true"); // التأكد أن القيمة المرسلة عند التحديد هي true
+                    }
+                });
+            });
         });
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -599,10 +611,10 @@
         });
         document.addEventListener('DOMContentLoaded', () => {
             // الحصول على حقل الخصم
-            const discountRateInput = document.querySelector('input[name="CrMasUserContractValidityDiscountRate"]');
+            const discountRateInput = document.querySelector('input[name="DiscountRateString"]');
 
             // الحصول على الحقول الأخرى التي تقبل أعداد صحيحة فقط
-            const integerInputs = document.querySelectorAll('input[type="text"]:not([name="CrMasUserContractValidityDiscountRate"])');
+            const integerInputs = document.querySelectorAll('input[type="text"]:not([name="DiscountRateString"])');
 
             // السماح فقط بالأرقام العشرية لحقل الخصم
             discountRateInput.addEventListener('input', () => {
@@ -641,7 +653,7 @@
             inputs.forEach(input => {
                 input.addEventListener('input', () => {
                     // السماح فقط بالأرقام والنقطة لحقل الخصم
-                    if (input.name === "CrMasUserContractValidityDiscountRate") {
+                    if (input.name === "DiscountRateString") {
                         input.value = input.value.replace(/[^0-9.]/g, ''); // يسمح بالأرقام والنقطة فقط
                     } else {
                         input.value = input.value.replace(/[^0-9]/g, ''); // السماح بالأرقام فقط
@@ -649,7 +661,7 @@
                 });
 
                 input.addEventListener('blur', () => {
-                    if (input.name === "CrMasUserContractValidityDiscountRate") {
+                    if (input.name === "DiscountRateString") {
                         // إذا انتهى الإدخال بنقطة (مثل 99.)
                         if (input.value.endsWith('.')) {
                             input.value = input.value.slice(0, -1); // إزالة النقطة

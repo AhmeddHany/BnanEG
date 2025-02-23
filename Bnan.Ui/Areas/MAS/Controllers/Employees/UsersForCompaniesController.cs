@@ -157,7 +157,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddUser(CompanyUserVM model,string WelcomeCardMessage)
+        public async Task<IActionResult> AddUser(CompanyUserVM model, string WelcomeCardMessage)
         {
 
             var pageNumber = SubTasks.CrMasUserInformationFromMASToCAS;
@@ -270,7 +270,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             }
         }
         [HttpPost]
-        public async Task<string> EditStatus(string status, string code)
+        public async Task<string> EditStatus(string status, string code, string reasons)
         {
 
             var user = await _userManager.GetUserAsync(User);
@@ -283,6 +283,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 EditedUser.CrMasUserInformationStatus = status;
+                EditedUser.CrMasUserInformationReasons = reasons;
                 _unitOfWork.CrMasUserInformation.Update(EditedUser);
                 await _unitOfWork.CompleteAsync();
                 await SaveTracingForUserChange(EditedUser, status);

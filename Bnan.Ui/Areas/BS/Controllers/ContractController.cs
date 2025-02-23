@@ -7,14 +7,11 @@ using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.BS.CreateContract;
 using Bnan.Ui.ViewModels.CAS;
-using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
-using System.ComponentModel;
 using System.Globalization;
 
 namespace Bnan.Ui.Areas.BS.Controllers
@@ -91,13 +88,13 @@ namespace Bnan.Ui.Areas.BS.Controllers
             // Transform data based on culture
             var nationalitiesArray = Nationailties.Select(c => new
             {
-                textAr = c.CrMasSupRenterNationalitiesArName ,
+                textAr = c.CrMasSupRenterNationalitiesArName,
                 textEn = c.CrMasSupRenterNationalitiesEnName, // الاسم العربي أو الإنجليزي
                 value = c.CrMasSupRenterNationalitiesCode, // كود الجنسية
                 naqlGCC = c.CrMasSupRenterNationalitiesNaqlGcc // إضافة العمود الإضافي (مثلاً CrMasSupRenterNationalitiesNaqlGcc)
             }).ToList();
-            var citiesArray = Cities.Select(c => new { textAr = c.CrMasSupPostCityConcatenateArName ,textEn = c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode }).ToList();
-            var workplacesArray = Workplaces.Select(c => new { textAr =  c.CrMasSupRenterEmployerArName, textEn = c.CrMasSupRenterEmployerEnName, value = c.CrMasSupRenterEmployerCode }).ToList();
+            var citiesArray = Cities.Select(c => new { textAr = c.CrMasSupPostCityConcatenateArName, textEn = c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode }).ToList();
+            var workplacesArray = Workplaces.Select(c => new { textAr = c.CrMasSupRenterEmployerArName, textEn = c.CrMasSupRenterEmployerEnName, value = c.CrMasSupRenterEmployerCode }).ToList();
 
             DateTime year = DateTime.Now;
             var y = year.ToString("yy");
@@ -187,7 +184,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var pdfContract = await SavePdfAsync(SavePdfContract, lessorCode, branch.CrCasBranchInformationCode, basicContractNo, "BnanContract");
 
             contractInfo.SourceCode = "10";//Static Data
-            var basicContract = await AddRenterContractBasicAsync(lessorCode, branch, basicContractNo, contractInfo, userLogin, pdfContract , sectorCodeForRenter);
+            var basicContract = await AddRenterContractBasicAsync(lessorCode, branch, basicContractNo, contractInfo, userLogin, pdfContract, sectorCodeForRenter);
             if (basicContract == null)
             {
                 await RemovePdfs(new[] { pdfContract });
@@ -245,7 +242,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             {
                 if (StaticContractCardImg != null) await WhatsAppServicesExtension.SendMediaAsync(userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ", lessorCode, StaticContractCardImg, "CreateContractCard.png");
                 var pdfDictionaryBase64 = GetPdfDictionaryBase64(SavePdfContract, SavePdfInvoice, SavePdfReceipt, amountPaid);
-                await SendPdfsToWhatsAppAsync(pdfDictionaryBase64, lessorCode,contractInfo.AccountReceiptNo,contractInfo.InitialInvoiceNo, basicContract.CrCasRenterContractBasicNo,
+                await SendPdfsToWhatsAppAsync(pdfDictionaryBase64, lessorCode, contractInfo.AccountReceiptNo, contractInfo.InitialInvoiceNo, basicContract.CrCasRenterContractBasicNo,
                                               userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, contractInfo.RenterInfo.CrMasRenterInformationArName, contractInfo.RenterInfo.CrMasRenterInformationEnName);
                 _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
@@ -281,7 +278,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             return condition ? await SavePdfAsync(savePdf, lessorCode, branchCode, receiptNo, type) : string.Empty;
         }
 
-        private async Task<bool> SendPdfsToWhatsAppAsync(Dictionary<string, string> pdfDictionary,string lessorCode ,string receiptNo, string invoiceNo,string contractNo, string toNumber, string renterArName, string renterEnName)
+        private async Task<bool> SendPdfsToWhatsAppAsync(Dictionary<string, string> pdfDictionary, string lessorCode, string receiptNo, string invoiceNo, string contractNo, string toNumber, string renterArName, string renterEnName)
         {
             if (pdfDictionary != null)
             {
@@ -293,9 +290,10 @@ namespace Bnan.Ui.Areas.BS.Controllers
                     string message = WhatsupExtension.GetMessage(documentType, renterArName, renterEnName);
                     if (documentType == "Receipt" && !string.IsNullOrEmpty(pdf)) fileNo = receiptNo;
                     else if (documentType == "Invoice" && !string.IsNullOrEmpty(pdf)) fileNo = invoiceNo;
-                    else if (documentType == "Contract"&&!string.IsNullOrEmpty(pdf)) fileNo = contractNo;
+                    else if (documentType == "Contract" && !string.IsNullOrEmpty(pdf)) fileNo = contractNo;
                     if (!string.IsNullOrEmpty(fileNo)) await WhatsAppServicesExtension.SendMediaAsync(toNumber, message, lessorCode, pdf, $"{fileNo}.pdf");
-                };
+                }
+                ;
                 return true;
             }
             return false;
@@ -324,7 +322,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 contractInfo.DaysNo, contractInfo.UserAddHours, contractInfo.UserAddKm, contractInfo.CurrentMeter, contractInfo.OptionTotal,
                 contractInfo.AdditionalTotal, contractInfo.ContractValueAfterDiscount, contractInfo.DiscountValue, contractInfo.ContractValueBeforeDiscount,
                 contractInfo.TaxValue, contractInfo.TotalContractAmount, userLogin.CrMasUserInformationCode, contractInfo.OutFeesTmm,
-                contractInfo.UserDiscount, contractInfo.AmountPayed, ContractPdf,contractInfo.PolicyCode,contractInfo.SourceCode, contractInfo.RenterReasons);
+                contractInfo.UserDiscount, contractInfo.AmountPayed, ContractPdf, contractInfo.PolicyCode, contractInfo.SourceCode, contractInfo.RenterReasons);
         }
 
         private async Task<CrCasAccountReceipt> AddAccountReceiptAsync(CrCasRenterContractBasic basicContract, string lessorCode, string sectorCode, CrCasBranchInformation branch,
@@ -727,7 +725,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             string pathSignature = string.Empty;
             if (renter != null) return false;
 
-            
+
             // Handle signature saving
             if (!string.IsNullOrEmpty(renterVM.CrMasRenterInformationSignature))
             {
@@ -962,10 +960,10 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var carVM = _mapper.Map<CarInfomationVM>(carInfo);
 
             // الحصول على جميع البيانات المطلوبة دفعة واحدة
-            var fuel =await _unitOfWork.CrMasSupCarFuel.FindAsync(x => x.CrMasSupCarFuelCode == carInfo.CrCasCarInformationFuel);
+            var fuel = await _unitOfWork.CrMasSupCarFuel.FindAsync(x => x.CrMasSupCarFuelCode == carInfo.CrCasCarInformationFuel);
             var cvt = await _unitOfWork.CrMasSupCarCvt.FindAsync(x => x.CrMasSupCarCvtCode == carInfo.CrCasCarInformationCvt);
             var oil = await _unitOfWork.CrMasSupCarOil.FindAsync(x => x.CrMasSupCarOilCode == carInfo.CrCasCarInformationOil);
-            var registration =await _unitOfWork.CrMasSupCarRegistration.FindAsync(x => x.CrMasSupCarRegistrationCode == carInfo.CrCasCarInformationRegistration);
+            var registration = await _unitOfWork.CrMasSupCarRegistration.FindAsync(x => x.CrMasSupCarRegistrationCode == carInfo.CrCasCarInformationRegistration);
 
             // استعلامات الصيانة دفعة واحدة
             var maintenances = await _unitOfWork.CrCasCarDocumentsMaintenance.FindAllAsync(x =>
@@ -988,7 +986,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             carVM.RegisterationEn = registration?.CrMasSupCarRegistrationEnName;
 
             // استخراج التواريخ من الصيانة
-            carVM.ChangeOilDate = GetMaintenanceRecord(maintenanceDocs.ToList(), "13", "131").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture);
+            carVM.ChangeOilDate = GetMaintenanceRecord(maintenanceDocs.ToList(), "13", "131").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
             carVM.EndDrivinglicence = GetMaintenanceRecord(maintenanceDocs, "12", "120").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
             carVM.EndPeriodicInspection = GetMaintenanceRecord(maintenanceDocs, "12", "123").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
             carVM.TiresDate = GetMaintenanceRecord(maintenanceDocs, "13", "130").CrCasCarDocumentsMaintenanceEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
@@ -1148,12 +1146,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var userLogin = await _userManager.GetUserAsync(User);
             var lessorCode = userLogin.CrMasUserInformationLessor;
             var Renter = await _unitOfWork.CrMasRenterInformation.FindAsync(x => x.CrMasRenterInformationId == renterId);
-            
+
             if (Renter != null && !string.IsNullOrEmpty(img))
             {
                 string foldername = $"{"images\\Bnan\\Renters"}\\{Renter.CrMasRenterInformationId}";
                 string fileName = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss");
-                var path = await FileExtensions.SaveSigntureImage(_hostingEnvironment, img, Renter.CrMasRenterInformationSignature, foldername,fileName);
+                var path = await FileExtensions.SaveSigntureImage(_hostingEnvironment, img, Renter.CrMasRenterInformationSignature, foldername, fileName);
                 if (!string.IsNullOrEmpty(path) && await _ContractServices.UpdateRenterSignture(Renter.CrMasRenterInformationId, path) && await _unitOfWork.CompleteAsync() > 0) return Json(path);
             }
             return Json(null);

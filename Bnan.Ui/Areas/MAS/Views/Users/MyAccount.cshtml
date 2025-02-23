@@ -22,7 +22,7 @@
                                 <h3>@localizer["MyAccount"]</h3>
                             </div>
                             <div class="col-md-6 save-col">
-                                <button type="submit" class="custom-img-btn">
+                                <button type="button" class="custom-img-btn" id="saveBtn">
                                     <img src="~/MasSystem/images/save.svg" />
                                 </button>
                             </div>
@@ -68,7 +68,7 @@
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="input-group">
-                                                                <input type="tel" class="form-control inputs tel-input" id="phone" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                                                <input type="tel" class="form-control inputs tel-input" id="phone" asp-for="CrMasUserInformationMobileNo" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                                                 <select class="input-group-text select-style counterCode" asp-for="CrMasUserInformationCallingKey">
                                                                     @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
                                                                     {
@@ -181,7 +181,7 @@
 
             </div>
         </form>
-        <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+        <a asp-area="MAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
            data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
            class="new-Page-icon"><img src="~/MasSystem/images/back to main.svg" alt="man"></a>
     </div>
@@ -236,6 +236,10 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/MasSystem/js/signature.js"></script>
+    <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
     <script>
         const changeProfileBtn = document.getElementById('change-profile-btn');
         const ProfilePhotoInput = document.getElementById('Profile-photo-input');
@@ -299,19 +303,16 @@
         });
     </script>
     <script>
-       $(document).ready(function () {
-            $("#msform").on("submit", function (event) {
-                if (!$("#msform").valid()) {
-                    event.preventDefault(); // منع الإرسال إذا لم يكن التحقق ناجحًا
+        $(document).ready(function () {
+            $("#saveBtn").on("click", function (event) {
+                 if (!$("#msform").valid()) {
+                    event.preventDefault(); 
                     return;
                 }
-
-                // إظهار اللودر قبل الإرسال
+                $(this).prop("disabled", true);
                 $("#min-loader").removeClass("d-none");
-
-                // إرسال الفورم بعد تأخير قصير لضمان ظهور اللودر
                 setTimeout(() => {
-                    this.submit();
+                     $("#msform").submit();
                 }, 500);
             });
         });

@@ -13,8 +13,9 @@ namespace Bnan.Ui.ViewModels.CAS.Employees
         public string? CrMasUserInformationArName { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrMasUserInformationEnName { get; set; }
-        [Required(ErrorMessage = "requiredFiled")]
         public decimal? CrMasUserInformationCreditLimit { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
+        public string? CreditLimitString { get; set; }
         public int? CrMasUserInformationCreditDaysLimit { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrMasUserInformationTasksArName { get; set; }
@@ -22,7 +23,6 @@ namespace Bnan.Ui.ViewModels.CAS.Employees
         public string? CrMasUserInformationTasksEnName { get; set; }
         public string? CrMasUserInformationCallingKey { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
-        [RegularExpression(@"^\d{10}$", ErrorMessage = "MobilePatternError")]
         public string? CrMasUserInformationMobileNo { get; set; }
         public string? CrMasUserInformationEmail { get; set; }
         public string? CrMasUserInformationStatus { get; set; }

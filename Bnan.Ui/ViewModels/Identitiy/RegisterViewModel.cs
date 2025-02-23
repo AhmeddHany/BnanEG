@@ -7,7 +7,6 @@ namespace Bnan.Ui.ViewModels.Identitiy
     {
         [Required(ErrorMessage = "requiredFiled")]
         public string CrMasUserInformationCode { get; set; } = null!;
-        [Required(ErrorMessage = "requiredFiled")]
         public string? CrMasUserInformationId { get; set; }
         public string? CrMasUserInformationPassWord { get; set; }
         public string? CrMasUserInformationLessor { get; set; }
@@ -32,7 +31,6 @@ namespace Bnan.Ui.ViewModels.Identitiy
         public string? CrMasUserInformationDefaultBranch { get; set; }
         public string? CrMasUserInformationDefaultLanguage { get; set; }
         public string? CrMasUserInformationCallingKey { get; set; }
-        [RegularExpression(@"^\d{10}$", ErrorMessage = "MobilePatternError")]
         public string? CrMasUserInformationMobileNo { get; set; }
         public string? CrMasUserInformationEmail { get; set; }
         public DateTime? CrMasUserInformationChangePassWordLastDate { get; set; }

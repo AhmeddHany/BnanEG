@@ -34,8 +34,8 @@ nav {
 
 .img-profile {
     margin-right: 12px;
-    height: 53px;
-    width: 53px;
+    height: 50px !important;
+    width: 50px !important;
 }
 
 /*=======================navbar lists ======================*/
@@ -580,10 +580,6 @@ body::-webkit-scrollbar-thumb {
     --bs-table-hover-bg: #bdbbbb1c;
 }
 
-#pieChart {
-    max-height: 180px;
-    padding-bottom: 10px;
-}
 
 #second-row-of-charts {
     min-height: 50%;
@@ -650,7 +646,7 @@ body::-webkit-scrollbar-thumb {
 /* this is last edit has made to the cars data drobdown list */
 .dropdown-content {
     border: 1px solid orange;
-    background: #fdfbf6;
+    background: #ffffff;
     display: none;
     border-radius: 8px;
     box-shadow: 0px 2px 4px 0px #39629C3D;
@@ -737,22 +733,12 @@ body::-webkit-scrollbar-thumb {
 
 @media(max-height:800px) {
 
-    #pieChart,
-    #horizontal_bar {
-        height: 150px !important;
-    }
-
     .main-carousel-item.active {
         margin-bottom: 0;
     }
 }
 
 @media(min-height:900px) and (min-width:1400px) {
-
-    #pieChart,
-    #horizontal_bar {
-        height: 220px !important;
-    }
 
     .car_img {
         padding: .1rem;
@@ -763,7 +749,7 @@ body::-webkit-scrollbar-thumb {
 
     footer {
         width: 100%;
-        padding-bottom: 50px;
+        /* padding-bottom: 50px; */
     }
 }
 
@@ -967,7 +953,7 @@ body::-webkit-scrollbar-thumb {
 
 /* last addd media */
 
-@media (max-width:768px) {
+@media (max-width:767px) {
     .pieChart-col {
         border-left: none;
         border-top: 2px solid #e7e3e06e;
@@ -999,5 +985,27 @@ body::-webkit-scrollbar-thumb {
         display: flex;
         flex-direction: column-reverse;
         height: auto;
+    }
+}
+
+
+/*last edits */
+
+.employee-chart-data, .branch-chart-data {
+    align-items: center;
+}
+
+.pieChart-data {
+    align-items: center;
+}
+
+#pieChart {
+    max-height: 240px;
+}
+/* 4k screen */
+@media(min-height:1000px) and (min-width:2560px) {
+    #pieChart,
+    #horizontal_bar {
+        height: 330px !important;
     }
 }

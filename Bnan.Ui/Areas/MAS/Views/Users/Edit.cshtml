@@ -108,7 +108,7 @@
                                                 <!-- <i class="fa-solid fa-star-of-life RequirdStar"></i>  -->
                                             </label>
                                             <div class="input-group">
-                                                <input type="tel" class="form-control inputs tel-input" id="CrMasUserInformationMobileNo" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10">
+                                                <input type="tel" class="form-control inputs tel-input" id="CrMasUserInformationMobileNo" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="15">
                                                 <select class="input-group-text select-style counterCode" asp-for="CrMasUserInformationCallingKey">
                                                     @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
                                                     {
@@ -267,11 +267,13 @@
     <script>
         function updateUserStatus(status) {
             var code = document.getElementById("CrMasUserInformationCode").value;
+            var reasons = document.getElementById("CrMasUserInformationReasons").value;
+            console.log("reasons",reasons)
             return new Promise((resolve, reject) => {
                 $.ajax({
                     type: "POST",
                     url: "/MAS/Users/EditStatus",
-                    data: { status: status, code: code },
+                    data: { status: status, code: code,reasons:reasons },
                     success: function (result) {
                         toastr.options = { "positionClass": "@localizer["toastPostion"]" };
 
