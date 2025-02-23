@@ -135,15 +135,15 @@
 										</div>
 
 										<div class="col-md-6 card-col pieChart-col">
-											<div class="row ">
-												<div class="col-12 pieChart-data">
+											<div class="row flex-row-reverse">
+												<div class="col-md-4 pieChart-data">
 													<div class="chart-legend" style="line-height: normal;">
 														<p class="chart-p">@localizer["ActiveContractsCount"] : <span>@Model.AlertContract.FindAll(x => x.CrCasRenterContractAlertContractStatus == Status.Active).Count()</span></p>
-														<p class="chart-p">@localizer["SavedContracts"] : <span>@Model.AlertContract.FindAll(x => x.CrCasRenterContractAlertContractStatus == Status.UnderProcssing).Count()</span></p>
+														<p class="chart-p">@localizer["ReservedContracts"] : <span>@Model.AlertContract.FindAll(x => x.CrCasRenterContractAlertContractStatus == Status.UnderProcssing).Count()</span></p>
 														<p class="chart-p">@localizer["SuspendContracts"] : <span>@Model.AlertContract.FindAll(x => x.CrCasRenterContractAlertContractStatus == Status.Hold).Count()</span></p>
 													</div>
 												</div>
-												<div class="col-12 pieChart">
+												<div class="col-md-8 pieChart">
 													<canvas id="pieChart" aria-label="chart"></canvas>
 												</div>
 											</div>
@@ -308,12 +308,12 @@
 			</svg>
 		</div>
 		<div class="container footer-buttons justify-content-center py-1" style="box-sizing: border-box; ">
-			<div class="row justify-content-center footer-buttons-row">
+			<div class="row  footer-buttons-row">
 				<!-- First row of buttons -->
 				<div class="col-sm-6 col-md-6 col-lg-3 ">
 					<a class="btn btn-Pages mb-2" id="SavedContract">
 						<img src="~/BranchSys/img/Rectangle 35.png">
-						@localizer["SavedContracts"]
+						@localizer["ReservedContracts"]
 					</a>
 				</div>
 				<div class="col-sm-6 col-md-6 col-lg-3  ">
@@ -475,7 +475,7 @@
 			var myChart1 = new Chart(barChart1, {
 				type: "bar",
 				data: {
-					labels: ['@localizer["Avaliable"]', '@localizer["Rented"]', '@localizer["UnAvaliable"]', '@localizer["UnderProcessing"]'],
+					labels: ['@localizer["Avaliable"]', '@localizer["Rented"]', '@localizer["UnAvaliable"]', '@localizer["ReservedCars"]'],
 					datasets: [
 						{
 							data: [available_cars, rented_cars, not_available_cars, saved_cars],
@@ -723,8 +723,7 @@
 		@Model.AlertContract?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "1" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
 		@Model.AlertContract?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "2" && x.CrCasRenterContractAlertContractStatus == "A").Count(),
 		@Model.AlertContract?.FindAll(x => x.CrCasRenterContractAlertContractActiviteStatus == "0" && x.CrCasRenterContractAlertContractStatus == "A").Count()],
-					 backgroundColor: [ 'rgba(255, 64, 105, .9)','rgba(255, 159, 64, .9)', 'rgba(153, 102, 255,.9 )','rgba(54, 162, 235, .9)'],
-					 borderColor: ['rgba(255, 64, 105, .9)','rgba(255, 159, 64, .9)',  'rgba(153, 102, 255,.9 )','rgba(54, 162, 235, .9)'],
+					 backgroundColor: [ 'rgba(242, 36, 36, 1)','rgba(242, 143, 36, 1)', '#9966FF','rgba(54, 162, 235, 1)'],
 				}]
 		};
 
@@ -747,9 +746,11 @@
 
 					},
 					legend: {
-						position: 'right',
+						position: 'bottom',
 						rtl: true,
 						labels: {
+							boxWidth: 20,
+							padding: 20,
 							font: {
 								family: "'Cairo', sans-serif",
 								size: 11

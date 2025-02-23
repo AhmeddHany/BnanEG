@@ -6,13 +6,13 @@ using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace Bnan.Ui.Areas.CAS.Controllers.Employees
 {
@@ -151,6 +151,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "EmployeesContractValiditions");
+            }
+            if (!string.IsNullOrEmpty(contractValiditionsVM.DiscountRateString?.ToString()))
+            {
+                if (decimal.TryParse(contractValiditionsVM.DiscountRateString.ToString().Replace(",", ""), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal parsedValue))
+                {
+                    contractValiditionsVM.CrMasUserContractValidityDiscountRate = parsedValue;
+                }
             }
             // التحقق فقط من الحقول التي تحتوي على Range
             var validationResults = new List<ValidationResult>();

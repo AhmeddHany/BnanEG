@@ -355,6 +355,28 @@
 												</div>
 											</div>
 										</div>
+										<div class="col-md-auto">
+											<div class="dropzone-Card">
+												<div class="drop-zone">
+													<div class="layer" style="display: none;">
+														<i class="fa-regular fa-circle-xmark removeImage"></i>
+													</div>
+													@if (string.IsNullOrEmpty(Model.CrMasLessorImageSales))
+													{
+														<span class="drop-zone__prompt"> <img src="~/MasSystem/images/upload icon.svg" class="mb-3"> <br>@localizer["DropAndDragImage"] </span>
+													}
+													<input type="file" asp-for="FileCrMasLessorImageSales" class="drop-zone__input" data-path="@Url.Content(Model.CrMasLessorImageSales)">
+													@if (!string.IsNullOrEmpty(Model.CrMasLessorImageSales))
+													{
+														<div class="drop-zone__thumb" style="background-image: url('@Url.Content(Model.CrMasLessorImageSales)');"></div>
+													}
+
+												</div>
+												<div class="fileNameDiv">
+													<p class="text-center pt-1 mb-1 fileNameP">@localizer["ForSale"]</p>
+												</div>
+											</div>
+										</div>
 									</div>
 									<div class="row g-4  Images-section" id="EImages">
 										<div class="col-md-auto">

@@ -172,8 +172,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             }
             try
             {
-                model.CrMasUserInformationSignature= "~/images/common/DefaultSignture.jpg";
-                model.CrMasUserInformationPicture= "~/images/common/DefaultUser.jpg";
+                model.CrMasUserInformationSignature = "~/images/common/DefaultSignture.jpg";
+                model.CrMasUserInformationPicture = "~/images/common/DefaultUser.jpg";
                 var crMasUserInformation = _mapper.Map<CrMasUserInformation>(model);
                 // Check if the entity already exists
                 if (await _masUser.ExistsByDetailsAsync(crMasUserInformation))
@@ -194,7 +194,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
                 {
                     _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return View("Users", model);
-                };
+                }
+                ;
                 //Add Main Validitions
                 //Add Sub Validitions
                 //Add Procedures Validitions
@@ -286,7 +287,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
             }
         }
         [HttpPost]
-        public async Task<string> EditStatus(string status, string code)
+        public async Task<string> EditStatus(string status, string code, string reasons)
         {
 
             var user = await _userManager.GetUserAsync(User);
@@ -300,6 +301,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Employees
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 EditedUser.CrMasUserInformationStatus = status;
+                EditedUser.CrMasUserInformationReasons = reasons;
                 _unitOfWork.CrMasUserInformation.Update(EditedUser);
                 await _unitOfWork.CompleteAsync();
                 await SaveTracingForUserChange(EditedUser, status);

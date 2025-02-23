@@ -18,7 +18,7 @@
                                 <h3>@localizer["Add_User_PageTitle"]</h3>
                             </div>
                             <div class="col-md-auto save-col">
-                                <button type="submit" class="custom-img-btn"><img src="~/MasSystem/images/save.svg" /></button>
+                                <button type="button" class="custom-img-btn" id="saveBtn"><img src="~/MasSystem/images/save.svg" /></button>
                                 <button type="button" class="custom-img-btn">
                                     <a href="/MAS/Users/Users">
                                         <img class="Chevron" src="~/MasSystem/images/Chevron_Left.svg" />
@@ -48,9 +48,8 @@
                                         <div class="col-md-6">
                                             <label for="CrMasUserInformationId" class="form-label">
                                                 @localizer["UserID"]
-                                                <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                             </label>
-                                            <input type="text" id="CrMasUserInformationId" class="form-control inputs " asp-for="CrMasUserInformationId" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10" required>
+                                            <input type="text" id="CrMasUserInformationId" class="form-control inputs " asp-for="CrMasUserInformationId" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10">
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasUserInformationId" class="text-danger"></span>
@@ -102,7 +101,7 @@
                                             <div class="invaild">
                                                 <div class="invalid-feedback">
                                                     <span asp-validation-for="@Model.CrMasUserInformationTasksArName" class="text-danger"></span>
-                                              </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -127,7 +126,7 @@
                                                 <!-- <i class="fa-solid fa-star-of-life RequirdStar"></i>  -->
                                             </label>
                                             <div class="input-group">
-                                                <input type="tel" class="form-control inputs tel-input" id="CrMasUserInformationMobileNo" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="10">
+                                                <input type="tel" class="form-control inputs tel-input" id="CrMasUserInformationMobileNo" asp-for="CrMasUserInformationMobileNo" oninput="this.value=this.value.replace(/[^0-9]/g,'')" maxlength="15">
                                                 <select class="input-group-text select-style counterCode" asp-for="CrMasUserInformationCallingKey">
                                                     @foreach (var callingKey in (List<SelectListItem>)ViewData["CallingKeys"])
                                                     {
@@ -239,27 +238,25 @@
                 Check_onChange_input('CrMasUserInformationEnName', newValue);
             });
 
-            
+
         });
 
     </script>
     <script>
         $(document).ready(function () {
-             $("#msform").on("submit", function (event) {
-                 if (!$("#msform").valid()) {
-                     event.preventDefault(); // منع الإرسال إذا لم يكن التحقق ناجحًا
-                     return;
-                 }
+            $("#saveBtn").on("click", function (event) {
+                if (!$("#msform").valid()) { // استبدل yourFormId بـ ID النموذج الفعلي
+                    event.preventDefault(); // منع الإرسال إذا لم يكن التحقق ناجحًا
+                    return;
+                }
+                $(this).prop("disabled", true);
+                $("#min-loader").removeClass("d-none");
+                setTimeout(() => {
+                    $("#msform").submit();
+                }, 500);
+            });
+        });
 
-                 // إظهار اللودر قبل الإرسال
-                 $("#min-loader").removeClass("d-none");
-
-                 // إرسال الفورم بعد تأخير قصير لضمان ظهور اللودر
-                 setTimeout(() => {
-                     this.submit();
-                 }, 500);
-             });
-         });
     </script>
 }
 

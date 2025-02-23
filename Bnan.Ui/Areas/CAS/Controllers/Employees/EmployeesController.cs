@@ -10,7 +10,6 @@ using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS.Employees;
 using Bnan.Ui.ViewModels.Identitiy;
 using Bnan.Ui.ViewModels.MAS;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -184,6 +183,18 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Employees");
+            }
+            if (!string.IsNullOrEmpty(model.CreditLimitString))
+            {
+                if (decimal.TryParse(model.CreditLimitString.Replace(",", ""), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal parsedValue))
+                {
+                    model.CrMasUserInformationCreditLimit = parsedValue;
+                }
+                else
+                {
+                    _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                    return RedirectToAction("Index", "Employees");
+                }
             }
 
             // التحقق من صحة البيانات المدخلة
@@ -375,8 +386,20 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                         _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                         return RedirectToAction("Index", "Employees");
                     }
-
+                    if (!string.IsNullOrEmpty(model.CreditLimitString))
+                    {
+                        if (decimal.TryParse(model.CreditLimitString.Replace(",", ""), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal parsedValue))
+                        {
+                            model.CrMasUserInformationCreditLimit = parsedValue;
+                        }
+                        else
+                        {
+                            _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                            return RedirectToAction("Index", "Employees");
+                        }
+                    }
                     var crMasUserInformation = _mapper.Map<CrMasUserInformation>(model);
+
                     if (crMasUserInformation.CrMasUserInformationAuthorizationBranch == true)
                     {
                         if (model.BranchesAuthrization?.Where(x => x.Authrization == true).Count() == 0) crMasUserInformation.CrMasUserInformationAuthorizationBranch = false;
@@ -444,7 +467,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             return true;
         }
         [HttpPost]
-        public async Task<string> EditStatus(string status, string code)
+        public async Task<string> EditStatus(string status, string code, string reasons)
         {
 
             var user = await _userManager.GetUserAsync(User);
@@ -457,6 +480,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";
                 if (status == Status.UnDeleted || status == Status.UnHold) status = Status.Active;
                 EditedUser.CrMasUserInformationStatus = status;
+                EditedUser.CrMasUserInformationReasons = reasons;
                 _unitOfWork.CrMasUserInformation.Update(EditedUser);
                 await _unitOfWork.CompleteAsync();
                 await SaveTracingForUserChange(EditedUser, status, pageNumber);
@@ -551,7 +575,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
 
             if (!string.IsNullOrEmpty(SigntureFile))
             {
-                filePathSignture = await _hostingEnvironment.SaveSigntureImage(SigntureFile, user.CrMasUserInformationCode, user.CrMasUserInformationSignature, foldername);
+                string fileNameImg = "Signture_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
+                filePathSignture = await _hostingEnvironment.SaveSigntureImage(SigntureFile, user.CrMasUserInformationSignature, foldername, fileNameImg);
             }
             else if (string.IsNullOrEmpty(oldPathSignture))
             {
