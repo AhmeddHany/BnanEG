@@ -24,7 +24,7 @@
         @foreach (var item in Model)
         {
             <tr onclick="if (parseInt(@item.CrMasSupRenterIdtypeCode) > 0) {location.href='@Url.Action("Edit", "RenterIdtype", new { id = item.CrMasSupRenterIdtypeCode })';} else{showErrorToast_NoUpdate();}">
-                <td><p>@item.CrMasRenterInformations.Count().ToString("N0")</p></td>
+                <td><p>@item.CrMasRenterInformations.Count().ToString("N0",CultureInfo.InvariantCulture)</p></td>
                 <td>
                     <p>@(item.CrMasSupRenterIdtypeNaqlId ?? 0)</p>
                 </td>

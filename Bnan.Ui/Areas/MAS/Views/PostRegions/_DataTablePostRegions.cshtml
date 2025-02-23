@@ -24,9 +24,9 @@
         {
             <tr onclick="if (parseInt(@item.CrMasSupPostRegionsCode) > 11) {location.href='@Url.Action("Edit", "PostRegions", new { id = item.CrMasSupPostRegionsCode })';} else{showErrorToast_NoUpdate();}">
 
-                <td><p>@(Model.Region_count?.Find(x => x.Column.ToString() == item.CrMasSupPostRegionsCode?.Trim())?.RowCount.ToString("N0") ?? "0" )</p></td>
+                <td><p>@(Model.Region_count?.Find(x => x.Column.ToString() == item.CrMasSupPostRegionsCode?.Trim())?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0" )</p></td>
 
-                <td><p>@(Model.cites_count?.Find(x => x.Column.ToString() == item.CrMasSupPostRegionsCode?.Trim())?.RowCount.ToString("N0") ?? "0")</p></td>
+                <td><p>@(Model.cites_count?.Find(x => x.Column.ToString() == item.CrMasSupPostRegionsCode?.Trim())?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0")</p></td>
 
                 <td class="DifferAlign">
                     <p>

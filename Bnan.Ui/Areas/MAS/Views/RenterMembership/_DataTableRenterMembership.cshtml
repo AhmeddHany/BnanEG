@@ -22,7 +22,7 @@
         @foreach (var item in Model)
         {
             <tr onclick="location.href='@Url.Action("Edit", "RenterMembership", new { id = item.CrMasSupRenterMembershipCode })'">
-                <td><p>@item.CrCasRenterLessors.Count().ToString("N0")</p></td>
+                <td><p>@item.CrCasRenterLessors.Count().ToString("N0",CultureInfo.InvariantCulture)</p></td>
                 <td class="DifferAlign">
                     <p>
                         @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupRenterMembershipEnName : item.CrMasSupRenterMembershipArName)

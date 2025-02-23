@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Numerics;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Bnan.Ui.ViewModels.MAS;
 
 namespace Bnan.Ui.Areas.CAS.Controllers.Services
@@ -294,7 +293,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
 
+                var Target = Acc_SalesPointVM.CrCasAccountSalesPointCode;
+                var reasons = Acc_SalesPointVM.CrCasAccountSalesPointReasons;
                 await SaveTracingForLicenseChange(user, SalesPointEntity, Status.Insert);
+                await SaveAdminstrative(user, Status.Insert, Target, reasons);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -391,7 +393,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 _unitOfWork.CrCasAccountSalesPoint.Update(SalesPointEntity);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
+                var Target = Acc_SalesPointVM.CrCasAccountSalesPointCode;
+                var reasons = Acc_SalesPointVM.CrCasAccountSalesPointReasons;
                 await SaveTracingForLicenseChange(user, SalesPointEntity, Status.Update);
+                await SaveAdminstrative(user, Status.Update, Target, reasons);
                 return RedirectToAction("Index", "AccountSalesPoint_CAS");
             }
             catch (Exception ex)
@@ -410,7 +415,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
 
             var thisSalesPoint = await _unitOfWork.CrCasAccountSalesPoint.FindAsync(x => x.CrCasAccountSalesPointCode == code && x.CrCasAccountSalesPointLessor == user.CrMasUserInformationLessor);
             if (thisSalesPoint == null) return "false";
-
+            var status1 = status;
             try
             {
 
@@ -427,7 +432,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 thisSalesPoint.CrCasAccountSalesPointStatus = status;
                 _unitOfWork.CrCasAccountSalesPoint.Update(thisSalesPoint);
                 _unitOfWork.Complete();
-                await SaveTracingForLicenseChange(user, thisSalesPoint, status);
+                var Target = thisSalesPoint.CrCasAccountSalesPointCode;
+                var reasons = thisSalesPoint.CrCasAccountSalesPointReasons;
+                await SaveTracingForLicenseChange(user, thisSalesPoint, status1);
+                await SaveAdminstrative(user, status1, Target, reasons);
                 return "true";
             }
             catch (Exception ex)
@@ -556,6 +564,64 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 system.CrMasSysSystemArName,
                 system.CrMasSysSystemEnName);
         }
+
+
+
+        private async Task SaveAdminstrative(CrMasUserInformation user, string status, string? Target, string? reasons)
+        {
+            // change ProcedureCode and Classification (30 == Financial) , (20 == Admin)
+            string procedure_Code = "244";
+            string procedure_Classification = "20";
+            //var procedureData = await _unitOfWork.CrMasSysProcedure.FindAsync(x=>x.CrMasSysProceduresCode== procedure_Code && x.CrMasSysProceduresClassification== procedure_Classification);
+
+            var (recordAr, recordEn) = GetStatusTranslation(status);
+            if (status?.Length > 1) status = Status.Active;
+
+            if (recordAr.Length > 29) recordAr = recordAr?.Substring(0, 30);
+            if (recordEn.Length > 29) recordEn = recordEn?.Substring(0, 30);
+            //var recordAr = "نقل سيارة";
+            //var recordEn = "Transefer Car";
+
+
+            string sector = "1";
+            var lessorCode = user?.CrMasUserInformationLessor ?? " ";
+            var branchCode = "100";
+            var target = Target;
+            var UserInsert = user?.CrMasUserInformationCode ?? " ";
+
+            string? CarFrom = null;
+            string? CarTo = null;
+            string? Reasons = reasons;
+            if (Reasons?.Length > 99) Reasons = Reasons?.Substring(0, 100);
+            if (CarFrom?.Length > 19) CarFrom = CarFrom?.Substring(0, 20);
+            if (CarTo?.Length > 19) CarTo = CarTo?.Substring(0, 20);
+            decimal? Debit = null;
+            decimal? Credit = null;
+            string? Doc_No = null;
+            DateTime? Doc_Date = null;
+            DateTime? Doc_Start = null;
+            DateTime? Doc_End = null;
+
+
+            await _userLoginsService.SaveAdminstrative(
+            sector,
+            procedure_Code,
+            lessorCode,
+            branchCode,
+            procedure_Classification,
+            target,
+            recordAr,
+            recordEn,
+            UserInsert,
+            status,
+            Reasons,
+            CarFrom,
+            CarTo,
+            Debit, Credit, Doc_No, Doc_Date, Doc_Start, Doc_End
+            );
+
+        }
+
 
         [HttpPost]
         public IActionResult DisplayToastError_NoUpdate(string messageText)

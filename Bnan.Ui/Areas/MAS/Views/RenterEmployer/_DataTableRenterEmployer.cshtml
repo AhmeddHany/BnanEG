@@ -22,7 +22,7 @@
         @foreach (var item in Model)
         {
             <tr onclick="if (parseInt(@item.CrMasSupRenterEmployerCode) > 1800000002) {location.href='@Url.Action("Edit", "RenterEmployer", new { id = item.CrMasSupRenterEmployerCode })';} else{showErrorToast_NoUpdate();}">
-                <td><p>@item.CrMasRenterInformations.Count().ToString("N0")</p></td>
+                <td><p>@item.CrMasRenterInformations.Count().ToString("N0",CultureInfo.InvariantCulture)</p></td>
                 <td class="DifferAlign">
                     <p>
                         @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupRenterEmployerEnName : item.CrMasSupRenterEmployerArName)

@@ -24,7 +24,7 @@
         @foreach (var item in Model)
         {
             <tr onclick="location.href='@Url.Action("Edit", "CarOil", new { id = item.CrMasSupCarOilCode })'">
-                <td><p>@item.CrCasCarInformations.Count().ToString("N0")</p></td>
+                <td><p>@item.CrCasCarInformations.Count().ToString("N0",CultureInfo.InvariantCulture)</p></td>
                 <td>
                     <p>@(item.CrMasSupCarOilNaqlId ?? 0)</p>
                 </td>

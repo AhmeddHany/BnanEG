@@ -24,7 +24,7 @@
 
             <tr onclick="if (parseInt('@item.CrMasSupPostCityCode') > 1700000002 && @Model.Regions?.Any(x=>x.CrMasSupPostRegionsCode.Trim()==item?.CrMasSupPostCityRegionsCode?.Trim()).ToString().ToLower() ) {location.href='@Url.Action("Edit", "PostCity", new { id = item.CrMasSupPostCityCode })';} else{showErrorToast_NoUpdate();}">
 
-                <td><p>@(Model.City_count?.Find(x => x.Column.ToString() == item.CrMasSupPostCityCode?.Trim())?.RowCount.ToString("N0") ?? "0" )</p></td>
+                <td><p>@(Model.City_count?.Find(x => x.Column.ToString() == item.CrMasSupPostCityCode?.Trim())?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0" )</p></td>
                 
                 <td class="DifferAlign">
                     <p>

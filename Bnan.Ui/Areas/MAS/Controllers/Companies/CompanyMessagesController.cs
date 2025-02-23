@@ -26,7 +26,6 @@ using System.ComponentModel.Design;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Text.Json;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Net.Http;
 
 namespace Bnan.Ui.Areas.MAS.Controllers.Companies

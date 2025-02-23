@@ -31,7 +31,7 @@
             <tr onclick="location.href='@Url.Action("Edit", "RenterContract", new { id = item.CrCasRenterLessorId })'">
 
 
-                <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Sum(x => x.CrCasRenterLessorContractKm)?.ToString("N2") ?? "0")</p></td>
+                <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Sum(x => x.CrCasRenterLessorContractKm)?.ToString("N2",CultureInfo.InvariantCulture) ?? "0")</p></td>
                 <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Sum(x => x.CrCasRenterLessorContractDays)?.ToString("0") ?? "0")</p></td>
                 <td><p>@(Model.allCasRenterLessor?.Where(x => x.CrCasRenterLessorId == item.CrCasRenterLessorId)?.Sum(x => x.CrCasRenterLessorContractCount)?.ToString("0") ?? "0")</p></td>
                 @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")

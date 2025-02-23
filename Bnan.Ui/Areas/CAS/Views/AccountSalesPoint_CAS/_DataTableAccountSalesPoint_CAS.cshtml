@@ -59,7 +59,7 @@
             no++;
 
                 @*<td>
-                    <p>@(Model.all_SalesPointsCount?.Find(x => x.Column?.ToString()?.Trim() == item.CrCasAccountSalesPointCode)?.RowCount.ToString("N0") ?? "0")</p>
+                    <p>@(Model.all_SalesPointsCount?.Find(x => x.Column?.ToString()?.Trim() == item.CrCasAccountSalesPointCode)?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0")</p>
                 </td>*@
         }
 

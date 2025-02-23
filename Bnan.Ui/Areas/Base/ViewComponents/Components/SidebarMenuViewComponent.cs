@@ -68,7 +68,7 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
             ("1101003", "CompanyContracts", "CompanyContracts"),
             ("1101004", "CompanyDues", "Index"),
             ("1101005", "CompanyOwed", "Index"),
-            ("1101006", "#", "#"),
+            ("1101006", "CompanyMessages", "Index"),
             ("1101007", "#", "#"),
             ("1101008", "#", "#"),
             ("1101009", "#", "#"),

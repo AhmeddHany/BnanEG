@@ -27,7 +27,7 @@
         {
             <tr onclick="location.href='@Url.Action("Edit", "Countries", new { id = item.CrMasSysCallingKeysCode })'">
 
-                <td><p>@(Model.Country_count?.Find(x => x.Column.ToString() == item.CrMasSysCallingKeysNo?.Trim())?.RowCount.ToString("N0") ?? "0" )</p></td>
+                <td><p>@(Model.Country_count?.Find(x => x.Column.ToString() == item.CrMasSysCallingKeysNo?.Trim())?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0" )</p></td>
                 @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                 {
                     <td class="DifferAlign">

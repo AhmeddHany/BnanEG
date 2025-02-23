@@ -22,7 +22,7 @@
         @foreach (var item in Model.crMasSupCarCvt)
         {
             <tr onclick="location.href='@Url.Action("Edit", "CarCvt", new { id = item.CrMasSupCarCvtCode })'">
-                <td><p> @(Model.cars_count?.Find(x => x.Column.ToString() == item.CrMasSupCarCvtCode)?.RowCount.ToString("N0") ?? "0") </p></td>
+                <td><p> @(Model.cars_count?.Find(x => x.Column.ToString() == item.CrMasSupCarCvtCode)?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0") </p></td>
                 <td class="DifferAlign">
                     <p>
                         @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupCarCvtEnName : item.CrMasSupCarCvtArName)

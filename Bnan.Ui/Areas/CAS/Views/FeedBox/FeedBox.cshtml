@@ -33,7 +33,7 @@
             </div>
         </form>
 
-        <a href="~/CasSys/index.html" data-bs-toggle="tooltip" data-bs-placement="top"
+        <a asp-area="CAS" asp-action="Index" asp-controller="Home" data-bs-toggle="tooltip" data-bs-placement="top"
            data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
            class="new-Page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
     </div>
@@ -51,7 +51,7 @@
                             <button type="button" class="modalClose" data-bs-dismiss="modal">&times;</button>
                         </div>
                         <div class="col-md-12 text-center">
-                            <h5 class="modal-title card-title m-auto">تغذية الصندوق</h5>
+                            <h5 class="modal-title card-title m-auto">@localizer["FeedBox Data"]</h5>
                         </div>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                         <div class="col-md-12">
                             <div class="row mt-4">
                                 <div class="col-md-auto">
-                                    <p>التاريخ</p>
+                                    <p>@localizer["CarRepairDate"]</p>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="Saved-data">@DateTime.Now.ToString("dd/MM/yyyy",CultureInfo.InvariantCulture)</p>
@@ -89,7 +89,7 @@
                         <div class="col-md-12">
                             <div class="row align-items-baseline">
                                 <div class="col-md-auto">
-                                    <label for="FeedAmount" class="form-label">مبلغ التغذية</label>
+                                    <label for="FeedAmount" class="form-label">@localizer["FeedValue"]</label>
                                 </div>
                                 <div class="col-md-6">
                                     <input type="text" id="FeedValue" class="form-control inputs number-input"
@@ -122,11 +122,11 @@
                 <div class="modal-footer border-0 justify-content-center mx-1">
                     <div class="row w-100 g-2">
                         <div class="col-md-6">
-                            <button type="submit" class="btn btn-standard w-100" id="Accept">موافق</button>
+                            <button type="submit" class="btn btn-standard w-100" id="Accept">@localizer["Okay"]</button>
                         </div>
                         <div class="col-md-6">
                             <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">
-                                إلغاء الأمر
+                                @localizer["Cancel"]
                             </button>
                         </div>
                     </div>

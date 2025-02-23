@@ -25,7 +25,7 @@
         @foreach (var item in Model.crMasSupAccountPaymentMethod)
         {
             <tr onclick="location.href='@Url.Action("Edit", "AccountPaymentMethod", new { id = item.CrMasSupAccountPaymentMethodCode })'">
-                <td><p>@item.CrCasAccountReceipts.Count().ToString("N0")</p></td>
+                <td><p>@item.CrCasAccountReceipts.Count().ToString("N0",CultureInfo.InvariantCulture)</p></td>
                 <td>
                     <p>@(item.CrMasSupAccountPaymentMethodNaqlId ?? 0)</p>
                 </td>

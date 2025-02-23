@@ -25,7 +25,7 @@
         @foreach (var item in Model.crMasSupContractSource)
         {
             <tr onclick="location.href='@Url.Action("Edit", "LessorMarketing", new { id = item.CrMasSupContractSourceCode })'">
-                @*<td><p>@(Model.LessorMarketings_count?.Find(x => x.Column.ToString() == item.CrMasSupContractSourceCode)?.RowCount.ToString("N0") ?? "0")</p></td>*@
+                @*<td><p>@(Model.LessorMarketings_count?.Find(x => x.Column.ToString() == item.CrMasSupContractSourceCode)?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0")</p></td>*@
                 <td class="DifferAlign">
                     <p>@item.CrMasSupContractSourceEmail</p>
                 </td>

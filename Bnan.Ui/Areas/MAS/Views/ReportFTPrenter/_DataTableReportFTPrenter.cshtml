@@ -36,24 +36,24 @@
 
                 <td>
                     <div class="row">
-                        <div class="col-12">@(Model.all_exchanges?.Find(x => x.Column?.ToString().Trim() == item.CrCasRenterLessorId.Trim())?.RowCount.ToString("N0") ?? "0")</div>
+                        <div class="col-12">@(Model.all_exchanges?.Find(x => x.Column?.ToString().Trim() == item.CrCasRenterLessorId.Trim())?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0")</div>
                     </div>
                 </td>
                 <td>
-                    @(Model.all_bonds?.Find(x => x.Column?.ToString().Trim() == item.CrCasRenterLessorId.Trim())?.RowCount.ToString("N0") ?? "0")
+                    @(Model.all_bonds?.Find(x => x.Column?.ToString().Trim() == item.CrCasRenterLessorId.Trim())?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0")
                 </td>
 
                 <td>
-                    <p>@item.CrCasRenterLessorContractTradedAmount?.ToString("N2")</p>
+                    <p>@item.CrCasRenterLessorContractTradedAmount?.ToString("N2",CultureInfo.InvariantCulture)</p>
                 </td>
                 <td>
-                    <p>@item.CrCasRenterLessorReservedBalance?.ToString("N2")</p>
+                    <p>@item.CrCasRenterLessorReservedBalance?.ToString("N2",CultureInfo.InvariantCulture)</p>
                 </td>
                 <td>
-                    <p>@item.CrCasRenterLessorAvailableBalance?.ToString("N2")</p>
+                    <p>@item.CrCasRenterLessorAvailableBalance?.ToString("N2",CultureInfo.InvariantCulture)</p>
                 </td>
                 <td>
-                    <p>@item.CrCasRenterLessorBalance?.ToString("N2")</p>
+                    <p>@item.CrCasRenterLessorBalance?.ToString("N2",CultureInfo.InvariantCulture)</p>
                 </td>
                 @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                 {

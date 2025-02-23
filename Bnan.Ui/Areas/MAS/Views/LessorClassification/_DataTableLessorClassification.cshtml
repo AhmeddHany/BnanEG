@@ -22,7 +22,7 @@
         @foreach (var item in Model)
         {
             <tr onclick="if (parseInt(@item.CrCasLessorClassificationCode) > 1) {location.href='@Url.Action("Edit", "LessorClassification", new { id = item.CrCasLessorClassificationCode })';} else{showErrorToast_NoUpdate();}">
-                <td><p>@item.CrMasLessorInformations.Count().ToString("N0")</p></td>
+                <td><p>@item.CrMasLessorInformations.Count().ToString("N0",CultureInfo.InvariantCulture)</p></td>
                 <td class="DifferAlign">
                     <p>
                         @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrCasLessorClassificationEnName : item.CrCasLessorClassificationArName)

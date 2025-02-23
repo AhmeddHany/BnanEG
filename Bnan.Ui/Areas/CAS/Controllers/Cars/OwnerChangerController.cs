@@ -131,13 +131,13 @@ namespace Bnan.Ui.Areas.CAS.Cars
 
             try
             {
-                //Check Validition
-                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
-                {
-                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return Json(false);
-                    return RedirectToAction("Index", "OwnerChanger");
-                }
+                ////Check Validition
+                //if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                //{
+                //    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                //    return Json(false);
+                //    return RedirectToAction("Index", "OwnerChanger");
+                //}
                 var oldOwner = car.CrCasCarInformationOwner??" ";
                 car.CrCasCarInformationOwner = ownerIdNew;
                 //car.CrCasCarInformationReasons = reasons;

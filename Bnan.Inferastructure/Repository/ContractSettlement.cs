@@ -27,7 +27,7 @@ namespace Bnan.Inferastructure.Repository
             crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedDate = DateTime.Now.Date;
             crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedIsPaid = false;
 
-            if (await _unitOfWork.CrCasAccountContractTaxOwed.AddAsync(crCasAccountContractTaxOwed) != null) return crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedValue?.ToString("N2");
+            if (await _unitOfWork.CrCasAccountContractTaxOwed.AddAsync(crCasAccountContractTaxOwed) != null) return crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedValue?.ToString("N2",CultureInfo.InvariantCulture);
             return null;
         }
 

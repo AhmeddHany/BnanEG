@@ -69,10 +69,10 @@
                     var carCount = item.CrCasCarInformations.Count(x => x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationStatus != Status.Deleted);
                     var unAvailable = carCount - rented - available;
                 }
-                <td onclick="location.href='@Url.Action("Edit", "Branches", new { id = item.CrCasBranchInformationCode })'"><p>@available.ToString("N0")</p></td>
-                <td onclick="location.href='@Url.Action("Edit", "Branches", new { id = item.CrCasBranchInformationCode })'"><p>@unAvailable.ToString("N0")</p></td>
-                <td onclick="location.href='@Url.Action("Edit", "Branches", new { id = item.CrCasBranchInformationCode })'"><p>@rented.ToString("N0")</p></td>
-                <td onclick="location.href='@Url.Action("Edit", "Branches", new { id = item.CrCasBranchInformationCode })'"><p>@carCount.ToString("N0")</p></td>
+                <td onclick="location.href='@Url.Action("Edit", "Branches", new { id = item.CrCasBranchInformationCode })'"><p>@available.ToString("N0",CultureInfo.InvariantCulture)</p></td>
+                <td onclick="location.href='@Url.Action("Edit", "Branches", new { id = item.CrCasBranchInformationCode })'"><p>@unAvailable.ToString("N0",CultureInfo.InvariantCulture)</p></td>
+                <td onclick="location.href='@Url.Action("Edit", "Branches", new { id = item.CrCasBranchInformationCode })'"><p>@rented.ToString("N0",CultureInfo.InvariantCulture)</p></td>
+                <td onclick="location.href='@Url.Action("Edit", "Branches", new { id = item.CrCasBranchInformationCode })'"><p>@carCount.ToString("N0",CultureInfo.InvariantCulture)</p></td>
                 <td onclick="location.href='@Url.Action("Edit", "Branches", new { id = item.CrCasBranchInformationCode })'">@item.CrCasBranchInformationTgaCode</td>
                 <td onclick="location.href='@Url.Action("Edit", "Branches", new { id = item.CrCasBranchInformationCode })'" class="DifferAlign">
                     <p class="FirstLineP">@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrCasBranchInformationEnShortName : item.CrCasBranchInformationArShortName)</p>

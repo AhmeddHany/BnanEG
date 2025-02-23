@@ -26,7 +26,7 @@
         {
             <tr onclick="if (parseInt(@item.CrMasSupRenterNationalitiesCode) > 1000000002) {location.href='@Url.Action("Edit", "RenterNationality", new { id = item.CrMasSupRenterNationalitiesCode })';} else{showErrorToast_NoUpdate();}">
                 
-                <td><p>@(Model.Nationality_count_1?.Find(x => x.Column.ToString() == item.CrMasSupRenterNationalitiesCode?.Trim())?.RowCount.ToString("N0") ?? "0")</p></td>
+                <td><p>@(Model.Nationality_count_1?.Find(x => x.Column.ToString() == item.CrMasSupRenterNationalitiesCode?.Trim())?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0")</p></td>
                 @if(requestCulture?.RequestCulture.UICulture.Name == "en-US")
                 {
                     <td class="DifferAlign">

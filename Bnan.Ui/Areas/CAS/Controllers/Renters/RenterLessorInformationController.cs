@@ -341,12 +341,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             try
             {
-                //Check Validition
-                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
-                {
-                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return RedirectToAction("Edit", new {id= singlExist.CrCasRenterLessorId });
-                }
                 if (singlExist.CrCasRenterLessorDealingMechanism == model.CrCasRenterLessorDealingMechanism && model.CrCasRenterLessorReasons?.Length < 1) return RedirectToAction("Edit", new { id = singlExist.CrCasRenterLessorId });
                 
                 if (model?.CrCasRenterLessorDealingMechanism == "16") { AdminStatus = Status.Blocked; }

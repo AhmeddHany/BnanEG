@@ -48,87 +48,11 @@
             </div>
 
             <div class="row table-row px-3">
-                    <div class="col  scroll-table-div  table-responsive-sm  w-100  dataTable">
-                        <table class=" tables-style table table-borderless " id="Table">
-                        <thead class="sticky-top">
-                            <tr>
-                                <th class="DifferAlign"> @localizer["Email"]</th>
-                                <th> @localizer["FTR_All_Total_Money_Transaction"]</th>
-                                <th> @localizer["FTR_Balance"]</th>
-                                <th class="DifferAlign"> @localizer["Evaluation"]</th>
-                                <th class="DifferAlign"> @localizer["RenterInformationAddress"]</th>
-                                <th class="DifferAlign"> @localizer["Renter_Name"]</th>
-                                <th>
-                                    <div class="d-flex gap-2 flex-row-reverse align-items-end">
-                                        <input class="form-check-input checkbox"
-                                               type="checkbox" value="checked"
-                                               id="All"
-                                               name="All"
-                                               onclick="toggleAllCheckboxes(this)">
-                                        <label class="form-check-label"
-                                               for="All">
-                                            @localizer["RenterMessages_All"]
-                                        </label>
-                                    </div>
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for(var x=1;x<Model.all_Renters.Count;x++){
-                                var item = Model.all_Renters[x];
-                                var status_sms = Model.all_status_sms.Find(x => x.Renter_Code == item.CrCasRenterLessorId);
-                                <tr>
-                                    <td hidden> <input type="text" id="mob_@(item.CrCasRenterLessorId)" name="mob_@(item.CrCasRenterLessorId)" value="@(item.CrCasRenterLessorNavigation.CrMasRenterInformationCountreyKey?.Trim() + item.CrCasRenterLessorNavigation.CrMasRenterInformationMobile?.Trim())" hidden /></td>
-                                    <td hidden> <input type="text" id="mail_@(item.CrCasRenterLessorId)" name="mail_@(item.CrCasRenterLessorId)" value="@(item.CrCasRenterLessorNavigation.CrMasRenterInformationEmail?.Trim())" hidden /></td>
-                                    <td hidden> <input type="text" id="sms_@(item.CrCasRenterLessorId)" name="sms_@(item.CrCasRenterLessorId)" value="@(status_sms?.sms_Status?.Trim()??"0")" hidden /></td>
-                                    <td class="DifferAlign">
-                                        <p>@item.CrCasRenterLessorNavigation.CrMasRenterInformationEmail</p>
-                                    </td>
-                                    @*<td class="DifferAlign">@(item.CrCasRenterLessorNavigation.CrMasRenterInformationCountreyKey?.Trim() + item.CrCasRenterLessorNavigation.CrMasRenterInformationMobile?.Trim())</td>*@
-                                    <td>
-                                        <p>@item.CrCasRenterLessorContractTradedAmount?.ToString("N2",CultureInfo.InvariantCulture)</p>
-                                    </td>
-                                    <td>
-                                        <p>@item.CrCasRenterLessorBalance?.ToString("N2",CultureInfo.InvariantCulture)</p>
-                                    </td>
-                                    <td class="DifferAlign">
-                                        <p>
-                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.Rates?.Find(x=>x.CrMasSysEvaluationsCode == item.CrCasRenterLessorDealingMechanism?.Trim())?.CrMasSysEvaluationsEnDescription :
-                                                Model.Rates?.Find(x => x.CrMasSysEvaluationsCode == item.CrCasRenterLessorDealingMechanism?.Trim())?.CrMasSysEvaluationsArDescription)
-                                        </p>
-                                    </td>
-                                    <td class="DifferAlign" style="  max-width:180px;">
-                                        <p>
-                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrCasRenterLessorNavigation?.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateEnName :
-                                                item.CrCasRenterLessorNavigation?.CrMasRenterPost?.CrMasRenterPostCityNavigation?.CrMasSupPostCityConcatenateArName)
-                                        </p>
-                                    </td>
-                                    <td class="DifferAlign" style="  max-width:200px;">
-                                        <p class="FirstLineP">
-                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrCasRenterLessorNavigation?.CrMasRenterInformationEnName : item.CrCasRenterLessorNavigation?.CrMasRenterInformationArName)
-                                        </p>
-                                        <p class="secondLineP"> @item.CrCasRenterLessorId </p>
-                                    </td>
-                            <td style="width: 10px;">
-                                <div class="d-flex justify-content-end">
-                                    <input class="form-check-input checkbox"
-                                            type="checkbox" value="checked"
-                                            name="@item.CrCasRenterLessorId">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="filter-number-td">
-                                    <div>@(x)</div>
-                                </div>
-                            </td>
-                        </tr>
-                            }                               
-                        </tbody>
-                    </table>
-
+                <div class="col  scroll-table-div  table-responsive-sm w-100 dataTable">
+                    <partial name="_DataTableRenterMessages" />
                 </div>
             </div>
+
         </form>
         @*<button class="bg-transparent border-0 new-Page-icon" data-bs-toggle="modal" id="MessagesModalBtn" data-bs-target="#MessagesModal">*@
         <button class="bg-transparent border-0 new-Page-icon" data-bs-toggle="modal" id="MessagesModalBtn">
@@ -583,6 +507,30 @@
         }
         
     </script>
+
+  @*  <script>
+        //get AccountSalesPoint_CAS By Status function
+        function GetAccountSalesPoint_CASFitler(search) {
+            $("#min-loader").removeClass("d-none");// اظهار loader تحميل
+            $.ajax({
+                type: "GET",
+                data: {
+                    search: search
+                },
+                url: "@Url.Action("GetAccountSalesPoint_CASByStatus", "RenterMessages", new { Area = "CAS" })",
+                success: function (response) {
+                    $(".dataTable").html(response);
+                },
+            })
+            $("#min-loader").toggleClass("d-none", true);
+        }
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#search2").on("keyup", function () {
+            const search = $(this).val(); // الحصول على قيمة البحث
+            GetAccountSalesPoint_CASFitler(search);
+        });
+    </script>*@
     
 }
 

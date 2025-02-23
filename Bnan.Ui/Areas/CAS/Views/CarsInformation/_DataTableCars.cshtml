@@ -50,7 +50,7 @@
                                     @item.CrCasCarInformationConcatenateEnName <span>+</span>
                                 </td>
                             }
-                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
+                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0",CultureInfo.InvariantCulture)</td>
 
                             <td>@item.CrCasCarInformationRegistrationNavigation?.CrMasSupCarRegistrationEnName</td>
                             <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelEnName</td>
@@ -86,7 +86,7 @@
                                     @item.CrCasCarInformationConcatenateEnName <span>+</span>
                                 </td>
                             }
-                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
+                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0",CultureInfo.InvariantCulture)</td>
 
                             <td>@item.CrCasCarInformationRegistrationNavigation?.CrMasSupCarRegistrationEnName</td>
                             <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelEnName</td>
@@ -161,7 +161,7 @@ else
                                     @item.CrCasCarInformationConcatenateArName <span>+</span>
                                 </td>
                             }
-                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
+                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0",CultureInfo.InvariantCulture)</td>
 
                             <td>@item.CrCasCarInformationRegistrationNavigation?.CrMasSupCarRegistrationArName</td>
                             <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelArName</td>
@@ -200,7 +200,7 @@ else
                                 </td>
                             }
 
-                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
+                            <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0",CultureInfo.InvariantCulture)</td>
 
                             <td>@item.CrCasCarInformationRegistrationNavigation?.CrMasSupCarRegistrationArName</td>
                             <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelArName</td>

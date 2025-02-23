@@ -24,10 +24,10 @@
         @foreach (var item in Model.crMasSupCarRegistration)
         {
             <tr onclick="location.href='@Url.Action("Edit", "CarRegistration", new { id = item.CrMasSupCarRegistrationCode })'">
-                @*<td><p>@Model.cars_count.Count(x=>x.CrCasCarInformationRegistration == @item.CrMasSupCarRegistrationCode).ToString("N0")</p></td>*@
+                @*<td><p>@Model.cars_count.Count(x=>x.CrCasCarInformationRegistration == @item.CrMasSupCarRegistrationCode).ToString("N0",CultureInfo.InvariantCulture)</p></td>*@
                 @{
                     var Count = "0";
-                    Count = Model.cars_count?.Find(x => x.Column.ToString() == item.CrMasSupCarRegistrationCode)?.RowCount.ToString("N0") ?? "0";
+                    Count = Model.cars_count?.Find(x => x.Column.ToString() == item.CrMasSupCarRegistrationCode)?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0";
                 }
                 <td><p>@Count</p></td>
                 <td>

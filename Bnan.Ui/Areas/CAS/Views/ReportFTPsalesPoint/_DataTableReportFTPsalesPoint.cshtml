@@ -54,13 +54,13 @@
             <tr onclick="location.href='@Url.Action("Edit", "ReportFTPsalesPoint", new { id = item.CrCasAccountReceiptSalesPoint})'">
 
                 <td>
-                    @((item.ReservedBalance??0.0m).ToString("N2"))
+                    @((item.ReservedBalance??0.0m).ToString("N2",CultureInfo.InvariantCulture))
                 </td>
                 <td>
-                    @((item.AvailableBalance ?? 0.0m).ToString("N2"))
+                    @((item.AvailableBalance ?? 0.0m).ToString("N2",CultureInfo.InvariantCulture))
                 </td>
                 <td>
-                    @((item.TotalBalance ?? 0.0m).ToString("N2"))
+                    @((item.TotalBalance ?? 0.0m).ToString("N2",CultureInfo.InvariantCulture))
                 </td>
 
                 <td class="DifferAlign">

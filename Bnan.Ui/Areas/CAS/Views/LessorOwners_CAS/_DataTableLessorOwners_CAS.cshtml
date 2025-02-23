@@ -27,7 +27,7 @@
             <tr onclick="location.href='@Url.Action("Edit", "LessorOwners_CAS", new { id = item.CrCasOwnersCode })'">
 
                 <td>
-                    <p>@(Model.all_CarsCount?.Find(x=>x.Column?.ToString()?.Trim() == item.CrCasOwnersCode)?.RowCount.ToString("N0") ?? "0")</p>
+                    <p>@(Model.all_CarsCount?.Find(x=>x.Column?.ToString()?.Trim() == item.CrCasOwnersCode)?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0")</p>
                 </td>
                 <td class="DifferAlign">
                     <p>

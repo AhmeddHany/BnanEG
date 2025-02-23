@@ -13,12 +13,12 @@
     ViewData["Page-Hint"] = @localizer["RenterInformations Hint"];
 }
 
-<style>
+@*<style>
     #min-loader {
         display: flex !important;
 
     }
-</style>
+</style>*@
 
 @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">*@
 
@@ -64,7 +64,7 @@
                 </div>
             </div>
         </form>
-            <a asp-area="CAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
+            <a asp-area="MAS" asp-controller="Home" asp-action="Index" data-bs-toggle="tooltip" data-bs-placement="top"
            data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]" class="new-Page-icon">
             <img src="~/MasSystem/images/back to main.svg" alt="man">
         </a>
@@ -73,8 +73,7 @@
 @*////////////////////////////*@@*////////////////////////////*@@*////////////////////////////*@
 @*////////////////////////////*@@*////////////////////////////*@@*////////////////////////////*@
 
-
-    @section Scripts{
+   @section Scripts{
     <!-- تحميل مكتبة jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -95,12 +94,14 @@
 
 <script>
         $(document).ready(function () {
+
             $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
             $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
 
             // لجعل الحالة حسب ما هي جاية من index نشط او الكل
-            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
-                        
+            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+            //$("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
+            $("#min-loader").removeClass("d-none");
             //var today = new Date();
             //$("#start_date").datepicker({
             //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
@@ -122,7 +123,6 @@
         });
 
         function end_init_ShowDatatable(){
-            $("#min-loader").toggleClass("d-none", true);
             $("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
             //$("select[name='Table_length'] option[value='10000']").prop("selected", true);
             $("select[name='Table_length']").val('10000').change();
@@ -134,6 +134,7 @@
             $(".paginate_button").css("display", "none");
             $(".ellipsis").css("display", "none");
             $("select[name='Table_length'] option[value='10000']").prop("selected", true);
+            $("#min-loader").toggleClass("d-none", true);
         }
 
         // دالة للبحث عن كلمة في جميع الصفوف
@@ -174,12 +175,12 @@
 
 </script>
     <script>
-        //get ReportClosedContract By Status function
-        function GetContractsByStatusFitler(start, end) {
+        //get ReportActiveContract By Status function
+        function GetContractsByStatusFitler(status, start, end) {
             $.ajax({
                 type: "GET",
                 data: {
-                     start: start, end: end
+                    status: status, start: start, end: end
                 },
                 url: "@Url.Action("GetContractsByStatus", "ReportClosedContract", new { Area = "MAS" })",
                 success: function (response) {
@@ -189,26 +190,9 @@
             })
         }
 
-        $("input[name='customRadio']").on("click", function () {
-            const start = $("#start_date").val(); // الحصول على قيمة البداية
-            const end = $("#end_date").val(); // الحصول على قيمة النهاية
-
-            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
-            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
-            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
-            //var start = formattedDate1;// الحصول على قيمة النهاية
-            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
-            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
-            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
-            //var end = formattedDate2;// الحصول على قيمة النهاية
-            
-            $("#min-loader").removeClass("d-none");
-            $("#search2").val("");
-            GetContractsByStatusFitler(start, end);
-        });
-
         // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
         $("#btn_view").on("click", function () {
+            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
             const start = $("#start_date").val(); // الحصول على قيمة البداية
             const end = $("#end_date").val(); // الحصول على قيمة النهاية
 
@@ -221,9 +205,9 @@
             //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
             //var end = formattedDate2;// الحصول على قيمة النهاية
             
-            $("#min-loader").removeClass("d-none");
+            $("#min-loader").removeClass("d-none")
             $("#search2").val("");
-            GetContractsByStatusFitler(start, end);
+            GetContractsByStatusFitler(status, start, end);
         });
     </script>
 }

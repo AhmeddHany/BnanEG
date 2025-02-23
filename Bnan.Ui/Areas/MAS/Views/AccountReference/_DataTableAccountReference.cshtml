@@ -23,7 +23,7 @@
         @foreach (var item in Model.crMasSupAccountReference)
         {
             <tr onclick="location.href='@Url.Action("Edit", "AccountReference", new { id = item.CrMasSupAccountReceiptReferenceCode })'">
-                <td><p>@(Model.AccountReferences_count?.Find(x => x.Column.ToString() == item.CrMasSupAccountReceiptReferenceCode)?.RowCount.ToString("N0") ?? "0")</p></td>
+                <td><p>@(Model.AccountReferences_count?.Find(x => x.Column.ToString() == item.CrMasSupAccountReceiptReferenceCode)?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0")</p></td>
                 <td class="DifferAlign">
                     <p>
                         @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrMasSupAccountReceiptReferenceEnName : item.CrMasSupAccountReceiptReferenceArName)

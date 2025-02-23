@@ -79,9 +79,9 @@
                                         <td>@item.CrCasCarInformationConcatenateEnName  (@localizer["Repair_New"])</td>
                                         <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelEnName</td>
                                         <td>@item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtEnName</td>
-                                        <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
+                                        <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0",CultureInfo.InvariantCulture)</td>
                                         <td>@item.CrCasRenterContractStatistics?.Count()</td>
-                                        @*<td>@item.CrCasCarInformationConractDaysNo?.ToString("N0")</td>*@
+                                        @*<td>@item.CrCasCarInformationConractDaysNo?.ToString("N0",CultureInfo.InvariantCulture)</td>*@
                                         <td>@item.CrCasRenterContractStatistics?.Max(x=>x.CrCasRenterContractStatisticsDate)?.ToString("dd/MM/yyyy")</td>
                                         @*<td>
                                             @localizer["Repair"]
@@ -97,9 +97,9 @@
                                         <td>@item.CrCasCarInformationConcatenateEnName</td>
                                         <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelEnName</td>
                                         <td>@item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtEnName</td>
-                                        <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
+                                        <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0",CultureInfo.InvariantCulture)</td>
                                         <td>@item.CrCasRenterContractStatistics?.Count()</td>
-                                        @*<td>@item.CrCasCarInformationConractDaysNo?.ToString("N0")</td>*@
+                                        @*<td>@item.CrCasCarInformationConractDaysNo?.ToString("N0",CultureInfo.InvariantCulture)</td>*@
                                         <td>@item.CrCasRenterContractStatistics?.Max(x=>x.CrCasRenterContractStatisticsDate)?.ToString("dd/MM/yyyy")</td>
                                         @*<td>
                                             @if (@item.CrCasCarInformationStatus == Status.Active)
@@ -163,9 +163,9 @@
                                         <td>@item.CrCasCarInformationConcatenateArName  (@localizer["Repair_New"])</td>
                                         <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelArName</td>
                                         <td>@item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtArName</td>
-                                        <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
+                                        <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0",CultureInfo.InvariantCulture)</td>
                                         <td>@item.CrCasRenterContractStatistics?.Count()</td>
-                                        @*<td>@item.CrCasCarInformationConractDaysNo?.ToString("N0")</td>*@
+                                        @*<td>@item.CrCasCarInformationConractDaysNo?.ToString("N0",CultureInfo.InvariantCulture)</td>*@
                                         <td>@item.CrCasRenterContractStatistics?.Max(x=>x.CrCasRenterContractStatisticsDate)?.ToString("dd/MM/yyyy")</td>
                                         @*<td>
                                             @localizer["Repair"]
@@ -181,9 +181,9 @@
                                         <td>@item.CrCasCarInformationConcatenateArName</td>
                                         <td>@item.CrCasCarInformationFuelNavigation?.CrMasSupCarFuelArName</td>
                                         <td>@item.CrCasCarInformationCvtNavigation?.CrMasSupCarCvtArName</td>
-                                        <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0")</td>
-                                        <td>@item.CrCasCarInformationConractCount?.ToString("N0")</td>
-                                        @*<td>@item.CrCasCarInformationConractDaysNo?.ToString("N0")</td>*@
+                                        <td>@item.CrCasCarInformationCurrentMeter?.ToString("N0",CultureInfo.InvariantCulture)</td>
+                                        <td>@item.CrCasCarInformationConractCount?.ToString("N0",CultureInfo.InvariantCulture)</td>
+                                        @*<td>@item.CrCasCarInformationConractDaysNo?.ToString("N0",CultureInfo.InvariantCulture)</td>*@
                                         <td>@item.CrCasCarInformationLastContractDate?.ToString("dd/MM/yyyy")</td>
                                         @*<td>
                                             @if (@item.CrCasCarInformationStatus == Status.Active)

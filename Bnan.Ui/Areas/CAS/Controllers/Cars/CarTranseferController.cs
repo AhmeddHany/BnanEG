@@ -127,13 +127,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
 
             try
             {
-                //Check Validition
-                if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
-                {
-                    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                    return Json(false);
-                    return RedirectToAction("Index", "CarTransefer");
-                }
+                ////Check Validition
+                //if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Update))
+                //{
+                //    _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                //    return Json(false);
+                //    return RedirectToAction("Index", "CarTransefer");
+                //}
                 var oldBranch = car.CrCasCarInformationBranch ?? " ";
                 car.CrCasCarInformationBranch = branchIdNew;
                 //car.CrCasCarInformationReasons = reasons;

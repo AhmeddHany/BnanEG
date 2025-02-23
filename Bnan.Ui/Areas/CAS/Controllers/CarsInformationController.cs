@@ -354,7 +354,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             ViewBag.MainColorEn = _unitOfWork.CrMasSupCarColor.Find(x => x.CrMasSupCarColorCode == car.CrCasCarInformationMainColor).CrMasSupCarColorEnName;
             ViewBag.JoinedDate = car.CrCasCarInformationJoinedFleetDate?.ToString("dd/MM/yyyy");
             ViewBag.Advantages = _unitOfWork.CrMasSupCarAdvantage.FindAll(x => x.CrMasSupCarAdvantagesStatus == Status.Active).ToList();
-            ViewBag.CurrentMeter = car.CrCasCarInformationCurrentMeter?.ToString("N0");
+            ViewBag.CurrentMeter = car.CrCasCarInformationCurrentMeter?.ToString("N0",CultureInfo.InvariantCulture);
             if (car != null)
             {
                 var carInforamtionVM = _mapper.Map<CarsInforamtionVM>(car);

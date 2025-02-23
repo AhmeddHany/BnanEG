@@ -27,7 +27,7 @@
             <tr onclick="location.href='@Url.Action("Edit", "AccountBank_CAS", new { id = item.CrCasAccountBankCode })'">
 
                 <td>
-                    <p>@(Model.all_SalesPointsCount?.Find(x => x.Column?.ToString()?.Trim() == item.CrCasAccountBankCode)?.RowCount.ToString("N0") ?? "0")</p>
+                    <p>@(Model.all_SalesPointsCount?.Find(x => x.Column?.ToString()?.Trim() == item.CrCasAccountBankCode)?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0")</p>
                 </td>
                 <td class="DifferAlign">
                     <p>@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? Model.all_BanksName?.Find(x => x.CrMasSupAccountBankCode == item?.CrCasAccountBankNo)?.CrMasSupAccountBankEnName : Model.all_BanksName?.Find(x => x.CrMasSupAccountBankCode == item?.CrCasAccountBankNo)?.CrMasSupAccountBankArName)</p>

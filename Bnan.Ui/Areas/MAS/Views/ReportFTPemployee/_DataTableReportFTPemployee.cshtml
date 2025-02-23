@@ -40,21 +40,21 @@
 
                 <td>
                     <div class="row">
-                        <div class="col-12">@(Model.all_exchanges?.Find(x => x.Column.ToString().Trim() == item.CrMasUserInformationCode)?.RowCount.ToString("N0") ?? "0")</div>
+                        <div class="col-12">@(Model.all_exchanges?.Find(x => x.Column.ToString().Trim() == item.CrMasUserInformationCode)?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0")</div>
                     </div>
                 </td>
                 <td>
-                    @(Model.all_bonds?.Find(x => x.Column.ToString().Trim() == item.CrMasUserInformationCode)?.RowCount.ToString("N0") ?? "0")
+                    @(Model.all_bonds?.Find(x => x.Column.ToString().Trim() == item.CrMasUserInformationCode)?.RowCount.ToString("N0",CultureInfo.InvariantCulture) ?? "0")
                 </td>
 
                 <td>
-                    <p>@item.CrMasUserInformationReservedBalance?.ToString("N2")</p>
+                    <p>@item.CrMasUserInformationReservedBalance?.ToString("N2",CultureInfo.InvariantCulture)</p>
                 </td>
                 <td>
-                    <p>@item.CrMasUserInformationAvailableBalance?.ToString("N2")</p>
+                    <p>@item.CrMasUserInformationAvailableBalance?.ToString("N2",CultureInfo.InvariantCulture)</p>
                 </td>
                 <td>
-                    <p>@item.CrMasUserInformationTotalBalance?.ToString("N2")</p>
+                    <p>@item.CrMasUserInformationTotalBalance?.ToString("N2",CultureInfo.InvariantCulture)</p>
                 </td>
                 @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                 {

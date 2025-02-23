@@ -27,6 +27,7 @@ using System.Text.Json;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Net.Http;
 using Bnan.Ui.ViewModels.CAS.Renters;
+using Bnan.Ui.ViewModels.CAS;
 
 namespace Bnan.Ui.Areas.CAS.Controllers.Renters
 {
@@ -110,8 +111,52 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             //VM.all_status_sms = all_status_sms;
             return View(VM);
         }
+        [HttpGet]
+        public async Task<PartialViewResult> GetAccountSalesPoint_CASByStatus(string search)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            //sidebar Active
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                var rates = await _unitOfWork.CrMasSysEvaluation.FindAllAsNoTrackingAsync(x => x.CrMasSysEvaluationsClassification == "1");
+
+                var thisCompanyData = await _unitOfWork.CrMasLessorInformation.FindAllAsNoTrackingAsync(x => x.CrMasLessorInformationCode == user.CrMasUserInformationLessor);
+
+                // استعلام رئيسي مع NoTracking
+                IQueryable<CrCasRenterLessor> query = _unitOfWork.CrCasRenterLessor.GetTableNoTracking().Include("CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation")/*.Where(x => x.CrCasRenterLessorId != "0000")*/;
+
+                // ارجاع الشركات الفعّالة
+                var Renters = await query.Where(x => x.CrCasRenterLessorCode == user.CrMasUserInformationLessor).ToListAsync();
 
 
+                //  var all_status_sms = await _unitOfWork.CrMasLessorCommunication.FindAllWithSelectAsNoTrackingAsync(
+                //predicate: null,
+                //selectProjection: query => query.Select(x => new Renter_SMS_VM
+                //{
+                //    Renter_Code = x.CrMasLessorCommunicationsLessorCode.Trim(),
+                //    sms_Name = x.CrMasLessorCommunicationsSmsName,
+                //    sms_Api = x.CrMasLessorCommunicationsSmsApi,
+                //    sms_Status = x.CrMasLessorCommunicationsSmsStatus,
+                //}));
+
+                var FilterAll_Renters = Renters.FindAll(x => x.CrCasRenterLessorStatus != Status.Deleted &&
+                                                         (x.CrCasRenterLessorNavigation.CrMasRenterInformationArName.Contains(search) ||
+                                                          x.CrCasRenterLessorNavigation.CrMasRenterInformationEnName.ToLower().Contains(search.ToLower()) ||
+                                                          x.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation.CrMasSupPostCityConcatenateArName.Contains(search) ||
+                                                          x.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation.CrMasSupPostCityConcatenateEnName.ToLower().Contains(search.ToLower()) ||
+                                                          x.CrCasRenterLessorCode.Contains(search)));
+
+                Cas_RenterMessages_VM VM = new Cas_RenterMessages_VM();
+                VM.all_Renters = FilterAll_Renters;
+                VM.Rates = rates;
+                VM.thisCompanyData = thisCompanyData?.FirstOrDefault();
+                return PartialView("_DataTableRenterMessages", VM);
+                
+            }
+            return PartialView();
+        }
+    
         [HttpPost]
         public async Task<IActionResult> send_ToAll_Whatsapp(List<IFormFile> files, string text, string address, string selectedValues, string all_mobiles, string all_mails)
         {
