@@ -1,4 +1,5 @@
 ﻿using Bnan.Core.Models;
+using Bnan.Ui.ViewModels.CAS;
 using System.ComponentModel.DataAnnotations;
 
 namespace Bnan.Ui.ViewModels.MAS
@@ -13,12 +14,21 @@ namespace Bnan.Ui.ViewModels.MAS
         public List<CrMasLessorInformation> all_lessors = new List<CrMasLessorInformation>();
         public List<CrMasRenterInformation> all_RentersMas = new List<CrMasRenterInformation>();
         public List<list_String_4> all_Invoices = new List<list_String_4>();
+        public List<Date_status_Contract_MAS_VM> all_status = new List<Date_status_Contract_MAS_VM>();
+
 
         public string? start_Date { get; set; }
         public string? end_Date { get; set; }
 
     }
-
+    public class Date_status_Contract_MAS_VM
+    {
+        public string CrCasRenterContractAlertNo { get; set; } = null!;
+        public string? CrCasRenterContractAlertLessor { get; set; }
+        public string? CrCasRenterContractAlertBranch { get; set; }
+        public string? CrCasRenterContractAlertContractActiviteStatus { get; set; }
+        public string? CrCasRenterContractAlertContractStatus { get; set; }
+    }
     public class ReportActiveContractVM
     {
 

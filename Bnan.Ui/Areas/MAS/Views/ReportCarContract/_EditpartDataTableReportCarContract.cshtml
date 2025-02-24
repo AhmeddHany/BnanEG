@@ -35,7 +35,7 @@
                     <p>@localizer["ContractCount_s"]</p>
                 </div>
                 <div class=" col-auto Saved-data">
-                    <p>@Model.summition?.Contracts_Count?.ToString("0")</p>
+                    <p>@Model.summition?.Contracts_Count?.ToString("N0")</p>
                 </div>
             </div>
         </div>
@@ -45,7 +45,7 @@
                     <p>@localizer["the_KM_Cut_n"]</p>
                 </div>
                 <div class=" col-auto Saved-data">
-                    <p>@Model.summition?.km_Count?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                    <p>@Model.summition?.km_Count?.ToString("N0", CultureInfo.InvariantCulture)</p>
                 </div>
             </div>
         </div>
@@ -116,9 +116,9 @@
                             <td><a href="@TGA_pdf" target="@TGA_pdf_blank"><img class="pdf-Tableicons" src="~/MasSystem/images/naql.svg"></a></td>
                             <td><a href="@Contract_pdf" target="@Contract_pdf_blank"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
                             <td><a href="@Invoice_pdf" target="@Invoice_pdf_blank"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
-                            <td><p>@km?.ToString("N2", CultureInfo.InvariantCulture)</p></td>
+                            <td><p>@km?.ToString("N0", CultureInfo.InvariantCulture)</p></td>
                             <td>
-                                <p>@days</p>
+                                <p>@days?.ToString("N0", CultureInfo.InvariantCulture)</p>
                             </td>
                             <td>
                                 <p>@contractValue?.ToString("N2", CultureInfo.InvariantCulture)</p>

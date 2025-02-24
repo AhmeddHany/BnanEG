@@ -51,10 +51,21 @@
 
 
                         if (item.CrCasAccountReceiptPdfFile != null && item.CrCasAccountReceiptPdfFile != "") { bond_pdf = item.CrCasAccountReceiptPdfFile?.ToString().Replace("~", ""); bond_pdf_blank = "_blank"; }
-                        paymentMethod = item.PaymentMethod_En;
-                        RefrenceType = item.ReferanceType_En;
-                        salesPoint = item.Salespoint_En;
-                        lessor = Model.all_lessors?.Find(x => x.id_key == item.CrCasAccountReceiptLessorCode)?.nameEn ?? " ";
+                        @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
+                        {
+                            paymentMethod = item.PaymentMethod_En;
+                            RefrenceType = item.ReferanceType_En;
+                            salesPoint = item.Salespoint_En;
+                            lessor = Model.all_lessors?.Find(x => x.id_key == item.CrCasAccountReceiptLessorCode)?.nameEn ?? " ";
+                        }
+                        else
+                        {
+                            paymentMethod = item.PaymentMethod_Ar;
+                            RefrenceType = item.ReferanceType_Ar;
+                            salesPoint = item.Salespoint_Ar;
+                            lessor = Model.all_lessors?.Find(x => x.id_key == item.CrCasAccountReceiptLessorCode)?.nameAr ?? " ";
+                        }
+
 
 
 

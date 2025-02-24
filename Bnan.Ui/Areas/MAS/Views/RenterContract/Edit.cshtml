@@ -84,9 +84,9 @@
                                                     <tr>
                                                         <td><a href="@image_pdf" target="@image_pdf_blank"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
                                                         <td><a href="#"><img src="~/MasSystem/images/Rectangle 197.svg"></a></td>
-                                                        <td><p>@km?.ToString("N2", CultureInfo.InvariantCulture)</p></td>
+                                                        <td><p>@km?.ToString("N0", CultureInfo.InvariantCulture)</p></td>
                                                         <td>
-                                                            <p>@days</p>
+                                                            <p>@days?.ToString("N0", CultureInfo.InvariantCulture)</p>
                                                         </td>
                                                         <td>
                                                             <p>@contractValue?.ToString("N2", CultureInfo.InvariantCulture)</p>

@@ -7,7 +7,6 @@ using Bnan.Core.Models;
 using Bnan.Inferastructure.Filters;
 using Bnan.Inferastructure.Repository.MAS;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.Areas.CAS.Controllers;
 using Bnan.Ui.ViewModels.MAS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -81,40 +80,54 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 start = DateTime.Parse(maxDate).AddMonths(-1);
             }
 
-            var all_RenterBasicContract = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
-                //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: x => x.CrCasRenterContractBasicStatus == Status.Active
-                && x.CrCasRenterContractBasicExpectedStartDate > start && x.CrCasRenterContractBasicExpectedStartDate <= end,
-                selectProjection: query => query.Select(x => new ReportActiveContractVM
+            var AllContracts = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
+                    //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
+                    predicate: x =>
+                    (x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire),
+                    selectProjection: query => query.Select(x => new ReportActiveContractVM
+                    {
+                        CrCasRenterContractBasicNo = x.CrCasRenterContractBasicNo,
+                        CrCasRenterContractBasicCopy = x.CrCasRenterContractBasicCopy,
+                        CrCasRenterContractBasicLessor = x.CrCasRenterContractBasicLessor,
+                        CrCasRenterContractBasicRenterId = x.CrCasRenterContractBasicRenterId,
+                        CrCasRenterContractBasicCarSerailNo = x.CrCasRenterContractBasicCarSerailNo,
+                        CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
+                        CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
+                        CrCasRenterContractBasicExpectedRentalDays = x.CrCasRenterContractBasicExpectedRentalDays,
+                        CrCasRenterContractBasicExpectedTotal = x.CrCasRenterContractBasicExpectedTotal,
+                        CrCasRenterContractBasicAmountPaidAdvance = x.CrCasRenterContractBasicAmountPaidAdvance,
+                        CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
+                        CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
+                        CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
+                        CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
+                        CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
+                        CrCasRenterContractBasicStatus = x.CrCasRenterContractBasicStatus,
+                    })
+                , includes: new string[] { "CrCasRenterContractBasic1" }
+                    );
+
+            var allStatus_contracts = await _unitOfWork.CrCasRenterContractAlert.FindAllWithSelectAsNoTrackingAsync(
+                predicate: null,
+                selectProjection: query => query.Select(x => new Date_status_Contract_MAS_VM
                 {
-                    CrCasRenterContractBasicNo = x.CrCasRenterContractBasicNo,
-                    CrCasRenterContractBasicCopy = x.CrCasRenterContractBasicCopy,
-                    CrCasRenterContractBasicLessor = x.CrCasRenterContractBasicLessor,
-                    CrCasRenterContractBasicRenterId = x.CrCasRenterContractBasicRenterId,
-                    CrCasRenterContractBasicCarSerailNo = x.CrCasRenterContractBasicCarSerailNo,
-                    CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
-                    CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
-                    CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
-                    CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
-                    CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
-                    CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
-                    CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
-                    CrCasRenterContractBasicStatus = x.CrCasRenterContractBasicStatus,
+                    CrCasRenterContractAlertNo = x.CrCasRenterContractAlertNo,
+                    CrCasRenterContractAlertLessor = x.CrCasRenterContractAlertLessor,
+                    CrCasRenterContractAlertBranch = x.CrCasRenterContractAlertBranch,
+                    CrCasRenterContractAlertContractActiviteStatus = x.CrCasRenterContractAlertContractActiviteStatus,
+                    CrCasRenterContractAlertContractStatus = x.CrCasRenterContractAlertContractStatus,
                 })
-                , includes: new string[] { "CrCasRenterContractBasicCarSerailNoNavigation" }
                 );
             var allRenters = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
-                //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
-                selectProjection: query => query.Select(x => new CrMasRenterInformation
-                {
-                    CrMasRenterInformationId = x.CrMasRenterInformationId,
-                    CrMasRenterInformationArName = x.CrMasRenterInformationArName,
-                    CrMasRenterInformationEnName = x.CrMasRenterInformationEnName,
-                    CrMasRenterInformationStatus = x.CrMasRenterInformationStatus,
-                })
-                //,includes: new string[] { "CrMasRenterInformationNationalityNavigation", "CrMasRenterInformationProfessionNavigation" } 
-                );
+                               predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
+                               selectProjection: query => query.Select(x => new CrMasRenterInformation
+                               {
+                                   CrMasRenterInformationId = x.CrMasRenterInformationId,
+                                   CrMasRenterInformationArName = x.CrMasRenterInformationArName,
+                                   CrMasRenterInformationEnName = x.CrMasRenterInformationEnName,
+                                   CrMasRenterInformationStatus = x.CrMasRenterInformationStatus,
+                               })
+                               //,includes: new string[] { "CrMasRenterInformationNationalityNavigation", "CrMasRenterInformationProfessionNavigation" } 
+                               );
 
             var allLessors = await _unitOfWork.CrMasLessorInformation.FindAllWithSelectAsNoTrackingAsync(
                 predicate: x => x.CrMasLessorInformationStatus != Status.Deleted,
@@ -126,7 +139,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 })
                 );
             var all_Invoices = await _unitOfWork.CrCasAccountInvoice.FindAllWithSelectAsNoTrackingAsync(
-            //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                 predicate: null,
                 selectProjection: query => query.Select(x => new list_String_4
                 {
@@ -138,40 +150,32 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 //,includes: new string[] { "" } 
                 );
 
-            // If no active licenses, retrieve all licenses
-            if (!all_RenterBasicContract.Any())
-            {
-                all_RenterBasicContract = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
-                   //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                   predicate: x => x.CrCasRenterContractBasicStatus == Status.Expire
-                   && x.CrCasRenterContractBasicExpectedStartDate > start && x.CrCasRenterContractBasicExpectedStartDate <= end,
-                   selectProjection: query => query.Select(x => new ReportActiveContractVM
-                   {
-                       CrCasRenterContractBasicNo = x.CrCasRenterContractBasicNo,
-                       CrCasRenterContractBasicCopy = x.CrCasRenterContractBasicCopy,
-                       CrCasRenterContractBasicLessor = x.CrCasRenterContractBasicLessor,
-                       CrCasRenterContractBasicRenterId = x.CrCasRenterContractBasicRenterId,
-                       CrCasRenterContractBasicCarSerailNo = x.CrCasRenterContractBasicCarSerailNo,
-                       CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
-                       CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
-                       CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
-                       CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
-                       CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
-                       CarEnName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateEnName,
-                       CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
-                       CrCasRenterContractBasicStatus = x.CrCasRenterContractBasicStatus,
-                   })
-                   , includes: new string[] { "CrCasRenterContractBasicCarSerailNoNavigation" }
-                   );
-                ViewBag.radio = "All";
-            }
-            else ViewBag.radio = "A";
-
-
             listReportActiveContractVM VM = new listReportActiveContractVM();
+
+
+            var query_Alert1 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus != "3").ToList();
+            var AllContracts_A = AllContracts.Where(x => query_Alert1.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo && x.CrCasRenterContractBasicStatus == "A")).OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+
+            // If no active licenses, retrieve all licenses
+            if (!AllContracts_A.Any())
+            {
+                var query_Alert2 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus == "3").ToList();
+                AllContracts = AllContracts.Where(x => query_Alert2.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo)).OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+                ViewBag.radio = "All";
+                VM.all_contractBasic = AllContracts;
+
+            }
+            else 
+            {
+                VM.all_contractBasic = AllContracts_A;
+                ViewBag.radio = "A";
+            }
+
+
+            //VM.all_RentersMas = allRenters;
+            VM.all_status = allStatus_contracts;
             VM.all_RentersMas = allRenters;
             VM.all_lessors = allLessors;
-            VM.all_contractBasic = all_RenterBasicContract;
             VM.all_Invoices = all_Invoices;
             VM.start_Date = start.ToString("yyyy-MM-dd");
             VM.end_Date = end.AddDays(-1).ToString("yyyy-MM-dd");
@@ -180,7 +184,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
         }
 
         [HttpGet]
-        //[Route("/MAS/ReportActiveContract/GetContractsByStatus")]
+        //[Route("/CAS/ReportActiveContract_Cas/GetContractsByStatus")]
         public async Task<PartialViewResult> GetContractsByStatus(string status, string start, string end)
         {
             //sidebar Active
@@ -197,7 +201,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                 var end_Date = DateTime.Parse(end).AddDays(1);
                 var AllContracts = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                     //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
-                    predicate: x => x.CrCasRenterContractBasicStatus !=Status.Extension
+                    predicate: x => 
+                    (x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire)
                     && x.CrCasRenterContractBasicExpectedStartDate > start_Date && x.CrCasRenterContractBasicExpectedStartDate <= end_Date,
                     selectProjection: query => query.Select(x => new ReportActiveContractVM
                     {
@@ -207,7 +212,10 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                         CrCasRenterContractBasicRenterId = x.CrCasRenterContractBasicRenterId,
                         CrCasRenterContractBasicCarSerailNo = x.CrCasRenterContractBasicCarSerailNo,
                         CrCasRenterContractBasicExpectedStartDate = x.CrCasRenterContractBasicExpectedStartDate,
-                        //CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
+                        CrCasRenterContractBasicActualCloseDateTime = x.CrCasRenterContractBasicActualCloseDateTime,
+                        CrCasRenterContractBasicExpectedRentalDays = x.CrCasRenterContractBasicExpectedRentalDays,
+                        CrCasRenterContractBasicExpectedTotal = x.CrCasRenterContractBasicExpectedTotal,
+                        CrCasRenterContractBasicAmountPaidAdvance = x.CrCasRenterContractBasicAmountPaidAdvance,
                         CrCasRenterContractBasicPdfFile = x.CrCasRenterContractBasicPdfFile,
                         CrCasRenterContractBasicPdfTga = x.CrCasRenterContractBasicPdfTga,
                         CarArName = x.CrCasRenterContractBasicCarSerailNoNavigation.CrCasCarInformationConcatenateArName,
@@ -215,19 +223,31 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                         CrCasRenterContractBasicExpectedEndDate = x.CrCasRenterContractBasicExpectedEndDate,
                         CrCasRenterContractBasicStatus = x.CrCasRenterContractBasicStatus,
                     })
-                    , includes: new string[] { "CrCasRenterContractBasicCarSerailNoNavigation" }
+                , includes: new string[] { "CrCasRenterContractBasic1" }
+                    );
+
+                var allStatus_contracts = await _unitOfWork.CrCasRenterContractAlert.FindAllWithSelectAsNoTrackingAsync(
+                    predicate: null,
+                    selectProjection: query => query.Select(x => new Date_status_Contract_MAS_VM
+                    {
+                        CrCasRenterContractAlertNo = x.CrCasRenterContractAlertNo,
+                        CrCasRenterContractAlertLessor = x.CrCasRenterContractAlertLessor,
+                        CrCasRenterContractAlertBranch = x.CrCasRenterContractAlertBranch,
+                        CrCasRenterContractAlertContractActiviteStatus = x.CrCasRenterContractAlertContractActiviteStatus,
+                        CrCasRenterContractAlertContractStatus = x.CrCasRenterContractAlertContractStatus,
+                    })
                     );
                 var allRenters = await _unitOfWork.CrMasRenterInformation.FindAllWithSelectAsNoTrackingAsync(
-                    predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
-                    selectProjection: query => query.Select(x => new CrMasRenterInformation
-                    {
-                        CrMasRenterInformationId = x.CrMasRenterInformationId,
-                        CrMasRenterInformationArName = x.CrMasRenterInformationArName,
-                        CrMasRenterInformationEnName = x.CrMasRenterInformationEnName,
-                        CrMasRenterInformationStatus = x.CrMasRenterInformationStatus,
-                    })
-                    //,includes: new string[] { "CrMasRenterInformationNationalityNavigation", "CrMasRenterInformationProfessionNavigation" } 
-                    );
+                                   predicate: x => x.CrMasRenterInformationStatus != Status.Deleted,
+                                   selectProjection: query => query.Select(x => new CrMasRenterInformation
+                                   {
+                                       CrMasRenterInformationId = x.CrMasRenterInformationId,
+                                       CrMasRenterInformationArName = x.CrMasRenterInformationArName,
+                                       CrMasRenterInformationEnName = x.CrMasRenterInformationEnName,
+                                       CrMasRenterInformationStatus = x.CrMasRenterInformationStatus,
+                                   })
+                                   //,includes: new string[] { "CrMasRenterInformationNationalityNavigation", "CrMasRenterInformationProfessionNavigation" } 
+                                   );
 
                 var allLessors = await _unitOfWork.CrMasLessorInformation.FindAllWithSelectAsNoTrackingAsync(
                     predicate: x => x.CrMasLessorInformationStatus != Status.Deleted,
@@ -250,21 +270,46 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     //,includes: new string[] { "" } 
                     );
 
+
                 listReportActiveContractVM VM = new listReportActiveContractVM();
+                //VM.all_RentersMas = allRenters;
+                VM.all_status = allStatus_contracts;
                 VM.all_RentersMas = allRenters;
                 VM.all_lessors = allLessors;
                 VM.all_Invoices = all_Invoices;
-
-                if (status == Status.All)
+                if (status == "all")
                 {
-                    var FilterAll = AllContracts.FindAll(x => x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire);
-                    VM.all_contractBasic = FilterAll;
+                    VM.all_contractBasic = AllContracts;
                     return PartialView("_DataTableReportActiveContract", VM);
                 }
-                var FilterByStatus = AllContracts.FindAll(x => x.CrCasRenterContractBasicStatus == status);
-
-                VM.all_contractBasic = FilterByStatus;
+                else if (status == Status.Active)
+                {
+                    var query_Alert1 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus != "3").ToList();
+                    AllContracts = AllContracts.Where(x => query_Alert1.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo && x.CrCasRenterContractBasicStatus == "A")).OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+                }
+                //else if (status == "today")
+                //{
+                //    var query_Alert1 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus == "2").ToList();
+                //    AllContracts = AllContracts.Where(x => query_Alert1.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo && x.CrCasRenterContractBasicStatus == "A")).OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+                //}
+                //else if (status == "tomorrow")
+                //{
+                //    var query_Alert2 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus == "1").ToList();
+                //    AllContracts = AllContracts.Where(x => query_Alert2.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo)).OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+                //}
+                //else if (status == "later")
+                //{
+                //    var query_Alert3 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus == "0").ToList();
+                //    AllContracts = AllContracts.Where(x => query_Alert3.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo)).OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+                //}
+                else if (status == Status.Expire)
+                {
+                    var query_Alert3 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus == "3").ToList();
+                    AllContracts = AllContracts.Where(x => query_Alert3.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo)).OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+                }
+                VM.all_contractBasic = AllContracts;
                 return PartialView("_DataTableReportActiveContract", VM);
+
             }
             listReportActiveContractVM VM2 = new listReportActiveContractVM();
 

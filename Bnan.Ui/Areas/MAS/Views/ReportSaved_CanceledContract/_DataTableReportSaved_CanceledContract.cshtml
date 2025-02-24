@@ -53,7 +53,7 @@
 
 				<td><p>@item.CrCasRenterContractBasicAmountPaidAdvance?.ToString("N2", CultureInfo.InvariantCulture)</p></td>
 				<td><p>@item.CrCasRenterContractBasicExpectedTotal?.ToString("N2", CultureInfo.InvariantCulture)</p></td>
-				<td><p>@item.CrCasRenterContractBasicExpectedRentalDays</p></td>
+				<td><p>@item.CrCasRenterContractBasicExpectedRentalDays?.ToString("N0", CultureInfo.InvariantCulture)</p></td>
 
 				@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
 				{

@@ -183,7 +183,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var Invoice = await _unitOfWork.CrCasAccountInvoice.FindAllAsNoTrackingAsync(x => x.CrCasAccountInvoiceReferenceContract == contract.CrCasRenterContractBasicNo);
             contractMap.InvoicePdfPath = Invoice.LastOrDefault()?.CrCasAccountInvoicePdfFile;
             contractMap.AdvantagesValue = advantages?.Sum(x => x.CrCasContractAdvantagesValue)?.ToString("N2", CultureInfo.InvariantCulture);
-            contractMap.AdvantagesValueTotal = (advantages?.Sum(x => x.CrCasContractAdvantagesValue) * contract.CrCasRenterContractBasicExpectedRentalDays)?.ToString("N2", CultureInfo.InvariantCulture);
+            contractMap.AdvantagesValueTotal = (advantages?.Sum(x => x.CrCasContractAdvantagesValue) * contract.CrCasRenterContractBasicExpectedRentalDays)?.ToString("N0", CultureInfo.InvariantCulture);
             var ChoicesValuesAll = await _unitOfWork.CrCasRenterContractChoice.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractChoiceNo == contract.CrCasRenterContractBasicNo);
             contractMap.ChoicesValue = ChoicesValuesAll.Sum(x => x.CrCasContractChoiceValue)?.ToString("N2", CultureInfo.InvariantCulture);
             var ContractChoicesAll = await _unitOfWork.CrCasRenterContractChoice.FindAllAsNoTrackingAsync(x => x.CrCasRenterContractChoiceNo == contract.CrCasRenterContractBasicNo && (x.CrCasRenterContractChoiceCode == "5100000003" || x.CrCasRenterContractChoiceCode == "5100000004"), new[] { "CrCasRenterContractChoiceCodeNavigation" });

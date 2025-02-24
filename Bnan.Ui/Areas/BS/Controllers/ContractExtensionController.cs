@@ -134,7 +134,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             contractMap.AuthEndDate = authContract.CrCasRenterContractAuthorizationEndDate;
             contractMap.AuthType = authContract.CrCasRenterContractAuthorizationType;
             contractMap.CasRenterPreviousBalance = contract.CrCasRenterContractBasic5?.CrCasRenterLessorAvailableBalance;
-            contractMap.AdvatagesValue = (advatagesContract * contract.CrCasRenterContractBasicExpectedRentalDays)?.ToString("N2", CultureInfo.InvariantCulture);
+            contractMap.AdvatagesValue = (advatagesContract * contract.CrCasRenterContractBasicExpectedRentalDays)?.ToString("N0", CultureInfo.InvariantCulture);
             contractMap.ChoicesValue = ChoicesContract?.ToString("N2", CultureInfo.InvariantCulture);
             contractMap.InvoicePdf = Invoice?.CrCasAccountInvoicePdfFile;
             bsLayoutVM.ExtensionContract = contractMap;
