@@ -1,16 +1,7 @@
 ﻿using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Globalization;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Security.Cryptography.Xml;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -66,7 +57,7 @@ namespace Bnan.Inferastructure.Repository
             renterContractBasic.CrCasRenterContractBasicTotalDailyFreeKm = Contract.CrCasRenterContractBasicTotalDailyFreeKm;
             ////////////////
             ///       
-            renterContractBasic.CrCasRenterContractBasicCopy = Contract.CrCasRenterContractBasicCopy+ 1;
+            renterContractBasic.CrCasRenterContractBasicCopy = Contract.CrCasRenterContractBasicCopy + 1;
             renterContractBasic.CrCasRenterContractBasicExpectedRentalDays = int.Parse(DaysNo);
             renterContractBasic.CrCasRenterContractBasicExpectedEndDate = renterContractBasic.CrCasRenterContractBasicExpectedStartDate?.AddDays(int.Parse(DaysNo));
             renterContractBasic.CrCasRenterContractBasicExpectedRentValue = int.Parse(DaysNo) * Contract.CrCasRenterContractBasicDailyRent;
@@ -98,7 +89,7 @@ namespace Bnan.Inferastructure.Repository
             var totalRequired = renterContractBasic.CrCasRenterContractBasicExpectedTotal - Contract.CrCasRenterContractBasicExpectedTotal - renterContractBasic.CrCasRenterContractBasicPreviousBalance;
             if (totalRequired < 0) totalRequired = 0;
             renterContractBasic.CrCasRenterContractBasicAmountRequired = totalRequired;
-            renterContractBasic.CrCasRenterContractBasicAmountPaidAdvance = decimal.Parse(AmountPayed, CultureInfo.InvariantCulture)+ Contract.CrCasRenterContractBasicAmountPaidAdvance;
+            renterContractBasic.CrCasRenterContractBasicAmountPaidAdvance = decimal.Parse(AmountPayed, CultureInfo.InvariantCulture) + Contract.CrCasRenterContractBasicAmountPaidAdvance;
             renterContractBasic.CrCasRenterContractBasicUserInsert = UserInsert;
             renterContractBasic.CrCasRenterContractBasicPdfFile = Contract.CrCasRenterContractBasicPdfFile;
             renterContractBasic.CrCasRenterContractBasicReasons = Reasons;
@@ -128,8 +119,6 @@ namespace Bnan.Inferastructure.Repository
             var RenterLessor = await _unitOfWork.CrCasRenterLessor.FindAsync(x => x.CrCasRenterLessorId == RenterId && x.CrCasRenterLessorCode == LessorCode);
             if (RenterLessor != null)
             {
-                if (RenterLessor.CrCasRenterLessorContractCount != null) RenterLessor.CrCasRenterLessorContractCount += 1;
-                else RenterLessor.CrCasRenterLessorContractCount = 1;
                 RenterLessor.CrCasRenterLessorBalance += TotalPayed;
                 RenterLessor.CrCasRenterLessorReservedBalance += RequiredValue;
                 RenterLessor.CrCasRenterLessorAvailableBalance = RenterLessor.CrCasRenterLessorBalance - RenterLessor.CrCasRenterLessorReservedBalance;

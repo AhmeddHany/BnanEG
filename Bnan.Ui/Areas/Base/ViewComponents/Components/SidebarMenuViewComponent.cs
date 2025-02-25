@@ -259,7 +259,7 @@ namespace Bnan.Ui.Areas.Base.ViewComponents.Components
                                             ("2202005", "CarTransefer", "Index"),
                                             ("2202006", "OwnerChanger", "Index"),
                                             ("2202007", "#", "#"),
-                                            ("2202008", "#", "#"),
+                                            ("2202008", "CarPrice", "CarPrice"),
                                             ("2202009", "#", "#"),
                                             ("2202010", "#", "#"),
                                         }),

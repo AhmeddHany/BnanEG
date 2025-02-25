@@ -235,6 +235,7 @@ namespace Bnan.Ui.Areas.CAS.Components
                     OnlineOrOffline = onlineOrOffline,
                     LastActionDate = lastActionDate,
                     LastActionTime = lastActionTime,
+                    Picture = user.CrMasUserInformationPicture,
                     AvaliableBalance = user.CrMasUserInformationAvailableBalance?.ToString("N2", CultureInfo.InvariantCulture),
                     ResevedBalance = user.CrMasUserInformationReservedBalance?.ToString("N2", CultureInfo.InvariantCulture),
                     HaveCustodyNotAccepted = user.CrMasUserInformationReservedBalance > 0,

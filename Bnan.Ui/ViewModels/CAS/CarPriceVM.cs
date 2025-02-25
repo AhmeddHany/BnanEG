@@ -16,27 +16,29 @@ namespace Bnan.Ui.ViewModels.CAS
         [Required(ErrorMessage = "requiredFiled")]
         public string? CrCasPriceCarBasicDistributionCode { get; set; }
         public DateTime? CrCasPriceCarBasicDate { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
         public DateTime? CrCasPriceCarBasicStartDate { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
         public DateTime? CrCasPriceCarBasicEndDate { get; set; }
-        
+
         public int? CrCasPriceCarBasicWeeklyDay { get; set; }
         public int? CrCasPriceCarBasicMonthlyDay { get; set; }
         public int? CrCasPriceCarBasicYearlyDay { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public int? CrCasPriceCarBasicNoDailyFreeKm { get; set; }
-        
+
         [Required(ErrorMessage = "requiredFiled")]
         public int? CrCasPriceCarBasicFreeAdditionalHours { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public int? CrCasPriceCarBasicHourMax { get; set; }
-       
+
         public bool? CrCasPriceCarBasicIsAdditionalDriver { get; set; }
-        
+
         [Required(ErrorMessage = "requiredFiled")]
         public int? CrCasPriceCarBasicMinAge { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public int? CrCasPriceCarBasicMaxAge { get; set; }
-      
+
         public bool? CrCasPriceCarBasicRequireFinancialCredit { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public int? CrCasPriceCarBasicCancelHour { get; set; }
@@ -79,7 +81,10 @@ namespace Bnan.Ui.ViewModels.CAS
         //[Required(ErrorMessage = "requiredFiled")]
         public decimal? CrCasPriceCarBasicCompensationDrowning { get; set; }
 
-        //Strings 
+        //Strings
+        [Required(ErrorMessage = "requiredFiled")]
+        public string? CarName { get; set; }
+
         [Required(ErrorMessage = "requiredFiled")]
         public string? DailyRent { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
@@ -98,10 +103,6 @@ namespace Bnan.Ui.ViewModels.CAS
         public string? InFeesTamm { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? OutFeesTamm { get; set; }
-        //[Required(ErrorMessage = "requiredFiled")]
-        //public string? InFeesTga { get; set; }
-        //[Required(ErrorMessage = "requiredFiled")]
-        //public string? OutFeesTga { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
         public string? ExtraHourValue { get; set; }
         [Required(ErrorMessage = "requiredFiled")]
@@ -121,8 +122,8 @@ namespace Bnan.Ui.ViewModels.CAS
         public virtual CrMasSupCarDistribution? CrCasPriceCarBasicDistributionCodeNavigation { get; set; }
         public virtual CrMasLessorInformation? CrCasPriceCarBasicLessorCodeNavigation { get; set; }
         public virtual CrMasSupCarModel? CrCasPriceCarBasicModelCodeNavigation { get; set; }
-        public virtual ICollection<CrCasPriceCarAdditional>? CrCasPriceCarAdditionals { get; set; }
-        public virtual ICollection<CrCasPriceCarAdvantage>? CrCasPriceCarAdvantages { get; set; }
-        public virtual ICollection<CrCasPriceCarOption>? CrCasPriceCarOptions { get; set; }
+        public virtual List<CrCasPriceCarAdditional>? CrCasPriceCarAdditionals { get; set; }
+        public virtual List<CrCasPriceCarAdvantage>? CrCasPriceCarAdvantages { get; set; }
+        public virtual List<CrCasPriceCarOption>? CrCasPriceCarOptions { get; set; }
     }
 }

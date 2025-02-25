@@ -6,99 +6,120 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = localizer["CarPrice Data"];
-    ViewData["Page-Hint"] = localizer["CarPrice_New Hint"];
 }
 
-
-<style>
-    body {
-        overflow: hidden
-    }
-
-    @@media (max-width: 600px) {
-        #basic-datatable_wrapper .row:first-child > div {
-            text-align: center;
-        }
-
-            #basic-datatable_wrapper .row:first-child > div:last-child > * {
-                text-align: center;
-            }
-    }
-</style>
-<div class="sub-container">
-    <div class="container-fluid">
-        <div class="row">
-            @*filter*@
-            <div class="col-sm-12 col-md-9">
-                <div class="col-sm-12 col-md-4 p-0">
-                    <a type="button" class="btn btn-danger" asp-area="CAS" asp-controller="Home" asp-action="Index">
-                        <i class="mdi mdi-window-close"></i>
-                    </a>
-                    <a onclick="CheckValidation('2202007', '@Status.Insert', '@Url.Action("AddPriceCar", "CarPrice")')" class="btn btn-secondary">
-                        @localizer["AddPrice"]
-                    </a>
+<div class="col d-flex align-items-center justify-content-center">
+    <div class="container main-container">
+        <form action="">
+            <div class="row g-3 mb-2">
+                <div class="col">
+                    <h3> @localizer["Prices"] </h3>
                 </div>
-            </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-end">
 
-            @*search*@
-            <div class="col-sm-12 col-md-3 p-0">
-                <input class="form-control" type="search" id="top-search" style="width: 96%;" placeholder="@localizer["search"]...">
-            </div>
-
-            <div class="col-sm-12 col-md-12 mt-3" id="status-filter">
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioAll" name="customRadio" value="All" class="form-check-input">
-                    <label class="form-check-label" for="customRadioAll">@localizer["All"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioActive" name="customRadio" value="A" class="form-check-input">
-                    <label class="form-check-label" for="customRadioActive">@localizer["Active"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioRemoved" name="customRadio" value="X" class="form-check-input">
-                    <label class="form-check-label" for="customRadioRemoved">@localizer["AboutToExpire_short"]</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input type="radio" id="customRadioStoped" name="customRadio" value="E" class="form-check-input">
-                    <label class="form-check-label" for="customRadioStoped">@localizer["Expire"]</label>
-                    <div class="form-check form-check-inline">
-                        <input type="radio" id="customRadioStoped2" name="customRadio" value="D" class="form-check-input">
-                        <label class="form-check-label" for="customRadioStoped2">@localizer["Deleted"]</label>
+                    <div class="col-12 col-md-8 search-input-col">
+                        <div class="form-outline w-100" data-mdb-input-init>
+                            <span class="fa fa-search"></span>
+                            <input type="search" id="search" class="form-control inputs search-input"
+                                   name="search" aria-label="Search" autofocus autocomplete="off" />
+                        </div>
                     </div>
+
                 </div>
             </div>
-            <div class="dataTable">
-                <partial name="_DataTableCarsPrice" />
+            <div class="row mb-3">
+                <div class="col-12 filters-col">
+                    <div class="filters-custom-order">
+
+                        <label class="form-check-label" for="all">@localizer["All"]</label>
+                        <input class="form-check-input custom" type="radio" name="customRadio" id="all"
+                               value="All" checked />
+                    </div>
+
+                    <div class="filters-custom-order">
+
+                        <label class="form-check-label filter2" for="Active">@localizer["Active"]</label>
+                        <input class="form-check-input custom" type="radio" name="customRadio" id="Active"
+                               value="A" />
+                    </div>
+
+                    <div class="filters-custom-order">
+
+                        <label class="form-check-label  filter1" for="AboutToExpire">@localizer["AboutToExpire"]</label>
+                        <input class="form-check-input custom" type="radio" name="customRadio" id="AboutToExpire"
+                               value="X" />
+                    </div>
+                    <div class="filters-custom-order">
+
+                        <label class="form-check-label filter3" for="Expire">@localizer["Expire"]</label>
+                        <input class="form-check-input custom" type="radio" name="customRadio" id="Expire"
+                               value="E" />
+                    </div>
+                    <div class="filters-custom-order">
+
+                        <label class="form-check-label filter5" for="deleted">@localizer["Deleted"]</label>
+                        <input class="form-check-input custom" type="radio" name="customRadio" id="deleted"
+                               value="D" />
+                    </div>
+
+                </div>
             </div>
-        </div>
+            
+            <div class="row table-row px-3">
+                <div class="col  scroll-table-div  table-responsive-sm  w-100  dataTable">
+                    <partial name="_DataTableCarsPrice">
+                </div>
+            </div>
+        </form>
+        <a href="/CAS/CarPrice/AddPriceCar" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["AddPrice"]" class="new-Page-icon">
+            <img src="~/CasSys/images/new price.svg" alt="new Price">
+        </a>
+        <a href="/CAS/Home/Index" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-custom-class="custom-tooltip" data-bs-title="@localizer["BackToHome"]"
+           class="main-page-icon"><img src="~/CasSys/images/back to main.svg" alt="man"></a>
     </div>
 </div>
+
+
 @section scripts {
-    @*Get Users Using filter*@
     <script>
-        //get User By Status function
-        function GetCarsFitler(status) {
+        $(document).ready(function () {
+            $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
+        });
+        ///////
+    </script>
+    <script>
+        // To Handle Background
+        $("#wrapper").addClass("Branches-wrapper");
+    </script>
+    <script>
+        //get AccountBank By Status function
+        function GetCarPriceFitler(status, search) {
             $.ajax({
                 type: "GET",
                 data: {
-                    status: status
+                    status: status, search: search
                 },
                 url: "@Url.Action("CarPriceByStatus", "CarPrice", new { Area = "CAS" })",
                 success: function (response) {
-                    // set_nice_scroll();
-                    console.log(response);
                     $(".dataTable").html(response);
-                    set_basic_datatable();
                 },
             })
         }
 
-        //on Click Filter Radio Button GetLessorsByStatus
         $("input[name='customRadio']").on("click", function () {
-            // Clear the value from the search input
-            $("#top-search").val("");
-            GetCarsFitler($(this).val())
-        })
+            const status = $(this).val();
+            const search = $("#search").val(); // الحصول على قيمة البحث
+            GetCarPriceFitler(status, search);
+        });
+
+        // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
+        $("#search").on("keyup", function () {
+            const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
+            const search = $(this).val(); // الحصول على قيمة البحث
+            GetCarPriceFitler(status, search);
+        });
     </script>
+   
     }
