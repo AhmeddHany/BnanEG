@@ -28,7 +28,7 @@
         }
         @foreach (var item in Model.all_contractBasic)
         {
-
+            var status_contract = Model.all_status?.Find(x => x.CrCasRenterContractAlertNo == item.CrCasRenterContractBasicNo)?.CrCasRenterContractAlertContractActiviteStatus ?? "";
             var endDate = item.CrCasRenterContractBasicExpectedEndDate;
             var Contract_pdf = "#";
             var Contract_pdf_blank = "";
@@ -38,7 +38,6 @@
             var TGA_pdf_blank = "";
             var invoce_ar = Model.all_Invoices?.Find(x => x.id_key == item.CrCasRenterContractBasicNo)?.nameAr ?? "";
             var invoce_en = Model.all_Invoices?.Find(x => x.id_key == item.CrCasRenterContractBasicNo)?.nameEn ?? "";
-
             if (item.CrCasRenterContractBasicPdfFile != null && item.CrCasRenterContractBasicPdfFile != "") { Contract_pdf = item.CrCasRenterContractBasicPdfFile?.ToString().Replace("~", ""); Contract_pdf_blank = "_blank"; }
             if (item.CrCasRenterContractBasicPdfTga != null && item.CrCasRenterContractBasicPdfTga != "") { TGA_pdf = item.CrCasRenterContractBasicPdfTga?.ToString().Replace("~", ""); TGA_pdf_blank = "_blank"; }
             if (invoce_en != null && invoce_en != "") { Invoice_pdf = invoce_en?.ToString().Replace("~", ""); Invoice_pdf_blank = "_blank"; }
@@ -103,13 +102,27 @@
                         </div>
                     </td>
                 }
+                @*<td>
+                    <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            var filterStyleColor = "";
+                            if (status_contract == "2") filterColor = "filter1-div";
+                            else if (status_contract == "1") filterColor = "filter2-div";
+                            else if (status_contract == "3") filterColor = "filter3-div";
+                            else if (status_contract == "0") filterColor = "filter4-div";
+                        }
+                        <div class="filters @filterColor" style="@filterStyleColor"></div>
+                        <div>@no</div>
+                    </div>
+                </td>*@
                 <td>
                     <div class="filter-number-td">
                         @{
                             var filterColor = "";
                             var filterStyleColor = "";
-                            if (item.CrCasRenterContractBasicStatus == Status.Active) { filterColor = "filter3-div"; filterStyleColor = "background-color:#22B14C"; }
-                            else if (item.CrCasRenterContractBasicStatus == Status.Expire) filterColor = "filter3-div";
+                            if (status_contract != "3") { filterColor = "filter3-div"; filterStyleColor = "background-color:#22B14C"; }
+                            else if (status_contract == "3") filterColor = "filter3-div";
                             //else if (item.CrCasRenterContractBasicStatus == Status.Closed) filterColor = "filter2-div";
                         }
                         <div class="filters @filterColor" style="@filterStyleColor"></div>

@@ -32,7 +32,7 @@
             var LastDate = item.CrCasCarInformationLastContractDate;
 
             <tr onclick="location.href='@Url.Action("Edit", "ReportCarContract_cas", new { id = item.CrCasCarInformationSerailNo})'">
-                <td><p>@item.CrCasCarInformationCurrentMeter?.ToString("N2",CultureInfo.InvariantCulture)</p></td>
+                <td><p>@item.CrCasCarInformationCurrentMeter?.ToString("N0",CultureInfo.InvariantCulture)</p></td>
                 <td><p>@item.CrCasCarInformationConractDaysNo?.ToString("N0",CultureInfo.InvariantCulture)</p></td>
                 <td><p>@item.CrCasCarInformationConractCount?.ToString("0")</p></td>
                 <td> @LastDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture)</td>

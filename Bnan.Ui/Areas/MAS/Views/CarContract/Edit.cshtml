@@ -504,7 +504,7 @@ else
                                 <label class="form-label" for="CrCasRenterLessorNavigation.CrMasRenterInformationEnName">@localizer["KM_Count"]</label>
                             </div>
                             <div class="col-md-6 p-0 col-11" style="margin-top:-6px">
-                                <input type="text" class="form-control" value="@Km_Count?.ToString("N2",CultureInfo.InvariantCulture)" readonly maxlength="100" width="80%" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" />
+                                <input type="text" class="form-control" value="@Km_Count?.ToString("N0",CultureInfo.InvariantCulture)" readonly maxlength="100" width="80%" oninput="this.value=this.value.replace(/[^\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff\s]/g, '')" />
                             </div>
 
                         </div> @*End row*@

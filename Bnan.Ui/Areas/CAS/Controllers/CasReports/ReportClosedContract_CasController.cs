@@ -298,8 +298,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
             var mod_ContractId = single?.CrCasRenterContractBasicNo?? " ";
             var mod_Paid = AmountPaid.ToString("N2", CultureInfo.InvariantCulture) ?? "0.00";
             var mod_Remain = remain;
-            var mod_KM = ((single?.CrCasRenterContractBasicActualCurrentReadingMeter??0) - (single?.CrCasRenterContractBasicCurrentReadingMeter??0)).ToString("N2", CultureInfo.InvariantCulture) ?? "0.00";
-            var mod_additionHours = single?.CrCasRenterContractBasicActualExtraHours?.ToString("N2", CultureInfo.InvariantCulture) ?? "0.00";
+            var mod_KM = ((single?.CrCasRenterContractBasicActualCurrentReadingMeter??0) - (single?.CrCasRenterContractBasicCurrentReadingMeter??0)).ToString("N0", CultureInfo.InvariantCulture) ?? "0.00";
+            var mod_additionHours = single?.CrCasRenterContractBasicActualExtraHours?.ToString("N0", CultureInfo.InvariantCulture) ?? "0.00";
             var mod_Reasons = single?.Reasons ?? " ";
 
 

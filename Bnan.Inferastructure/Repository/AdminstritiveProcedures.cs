@@ -60,7 +60,12 @@ namespace Bnan.Inferastructure.Repository
                 CrCasSysAdministrativeProceduresLessor = LessorCode,
                 CrCasSysAdministrativeProceduresBranch = BranchCode,
                 CrCasSysAdministrativeProceduresDate = DateTime.Now.Date,
-                CrCasSysAdministrativeProceduresTime = DateTime.Now.TimeOfDay,
+                CrCasSysAdministrativeProceduresTime = DateTime.Now.TimeOfDay
+                
+                
+                
+                
+                ,
                 CrCasSysAdministrativeProceduresTargeted = Targeted,
                 CrCasSysAdministrativeProceduresDebit = Debit,
                 CrCasSysAdministrativeProceduresCreditor = Creditor,

@@ -32,8 +32,8 @@
                     </div>
                     <div class="col-md-12 ">
                         <p class="d-inline-block headLines">@localizer["ContractStatistics_count_Contracts"] : </p>
-                        @*<p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("0") ?? "0") @localizer["ContractStatistics_Contract"]</p>*@
-                        <p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("0") ?? "0")</p>
+                        @*<p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("N0") ?? "0") @localizer["ContractStatistics_Contract"]</p>*@
+                        <p class="d-inline-block Saved-data headLines" id="Count_var" name="Count_var">@(Model.Contracts_Count?.ToString("N0") ?? "0")</p>
 
                     </div>
                     <div class="col-md-12">
