@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
+using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Models;
 using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +13,7 @@ using Microsoft.Extensions.Localization;
 using NToastNotify;
 using System.Globalization;
 
-namespace Bnan.Ui.Areas.CAS.Controllers
+namespace Bnan.Ui.Areas.CAS.Controllers.Cars
 {
     [Area("CAS")]
     [Authorize(Roles = "CAS")]
@@ -25,8 +25,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IAdminstritiveProcedures _adminstritiveProcedures;
         private readonly IDocumentsMaintainanceCar _documentsMaintainanceCar;
+        private readonly IBaseRepo _baseRepo;
+        private readonly string pageNumber = SubTasks.CarForSale_CAS;
 
-        public CarsForSaleController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, ICarInformation carInformation, IUserLoginsService userLoginsService, IToastNotification toastNotification, IAdminstritiveProcedures adminstritiveProcedures, IStringLocalizer<CarsInformationController> localizer, IDocumentsMaintainanceCar documentsMaintainanceCar) : base(userManager, unitOfWork, mapper)
+        public CarsForSaleController(UserManager<CrMasUserInformation> userManager, IUnitOfWork unitOfWork, IMapper mapper, ICarInformation carInformation, IUserLoginsService userLoginsService, IToastNotification toastNotification, IAdminstritiveProcedures adminstritiveProcedures, IStringLocalizer<CarsInformationController> localizer, IDocumentsMaintainanceCar documentsMaintainanceCar, IBaseRepo baseRepo) : base(userManager, unitOfWork, mapper)
         {
             _carInformation = carInformation;
             _userLoginsService = userLoginsService;
@@ -34,39 +36,48 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             _adminstritiveProcedures = adminstritiveProcedures;
             _localizer = localizer;
             _documentsMaintainanceCar = documentsMaintainanceCar;
+            _baseRepo = baseRepo;
         }
-        public async Task<IActionResult> CarsForSale()
+        public async Task<IActionResult> Index()
         {
-            //save Tracing
-            var (mainTask, subTask, system, currentUser) = await SetTrace("202", "2202008", "2");
-
-            await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "عرض بيانات", "View Informations", mainTask.CrMasSysMainTasksCode,
-            subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-            subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-            //sidebar Active
-            ViewBag.id = "#sidebarcars";
-            ViewBag.no = "7";
-            var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
-            var titles = await setTitle("202", "2202008", "2");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "", "", titles[3]);
-            var cars = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == lessorCode &&
-                                                                   (x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Hold) &&
-                                                                    x.CrCasCarInformationBranchStatus == Status.Active &&
-                                                                    x.CrCasCarInformationOwnerStatus == Status.Active,
-                                                                    new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
+            var cars = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == user.CrMasUserInformationLessor &&
+                                                        x.CrCasCarInformationStatus == Status.Active &&
+                                                        x.CrCasCarInformationForSaleStatus == Status.Active &&
+                                                        x.CrCasCarInformationBranchStatus == Status.Active &&
+                                                        x.CrCasCarInformationOwnerStatus == Status.Active,
+                                                        new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
+                                                                "CrCasCarInformationCategoryNavigation", "CrCasCarInformation2" });
+            if (!cars.Any())
+            {
+                cars = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == user.CrMasUserInformationLessor &&
+                                                                   x.CrCasCarInformationStatus == Status.Active &&
+                                                                   x.CrCasCarInformationBranchStatus == Status.Active &&
+                                                                   x.CrCasCarInformationOwnerStatus == Status.Active,
+                                                                   new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
                                                                             "CrCasCarInformationCategoryNavigation", "CrCasCarInformation2" });
+                ViewBag.radio = "All";
+            }
+            else ViewBag.radio = "A";
+
+
             return View(cars);
         }
 
         [HttpGet]
-        public async Task<PartialViewResult> GetCarsByStatus(string status)
+        public async Task<PartialViewResult> GetCarsByStatus(string status, string search)
         {
             var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
-            var lessor = await _unitOfWork.CrMasLessorInformation.FindAsync(x => x.CrMasLessorInformationCode == lessorCode);
-            var cars = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == lessorCode &&
+            var cars = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == userLogin.CrMasUserInformationLessor &&
+                                                                    x.CrCasCarInformationStatus != Status.Deleted &&
+                                                                    x.CrCasCarInformationStatus != Status.Hold &&
                                                                     x.CrCasCarInformationBranchStatus == Status.Active &&
                                                                     x.CrCasCarInformationOwnerStatus == Status.Active,
                                                                     new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
@@ -74,9 +85,15 @@ namespace Bnan.Ui.Areas.CAS.Controllers
 
             if (!string.IsNullOrEmpty(status))
             {
-                if (status == Status.All.ToLower()) return PartialView("_CarsForSaleData", cars.Where(x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationStatus != Status.Hold));
-                else if (status != Status.Sold) return PartialView("_CarsForSaleData", cars.Where(x => x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold && x.CrCasCarInformationStatus != Status.Hold && x.CrCasCarInformationForSaleStatus==status));
-                else return PartialView("_CarsForSaleData", cars.Where(x => x.CrCasCarInformationStatus == status));
+                if (status == Status.All) return PartialView("_CarsForSaleData", cars.Where(x => x.CrCasCarInformationStatus != Status.Sold &&
+                                                                         (x.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionConcatenateArName.Contains(search) ||
+                                                                          x.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionConcatenateEnName.Contains(search.ToLower())
+                                                                          )));
+                else if (status == Status.Sold) return PartialView("_CarsForSaleData", cars.Where(x => x.CrCasCarInformationStatus == Status.Sold &&
+                                                                         (x.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionConcatenateArName.Contains(search) ||
+                                                                          x.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionConcatenateEnName.Contains(search.ToLower())
+                                                                          )));
+                else return PartialView("_CarsForSaleData", cars.Where(x => x.CrCasCarInformationStatus == Status.Active && x.CrCasCarInformationForSaleStatus == status));
             }
             return PartialView();
         }
@@ -145,14 +162,15 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                     await _adminstritiveProcedures.SaveAdminstritive(currentUserr.CrMasUserInformationCode, "1", "217", "20", currentUserr.CrMasUserInformationLessor, "100",
                         car.CrCasCarInformationSerailNo, null, null, null, null, null, null, null, null, sAr, sEn, "U", null);
                     _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return RedirectToAction("CarsForSale");
-                };
+                    return RedirectToAction("Index");
+                }
+                ;
 
             }
             return View(carsInforamtionVM);
         }
         [HttpPost]
-        public async Task<IActionResult> EditStatusOfSaleCar(string code, string status,string reasons)
+        public async Task<IActionResult> EditStatusOfSaleCar(string code, string status, string reasons)
         {
             string sAr = "";
             string sEn = "";
@@ -190,10 +208,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 else proCode = "218";
                 await _adminstritiveProcedures.SaveAdminstritive(currentUserr.CrMasUserInformationCode, "1", proCode, "20", currentUserr.CrMasUserInformationLessor, "100",
                     car.CrCasCarInformationSerailNo, null, null, null, null, null, null, null, null, sAr, sEn, "U", null);
-                return RedirectToAction("CarsForSale");
+                return RedirectToAction("Index");
             }
             _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-            return RedirectToAction("CarsForSale");
+            return RedirectToAction("Index");
         }
 
 
@@ -204,7 +222,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         public IActionResult SuccesssMessageForCarsInformation()
         {
             _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-            return RedirectToAction("CarsForSale");
+            return RedirectToAction("Index");
         }
     }
 }

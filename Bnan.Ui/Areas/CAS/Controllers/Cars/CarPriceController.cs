@@ -74,13 +74,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 {
                     var carPricesStatusAll = carPrices.Where(x => x.CrCasPriceCarBasicStatus != Status.Deleted &&
                                                                          (x.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateArName.Contains(search) ||
-                                                                          x.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateArName.Contains(search.ToLower())
+                                                                          x.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateEnName.Contains(search.ToLower())
                                                                           ));
                     return PartialView("_DataTableCarsPrice", carPricesStatusAll);
                 }
                 var carPricesbyStatus = carPrices.Where(x => x.CrCasPriceCarBasicStatus == status &&
                                                                          (x.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateArName.Contains(search) ||
-                                                                          x.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateArName.Contains(search.ToLower())));
+                                                                          x.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateEnName.Contains(search.ToLower())));
                 return PartialView("_DataTableCarsPrice", carPricesbyStatus);
             }
             return PartialView();

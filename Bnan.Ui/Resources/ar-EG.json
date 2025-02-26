@@ -3013,6 +3013,7 @@
   "Maintaince": "صيانة",
   "Repair": "اصلاح",
   "Repair_New": "في الإصلاح",
+  "SalesProcedures": "إجراءات البيع",
   "ForSale": "للبيع فقط",
   "ForSaleOnly": "للبيع",
   "ForSaleAndRent": "للبيع وللايجار",
@@ -3038,6 +3039,7 @@
   "Edit Car Data": "تعديل بيانات السياراة",
   "Edit Car Hint": "تمكنك هذه الصفحة من تعديل بيانات السياراة",
   "ForRented": "عرض للايجار",
+  "Details": "التفاصيل",
   //DocumentCar
   "DocumentCar Edit Data": "تعديل مستند السيارة",
   "DocumentCar Edit Hint": "تمكنك هذه الصفحة من التعديل على مستندات السيارة",

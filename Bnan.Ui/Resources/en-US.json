@@ -2967,6 +2967,7 @@
   "Maintaince": "Maintaince",
   "Repair": "Repair",
   "Repair_New": "in Repair",
+  "SalesProcedures": "Sales Procedures",
   "ForSale": "For Sale",
   "ForSaleOnly": "For Sale",
   "Sold": "Sold",
@@ -2988,6 +2989,7 @@
   "Edit Car Data": "Edit Car Data",
   "Edit Car Hint": "The page allows you to Edit Car Data.",
   "ForRented": "For Rent",
+  "Details": "Details",
 
   //DocumentCar
   "DocumentCar Edit Data": "Edit Car Document",

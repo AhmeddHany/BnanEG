@@ -6,159 +6,95 @@
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
-    ViewData["Page-title"] = localizer["Cars Data"];
-    ViewData["Page-Hint"] = localizer["CarsForSale Hint"];
 }
 
 
-@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-{
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-            <thead>
-                <tr role="row">
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["SerialNumber"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Branch"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Car"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["CurrentMeter"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["OfferDate"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["SoldDate"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
+<table class=" tables-style table table-borderless " id="table">
+    <thead class="sticky-top">
+        <tr>
+            <th> @localizer["Details"] </th>
+            <th> @localizer["OfferValueSale"] </th>
+            <th> @localizer["SoldDate"]</th>
+            <th> @localizer["OfferDate"]</th>
+            <th> @localizer["CurrentMeter"] </th>
+            <th class="DifferAlign"> @localizer["CarDistribution"] </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                <a href="" target="_blank"><img src="~/CasSys/images/Rectangle 196.svg" alt="Details pdf anchor"></a>
+            </td>
+            <td>
+                    <p>@item.CrCasCarInformationOfferValueSale?.ToString("N2", CultureInfo.InvariantCulture)</p>
+            </td>
+            <td>
+                    <p>@item.CrCasCarInformationSoldDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</p>
+            </td>
+            <td>
+                    <p>@item.CrCasCarInformationOfferedSaleDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</p>
+            </td>
+            <td>    
+                <p>@item.CrCasCarInformationCurrentMeter?.ToString("N0", CultureInfo.InvariantCulture)</p> 
+            </td>
+            <td class="DifferAlign car-name">
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="col">
+                        <div class="row justify-content-end">
+                            <div class="col-auto">
+                                <div class="CarColorDiv" style="background-color: rgb(255, 255, 255);"></div>
+                            </div>
+                            <div class="col-auto">
+                                <p class="FirstLineP">
+                                        @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ?
+                                        item.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionConcatenateEnName :
+                                        item.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionConcatenateArName)
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row justify-content-end">
+                            <div class="col-auto">
+                                <p class="secondLineP">
+                                          @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ?
+                                            item.CrCasCarInformation1?.CrCasBranchInformationEnShortName :
+                                            item.CrCasCarInformation1?.CrCasBranchInformationArShortName)
+                                </p>
+                            </div>
+                            <div class="col-auto">
+                                <p class="secondLineP">@item.CrCasCarInformationSerailNo</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto d-flex justify-content-end">
+                        <div class="CarBorder-CarData">
+                            <img src="@Url.Content(item.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionImage)" alt="Car-photo" class="CarPhoto">
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrCasCarInformationStatus == Status.Sold) filterColor = "filter5-div";
+                            else if (item.CrCasCarInformationForSaleStatus == Status.ForSale) filterColor = "filter1-div";
+                            else if (item.CrCasCarInformationForSaleStatus == Status.RendAndForSale) filterColor = "filter2-div";
+                            else if (item.CrCasCarInformationForSaleStatus == Status.Active) filterColor = "filter3-div";
+                        }
+                        <div class="filters @filterColor"></div>
 
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model)
-                {
-                    if (item.CrCasCarInformationStatus == Status.Active && (item.CrCasCarInformationForSaleStatus == Status.ForSale || item.CrCasCarInformationForSaleStatus == Status.RendAndForSale))
-                    {
-                        <tr onclick="location.href='@Url.Action("OfferCarForSale", "CarsForSale", new { id = item.CrCasCarInformationSerailNo })'" style="color:red; cursor:pointer">
-                            <td>@no</td>
-                            <td>@item.CrCasCarInformationSerailNo</td>
-                            <td>@item.CrCasCarInformation1?.CrCasBranchInformationEnShortName</td>
-                            <td>@item.CrCasCarInformationConcatenateEnName</td>
-                            <td>@item.CrCasCarInformationCurrentMeter</td>
-                            <td>@item.CrCasCarInformationOfferedSaleDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</td>
-                            <td>@item.CrCasCarInformationSoldDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</td>
-                            <td>
-                                @if (item.CrCasCarInformationStatus == Status.Active && item.CrCasCarInformationForSaleStatus == Status.ForSale)
-                                {
-                                    @localizer["ForSale"]
-                                }
-                                else if (item.CrCasCarInformationStatus == Status.Active && item.CrCasCarInformationForSaleStatus == Status.RendAndForSale)
-                                {
-                                    @localizer["ForSaleAndRent"]
-                                }
+                        <div>@no</div>
 
-                            </td>
-                        </tr>
-                        no++;
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("OfferCarForSale", "CarsForSale", new { id = item.CrCasCarInformationSerailNo })'">
-                            <td>@no</td>
-                            <td>@item.CrCasCarInformationSerailNo</td>
-                            <td>@item.CrCasCarInformation1?.CrCasBranchInformationEnShortName</td>
-                            <td>@item.CrCasCarInformationConcatenateEnName</td>
-                            <td>@item.CrCasCarInformationCurrentMeter</td>
-                            <td>@item.CrCasCarInformationOfferedSaleDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</td>
-                            <td>@item.CrCasCarInformationSoldDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</td>
-                            <td>
-                                @if (item.CrCasCarInformationStatus == Status.Active && item.CrCasCarInformationForSaleStatus == Status.Active)
-                                {
-                                    @localizer["Avaliable"]
-                                }
-                                else if (item.CrCasCarInformationStatus == Status.Sold)
-                                {
-                                    @localizer["Sold"]
-                                }
-                            </td>
-                        </tr>
-                        no++;
-                    }
-                }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-            <thead>
-                <tr role="row">
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["SerialNumber"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Branch"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Car"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["CurrentMeter"]</th>
-                    <th aria-label="position: activate to sort column ascending">@localizer["OfferDate"]</th>
-                    <th aria-label="position: activate to sort column ascending">@localizer["SoldDate"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model)
-                {
-                    if (item.CrCasCarInformationStatus == Status.Active && (item.CrCasCarInformationForSaleStatus == Status.ForSale || item.CrCasCarInformationForSaleStatus == Status.RendAndForSale))
-                    {
-                        <tr onclick="location.href='@Url.Action("OfferCarForSale", "CarsForSale", new { id = item.CrCasCarInformationSerailNo })'" style="color:red; cursor:pointer">
-                            <td>@no</td>
-                            <td>@item.CrCasCarInformationSerailNo</td>
-                            <td>@item.CrCasCarInformation1?.CrCasBranchInformationArShortName</td>
-                            <td>@item.CrCasCarInformationConcatenateArName</td>
-                            <td>@item.CrCasCarInformationCurrentMeter</td>
-                            <td>@item.CrCasCarInformationOfferedSaleDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</td>
-                            <td>@item.CrCasCarInformationSoldDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</td>
-                            <td>
-                                @if (item.CrCasCarInformationStatus == Status.Active && item.CrCasCarInformationForSaleStatus == Status.ForSale)
-                                {
-                                    @localizer["ForSale"]
-                                }
-                                else if (item.CrCasCarInformationStatus == Status.Active && item.CrCasCarInformationForSaleStatus == Status.RendAndForSale)
-                                {
-                                    @localizer["ForSaleAndRent"]
-                                }
-
-                            </td>
-                        </tr>
-                        no++;
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("OfferCarForSale", "CarsForSale", new { id = item.CrCasCarInformationSerailNo })'" style="cursor:pointer;">
-                            <td>@no</td>
-                            <td>@item.CrCasCarInformationSerailNo</td>
-                            <td>@item.CrCasCarInformation1?.CrCasBranchInformationArShortName</td>
-                            <td>@item.CrCasCarInformationConcatenateArName</td>
-                            <td>@item.CrCasCarInformationCurrentMeter</td>
-                            <td>@item.CrCasCarInformationOfferedSaleDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</td>
-                            <td>@item.CrCasCarInformationSoldDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</td>
-                            <td>
-                                @if (item.CrCasCarInformationStatus == Status.Active && item.CrCasCarInformationForSaleStatus == Status.Active)
-                                {
-                                    @localizer["Avaliable"]
-                                }
-                                else if (item.CrCasCarInformationStatus == Status.Sold)
-                                {
-                                    @localizer["Sold"]
-                                }
-                            </td>
-                        </tr>
-
-                        no++;
-                    }
-                }
-            </tbody>
-        </table>
-    </div>
-}
+                </div>
+            </td>
+        </tr>
+        no++;
+        }
+    </tbody>
+</table>

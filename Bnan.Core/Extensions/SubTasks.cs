@@ -119,6 +119,7 @@
         public static string Documents_CAS { get; set; } = "2201002";
         public static string Owners_CAS { get; set; } = "2201003";
         public static string CarPrice_CAS { get; set; } = "2202008";
+        public static string CarForSale_CAS { get; set; } = "2202007";
 
         //MAS  Services
         public static string TechnicalConnectivityCAS { get; set; } = "2208004";
