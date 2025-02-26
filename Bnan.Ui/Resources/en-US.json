@@ -2447,7 +2447,7 @@
 
   "Exist": "ExistEn",
   "CarIsRented": "Sorry... this car has already been rented, please choose another car",
-
+  "InvalidFileFormat": "Invalid Excel File Format",
 
   //Contract Company
   "ContractCompany Data": "Company Contracts",
@@ -2967,6 +2967,7 @@
   "Maintaince": "Maintaince",
   "Repair": "Repair",
   "Repair_New": "in Repair",
+  "SalesProcedures": "Sales Procedures",
   "ForSale": "For Sale",
   "ForSaleOnly": "For Sale",
   "Sold": "Sold",
@@ -2988,6 +2989,7 @@
   "Edit Car Data": "Edit Car Data",
   "Edit Car Hint": "The page allows you to Edit Car Data.",
   "ForRented": "For Rent",
+  "Details": "Details",
 
   //DocumentCar
   "DocumentCar Edit Data": "Edit Car Document",
@@ -3053,6 +3055,7 @@
 
   "Price": "Price",
   "AddPrice": "Add Price",
+  "PriceCarInfo": "Price Car Information",
   "AddPriceCar Hint": "The page allo you to add a new price car",
   "Next": "Next",
   "Previous": "Previous",
@@ -3069,6 +3072,7 @@
   "InFees": "In Fees",
   "OutFees": "Out Fees",
   "OutFeesTamm": "Out Fees Tamm",
+  "OtherFees": "Other Values",
   "CompensationAccident": "Compensation Accident",
   "CompensationDrowning": "Compensation Drowning",
   "CompensationFire": "Compensation Fire",
@@ -3477,6 +3481,8 @@
     "EndingToday": "Ending Today",
     "EndingTomorrow": "Ending Tomorrow",
     "EndingLater": "Ending Later",
+    "Saved": "Saved",
+    "Suspend": "Suspend",
     "Active": "Active",
     "Closed": "Closed",
     "Executed": "Executed",

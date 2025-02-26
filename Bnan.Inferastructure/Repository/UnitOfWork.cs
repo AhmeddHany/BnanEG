@@ -5,7 +5,7 @@ namespace Bnan.Inferastructure.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly BnanSCContext _context;
+        private readonly BnanEGContext _context;
 
 
         public IGenric<CrMasSysMainTask> CrMasSysMainTasks { get; private set; }
@@ -112,7 +112,7 @@ namespace Bnan.Inferastructure.Repository
         public IGenric<CrMasSupContractCloseSuspension> CrMasSupContractCloseSuspension { get; private set; }
 
 
-        public UnitOfWork(BnanSCContext context)
+        public UnitOfWork(BnanEGContext context)
         {
             _context = context;
             CrMasSysMainTasks = new BaseRepository<CrMasSysMainTask>(_context);

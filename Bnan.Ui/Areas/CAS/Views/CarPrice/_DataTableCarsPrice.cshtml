@@ -6,141 +6,63 @@
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
     ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
 }
-@if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
-{
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-            <thead>
-                <tr role="row">
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Car"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Date"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["StartDate"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["EndDate"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["NoOfCar"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model)
-                {
-                    @if (item.CrCasPriceCarBasicStatus == @Status.Deleted || item.CrCasPriceCarBasicStatus == @Status.AboutToExpire || item.CrCasPriceCarBasicStatus == Status.Expire)
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarPrice", new { serialNumber = item.CrCasPriceCarBasicNo})'" style="cursor:pointer;color:red">
-                            <td>@no</td>
-                            <td>@item.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateEnName</td>
-                            <td>@item.CrCasPriceCarBasicDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicStartDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicEndDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicDistributionCodeNavigation.CrCasCarInformations.Where(x=>x.CrCasCarInformationLessor==item.CrCasPriceCarBasicLessorCode).Count()</td>
-                            <td>
-                                @if (@item.CrCasPriceCarBasicStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else if (@item.CrCasPriceCarBasicStatus == Status.Expire)
-                                {
-                                    @localizer["Expire"]
-                                }
-                                else if (@item.CrCasPriceCarBasicStatus == Status.AboutToExpire)
-                                {
-                                    @localizer["AboutToExpire"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarPrice", new { serialNumber = item.CrCasPriceCarBasicNo })'">
-                            <td>@no</td>
-                            <td>@item.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateEnName</td>
-                            @*<td>@item.CrCasPriceCarBasicDailyRent - @item.CrCasPriceCarBasicWeeklyRent - @item.CrCasPriceCarBasicMonthlyRent</td>*@
-                            <td>@item.CrCasPriceCarBasicDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicStartDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicEndDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicDistributionCodeNavigation.CrCasCarInformations.Where(x=>x.CrCasCarInformationLessor==item.CrCasPriceCarBasicLessorCode).Count()</td>
-                            <td>
-                                
-                                @localizer["Active"]
-                                
-                            </td>
-                        </tr>
-                    }
-                    no++;
-                }
-            </tbody>
-        </table>
-    </div>
-}
-else
-{
-    <div class="col-sm-12">
-        <table id="basic-datatable" class="table table-bordered dt-responsive nowrap w-100 dataTable no-footer dtr-inline table-hover" role="grid" aria-describedby="basic-datatable_info" style="position: relative; width: 1166px;">
-            <thead>
-                <tr role="row">
-                    <th aria-sort="ascending" aria-label="Name: activate to sort column descending">@localizer["No"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Car"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Date"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["StartDate"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["EndDate"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["NoOfCar"]</th>
-                    <th aria-label="Position: activate to sort column ascending">@localizer["Status"]</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @{
-                    int no = 1;
-                }
-                @foreach (var item in Model)
-                {
-                    @if (item.CrCasPriceCarBasicStatus == @Status.Deleted || item.CrCasPriceCarBasicStatus == @Status.AboutToExpire || item.CrCasPriceCarBasicStatus == Status.Expire)
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarPrice", new { serialNumber = item.CrCasPriceCarBasicNo})'" style="cursor:pointer;color:red">
-                            <td>@no</td>
-                            <td>@item.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateArName</td>
-                            <td>@item.CrCasPriceCarBasicDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicStartDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicEndDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicDistributionCodeNavigation.CrCasCarInformations.Where(x=>x.CrCasCarInformationLessor==item.CrCasPriceCarBasicLessorCode).Count()</td>
-                            <td>
-                                @if (@item.CrCasPriceCarBasicStatus == Status.Deleted)
-                                {
-                                    @localizer["Deleted"]
-                                }
-                                else if (@item.CrCasPriceCarBasicStatus == Status.Expire)
-                                {
-                                    @localizer["Expire"]
-                                }
-                                else if (@item.CrCasPriceCarBasicStatus == Status.AboutToExpire)
-                                {
-                                    @localizer["AboutToExpire"]
-                                }
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr onclick="location.href='@Url.Action("Edit", "CarPrice", new { serialNumber = item.CrCasPriceCarBasicNo })'" style="cursor:pointer;">
-                            <td>@no</td>
-                            <td>@item.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateArName</td>
-                            @*<td>@item.CrCasPriceCarBasicDailyRent - @item.CrCasPriceCarBasicWeeklyRent - @item.CrCasPriceCarBasicMonthlyRent</td>*@
-                            <td>@item.CrCasPriceCarBasicDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicStartDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicEndDate?.ToString("dd/MM/yyyy")</td>
-                            <td>@item.CrCasPriceCarBasicDistributionCodeNavigation.CrCasCarInformations.Where(x=>x.CrCasCarInformationLessor==item.CrCasPriceCarBasicLessorCode).Count()</td>
-                            <td>
-                                @localizer["Active"]
-                            </td>
-                        </tr>
-                    }
-                    no++;
-                }
-            </tbody>
-        </table>
-    </div>
-}
+<table class=" tables-style table table-borderless " id="table">
+    <thead class="sticky-top">
+        <tr>
+            <th>@localizer["NoOfCar"]</th>
+            <th>@localizer["EndDate"]</th>
+            <th>@localizer["StartDate"]</th>
+            <th class="DifferAlign">@localizer["Car"]</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int no = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", "CarPrice", new { priceNo = item.CrCasPriceCarBasicNo })'">
+                <td>
+                    <p>@item.CrCasPriceCarBasicDistributionCodeNavigation?.CrCasCarInformations.Where(x => x.CrCasCarInformationLessor == item.CrCasPriceCarBasicLessorCode).Count()</p>
+                </td>
+            <td>
+                <p>@item.CrCasPriceCarBasicEndDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</p>
+            </td>
+            <td>
+                <p>@item.CrCasPriceCarBasicStartDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</p>
+            </td>
+            <td class="DifferAlign car-name">
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="col">
+                            <p class="FirstLineP">
+                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? item.CrCasPriceCarBasicDistributionCodeNavigation?.CrMasSupCarDistributionConcatenateEnName : item.CrCasPriceCarBasicDistributionCodeNavigation?.CrMasSupCarDistributionConcatenateArName)
+                            </p>
+                        <p class="secondLineP">@item.CrCasPriceCarBasicDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</p>
+                    </div>
+                    <div class="col-auto d-flex justify-content-end">
+                        <div class="CarBorder">
+                            <img src="@Url.Content(item.CrCasPriceCarBasicDistributionCodeNavigation?.CrMasSupCarDistributionImage)"
+                              alt="Car-photo"  class="CarPhoto border-0 w-100 h-100" >
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="filter-number-td">
+                        @{
+                            var filterColor = "";
+                            if (item.CrCasPriceCarBasicStatus == Status.Active) filterColor = "filter2-div";
+                            else if (item.CrCasPriceCarBasicStatus == Status.AboutToExpire) filterColor = "filter1-div";
+                            else if (item.CrCasPriceCarBasicStatus == Status.Expire) filterColor = "filter3-div";
+                            else if (item.CrCasPriceCarBasicStatus == Status.Deleted) filterColor = "filter5-div";
+                        }
+                        <div class="filters @filterColor"></div>
+                        <div>@no</div>
+                   
+                </div>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

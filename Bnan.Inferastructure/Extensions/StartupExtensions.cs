@@ -1,6 +1,4 @@
-﻿
-using Bnan.Core.Models;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -12,7 +10,7 @@ namespace Bnan.Inferastructure
         {
             using (var Scope = app.ApplicationServices.CreateScope())
             {
-                var dbContext = Scope.ServiceProvider.GetRequiredService<BnanSCContext>();
+                var dbContext = Scope.ServiceProvider.GetRequiredService<BnanEGContext>();
                 DatabaseInitializer.Initialize(dbContext, seedDataSql);
             }
         }

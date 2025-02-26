@@ -15,10 +15,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers
     [Authorize(Roles = "MAS")]
     public class HomeController : BaseController
     {
-        private readonly IStringLocalizer<HomeController> _localizer;
-        public HomeController(IStringLocalizer<HomeController> localizer, BnanSCContext context, IUnitOfWork unitOfWork, UserManager<CrMasUserInformation> userManager, IMapper mapper) : base(userManager, unitOfWork, mapper)
+        public HomeController(IStringLocalizer<HomeController> localizer, IUnitOfWork unitOfWork, UserManager<CrMasUserInformation> userManager, IMapper mapper) : base(userManager, unitOfWork, mapper)
         {
-            _localizer = localizer;
+
         }
         public async Task<IActionResult> Index()
         {

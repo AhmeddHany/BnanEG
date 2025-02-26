@@ -249,18 +249,14 @@
                                 }
                             </div>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-left shadow animated--grow-in text-right" style="font-size: 16px;font-weight: 600;color: black;" aria-labelledby="userDropdown">
+                        <div class="dropdown-menu dropdown-menu-left animated--grow-in text-right"
+                             style="font-size: 14px; width: 200px;" aria-labelledby="userDropdown">
                             <!-- item-->
-                            <div class="dropdown-header noti-title dropdown-item">
-                                <h6 class="text-overflow m-0">@localizer["Welcome"]</h6>
-                            </div>
-
-                            <!-- item-->
-                            <a class="dropdown-item notify-item" asp-area="BS" asp-controller="Employees" asp-action="MyAccount">
+                            <a class="dropdown-item notify-item d-flex justify-content-between" asp-area="BS" asp-controller="Employees" asp-action="MyAccount">
                                 <i class="mdi mdi-account-circle me-1"></i>
                                 <span>@localizer["My Account"]</span>
                             </a>
-                            <a class="dropdown-item notify-item" data-bs-toggle="modal" data-bs-target="#PasswordModal" style="cursor:pointer">
+                            <a class="dropdown-item notify-item d-flex justify-content-between" data-bs-toggle="modal" data-bs-target="#PasswordModal" style="cursor:pointer">
                                 <i class="mdi mdi-onepassword me-1"></i>
                                 <span>@localizer["ChangePassword"]</span>
                             </a>
@@ -268,14 +264,14 @@
                             (user.CrMasUserInformationAuthorizationAdmin == true && user.CrMasUserInformationAuthorizationOwner == true) ||
                             (user.CrMasUserInformationAuthorizationBranch == true && user.CrMasUserInformationAuthorizationOwner == true))
                             {
-                                <a asp-area="Identity" asp-controller="Account" asp-action="Systems" class="dropdown-item notify-item">
+                                <a asp-area="Identity" asp-controller="Account" asp-action="Systems" class="dropdown-item notify-item d-flex justify-content-between">
                                     <i class="mdi mdi-access-point-network me-1"></i>
                                     <span>@localizer["Systems"]</span>
                                 </a>
                             }
 
                             <!-- item-->
-                            <a asp-area="Identity" asp-controller="Account" asp-action="Logout" class="dropdown-item notify-item">
+                            <a asp-area="Identity" asp-controller="Account" asp-action="Logout" class="dropdown-item notify-item d-flex justify-content-between">
                                 <i class="mdi mdi-logout me-1"></i>
                                 <span>@localizer["logout"]</span>
                             </a>

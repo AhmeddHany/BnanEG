@@ -1,12 +1,10 @@
-﻿
-using Bnan.Core.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Bnan.Inferastructure
 {
     public static class DatabaseInitializer
     {
-        public static void Initialize(BnanSCContext context, string seedDataSql)
+        public static void Initialize(BnanEGContext context, string seedDataSql)
         {
             if (context.Database.EnsureCreated())
             {

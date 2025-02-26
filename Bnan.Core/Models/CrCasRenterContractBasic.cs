@@ -104,6 +104,7 @@ namespace Bnan.Core.Models
         public virtual CrCasRenterLessor? CrCasRenterContractBasic5 { get; set; }
         public virtual CrCasCarInformation? CrCasRenterContractBasicCarSerailNoNavigation { get; set; }
         public virtual CrMasSupContractCloseSuspension? CrCasRenterContractBasicCloseStatusNavigation { get; set; }
+        public virtual CrMasSupContractCloseMechanism? CrCasRenterContractBasicDelayMechanismNavigation { get; set; }
         public virtual CrCasRenterLessor? CrCasRenterContractBasicNavigation { get; set; }
         public virtual CrMasSupContractSource? CrCasRenterContractBasicSourceNavigation { get; set; }
     }

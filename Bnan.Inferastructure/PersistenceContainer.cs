@@ -33,7 +33,7 @@ namespace Bnan.Inferastructure
         public static WebApplicationBuilder AddPersistenceServices(this WebApplicationBuilder builder)
         {
             builder.Services.AddLocalization();
-            builder.Services.AddDbContext<BnanSCContext>(options =>
+            builder.Services.AddDbContext<BnanEGContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("constring"));
                 /* options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);*/
@@ -47,7 +47,7 @@ namespace Bnan.Inferastructure
                 opt.Password.RequireNonAlphanumeric = false;
                 opt.Password.RequireLowercase = false;
                 opt.Password.RequiredLength = 1;
-            }).AddEntityFrameworkStores<BnanSCContext>()
+            }).AddEntityFrameworkStores<BnanEGContext>()
               .AddDefaultTokenProviders();
 
             builder.Services.AddAuthorization();
