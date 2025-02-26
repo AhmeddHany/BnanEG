@@ -789,7 +789,7 @@
 													{
 														<span class="drop-zone__prompt"> <img src="~/MasSystem/images/upload icon.svg" class="mb-3"> <br>@localizer["DropAndDragImage"] </span>
 													}
-													<input type="file" asp-for="FileCrMasLessorImageArDailyReport" class="drop-zone__input" data-path="@Url.Content(Model.CrMasLessorImageArDailyReport)">
+													<input type="file" asp-for="FileCrMasLessorImageArDailyReport" class="drop-zone__input input-excel" data-path="@Url.Content(Model.CrMasLessorImageArDailyReport)" accept=".xls,.xlsx">
 													@if (!string.IsNullOrEmpty(Model.CrMasLessorImageArDailyReport))
 													{
 														<div class="drop-zone__thumb" style="background-image: url('@Url.Content(Model.CrMasLessorImageArDailyReport)');"></div>
@@ -811,7 +811,7 @@
 													{
 														<span class="drop-zone__prompt"> <img src="~/MasSystem/images/upload icon.svg" class="mb-3"> <br>@localizer["DropAndDragImage"] </span>
 													}
-													<input type="file" asp-for="FileCrMasLessorImageEnDailyReport" class="drop-zone__input" data-path="@Url.Content(Model.CrMasLessorImageEnDailyReport)">
+													<input type="file" asp-for="FileCrMasLessorImageEnDailyReport" class="drop-zone__input input-excel" data-path="@Url.Content(Model.CrMasLessorImageEnDailyReport)" accept=".xls,.xlsx">
 													@if (!string.IsNullOrEmpty(Model.CrMasLessorImageEnDailyReport))
 													{
 														<div class="drop-zone__thumb" style="background-image: url('@Url.Content(Model.CrMasLessorImageEnDailyReport)');"></div>
@@ -1044,7 +1044,24 @@
 		window.onload = () => {
 			AddThumbnail();
 		};
+		// To Handle input Enable Excel Only
+	    document.addEventListener("DOMContentLoaded", function () {
+			document.querySelectorAll('.input-excel').forEach(inputElement => {
+				inputElement.addEventListener("change", function () {
+					const file = this.files[0]; // الحصول على الملف
+					if (file) {
+						const allowedExtensions = [".xls", ".xlsx"];
+						const fileExtension = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
 
+						if (!allowedExtensions.includes(fileExtension)) {
+							toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+							toastr.error("@localizer["InvalidFileFormat"]");
+							this.value = ""; // تفريغ الحقل لمنع الرفع
+						}
+					}
+				});
+			});
+		});
 	</script>
 
 }

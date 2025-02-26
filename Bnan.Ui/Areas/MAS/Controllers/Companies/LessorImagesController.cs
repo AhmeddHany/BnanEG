@@ -122,16 +122,32 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
 
             foreach (var item in files)
             {
-                var propertyName = item.PropertyName;
-                var NewName = propertyName.Replace("CrMasLessor", "") + "_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
+
                 var file = item.File;
+
                 if (file != null)
                 {
+                    var propertyName = item.PropertyName;
+                    var NewName = propertyName.Replace("CrMasLessor", "") + "_" + DateTime.Now.ToString("yyyyMMddHHmmss"); // اسم مبني على التاريخ والوقت
                     var propertyInfo = lessorImgs.GetType().GetProperty(propertyName);
+
+                    if (propertyName == "CrMasLessorImageArDailyReport" || propertyName == "CrMasLessorImageEnDailyReport")
+                    {
+                        if (file != null)
+                        {
+                            var extension = Path.GetExtension(file.FileName).ToLower();
+                            if (extension != ".xlsx")
+                            {
+                                _toastNotification.AddErrorToastMessage(_localizer["InvalidFileFormat"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                                return RedirectToAction("Index", "LessorImages"); // رجوع في حالة رفع ملف غير صالح
+                            }
+                        }
+                    }
                     if (propertyInfo != null)
                     {
                         var currentValue = propertyInfo.GetValue(lessorImgs)?.ToString();
-                        var path = await file.SaveImageAsync(_webHostEnvironment, foldername, NewName, ".png", currentValue);
+                        var extension = (propertyName == "CrMasLessorImageArDailyReport" || propertyName == "CrMasLessorImageEnDailyReport") ? ".xlsx" : ".png";
+                        var path = await file.SaveImageAsync(_webHostEnvironment, foldername, NewName, extension, currentValue);
                         // تعيين المسار الجديد للخاصية في الكائن
                         if (!string.IsNullOrEmpty(path))
                         {

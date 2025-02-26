@@ -2447,7 +2447,7 @@
 
   "Exist": "ExistEn",
   "CarIsRented": "Sorry... this car has already been rented, please choose another car",
-
+  "InvalidFileFormat": "Invalid Excel File Format",
 
   //Contract Company
   "ContractCompany Data": "Company Contracts",
