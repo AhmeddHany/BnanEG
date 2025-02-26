@@ -5,7 +5,7 @@ namespace Bnan.Core.Models
 {
     public partial class CrMasSysQuestionsAnswer
     {
-        public string CrMasSysQuestionsAnswerNo { get; set; } = null!;
+        public string? CrMasSysQuestionsAnswerNo { get; set; }
         public string? CrMasSysQuestionsAnswerSystem { get; set; }
         public string? CrMasSysQuestionsAnswerMainTask { get; set; }
         public string? CrMasSysQuestionsAnswerArQuestions { get; set; }

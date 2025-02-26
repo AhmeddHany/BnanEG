@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Bnan.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Bnan.Core.Models
+namespace Bnan.Inferastructure
 {
-    public partial class BnanSCContext : IdentityDbContext<CrMasUserInformation>
+    public partial class BnanEGContext : IdentityDbContext<CrMasUserInformation>
     {
-        public BnanSCContext()
+        public BnanEGContext()
         {
         }
 
-        public BnanSCContext(DbContextOptions<BnanSCContext> options)
+        public BnanEGContext(DbContextOptions<BnanEGContext> options)
             : base(options)
         {
         }
@@ -82,6 +80,7 @@ namespace Bnan.Core.Models
         public virtual DbSet<CrMasSupContractAdditional> CrMasSupContractAdditionals { get; set; } = null!;
         public virtual DbSet<CrMasSupContractCarCheckup> CrMasSupContractCarCheckups { get; set; } = null!;
         public virtual DbSet<CrMasSupContractCarCheckupDetail> CrMasSupContractCarCheckupDetails { get; set; } = null!;
+        public virtual DbSet<CrMasSupContractCloseMechanism> CrMasSupContractCloseMechanisms { get; set; } = null!;
         public virtual DbSet<CrMasSupContractCloseSuspension> CrMasSupContractCloseSuspensions { get; set; } = null!;
         public virtual DbSet<CrMasSupContractOption> CrMasSupContractOptions { get; set; } = null!;
         public virtual DbSet<CrMasSupContractSource> CrMasSupContractSources { get; set; } = null!;
@@ -118,7 +117,8 @@ namespace Bnan.Core.Models
         public virtual DbSet<CrMasUserMessage> CrMasUserMessages { get; set; } = null!;
         public virtual DbSet<CrMasUserProceduresValidation> CrMasUserProceduresValidations { get; set; } = null!;
         public virtual DbSet<CrMasUserSubValidation> CrMasUserSubValidations { get; set; } = null!;
-       
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -557,7 +557,8 @@ namespace Bnan.Core.Models
 
                 entity.Property(e => e.CrCasAccountReceiptPdfFile)
                     .HasMaxLength(100)
-                    .HasColumnName("CR_Cas_Account_Receipt_PDF_File");
+                    .HasColumnName("CR_Cas_Account_Receipt_PDF_File")
+                    .UseCollation("Arabic_CI_AS");
 
                 entity.Property(e => e.CrCasAccountReceiptReasons)
                     .HasMaxLength(100)
@@ -1145,9 +1146,8 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Cas_Branch_Post_Longitude");
 
                 entity.Property(e => e.CrCasBranchPostReasons)
-                    .HasMaxLength(10)
-                    .HasColumnName("CR_Cas_Branch_Post_Reasons")
-                    .IsFixedLength();
+                    .HasMaxLength(100)
+                    .HasColumnName("CR_Cas_Branch_Post_Reasons");
 
                 entity.Property(e => e.CrCasBranchPostRegions)
                     .HasMaxLength(2)
@@ -1161,7 +1161,8 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Cas_Branch_Post_Short_Code");
 
                 entity.Property(e => e.CrCasBranchPostStatus)
-                    .HasMaxLength(10)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
                     .HasColumnName("CR_Cas_Branch_Post_Status")
                     .IsFixedLength();
 
@@ -1490,10 +1491,6 @@ namespace Bnan.Core.Models
 
                 entity.Property(e => e.CrCasCarInformationCurrentMeter).HasColumnName("CR_Cas_Car_Information_Current_Meter");
 
-                entity.Property(e => e.CrCasCarInformationNo)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Cas_Car_Information_No");
-
                 entity.Property(e => e.CrCasCarInformationCvt)
                     .HasMaxLength(2)
                     .IsUnicode(false)
@@ -1561,6 +1558,7 @@ namespace Bnan.Core.Models
                     .IsFixedLength();
 
                 entity.Property(e => e.CrCasCarInformationMaintenanceStatus).HasColumnName("CR_Cas_Car_Information_Maintenance_Status");
+
                 entity.Property(e => e.CrCasCarInformationMarketing).HasColumnName("CR_Cas_Car_Information_Marketing");
 
                 entity.Property(e => e.CrCasCarInformationModel)
@@ -1568,6 +1566,10 @@ namespace Bnan.Core.Models
                     .IsUnicode(false)
                     .HasColumnName("CR_Cas_Car_Information_Model")
                     .IsFixedLength();
+
+                entity.Property(e => e.CrCasCarInformationNo)
+                    .HasMaxLength(20)
+                    .HasColumnName("CR_Cas_Car_Information_No");
 
                 entity.Property(e => e.CrCasCarInformationOfferValueSale)
                     .HasColumnType("decimal(13, 2)")
@@ -1888,7 +1890,7 @@ namespace Bnan.Core.Models
             modelBuilder.Entity<CrCasLessorPolicy>(entity =>
             {
                 entity.HasKey(e => new { e.CrCasLessorPolicyCode, e.CrCasLessorPolicyLessor })
-                    .HasName("PK__CR_Cas_L__DE7DD52C4B22F2A0");
+                    .HasName("PK__CR_Cas_L__DE7DD52C77BF1973");
 
                 entity.ToTable("CR_Cas_Lessor_Policy");
 
@@ -1946,7 +1948,7 @@ namespace Bnan.Core.Models
                     .WithMany(p => p.CrCasLessorPolicies)
                     .HasForeignKey(d => d.CrCasLessorPolicyLessor)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CR_Cas_Le__CR_Ca__05F8DC4F");
+                    .HasConstraintName("FK__CR_Cas_Le__CR_Ca__78D3EB5B");
             });
 
             modelBuilder.Entity<CrCasLessorShomoosConnect>(entity =>
@@ -2411,6 +2413,10 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Cas_Price_Car_Basic_Monthly_Rent");
 
                 entity.Property(e => e.CrCasPriceCarBasicNoDailyFreeKm).HasColumnName("CR_Cas_Price_Car_Basic_No_Daily_Free_KM");
+
+                entity.Property(e => e.CrCasPriceCarBasicOtherFees)
+                    .HasColumnType("decimal(13, 2)")
+                    .HasColumnName("CR_Cas_Price_Car_Basic_Other_Fees");
 
                 entity.Property(e => e.CrCasPriceCarBasicPrivateDriverValue)
                     .HasColumnType("decimal(13, 2)")
@@ -2926,7 +2932,7 @@ namespace Bnan.Core.Models
                     .HasColumnName("CR_Cas_Renter_Contract_Basic_Daily_Rent");
 
                 entity.Property(e => e.CrCasRenterContractBasicDelayMechanism)
-                    .HasMaxLength(1)
+                    .HasMaxLength(2)
                     .IsUnicode(false)
                     .HasColumnName("CR_Cas_Renter_Contract_Basic_Delay_Mechanism")
                     .IsFixedLength();
@@ -2987,14 +2993,15 @@ namespace Bnan.Core.Models
 
                 entity.Property(e => e.CrCasRenterContractBasicFreeHours).HasColumnName("CR_Cas_Renter_Contract_Basic_Free_Hours");
 
+                entity.Property(e => e.CrCasRenterContractBasicFuelValue)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("CR_Cas_Renter_Contract_Basic_Fuel_Value");
+
                 entity.Property(e => e.CrCasRenterContractBasicHourMax).HasColumnName("CR_Cas_Renter_Contract_Basic_Hour_Max");
 
                 entity.Property(e => e.CrCasRenterContractBasicHourValue)
                     .HasColumnType("decimal(7, 2)")
                     .HasColumnName("CR_Cas_Renter_Contract_Basic_Hour_Value");
-                entity.Property(e => e.CrCasRenterContractBasicFuelValue)
-                   .HasColumnType("decimal(10, 2)")
-                   .HasColumnName("CR_Cas_Renter_Contract_Basic_Fuel_Value");
 
                 entity.Property(e => e.CrCasRenterContractBasicIssuedDate)
                     .HasColumnType("datetime")
@@ -3139,6 +3146,11 @@ namespace Bnan.Core.Models
                     .WithMany(p => p.CrCasRenterContractBasics)
                     .HasForeignKey(d => d.CrCasRenterContractBasicCloseStatus)
                     .HasConstraintName("FK_CR_Cas_Renter_Contract_Basic_CR_Mas_Sup_Contract_Close_Suspension");
+
+                entity.HasOne(d => d.CrCasRenterContractBasicDelayMechanismNavigation)
+                    .WithMany(p => p.CrCasRenterContractBasics)
+                    .HasForeignKey(d => d.CrCasRenterContractBasicDelayMechanism)
+                    .HasConstraintName("FK_CR_Cas_Renter_Contract_Basic_CR_Mas_Sup_Contract_Close_Mechanism");
 
                 entity.HasOne(d => d.CrCasRenterContractBasicSourceNavigation)
                     .WithMany(p => p.CrCasRenterContractBasics)
@@ -4502,10 +4514,6 @@ namespace Bnan.Core.Models
                     .HasMaxLength(100)
                     .HasColumnName("CR_Mas_Lessor_Image_Exchange");
 
-                entity.Property(e => e.CrMasLessorImageSales)
-                    .HasMaxLength(100)
-                    .HasColumnName("CR_Mas_Lessor_Image_Sales");
-
                 entity.Property(e => e.CrMasLessorImageLoaderLogo)
                     .HasMaxLength(100)
                     .HasColumnName("CR_Mas_Lessor_Image_Loader_Logo");
@@ -4533,6 +4541,10 @@ namespace Bnan.Core.Models
                 entity.Property(e => e.CrMasLessorImageReceipt)
                     .HasMaxLength(100)
                     .HasColumnName("CR_Mas_Lessor_Image_Receipt");
+
+                entity.Property(e => e.CrMasLessorImageSales)
+                    .HasMaxLength(100)
+                    .HasColumnName("CR_Mas_Lessor_Image_Sales");
 
                 entity.Property(e => e.CrMasLessorImageStamp)
                     .HasMaxLength(100)
@@ -5894,6 +5906,47 @@ namespace Bnan.Core.Models
                     .HasConstraintName("FK_CR_Mas_Sup_Contract_Car_Checkup_Details_CR_Mas_Sup_Contract_Car_Checkup");
             });
 
+            modelBuilder.Entity<CrMasSupContractCloseMechanism>(entity =>
+            {
+                entity.HasKey(e => e.CrMasSupContractCloseMechanismCode);
+
+                entity.ToTable("CR_Mas_Sup_Contract_Close_Mechanism");
+
+                entity.Property(e => e.CrMasSupContractCloseMechanismCode)
+                    .HasMaxLength(2)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Code")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrMasSupContractCloseMechanismArName)
+                    .HasMaxLength(50)
+                    .HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Ar_Name");
+
+                entity.Property(e => e.CrMasSupContractCloseMechanismEnName)
+                    .HasMaxLength(50)
+                    .HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_En_Name");
+
+                entity.Property(e => e.CrMasSupContractCloseMechanismNaqlMain).HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Naql_Main");
+
+                entity.Property(e => e.CrMasSupContractCloseMechanismNaqlSub).HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Naql_Sub");
+
+                entity.Property(e => e.CrMasSupContractCloseMechanismReasons)
+                    .HasMaxLength(100)
+                    .HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Reasons");
+
+                entity.Property(e => e.CrMasSupContractCloseMechanismStatus)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Status")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrMasSupContractCloseMechanismType)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Type")
+                    .IsFixedLength();
+            });
+
             modelBuilder.Entity<CrMasSupContractCloseSuspension>(entity =>
             {
                 entity.HasKey(e => e.CrMasSupContractCloseSuspensionCode);
@@ -6041,19 +6094,19 @@ namespace Bnan.Core.Models
 
             modelBuilder.Entity<CrMasSupCountryClassification>(entity =>
             {
-                entity.HasKey(e => e.CrMasLessorCountryClassificationCode);
+                entity.HasNoKey();
 
                 entity.ToTable("CR_Mas_Sup_Country_Classification");
+
+                entity.Property(e => e.CrMasLessorCountryClassificationArName)
+                    .HasMaxLength(30)
+                    .HasColumnName("CR_Mas_Lessor_Country_Classification_Ar_Name");
 
                 entity.Property(e => e.CrMasLessorCountryClassificationCode)
                     .HasMaxLength(1)
                     .IsUnicode(false)
                     .HasColumnName("CR_Mas_Lessor_Country_Classification_Code")
                     .IsFixedLength();
-
-                entity.Property(e => e.CrMasLessorCountryClassificationArName)
-                    .HasMaxLength(30)
-                    .HasColumnName("CR_Mas_Lessor_Country_Classification_Ar_Name");
 
                 entity.Property(e => e.CrMasLessorCountryClassificationEnName)
                     .HasMaxLength(30)
@@ -7016,15 +7069,9 @@ namespace Bnan.Core.Models
 
             modelBuilder.Entity<CrMasSysQuestionsAnswer>(entity =>
             {
-                entity.HasKey(e => e.CrMasSysQuestionsAnswerNo);
+                entity.HasNoKey();
 
                 entity.ToTable("CR_Mas_Sys_Questions_Answer");
-
-                entity.Property(e => e.CrMasSysQuestionsAnswerNo)
-                    .HasMaxLength(6)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Mas_Sys_Questions_Answer_No")
-                    .IsFixedLength();
 
                 entity.Property(e => e.CrMasSysQuestionsAnswerArAnswer).HasColumnName("CR_Mas_Sys_Questions_Answer_Ar_Answer");
 
@@ -7046,6 +7093,12 @@ namespace Bnan.Core.Models
                     .HasMaxLength(3)
                     .IsUnicode(false)
                     .HasColumnName("CR_Mas_Sys_Questions_Answer_Main_Task")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CrMasSysQuestionsAnswerNo)
+                    .HasMaxLength(6)
+                    .IsUnicode(false)
+                    .HasColumnName("CR_Mas_Sys_Questions_Answer_No")
                     .IsFixedLength();
 
                 entity.Property(e => e.CrMasSysQuestionsAnswerReasons)
@@ -7376,7 +7429,7 @@ namespace Bnan.Core.Models
 
                 entity.HasIndex(e => e.CrMasUserInformationLessor, "IX_CR_Mas_User_Information_CR_Mas_User_Information_Lessor");
 
-           
+
                 entity.Property(e => e.CrMasUserInformationCode)
                     .HasMaxLength(10)
                     .IsUnicode(false)
@@ -7522,7 +7575,6 @@ namespace Bnan.Core.Models
                     .WithMany(p => p.CrMasUserInformations)
                     .HasForeignKey(d => d.CrMasUserInformationLessor)
                     .HasConstraintName("FK_CR_Mas_User_Information_CR_Mas_Lessor_Information");
-
             });
 
             modelBuilder.Entity<CrMasUserLogin>(entity =>

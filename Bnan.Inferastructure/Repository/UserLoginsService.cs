@@ -14,7 +14,7 @@ namespace Bnan.Inferastructure.Repository
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public UserLoginsService(UserManager<CrMasUserInformation> userManager, SignInManager<CrMasUserInformation> signInManager, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork, BnanSCContext db) : base(db)
+        public UserLoginsService(UserManager<CrMasUserInformation> userManager, SignInManager<CrMasUserInformation> signInManager, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork, BnanEGContext db) : base(db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -115,7 +115,7 @@ namespace Bnan.Inferastructure.Repository
 
             return lastUserLogin?.CrMasUserLoginNo + 1 ?? 1;
         }
-        public async Task SaveAdminstrative_with_Set_Date(DateTime SetedDate ,string sector, string ProcedureCode, string lessorCode, string branchCode, string Classification, string? Target, string? operationAr, string? operationEn
+        public async Task SaveAdminstrative_with_Set_Date(DateTime SetedDate, string sector, string ProcedureCode, string lessorCode, string branchCode, string Classification, string? Target, string? operationAr, string? operationEn
             , string UserInsert, string? Status, string? Reasons, string? CarFrom, string? CarTo, decimal? Debit, decimal? Credit, string? Doc_No, DateTime? Doc_Date, DateTime? Doc_Start, DateTime? Doc_End)
         {
             var thisProcedure = new CrCasSysAdministrativeProcedure();
@@ -174,7 +174,7 @@ namespace Bnan.Inferastructure.Repository
         }
 
         public async Task SaveAdminstrative(string sector, string ProcedureCode, string lessorCode, string branchCode, string Classification, string? Target, string? operationAr, string? operationEn
-            , string UserInsert, string? Status, string? Reasons, string? CarFrom, string? CarTo, decimal? Debit, decimal? Credit, string? Doc_No, DateTime? Doc_Date, DateTime? Doc_Start, DateTime? Doc_End)      
+            , string UserInsert, string? Status, string? Reasons, string? CarFrom, string? CarTo, decimal? Debit, decimal? Credit, string? Doc_No, DateTime? Doc_Date, DateTime? Doc_Start, DateTime? Doc_End)
         {
             var thisProcedure = new CrCasSysAdministrativeProcedure();
             var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
@@ -184,9 +184,9 @@ namespace Bnan.Inferastructure.Repository
             // إعداد تاريخ ووقت الدخول الحالي
             var currentDate = DateTime.Now;
 
-            var year = currentDate.ToString("yy",CultureInfo.InvariantCulture);
+            var year = currentDate.ToString("yy", CultureInfo.InvariantCulture);
 
-            var CodeWithout_serial = (year+"-"+ sector+ ProcedureCode+"-"+ lessorCode+ branchCode+"-") ??"";
+            var CodeWithout_serial = (year + "-" + sector + ProcedureCode + "-" + lessorCode + branchCode + "-") ?? "";
 
             // تعيين رقم الدخول (Login No) الجديد
             thisProcedure.CrCasSysAdministrativeProceduresNo = await GetNewAdminstrativeNumberAsync(CodeWithout_serial);
@@ -234,9 +234,9 @@ namespace Bnan.Inferastructure.Repository
 
         private async Task<string> GetNewAdminstrativeNumberAsync(string AdminstrativeId_withoutSerial)
         {
-            var AdminstrativeCount = await _unitOfWork.CrCasSysAdministrativeProcedure.FindAllAsync(x=>x.CrCasSysAdministrativeProceduresNo.StartsWith(AdminstrativeId_withoutSerial));
+            var AdminstrativeCount = await _unitOfWork.CrCasSysAdministrativeProcedure.FindAllAsync(x => x.CrCasSysAdministrativeProceduresNo.StartsWith(AdminstrativeId_withoutSerial));
 
-            var serial = (AdminstrativeCount.Count()+1).ToString("000000", CultureInfo.InvariantCulture)??"000001";
+            var serial = (AdminstrativeCount.Count() + 1).ToString("000000", CultureInfo.InvariantCulture) ?? "000001";
 
             return (AdminstrativeId_withoutSerial + serial);
         }

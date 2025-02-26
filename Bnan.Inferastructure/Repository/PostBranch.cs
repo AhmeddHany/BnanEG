@@ -6,7 +6,7 @@ namespace Bnan.Inferastructure.Repository
     public class PostBranch : IPostBranch
     {
         private readonly IUnitOfWork _unitOfWork;
-        public PostBranch(IUnitOfWork unitOfWork, BnanSCContext context)
+        public PostBranch(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -15,7 +15,7 @@ namespace Bnan.Inferastructure.Repository
         {
             var City = await _unitOfWork.CrMasSupPostCity.FindAsync(l => l.CrMasSupPostCityCode == CrCasBranchPost.CrCasBranchPostCity);
             if (City == null) return false;
-            
+
             var concatenatedArAddress = "";
             var concatenatedEnAddress = "";
             var concatenatedArAddressShort = "";

@@ -1,5 +1,4 @@
-﻿using Bnan.Core.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
 
@@ -8,10 +7,10 @@ namespace Bnan.Inferastructure.Repository
 
     public class BaseRepository<T> : IGenric<T> where T : class
     {
-        protected BnanSCContext _context;
+        protected BnanEGContext _context;
 
 
-        public BaseRepository(BnanSCContext context
+        public BaseRepository(BnanEGContext context
            )
         {
             _context = context;
@@ -327,7 +326,7 @@ namespace Bnan.Inferastructure.Repository
             Func<IQueryable<T>, IQueryable<TResult>> selectProjection,
             string[] includes = null)
         {
-            IQueryable<T> query = _context.Set<T>().AsNoTracking(); 
+            IQueryable<T> query = _context.Set<T>().AsNoTracking();
 
             if (predicate != null)
             {
@@ -338,14 +337,14 @@ namespace Bnan.Inferastructure.Repository
             {
                 foreach (var include in includes)
                 {
-                    query = query.Include(include); 
+                    query = query.Include(include);
                 }
             }
 
             // تطبيق دالة Select لتحديد الأعمدة المطلوبة
             var resultQuery = selectProjection(query);
 
-            return await resultQuery.ToListAsync(); 
+            return await resultQuery.ToListAsync();
         }
 
         public async Task<List<TResult2>> FindCountByColumnAsync<TResult>(
@@ -353,7 +352,7 @@ namespace Bnan.Inferastructure.Repository
             Expression<Func<T, object>> columnSelector,  // العمود الذي سيتم التجميع عليه
             string[] includes = null)
         {
-            IQueryable<T> query = _context.Set<T>().AsNoTracking(); 
+            IQueryable<T> query = _context.Set<T>().AsNoTracking();
 
             if (predicate != null)
             {
@@ -364,7 +363,7 @@ namespace Bnan.Inferastructure.Repository
             {
                 foreach (var include in includes)
                 {
-                    query = query.Include(include); 
+                    query = query.Include(include);
                 }
             }
 
@@ -377,7 +376,7 @@ namespace Bnan.Inferastructure.Repository
                     RowCount = g.Count()      // حساب عدد الصفوف في هذه المجموعة
                 });
 
-            return await resultQuery.ToListAsync(); 
+            return await resultQuery.ToListAsync();
         }
 
 

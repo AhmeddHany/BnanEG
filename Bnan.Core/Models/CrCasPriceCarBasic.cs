@@ -45,6 +45,7 @@ namespace Bnan.Core.Models
         public decimal? CrCasCarPriceBasicOutFeesTamm { get; set; }
         public decimal? CrCasCarPriceBasicInFeesTga { get; set; }
         public decimal? CrCasCarPriceBasicOutFeesTga { get; set; }
+        public decimal? CrCasPriceCarBasicOtherFees { get; set; }
         public int? CrCasPriceCarBasicMinAge { get; set; }
         public int? CrCasPriceCarBasicMaxAge { get; set; }
         public decimal? CrCasPriceCarBasicCompensationAccident { get; set; }
