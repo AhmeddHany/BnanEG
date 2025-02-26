@@ -93,8 +93,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             }
             else ViewBag.radio = "A";
 
-            //  var all_status_sms = await _unitOfWork.CrMasLessorCommunication.FindAllWithSelectAsNoTrackingAsync(
-            //predicate: null,
+            //   var all_status_sms = await _unitOfWork.CrMasLessorCommunication.FindAllWithSelectAsNoTrackingAsync(
+            // predicate: null,
             //selectProjection: query => query.Select(x => new Renter_SMS_VM
             //{
             //    Renter_Code = x.CrMasLessorCommunicationsLessorCode.Trim(),
