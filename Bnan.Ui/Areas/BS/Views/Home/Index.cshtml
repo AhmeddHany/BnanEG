@@ -138,7 +138,7 @@
 											<div class="row flex-row-reverse">
 												<div class="col-md-4 pieChart-data">
 													<div class="chart-legend" style="line-height: normal;">
-														<p class="chart-p">@localizer["ActiveContractsCount"] : <span>@Model.AlertContract.FindAll(x => x.CrCasRenterContractAlertContractStatus == Status.Active && x.CrCasRenterContractAlertContractStatus==Status.Expire).Count()</span></p>
+														<p class="chart-p">@localizer["ActiveContractsCount"] : <span>@Model.AlertContract.FindAll(x => x.CrCasRenterContractAlertContractStatus == Status.Active || x.CrCasRenterContractAlertContractStatus==Status.Expire).Count()</span></p>
 														<p class="chart-p">@localizer["ReservedContracts"] : <span>@Model.AlertContract.FindAll(x => x.CrCasRenterContractAlertContractStatus == Status.UnderProcssing).Count()</span></p>
 														<p class="chart-p">@localizer["SuspendContracts"] : <span>@Model.AlertContract.FindAll(x => x.CrCasRenterContractAlertContractStatus == Status.Hold).Count()</span></p>
 													</div>

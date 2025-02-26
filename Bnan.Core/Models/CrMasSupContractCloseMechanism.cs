@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Bnan.Core.Models
+﻿namespace Bnan.Core.Models
 {
     public partial class CrMasSupContractCloseMechanism
     {
@@ -12,6 +9,7 @@ namespace Bnan.Core.Models
 
         public string CrMasSupContractCloseMechanismCode { get; set; } = null!;
         public string? CrMasSupContractCloseMechanismType { get; set; }
+        public decimal? CrMasSupContractCloseMechanismValue { get; set; }
         public int? CrMasSupContractCloseMechanismNaqlMain { get; set; }
         public int? CrMasSupContractCloseMechanismNaqlSub { get; set; }
         public string? CrMasSupContractCloseMechanismArName { get; set; }

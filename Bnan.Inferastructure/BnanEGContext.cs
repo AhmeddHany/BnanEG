@@ -5945,6 +5945,9 @@ namespace Bnan.Inferastructure
                     .IsUnicode(false)
                     .HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Type")
                     .IsFixedLength();
+                entity.Property(e => e.CrMasSupContractCloseMechanismValue)
+                .HasColumnType("decimal(3, 2)")
+                .HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Value");
             });
 
             modelBuilder.Entity<CrMasSupContractCloseSuspension>(entity =>
