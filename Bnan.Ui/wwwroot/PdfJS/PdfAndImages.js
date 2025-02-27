@@ -180,34 +180,51 @@ const createMergedPdfs = async (PdfNo, canvas, InputPdf, InputHaveNo, exitingInv
 };
 
 const mergePdfs = async (existingPdfPath, newPdfBlob) => {
-     try {
-         console.log(`Fetching existing PDF from ${existingPdfPath}`);
-         const existingPdfResponse = await fetch(existingPdfPath);
-         if (!existingPdfResponse.ok) {
-             console.error(`Failed to fetch existing PDF: ${existingPdfResponse.statusText}`);
-             throw new Error('Failed to fetch existing PDF');
-         }
+    try {
+        console.log(`📂 Fetching existing PDF from: ${existingPdfPath}`);
 
-         const existingPdfBlob = await existingPdfResponse.blob();
-         const existingPdfBytes = await existingPdfBlob.arrayBuffer();
-         const newPdfBytes = await newPdfBlob.arrayBuffer();
+        let existingPdfBlob = null;
 
-         const existingPdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
-         const newPdfDoc = await PDFLib.PDFDocument.load(newPdfBytes);
+        try {
+            const existingPdfResponse = await fetch(existingPdfPath);
+            if (!existingPdfResponse.ok) throw new Error(`HTTP Error: ${existingPdfResponse.status} ${existingPdfResponse.statusText}`);
 
-         const copiedPages = await existingPdfDoc.copyPages(newPdfDoc, newPdfDoc.getPageIndices());
-         copiedPages.forEach((page) => {
-             existingPdfDoc.addPage(page);
-         });
+            const contentType = existingPdfResponse.headers.get("content-type");
+            if (!contentType || !contentType.includes("pdf")) throw new Error("Invalid PDF format");
 
-         const mergedPdfBytes = await existingPdfDoc.save();
-         const base64String = arrayBufferToBase64(mergedPdfBytes);
-         return base64String;
-     } catch (error) {
-         console.error('Error in mergePdfs:', error);
-         throw error;
-     }
- };
+            existingPdfBlob = await existingPdfResponse.blob();
+        } catch (error) {
+            console.warn(`⚠️ Existing PDF not found or invalid. Creating a new one.`);
+            existingPdfBlob = null;
+        }
+
+        const newPdfBytes = await newPdfBlob.arrayBuffer();
+        const newPdfDoc = await PDFLib.PDFDocument.load(newPdfBytes);
+
+        let existingPdfDoc;
+        if (existingPdfBlob) {
+            try {
+                const existingPdfBytes = await existingPdfBlob.arrayBuffer();
+                existingPdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+                const copiedPages = await existingPdfDoc.copyPages(newPdfDoc, newPdfDoc.getPageIndices());
+                copiedPages.forEach(page => existingPdfDoc.addPage(page));
+            } catch (error) {
+                console.warn("⚠️ Failed to load existing PDF. Proceeding with new PDF only.");
+                existingPdfDoc = newPdfDoc;
+            }
+        } else {
+            existingPdfDoc = newPdfDoc;
+        }
+
+        const mergedPdfBytes = await existingPdfDoc.save();
+        const base64PdfMerged = arrayBufferToBase64(mergedPdfBytes);
+        return base64PdfMerged;
+    } catch (error) {
+        console.error('❌ Error in mergePdfs:', error);
+        return null;
+    }
+};
+
 const arrayBufferToBase64 = (arrayBuffer) => {
      const uint8Array = new Uint8Array(arrayBuffer);
      let binaryString = '';
@@ -267,6 +284,58 @@ const createPdfWithMultiPhoto = async (imageBlobs, InputPdf) => {
     const pdfBase64 = doc.output('datauristring', { compress: true });
     document.getElementById(InputPdf).value = pdfBase64;
     doc.save("Contracts.pdf")
+};
+// Settelment Contract
+const generateSettelmentContractPdf = async (existingContractPdf,canvasArray, InputPdf) => {
+    const imageBlobs = [];
+    for (const canvas of canvasArray) {
+        // تحويل كل Canvas إلى صورة (Blob)
+        const imageBlob = await new Promise((resolve) => {
+            canvas.toBlob(resolve, 'image/png');
+        });
+        imageBlobs.push(imageBlob);
+    }
+    // بعد جمع كل الصور، نرسلها إلى دالة إنشاء الـ PDF
+    await createContractSettelmentPdfWithMultiPhoto(existingContractPdf,imageBlobs, InputPdf);
+};
+const createContractSettelmentPdfWithMultiPhoto = async (existingContractPdf,imageBlobs, InputPdf) => {
+    const doc = new jsPDF('p', 'pt', 'a4', true);
+
+    for (let imageIndex = 0; imageIndex < imageBlobs.length; imageIndex++) {
+        if (imageIndex > 0) {
+            doc.addPage();
+        }
+        doc.setPage(imageIndex + 1);
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
+        // ضغط الصورة مع تقليل الحجم أكثر
+        const blob = imageBlobs[imageIndex];
+        const imgCompressed = await compressImage(blob, 0.2);
+        const img = await createImageFromBlob(imgCompressed);
+
+        // 🔹 جعل الصورة تغطي الصفحة بالكامل دون فراغ زائد
+        let imgWidth = pageWidth; // تغيير إلى let بدلاً من const
+        let imgHeight = (imgWidth * img.height) / img.width; // تغيير إلى let بدلاً من const
+
+        // إذا كانت الصورة أطول من الصفحة، سنتأكد من أنها تغطي العرض الكامل
+        if (imgHeight < pageHeight) {
+            const scale = pageHeight / imgHeight;
+            imgHeight *= scale;
+            imgWidth *= scale;
+        }
+
+        const imgXPos = 0; // تأكد أن الصورة تبدأ من أقصى اليسار
+        const imgYPos = (pageHeight - imgHeight) / 2; // توسيط الصورة عموديًا
+
+        doc.addImage(img, 'JPEG', imgXPos, imgYPos, imgWidth, imgHeight, '', 'FAST');
+    }
+
+    // 🔹 استخدام الضغط لتقليل حجم PDF أكثر
+    const newPdfBlob = doc.output('blob');
+    const mergedPdfBase64 = await mergePdfs(existingContractPdf, newPdfBlob);
+    document.getElementById(InputPdf).value = mergedPdfBase64;
 };
 const compressImage = (blob, quality) => {
     return new Promise((resolve) => {

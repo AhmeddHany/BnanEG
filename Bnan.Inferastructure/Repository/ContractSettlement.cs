@@ -14,22 +14,35 @@ namespace Bnan.Inferastructure.Repository
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<string> AddAccountContractTaxOwed(string ContractNo, string InvoiceNo, decimal ContractValue)
+        public async Task<decimal?> AddAccountContractTaxOwed(string ContractNo, string InvoiceNo, decimal ContractValue)
         {
-            var OldContract = _unitOfWork.CrCasRenterContractBasic.FindAll(x => x.CrCasRenterContractBasicNo == ContractNo).OrderByDescending(x => x.CrCasRenterContractBasicCopy).FirstOrDefault();
+            var OldContract = _unitOfWork.CrCasRenterContractBasic
+                .FindAll(x => x.CrCasRenterContractBasicNo == ContractNo)
+                .OrderByDescending(x => x.CrCasRenterContractBasicCopy)
+                .FirstOrDefault();
 
-            CrCasAccountContractTaxOwed crCasAccountContractTaxOwed = new CrCasAccountContractTaxOwed();
-            crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedContractNo = InvoiceNo;
-            crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedLessor = OldContract.CrCasRenterContractBasicLessor;
-            crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedContractValue = ContractValue;
-            crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedPercentage = OldContract.CrCasRenterContractBasicTaxRate;
-            crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedValue = crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedContractValue * OldContract.CrCasRenterContractBasicTaxRate / 100;
-            crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedDate = DateTime.Now.Date;
-            crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedIsPaid = false;
+            if (OldContract == null)
+            {
+                // سجل الخطأ أو تعامل مع الحالة المناسبة
+                return null;
+            }
 
-            if (await _unitOfWork.CrCasAccountContractTaxOwed.AddAsync(crCasAccountContractTaxOwed) != null) return crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedValue?.ToString("N2",CultureInfo.InvariantCulture);
-            return null;
+            var crCasAccountContractTaxOwed = new CrCasAccountContractTaxOwed
+            {
+                CrCasAccountContractTaxOwedContractNo = InvoiceNo,
+                CrCasAccountContractTaxOwedLessor = OldContract.CrCasRenterContractBasicLessor,
+                CrCasAccountContractTaxOwedContractValue = ContractValue,
+                CrCasAccountContractTaxOwedPercentage = OldContract.CrCasRenterContractBasicTaxRate,
+                CrCasAccountContractTaxOwedValue = ContractValue * (OldContract.CrCasRenterContractBasicTaxRate ?? 0) / 100,
+                CrCasAccountContractTaxOwedDate = DateTime.UtcNow.Date, // استخدم UTC لتجنب مشاكل التوقيت
+                CrCasAccountContractTaxOwedIsPaid = false
+            };
+
+            var addedEntity = await _unitOfWork.CrCasAccountContractTaxOwed.AddAsync(crCasAccountContractTaxOwed);
+
+            return crCasAccountContractTaxOwed.CrCasAccountContractTaxOwedValue;
         }
+
 
         public async Task<CrCasAccountReceipt> AddAccountReceipt(string ContractNo, string LessorCode, string BranchCode, string PaymentMethod, string Account, string SerialNo, string SalesPointNo,
                                                   decimal TotalPayed, string RenterId, string UserId, string PassingType, string Reasons, string pdfPath, string procedureCode)
@@ -191,7 +204,8 @@ namespace Bnan.Inferastructure.Repository
                     else UserValidity.CrMasUserBranchValidityBranchSalesPointBalance = AmountPaid;
                 }
                 if (_unitOfWork.CrMasUserBranchValidity.Update(UserValidity) != null) return true;
-            };
+            }
+            ;
             return false;
         }
 
@@ -286,21 +300,21 @@ namespace Bnan.Inferastructure.Repository
             return false;
         }
 
-        public async Task<CrCasRenterContractBasic> UpdateRenterSettlementContract(string ContractNo, string UserInsert, string ActualDaysNo, string Mechanizm, string CurrentMeter, string AdditionalKm,
+        public async Task<CrCasRenterContractBasic> UpdateRenterSettlementContract(string ContractNo, string UserInsert, string ActualDaysNo, string DelayMechanism, string CurrentMeter, string AdditionalKm,
                                                                               string TaxValue, string DiscountValue, string RequiredValue, string AmountPaid, string ExpensesValue, string ExpensesReasons, string CompensationValue,
                                                                              string CompensationReasons, string MaxHours, string MaxMinutes, string ExtraValueHours, string PrivateDriverValueTotal, string ChoicesValueTotal, string AdvantagesValueTotal, string ContractValue,
-                                                                             string ContractValueAfterDiscount, string TotalContract, decimal PreviousBalance,string CloseStatus, string PdfContract, string Reasons)
+                                                                             string ContractValueAfterDiscount, string TotalContract, decimal PreviousBalance, string CloseStatus, string PdfContract, string Reasons)
         {
-            var OldContract =(await _unitOfWork.CrCasRenterContractBasic.FindAllAsync(x => x.CrCasRenterContractBasicNo == ContractNo)).OrderByDescending(x => x.CrCasRenterContractBasicCopy).FirstOrDefault();
+            var OldContract = (await _unitOfWork.CrCasRenterContractBasic.FindAllAsync(x => x.CrCasRenterContractBasicNo == ContractNo)).OrderByDescending(x => x.CrCasRenterContractBasicCopy).FirstOrDefault();
             var User = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == UserInsert);
-            var CloseCancelContract= await _unitOfWork.CrMasSupContractCloseSuspension.FindAsync(x=>x.CrMasSupContractCloseSuspensionCode == CloseStatus);
+            var CloseCancelContract = await _unitOfWork.CrMasSupContractCloseSuspension.FindAsync(x => x.CrMasSupContractCloseSuspensionCode == CloseStatus);
             if (CloseCancelContract == null) return null;
-            
+
             if (string.IsNullOrEmpty(CompensationValue)) CompensationValue = "0";
             if (string.IsNullOrEmpty(ExpensesValue)) ExpensesValue = "0";
             if (string.IsNullOrEmpty(AmountPaid)) AmountPaid = "0";
             OldContract.CrCasRenterContractBasicActualCloseDateTime = OldContract.CrCasRenterContractBasicExpectedStartDate?.AddDays(int.Parse(ActualDaysNo));
-            OldContract.CrCasRenterContractBasicDelayMechanism = Mechanizm;
+            OldContract.CrCasRenterContractBasicDelayMechanism = DelayMechanism;
             double actualDays = Convert.ToDouble(ActualDaysNo);
             OldContract.CrCasRenterContractBasicActualDays = (int)Math.Floor(actualDays);
             OldContract.CrCasRenterContractBasicActualExtraHours = int.Parse(MaxHours);
@@ -326,7 +340,7 @@ namespace Bnan.Inferastructure.Repository
             OldContract.CrCasRenterContractBasicExpensesDescription = ExpensesReasons;
             OldContract.CrCasRenterContractBasicActualAmountRequired = decimal.Parse(RequiredValue, CultureInfo.InvariantCulture);
             OldContract.CrCasRenterContractBasicAmountPaid = decimal.Parse(AmountPaid, CultureInfo.InvariantCulture);
-            if (CloseCancelContract.CrMasSupContractCloseSuspensionType=="2") OldContract.CrCasRenterContractBasicStatus = Status.Hold;
+            if (CloseCancelContract.CrMasSupContractCloseSuspensionType == "2") OldContract.CrCasRenterContractBasicStatus = Status.Hold;
             else OldContract.CrCasRenterContractBasicStatus = Status.Closed;
             OldContract.CrCasRenterContractBasicCloseStatus = CloseCancelContract.CrMasSupContractCloseSuspensionCode;
             OldContract.CrCasRenterContractBasicPdfFile = PdfContract;
@@ -405,7 +419,7 @@ namespace Bnan.Inferastructure.Repository
         }
         //public async Task<bool> AddRenterContractCheckUp(string LessorCode, string ContractNo, string SerialNo, string PriceNo, string CheckUpCode, string ReasonCheckCode, bool Status, string Reasons)
         //{
-           
+
         //}
         public async Task<string> UpdateCarDocMaintainance(string SerialNo, string LessorCode, string BranchCode, int CurrentMeter)
         {
@@ -490,7 +504,7 @@ namespace Bnan.Inferastructure.Repository
 
             return c;
         }
-        public async Task<bool> UpdateRenterStatistics(CrCasRenterContractBasic Contract, string userCodeClose, string BnanValue)
+        public async Task<bool> UpdateRenterStatistics(CrCasRenterContractBasic Contract, string userCodeClose, decimal BnanValue)
         {
             var Statistic = await _unitOfWork.CrCasRenterContractStatistic.FindAsync(x => x.CrCasRenterContractStatisticsNo == Contract.CrCasRenterContractBasicNo);
             if (Contract != null)
@@ -516,7 +530,7 @@ namespace Bnan.Inferastructure.Repository
                 Statistic.CrCasRenterContractStatisticsUserClose = userCodeClose;
                 Statistic.CrCasRenterContractStatisticsDayClose = GetDay((DateTime)(Contract.CrCasRenterContractBasicActualCloseDateTime));
                 Statistic.CrCasRenterContractStatisticsTimeClose = GetTimeCategory((DateTime)(Contract.CrCasRenterContractBasicActualCloseDateTime));
-                Statistic.CrCasRenterContractStatisticsBnanValue = decimal.Parse(BnanValue);
+                Statistic.CrCasRenterContractStatisticsBnanValue = BnanValue;
                 Statistic.CrCasRenterContractStatisticsKm = GetKmCategory(((decimal)Contract.CrCasRenterContractBasicActualCurrentReadingMeter - (decimal)Contract.CrCasRenterContractBasicCurrentReadingMeter), (int)Contract.CrCasRenterContractBasicActualDays);
                 if (_unitOfWork.CrCasRenterContractStatistic.Update(Statistic) != null) return true;
                 return false;

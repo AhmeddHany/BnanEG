@@ -84,7 +84,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             var CallingKeysAll = await _unitOfWork.CrMasSysCallingKeys.FindAllAsNoTrackingAsync(l => l.CrMasSysCallingKeysStatus != Status.Deleted);
             var CallingKeys = CallingKeysAll.OrderByDescending(x => x.CrMasSysCallingKeysCount).ToList();
             var DrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterDrivingLicenseStatus != Status.Deleted && l.CrMasSupRenterDrivingLicenseCode != "1");
-            var Policies = await _unitOfWork.CrCasLessorPolicy.FindAllAsNoTrackingAsync(l => l.CrCasLessorPolicyStatus != Status.Deleted);
+            var Policies = await _unitOfWork.CrCasLessorPolicy.FindAllAsNoTrackingAsync(l => l.CrCasLessorPolicyLessor == user.CrMasUserInformationLessor && l.CrCasLessorPolicyStatus != Status.Deleted);
             // Transform data based on culture
             var nationalitiesArray = Nationailties.Select(c => new
             {
@@ -240,10 +240,11 @@ namespace Bnan.Ui.Areas.BS.Controllers
 
             if (await _unitOfWork.CompleteAsync() > 0)
             {
-                if (StaticContractCardImg != null) await WhatsAppServicesExtension.SendMediaAsync(userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, " ", lessorCode, StaticContractCardImg, "CreateContractCard.png");
+                var toNumber = GetPhoneNumber(userLogin, contractInfo.RenterInfo);
+                if (StaticContractCardImg != null) await WhatsAppServicesExtension.SendMediaAsync(toNumber, " ", lessorCode, StaticContractCardImg, "CreateContractCard.png");
                 var pdfDictionaryBase64 = GetPdfDictionaryBase64(SavePdfContract, SavePdfInvoice, SavePdfReceipt, amountPaid);
                 await SendPdfsToWhatsAppAsync(pdfDictionaryBase64, lessorCode, contractInfo.AccountReceiptNo, contractInfo.InitialInvoiceNo, basicContract.CrCasRenterContractBasicNo,
-                                              userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo, contractInfo.RenterInfo.CrMasRenterInformationArName, contractInfo.RenterInfo.CrMasRenterInformationEnName);
+                                              toNumber, contractInfo.RenterInfo.CrMasRenterInformationArName, contractInfo.RenterInfo.CrMasRenterInformationEnName);
                 _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
             }
@@ -1306,6 +1307,13 @@ namespace Bnan.Ui.Areas.BS.Controllers
                 else sectorCode = "1";
             }
             return sectorCode;
+        }
+        private string GetPhoneNumber(CrMasUserInformation userLogin, RenterInfoVM RenterInfo)
+        {
+            string userPhoneNumber = userLogin.CrMasUserInformationCallingKey + userLogin.CrMasUserInformationMobileNo;
+            string renterPhoneNumber = RenterInfo.CrMasRenterInformationCountreyKey + RenterInfo.CrMasRenterInformationMobile;
+
+            return int.Parse(userLogin.CrMasUserInformationLessor) > 4005 ? renterPhoneNumber : userPhoneNumber;
         }
         public IActionResult FailedToast(string type)
         {

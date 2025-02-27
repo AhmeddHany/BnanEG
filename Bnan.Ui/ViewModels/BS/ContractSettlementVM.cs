@@ -56,6 +56,8 @@ namespace Bnan.Ui.ViewModels.BS
         public decimal? CrCasRenterContractBasicPreviousBalance { get; set; }
         public decimal? CrCasRenterContractBasicAmountRequired { get; set; }
         public decimal? CrCasRenterContractBasicAmountPaidAdvance { get; set; }
+        [Required(ErrorMessage = "requiredFiled")]
+        public string? CrCasRenterContractBasicDelayMechanism { get; set; }
         public string? CrCasRenterContractBasicPdfFile { get; set; }
         public string? CrCasRenterContractBasicPdfTga { get; set; }
         public string? CrCasRenterContractPriceReference { get; set; }
@@ -116,6 +118,8 @@ namespace Bnan.Ui.ViewModels.BS
         public bool? UnlimitedKm { get; set; }
         public string? AccountReceiptNo { get; set; }
         public string? InitialInvoiceNo { get; set; }
+        public string? RentSystemHourValue { get; set; }
+        public string? RentSystemDayValue { get; set; }
 
 
         public virtual CrCasRenterLessor? CrCasRenterContractBasic5 { get; set; }

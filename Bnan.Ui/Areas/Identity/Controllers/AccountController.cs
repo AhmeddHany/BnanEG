@@ -84,151 +84,117 @@ namespace Bnan.Ui.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (CultureInfo.CurrentUICulture.Name == "en-US") await ViewData.SetPageTitleAsync("Log in", "Bnan", "", "", "", "");
-            else await ViewData.SetPageTitleAsync("تسجيل الدخول", "بنان", "", "", "", "");
-            if (ModelState.IsValid)
+            if (CultureInfo.CurrentUICulture.Name == "en-US")
+                await ViewData.SetPageTitleAsync("Log in", "Bnan", "", "", "", "");
+            else
+                await ViewData.SetPageTitleAsync("تسجيل الدخول", "بنان", "", "", "", "");
+
+            // التحقق من المدخلات قبل تنفيذ أي عمليات أخرى
+            if (string.IsNullOrWhiteSpace(model.UserName) || string.IsNullOrWhiteSpace(model.Password))
             {
-                var user = _unitOfWork.CrMasUserInformation.Find(x => x.CrMasUserInformationCode == model.UserName, new[] { "CrMasUserInformationLessorNavigation", "CrMasUserBranchValidities.CrMasUserBranchValidity1" });
-                if (user == null)
+                if (string.IsNullOrWhiteSpace(model.UserName))
+                    ModelState.AddModelError(nameof(model.UserName), _localizer["PleaseEnterUserName"]);
+
+                if (string.IsNullOrWhiteSpace(model.Password))
+                    ModelState.AddModelError(nameof(model.Password), _localizer["PleaseEnterPassword"]);
+
+                return View(model);
+            }
+
+            // البحث عن المستخدم
+            var user = await _unitOfWork.CrMasUserInformation.FindAsync(
+                x => x.CrMasUserInformationCode == model.UserName,
+                new[] { "CrMasUserInformationLessorNavigation", "CrMasUserBranchValidities.CrMasUserBranchValidity1" }
+            );
+
+            if (user == null)
+            {
+                ModelState.AddModelError(nameof(model.Password), _localizer["InvalidCredentials"]);
+                return View(model);
+            }
+
+            // التحقق من كلمة المرور
+            if (!await _authService.CheckPassword(model.UserName, model.Password))
+            {
+                string errorMessage = _localizer["InvalidCredentials"];
+                if (!string.IsNullOrEmpty(user.CrMasUserInformationRemindMe))
                 {
-                    ModelState.AddModelError(nameof(model.UserName), _localizer["UserNameInvalid"]);
+                    errorMessage += $": {user.CrMasUserInformationRemindMe}";
+                }
+                ModelState.AddModelError("Hint", errorMessage);
+                return View("Login", model);
+            }
+
+            // التحقق مما إذا كان الحساب محذوفًا
+            if (user.CrMasUserInformationStatus == Status.Deleted)
+            {
+                ModelState.AddModelError("Hint", _localizer["AccountDelete"]);
+                return View(model);
+            }
+
+            if (user.CrMasUserInformationLessorNavigation.CrMasLessorInformationStatus == Status.Deleted)
+            {
+                ModelState.AddModelError("Hint", _localizer["CompanyDeleted"]);
+                return View(model);
+            }
+
+            // التحقق من صلاحيات الفروع
+            if (user.CrMasUserInformationAuthorizationBranch.GetValueOrDefault() && !user.CrMasUserInformationAuthorizationAdmin.GetValueOrDefault() && !user.CrMasUserInformationAuthorizationOwner.GetValueOrDefault())
+            {
+                var branchValidities = user.CrMasUserBranchValidities.Where(x => x.CrMasUserBranchValidityBranchStatus == Status.Active);
+                if (!branchValidities.Any())
+                {
+                    ModelState.AddModelError("Hint", _localizer["NoHaveBranches"]);
                     return View(model);
                 }
-                // If Password Is Invalid Or
-                if (await _authService.CheckPassword(model.UserName, model.Password) == false)
+                else if (branchValidities.Count() == 1 && branchValidities.First().CrMasUserBranchValidity1.CrCasBranchInformationStatus == Status.Deleted)
                 {
-                    if (user.CrMasUserInformationRemindMe != null)
-                    {
-                        ModelState.AddModelError("Hint", _localizer["PasswordInvalid"] + ":" + user.CrMasUserInformationRemindMe);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("Hint", _localizer["PasswordInvalid"]);
-                    }
-                    return View("Login", model);
-                }
-                //else if (await _authService.CheckPassword(model.UserName, model.Password) == true)
-                //{
-                //    if (user.CrMasUserInformationOperationStatus == true)
-                //    {
-                //        ModelState.AddModelError("Hint", _localizer["UserIsOpen"]);
-                //        return View(model);
-                //    }
-                //}
-                //Check The Status Of User 
-                if (user.CrMasUserInformationStatus == Status.Deleted)
-                {
-                    ModelState.AddModelError("Hint", _localizer["AccountDelete"]);
+                    ModelState.AddModelError("Hint", _localizer["HaveOneBranchDeleted"]);
                     return View(model);
                 }
-                if (user.CrMasUserInformationLessorNavigation.CrMasLessorInformationStatus == Status.Deleted)
-                {
-                    ModelState.AddModelError("Hint", _localizer["CompanyDeleted"]);
-                    return View(model);
-                }
+            }
 
-                if (user.CrMasUserInformationAuthorizationBranch == true && user.CrMasUserInformationAuthorizationAdmin == false && user.CrMasUserInformationAuthorizationOwner == false)
-                {
-                    var branchValidities = user.CrMasUserBranchValidities.Where(x => x.CrMasUserBranchValidityBranchStatus == Status.Active);
-                    if (branchValidities.Count() == 0)
-                    {
-                        ModelState.AddModelError("Hint", _localizer["NoHaveBranches"]);
-                        return View(model);
-                    }
-                    else if (branchValidities.Count() == 1)
-                    {
-                        if (branchValidities.FirstOrDefault().CrMasUserBranchValidity1.CrCasBranchInformationStatus == Status.Deleted)
-                        {
-                            ModelState.AddModelError("Hint", _localizer["HaveOneBranchDeleted"]);
-                            return View(model);
-                        }
-                    }
-                }
+            // تنفيذ تسجيل الدخول
+            var result = await _authService.LoginAsync(model.UserName, model.Password);
+            if (result.Succeeded)
+            {
+                // تحديد لغة الواجهة
+                SetLanguage("~/", user.CrMasUserInformationDefaultLanguage.ToLower() == "en" ? "en-US" : "ar-EG");
 
+                // تحديث بيانات المستخدم بعد تسجيل الدخول
+                user.CrMasUserInformationOperationStatus = true;
+                user.CrMasUserInformationLastActionDate = DateTime.UtcNow;
+                user.CrMasUserInformationEntryLastDate = DateTime.UtcNow.Date;
+                user.CrMasUserInformationEntryLastTime = DateTime.UtcNow.TimeOfDay;
+                await _userService.SaveChanges(user);
 
-                var result = await _authService.LoginAsync(model.UserName, model.Password);
-                if (result.Succeeded)
-                {
+                // تحديد الوجهة المناسبة بعد تسجيل الدخول
+                string redirectUrl = string.Empty;
 
-
-
-                    if (user.CrMasUserInformationDefaultLanguage.ToLower() == "en") SetLanguage("~/", "en-US");
-                    else SetLanguage("~/", "ar-EG");
-
-                    //Check if no have branches and have branch auth true set branch auth false
-                    var UserInforation = await _unitOfWork.CrMasUserInformation.FindAsync(x => x.CrMasUserInformationCode == model.UserName, new[] { "CrMasUserBranchValidities.CrMasUserBranchValidity1" });
-                    var branchValiditie = UserInforation.CrMasUserBranchValidities.Where(x => x.CrMasUserBranchValidityBranchStatus == Status.Active && x.CrMasUserBranchValidityBranchRecStatus != Status.Deleted).Count();
-                    if (UserInforation.CrMasUserInformationAuthorizationBranch == true && branchValiditie == 0) UserInforation.CrMasUserInformationAuthorizationBranch = false;
-                    UserInforation.CrMasUserInformationOperationStatus = true;
-                    UserInforation.CrMasUserInformationLastActionDate = DateTime.Now;
-                    UserInforation.CrMasUserInformationEntryLastDate = DateTime.Now.Date;
-                    UserInforation.CrMasUserInformationEntryLastTime = DateTime.Now.TimeOfDay;
-                    await _userService.SaveChanges(UserInforation);
-
-                    bool? userAuthBnan = UserInforation.CrMasUserInformationAuthorizationBnan;
-                    bool? userAuthAdmin = UserInforation.CrMasUserInformationAuthorizationAdmin;
-                    bool? userAuthBranch = UserInforation.CrMasUserInformationAuthorizationBranch;
-                    bool? userAuthOwners = UserInforation.CrMasUserInformationAuthorizationOwner;
-
-
-                    if (userAuthBnan == true)
-                    {
-                        return RedirectToAction("Index", "Home", new { area = "MAS" });
-                    }
-
-                    if (userAuthAdmin == true && userAuthBranch == true && userAuthOwners == true)
-                    {
-                        return RedirectToAction("Systems", "Account");
-                    }
-                    else if ((userAuthAdmin == true && userAuthBranch == true) || (userAuthAdmin == true && userAuthOwners == true) || (userAuthBranch == true && userAuthOwners == true))
-                    {
-                        return RedirectToAction("Systems", "Account");
-                    }
-                    else if (userAuthAdmin == true && userAuthBranch == false && userAuthOwners == false)
-                    {
-                        return RedirectToAction("Index", "Home", new { area = "CAS" });
-                    }
-                    else if (userAuthAdmin == false && userAuthBranch == true && userAuthOwners == false)
-                    {
-                        return RedirectToAction("Index", "Home", new { area = "BS" });
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("Stat", _localizer["AuthEmplpoyee"]);
-                        return View(model);
-                    }
-                }
-                if (result.IsLockedOut)
-                {
-                    return View("AccountLocked");
-                }
+                if (user.CrMasUserInformationAuthorizationBnan == true)
+                    redirectUrl = Url.Action("Index", "Home", new { area = "MAS" });
+                else if (user.CrMasUserInformationAuthorizationAdmin == true &&
+                         user.CrMasUserInformationAuthorizationBranch == true &&
+                         user.CrMasUserInformationAuthorizationOwner == true)
+                    redirectUrl = Url.Action("Systems", "Account");
+                else if (user.CrMasUserInformationAuthorizationAdmin == true)
+                    redirectUrl = Url.Action("Index", "Home", new { area = "CAS" });
+                else if (user.CrMasUserInformationAuthorizationBranch == true)
+                    redirectUrl = Url.Action("Index", "Home", new { area = "BS" });
                 else
                 {
-                    ModelState.AddModelError("message", "Invalid login attempt");
+                    ModelState.AddModelError("Stat", _localizer["AuthEmplpoyee"]);
                     return View(model);
                 }
+
+                return Redirect(redirectUrl);
             }
 
-            // If UserName Or Password is Null
-            if (model.UserName == null && model.Password == null)
+            if (result.IsLockedOut)
             {
-                ModelState.AddModelError(nameof(model.UserName), _localizer["PleaseEnterUserName"]);
-                ModelState.AddModelError(nameof(model.Password), _localizer["PleaseEntePassword"]);
-                return View(model);
+                return View("AccountLocked");
             }
-            else if (model.UserName == null)
-            {
-                ModelState.AddModelError(nameof(model.UserName), _localizer["PleaseEnterUserName"]);
-                return View(model);
-            }
-            else if (model.Password == null)
-            {
-                ModelState.AddModelError(nameof(model.Password), _localizer["PleaseEntePassword"]);
-                return View(model);
-            }
-
             return View(model);
-
         }
 
         [Authorize]

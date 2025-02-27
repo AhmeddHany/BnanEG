@@ -438,7 +438,7 @@
                                                     </label>
                                                 </div>
                                                 <div class="col-12 col-md-7 col-lg-6">
-                                                    <select class="form-select form-select-settel" id="Settlement-mechanism" asp-for="ContractSettlement.SettlementMechanism">
+                                                    <select class="form-select form-select-settel" id="Settlement-mechanism" asp-for="ContractSettlement.CrCasRenterContractBasicDelayMechanism">
                                                                 @foreach (var item in Model.ContractCloseMechanism)
                                                                 {
                                                                   <option value="@item.CrMasSupContractCloseMechanismCode" 
@@ -451,7 +451,7 @@
                                                                 }                                        
                                                     </select>
                                                     <div class="row requird-field-row-last">
-                                                        <span class="requird-field" id="requird_field_SettlementMechanism" asp-validation-for="@Model.ContractSettlement.SettlementMechanism"></span>
+                                                        <span class="requird-field" id="requird_field_SettlementMechanism" asp-validation-for="ContractSettlement.CrCasRenterContractBasicDelayMechanism"></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -992,7 +992,7 @@
                                                         </div>
                                                         <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
-                                                                <p> : @localizer["FuelValue"]  </p>
+                                                                <p> : @localizer["FuelValueFull"]  </p>
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p>@Model.ContractSettlement?.CrCasRenterContractBasicFuelValue?.ToString("N2", CultureInfo.InvariantCulture) </p>
@@ -1119,7 +1119,7 @@
                                                         </div>
                                                         <div class="row dropdown-content-row">
                                                             <div class="col-auto ">
-                                                                <p> :@localizer["FuelValue"]</p>
+                                                                <p> :@localizer["FuelValueConsumed"]</p>
                                                             </div>
                                                             <div class="col personal-data">
                                                                 <p id="FuelValue">0.00</p>
@@ -1462,6 +1462,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" integrity="sha512-u3fPA7V8qQmhBPNT5quvaXVa1mnnLSXUep5PS1qo5NRzHwG19aHmNJnj1Q8hpA/nBWZtZD4r4AX6YOt5ynLN2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="~/js/toastr.js"></script>
     <!--Pdf-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
     <script src="~/PdfJS/Receipts/Receipt.js"></script>
     <script src="~/PdfJS/Invoices/ProformaInvoice.js"></script>
     <script src="~/PdfJS/Card/Card.js"></script>
@@ -1474,8 +1477,7 @@
     <script src="~/PdfJS/Contract/page11.js"></script>
     <script src="~/PdfJS/Contract/page12.js"></script>
     <!--Contract-->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    
     <!--Pdf-->
     <script>
         $(document).ready(function () {
@@ -1779,6 +1781,7 @@
         var diff = 0;
         var totalDaysNo = 0;
         var settlementDay = 0;
+        var settlementDayCode = 0;
         var roundedHours = 0;
         var roundedLateAddHours = 0;
         var roundedLateSettelmentHours = 0;
@@ -1874,20 +1877,10 @@
                 $("#DaysNoContract").text(diffDays);
                 $("#EndContract").text(formattedEndContractDate);
                 console.log("totalDaysNo", totalDaysNo)
-               //  ////////////////////////////////////////////////////////////
-               // if (endContractDate < now && diffHours > 0 ) {
-               //      roundedHours = diffHours; // Rounded to next hour
-               //      roundedLateAddHours = diffHours;
-               //      handleSettlementAuth(roundedHours);
-               //      checkAuthForUser();
-               //  } else {
-               //      caseSettelement = 1;
-               //      resetTimeDisplay();
-               //  }
+              
                 console.log("CASE  ......:",caseSettelement);
                 roundedHours = diffHours; // Rounded to next hour
                 roundedLateAddHours = diffHours;
-                // handleSettlementAuth(roundedHours);
                 checkAuthForUser();
                 function checkAuthForUser(){
                     // التعامل مع صلاحية المستخدم بعد عرض التأخير
@@ -2017,16 +2010,22 @@
         function CalculateSettelementDay(typeLate) {
            
             if(!isSettlementAuthValid){
-                settlementDay =2;
+                   var rentSystemHourValue = parseFloat("@Model.ContractSettlement.RentSystemHourValue");
+                   var rentSystemDayValue  = parseFloat("@Model.ContractSettlement.RentSystemDayValue");
+                   console.log("rentSystemHourValue",rentSystemHourValue)
+                   console.log("rentSystemDayValue",rentSystemDayValue)
                 if(typeLate==="hour"){
+                    settlementDay =rentSystemHourValue;
                     $("#Settlement-mechanism").val("13")
                 }
                 else{
+                    settlementDay =rentSystemDayValue;
                     $("#Settlement-mechanism").val("23")
                 }
             }
             else{
                settlementDay = parseFloat($("#Settlement-mechanism option:selected").attr("data-val"));
+               settlementDayCode = parseFloat($("#Settlement-mechanism").val());
             }
             $("#ContractSettlement_ActualDaysNo").val(totalDaysNo);
         }
@@ -2113,7 +2112,7 @@
                 if ($("#SettlementForm").valid()) {
                     const current_fs = nextBtn.closest("fieldset");
                     let next_fs = current_fs.nextElementSibling;
-                    // CalculateSettelementDay(typeLate);
+                    CalculateSettelementDay(typeLate);
                     CalculateKmFree();
                     if (current_fs.id === 'firstFieldset') {
                         // $("#ExpensesError").text('');
@@ -2322,14 +2321,33 @@
             //Rental Price
             var expectedDays =parseInt("@Model.ContractSettlement.CrCasRenterContractBasicExpectedRentalDays");
             var rentalPricePerDay = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicDailyRent));
-            var rentValue = diffDays * parseFloat(rentalPricePerDay);
+            var rentValue=0;
+            var settelementRentValue=0;
+            
+             
             // غرامة التاخير
             console.log("settlementDay:",settlementDay)
+            console.log("settlementDayCode:",settlementDayCode)
             console.log("lateDaysToSettlement:",diffDays - parseInt(expectedDays))
+            console.log("totalDaysNo:",totalDaysNo)
             var lateDaysToSettlement = Math.max(0, diffDays - parseInt(expectedDays));
-            var settelementRentValue = settlementDay * lateDaysToSettlement * parseFloat(rentalPricePerDay)
+            if(settlementDayCode==="20"){
+                rentValue = parseInt(expectedDays) * parseFloat(rentalPricePerDay);
+            }
+            else if(settlementDayCode==="21"){
+                rentValue = diffDays * parseFloat(rentalPricePerDay);
+            }
+            else{
+                rentValue = diffDays * parseFloat(rentalPricePerDay);
+                settelementRentValue = settlementDay * lateDaysToSettlement * parseFloat(rentalPricePerDay)
+            }
+
+
             console.log("settelementRentValue:",settelementRentValue)
+            console.log("rentValue:",rentValue)
             rentValueTotal = rentValue + settelementRentValue;
+            console.log("rentValueTotal:",rentValueTotal)
+
             document.getElementById('LateDays').textContent=lateDaysToSettlement.toString().padStart(2, '0');
             document.getElementById('RentalValue').textContent = rentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('LateSettlement').textContent = settelementRentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -2339,11 +2357,11 @@
             FeesTammValue = parseFloat(FeesTamm);
             document.getElementById('DelegationValue').textContent = FeesTammValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-            // Advantages
-            var AdvantagesValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.AdvantagesValue));
-            advantagesValueTotal = totalDaysNo * parseFloat(AdvantagesValue);
-            document.getElementById('Features').textContent = advantagesValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            $("#ContractSettlement_AdvantagesValueTotal").val(advantagesValueTotal.toFixed(2));
+            // // Advantages
+            // var AdvantagesValue = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.AdvantagesValue));
+            // advantagesValueTotal = totalDaysNo * parseFloat(AdvantagesValue);
+            // document.getElementById('Features').textContent = advantagesValueTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            // $("#ContractSettlement_AdvantagesValueTotal").val(advantagesValueTotal.toFixed(2));
 
             //AdditionalDriver
             var AdditionalDriver = @Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicAdditionalDriverValue));
@@ -2386,7 +2404,7 @@
             }
             //Get ContractValue
 
-            ContractValue = rentValueTotal + FeesTammValue + advantagesValueTotal + AdditionalDriverValue + fuelValue +
+            ContractValue = rentValueTotal + FeesTammValue  + AdditionalDriverValue + fuelValue +
                             PrivateDriverValueTotal + AdditionalValue + ChoicesValueTotal + AdditionalHoursValueTotal + AdditionalKMValueTotal;
             document.getElementById('ContractValue').textContent = ContractValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $("#ContractSettlement_ContractValue").val(ContractValue.toFixed(2));
@@ -2710,7 +2728,10 @@
             const KMValue =parseFloat(@Html.Raw(Json.Serialize(Model?.ContractSettlement?.CrCasRenterContractBasicKmValue)));
             const expectedDays = "@Model?.ContractSettlement?.CrCasRenterContractBasicExpectedRentalDays";
             var lateDaysToSettlement = Math.max(0, diffDays - parseInt(expectedDays));
-            var settelementRentValue = settlementDay * lateDaysToSettlement * rentDailyValue;
+            var settelementRentValue=0;
+            if(settlementDay !=1 || settlementDay !=0){
+                settelementRentValue = settlementDay * lateDaysToSettlement * rentDailyValue;
+            }
             const itemsData = [
                 {
                     arabic: "الإيجار",
@@ -3398,6 +3419,8 @@
     <script>
             // دالة لدمج كل الصفحات وتحويلها إلى PDF
             const CreateContractPdf = async () => {
+                var existingContractPdf = decodeHTMLEntities('@Model?.ContractSettlement?.CrCasRenterContractBasicPdfFile?.Replace("~", "")');
+
                 console.log("⏳ بدء إنشاء الصفحات...");
                 // الصفحات من 7 إلى 12
                 const canvas7 = document.getElementById("myCanvasPage7");
@@ -3454,7 +3477,7 @@
 
                 // إنشاء الـ PDF من الصفحات
                 console.log("⏳ بدء إنشاء ملف PDF...");
-                await generateContractPdf(canvasArray, "SavePdfContract");
+                await generateSettelmentContractPdf(existingContractPdf,canvasArray, "SavePdfContract");
                 console.log("✅ تم الانتهاء من إنشاء ملف العقد.");
             };
     </script>
