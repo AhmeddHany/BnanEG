@@ -33,7 +33,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
         private readonly IBaseRepo _baseRepo;
         private readonly IMasBase _masBase;
         private readonly IToastNotification _toastNotification;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IWebHostEnvironment _env;
         private readonly IStringLocalizer<DailyReportController> _localizer;
         private readonly string pageNumber = SubTasks.Daily_Report_Cas;
 
@@ -47,7 +47,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
             _baseRepo = BaseRepo;
             _masBase = masBase;
             _toastNotification = toastNotification;
-            _webHostEnvironment = webHostEnvironment;
+            _env = webHostEnvironment;
             _localizer = localizer;
         }
 
@@ -325,8 +325,20 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
 
 
         [HttpPost]
-        public async Task<IActionResult> createExcel_saveAs_Receipt_Action(List<string> list_recipt_ids, List<string> list_serials, string debits, string credits, string start, string end)
+        public async Task<IActionResult> createExcel_saveAs_Receipt_Action(string list_ids_string, string list_serials_string, string debits, string credits, string start, string end)
         {
+            if (string.IsNullOrEmpty(list_ids_string) || string.IsNullOrEmpty(list_serials_string))
+            {
+                var result5 = new
+                {
+                    code = 4,
+                };
+                return Json(result5);
+            }
+            // تحويل السلسلة إلى قائمة باستخدام Split
+            List<string> list_recipt_ids = new List<string>(list_ids_string.Split(','));
+            List<string> list_serials = new List<string>(list_serials_string.Split(','));
+
             var id = "55";
             try
             {
@@ -338,6 +350,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                 listDailyReportVM VM = new listDailyReportVM();
 
                 await SetPageTitleAsync(Status.Update, pageNumber);
+
+                var lessorImage = await _unitOfWork.CrMasLessorImage.FindAllAsNoTrackingAsync(x => x.CrMasLessorImageCode == user.CrMasUserInformationLessor);
+
+                var Ar_pathFormoula = lessorImage?.FirstOrDefault()?.CrMasLessorImageArDailyReport?.Replace("~/", "./wwwroot/");
+                var En_pathFormoula = lessorImage?.FirstOrDefault()?.CrMasLessorImageEnDailyReport?.Replace("~/", "./wwwroot/");
+
                 var all_Recipts = await _unitOfWork.CrCasAccountReceipt.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                 predicate: x => x.CrCasAccountReceiptLessorCode == user.CrMasUserInformationLessor
@@ -379,11 +397,22 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
 
                 all_Recipts = all_Recipts.Where(x => receipt_ids.Any(y => y.Id?.Trim() == x.CrCasAccountReceiptNo)).ToList();
 
+                if (all_Recipts==null || all_Recipts?.Count < 1)
+                {
+                    var result4 = new
+                    {
+                        code = 4,
+                    };
+                    return Json(result4);
+                }
+
+
                 var renamedListAr = all_Recipts.Select(recipt => new
                 {
                     //receipt_Serial = list_serials[all_Recipts.IndexOf(recipt)],
                     receipt_Serial = all_Recipts.IndexOf(recipt) + 1,
                     receipt_No = recipt.CrCasAccountReceiptNo,
+                    //space = " ",
                     reciptDate = recipt.CrCasAccountReceiptDate?.ToString("dd-MM-yyyy"),
                     branch = recipt.branch_Ar,
                     reference = recipt.ReferanceType_Ar,
@@ -399,6 +428,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                     //receipt_Serial = list_serials[all_Recipts.IndexOf(recipt)],
                     receipt_Serial = all_Recipts.IndexOf(recipt) + 1,
                     receipt_No = recipt.CrCasAccountReceiptNo,
+                    //space = " ",
                     reciptDate = recipt.CrCasAccountReceiptDate?.ToString("dd-MM-yyyy"),
                     branch = recipt.branch_En,
                     reference = recipt.ReferanceType_En,
@@ -409,20 +439,37 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                     Credit = recipt.CrCasAccountReceiptPayment,
                 }).ToList();
 
-
                 //////// Ar - En
                 var folderAr = "C:/ArDailyReport";
                 var folderEn = "C:/EnDailyReport";
-                var folderSource = "C:/Users/HP/Desktop/Excels";
+                //var folderSource = "C:/Users/HP/Desktop/Excels";
+
+
 
                 if (CultureInfo.CurrentUICulture.Name == "en-US")
                 {
-                    bool folderExistsEn = Directory.Exists(folderEn);
-                    if (!folderExistsEn)
-                        Directory.CreateDirectory(folderEn);
+
+                    if (En_pathFormoula?.Length < 2)
+                    {
+                        var result3 = new
+                        {
+                            code = 3,
+                        };
+                        return Json(result3);
+                    }
+                    if (!System.IO.File.Exists(En_pathFormoula))
+                    {
+                        //Console.WriteLine("الملف غير موجود.");
+                        var result2 = new
+                        {
+                            code = 2,
+                        };
+                        return Json(result2);
+                    }
 
 
-                    string originalFilePath_En = folderSource + "/" + "DailyReportFormula" + ".xlsx";
+                    //string originalFilePath_En = folderSource + "/" + "DailyReportFormula" + ".xlsx";
+                    string originalFilePath_En = En_pathFormoula??" ";
 
                     // مسار النسخة الجديدة En
                     string newFilePath_En = folderEn + "/" + "DailyReportEn" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
@@ -442,7 +489,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                         // كتابة في خلايا محددة
                         worksheet_En.Cell("D9").Value = start;
                         worksheet_En.Cell("F9").Value = end;
-                        worksheet_En.Cell("J9").Value = user.CrMasUserInformationArName;
+                        worksheet_En.Cell("J9").Value = user.CrMasUserInformationEnName;
                         worksheet_En.Cell("D11").Value = debits;
                         worksheet_En.Cell("D12").Value = credits;
 
@@ -457,13 +504,28 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                 }
                 else
                 {
-                    bool folderExistsAr = Directory.Exists(folderAr);
-                    if (!folderExistsAr)
-                        Directory.CreateDirectory(folderAr);
+                    if (Ar_pathFormoula?.Length < 2)
+                    {
+                        var result3 = new
+                        {
+                            code = 3,
+                        };
+                        return Json(result3);
+                    }
+                    if (!System.IO.File.Exists(Ar_pathFormoula))
+                    {
+                        //Console.WriteLine("الملف غير موجود.");
+                        var result2 = new
+                        {
+                            code = 2,
+                        };
+                        return Json(result2);
+                    }
 
 
                     // مسار الملف الأصلي old excel Ar
-                    string originalFilePath_Ar = folderSource + "/" + "DailyReportFormula" + ".xlsx";
+                    //string originalFilePath_Ar = folderSource + "/" + "DailyReportFormula" + ".xlsx";
+                    string originalFilePath_Ar = Ar_pathFormoula??" ";
 
                     // مسار النسخة الجديدة Ar
                     string newFilePath_Ar = folderAr + "/" + "DailyReportAr" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";

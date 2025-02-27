@@ -17,17 +17,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using NToastNotify;
-using System.Net;
-using System.Net.Mail;
-using System;
-using System.ComponentModel.Design;
-using System.Globalization;
-using System.Linq.Expressions;
-using System.Text.Json;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.Net.Http;
+//using System.Net;
+//using System.Net.Mail;
+//using System;
+//using System.ComponentModel.Design;
+//using System.Globalization;
+//using System.Linq.Expressions;
+//using System.Text.Json;
+//using System.Net.Http;
 using Bnan.Ui.ViewModels.CAS.Renters;
 using Bnan.Ui.ViewModels.CAS;
+using MimeKit;
+using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Bnan.Ui.Areas.CAS.Controllers.Renters
 {
@@ -291,176 +293,243 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
         }
 
 
+        //[HttpPost]
+        //public async Task<IActionResult> send_ToAll_Email(List<IFormFile> files, string text, string address, string selectedValues, string all_mobiles, string all_mails)
+        //{
+        //    if (string.IsNullOrEmpty(all_mails))
+        //    {
+        //        //return Json(new { status = false, message = "رقم الهاتف والرسالة مطلوبان" });
+        //        return Json(new { status = false, message = $"{_localizer["RenterMessages_M_phoneAndMessageRequired"]}" });
+        //    }
+        //    var user = await _userManager.GetUserAsync(User);
+
+        //    IFormFile file = null;
+        //    List<ResultResponseWithNo> listResultResponseWithNo = new List<ResultResponseWithNo>();
+        //    var messageErrors = " ";
+        //    //if (string.IsNullOrEmpty(text) || text == "undefined") text= "اهلا وسهلا";
+        //    string[] splitArray_mob = all_mobiles.Split(',');
+        //    List<string> list_mobiles = splitArray_mob.ToList();
+        //    string[] splitArray_mails = all_mails.Split(',');
+        //    List<string> list_emails = splitArray_mails.ToList();
+        //    string[] splitArray_Renters = selectedValues.Split(',');
+        //    List<string> list_Renters = splitArray_Renters.ToList();
+        //    //if(address == "undefined" ||address == "" || address == " " || address == null)
+
+        //    MediaRequest request = new MediaRequest();
+        //    request.Phone = splitArray_mob[0];
+        //    //request.CompanyId = "0000";
+        //    request.CompanyId = user?.CrMasUserInformationLessor ?? "0";
+        //    request.Message = text;
+
+        //    ////var checkConneted = await WhatsAppServicesExtension.CheckIsConnected(request.CompanyId);
+        //    ////// تحويل النص إلى كائن JSON
+        //    ////// تحويل النص إلى كائن من النوع Response
+        //    ////var jsonObject_check_Response = JsonConvert.DeserializeObject<dynamic>(checkConneted);
+        //    ////if (jsonObject_check_Response == null || jsonObject_check_Response?.status == false || jsonObject_check_Response?.key != "3")
+        //    ////{
+        //    ////    //return Json(new { status = false, message = $"جوال الشركة غير متصل" });
+        //    ////    return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_Error_BnanPhone_notConnected"]} " });
+        //    ////}
+        //    var result = "";
+
+        //    if (files.Count > 0)
+        //    {
+        //        file = files[0];
+        //    }
+
+        //    if (file != null && file.Length > 0)
+        //    {
+        //        string fileName = Path.GetFileName(file.FileName);  // اسم الملف
+        //        // قراءة محتويات الملف في مصفوفة بايت
+        //        using (var memoryStream = new MemoryStream())
+        //        {
+        //            await file.CopyToAsync(memoryStream);
+
+        //            // تحويل المصفوفة البايت إلى Base64 string
+        //            string base64String = Convert.ToBase64String(memoryStream.ToArray());
+
+        //            // طباعة الـ Base64 string للتأكيد
+        //            Console.WriteLine(base64String);
+        //            request.fileBase64 = base64String;
+        //            request.filename = fileName;
+        //            //// يمكنك الآن إرسال base64String أو تخزينه حسب الحاجة
+        //            //return Ok(new { base64 = base64String });
+
+        //        }
+        //    }
+        //    if (string.IsNullOrEmpty(text))
+        //    {
+        //        //return Json(new { status = false, message = "رقم الهاتف والرسالة مطلوبان" });
+        //        return Json(new { status = false, message = $"{_localizer["RenterMessages_M_phoneAndMessageRequired"]}" });
+        //    }
+        //    var i = 0;
+        //    try
+        //    {
+        //        // // استخدام الـ Extension Method لإرسال الرسالة
+        //        //var result = await WhatsAppServicesExtension.SendMessageAsync(request.Phone, request.Message, request.CompanyId);
+        //        //string phone, string message, string companyId, string fileBase64, string filename
+        //        for (i = 0; i < list_Renters.Count; i++)
+        //        {
+        //            request.Phone = list_mobiles[i];
+        //            result = await SendEmailAsync(request.Phone, request.Message, request.CompanyId, request.CompanyId);
+        //            if (result != ApiResponseStatus.Success)
+        //            {
+        //                ResultResponseWithNo singleResult_Obj = new ResultResponseWithNo();
+        //                singleResult_Obj.message = result;
+        //                singleResult_Obj.companyId = list_Renters[i];
+        //                listResultResponseWithNo.Add(singleResult_Obj);
+        //            }
+        //        }
+        //        listResultResponseWithNo.DistinctBy(y => y.companyId).ToList();
+        //        foreach (var error in listResultResponseWithNo)
+        //        {
+        //            messageErrors = messageErrors + $" {_localizer["toasterForWhats_" + error.message]} : {error.companyId} ,";
+        //        }
+        //        // إرجاع الاستجابة الناجحة
+        //        return Json(new { status = true, message = messageErrors });
+        //        //return BadRequest("No file uploaded.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // التعامل مع الأخطاء
+        //        //return Json(new { status = false, message = $"حدث خطأ أثناء إرسال الرسالة للشركة رقم: {list_Renters[i]} وكل ما بعدها" });
+        //        return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_ErrorPart1"]} {list_Renters[i]} {_localizer["RenterMessages_address_M_ErrorPart2"]} " });
+        //    }
+
+        //}
+
+
+
+        //public static async Task<string> SendEmailAsync(string mail, string message, string title, string companyId)
+        //{
+        //    // إعداد البيانات بتنسيق x-www-form-urlencoded
+        //    var formData = new Dictionary<string, string>
+        //{
+        //    { "mail", mail },
+        //    { "message", message },
+        //    { "title", title },
+
+        //    { "id", companyId }
+        //};
+
+        //    var data = new FormUrlEncodedContent(formData);
+
+        //    try
+        //    {
+        //        // إعداد بيانات البريد الإلكتروني
+
+        //        // إعداد البيانات اللازمة
+        //        var smtpServer = "smtp.office365.com"; // خادم SMTP لـ Outlook
+        //        var smtpPort = 587; // المنفذ الذي يدعم STARTTLS
+        //        var fromEmail = "mazen144essam@yahoo.com"; // بريد المرسل
+        //        var fromPassword = "moza123456"; // كلمة مرور التطبيق (إذا كنت تستخدم المصادقة الثنائية)
+        //        var toEmail = "mazen142000@yahoo.com"; // بريد المستلم
+        //        var subject = "Test Email";
+        //        var body = "This is a test email sent via Outlook SMTP.";
+
+
+        //        // إعداد SmtpClient
+        //        using (var smtpClient = new SmtpClient(smtpServer, smtpPort))
+        //        {
+        //            smtpClient.Credentials = new NetworkCredential(fromEmail, fromPassword); // المصادقة باستخدام البريد وكلمة المرور
+        //            smtpClient.EnableSsl = true; // تأكد من أن SSL مفعل
+        //            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+        //            // إعداد الرسالة
+        //            var mailMessage = new MailMessage(fromEmail, toEmail, subject, body);
+
+        //            // إرسال البريد الإلكتروني
+        //            smtpClient.Send(mailMessage);
+        //            Console.WriteLine("Email sent successfully.");
+        //        }
+
+        //        // إرسال رد بنجاح
+        //        //return Content("Email sent successfully.");
+
+        //        //var content = await response.Content.ReadAsStringAsync();
+        //        //var jsonResult = JsonConvert.DeserializeObject<dynamic>(content);
+
+        //        // // التحقق من الحالة
+        //        //if (jsonResult != null && (jsonResult.status == true || jsonResult.status.ToString().ToLower() == "true")) return ApiResponseStatus.Success;
+        //        return ApiResponseStatus.Success;
+        //        return ApiResponseStatus.Failure;
+        //    }
+        //    catch (HttpRequestException)
+        //    {
+        //        return ApiResponseStatus.ServerError;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return ApiResponseStatus.ServerError;
+        //    }
+        //}
+
         [HttpPost]
+        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
         public async Task<IActionResult> send_ToAll_Email(List<IFormFile> files, string text, string address, string selectedValues, string all_mobiles, string all_mails)
+
+        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
         {
-            if (string.IsNullOrEmpty(all_mails))
-            {
-                //return Json(new { status = false, message = "رقم الهاتف والرسالة مطلوبان" });
-                return Json(new { status = false, message = $"{_localizer["RenterMessages_M_phoneAndMessageRequired"]}" });
-            }
-            var user = await _userManager.GetUserAsync(User);
-
-            IFormFile file = null;
-            List<ResultResponseWithNo> listResultResponseWithNo = new List<ResultResponseWithNo>();
-            var messageErrors = " ";
-            //if (string.IsNullOrEmpty(text) || text == "undefined") text= "اهلا وسهلا";
-            string[] splitArray_mob = all_mobiles.Split(',');
-            List<string> list_mobiles = splitArray_mob.ToList();
-            string[] splitArray_mails = all_mails.Split(',');
-            List<string> list_emails = splitArray_mails.ToList();
-            string[] splitArray_Renters = selectedValues.Split(',');
-            List<string> list_Renters = splitArray_Renters.ToList();
-            //if(address == "undefined" ||address == "" || address == " " || address == null)
-
-            MediaRequest request = new MediaRequest();
-            request.Phone = splitArray_mob[0];
-            //request.CompanyId = "0000";
-            request.CompanyId = user?.CrMasUserInformationLessor ?? "0";
-            request.Message = text;
-
-            var checkConneted = await WhatsAppServicesExtension.CheckIsConnected(request.CompanyId);
-            // تحويل النص إلى كائن JSON
-            // تحويل النص إلى كائن من النوع Response
-            var jsonObject_check_Response = JsonConvert.DeserializeObject<dynamic>(checkConneted);
-            if (jsonObject_check_Response == null || jsonObject_check_Response?.status == false || jsonObject_check_Response?.key != "3")
-            {
-                //return Json(new { status = false, message = $"جوال الشركة غير متصل" });
-                return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_Error_BnanPhone_notConnected"]} " });
-            }
-            var result = "";
-
-            if (files.Count > 0)
-            {
-                file = files[0];
-            }
-
-            if (file != null && file.Length > 0)
-            {
-                string fileName = Path.GetFileName(file.FileName);  // اسم الملف
-                // قراءة محتويات الملف في مصفوفة بايت
-                using (var memoryStream = new MemoryStream())
-                {
-                    await file.CopyToAsync(memoryStream);
-
-                    // تحويل المصفوفة البايت إلى Base64 string
-                    string base64String = Convert.ToBase64String(memoryStream.ToArray());
-
-                    // طباعة الـ Base64 string للتأكيد
-                    Console.WriteLine(base64String);
-                    request.fileBase64 = base64String;
-                    request.filename = fileName;
-                    //// يمكنك الآن إرسال base64String أو تخزينه حسب الحاجة
-                    //return Ok(new { base64 = base64String });
-
-                }
-            }
-            if (string.IsNullOrEmpty(text))
-            {
-                //return Json(new { status = false, message = "رقم الهاتف والرسالة مطلوبان" });
-                return Json(new { status = false, message = $"{_localizer["RenterMessages_M_phoneAndMessageRequired"]}" });
-            }
-            var i = 0;
             try
             {
-                // // استخدام الـ Extension Method لإرسال الرسالة
-                //var result = await WhatsAppServicesExtension.SendMessageAsync(request.Phone, request.Message, request.CompanyId);
-                //string phone, string message, string companyId, string fileBase64, string filename
-                for (i = 0; i < list_Renters.Count; i++)
+                var message = new MimeMessage();
+                //message.From.Add(new MailboxAddress("hazem", "mohamedy144200@gmail.com"));
+                message.From.Add(new MailboxAddress("hazem", "mazen144essam@yahoo.com"));
+                message.To.Add(new MailboxAddress("essam", "hazem14442000@gmail.com"));
+                message.Subject = "Test Email";
+
+                var body = new TextPart("plain")
                 {
-                    request.Phone = list_mobiles[i];
-                    result = await SendEmailAsync(request.Phone, request.Message, request.CompanyId, request.CompanyId);
-                    if (result != ApiResponseStatus.Success)
-                    {
-                        ResultResponseWithNo singleResult_Obj = new ResultResponseWithNo();
-                        singleResult_Obj.message = result;
-                        singleResult_Obj.companyId = list_Renters[i];
-                        listResultResponseWithNo.Add(singleResult_Obj);
-                    }
-                }
-                listResultResponseWithNo.DistinctBy(y => y.companyId).ToList();
-                foreach (var error in listResultResponseWithNo)
+                    Text = "This is a test email."
+                };
+                message.Body = body;
+
+                using (var smtpClient = new SmtpClient())
                 {
-                    messageErrors = messageErrors + $" {_localizer["toasterForWhats_" + error.message]} : {error.companyId} ,";
-                }
-                // إرجاع الاستجابة الناجحة
-                return Json(new { status = true, message = messageErrors });
-                //return BadRequest("No file uploaded.");
-            }
-            catch (Exception ex)
-            {
-                // التعامل مع الأخطاء
-                //return Json(new { status = false, message = $"حدث خطأ أثناء إرسال الرسالة للشركة رقم: {list_Renters[i]} وكل ما بعدها" });
-                return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_ErrorPart1"]} {list_Renters[i]} {_localizer["RenterMessages_address_M_ErrorPart2"]} " });
-            }
+                    ////smtpClient.Connect("smtp.yourserver.com", 587, false); 
+                    //////smtpClient.Authenticate("your-email@example.com", "your-password");
+                    ////smtpClient.Authenticate("mazen144essam@yahoo.com", "mozaessam@123456");
+                    ////smtpClient.Send(message);
+                    ////smtpClient.Disconnect(true);
 
-        }
+                    // الاتصال بـ SMTP Yahoo Mail باستخدام المنفذ 465 لـ SSL أو 587 لـ TLS
+                    //smtpClient.Connect("smtp.mail.yahoo.com", 465, true);  // true تعني تفعيل SSL
+                    smtpClient.Connect("smtp.mail.yahoo.com", 587, false);
+                    //smtpClient.Connect("smtp.gmail.com", 465, true);// true تعني تفعيل SSL
 
-        public static async Task<string> SendEmailAsync(string mail, string message, string title, string companyId)
-        {
-            // إعداد البيانات بتنسيق x-www-form-urlencoded
-            var formData = new Dictionary<string, string>
-        {
-            { "mail", mail },
-            { "message", message },
-            { "title", title },
-
-            { "id", companyId }
-        };
-
-            var data = new FormUrlEncodedContent(formData);
-
-            try
-            {
-                // إعداد بيانات البريد الإلكتروني
-
-                // إعداد البيانات اللازمة
-                var smtpServer = "smtp.office365.com"; // خادم SMTP لـ Outlook
-                var smtpPort = 587; // المنفذ الذي يدعم STARTTLS
-                var fromEmail = "mazen144essam@yahoo.com"; // بريد المرسل
-                var fromPassword = "moza123456"; // كلمة مرور التطبيق (إذا كنت تستخدم المصادقة الثنائية)
-                var toEmail = "mazen142000@yahoo.com"; // بريد المستلم
-                var subject = "Test Email";
-                var body = "This is a test email sent via Outlook SMTP.";
-
-
-                // إعداد SmtpClient
-                using (var smtpClient = new SmtpClient(smtpServer, smtpPort))
-                {
-                    smtpClient.Credentials = new NetworkCredential(fromEmail, fromPassword); // المصادقة باستخدام البريد وكلمة المرور
-                    smtpClient.EnableSsl = true; // تأكد من أن SSL مفعل
-                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-
-                    // إعداد الرسالة
-                    var mailMessage = new MailMessage(fromEmail, toEmail, subject, body);
+                    // التحقق من الهوية باستخدام البريد الإلكتروني وكلمة المرور
+                    //smtpClient.Authenticate("mohamedy144200@gmail.com", "mohamady123456");
+                    smtpClient.Authenticate("mazen144essam@yahoo.com", "mozaessam@123456");
 
                     // إرسال البريد الإلكتروني
-                    smtpClient.Send(mailMessage);
-                    Console.WriteLine("Email sent successfully.");
+                    await smtpClient.SendAsync(message);
+                    smtpClient.Disconnect(true);
                 }
 
-                // إرسال رد بنجاح
-                //return Content("Email sent successfully.");
+                //return Ok("Email sent successfully!");
+                return Json(new { status = true, message = ApiResponseStatus.Success });
 
-                //var content = await response.Content.ReadAsStringAsync();
-                //var jsonResult = JsonConvert.DeserializeObject<dynamic>(content);
-
-                // // التحقق من الحالة
-                //if (jsonResult != null && (jsonResult.status == true || jsonResult.status.ToString().ToLower() == "true")) return ApiResponseStatus.Success;
-                return ApiResponseStatus.Success;
-                return ApiResponseStatus.Failure;
+                //return ApiResponseStatus.Success;
             }
             catch (HttpRequestException)
             {
-                return ApiResponseStatus.ServerError;
-            }
-            catch (Exception)
-            {
-                return ApiResponseStatus.ServerError;
-            }
-        }
+                //return ApiResponseStatus.ServerError;
+                return Json(new { status = false, message = ApiResponseStatus.ServerError });
 
-        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasRenterInformation licence, string status)
+            }
+            catch (Exception ex)
+            {
+                //return ex.Message;
+                return Json(new { status = false, message = ex.Message });
+
+            }
+            //catch (Exception ex)
+            //{
+            //    return BadRequest($"Error sending email: {ex.Message}");
+            //}
+        }
+    
+    private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasRenterInformation licence, string status)
         {
 
             var recordAr = licence.CrMasRenterInformationArName;

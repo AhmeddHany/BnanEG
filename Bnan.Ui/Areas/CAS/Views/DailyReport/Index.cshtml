@@ -66,7 +66,7 @@
                                 </div>
                             </div>
                             <div class="col-auto col-lg-3 save-col">
-                                    <a onclick="retrive_serials_ids_From_Datatable()" target="_blank">
+                                <a onclick="retrive_serials_ids_From_Datatable()" target="_blank" style="cursor:pointer;">
                                         <img src="~/CasSys/images/Frame (8).svg"> </a>
                             </div>
                             </div>
@@ -242,6 +242,7 @@
 
         // دالة للبحث عن كلمة في جميع الصفوف
         function searchRows() {
+            $(".dataTables_empty").css({ "display": "none" });
             $("#min-loader").removeClass("d-none");// اظهار loader تحميل
 
             var table = $('#Table').DataTable();
@@ -320,12 +321,16 @@
 
             $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
             //$("select[name='Table_length']").prepend("<option value='10000' id='A10000'>10000</option>");
+            $(".dataTables_empty").css({ "display": "none" });
         }
 
 
         // يمكن إضافة وظيفة البحث تلقائيًا عند كتابة النص
         $('#search2').on('keyup', function () {
+            $("#min-loader").removeClass("d-none");// اظهار loader تحميل
             searchRows();
+            $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
+
         });
 
     </script>
@@ -402,9 +407,14 @@
     <script>
 
         // دالة للبحث عن كلمة في جميع الصفوف
-        function retrive_serials_ids_From_Datatable() {
+       async function retrive_serials_ids_From_Datatable() {
+            const promises = [];
+            //$("#min-loader").toggleClass("d-none", true);
+            const promise3 = new Promise(resolve3 => {
             $("#min-loader").removeClass("d-none");// اظهار loader تحميل
-
+            resolve3();
+            });
+            await promise3;
             var table4 = $('#Table').DataTable();
             end_init_ShowDatatable();
             var keyword2 = $('#search2').val().toLowerCase(); // الكلمة المدخلة للبحث (تحويلها إلى حروف صغيرة)
@@ -414,52 +424,71 @@
             var totalSum_Debits2 = 0; // المتغير لحفظ مجموع القيم
             var totalSum_Credits2 = 0; // المتغير لحفظ مجموع القيم
 
-            // إخفاء كل الصفوف أولاً
-            table4.rows().every(function () {
-                this.nodes().to$().hide(); // إخفاء الصف
-            });
+            //// إخفاء كل الصفوف أولاً
+            //table4.rows().every(function () {
+            //    this.nodes().to$().hide(); // إخفاء الصف
+            //});
 
             // التكرار عبر كل الصفوف
             table4.rows().every(function () {
-                var row1 = this.data();
-                var found2 = false;
+                // إضافة العملية غير المتزامنة إلى الوعود
+                const promise = new Promise(resolve => {
+                    setTimeout(() => {
+                        //this.nodes().to$().hide();
+                        //-----------
+                        var row1 = this.data();
+                        var found2 = false;
 
-                // التكرار عبر كل الخلايا في الصف
-                row1.forEach(function (cell) {
-                    if (cell.toString().toLowerCase().includes(keyword2)) {
-                        found2 = true; // إذا تم العثور على الكلمة في أي خلية
-                    }
+                        // التكرار عبر كل الخلايا في الصف
+                        for (let i = 0; i < row1.length; i++) {
+                            let cell = row1[i];
+                            if (cell.toString().toLowerCase().includes(keyword2)) {
+                                found2 = true; // إذا تم العثور على الكلمة في أي خلية
+                                break; // إذا أردت إيقاف البحث بعد العثور على الكلمة
+                            }
+                        }
+
+                        // إذا تم العثور على الكلمة في الصف، نظهره
+                        if (found2) {
+                            this.nodes().to$().show();// إظهار الصف
+                            //recipts_ids_Data.push(row1); // إضافة الصف إلى البيانات المفلترة
+                            //recipts_ids_Data.push($(row1[7]).find('.FirstLineP').text().replace(/,/g, '').trim()); // إضافة الصف إلى البيانات المفلترة
+                            var recipt_id = $(this.node()).find('td').eq(7).find('.FirstLineP').text().trim();
+                            var row_serial = $(this.node()).find('td').eq(8).find('.filter-number-td > div').text().trim();
+                            recipts_ids_Data.push(recipt_id);
+                            recipts_serials_Data.push(row_serial);
+                            //console.log($(this.node()).find('td').eq(7).find('.FirstLineP').text().trim());
+                            //console.log($(this.node()).find('td').eq(8).find('.filter-number-td > div').text().trim());
+
+                            // جمع القيم من العمود المحدد (مثلاً العمود الثاني)
+                            var columnValue33 = parseFloat($(row1[3]).text().replace(/,/g, '').trim()); // تغيير الفهرس 1 إلى رقم العمود الذي تريد جمعه
+                            //console.log(columnValue);
+                            //console.log(row[3]);
+                            if (!isNaN(columnValue33)) {
+                                totalSum_Credits2 += columnValue33; // إضافة القيمة إلى المجموع
+                            }
+                            // جمع القيم من العمود المحدد (مثلاً العمود الثاني)
+                            var columnValue22 = parseFloat($(row1[2]).text().replace(/,/g, '').trim()); // تغيير الفهرس 1 إلى رقم العمود الذي تريد جمعه
+                            //console.log(columnValue);
+                            //console.log(row[3]);
+                            if (!isNaN(columnValue22)) {
+                                totalSum_Debits2 += columnValue22; // إضافة القيمة إلى المجموع
+                            }
+                        }
+                        else {
+                            this.nodes().to$().hide(); // إخفاء الصف
+                        }
+                        //---------
+                        resolve();
+                    }, 100);
                 });
-
-                // إذا تم العثور على الكلمة في الصف، نظهره
-                if (found2) {
-                    this.nodes().to$().show();// إظهار الصف
-                    //recipts_ids_Data.push(row1); // إضافة الصف إلى البيانات المفلترة
-                    //recipts_ids_Data.push($(row1[7]).find('.FirstLineP').text().replace(/,/g, '').trim()); // إضافة الصف إلى البيانات المفلترة
-                    var recipt_id = $(this.node()).find('td').eq(7).find('.FirstLineP').text().trim();
-                    var row_serial = $(this.node()).find('td').eq(8).find('.filter-number-td > div').text().trim();
-                    recipts_ids_Data.push(recipt_id);
-                    recipts_serials_Data.push(row_serial);
-                    //console.log($(this.node()).find('td').eq(7).find('.FirstLineP').text().trim());
-                    //console.log($(this.node()).find('td').eq(8).find('.filter-number-td > div').text().trim());
-
-                    // جمع القيم من العمود المحدد (مثلاً العمود الثاني)
-                    var columnValue33 = parseFloat($(row1[3]).text().replace(/,/g, '').trim()); // تغيير الفهرس 1 إلى رقم العمود الذي تريد جمعه
-                    //console.log(columnValue);
-                    //console.log(row[3]);
-                    if (!isNaN(columnValue33)) {
-                        totalSum_Credits2 += columnValue33; // إضافة القيمة إلى المجموع
-                    }
-                    // جمع القيم من العمود المحدد (مثلاً العمود الثاني)
-                    var columnValue22 = parseFloat($(row1[2]).text().replace(/,/g, '').trim()); // تغيير الفهرس 1 إلى رقم العمود الذي تريد جمعه
-                    //console.log(columnValue);
-                    //console.log(row[3]);
-                    if (!isNaN(columnValue22)) {
-                        totalSum_Debits2 += columnValue22; // إضافة القيمة إلى المجموع
-                    }
-                }
+                promises.push(promise); // إضافة الوعود إلى مصفوفة
+                
             });
-
+            // الانتظار حتى تنتهي جميع الوعود
+            await Promise.all(promises);
+            // بعد اكتمال جميع العمليات
+            console.log("تم انتهاء جميع الوعود");
 
             // استخدام toLocaleString لتنسيق الرقم وإضافة الفواصل
             var formattedNumber_Sum_Credits2 = totalSum_Credits2.toLocaleString('en-US', {
@@ -491,31 +520,74 @@
     <script>
         //post Create DailyReport Excel File function
         function CreateExcelFile(recipts_ids_Data, recipts_serials_Data, Debits, Credits) {
+            $(".dataTables_empty").css({ "display": "none" });
+            console.log("تم النداء");
+            $("#min-loader").removeClass("d-none");// اظهار loader تحميل
             const start = $("#start_date").val(); // الحصول على قيمة البداية
             const end = $("#end_date").val(); // الحصول على قيمة النهاية
+            console.log(recipts_ids_Data);
+            console.log(recipts_serials_Data);
+            console.log({ Debits, Credits });
+
+            var formData = new FormData();
+
+            formData.append('list_ids_string', recipts_ids_Data);
+
+            formData.append('list_serials_string', recipts_serials_Data);
+            formData.append('debits', Debits);
+            formData.append('credits', Credits);
+            formData.append('start', start);
+            formData.append('end', end);
+
+
             $.ajax({
                 type: "POST",
-                data: { list_recipt_ids: recipts_ids_Data, list_serials: recipts_serials_Data, debits: Debits, credits: Credits, start: start, end: end },  // إرسال البيانات المفلترة
+                data: formData,
+                processData: false,  // مهم جدًا لرفع الملفات
+                contentType: false,  // مهم جدًا لرفع الملفات
+                //data: { list_recipt_ids: recipts_ids_Data, list_serials: recipts_serials_Data, debits: Debits, credits: Credits, start: start, end: end },  // إرسال البيانات المفلترة
                 url: "@Url.Action("createExcel_saveAs_Receipt_Action", "DailyReport", new { Area = "CAS" })",
 
                 success: function (response) {
                     console.log(response);
                     //$('#Table').DataTable();
-                    var credit1 = $("#in_credit").val();
-                    var debit1 = $("#in_debit").val();
-                    var balance1 = $("#in_balance").val();
-                    var avilableBalance1 = $("#in_avilableBalance").val();
-                    var reservedBalance1 = $("#in_reservedBalance").val();
-                    $("#p_credit").text(credit1);
-                    $("#p_debit").text(debit1);
-                    $("#p_balance").text(balance1);
-                    $("#p_avilableBalance").text(avilableBalance1);
-                    $("#p_reservedBalance").text(reservedBalance1);
                     $("#min-loader").toggleClass("d-none", true);
+                    toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+                    if (response.code == 0) {
+                        toastr.error("@localizer["ToastFailed"]");
+                    }
+                    else if (response.code == 4) {
+                        toastr.error("@localizer["NoDataToShow_Excel"]");
+                    }
+
+                    else if (response.code == 1) {
+                        var credit1 = $("#in_credit").val();
+                        var debit1 = $("#in_debit").val();
+                        var balance1 = $("#in_balance").val();
+                        var avilableBalance1 = $("#in_avilableBalance").val();
+                        var reservedBalance1 = $("#in_reservedBalance").val();
+                        $("#p_credit").text(credit1);
+                        $("#p_debit").text(debit1);
+                        $("#p_balance").text(balance1);
+                        $("#p_avilableBalance").text(avilableBalance1);
+                        $("#p_reservedBalance").text(reservedBalance1);
+                        toastr.success("@localizer["ToastSave"]");
+                    }
+                    else if (response.code == 3) {
+                        console.error('ExcelFile Not Found in db');
+                        toastr.error("@localizer["Toast_ExcelFileNotFound_db"]");
+                    }
+                    else if (response.code == 2) {
+                        console.error('ExcelFile Not Found in Hard Disk');
+                        toastr.error("@localizer["Toast_ExcelFileNotFound_HardDisk"]");
+                    }
+
+
 
                 },
                 error: function (xhr, status, error) {
                     console.error('Error sending filtered data');
+                    toastr.error("@localizer["ToastFailed"]");
                 }
             });
         }

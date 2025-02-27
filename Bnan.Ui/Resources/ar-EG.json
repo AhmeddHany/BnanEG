@@ -14,6 +14,7 @@
     "AuthEmplpoyee_NoHoldStatus": "لا يمكن إيقافه",
     "toastor_Exist": "هذا السجل مسجل من قبل",
     "NoDataToShow": "لا توجد بيانات لعرضها !!",
+    "NoDataToShow_Excel": "لا توجد بيانات",
     "No_company_choosed": "الرجاء اختيار شركة",
     "No_connect_way": "لا توجد وسيلة تواصل",
     "No_Branches_Toview": "لا توجد فروع",
@@ -2436,6 +2437,8 @@
   "Existing": "هذا الحقل مسجل من قبل",
   "Erro_entry": "خطأ في الادخال",
   "Exist": "ExistAr",
+  "Toast_ExcelFileNotFound_db": "ملف الإكسل غير موجود",
+  "Toast_ExcelFileNotFound_HardDisk": "ملف الإكسل غير موجود",
   "CarIsRented": "عفوا ... هذه السيارة تم تأجيرها بالفعل ، يرجى اختيار سيارة اخرى",
   "InvalidFileFormat": "تنسيق الملف الاكسيل غير صالح",
 

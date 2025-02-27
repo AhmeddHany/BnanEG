@@ -14,6 +14,7 @@
     "AuthEmplpoyee_NoUpdateStatus": "You can't Update its Status.",
     "AuthEmplpoyee_NoHoldStatus": "You can't Stop it.",
     "NoDataToShow": "!! No Data To Show",
+    "NoDataToShow_Excel": "No Data Found",
     "No_company_choosed": "select a company ,please",
     "No_connect_way": "There's No way to communicate",
     "No_Branches_Toview": "There's No Branches",
@@ -2446,6 +2447,8 @@
   "Erro_entry": "Entry Error in this Field",
 
   "Exist": "ExistEn",
+  "Toast_ExcelFileNotFound_db": "Excel File Not Found",
+  "Toast_ExcelFileNotFound_HardDisk": "Excel File Not Found",
   "CarIsRented": "Sorry... this car has already been rented, please choose another car",
   "InvalidFileFormat": "Invalid Excel File Format",
 
