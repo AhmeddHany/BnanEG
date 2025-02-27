@@ -1,8 +1,6 @@
 ﻿using Bnan.Core.Models;
 using Bnan.Ui.ViewModels.BS.CreateContract;
-using Microsoft.CodeAnalysis.Options;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace Bnan.Ui.ViewModels.BS
 {
@@ -30,6 +28,7 @@ namespace Bnan.Ui.ViewModels.BS
         public List<CrMasSupRenterGender>? RenterGender { get; set; }
         public List<CrCasLessorPolicy>? Policies { get; set; }
         public List<CrMasSupContractCloseSuspension>? ContractCloseSuspensions { get; set; }
+        public List<CrMasSupContractCloseMechanism>? ContractCloseMechanism { get; set; }
         public CrMasUserInformation UserInformation { get; set; }
         //Renter Lessor PAge
         public List<CrCasRenterLessor>? RentersLessor { get; set; }

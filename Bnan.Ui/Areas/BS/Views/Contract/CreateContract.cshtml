@@ -2248,6 +2248,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" integrity="sha512-u3fPA7V8qQmhBPNT5quvaXVa1mnnLSXUep5PS1qo5NRzHwG19aHmNJnj1Q8hpA/nBWZtZD4r4AX6YOt5ynLN2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="~/js/toastr.js"></script>
     <!--Pdf-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
     <script src="~/PdfJS/Receipts/Receipt.js"></script>
     <script src="~/PdfJS/Invoices/ProformaInvoice.js"></script>
     <script src="~/PdfJS/Card/Card.js"></script>
@@ -2261,8 +2263,7 @@
     <script src="~/PdfJS/Contract/page6.js"></script>
     <script src="~/PdfJS/Contract/conditions.js"></script>
     <!--Contract-->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    
     <!--Pdf-->
     <script>
         $(document).ready(function () {
@@ -6957,12 +6958,12 @@
 
 
             // الصفحات من 7 إلى 12
-            await createPageAndAddToCanvasArray(canvas7,7,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage7)", canvasArray);
-            await createPageAndAddToCanvasArray(canvas8,8,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage8)", canvasArray);
-            await createPageAndAddToCanvasArray(canvas9,9,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage9)", canvasArray);
-            await createPageAndAddToCanvasArray(canvas10,10,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage10)", canvasArray);
-            await createPageAndAddToCanvasArray(canvas11,11,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage11)", canvasArray);
-            await createPageAndAddToCanvasArray(canvas12,12,"@Url.Content(userInfo.CrMasUserInformationLessorNavigation.CrMasLessorImage.CrMasLessorImageContractPage12)", canvasArray);
+            await createPageAndAddToCanvasArray(canvas7,7,"@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArConditionPage1)", canvasArray);
+            await createPageAndAddToCanvasArray(canvas8,8,"@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArConditionPage2)", canvasArray);
+            await createPageAndAddToCanvasArray(canvas9,9,"@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageArConditionPage3)", canvasArray);
+            await createPageAndAddToCanvasArray(canvas10,10,"@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnConditionPage1)", canvasArray);
+            await createPageAndAddToCanvasArray(canvas11,11,"@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnConditionPage2)", canvasArray);
+            await createPageAndAddToCanvasArray(canvas12,12,"@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageEnConditionPage3)", canvasArray);
 
             // إنشاء الـ PDF من الصفحات
             console.log("⏳ بدء إنشاء ملف PDF...");

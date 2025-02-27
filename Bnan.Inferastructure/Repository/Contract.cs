@@ -342,7 +342,7 @@ namespace Bnan.Inferastructure.Repository
                                                        string AdditionalDriver, string SerialNo, string PriceNo, string DaysNo, string UserFreeHour, string UserFreeKm,
                                                        string CurrentMeter, string OptionsTotal, string AdditionalTotal, string ContractValueAfterDiscount,
                                                        string DiscountValue, string ContractValueBeforeDiscount, string TaxValue, string TotalAmount, string UserInsert,
-                                                       string Authrization, string UserDiscount, string AmountPayed, string ContractPdf,string PolicyCode,string SourceCode, string Reasons)
+                                                       string Authrization, string UserDiscount, string AmountPayed, string ContractPdf, string PolicyCode, string SourceCode, string Reasons)
         {
             DateTime now = DateTime.Now;
             CrCasRenterContractBasic renterContractBasic = new CrCasRenterContractBasic();
@@ -360,7 +360,7 @@ namespace Bnan.Inferastructure.Repository
             renterContractBasic.CrCasRenterContractBasicProcedures = "401";
             renterContractBasic.CrCasRenterContractBasicLessor = LessorCode;
             renterContractBasic.CrCasRenterContractBasicBranch = BranchCode;
-            renterContractBasic.CrCasRenterContractBasicPolicy =int.Parse(PolicyCode);
+            renterContractBasic.CrCasRenterContractBasicPolicy = int.Parse(PolicyCode);
             renterContractBasic.CrCasRenterContractBasicSource = SourceCode;
             renterContractBasic.CrCasRenterContractBasicIssuedDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
             renterContractBasic.CrCasRenterContractBasicExpectedStartDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
@@ -370,6 +370,7 @@ namespace Bnan.Inferastructure.Repository
             renterContractBasic.CrCasRenterContractBasicAllowCanceled = renterContractBasic.CrCasRenterContractBasicExpectedStartDate?.AddHours(Convert.ToDouble(carPrice.CrCasPriceCarBasicCancelHour));
             renterContractBasic.CrCasRenterContractBasicRenterId = RenterId;
             renterContractBasic.CrCasRenterContractBasicCarSerailNo = SerialNo;
+            renterContractBasic.CrCasRenterContractBasicFuelValue = carInfo.CrCasCarInformationFuelValue;
             renterContractBasic.CrCasRenterContractBasicOwner = carInfo.CrCasCarInformationOwner;
             if (RenterId != DriverId)
             {
@@ -392,7 +393,8 @@ namespace Bnan.Inferastructure.Repository
                 renterContractBasic.CrCasRenterContractBasicAdditionalDriverId = null;
                 renterContractBasic.CrCasRenterContractBasicAdditionalDriverValue = 0;
 
-            };
+            }
+            ;
             if (!string.IsNullOrEmpty(PrivateDriver))
             {
                 renterContractBasic.CrCasRenterContractBasicPrivateDriverValue = carPrice.CrCasPriceCarBasicPrivateDriverValue ?? 0;
@@ -404,7 +406,8 @@ namespace Bnan.Inferastructure.Repository
                 renterContractBasic.CrCasRenterContractBasicPrivateDriverId = null;
                 renterContractBasic.CrCasRenterContractBasicExpectedPrivateDriverValue = 0;
                 renterContractBasic.CrCasRenterContractBasicPrivateDriverValue = 0;
-            };
+            }
+            ;
             //Get Data From Car Price Info
 
             // Hours

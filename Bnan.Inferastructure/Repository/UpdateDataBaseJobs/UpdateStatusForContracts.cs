@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.UpdateDataBaseJobs;
-using Bnan.Core.Interfaces;
-using Microsoft.Extensions.Logging;
 using Bnan.Core.Models;
-using System.Drawing;
+using Bnan.Inferastructure.Extensions;
+using Microsoft.Extensions.Logging;
 
 
 namespace Bnan.Inferastructure.Repository.UpdateDataBaseJobs
@@ -74,11 +69,9 @@ namespace Bnan.Inferastructure.Repository.UpdateDataBaseJobs
                 string toNumber;
                 string userPhoneNumber = user.CrMasUserInformationCallingKey + user.CrMasUserInformationMobileNo;
                 string renterPhoneNumber = renter.CrMasRenterInformationCountreyKey + renter.CrMasRenterInformationMobile;
-                if (int.Parse(user.CrMasUserInformationLessor) > 4009) toNumber = renterPhoneNumber;
+                if (int.Parse(user.CrMasUserInformationLessor) > 4005) toNumber = renterPhoneNumber;
                 else toNumber = userPhoneNumber;
-                if (!string.IsNullOrEmpty(toNumber)) await SendMessageOnly(toNumber, message);
-                // Uncomment if you want to send a photo as well
-                // await SendPhotoBeforeOneDay(contract, path, toNumber);
+                if (!string.IsNullOrEmpty(toNumber)) await WhatsAppServicesExtension.SendMessageAsync(toNumber, message, user.CrMasUserInformationLessor);
             }
         }
         private bool ShouldUpdateStatusForTommorrowAlert(CrCasRenterContractAlert item)
@@ -147,24 +140,7 @@ namespace Bnan.Inferastructure.Repository.UpdateDataBaseJobs
             string EndDateContract = item.CrCasRenterContractAlertEndDate?.ToString("yyyy/MM/dd HH:mm");
             return $"{item.CrCasRenterContractAlertArStatusMsg} - {reversedContractNumber} - {EndDateContract} - LocalHost ";
         }
-        private async Task SendMessageOnly(string toNumber, string messageText)
-        {
-            var client = _httpClientFactory.CreateClient();
-            string url = $"https://business.enjazatik.com/api/v1/send-message?number={Uri.EscapeDataString(toNumber)}&message={Uri.EscapeDataString(messageText)}&token={Uri.EscapeDataString("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJudW1iZXIiOiJKYXNlcjExIiwic2VyaWFsIjoiMTk5ZmUzYjFlYjc2MjNlIiwiaWF0IjoxNzA3NzMxNjI4LCJleHAiOjE3OTQxMzE2Mjh9.O_4RW4vYAays1ZL7D-OlOQh6C5P5xVYrT3pZ2Oi9Yak")}";
 
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode(); // Throw if not a success code
-
-                string responseBody = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation("Message sent successfully: {Response}", responseBody);
-            }
-            catch (HttpRequestException e)
-            {
-                _logger.LogError("Error sending message: {Error}", e.Message);
-            }
-        }
         private string ReverseParts(string input)
         {
             string[] parts = input.Split('-');
