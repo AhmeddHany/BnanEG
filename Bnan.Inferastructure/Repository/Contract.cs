@@ -338,11 +338,11 @@ namespace Bnan.Inferastructure.Repository
             if (await _unitOfWork.CrCasRenterContractAuthorization.AddAsync(authorization) != null) return true;
             return false;
         }
-        public async Task<CrCasRenterContractBasic> AddRenterContractBasic(string LessorCode, string BranchCode, string ContractNo, string RenterId, string sectorCodeForRenter, string DriverId, string PrivateDriver,
+        public async Task<CrCasRenterContractBasic> AddRenterContractBasic(string LessorCode, string BranchCode, string BranchReceivingCode, string ContractNo, string RenterId, string sectorCodeForRenter, string DriverId, string PrivateDriver,
                                                        string AdditionalDriver, string SerialNo, string PriceNo, string DaysNo, string UserFreeHour, string UserFreeKm,
                                                        string CurrentMeter, string OptionsTotal, string AdditionalTotal, string ContractValueAfterDiscount,
                                                        string DiscountValue, string ContractValueBeforeDiscount, string TaxValue, string TotalAmount, string UserInsert,
-                                                       string Authrization, string UserDiscount, string AmountPayed, string ContractPdf, string PolicyCode, string SourceCode, string Reasons)
+                                                       string Authrization, string UserDiscount, string AmountPayed, string ContractPdf, string PolicyCode, string SourceCode, string ContractType, string Reasons)
         {
             DateTime now = DateTime.Now;
             CrCasRenterContractBasic renterContractBasic = new CrCasRenterContractBasic();
@@ -360,8 +360,10 @@ namespace Bnan.Inferastructure.Repository
             renterContractBasic.CrCasRenterContractBasicProcedures = "401";
             renterContractBasic.CrCasRenterContractBasicLessor = LessorCode;
             renterContractBasic.CrCasRenterContractBasicBranch = BranchCode;
+            renterContractBasic.CrCasRenterContractBasicBranchRecevied = string.IsNullOrEmpty(BranchReceivingCode) ? BranchCode : BranchReceivingCode;
             renterContractBasic.CrCasRenterContractBasicPolicy = int.Parse(PolicyCode);
             renterContractBasic.CrCasRenterContractBasicSource = SourceCode;
+            renterContractBasic.CrCasRenterContractBasicTgaType = int.Parse(ContractType);
             renterContractBasic.CrCasRenterContractBasicIssuedDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
             renterContractBasic.CrCasRenterContractBasicExpectedStartDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
             renterContractBasic.CrCasRenterContractBasicExpectedRentalDays = int.Parse(DaysNo);

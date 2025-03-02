@@ -11,8 +11,8 @@
 <div class="col my-2 d-flex align-items-center justify-content-center">
     <div class="container NewUpdate-container">
         <form id="myForm" asp-area="MAS" asp-controller="LessorsKSA" asp-action="AddLessorKSA" class="needs-validation" novalidate>
-            <input asp-for="CrMasLessorInformationCode" value="@ViewBag.LessorCode" hidden />
-            <input name="WelcomeImg" id="WelcomeImg" hidden />
+@*             <input asp-for="CrMasLessorInformationCode" value="@ViewBag.LessorCode" hidden />
+ *@            <input name="WelcomeImg" id="WelcomeImg" hidden />
             <div class="row mt-3 g-3">
 
                 <div class="row justify-content-center">
@@ -162,24 +162,14 @@
                                                         <label for="Category" class="form-label"> @localizer["Classification"] <i class="fa-solid fa-star-of-life RequirdStar"></i> </label>
                                                         <select class="form-select select-style " asp-for="@Model.CrMasLessorInformationClassification"
                                                                 id="Category" required>
-                                                            @if (requestCulture?.RequestCulture.UICulture.Name == "ar-EG")
-                                                            {
-                                                                @foreach (var classification in (List<SelectListItem>)ViewData["ClassificationDropDownAr"])
+                                                            
+                                                                @foreach (var classification in (List<SelectListItem>)ViewData["ClassificationDropDown"])
                                                                 {
 
                                                                     <option value="@classification.Value" selected="@(classification.Value.Trim() == "" ? "selected" : null)">@classification.Text</option>
 
                                                                 }
-                                                            }
-                                                            else
-                                                            {
-                                                                @foreach (var classification in (List<SelectListItem>)ViewData["ClassificationDropDownEn"])
-                                                                {
-
-                                                                    <option value="@classification.Value" selected="@(classification.Value.Trim() == "" ? "selected" : null)">@classification.Text</option>
-
-                                                                }
-                                                            }
+                                                           
                                                         </select>
                                                         <div class="invaild">
                                                             <div class="invalid-feedback">
@@ -296,17 +286,18 @@
                                             <hr class="accordion-items-hr">
                                             <div class="container-fluid data-scroll-container">
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" style="position:relative">
                                                         <label for="City-Area"
                                                                class="form-label">
                                                             @localizer["PostCityConcateAr"]
                                                             <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                                         </label>
-                                                        <input type="text" id="CityField" name="BranchPostVM.CrCasBranchPostCity"
-                                                               class="form-control inputs" maxlength="50" required>
+                                                        <input type="text" id="City-Area" class="form-control inputs" maxlength="50" autocomplete="off" required>
+                                                        <div id="autocomplete-Cities" class="autocomplete-items autocomplete-Cities"> </div>
+                                                        <input type="text" id="City-Area-code" asp-for="BranchPostVM.CrCasBranchPostCity" hidden>
                                                         <div class="invaild">
                                                             <div class="invalid-feedback">
-                                                                <span asp-validation-for="BranchPostVM.CrCasBranchPostCity" class="text-danger"></span>
+                                                                <span asp-validation-for="BranchPostVM.CrCasBranchPostCity" id="Region-city-tenant-error" class="text-danger"></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -591,35 +582,99 @@
     </script>
 
     <script>
+        const cities = @Html.Raw(Json.Serialize(ViewData["Cities"]));
+
+        const dataLists = {
+            Cities: cities,
+        };
+        var listsIsTrueOrNotBranch = true;
+        console.log("dataLists",dataLists)
         $(document).ready(function () {
-            $.ajax({
-                type: "GET",
-                url: "@Url.Action("GetCities", "LessorsKSA", new { Area = "MAS" })",
-                success: function (response) {
-                    console.log(response)
-                    const newArray = response.map(obj => obj.text);
-                    $("#CityField").autocomplete({
-                        source: newArray
+            function setupAutocomplete(inputId, list, dataList, errorElementId, listsIsTrueOrNot, validate) {
+                $("#" + inputId).on("input", function () {
+                    const value = this.value.toLowerCase();
+                    const autocompleteList = $("#" + list);
+                    autocompleteList.empty();
+                    console.log("value",value);
+                    if (validate) {
+                        // Clear the code input and error message whenever the user types
+                        $("#" + inputId + "-code").val('');
+                        $("#" + errorElementId).text(''); // Clear any previous error message
+                    }
+
+                    if (value) {
+                        let matchesFound = false;
+                        dataList.forEach(item => {
+                            const text = item.text;  // عرض النص بناءً على اللغة
+                            if (text.toLowerCase().includes(value)) {
+                                autocompleteList.append("<div data-value='" + item.value + "'>" + text + "</div>");
+                                matchesFound = true;
+                            }
+                        });
+
+                        autocompleteList.toggle(matchesFound);
+                    } else {
+                        autocompleteList.hide();
+                    }
+                });
+
+                   $(document).on("click", "#" + list + " div", function () {
+                    const selectedText = $(this).text();
+                    const selectedValue = $(this).data("value");
+                     console.log("Selected text:", selectedText);
+                     console.log("Selected value:", selectedValue);
+                    $("#" + inputId).val(selectedText);
+                    $("#" + inputId + "-code").val(selectedValue);
+                    const matchedItemFromChose = dataList.find(item => item.text === selectedText || item.text === selectedText);
+
+                    if (validate) {
+                        if (matchedItemFromChose) {
+                            $("#" + inputId + "-code").val(matchedItemFromChose.value);
+                            $("#" + errorElementId).text('');
+                            window[listsIsTrueOrNot] = true;
+                        } else {
+                            $("#" + errorElementId).text("@localizer["requiredFiled"]");
+                            $("#" + inputId + "-code").val("");
+                            window[listsIsTrueOrNot] = false;
+                        }
+                    }
+
+                    $("#" + list).empty().hide();
+                });
+
+                $(document).click(function (e) {
+                    if (!$(e.target).closest("#" + list + ", #" + inputId).length) {
+                        $("#" + list).empty().hide();
+                    }
+                });
+
+                if (validate) {
+                    // Check for match on blur or Enter key press
+                    $("#" + inputId).on("blur keypress", function (e) {
+                        if (e.type === "blur" || (e.type === "keypress" && e.which === 13)) {
+                            const inputValue = $(this).val();
+                            const matchedItem = dataList.find(item => item.text === inputValue);
+
+                            if (matchedItem) {
+                                $("#" + inputId + "-code").val(matchedItem.value);
+                                $("#" + errorElementId).text(''); // Clear error message
+                                window[listsIsTrueOrNot] = true; // Update the global flag
+                            } else {
+                                $("#" + errorElementId).text("@localizer["requiredFiled"]"); // Show error message
+                                window[listsIsTrueOrNot] = false; // Update the global flag
+                            }
+                        }
                     });
-                },
-            })
+                }
+            };
+            // setupAutocomplete("City-Area", "autocomplete-Cities", dataLists.Cities);
+            setupAutocomplete("City-Area", "autocomplete-Cities", dataLists.Cities, "Region-city-tenant-error", "listsIsTrueOrNotBranch", true);
 
         });
     </script>
 
     <script>
         $(document).ready(function () {
-
-            // // This To Focus On input when page load
-            // if ('@requestCulture?.RequestCulture.UICulture.Name' == "en-US") {
-            //     $("#CrMasSupAccountBankEnName").focus();
-            // }
-            // else {
-            //     $("#CrMasSupAccountBankArName").focus();
-            // }
-            // //////////////////////////////////////////
-
-
             function Check_onChange_input(existName, dataField) {
                 $.ajax({
                     type: "GET",

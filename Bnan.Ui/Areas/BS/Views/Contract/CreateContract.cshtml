@@ -79,6 +79,7 @@
                                 <input hidden asp-for="Contract.RenterInfo.OldSignature" />
                                 <input hidden asp-for="Contract.AccountReceiptNo" />
                                 <input hidden asp-for="Contract.InitialInvoiceNo" />
+                                <input hidden asp-for="Contract.ContractTypeCode" />
                                 <input hidden id="language" name="language" />
                                 <div class=" pe-4">
                                     <!-- progressbar -->
@@ -3643,7 +3644,12 @@
                  RenterInformation.personalArNationality = getAttributeOrDefault("nationality-Renter", 'data-other-lang', RenterInformation.personalArNationality);
                  RenterInformation.employerArName = getAttributeOrDefault("tenant-workplace", 'data-other-lang', RenterInformation.employerArName);
                  RenterInformation.cityAr = getAttributeOrDefault("Region-city-tenant", 'data-other-lang', RenterInformation.cityAr);
+                  if (RenterInformation.employerCode == "1800000001"|| RenterInformation.employerCode == "1800000002") {
+                    RenterInformation.employerEnName = "The Employer Is Not Available";
+                    RenterInformation.employerArName = "جهة العمل غير متوفرة";
+                  }
              } else {
+                 
                  RenterInformation.personalArNationality = getValueOrDefault("nationality-Renter", RenterInformation.personalArNationality);
                  RenterInformation.employerArName = getValueOrDefault("tenant-workplace", RenterInformation.employerArName);
                  RenterInformation.cityAr = getValueOrDefault("Region-city-tenant", RenterInformation.cityAr);
@@ -3651,6 +3657,10 @@
                  RenterInformation.personalEnNationality = getAttributeOrDefault("nationality-Renter", 'data-other-lang', RenterInformation.personalEnNationality);
                  RenterInformation.employerEnName = getAttributeOrDefault("tenant-workplace", 'data-other-lang', RenterInformation.employerEnName);
                  RenterInformation.cityEn = getAttributeOrDefault("Region-city-tenant", 'data-other-lang', RenterInformation.cityEn);
+                  if (RenterInformation.employerCode == "1800000001"|| RenterInformation.employerCode == "1800000002") {
+                    RenterInformation.employerEnName = "The Employer Is Not Available";
+                    RenterInformation.employerArName = "جهة العمل غير متوفرة";
+                  }
              }
 
              RenterInformation.postArNameConcenate = RenterInformation.cityAr;
@@ -4043,7 +4053,7 @@
               if (DriverInformation.postEnDistictName) {
                   DriverInformation.postEnNameConcenate += " - " + DriverInformation.postEnDistictName;
               }
-             console.log("DriverInformation", DriverInformation);
+             console.log("DriverInformation no Exist", DriverInformation);
          }
 
 
@@ -6305,13 +6315,13 @@
                     var endDate = new Date(startDate);
                     endDate.setDate(endDate.getDate() + daysNo);
                     const miladiDate = new Date(dateTimeNow);
-                    var checkPrivateDriver = GetPrivateDriverCheck();
+                    var checkPrivateDriver = GetContractType() == "3"; // هل العقد يحتوي على سائق؟
 
-                    // تحديد حالة العقد بناءً على ما إذا كان المستأجر هو السائق أم لا
-                    var contractStatusAr = !checkPrivateDriver ? "قائم / يومي" : "قائم / يومي (سائق خاص)";
-                    var contractStatusEn = !checkPrivateDriver ? "Valid / Daily" : "Valid / Daily (Private Driver)";
+                    // تحديد حالة العقد بناءً على نوع المستأجر
+                    var contractStatusAr = checkPrivateDriver ? "قائم / يومي (سائق خاص)" : "قائم / يومي";
+                    var contractStatusEn = checkPrivateDriver ? "Valid / Daily (Private Driver)" : "Valid / Daily";
                     const dynamicData = {
-                          NUMBER: "2490667684810001",
+                          NUMBER: "",
                           CONTRACT_NUMBER: "@ViewBag.ContractNo",
                           CONTRACT_DATE_AR: formatHijriDate(miladiDate,"ar"),
                           CONTRACT_DATE_EN: formatHijriDate(miladiDate,"en"),
@@ -6337,7 +6347,7 @@
                           ADDRESS_EN: decodeHTMLEntities("@Model.CrCasBranchInformation?.CrCasBranchPost.CrCasBranchPostEnConcatenate") || "",
                           CAR_DETAILS_AR: CarInformationForContract.crCasCarInformationConcatenateArName || "",
                           CAR_DETAILS_EN: CarInformationForContract.crCasCarInformationConcatenateEnName || "",
-                          SERIAL_NUMBER: CarInformationForContract.crCasCarInformationSerailNo || "",
+                          SERIAL_NUMBER: CarInformationForContract.crCasCarInformationNo || "",
                           REGISTRATION_AR: CarInformationForContract.registerationAr || "",
                           REGISTRATION_EN: CarInformationForContract.registerationEn || "",
                           FUEL_TYPE_AR: CarInformationForContract.fuelAr || "",
@@ -6382,10 +6392,10 @@
                               : "",
                           OWNER_COMPANY_AR: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationArLongName") || "",
                           OWNER_COMPANY_EN: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEnLongName") || "",
-                          ID_NUMBER: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationOwnerId") || "",
-                          ID_TYPE_AR: "سجل تجاري",
-                          ID_TYPE_EN: "Commercial Register",
-                          VERSION_NUM: "512",
+                          ID_NUMBER: CarInformation.carInformation.crCasCarInformationOwner || "",
+                          ID_TYPE_AR: "",
+                          ID_TYPE_EN: "",
+                          VERSION_NUM: "",
                           PHONE_3: ( decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationCommunicationMobileKey") + decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationCommunicationMobile")) || "",
                           EMAIL_2: decodeHTMLEntities("@userInfo.CrMasUserInformationLessorNavigation?.CrMasLessorInformationEmail") || "",
                           SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
@@ -6408,16 +6418,17 @@
                     console.error("خطأ في إنشاء الصفحة الاولي من العقد:", error);
               }
           };
-          function GetPrivateDriverCheck(){
+          function GetContractType(){
+              var contractTypeCode = "1"; // Contract By Day Without Driver
               var privateDriverRadio1 = document.getElementById("PrivateDriver");
               var privateDriverID = $("#Private-Driver-selectt").val();
               if (privateDriverRadio1.checked && privateDriverID != null) {
-                return true;
+                  contractTypeCode = "3";;
               }
-              else{
-                return false;
-              }
+              $("#Contract_ContractTypeCode").val(contractTypeCode);
+              return contractTypeCode;
           }
+          
           // Page2
           const ContractPage2 = async (canvas) => {
                 try {
@@ -6427,7 +6438,7 @@
                     const getFormattedDate = (date) => date ? getFormatDate(date) : "";
                     console.log("DriverInformation page 2",DriverInformation);
                     const dynamicData = {
-                        NUMBER: "2490667684810001",
+                        NUMBER: "",
                         CONTRACT_NUMBER: "@ViewBag.ContractNo",
                         TENANT_NAME_AR: RenterInformation.personalArName || "",
                         TENANT_NAME_EN: RenterInformation.personalEnName || "",
@@ -6550,7 +6561,7 @@
                 getAdditionalData();  // ملء AdditionalItems و Addition_Price_Items
                 getChoicesData();  // ملء OptionsItems و Option_Price_Items
                 const dynamicData = {
-                NUMBER: "2490667684810001",
+                NUMBER: "",
                 CONTRACT_NUMBER: "@ViewBag.ContractNo",
                 // بنود التأجير //
                 DELIVERY_BRANCH_AR: decodeHTMLEntities("@Model.CrCasBranchInformation.CrCasBranchInformationArShortName") || "",
@@ -6714,56 +6725,61 @@
         }
           // Page4
           const ContractPage4 = async (canvas) => {
-              try {
-                const checkUpData = GetCheckUp(); // جلب البيانات من `GetCheckUp`
+                try {
+                    const checkUpData = GetCheckUp(); 
 
-                // تحويل البيانات إلى التنسيق المطلوب
-                const Inspection_Items = checkUpData.map(item => ({
-                    arabic: item.arName,
-                    english: item.enName,
-                    textAlign: "right"
-                }));
+                    const limitedCheckUpData = checkUpData.slice(0, Math.min(21, checkUpData.length));
 
-                const Inspection_Status = checkUpData.map(item => ({
-                    arabic: item.reasonCheckArName,
-                    english: item.reasonCheckEnName,
-                    textAlign: "right"
-                }));
+                    // تحويل البيانات إلى التنسيق المطلوب
+                    const Inspection_Items = limitedCheckUpData.map(item => ({
+                        arabic: item.arName,
+                        english: item.enName,
+                        textAlign: "right"
+                    }));
 
-                const Notes_Items = checkUpData.map(item => ({
-                    content: item.reason || " "
-                }));
-                console.log("Inspection_Items",Inspection_Items)
-                console.log("Inspection_Status",Inspection_Status)
-                console.log("Notes_Items",Notes_Items)
-                // بيانات العقد مع دمج العناصر المستخرجة
-                const dynamicData = {
-                    NUMBER: "2490667684810001",
-                    CONTRACT_NUMBER: "@ViewBag.ContractNo",
-                    SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
-                    SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
-                    images: {
-                        background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage4)",
-                        EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
-                        TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
-                        QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeAuthenticated)",
-                        STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
-                        Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)"
-                    },
-                    Inspection_Items,  // عناصر الفحص
-                    Inspection_Status, // حالة الفحص
-                    Notes_Items     // الملاحظات
-                };
+                    const Inspection_Status = limitedCheckUpData.map(item => ({
+                        arabic: item.reasonCheckArName,
+                        english: item.reasonCheckEnName,
+                        textAlign: "right"
+                    }));
 
-                const loadedImages = await loadDynamicImages(dynamicData.images);
-                const dataWithImages = { ...dynamicData, images: loadedImages };
-                console.log("Final Data for Contract Page 4:", dataWithImages);
-                await DrawContractPage4(canvas, dataWithImages);
+                    const Notes_Items = limitedCheckUpData.map(item => ({
+                        content: item.reason || " "
+                    }));
+
+                    console.log("Inspection_Items", Inspection_Items);
+                    console.log("Inspection_Status", Inspection_Status);
+                    console.log("Notes_Items", Notes_Items);
+
+                    // بيانات العقد مع دمج العناصر المستخرجة
+                    const dynamicData = {
+                        NUMBER: "",
+                        CONTRACT_NUMBER: "@ViewBag.ContractNo",
+                        SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
+                        SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
+                        images: {
+                            background: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageContractPage4)",
+                            EMPLOYEE_SIGN: "@Url.Content(user?.CrMasUserInformationSignature)",
+                            TENANT_SIGN: RenterInformation.signture ? RenterInformation.signture.replace('~', '') : null,
+                            QR: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageQrCodeAuthenticated)",
+                            STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageStamp)",
+                            Authentication_STAMP: "@Url.Content(userInfo?.CrMasUserInformationLessorNavigation?.CrMasLessorImage.CrMasLessorImageAuthenticatedElectronically)"
+                        },
+                        Inspection_Items,
+                        Inspection_Status, 
+                        Notes_Items
+                    };
+
+                    const loadedImages = await loadDynamicImages(dynamicData.images);
+                    const dataWithImages = { ...dynamicData, images: loadedImages };
+                    console.log("Final Data for Contract Page 4:", dataWithImages);
+                    await DrawContractPage4(canvas, dataWithImages);
                 }
-              catch (error) {
-                      console.error("خطأ في إنشاء الصفحة الرابعة من العقد:", error);
+                catch (error) {
+                    console.error("خطأ في إنشاء الصفحة الرابعة من العقد:", error);
                 }
           };
+
           // Page5
           const ContractPage5 = async (canvas) => {
               try{
@@ -6772,7 +6788,7 @@
                    const ExtractedUrls = imgCheckUpArray.map(item => item.url);
                    console.log("📸 صور الفحص المحملة:", ExtractedUrls);
                    const dynamicData = {
-                    NUMBER: "2490667684810001",
+                    NUMBER: "",
                     CONTRACT_NUMBER: "@ViewBag.ContractNo",
                     SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
                     SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
@@ -6808,7 +6824,7 @@
                     console.log("🚀 بدء إنشاء الصفحة السادسة من العقد...");
                     const ExtractedUrls = imgCheckUpArray.map(item => item.url);
                     const dynamicData = {
-                        NUMBER: "2490667684810001",
+                        NUMBER: "",
                         CONTRACT_NUMBER: "@ViewBag.ContractNo",
                         SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
                         SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
@@ -6858,7 +6874,7 @@
 
                     // إذا كانت الصورة موجودة وتم تحميلها بنجاح، أكمل رسم الصفحة
                     const dynamicData = {
-                        NUMBER: "2490667684810001",
+                        NUMBER: "",
                         CONTRACT_NUMBER: "@ViewBag.ContractNo",
                         SIGNATURE_AR: decodeHTMLEntities("@user.CrMasUserInformationArName"),
                         SIGNATURE_EN: decodeHTMLEntities("@user.CrMasUserInformationEnName"),
@@ -7124,7 +7140,11 @@
         }
                // دالة تنسيق التاريخ الميلادي
         function formatMiladiDate(date) {
-            return date.toLocaleDateString('en-GB'); // يعطي الصيغة DD/MM/YYYY
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // ضمان وجود صفر قبل الشهر إذا كان أقل من 10
+            const day = String(date.getDate()).padStart(2, '0'); // ضمان وجود صفر قبل اليوم إذا كان أقل من 10
+
+            return `${year}/${month}/${day}`;
         }
 
         // دالة تنسيق الوقت

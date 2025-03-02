@@ -1258,7 +1258,15 @@
     "Memberships": "Memberships",
     //Branches
     "RentedSystem": "Rental System",
-    "RentedSystemNo": "Rental System Code"
+    "RentedSystemNo": "Rental System Code",
+    "ModalFirstMessage_Branches_Delete": "Deleting Branch data will Delete All The Document And Sales Point Of Branch.",
+    "ModalSecondMessage_Branches_Delete": "",
+    "ModalFirstMessage_Branches_UnDelete": "Returning the branch data will result in a return. All documents, vehicles, points of sale, and branch powers for employees associated with the branch",
+    "ModalSecondMessage_Branches_UnDelete": "",
+    "ModalFirstMessage_Branches_Hold": "Branch data will be Holed, Which All The Document And Sales Point Of Branch.",
+    "ModalSecondMessage_Branches_Hold": "",
+    "ModalFirstMessage_Branches_UnHold": "Retrieving the activation of the branch data will entail activating the cars, points of sale, and documents associated with the branch.",
+    "ModalSecondMessage_Branches_UnHold": ""
   },
   "ModalAutoLogout": "Your session is about to end!",
   "Arabic": "Arabic",
@@ -3207,7 +3215,7 @@
     "AmountsTraded": "Amounts Traded",
     "DealingMechanism": "Dealing Mechanism",
     "Birthdate": "Birthdate",
-    "Verification": "Verification",
+    "Verification": "Search",
     "TheRenterIsAdriver": "The Renter Is A driver",
     "PrivateDriver": "Private Driver",
     "ChooseYourDriver": "Choose your driver",

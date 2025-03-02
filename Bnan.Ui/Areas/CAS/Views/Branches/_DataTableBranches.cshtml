@@ -37,14 +37,24 @@
                             {
                                 <div class="row dropdown-content-row pt-2 ">
                                     <div class="col-auto  ">
-                                        <a href="@Url.Content(doc.CrCasBranchDocumentsImage)"
-                                           target="_blank">
-                                            <img src="~/CasSys/images/Existing file.svg" class="file-status existing">
-                                        </a>
+                                        @if (!string.IsNullOrEmpty(doc.CrCasBranchDocumentsImage))
+                                        {
+                                            <a href="@Url.Content(doc.CrCasBranchDocumentsImage)" target="_blank">
+                                                <img src="~/CasSys/images/Existing file.svg" class="file-status">
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <img src="~/CasSys/images/file not exist.svg" class="file-status not-exist">
+                                        }
                                     </div>
                                     <div class="col text-end ">
                                         <a class="Documents-anchor">
-                                            <p class="Saved-data">@(requestCulture?.RequestCulture.UICulture.Name == "en-US" ? doc.CrCasBranchDocumentsProceduresNavigation.CrMasSysProceduresEnName : doc.CrCasBranchDocumentsProceduresNavigation.CrMasSysProceduresArName) </p>
+                                            <p class="Saved-data @(doc.CrCasBranchDocumentsStatus == Status.Renewed || doc.CrCasBranchDocumentsStatus == Status.Expire ? "text-danger" : "")">
+                                                @(requestCulture?.RequestCulture.UICulture.Name == "en-US"
+                                                    ? doc.CrCasBranchDocumentsProceduresNavigation.CrMasSysProceduresEnName
+                                                    : doc.CrCasBranchDocumentsProceduresNavigation.CrMasSysProceduresArName)
+                                            </p>
                                         </a>
                                         <div class="documentDate">
                                             <p> : @localizer["Expirationdate"] </p> <span>@doc.CrCasBranchDocumentsEndDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</span>

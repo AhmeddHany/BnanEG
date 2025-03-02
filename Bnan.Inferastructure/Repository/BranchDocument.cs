@@ -79,15 +79,19 @@ namespace Bnan.Inferastructure.Repository
                                                                            && l.CrCasBranchDocumentsLessor == model.CrCasBranchDocumentsLessor
                                                                            && l.CrCasBranchDocumentsProcedures == model.CrCasBranchDocumentsProcedures);
             if (branchDocument == null) return false;
-            
+            var AboutToExpire = _unitOfWork.CrCasLessorMechanism.FindAsync(l => l.CrCasLessorMechanismCode == branchDocument.CrCasBranchDocumentsLessor
+                                                                                 && l.CrCasLessorMechanismProcedures == branchDocument.CrCasBranchDocumentsProcedures
+                                                                                 && l.CrCasLessorMechanismProceduresClassification == branchDocument.CrCasBranchDocumentsProceduresClassification).Result.CrCasLessorMechanismDaysAlertAboutExpire;
 
             branchDocument.CrCasBranchDocumentsNo = model.CrCasBranchDocumentsNo;
             branchDocument.CrCasBranchDocumentsDate = model.CrCasBranchDocumentsDate;
             branchDocument.CrCasBranchDocumentsStartDate = model.CrCasBranchDocumentsStartDate;
             branchDocument.CrCasBranchDocumentsEndDate = model.CrCasBranchDocumentsEndDate;
+            branchDocument.CrCasBranchDocumentsDateAboutToFinish = branchDocument.CrCasBranchDocumentsEndDate?.AddDays(-(double)AboutToExpire);
             branchDocument.CrCasBranchDocumentsImage = model.CrCasBranchDocumentsImage;
+            branchDocument.CrCasBranchDocumentsStatus = Status.Active;
             branchDocument.CrCasBranchDocumentsReasons = model.CrCasBranchDocumentsReasons;
-            if (_unitOfWork.CrCasBranchDocument.Update(branchDocument)!=null) return true;
+            if (_unitOfWork.CrCasBranchDocument.Update(branchDocument) != null) return true;
             return false;
         }
         //public async Task<bool> UpdateBranchDocument(CrCasBranchDocument CrCasBranchDocument)

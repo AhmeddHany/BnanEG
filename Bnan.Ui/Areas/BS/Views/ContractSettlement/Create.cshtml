@@ -2331,10 +2331,10 @@
             console.log("lateDaysToSettlement:",diffDays - parseInt(expectedDays))
             console.log("totalDaysNo:",totalDaysNo)
             var lateDaysToSettlement = Math.max(0, diffDays - parseInt(expectedDays));
-            if(settlementDayCode==="20"){
+            if(settlementDayCode=="20"){
                 rentValue = parseInt(expectedDays) * parseFloat(rentalPricePerDay);
             }
-            else if(settlementDayCode==="21"){
+            else if(settlementDayCode=="21"){
                 rentValue = diffDays * parseFloat(rentalPricePerDay);
             }
             else{

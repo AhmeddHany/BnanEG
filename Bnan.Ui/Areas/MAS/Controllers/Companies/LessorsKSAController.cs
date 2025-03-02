@@ -157,6 +157,8 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
         public async Task<IActionResult> AddLessorKSA()
         {
             var user = await _userManager.GetUserAsync(User);
+            var isArabic = CultureInfo.CurrentCulture.Name == "ar-EG"; // تحديد اللغة
+
             if (user == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -171,41 +173,26 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
             }
             await SetPageTitleAsync(Status.Insert, pageNumber);
 
-            //pass Classification Arabic
-            var ClassificationAr = _unitOfWork.CrCasLessorClassification.GetAll();
-            var ClassificationDropDownAr = ClassificationAr.Select(c => new SelectListItem { Value = c.CrCasLessorClassificationCode?.ToString(), Text = c.CrCasLessorClassificationArName }).ToList();
-            ClassificationDropDownAr.Add(new SelectListItem { Text = "", Value = "", Selected = true });
-            ViewData["ClassificationDropDownAr"] = ClassificationDropDownAr;
+            var classifications = (await _unitOfWork.CrCasLessorClassification.GetAllAsyncAsNoTrackingAsync()).Select(c => new SelectListItem
+            {
+                Value = c.CrCasLessorClassificationCode?.ToString(),
+                Text = isArabic ? c.CrCasLessorClassificationArName : c.CrCasLessorClassificationEnName
+            }).ToList();
+            classifications.Insert(0, new SelectListItem { Text = "", Value = "", Selected = true });
+            ViewData["ClassificationDropDown"] = classifications;
 
-
-            //pass Classification English
-            var ClassificationEn = _unitOfWork.CrCasLessorClassification.GetAll();
-            var ClassificationDropDownEn = ClassificationAr.Select(c => new SelectListItem { Value = c.CrCasLessorClassificationCode?.ToString(), Text = c.CrCasLessorClassificationEnName }).ToList();
-            ClassificationDropDownEn.Add(new SelectListItem { Text = "", Value = "", Selected = true });
-            ViewData["ClassificationDropDownEn"] = ClassificationDropDownEn;
-
-
-            //To Set Title;
-            var titles = await setTitle("101", "1101001", "1");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "اضافة", "Create", titles[3]);
-
-            // Pass the KSA callingKeys to the view 
-            var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active);
+            var callingKeys = await _unitOfWork.CrMasSysCallingKeys.FindAllWithSelectAsNoTrackingAsync(x => x.CrMasSysCallingKeysStatus == Status.Active, query => query.Select(c => new { c.CrMasSysCallingKeysCode, c.CrMasSysCallingKeysNo }));
             var callingKeyList = callingKeys.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo }).ToList();
             ViewData["CallingKeys"] = callingKeyList;
 
-            // Pass All callingKeys to the view 
-            var callingKeysWhats = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active);
-            var callingKeyListWhats = callingKeysWhats.Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo }).ToList();
-            ViewData["CallingKeysWhats"] = callingKeyListWhats;
 
-            //Check User Sub Validation Procdures
-            var UserValidation = await CheckUserSubValidationProcdures("1101001", Status.Insert);
-            if (UserValidation == false) return RedirectToAction("Index", "Home", new { area = "MAS" });
+            var Cities = await _unitOfWork.CrMasSupPostCity.FindAllAsNoTrackingAsync(l => l.CrMasSupPostCityStatus == Status.Active);
+            var citiesArray = Cities.Select(c => new { text = isArabic ? c.CrMasSupPostCityConcatenateArName : c.CrMasSupPostCityConcatenateEnName, value = c.CrMasSupPostCityCode }).ToList();
+            ViewData["Cities"] = citiesArray;
 
-            var Lessors = await _unitOfWork.CrMasLessorInformation.GetAllAsync();
-            var LessorCode = (int.Parse(Lessors.LastOrDefault().CrMasLessorInformationCode) + 1).ToString();
-            ViewBag.LessorCode = LessorCode;
+            //var Lessors = await _unitOfWork.CrMasLessorInformation.GetAllAsync();
+            //var LessorCode = (int.Parse(Lessors.LastOrDefault().CrMasLessorInformationCode) + 1).ToString();
+            //ViewBag.LessorCode = LessorCode;
             return View();
         }
 
