@@ -201,14 +201,19 @@
                 if (checkedValues[0]=="All"){
                     checkedValues.splice(0, 1);
                 }
+                if(checkedValues.length == 1){
+                    var this_sms = $("#sms_" + checkedValues[0] + "").val();
+                    if (this_sms != "A") sms = false;
+                    var this_mobile = $("#mob_" + checkedValues[0] + "").val();
+                    if (this_mobile.length < 5) mobile = false;
+                    var this_mail = $("#mail_" + checkedValues[0] + "").val();
+                    if (this_mail.length < 5) mail = false;
+                }
                 for (let i = 0; i < checkedValues.length;i+=1) {
                     var this_sms = $("#sms_" + checkedValues[i] + "").val();
-                    console.log(this_sms);
-                    if (this_sms != "A") sms = false;
-                    var this_mobile = $("#mob_" + checkedValues[i]+ "").val();
-                    if (this_mobile.length < 5) mobile = false;
+                    var this_mobile = $("#mob_" + checkedValues[i] + "").val();
                     var this_mail = $("#mail_" + checkedValues[i] + "").val();
-                    if (this_mail.length < 5) mail = false;
+                    console.log(this_sms);
                     console.log({ this_sms, this_mobile, this_mail });
                 }
                 let This_Company_Mail = $("#This_Company_Mail").val();
@@ -373,13 +378,15 @@
                 });
 
                 const text = $("#messageContent").val();
-                const address = $("#TitleSubject").val();
+                const subject = $("#TitleSubject").val();
                 formData.append('text', text);
-                formData.append('address', address);
+                formData.append('subject', subject);
 
 
                 // الحصول على كل القيم المحددة
-                const selectedValues = Array.from(document.querySelectorAll('.checkbox:checked')).map(checkbox => checkbox.name);
+                const selectedValues = Array.from(document.querySelectorAll('.checkbox'))
+                    .filter(checkbox => checkbox.checked)  // اختر فقط العناصر المحددة
+                    .map(checkbox => checkbox.name);  // احصل على الأسماء للقيم المحددة
 
                 // عرض القيم المحددة
                 console.log(selectedValues);
@@ -493,8 +500,12 @@
                         if (response.status == true && response.message == '@ApiResponseStatus.Success') {
                             showToast_successfuly();
                         }
+                        else if (response.status == 2) {
+
+                        }
                         else {
-                            showErrorToast_any_error(response.message);
+                            console.log(response.message);
+                            showErrorToast_any_error("@localizer["ToastFailed"]");
                         }
                         resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
                     },

@@ -73,11 +73,26 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
             // Check Validition
-            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation) || user==null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
+            var Master_Lessor = _unitOfWork.CrMasLessorInformation.FindAll(x => x.CrMasLessorInformationCode == user.CrMasUserInformationLessor).FirstOrDefault();
+            if (Master_Lessor==null)
+            {
+
+            }
+            if (Master_Lessor?.CrMasLessorInformationContEmail?.Length <5)
+            {
+
+            }
+            if ((Master_Lessor?.CrMasLessorInformationContWhatsappKey+ Master_Lessor?.CrMasLessorInformationContWhatsapp)?.Length < 5)
+            {
+
+            }
+
+
             var rates = await _unitOfWork.CrMasSysEvaluation.FindAllAsNoTrackingAsync(x => x.CrMasSysEvaluationsClassification == "1");
 
             var thisCompanyData = await _unitOfWork.CrMasLessorInformation.FindAllAsNoTrackingAsync(x => x.CrMasLessorInformationCode == user.CrMasUserInformationLessor);
@@ -160,7 +175,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
         }
     
         [HttpPost]
-        public async Task<IActionResult> send_ToAll_Whatsapp(List<IFormFile> files, string text, string address, string selectedValues, string all_mobiles, string all_mails)
+        public async Task<IActionResult> send_ToAll_Whatsapp(List<IFormFile> files, string text, string subject, string selectedValues, string all_mobiles, string all_mails)
         {
             if (string.IsNullOrEmpty(all_mobiles))
             {
@@ -196,6 +211,28 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                 //return Json(new { status = false, message = $"جوال الشركة غير متصل" });
                 return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_Error_BnanPhone_notConnected"]} " });
             }
+
+            ///////
+            var userData = _unitOfWork.CrMasUserInformation.FindAll(x => x.CrMasUserInformationCode == user.CrMasUserInformationCode).FirstOrDefault();
+
+            if (Convert.ToInt16(user.CrMasUserInformationLessor ?? "1000") < 4006)
+            {
+                //list_mails.RemoveAll(x => x.Contains("@"));
+                var mobs_count = list_mobiles.Count;
+                list_mobiles.RemoveRange(0, list_mobiles.Count);
+                for (int coun=0; coun < mobs_count; coun++)
+                {
+                    list_mobiles.Add((userData?.CrMasUserInformationCallingKey + userData?.CrMasUserInformationMobileNo) ?? "0");
+                }
+
+                list_mobiles = list_mobiles.Where(x => x.Length > 5).ToList();
+                if (list_mobiles.Count == 0)
+                {
+                    return Json(new { status = 3, message = "no mails" });
+                }
+            }
+            ///////
+            
             var result = "";
 
             if (files.Count>0)
@@ -294,7 +331,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
 
 
         //[HttpPost]
-        //public async Task<IActionResult> send_ToAll_Email(List<IFormFile> files, string text, string address, string selectedValues, string all_mobiles, string all_mails)
+        //public async Task<IActionResult> send_ToAll_Email(List<IFormFile> files, string text, string subject, string selectedValues, string all_mobiles, string all_mails)
         //{
         //    if (string.IsNullOrEmpty(all_mails))
         //    {
@@ -466,43 +503,122 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
 
         [HttpPost]
         //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
-        public async Task<IActionResult> send_ToAll_Email(List<IFormFile> files, string text, string address, string selectedValues, string all_mobiles, string all_mails)
+        public async Task<IActionResult> send_ToAll_Email(List<IFormFile> files, string text, string subject, string selectedValues, string all_mobiles, string all_mails)
 
         //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
         {
+            IFormFile file = null;
+            if(all_mails == null || all_mails.Length < 5)
+            {
+                return Json(new { status = 2, message = "no mails selected" });
+            }
+            if ( text == " " || text == "" || subject == " " || subject == "")
+            {
+                return Json(new { status = 0, message = "no Text or Subject" });
+            }
+            List<string> list_mails = new List<string>(all_mails.Split(','));
+            list_mails = list_mails.Where(x=>x.Length > 5).ToList();
+            if(list_mails.Count == 0)
+            {
+                return Json(new { status = 3, message = "no mails" });
+            }
+
+            if (files.Count > 0)
+            {
+                file = files[0];
+            }
+
             try
             {
+                var user = await _userManager.GetUserAsync(User);
+                var Master_Lessor = _unitOfWork.CrMasLessorInformation.FindAll(x => x.CrMasLessorInformationCode == user.CrMasUserInformationLessor).FirstOrDefault();
+                var Master_Lessor_mail = Master_Lessor?.CrMasLessorInformationContEmail;
+                var Master_Lessor_EnName = Master_Lessor?.CrMasLessorInformationEnShortName;
+                var Master_Lessor_Password = "cgve uili qekq tlcu";
+
+                ///////
+                var userData = _unitOfWork.CrMasUserInformation.FindAll(x => x.CrMasUserInformationCode == user.CrMasUserInformationCode).FirstOrDefault();
+
+                if (Convert.ToInt16(user.CrMasUserInformationLessor??"1000")<4006 )
+                {
+                    //list_mails.RemoveAll(x => x.Contains("@"));
+                    list_mails.RemoveRange(0,list_mails.Count);
+                    list_mails.Add(userData?.CrMasUserInformationEmail??"0");
+
+                    list_mails = list_mails.Where(x => x.Length > 5).ToList();
+                    if (list_mails.Count == 0)
+                    {
+                        return Json(new { status = 3, message = "no mails" });
+                    }
+                }
+                ///////
+
+                if (Master_Lessor_mail?.Length < 5)
+                {
+                    return Json(new { status = 4, message = "no lessor Mail" });
+                }
                 var message = new MimeMessage();
-                //message.From.Add(new MailboxAddress("hazem", "mohamedy144200@gmail.com"));
-                message.From.Add(new MailboxAddress("hazem", "mazen144essam@yahoo.com"));
-                message.To.Add(new MailboxAddress("essam", "hazem14442000@gmail.com"));
-                message.Subject = "Test Email";
+                //message.From.Add(new MailboxAddress("hazem", "hazem14442000@gmail.com"));
+                message.From.Add(new MailboxAddress(Master_Lessor_EnName, Master_Lessor_mail));
+                //message.To.Add(new MailboxAddress("essam", "mazen144essam@gmail.com"));
+                //message.Subject = "Test Email";
+
+                //var body = new TextPart("plain")
+                //{
+                //    Text = "This is a test email new mazen."
+                //};
+
+                message.Subject = subject;
 
                 var body = new TextPart("plain")
                 {
-                    Text = "This is a test email."
+                    Text = text
                 };
-                message.Body = body;
+                ////  //////
+                // //message.Body = body;
+                var multipart = new Multipart("mixed");
+                multipart.Add(body);
+
+                if (file != null && file.Length > 0)
+                {
+                    // تحويل IFormFile إلى MimePart وإضافته كملف مرفق
+                    var attachment = new MimePart(file.ContentType)
+                    {
+                        Content = new MimeContent(file.OpenReadStream(), ContentEncoding.Default),
+                        FileName = file.FileName
+                    };
+                    multipart.Add(attachment);
+                }
+
+                message.Body = multipart;
+                ////// /////
 
                 using (var smtpClient = new SmtpClient())
                 {
-                    ////smtpClient.Connect("smtp.yourserver.com", 587, false); 
-                    //////smtpClient.Authenticate("your-email@example.com", "your-password");
-                    ////smtpClient.Authenticate("mazen144essam@yahoo.com", "mozaessam@123456");
-                    ////smtpClient.Send(message);
-                    ////smtpClient.Disconnect(true);
 
                     // الاتصال بـ SMTP Yahoo Mail باستخدام المنفذ 465 لـ SSL أو 587 لـ TLS
                     //smtpClient.Connect("smtp.mail.yahoo.com", 465, true);  // true تعني تفعيل SSL
-                    smtpClient.Connect("smtp.mail.yahoo.com", 587, false);
-                    //smtpClient.Connect("smtp.gmail.com", 465, true);// true تعني تفعيل SSL
+                    //smtpClient.Connect("smtp.gmail.com", 587, false);
+                    smtpClient.Connect("smtp.gmail.com", 465, true);// true تعني تفعيل SSL !!!!!!!
 
-                    // التحقق من الهوية باستخدام البريد الإلكتروني وكلمة المرور
-                    //smtpClient.Authenticate("mohamedy144200@gmail.com", "mohamady123456");
-                    smtpClient.Authenticate("mazen144essam@yahoo.com", "mozaessam@123456");
-
-                    // إرسال البريد الإلكتروني
-                    await smtpClient.SendAsync(message);
+                    // التطبيق في Gmail التحقق من الهوية باستخدام البريد الإلكتروني وكلمة المرور
+                    //smtpClient.Authenticate("hazem14442000@gmail.com", "cgve uili qekq tlcu");
+                    smtpClient.Authenticate(Master_Lessor_mail, Master_Lessor_Password);
+                    foreach (var single_Email in list_mails)
+                    {
+                        try
+                        {
+                            // إرسال البريد الإلكتروني
+                            //message.Body = body2;
+                            //message.To.Add(new MailboxAddress("essam", "khaled14442000@gmail.com"));
+                            message.To.Add(new MailboxAddress("Hi Rrenter From " + Master_Lessor_EnName, single_Email));
+                            await smtpClient.SendAsync(message);
+                        }
+                        catch (Exception ex)
+                        {
+                            var inb = 0;
+                        }
+                    }
                     smtpClient.Disconnect(true);
                 }
 
@@ -528,8 +644,67 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             //    return BadRequest($"Error sending email: {ex.Message}");
             //}
         }
-    
-    private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasRenterInformation licence, string status)
+
+        [HttpPost]
+        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
+        public async Task<IActionResult> send_Single_Email(List<IFormFile> files, string text, string subject, string selectedValues, string all_mobiles, string all_mails)
+
+        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
+        {
+            try
+            {
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("hazem", "hazem14442000@gmail.com"));
+                message.To.Add(new MailboxAddress("essam", "mazen144essam@gmail.com"));
+                message.Subject = "Test Email";
+
+                var body = new TextPart("plain")
+                {
+                    Text = "This is a test email new mazen."
+                };
+                message.Body = body;
+
+                using (var smtpClient = new SmtpClient())
+                {
+                    ////smtpClient.Connect("smtp.yourserver.com", 587, false); 
+                    //////smtpClient.Authenticate("your-email@example.com", "your-password");
+                    ////smtpClient.Send(message);
+                    ////smtpClient.Disconnect(true);
+
+                    // الاتصال بـ SMTP Yahoo Mail باستخدام المنفذ 465 لـ SSL أو 587 لـ TLS
+                    //smtpClient.Connect("smtp.mail.yahoo.com", 465, true);  // true تعني تفعيل SSL
+                    //smtpClient.Connect("smtp.gmail.com", 587, false);
+                    smtpClient.Connect("smtp.gmail.com", 465, true);// true تعني تفعيل SSL !!!!!!!
+
+                    // التحقق من الهوية باستخدام البريد الإلكتروني وكلمة المرور
+                    smtpClient.Authenticate("hazem14442000@gmail.com", "cgve uili qekq tlcu");
+                    //smtpClient.Authenticate("mazen144essam@yahoo.com", "mozaessam@123456");
+
+                    // إرسال البريد الإلكتروني
+                    await smtpClient.SendAsync(message);
+                    smtpClient.Disconnect(true);
+                }
+
+                //return Ok("Email sent successfully!");
+                return Json(new { status = true, message = ApiResponseStatus.Success });
+
+                //return ApiResponseStatus.Success;
+            }
+            catch (HttpRequestException)
+            {
+                //return ApiResponseStatus.ServerError;
+                return Json(new { status = false, message = ApiResponseStatus.ServerError });
+
+            }
+            catch (Exception ex)
+            {
+                //return ex.Message;
+                return Json(new { status = false, message = ex.Message });
+
+            }
+        }
+
+        private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasRenterInformation licence, string status)
         {
 
             var recordAr = licence.CrMasRenterInformationArName;
