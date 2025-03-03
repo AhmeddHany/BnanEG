@@ -72,19 +72,19 @@ namespace Bnan.Ui.Areas.BS.Controllers
                                                                              x.CrCasAccountSalesPointBranchStatus == Status.Active);
 
             // Fetch all data
-            var RenterIdTypes = await _unitOfWork.CrMasSupRenterIdtype.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterIdtypeStatus != Status.Deleted);
-            var RenterProffesions = await _unitOfWork.CrMasSupRenterProfession.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterProfessionsStatus != Status.Deleted &&
+            var RenterIdTypes = await _unitOfWork.CrMasSupRenterIdtype.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterIdtypeStatus == Status.Active);
+            var RenterProffesions = await _unitOfWork.CrMasSupRenterProfession.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterProfessionsStatus == Status.Active &&
                                                                                                            x.CrMasSupRenterProfessionsCode != "1400000001" && x.CrMasSupRenterProfessionsCode != "1400000002");
 
 
-            var Nationailties = await _unitOfWork.CrMasSupRenterNationality.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterNationalitiesStatus != Status.Deleted);
-            var Cities = await _unitOfWork.CrMasSupPostCity.FindAllAsNoTrackingAsync(l => l.CrMasSupPostCityStatus != Status.Deleted);
-            var Workplaces = await _unitOfWork.CrMasSupRenterEmployer.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterEmployerStatus != Status.Deleted && l.CrMasSupRenterEmployerCode != "1800000001" && l.CrMasSupRenterEmployerCode != "1800000002");
-            var Genders = await _unitOfWork.CrMasSupRenterGender.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterGenderStatus != Status.Deleted && l.CrMasSupRenterGenderCode != "1100000002" && l.CrMasSupRenterGenderCode != "1100000001");
-            var CallingKeysAll = await _unitOfWork.CrMasSysCallingKeys.FindAllAsNoTrackingAsync(l => l.CrMasSysCallingKeysStatus != Status.Deleted);
+            var Nationailties = await _unitOfWork.CrMasSupRenterNationality.FindAllAsNoTrackingAsync(x => x.CrMasSupRenterNationalitiesStatus == Status.Active);
+            var Cities = await _unitOfWork.CrMasSupPostCity.FindAllAsNoTrackingAsync(l => l.CrMasSupPostCityStatus == Status.Active);
+            var Workplaces = await _unitOfWork.CrMasSupRenterEmployer.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterEmployerStatus == Status.Active && l.CrMasSupRenterEmployerCode != "1800000001" && l.CrMasSupRenterEmployerCode != "1800000002");
+            var Genders = await _unitOfWork.CrMasSupRenterGender.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterGenderStatus == Status.Active && l.CrMasSupRenterGenderCode != "1100000002" && l.CrMasSupRenterGenderCode != "1100000001");
+            var CallingKeysAll = await _unitOfWork.CrMasSysCallingKeys.FindAllAsNoTrackingAsync(l => l.CrMasSysCallingKeysStatus == Status.Active);
             var CallingKeys = CallingKeysAll.OrderByDescending(x => x.CrMasSysCallingKeysCount).ToList();
-            var DrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterDrivingLicenseStatus != Status.Deleted && l.CrMasSupRenterDrivingLicenseCode != "1");
-            var Policies = await _unitOfWork.CrCasLessorPolicy.FindAllAsNoTrackingAsync(l => l.CrCasLessorPolicyLessor == user.CrMasUserInformationLessor && l.CrCasLessorPolicyStatus != Status.Deleted);
+            var DrivingLicenses = await _unitOfWork.CrMasSupRenterDrivingLicense.FindAllAsNoTrackingAsync(l => l.CrMasSupRenterDrivingLicenseStatus == Status.Active && l.CrMasSupRenterDrivingLicenseCode != "1");
+            var Policies = await _unitOfWork.CrCasLessorPolicy.FindAllAsNoTrackingAsync(l => l.CrCasLessorPolicyLessor == user.CrMasUserInformationLessor && l.CrCasLessorPolicyStatus == Status.Active);
             // Transform data based on culture
             var nationalitiesArray = Nationailties.Select(c => new
             {
@@ -318,12 +318,12 @@ namespace Bnan.Ui.Areas.BS.Controllers
              string ContractPdf, string sectorCodeForRenter)
         {
             return await _ContractServices.AddRenterContractBasic(
-                lessorCode, branch.CrCasBranchInformationCode, contractNo, contractInfo.RenterInfo.CrMasRenterInformationId, sectorCodeForRenter, contractInfo.DriverInfo.CrMasRenterInformationId,
+                lessorCode, branch.CrCasBranchInformationCode, contractInfo.BranchReceivingCode, contractNo, contractInfo.RenterInfo.CrMasRenterInformationId, sectorCodeForRenter, contractInfo.DriverInfo.CrMasRenterInformationId,
                 contractInfo.PrivateDriverId, contractInfo.AddDriverInfo.CrMasRenterInformationId, contractInfo.SerialNo, contractInfo.PriceNo,
                 contractInfo.DaysNo, contractInfo.UserAddHours, contractInfo.UserAddKm, contractInfo.CurrentMeter, contractInfo.OptionTotal,
                 contractInfo.AdditionalTotal, contractInfo.ContractValueAfterDiscount, contractInfo.DiscountValue, contractInfo.ContractValueBeforeDiscount,
                 contractInfo.TaxValue, contractInfo.TotalContractAmount, userLogin.CrMasUserInformationCode, contractInfo.OutFeesTmm,
-                contractInfo.UserDiscount, contractInfo.AmountPayed, ContractPdf, contractInfo.PolicyCode, contractInfo.SourceCode, contractInfo.RenterReasons);
+                contractInfo.UserDiscount, contractInfo.AmountPayed, ContractPdf, contractInfo.PolicyCode, contractInfo.SourceCode, contractInfo.ContractTypeCode, contractInfo.RenterReasons);
         }
 
         private async Task<CrCasAccountReceipt> AddAccountReceiptAsync(CrCasRenterContractBasic basicContract, string lessorCode, string sectorCode, CrCasBranchInformation branch,
@@ -784,6 +784,7 @@ namespace Bnan.Ui.Areas.BS.Controllers
             {
                 RenterID = renterInfo?.CrMasRenterInformationId,
                 RenterIDType = renterInfo?.CrMasRenterInformationIdtype,
+                IdCopyNumber = renterInfo?.CrMasRenterInformationCopyId,
                 RenterIDTypeNameAr = renterInfo?.CrMasRenterInformationIdtypeNavigation?.CrMasSupRenterIdtypeArName,
                 RenterIDTypeNameEn = renterInfo?.CrMasRenterInformationIdtypeNavigation?.CrMasSupRenterIdtypeEnName,
                 PersonalArName = renterInfo?.CrMasRenterInformationArName,

@@ -4623,6 +4623,10 @@ namespace Bnan.Inferastructure
                     .HasMaxLength(100)
                     .HasColumnName("CR_Mas_Lessor_Information_Cont_Email");
 
+                entity.Property(e => e.CrMasLessorInformationContEmailToken)
+                   .HasMaxLength(100)
+                   .HasColumnName("CR_Mas_Lessor_Information_Cont_Email_Token");
+
                 entity.Property(e => e.CrMasLessorInformationContWhatsapp)
                     .HasMaxLength(20)
                     .IsUnicode(false)

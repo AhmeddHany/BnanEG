@@ -1,10 +1,9 @@
-﻿using Bnan.Core.Models;
-
-namespace Bnan.Ui.ViewModels.BS
+﻿namespace Bnan.Ui.ViewModels.BS
 {
     public class CarInfomationVM
     {
         public string CrCasCarInformationSerailNo { get; set; } = null!;
+        public string? CrCasCarInformationNo { get; set; }
         public string? CrCasCarInformationConcatenateArName { get; set; }
         public string? CrCasCarInformationConcatenateEnName { get; set; }
         public int? CrCasCarInformationCurrentMeter { get; set; }
