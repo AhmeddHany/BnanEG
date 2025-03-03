@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Bnan.Core.Models
+﻿namespace Bnan.Core.Models
 {
     public partial class CrMasLessorInformation
     {
@@ -55,6 +52,7 @@ namespace Bnan.Core.Models
         public string? CrMasLessorInformationContWhatsappKey { get; set; }
         public string? CrMasLessorInformationContWhatsapp { get; set; }
         public string? CrMasLessorInformationContEmail { get; set; }
+        public string? CrMasLessorInformationContEmailToken { get; set; }
         public string? CrMasLessorInformationStatus { get; set; }
         public string? CrMasLessorInformationReasons { get; set; }
 
