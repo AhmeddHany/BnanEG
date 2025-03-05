@@ -57,29 +57,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
 
-            //var listmaxDate = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
-            //        predicate: x => x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire,
-            //        selectProjection: query => query.Select(x => new Date_ReportActiveContractVM
-            //        {
-            //            dates = x.CrCasRenterContractBasicExpectedStartDate,
-            //        }));
-
-            //if (listmaxDate?.Count == 0)
-            //{
-            //    _toastNotification.AddErrorToastMessage(_localizer["NoDataToShow"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-            //    return RedirectToAction("Index", "Home");
-            //}
-
-            //var maxDate = listmaxDate.Max(x => x.dates)?.ToString("yyyy-MM-dd");
-
-            //var end = DateTime.Now.AddDays(1);
-            //var start = DateTime.Now.AddMonths(-1);
-            //if (maxDate != null)
-            //{
-            //    end = DateTime.Parse(maxDate).AddDays(1);
-            //    start = DateTime.Parse(maxDate).AddMonths(-1);
-            //}
-
             var AllContracts = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                     //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                     predicate: x =>
@@ -164,8 +141,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             VM.all_RentersMas = allRenters;
             VM.all_lessors = allLessors;
             VM.all_Invoices = all_Invoices;
-            //VM.start_Date = start.ToString("yyyy-MM-dd");
-            //VM.end_Date = end.AddDays(-1).ToString("yyyy-MM-dd");
 
             return View(VM);
         }
@@ -174,24 +149,14 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
         //[Route("/CAS/ReportActiveContract_Cas/GetContractsByStatus")]
         public async Task<PartialViewResult> GetContractsByStatus(string status /*, string start, string end*/)
         {
-            //sidebar Active
-            //if (start == "undefined-undefined-") start = "";
-            //if (end == "undefined-undefined-") end = "";
-            //if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
-            //{
-            //    start = DateTime.Now.AddMonths(-1).ToString("dd-MM-yyyy");
-            //    end = DateTime.Now.ToString("dd-MM-yyyy");
-            //}
-            //if (!string.IsNullOrEmpty(status) && !string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
+           
             if (!string.IsNullOrEmpty(status))
             {
-                //var start_Date = DateTime.Parse(start);
-                //var end_Date = DateTime.Parse(end).AddDays(1);
+              
                 var AllContracts = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                     //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                     predicate: x => 
                     (x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire)
-                    //&& x.CrCasRenterContractBasicExpectedStartDate > start_Date && x.CrCasRenterContractBasicExpectedStartDate <= end_Date
                     ,
                     selectProjection: query => query.Select(x => new ReportActiveContractVM
                     {
@@ -272,11 +237,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
                     VM.all_contractBasic = AllContracts;
                     return PartialView("_DataTableReportActiveContract", VM);
                 }
-                //else if (status == Status.Active)
-                //{
-                //    var query_Alert1 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus != "3").ToList();
-                //    AllContracts = AllContracts.Where(x => query_Alert1.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo && x.CrCasRenterContractBasicStatus == "A")).OrderBy(x => x.CrCasRenterContractBasicExpectedEndDate).ToList();
-                //}
                 else if (status == "today")
                 {
                     var query_Alert1 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus == "2").ToList();
@@ -304,7 +264,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.MasReports
             listReportActiveContractVM VM2 = new listReportActiveContractVM();
 
             return PartialView("_DataTableReportActiveContract", VM2);
-            //return PartialView();
         }
 
         private async Task SaveTracingForLicenseChange(CrMasUserInformation user, CrMasRenterInformation licence, string status)

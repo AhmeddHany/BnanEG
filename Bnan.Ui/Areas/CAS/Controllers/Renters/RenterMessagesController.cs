@@ -17,14 +17,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using NToastNotify;
-//using System.Net;
-//using System.Net.Mail;
-//using System;
-//using System.ComponentModel.Design;
-//using System.Globalization;
-//using System.Linq.Expressions;
-//using System.Text.Json;
-//using System.Net.Http;
 using Bnan.Ui.ViewModels.CAS.Renters;
 using Bnan.Ui.ViewModels.CAS;
 using MimeKit;
@@ -110,8 +102,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             {
                 Master_whatsapp_connect = false;
                 Master_whatsapp = false;
-                //return Json(new { status = false, message = $"جوال الشركة غير متصل" });
-                //return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_Error_BnanPhone_notConnected"]} " });
             }
 
             if (!Master_sms && !Master_email && (!Master_whatsapp || !Master_whatsapp_connect))
@@ -229,12 +219,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             IFormFile file = null;           
             List<ResultResponseWithNo> listResultResponseWithNo = new List<ResultResponseWithNo>();
             var messageErrors = " ";
-            //if (string.IsNullOrEmpty(text) || text == "undefined") text= "اهلا وسهلا";
             string[] splitArray_mails = all_mails.Split(',');
             List<string> list_emails = splitArray_mails.ToList();
             string[] splitArray_Renters = selectedValues.Split(',');
             List<string> list_Renters = splitArray_Renters.ToList();
-            //if(address == "undefined" ||address == "" || address == " " || address == null)
 
             MediaRequest request = new MediaRequest();
             request.Phone = list_mobiles[0];
@@ -304,21 +292,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                         {
                             request.Phone = list_mobiles[ii];
                             result = await WhatsAppServicesExtension.SendMediaAsync(request.Phone, request.Message, request.CompanyId, request.fileBase64, request.filename);
-                            //if (result != ApiResponseStatus.Success)
-                            //{
-                            //    ResultResponseWithNo singleResult_Obj = new ResultResponseWithNo();
-                            //    singleResult_Obj.message = result;
-                            //    singleResult_Obj.companyId = list_Renters[ii];
-                            //    listResultResponseWithNo.Add(singleResult_Obj);
-                            //}
+                           
                         }
-                        //listResultResponseWithNo.DistinctBy(y => y.companyId).ToList();
-                        //foreach (var error in listResultResponseWithNo)
-                        //{
-                        //    messageErrors = messageErrors + $" {_localizer["toasterForWhats_" + error.message]} : {error.companyId} ,";
-                        //}
-                        //return Json(new { status = true, message = messageErrors });
-
+                     
                         // إرجاع الاستجابة الناجحة
                         return Json(new { status = true, message = ApiResponseStatus.Success });
                     }
@@ -326,8 +302,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                     {
                         // التعامل مع الأخطاء
                         return Json(new { status = false, message = _localizer["ToastFailed"] });
-                        //return Json(new { status = false, message = $"حدث خطأ أثناء إرسال الرسالة للشركة رقم: {list_Renters[ii]} وكل ما بعدها" });
-                        //return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_ErrorPart1"]} {list_Renters[ii]} {_localizer["RenterMessages_address_M_ErrorPart2"]} " });
                     }
                 }
             }
@@ -340,26 +314,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             try
             {
                 // // استخدام الـ Extension Method لإرسال الرسالة
-                //var result = await WhatsAppServicesExtension.SendMessageAsync(request.Phone, request.Message, request.CompanyId);
-                //string phone, string message, string companyId, string fileBase64, string filename
                 for (i = 0; i < list_Renters.Count; i++)
                 {
                     request.Phone = list_mobiles[i];
                     result = await WhatsAppServicesExtension.SendMessageAsync(request.Phone, request.Message, request.CompanyId);
-                    //if (result != ApiResponseStatus.Success)
-                    //{
-                    //    ResultResponseWithNo singleResult_Obj = new ResultResponseWithNo();
-                    //    singleResult_Obj.message = result;
-                    //    singleResult_Obj.companyId = list_Renters[i];
-                    //    listResultResponseWithNo.Add(singleResult_Obj);
-                    //}
+                    
                 }
-                //listResultResponseWithNo.DistinctBy(y => y.companyId).ToList();
-                //foreach (var error in listResultResponseWithNo)
-                //{
-                //    messageErrors = messageErrors + $" {_localizer["toasterForWhats_" + error.message]} : {error.companyId} ,";
-                //}
-                //return Json(new { status = true, message = messageErrors });
+              
 
                 // إرجاع الاستجابة الناجحة
                 return Json(new { status = true, message = ApiResponseStatus.Success });
@@ -370,17 +331,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             {
                 // التعامل مع الأخطاء
                 return Json(new { status = false, message = _localizer["ToastFailed"] });
-                //return Json(new { status = false, message = $"حدث خطأ أثناء إرسال الرسالة للشركة رقم: {list_Renters[i]} وكل ما بعدها" });
-                //return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_ErrorPart1"]} {list_Renters[i]} {_localizer["RenterMessages_address_M_ErrorPart2"]} " });
             }
 
         }
 
         [HttpPost]
-        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
         public async Task<IActionResult> send_ToAll_Email(List<IFormFile> files, string text, string subject, string selectedValues, string all_mobiles, string all_mails)
 
-        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
         {
             IFormFile file = null;
             if(all_mails == null || all_mails.Length < 5)
@@ -438,12 +395,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                 //message.From.Add(new MailboxAddress("hazem", "hazem14442000@gmail.com"));
                 message.From.Add(new MailboxAddress(Master_Lessor_EnName, Master_Lessor_mail));
                 //message.To.Add(new MailboxAddress("essam", "mazen144essam@gmail.com"));
-                //message.Subject = "Test Email";
-
-                //var body = new TextPart("plain")
-                //{
-                //    Text = "This is a test email new mazen."
-                //};
 
                 message.Subject = subject;
 
@@ -486,7 +437,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                         try
                         {
                             // إرسال البريد الإلكتروني
-                            //message.Body = body2;
                             //message.To.Add(new MailboxAddress("essam", "khaled14442000@gmail.com"));
                             message.To.Add(new MailboxAddress("Hi Rrenter From " + Master_Lessor_EnName, single_Email));
                             await smtpClient.SendAsync(message);
@@ -516,17 +466,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                 return Json(new { status = false, message = ex.Message });
 
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest($"Error sending email: {ex.Message}");
-            //}
         }
 
         [HttpPost]
-        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
         public async Task<IActionResult> send_Single_Email(List<IFormFile> files, string text, string subject, string selectedValues, string all_mobiles, string all_mails)
 
-        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
         {
             try
             {

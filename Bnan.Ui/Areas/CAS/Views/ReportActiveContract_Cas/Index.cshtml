@@ -28,21 +28,6 @@
                 <div class="row mt-2">
 
 
-                    @*<div class="col-lg-8">
-                        <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
-                            <div class="col-xl-4 d-flex  gap-3 align-items-center">
-                                <label for="start_date">@localizer["From_n"]</label>
-                                <input type="date" class="form-control inputs custom-date-input" id="start_date" name="start_date" required>
-                            </div>
-                            <div class="col-xl-4 d-flex  gap-3 align-items-center">
-                                <label for="end_date">@localizer["To_n"]</label>
-                                    <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required>
-
-                            </div>
-
-                                <button type="button" id="btn_view" name="btn_view" class="btn btn-standard">@localizer["View_n"]</button>
-                        </div>
-                    </div>*@
                     <div class="col-md-8 col-lg-4 search-input-col">
                         <div class="form-outline w-100" data-mdb-input-init>
                             <span class="fa fa-search"></span>
@@ -110,38 +95,16 @@
     <!-- تحميل مكتبة DataTables -->
     <script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 
-@*    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script>
-    // تهيئة flatpickr مع التنسيق المطلوب
-    flatpickr("#start_date", {
-        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
-    });
-        // تهيئة flatpickr مع التنسيق المطلوب
-    flatpickr("#end_date", {
-        dateFormat: "d/m/Y", // تنسيق التاريخ إلى يوم/شهر/سنة
-    });
-</script>*@
 
 <script>
         $(document).ready(function () {
-            //$("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
-            //$("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
+           
 
             // لجعل الحالة حسب ما هي جاية من index نشط او الكل
             $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
             $("#min-loader").toggleClass("d-none", true); // اخفاء loader بعد انتهاء تحميل الصفحة
                         
-            //var today = new Date();
-            //$("#start_date").datepicker({
-            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
-            //    maxDate: today,
-            //});
-            //$("#end_date").datepicker({
-            //    dateFormat: 'yy/mm/dd',  // التاريخ إلى يوم/شهر/سنة
-            //    maxDate: today,
-            //});
-
- 
+          
             ///////
             // تهيئة DataTable
             var table2 = $('#Table').DataTable({
@@ -223,42 +186,19 @@
 
         $("input[name='customRadio']").on("click", function () {
             const status = $(this).val();
-            //const start = $("#start_date").val(); // الحصول على قيمة البداية
-            //const end = $("#end_date").val(); // الحصول على قيمة النهاية
-
-            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
-            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
-            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
-            //var start = formattedDate1;// الحصول على قيمة النهاية
-            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
-            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
-            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
-            //var end = formattedDate2;// الحصول على قيمة النهاية
+           
             
             $("#min-loader").removeClass("d-none");
             $("#search2").val("");
-            //GetContractsByStatusFitler(status, start, end);
             GetContractsByStatusFitler(status);
         });
 
         // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
         $("#btn_view").on("click", function () {
             const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
-            //const start = $("#start_date").val(); // الحصول على قيمة البداية
-            //const end = $("#end_date").val(); // الحصول على قيمة النهاية
-
-            //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
-            //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
-            //var formattedDate1 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
-            //var start = formattedDate1;// الحصول على قيمة النهاية
-            //const end2 = $("#end_date").val(); // الحصول على قيمة البداية
-            //var dateParts = end2.split("/"); // تقسيم التاريخ إلى أجزاء
-            //var formattedDate2 = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // تحويله إلى yyyy-MM-dd
-            //var end = formattedDate2;// الحصول على قيمة النهاية
-            
+          
             $("#min-loader").removeClass("d-none");
             $("#search2").val("");
-            //GetContractsByStatusFitler(status, start, end);
             GetContractsByStatusFitler(status);
         });
     </script>

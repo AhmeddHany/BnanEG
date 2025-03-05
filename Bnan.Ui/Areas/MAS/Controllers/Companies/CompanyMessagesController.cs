@@ -112,7 +112,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
                 Master_whatsapp_connect = false;
                 Master_whatsapp = false;
                 //return Json(new { status = false, message = $"جوال الشركة غير متصل" });
-                //return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_Error_BnanPhone_notConnected"]} " });
             }
 
             if (!Master_sms && !Master_email && (!Master_whatsapp || !Master_whatsapp_connect))
@@ -275,8 +274,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
             try
             {
                 // // استخدام الـ Extension Method لإرسال الرسالة
-                //var result = await WhatsAppServicesExtension.SendMessageAsync(request.Phone, request.Message, request.CompanyId);
-                //string phone, string message, string companyId, string fileBase64, string filename
                 for (i = 0; i < list_companys.Count; i++)
                 {
                     request.Phone = list_mobiles[i];
@@ -318,10 +315,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
 
 
         [HttpPost]
-        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
         public async Task<IActionResult> send_ToAll_Email(List<IFormFile> files, string text, string subject, string selectedValues, string all_mobiles, string all_mails)
-
-        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
         {
             IFormFile file = null;
             if (all_mails == null || all_mails.Length < 5)
@@ -361,12 +355,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
                 //message.From.Add(new MailboxAddress("hazem", "hazem14442000@gmail.com"));
                 message.From.Add(new MailboxAddress(Master_Lessor_EnName, Master_Lessor_mail));
                 //message.To.Add(new MailboxAddress("essam", "mazen144essam@gmail.com"));
-                //message.Subject = "Test Email";
-
-                //var body = new TextPart("plain")
-                //{
-                //    Text = "This is a test email new mazen."
-                //};
 
                 message.Subject = subject;
 
@@ -409,7 +397,6 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
                         try
                         {
                             // إرسال البريد الإلكتروني
-                            //message.Body = body2;
                             //message.To.Add(new MailboxAddress("essam", "khaled14442000@gmail.com"));
                             message.To.Add(new MailboxAddress("Hi Lessor From " + Master_Lessor_EnName, single_Email));
                             await smtpClient.SendAsync(message);
@@ -439,17 +426,11 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
                 return Json(new { status = false, message = ex.Message });
 
             }
-            //catch (Exception ex)
-            //{
-            //    return BadRequest($"Error sending email: {ex.Message}");
-            //}
         }
 
         [HttpPost]
-        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
         public async Task<IActionResult> send_Single_Email(List<IFormFile> files, string text, string subject, string selectedValues, string all_mobiles, string all_mails)
 
-        //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
         {
             try
             {
