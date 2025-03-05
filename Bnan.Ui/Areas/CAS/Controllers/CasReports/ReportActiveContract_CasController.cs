@@ -57,34 +57,35 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
 
-            var listmaxDate = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
-                    predicate: x => x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire,
-                    selectProjection: query => query.Select(x => new Date_ReportActiveContract_CasVM
-                    {
-                        dates = x.CrCasRenterContractBasicExpectedStartDate,
-                    }));
+            //var listmaxDate = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
+            //        predicate: x => x.CrCasRenterContractBasicStatus == Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire,
+            //        selectProjection: query => query.Select(x => new Date_ReportActiveContract_CasVM
+            //        {
+            //            dates = x.CrCasRenterContractBasicExpectedStartDate,
+            //        }));
 
-            if (listmaxDate?.Count == 0)
-            {
-                _toastNotification.AddErrorToastMessage(_localizer["NoDataToShow"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
-                return RedirectToAction("Index", "Home");
-            }
+            //if (listmaxDate?.Count == 0)
+            //{
+            //    _toastNotification.AddErrorToastMessage(_localizer["NoDataToShow"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+            //    return RedirectToAction("Index", "Home");
+            //}
 
-            var maxDate = listmaxDate.Max(x => x.dates)?.ToString("yyyy-MM-dd");
+            //var maxDate = listmaxDate.Max(x => x.dates)?.ToString("yyyy-MM-dd");
 
-            var end = DateTime.Now.AddDays(1);
-            var start = DateTime.Now.AddMonths(-1);
-            if (maxDate != null)
-            {
-                end = DateTime.Parse(maxDate).AddDays(1);
-                start = DateTime.Parse(maxDate).AddMonths(-1);
-            }
+            //var end = DateTime.Now.AddDays(1);
+            //var start = DateTime.Now.AddMonths(-1);
+            //if (maxDate != null)
+            //{
+            //    end = DateTime.Parse(maxDate).AddDays(1);
+            //    start = DateTime.Parse(maxDate).AddMonths(-1);
+            //}
 
             var all_RenterBasicContract = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                 //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                 predicate: x => x.CrCasRenterContractBasicLessor == user.CrMasUserInformationLessor
                 && x.CrCasRenterContractBasicStatus == Status.Active
-                && x.CrCasRenterContractBasicExpectedStartDate > start && x.CrCasRenterContractBasicExpectedStartDate <= end,
+                //&& x.CrCasRenterContractBasicExpectedStartDate > start && x.CrCasRenterContractBasicExpectedStartDate <= end
+                ,
                 selectProjection: query => query.Select(x => new ReportActiveContract_CasVM
                 {
                     CrCasRenterContractBasicNo = x.CrCasRenterContractBasicNo,
@@ -140,34 +141,37 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
             VM.all_status = allStatus_contracts;
             VM.all_contractBasic = all_RenterBasicContract;
             VM.all_Invoices = all_Invoices;
-            VM.start_Date = start.ToString("yyyy-MM-dd");
-            VM.end_Date = end.AddDays(-1).ToString("yyyy-MM-dd");
+            //VM.start_Date = start.ToString("yyyy-MM-dd");
+            //VM.end_Date = end.AddDays(-1).ToString("yyyy-MM-dd");
 
             return View(VM);
         }
 
         [HttpGet]
         //[Route("/CAS/ReportActiveContract_Cas/GetContractsByStatus")]
-        public async Task<PartialViewResult> GetContractsByStatus(string status, string start, string end)
+        //public async Task<PartialViewResult> GetContractsByStatus(string status, string start, string end)
+        public async Task<PartialViewResult> GetContractsByStatus(string status)
         {
             var user = await _userManager.GetUserAsync(User);
-            //sidebar Active
-            if (start == "undefined-undefined-") start = "";
-            if (end == "undefined-undefined-") end = "";
-            if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
+            ////sidebar Active
+            //if (start == "undefined-undefined-") start = "";
+            //if (end == "undefined-undefined-") end = "";
+            //if (string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end))
+            //{
+            //    start = DateTime.Now.AddMonths(-1).ToString("dd-MM-yyyy");
+            //    end = DateTime.Now.ToString("dd-MM-yyyy");
+            //}
+            //if (!string.IsNullOrEmpty(status) && !string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
+            if (!string.IsNullOrEmpty(status))
             {
-                start = DateTime.Now.AddMonths(-1).ToString("dd-MM-yyyy");
-                end = DateTime.Now.ToString("dd-MM-yyyy");
-            }
-            if (!string.IsNullOrEmpty(status) && !string.IsNullOrEmpty(start) && !string.IsNullOrEmpty(end))
-            {
-                var start_Date = DateTime.Parse(start);
-                var end_Date = DateTime.Parse(end).AddDays(1);
+                //var start_Date = DateTime.Parse(start);
+                //var end_Date = DateTime.Parse(end).AddDays(1);
                 var AllContracts = await _unitOfWork.CrCasRenterContractBasic.FindAllWithSelectAsNoTrackingAsync(
                     //predicate: x => x.CrCasCarInformationStatus != Status.Deleted,
                     predicate: x => x.CrCasRenterContractBasicLessor == user.CrMasUserInformationLessor
                     && (x.CrCasRenterContractBasicStatus ==Status.Active || x.CrCasRenterContractBasicStatus == Status.Expire)
-                    && x.CrCasRenterContractBasicExpectedStartDate > start_Date && x.CrCasRenterContractBasicExpectedStartDate <= end_Date,
+                    //&& x.CrCasRenterContractBasicExpectedStartDate > start_Date && x.CrCasRenterContractBasicExpectedStartDate <= end_Date
+                    ,
                     selectProjection: query => query.Select(x => new ReportActiveContract_CasVM
                     {
                         CrCasRenterContractBasicNo = x.CrCasRenterContractBasicNo,

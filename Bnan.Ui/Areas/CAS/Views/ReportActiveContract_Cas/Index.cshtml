@@ -21,14 +21,14 @@
 <div class="col d-flex align-items-center justify-content-center" style=" z-index:2;">
     <div class="container main-container">
         <form action="">
-            <div class="row g-3 mb-3">
+            <div class="row">
                 <div class="col">
                         <h3> @localizer["ReportActiveContract_Cas_Data"]  </h3>
                 </div>
-                <div class="row g-2">
+                <div class="row mt-2">
 
 
-                    <div class="col-lg-8">
+                    @*<div class="col-lg-8">
                         <div class="col-12 d-flex align-items-center Search-col  flex-wrap gap-2">
                             <div class="col-xl-4 d-flex  gap-3 align-items-center">
                                 <label for="start_date">@localizer["From_n"]</label>
@@ -37,13 +37,12 @@
                             <div class="col-xl-4 d-flex  gap-3 align-items-center">
                                 <label for="end_date">@localizer["To_n"]</label>
                                     <input type="date" class="form-control inputs custom-date-input" id="end_date" name="end_date" required>
-                                @*<input type="text" class="form-control inputs custom-date-input" id="end_date" name="end_date" required="" autocomplete="off">*@
 
                             </div>
 
                                 <button type="button" id="btn_view" name="btn_view" class="btn btn-standard">@localizer["View_n"]</button>
                         </div>
-                    </div>
+                    </div>*@
                     <div class="col-md-8 col-lg-4 search-input-col">
                         <div class="form-outline w-100" data-mdb-input-init>
                             <span class="fa fa-search"></span>
@@ -51,7 +50,7 @@
                         </div>
                     </div>
 
-                    <div class="col-12 filters-col">
+                    <div class="col-md-8 filters-col" style="align-items: end;">
                         <div class="filters-custom-order">
 
                             <label class="form-check-label" for="all">@localizer["All_n"]</label>
@@ -125,8 +124,8 @@
 
 <script>
         $(document).ready(function () {
-            $("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
-            $("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
+            //$("#start_date").val('@Model.start_Date'); //  اضافة قيمة البداية من ال viewModel
+            //$("#end_date").val('@Model.end_Date'); //  اضافة قيمة النهاية من ال viewModel
 
             // لجعل الحالة حسب ما هي جاية من index نشط او الكل
             $("input[name='customRadio'][value='" + '@ViewBag.radio' + "']").prop("checked", true);
@@ -212,7 +211,7 @@
             $.ajax({
                 type: "GET",
                 data: {
-                    status: status, start: start, end: end
+                    status: status, /*start: start, end: end*/
                 },
                 url: "@Url.Action("GetContractsByStatus", "ReportActiveContract_Cas", new { Area = "CAS" })",
                 success: function (response) {
@@ -224,8 +223,8 @@
 
         $("input[name='customRadio']").on("click", function () {
             const status = $(this).val();
-            const start = $("#start_date").val(); // الحصول على قيمة البداية
-            const end = $("#end_date").val(); // الحصول على قيمة النهاية
+            //const start = $("#start_date").val(); // الحصول على قيمة البداية
+            //const end = $("#end_date").val(); // الحصول على قيمة النهاية
 
             //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
             //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
@@ -238,14 +237,15 @@
             
             $("#min-loader").removeClass("d-none");
             $("#search2").val("");
-            GetContractsByStatusFitler(status, start, end);
+            //GetContractsByStatusFitler(status, start, end);
+            GetContractsByStatusFitler(status);
         });
 
         // عند كتابة أي شيء في حقل البحث، تحديث الفلتر
         $("#btn_view").on("click", function () {
             const status = $("input[name='customRadio']:checked").val(); // الحصول على القيمة المحددة من الراديو
-            const start = $("#start_date").val(); // الحصول على قيمة البداية
-            const end = $("#end_date").val(); // الحصول على قيمة النهاية
+            //const start = $("#start_date").val(); // الحصول على قيمة البداية
+            //const end = $("#end_date").val(); // الحصول على قيمة النهاية
 
             //const start1 = $("#start_date").val(); // الحصول على قيمة البداية
             //var dateParts = start1.split("/"); // تقسيم التاريخ إلى أجزاء
@@ -258,7 +258,8 @@
             
             $("#min-loader").removeClass("d-none");
             $("#search2").val("");
-            GetContractsByStatusFitler(status, start, end);
+            //GetContractsByStatusFitler(status, start, end);
+            GetContractsByStatusFitler(status);
         });
     </script>
 }
