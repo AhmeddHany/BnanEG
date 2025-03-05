@@ -33,10 +33,10 @@
                                 <button type="submit" class="custom-img-btn" id="SaveEdit">
                                     <img src="~/CasSys/images/save.svg" />
                                 </button>
-                                <button type="button" class="custom-img-btn" id="HoldBtn" data-bs-toggle="modal" data-bs-target="#Stop-Modal">
+                                <button type="button" class="custom-img-btn" id="HoldBtnOpen" >
                                     <img id="StopModalIcon" src="~/CasSys/images/stop.svg" />
                                 </button>
-                                <button type="button" class="custom-img-btn" id="DeleteBtn" data-bs-toggle="modal" data-bs-target="#Delete-Modal">
+                                <button type="button" class="custom-img-btn" id="DeleteBtnOpen">
                                     <img id="modalIcon" src="~/CasSys/images/delete (2).svg" />
                                 </button>
                                 <button type="button" class="custom-img-btn">
@@ -598,6 +598,38 @@
         }
     </script>
     <script>
+           document.addEventListener("DOMContentLoaded", function () {
+            const branchId = document.getElementById("BranchId")?.value;
+
+            function handleButtonClick(buttonId, modalId) {
+                const button = document.getElementById(buttonId);
+                const modal = document.getElementById(modalId);
+
+                if (button && modal) {
+                    button.addEventListener("click", function (event) {
+                        if (branchId === "100") {
+                            event.preventDefault(); // منع أي سلوك افتراضي
+                            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+                            toastr.error("@localizer["SureTo_Cannot_delete_MainBranch"]");
+                        } else {
+                            // فتح المودال يدويًا عند الضغط على الزر
+                            const bsModal = new bootstrap.Modal(modal);
+                            bsModal.show();
+                        }
+                    });
+                }
+            }
+
+            // ربط الأزرار بالمودالات الخاصة بها
+            handleButtonClick("DeleteBtnOpen", "Delete-Modal");
+            handleButtonClick("HoldBtnOpen", "Stop-Modal");
+        });
+
+
+
+
+
+
         let isDeleted = false;
         let isStoped = false
         if (statusInput.val() == '@Status.Hold') {

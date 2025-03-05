@@ -75,13 +75,13 @@
                         @if (requestCulture?.RequestCulture.UICulture.Name == "en-US")
                         {
                         <div class="d-flex justify-content-end gap-1">
-                            <p class="secondLineP"> <span class="time">@item.CrCasSysAdministrativeProceduresTime?.ToString(@"hh\:mm") </span> @item.CrCasSysAdministrativeProceduresDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture)</p>
+                            <p class="secondLineP"> <span class="time">@item.CrCasSysAdministrativeProceduresTime?.ToString(@"hh\:mm") </span> @item.CrCasSysAdministrativeProceduresDate?.ToString("yyyy/MM/dd ", CultureInfo.InvariantCulture)</p>
                         </div>
                         }
                         else
                         {
                         <div class="d-flex justify-content-end gap-1">
-                            <p class="secondLineP">@item.CrCasSysAdministrativeProceduresDate?.ToString("dd/MM/yyyy ",CultureInfo.InvariantCulture) <span class="time">  @item.CrCasSysAdministrativeProceduresTime?.ToString(@"hh\:mm") </span></p>
+                            <p class="secondLineP">@item.CrCasSysAdministrativeProceduresDate?.ToString("yyyy/MM/dd ", CultureInfo.InvariantCulture) <span class="time">  @item.CrCasSysAdministrativeProceduresTime?.ToString(@"hh\:mm") </span></p>
                         </div>
                         }
 

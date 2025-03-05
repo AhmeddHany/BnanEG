@@ -1009,3 +1009,35 @@ body::-webkit-scrollbar-thumb {
         height: 330px !important;
     }
 }
+
+/* ////////////////////////////////////////Rate///////////////////////////////////////////////// */
+.rate-modal-content {
+    border: 3px solid #FF9626;
+    border-radius: 10px;
+}
+
+.rate-col {
+    box-shadow: 0px 1px 6px 1px #FF962633;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+    .rate-col:hover {
+        box-shadow: inset 0px 1px 6px 1px #ff962638;
+        /* color: #39629C;
+    font-weight: 600; */
+    }
+
+.rate-modal-header {
+    border: none;
+}
+
+.rate-title {
+    color: #FF9626;
+}
+
+.modal-header .rate-modal-close {
+    margin: calc(-.5* var(--bs-modal-header-padding-y)) calc(-.5* var(--bs-modal-header-padding-x)) calc(-.5* var(--bs-modal-header-padding-y));
+}
+
+/* ///////////////////////////////////////////////////////////////////////////////////////////// */

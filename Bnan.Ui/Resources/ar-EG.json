@@ -1645,6 +1645,7 @@
 
   "HintSureTo_Cannot_deleteCarBrand": "للأسف لا تستطيع حذف ماركة السيارة هذه لأنه يوجد منها عدد =",
   "SureTo_Cannot_delete": "لا يمكن حذفه",
+  "SureTo_Cannot_delete_MainBranch": "لا يمكن حذفه او ايقاف الفرع الرئيسي",
 
 
   //Car Fuels------
@@ -3336,7 +3337,10 @@
     "AddDriverValue": "قيمة السائق الاضافي",
     "PrivateDriverValue": "قيمة السائق الخاص",
     "DelegationValue": "قيمة التفويض",
-    "Unifiedcontract": "عقد تأجير",
+    "Unifiedcontract": "العقد الموحد",
+    "Policy": "سياسة التأجير",
+    "SaveContract": "حفظ العقد",
+    "ContractConclusion": "ابرام العقد",
     "Shemos": "شموس",
     "UploadRenterSignture": "ارفق صورة التوقيع",
     "AcceptSignture": "قبول التوقيع",
@@ -3353,7 +3357,7 @@
     "SimpleScratch": "خدش بسيط",
     "PleaseEnterCorrectlyName": "الرجاء التحقق من ادخال البيانات"
   },
-
+  "ContractSavedSummary": "ملخص العقد",
   //Renters In BS
   "TradedAmount": "المبالغ المتداولة",
   "Canceled": "ملغى",

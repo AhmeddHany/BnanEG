@@ -116,6 +116,8 @@ namespace Bnan.Inferastructure
             CreateMap<DetailsContractsForRenterVM, CrCasRenterContractBasic>().ReverseMap();
             CreateMap<CarInfomationVM, CrCasCarInformation>().ReverseMap();
             CreateMap<CrCasRenterContractBasic, ContractSettlementVM>().ReverseMap();
+            //For TGA
+            //CreateMap<CrCasRenterContractBasic, SavedContractsVM>().ReverseMap();
             //Owners
             CreateMap<CrCasRenterContractBasic, OwnContractsVM>().ReverseMap();
             CreateMap<CrCasCarInformation, OwnCarsInfoVM>().ReverseMap();
