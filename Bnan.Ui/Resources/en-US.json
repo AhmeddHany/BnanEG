@@ -1683,6 +1683,8 @@
 
   "HintSureTo_Cannot_deleteCarBrand": "Sorry You Can't Delete this Car Brand because there are Count of this =",
   "SureTo_Cannot_delete": "Can't Delete It",
+  "SureTo_Cannot_delete_MainBranch": "Can't Delete Or Hold Main Branch",
+
 
 
   //Car Fuels------
@@ -3296,7 +3298,10 @@
     "AddDriverValue": "AddDriver Value",
     "PrivateDriverValue": "Private Driver Value",
     "DelegationValue": "Delegation Value",
-    "Unifiedcontract": "Rental contract",
+    "Unifiedcontract": "Unified contract",
+    "SaveContract": "Save Contract",
+    "ContractConclusion": "Contract Conclusion",
+    "Policy": "Policy Tenant",
     "Shemos": "Shemos",
     "UploadRenterSignture": "Upload Renter Signture",
     "AcceptSignture": "Accept",
@@ -3313,6 +3318,7 @@
     "PleaseEnterCorrectlyName": "Please enter a valid name,"
 
   },
+  "ContractSavedSummary": "Contract Summary",
 
   //
   "TradedAmount": "Traded Amount",

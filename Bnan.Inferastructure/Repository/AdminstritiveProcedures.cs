@@ -3,14 +3,7 @@ using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -52,7 +45,7 @@ namespace Bnan.Inferastructure.Repository
             }
             CrCasSysAdministrativeProcedure crCasSysAdministrativeProcedure = new CrCasSysAdministrativeProcedure()
             {
-                CrCasSysAdministrativeProceduresNo = y + "-" + SectorId + ProcedureCode + "-" + LessorCode + BranchCode +"-"+ Serial,
+                CrCasSysAdministrativeProceduresNo = y + "-" + SectorId + ProcedureCode + "-" + LessorCode + BranchCode + "-" + Serial,
                 CrCasSysAdministrativeProceduresYear = y,
                 CrCasSysAdministrativeProceduresSector = SectorId,
                 CrCasSysAdministrativeProceduresCode = ProcedureCode,
@@ -61,10 +54,10 @@ namespace Bnan.Inferastructure.Repository
                 CrCasSysAdministrativeProceduresBranch = BranchCode,
                 CrCasSysAdministrativeProceduresDate = DateTime.Now.Date,
                 CrCasSysAdministrativeProceduresTime = DateTime.Now.TimeOfDay
-                
-                
-                
-                
+
+
+
+
                 ,
                 CrCasSysAdministrativeProceduresTargeted = Targeted,
                 CrCasSysAdministrativeProceduresDebit = Debit,
@@ -87,7 +80,7 @@ namespace Bnan.Inferastructure.Repository
             return true;
         }
 
-        public async Task<CrCasSysAdministrativeProcedure> SaveAdminstritiveCustody(string userCode, string LessorCode, string BranchCode, string? Targeted, string Creditor,string Debit, string? Reasons, List<string> ReceiptsNo)
+        public async Task<CrCasSysAdministrativeProcedure> SaveAdminstritiveCustody(string userCode, string LessorCode, string BranchCode, string? Targeted, string Creditor, string Debit, string? Reasons, List<string> ReceiptsNo)
         {
             DateTime year = DateTime.Now;
             var y = year.ToString("yy");
@@ -117,9 +110,9 @@ namespace Bnan.Inferastructure.Repository
                 var R = await _unitOfWork.CrCasAccountReceipt.FindAsync(x => x.CrCasAccountReceiptNo == Receipt);
                 Receipts.Add(R);
             }
-            var endDate = Receipts.OrderByDescending(x=>x.CrCasAccountReceiptDate).FirstOrDefault().CrCasAccountReceiptDate;
-            var startDate = Receipts.OrderBy(x=>x.CrCasAccountReceiptDate).FirstOrDefault().CrCasAccountReceiptDate;
-            var SalesPointNo = Receipts.OrderBy(x=>x.CrCasAccountReceiptDate).FirstOrDefault().CrCasAccountReceiptSalesPoint;
+            var endDate = Receipts.OrderByDescending(x => x.CrCasAccountReceiptDate).FirstOrDefault().CrCasAccountReceiptDate;
+            var startDate = Receipts.OrderBy(x => x.CrCasAccountReceiptDate).FirstOrDefault().CrCasAccountReceiptDate;
+            var SalesPointNo = Receipts.OrderBy(x => x.CrCasAccountReceiptDate).FirstOrDefault().CrCasAccountReceiptSalesPoint;
             CrCasSysAdministrativeProcedure crCasSysAdministrativeProcedure = new CrCasSysAdministrativeProcedure()
             {
                 CrCasSysAdministrativeProceduresNo = y + "-" + "1" + "304" + "-" + LessorCode + BranchCode + "-" + Serial,
@@ -133,13 +126,13 @@ namespace Bnan.Inferastructure.Repository
                 CrCasSysAdministrativeProceduresTime = DateTime.Now.TimeOfDay,
                 CrCasSysAdministrativeProceduresTargeted = Targeted,
                 CrCasSysAdministrativeProceduresDebit = decimal.Parse(Debit, CultureInfo.InvariantCulture),
-                CrCasSysAdministrativeProceduresCreditor =decimal.Parse(Creditor, CultureInfo.InvariantCulture),
+                CrCasSysAdministrativeProceduresCreditor = decimal.Parse(Creditor, CultureInfo.InvariantCulture),
                 CrCasSysAdministrativeProceduresUserInsert = userCode,
                 CrCasSysAdministrativeProceduresArDescription = "تحت الاجراء",
                 CrCasSysAdministrativeProceduresEnDescription = "Under the procedure",
                 CrCasSysAdministrativeProceduresDocNo = SalesPointNo,
-                CrCasSysAdministrativeProceduresDocStartDate =startDate,
-                CrCasSysAdministrativeProceduresDocEndDate=endDate,
+                CrCasSysAdministrativeProceduresDocStartDate = startDate,
+                CrCasSysAdministrativeProceduresDocEndDate = endDate,
                 CrCasSysAdministrativeProceduresStatus = Status.Insert,
                 CrCasSysAdministrativeProceduresReasons = Reasons,
             };
@@ -195,6 +188,6 @@ namespace Bnan.Inferastructure.Repository
 
         }
 
-        
+
     }
 }

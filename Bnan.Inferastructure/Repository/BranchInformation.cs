@@ -1,11 +1,6 @@
 ﻿using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -141,8 +136,8 @@ namespace Bnan.Inferastructure.Repository
 
         public async Task<bool> UpdateBranchInformation(CrCasBranchInformation CrCasBranchInformation)
         {
-            var branchInfo= await _unitOfWork.CrCasBranchInformation.FindAsync(x=>x.CrCasBranchInformationLessor== CrCasBranchInformation.CrCasBranchInformationLessor&&
-                                                                                    x.CrCasBranchInformationCode== CrCasBranchInformation.CrCasBranchInformationCode);
+            var branchInfo = await _unitOfWork.CrCasBranchInformation.FindAsync(x => x.CrCasBranchInformationLessor == CrCasBranchInformation.CrCasBranchInformationLessor &&
+                                                                                    x.CrCasBranchInformationCode == CrCasBranchInformation.CrCasBranchInformationCode);
             if (branchInfo == null) return false;
 
             branchInfo.CrCasBranchInformationTgaCode = CrCasBranchInformation.CrCasBranchInformationTgaCode;
@@ -161,12 +156,26 @@ namespace Bnan.Inferastructure.Repository
             return true;
         }
 
-        public async Task<bool> CheckIfCanDeleteIt(string lessorCode,string branchCode)
+        public async Task<bool> CheckIfCanDeleteIt(string lessorCode, string branchCode)
         {
-            var carsActive = await _unitOfWork.CrCasCarInformation.CountAsync(x => x.CrCasCarInformationLessor == lessorCode &&x.CrCasCarInformationBranch==branchCode&&
-                                                                                   x.CrCasCarInformationStatus != Status.Deleted && x.CrCasCarInformationStatus != Status.Sold);
-            var salesPointsHaveBalance = await _unitOfWork.CrCasAccountSalesPoint.CountAsync(x => x.CrCasAccountSalesPointStatus != Status.Deleted &&x.CrCasAccountSalesPointTotalAvailable > 0);
-            return carsActive == 0 && salesPointsHaveBalance == 0;
+            if (branchCode == "100")
+                return false;
+
+            var carsActiveTask = await _unitOfWork.CrCasCarInformation.CountAsync(x => x.CrCasCarInformationLessor == lessorCode &&
+                                                                                 x.CrCasCarInformationBranch == branchCode &&
+                                                                                 x.CrCasCarInformationStatus != Status.Deleted &&
+                                                                                 x.CrCasCarInformationStatus != Status.Sold);
+
+            var salesPointsHaveBalanceTask = await _unitOfWork.CrCasAccountSalesPoint.CountAsync(x => x.CrCasAccountSalesPointStatus != Status.Deleted &&
+                                                                                                x.CrCasAccountSalesPointTotalAvailable != 0);
+
+            var branchBalanceTask = await _unitOfWork.CrCasBranchInformation.CountAsync(x => x.CrCasBranchInformationCode == branchCode &&
+                                                                                       x.CrCasBranchInformationAvailableBalance != 0);
+
+
+            return carsActiveTask == 0 && salesPointsHaveBalanceTask == 0 && branchBalanceTask == 0;
         }
+
+
     }
 }

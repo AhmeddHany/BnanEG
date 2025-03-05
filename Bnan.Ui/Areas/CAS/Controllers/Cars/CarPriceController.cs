@@ -179,6 +179,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                     if (await _unitOfWork.CompleteAsync() > 0)
                     {
                         await SaveTracingForCarPriceChange(userLogin, distribution.CrMasSupCarDistributionConcatenateArName, distribution.CrMasSupCarDistributionConcatenateEnName, Status.Insert);
+                        await SaveAdminstritiveForCarPrice(userLogin, "219", "20", PriceCarNo, carPriceVM.CrCasPriceCarBasicReasons, Status.Insert);
                         _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                         return RedirectToAction("CarPrice");
                     }
@@ -302,6 +303,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 if (await _unitOfWork.CompleteAsync() > 0)
                 {
                     await SaveTracingForCarPriceChange(user, carPrice.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateArName, carPrice.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateEnName, Status.Deleted);
+                    await SaveAdminstritiveForCarPrice(user, "219", "20", carPrice.CrCasPriceCarBasicNo, carPrice.CrCasPriceCarBasicReasons, Status.Deleted);
+
                     _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return "true";
                 }
@@ -356,6 +359,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 system.CrMasSysSystemArName,
                 system.CrMasSysSystemEnName);
         }
+        private async Task SaveAdminstritiveForCarPrice(CrMasUserInformation user, string procudureCode, string classification, string PriceCarNo, string reasons, string status)
+        {
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+            await _adminstritiveProcedures.SaveAdminstritive(user.CrMasUserInformationCode, "1", procudureCode, classification, user.CrMasUserInformationLessor, "100",
+            PriceCarNo, null, null, null, null, null, null, null, null, operationAr, operationEn, status, reasons);
+        }
+
         public IActionResult SuccesssMessageForCarPrice()
         {
             _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });

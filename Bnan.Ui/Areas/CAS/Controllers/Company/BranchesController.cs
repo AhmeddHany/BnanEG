@@ -433,6 +433,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Company
 
             var branch = await _unitOfWork.CrCasBranchInformation.FindAsync(x => x.CrCasBranchInformationCode == code && x.CrCasBranchInformationLessor == user.CrMasUserInformationLessor);
             if (branch == null) return "false";
+            if (branch.CrCasBranchInformationCode == "100") return "udelete";
+
             try
             {
                 if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, status)) return "false_auth";

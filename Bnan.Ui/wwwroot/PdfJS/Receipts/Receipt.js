@@ -44,8 +44,11 @@ const drawReceipt = async (canvas, data) => {
             textColor: "#000000",
         },
     };
+    // تحميل الخطوط قبل استخدامها
+    await document.fonts.ready;
+    console.log("✅ الخطوط جاهزة للاستخدام");
+    await document.fonts.load(`${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`);
 
-    //await document.fonts.load(`${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`);
 
     ctx.font = `${fixedConfig.textStyle.fontWeight} ${fixedConfig.textStyle.fontSize}px ${fixedConfig.textStyle.fontFamily}`;
     ctx.fillStyle = fixedConfig.textStyle.textColor;
@@ -64,7 +67,12 @@ const drawReceipt = async (canvas, data) => {
 
     // رسم الصور
     fixedConfig.images.forEach(({ content, x, y, width, height }) => {
-        ctx.drawImage(content, x, y, width, height);
+        // التحقق من ان الصورة موجوده
+        if (content) {
+            ctx.drawImage(content, x, y, width, height);
+        } else {
+            console.warn("Image not found or not loaded, skipping.");
+        }
     });
 };
 

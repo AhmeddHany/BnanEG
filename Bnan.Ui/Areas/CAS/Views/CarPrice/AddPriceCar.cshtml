@@ -278,7 +278,7 @@
                                                     @localizer["CancelHour"]
                                                     <i class="fa-solid fa-star-of-life RequirdStar"></i>
                                                 </label>
-                                                <input type="text" id="contractCancellationHours" class="form-control inputs number-input" asp-for="CrCasPriceCarBasicCancelHour" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'')" data-section="1">
+                                                <input type="text" id="contractCancellationHours" class="form-control inputs number-input" asp-for="CrCasPriceCarBasicCancelHour" maxlength="2" oninput="this.value=this.value.replace(/[^0-9]/g,'')" data-section="1">
                                                 <div class="invaild">
                                                     <div class="invalid-feedback"><span asp-validation-for="CrCasPriceCarBasicCancelHour" class="text-danger"></span></div>
                                                 </div>
