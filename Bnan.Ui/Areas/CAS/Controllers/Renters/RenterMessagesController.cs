@@ -78,21 +78,47 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                 _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
                 return RedirectToAction("Index", "Home");
             }
+            bool Master_sms = true;
+            bool Master_whatsapp = true;
+            bool Master_email = true;
+            bool Master_whatsapp_connect = true;
+
             var Master_Lessor = _unitOfWork.CrMasLessorInformation.FindAll(x => x.CrMasLessorInformationCode == user.CrMasUserInformationLessor).FirstOrDefault();
+            var Master_sms_Lessor = _unitOfWork.CrCasLessorSmsConnect.FindAll(x => x.CrMasLessorSmsConnectLessor == user.CrMasUserInformationLessor).FirstOrDefault();
             if (Master_Lessor==null)
             {
-
-            }
-            if (Master_Lessor?.CrMasLessorInformationContEmail?.Length <5)
-            {
-
+                Master_whatsapp = false;
+                Master_email = false;
             }
             if ((Master_Lessor?.CrMasLessorInformationContWhatsappKey+ Master_Lessor?.CrMasLessorInformationContWhatsapp)?.Length < 5)
             {
-
+                Master_whatsapp = false;
+            }
+            if (Master_Lessor?.CrMasLessorInformationContEmail?.Length < 5 && Master_Lessor?.CrMasLessorInformationContEmailToken?.Length < 5)
+            {
+                Master_email = false;
+            }
+            if (Master_sms_Lessor == null || Master_sms_Lessor?.CrMasLessorSmsConnectStatus != "A")
+            {
+                Master_sms = false;
+            }
+            var checkConneted = await WhatsAppServicesExtension.CheckIsConnected(user.CrMasUserInformationLessor??"0");
+            // تحويل النص إلى كائن JSON
+            // تحويل النص إلى كائن من النوع Response
+            var jsonObject_check_Response = JsonConvert.DeserializeObject<dynamic>(checkConneted);
+            if (jsonObject_check_Response == null || jsonObject_check_Response?.status == false || jsonObject_check_Response?.key != "3")
+            {
+                Master_whatsapp_connect = false;
+                Master_whatsapp = false;
+                //return Json(new { status = false, message = $"جوال الشركة غير متصل" });
+                //return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_Error_BnanPhone_notConnected"]} " });
             }
 
-
+            if (!Master_sms && !Master_email && (!Master_whatsapp || !Master_whatsapp_connect))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["toasterForWhats_NoConnWay"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "Home");
+            }
             var rates = await _unitOfWork.CrMasSysEvaluation.FindAllAsNoTrackingAsync(x => x.CrMasSysEvaluationsClassification == "1");
 
             var thisCompanyData = await _unitOfWork.CrMasLessorInformation.FindAllAsNoTrackingAsync(x => x.CrMasLessorInformationCode == user.CrMasUserInformationLessor);
@@ -124,6 +150,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             VM.all_Renters = Renters;
             VM.Rates = rates;
             VM.thisCompanyData = thisCompanyData?.FirstOrDefault();
+            VM.Master_sms = Master_sms;
+            VM.Master_email = Master_email;
+            VM.Master_whatsapp = Master_whatsapp;
+            VM.Master_whatsapp_connect = Master_whatsapp_connect;
 
             //VM.all_status_sms = all_status_sms;
             return View(VM);
@@ -177,10 +207,22 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
         [HttpPost]
         public async Task<IActionResult> send_ToAll_Whatsapp(List<IFormFile> files, string text, string subject, string selectedValues, string all_mobiles, string all_mails)
         {
-            if (string.IsNullOrEmpty(all_mobiles))
+            if (string.IsNullOrEmpty(all_mobiles) || all_mobiles.Length < 5)
             {
-                //return Json(new { status = false, message = "رقم الهاتف والرسالة مطلوبان" });
-                return Json(new { status = false, message = $"{_localizer["RenterMessages_M_phoneAndMessageRequired"]}" });
+                //return Json(new { status = false, message = " خطأ بالهاتف المسجل رقم الهاتف والرسالة مطلوبان"  });
+                return Json(new { status = false, message = $"{_localizer["toasterForWhats_phoneRecordError"]}" });
+            }
+            List<string> list_mobiles = new List<string>(all_mobiles.Split(','));
+            list_mobiles = list_mobiles.Where(x => x.Length > 5).ToList();
+            if (list_mobiles.Count == 0)
+            {
+                // خطأ بالهاتف المسجل 
+                return Json(new { status = false, message = $"{_localizer["toasterForWhats_phoneRecordError"]}" });
+            }
+            if (text.Length < 2)
+            {
+                // رجى كتابة الرسالة بشكل صحيح
+                return Json(new { status = false, message = $"{_localizer["toasterForWhats_MessageEnterError"]}" });
             }
             var user = await _userManager.GetUserAsync(User);
 
@@ -188,8 +230,6 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             List<ResultResponseWithNo> listResultResponseWithNo = new List<ResultResponseWithNo>();
             var messageErrors = " ";
             //if (string.IsNullOrEmpty(text) || text == "undefined") text= "اهلا وسهلا";
-            string[] splitArray_mob = all_mobiles.Split(',');
-            List<string> list_mobiles = splitArray_mob.ToList();
             string[] splitArray_mails = all_mails.Split(',');
             List<string> list_emails = splitArray_mails.ToList();
             string[] splitArray_Renters = selectedValues.Split(',');
@@ -197,7 +237,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             //if(address == "undefined" ||address == "" || address == " " || address == null)
 
             MediaRequest request = new MediaRequest();
-            request.Phone = splitArray_mob[0];
+            request.Phone = list_mobiles[0];
             //request.CompanyId = "0000";
             request.CompanyId = user?.CrMasUserInformationLessor??"0";
             request.Message = text;
@@ -209,7 +249,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             if (jsonObject_check_Response == null  || jsonObject_check_Response?.status == false || jsonObject_check_Response?.key != "3")
             {
                 //return Json(new { status = false, message = $"جوال الشركة غير متصل" });
-                return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_Error_BnanPhone_notConnected"]} " });
+                return Json(new { status = false, message = $"{_localizer["toasterForWhats_whatsappServicesNotConnected_ForthisLessor"]} " });
             }
 
             ///////
@@ -228,7 +268,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                 list_mobiles = list_mobiles.Where(x => x.Length > 5).ToList();
                 if (list_mobiles.Count == 0)
                 {
-                    return Json(new { status = 3, message = "no mails" });
+                    return Json(new { status = false, message = $"{_localizer["toasterForWhats_phoneRecordError"]}" });
                 }
             }
             ///////
@@ -264,34 +304,37 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                         {
                             request.Phone = list_mobiles[ii];
                             result = await WhatsAppServicesExtension.SendMediaAsync(request.Phone, request.Message, request.CompanyId, request.fileBase64, request.filename);
-                            if (result != ApiResponseStatus.Success)
-                            {
-                                ResultResponseWithNo singleResult_Obj = new ResultResponseWithNo();
-                                singleResult_Obj.message = result;
-                                singleResult_Obj.companyId = list_Renters[ii];
-                                listResultResponseWithNo.Add(singleResult_Obj);
-                            }
+                            //if (result != ApiResponseStatus.Success)
+                            //{
+                            //    ResultResponseWithNo singleResult_Obj = new ResultResponseWithNo();
+                            //    singleResult_Obj.message = result;
+                            //    singleResult_Obj.companyId = list_Renters[ii];
+                            //    listResultResponseWithNo.Add(singleResult_Obj);
+                            //}
                         }
-                        listResultResponseWithNo.DistinctBy(y => y.companyId).ToList();
-                        foreach (var error in listResultResponseWithNo)
-                        {
-                            messageErrors = messageErrors + $" {_localizer["toasterForWhats_" + error.message]} : {error.companyId} ,";
-                        }
+                        //listResultResponseWithNo.DistinctBy(y => y.companyId).ToList();
+                        //foreach (var error in listResultResponseWithNo)
+                        //{
+                        //    messageErrors = messageErrors + $" {_localizer["toasterForWhats_" + error.message]} : {error.companyId} ,";
+                        //}
+                        //return Json(new { status = true, message = messageErrors });
+
                         // إرجاع الاستجابة الناجحة
-                        return Json(new { status = true, message = messageErrors });
+                        return Json(new { status = true, message = ApiResponseStatus.Success });
                     }
                     catch (Exception ex)
                     {
                         // التعامل مع الأخطاء
+                        return Json(new { status = false, message = _localizer["ToastFailed"] });
                         //return Json(new { status = false, message = $"حدث خطأ أثناء إرسال الرسالة للشركة رقم: {list_Renters[ii]} وكل ما بعدها" });
-                        return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_ErrorPart1"]} {list_Renters[ii]} {_localizer["RenterMessages_address_M_ErrorPart2"]} " });
+                        //return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_ErrorPart1"]} {list_Renters[ii]} {_localizer["RenterMessages_address_M_ErrorPart2"]} " });
                     }
                 }
             }
             if (string.IsNullOrEmpty(text))
             {
-                //return Json(new { status = false, message = "رقم الهاتف والرسالة مطلوبان" });
-                return Json(new { status = false, message = $"{_localizer["RenterMessages_M_phoneAndMessageRequired"]}" });
+                //return Json(new { status = false, message = "يرجى كتابة الرسالة بشكل صحي" });
+                return Json(new { status = false, message = $"{_localizer["toasterForWhats_MessageEnterError"]}" });
             }
             var i = 0;
             try
@@ -303,203 +346,35 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                 {
                     request.Phone = list_mobiles[i];
                     result = await WhatsAppServicesExtension.SendMessageAsync(request.Phone, request.Message, request.CompanyId);
-                    if (result != ApiResponseStatus.Success)
-                    {
-                        ResultResponseWithNo singleResult_Obj = new ResultResponseWithNo();
-                        singleResult_Obj.message = result;
-                        singleResult_Obj.companyId = list_Renters[i];
-                        listResultResponseWithNo.Add(singleResult_Obj);
-                    }
+                    //if (result != ApiResponseStatus.Success)
+                    //{
+                    //    ResultResponseWithNo singleResult_Obj = new ResultResponseWithNo();
+                    //    singleResult_Obj.message = result;
+                    //    singleResult_Obj.companyId = list_Renters[i];
+                    //    listResultResponseWithNo.Add(singleResult_Obj);
+                    //}
                 }
-                listResultResponseWithNo.DistinctBy(y => y.companyId).ToList();
-                foreach (var error in listResultResponseWithNo)
-                {
-                    messageErrors = messageErrors + $" {_localizer["toasterForWhats_" + error.message]} : {error.companyId} ,";
-                }
+                //listResultResponseWithNo.DistinctBy(y => y.companyId).ToList();
+                //foreach (var error in listResultResponseWithNo)
+                //{
+                //    messageErrors = messageErrors + $" {_localizer["toasterForWhats_" + error.message]} : {error.companyId} ,";
+                //}
+                //return Json(new { status = true, message = messageErrors });
+
                 // إرجاع الاستجابة الناجحة
-                return Json(new { status = true, message = messageErrors });
+                return Json(new { status = true, message = ApiResponseStatus.Success });
+
                 //return BadRequest("No file uploaded.");
             }
             catch (Exception ex)
             {
                 // التعامل مع الأخطاء
+                return Json(new { status = false, message = _localizer["ToastFailed"] });
                 //return Json(new { status = false, message = $"حدث خطأ أثناء إرسال الرسالة للشركة رقم: {list_Renters[i]} وكل ما بعدها" });
-                return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_ErrorPart1"]} {list_Renters[i]} {_localizer["RenterMessages_address_M_ErrorPart2"]} " });
+                //return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_ErrorPart1"]} {list_Renters[i]} {_localizer["RenterMessages_address_M_ErrorPart2"]} " });
             }
 
         }
-
-
-        //[HttpPost]
-        //public async Task<IActionResult> send_ToAll_Email(List<IFormFile> files, string text, string subject, string selectedValues, string all_mobiles, string all_mails)
-        //{
-        //    if (string.IsNullOrEmpty(all_mails))
-        //    {
-        //        //return Json(new { status = false, message = "رقم الهاتف والرسالة مطلوبان" });
-        //        return Json(new { status = false, message = $"{_localizer["RenterMessages_M_phoneAndMessageRequired"]}" });
-        //    }
-        //    var user = await _userManager.GetUserAsync(User);
-
-        //    IFormFile file = null;
-        //    List<ResultResponseWithNo> listResultResponseWithNo = new List<ResultResponseWithNo>();
-        //    var messageErrors = " ";
-        //    //if (string.IsNullOrEmpty(text) || text == "undefined") text= "اهلا وسهلا";
-        //    string[] splitArray_mob = all_mobiles.Split(',');
-        //    List<string> list_mobiles = splitArray_mob.ToList();
-        //    string[] splitArray_mails = all_mails.Split(',');
-        //    List<string> list_emails = splitArray_mails.ToList();
-        //    string[] splitArray_Renters = selectedValues.Split(',');
-        //    List<string> list_Renters = splitArray_Renters.ToList();
-        //    //if(address == "undefined" ||address == "" || address == " " || address == null)
-
-        //    MediaRequest request = new MediaRequest();
-        //    request.Phone = splitArray_mob[0];
-        //    //request.CompanyId = "0000";
-        //    request.CompanyId = user?.CrMasUserInformationLessor ?? "0";
-        //    request.Message = text;
-
-        //    ////var checkConneted = await WhatsAppServicesExtension.CheckIsConnected(request.CompanyId);
-        //    ////// تحويل النص إلى كائن JSON
-        //    ////// تحويل النص إلى كائن من النوع Response
-        //    ////var jsonObject_check_Response = JsonConvert.DeserializeObject<dynamic>(checkConneted);
-        //    ////if (jsonObject_check_Response == null || jsonObject_check_Response?.status == false || jsonObject_check_Response?.key != "3")
-        //    ////{
-        //    ////    //return Json(new { status = false, message = $"جوال الشركة غير متصل" });
-        //    ////    return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_Error_BnanPhone_notConnected"]} " });
-        //    ////}
-        //    var result = "";
-
-        //    if (files.Count > 0)
-        //    {
-        //        file = files[0];
-        //    }
-
-        //    if (file != null && file.Length > 0)
-        //    {
-        //        string fileName = Path.GetFileName(file.FileName);  // اسم الملف
-        //        // قراءة محتويات الملف في مصفوفة بايت
-        //        using (var memoryStream = new MemoryStream())
-        //        {
-        //            await file.CopyToAsync(memoryStream);
-
-        //            // تحويل المصفوفة البايت إلى Base64 string
-        //            string base64String = Convert.ToBase64String(memoryStream.ToArray());
-
-        //            // طباعة الـ Base64 string للتأكيد
-        //            Console.WriteLine(base64String);
-        //            request.fileBase64 = base64String;
-        //            request.filename = fileName;
-        //            //// يمكنك الآن إرسال base64String أو تخزينه حسب الحاجة
-        //            //return Ok(new { base64 = base64String });
-
-        //        }
-        //    }
-        //    if (string.IsNullOrEmpty(text))
-        //    {
-        //        //return Json(new { status = false, message = "رقم الهاتف والرسالة مطلوبان" });
-        //        return Json(new { status = false, message = $"{_localizer["RenterMessages_M_phoneAndMessageRequired"]}" });
-        //    }
-        //    var i = 0;
-        //    try
-        //    {
-        //        // // استخدام الـ Extension Method لإرسال الرسالة
-        //        //var result = await WhatsAppServicesExtension.SendMessageAsync(request.Phone, request.Message, request.CompanyId);
-        //        //string phone, string message, string companyId, string fileBase64, string filename
-        //        for (i = 0; i < list_Renters.Count; i++)
-        //        {
-        //            request.Phone = list_mobiles[i];
-        //            result = await SendEmailAsync(request.Phone, request.Message, request.CompanyId, request.CompanyId);
-        //            if (result != ApiResponseStatus.Success)
-        //            {
-        //                ResultResponseWithNo singleResult_Obj = new ResultResponseWithNo();
-        //                singleResult_Obj.message = result;
-        //                singleResult_Obj.companyId = list_Renters[i];
-        //                listResultResponseWithNo.Add(singleResult_Obj);
-        //            }
-        //        }
-        //        listResultResponseWithNo.DistinctBy(y => y.companyId).ToList();
-        //        foreach (var error in listResultResponseWithNo)
-        //        {
-        //            messageErrors = messageErrors + $" {_localizer["toasterForWhats_" + error.message]} : {error.companyId} ,";
-        //        }
-        //        // إرجاع الاستجابة الناجحة
-        //        return Json(new { status = true, message = messageErrors });
-        //        //return BadRequest("No file uploaded.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // التعامل مع الأخطاء
-        //        //return Json(new { status = false, message = $"حدث خطأ أثناء إرسال الرسالة للشركة رقم: {list_Renters[i]} وكل ما بعدها" });
-        //        return Json(new { status = false, message = $"{_localizer["RenterMessages_address_M_ErrorPart1"]} {list_Renters[i]} {_localizer["RenterMessages_address_M_ErrorPart2"]} " });
-        //    }
-
-        //}
-
-
-
-        //public static async Task<string> SendEmailAsync(string mail, string message, string title, string companyId)
-        //{
-        //    // إعداد البيانات بتنسيق x-www-form-urlencoded
-        //    var formData = new Dictionary<string, string>
-        //{
-        //    { "mail", mail },
-        //    { "message", message },
-        //    { "title", title },
-
-        //    { "id", companyId }
-        //};
-
-        //    var data = new FormUrlEncodedContent(formData);
-
-        //    try
-        //    {
-        //        // إعداد بيانات البريد الإلكتروني
-
-        //        // إعداد البيانات اللازمة
-        //        var smtpServer = "smtp.office365.com"; // خادم SMTP لـ Outlook
-        //        var smtpPort = 587; // المنفذ الذي يدعم STARTTLS
-        //        var fromEmail = "mazen144essam@yahoo.com"; // بريد المرسل
-        //        var fromPassword = "moza123456"; // كلمة مرور التطبيق (إذا كنت تستخدم المصادقة الثنائية)
-        //        var toEmail = "mazen142000@yahoo.com"; // بريد المستلم
-        //        var subject = "Test Email";
-        //        var body = "This is a test email sent via Outlook SMTP.";
-
-
-        //        // إعداد SmtpClient
-        //        using (var smtpClient = new SmtpClient(smtpServer, smtpPort))
-        //        {
-        //            smtpClient.Credentials = new NetworkCredential(fromEmail, fromPassword); // المصادقة باستخدام البريد وكلمة المرور
-        //            smtpClient.EnableSsl = true; // تأكد من أن SSL مفعل
-        //            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-
-        //            // إعداد الرسالة
-        //            var mailMessage = new MailMessage(fromEmail, toEmail, subject, body);
-
-        //            // إرسال البريد الإلكتروني
-        //            smtpClient.Send(mailMessage);
-        //            Console.WriteLine("Email sent successfully.");
-        //        }
-
-        //        // إرسال رد بنجاح
-        //        //return Content("Email sent successfully.");
-
-        //        //var content = await response.Content.ReadAsStringAsync();
-        //        //var jsonResult = JsonConvert.DeserializeObject<dynamic>(content);
-
-        //        // // التحقق من الحالة
-        //        //if (jsonResult != null && (jsonResult.status == true || jsonResult.status.ToString().ToLower() == "true")) return ApiResponseStatus.Success;
-        //        return ApiResponseStatus.Success;
-        //        return ApiResponseStatus.Failure;
-        //    }
-        //    catch (HttpRequestException)
-        //    {
-        //        return ApiResponseStatus.ServerError;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return ApiResponseStatus.ServerError;
-        //    }
-        //}
 
         [HttpPost]
         //public static async Task<string> SendEmailAsync(string mail, string messageText, string title, string companyId)
@@ -510,17 +385,17 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
             IFormFile file = null;
             if(all_mails == null || all_mails.Length < 5)
             {
-                return Json(new { status = 2, message = "no mails selected" });
+                return Json(new { status = 2, message = $"{_localizer["toasterForWhats_EmailRecordError"]}", description = "no mails selected" });
             }
             if ( text == " " || text == "" || subject == " " || subject == "")
             {
-                return Json(new { status = 0, message = "no Text or Subject" });
+                return Json(new { status = 0, message = $"{_localizer["toasterForWhats_EmailEnterError"]}", description = "no Text or Subject" });
             }
             List<string> list_mails = new List<string>(all_mails.Split(','));
             list_mails = list_mails.Where(x=>x.Length > 5).ToList();
             if(list_mails.Count == 0)
             {
-                return Json(new { status = 3, message = "no mails" });
+                return Json(new { status = 3, message = $"{_localizer["toasterForWhats_EmailRecordError"]}", description = "no mails selected" });
             }
 
             if (files.Count > 0)
@@ -534,7 +409,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                 var Master_Lessor = _unitOfWork.CrMasLessorInformation.FindAll(x => x.CrMasLessorInformationCode == user.CrMasUserInformationLessor).FirstOrDefault();
                 var Master_Lessor_mail = Master_Lessor?.CrMasLessorInformationContEmail;
                 var Master_Lessor_EnName = Master_Lessor?.CrMasLessorInformationEnShortName;
-                var Master_Lessor_Password = "cgve uili qekq tlcu";
+                //var Master_Lessor_Password = "cgve uili qekq tlcu";
+                var Master_Lessor_Password = Master_Lessor?.CrMasLessorInformationContEmailToken;
 
                 ///////
                 var userData = _unitOfWork.CrMasUserInformation.FindAll(x => x.CrMasUserInformationCode == user.CrMasUserInformationCode).FirstOrDefault();
@@ -548,16 +424,17 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Renters
                     list_mails = list_mails.Where(x => x.Length > 5).ToList();
                     if (list_mails.Count == 0)
                     {
-                        return Json(new { status = 3, message = "no mails" });
+                        return Json(new { status = 3, message = $"{_localizer["toasterForWhats_EmailRecordError"]}", description = "no mails selected" });
                     }
                 }
                 ///////
 
-                if (Master_Lessor_mail?.Length < 5)
+                if (Master_Lessor_mail?.Length < 5 && Master_Lessor_Password?.Length < 5) 
                 {
-                    return Json(new { status = 4, message = "no lessor Mail" });
+                    return Json(new { status = 4, message = $"{_localizer["toasterForWhats_EmailNo_ForthisLessor"]}", description = "no lessor Mail لا يوجد بريد للشركة" });
                 }
-                var message = new MimeMessage();
+
+                    var message = new MimeMessage();
                 //message.From.Add(new MailboxAddress("hazem", "hazem14442000@gmail.com"));
                 message.From.Add(new MailboxAddress(Master_Lessor_EnName, Master_Lessor_mail));
                 //message.To.Add(new MailboxAddress("essam", "mazen144essam@gmail.com"));

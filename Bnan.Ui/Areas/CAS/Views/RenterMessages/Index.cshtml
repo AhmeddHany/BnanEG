@@ -30,6 +30,10 @@
     <div class="container main-container">
         <form action="">
             <td hidden> <input type="text" id="This_Company_Mail" name="This_Company_Mail" value="@(Model.thisCompanyData?.CrMasLessorInformationContEmail?.Trim())" hidden /></td>
+            <td hidden> <input type="text" id="Master_sms" name="Master_sms" value="@(Model.Master_sms)" hidden /></td>
+            <td hidden> <input type="text" id="Master_email" name="Master_email" value="@(Model.Master_email)" hidden /></td>
+            <td hidden> <input type="text" id="Master_whatsapp" name="Master_whatsapp" value="@(Model.Master_whatsapp)" hidden /></td>
+            <td hidden> <input type="text" id="Master_whatsapp_connect" name="Master_whatsapp_connect" value="@(Model.Master_whatsapp_connect)" hidden /></td>
             <div class="row g-3 mb-2">
                 <div class="col">
                     <h3>@localizer["RenterMessages_Companies"]</h3>
@@ -184,19 +188,29 @@
     <script>
         document.getElementById('MessagesModalBtn').addEventListener('click', function () {
             $("#sms").prop("disabled", true);
-            $("#WhatsApp").prop("disabled", true);
+            $("#whatsapp").prop("disabled", true);
             $("#email").prop("disabled", true);
             $("#div_sms").css("opacity", 0.5);
             $("#div_whatsapp").css("opacity", 0.5);
             $("#div_email").css("opacity", 0.5);
             $('#clip').removeClass('d-none');
             console.log("page2");
-
-            const checkedValues = Array.from(document.querySelectorAll('.checkbox:checked')).map(checkbox => checkbox.name);
-            console.log(checkedValues);
             var sms = true;
             var mobile = true;
             var mail = true;
+            var master_sms = $("#Master_sms").val();
+            var master_email = $("#Master_email").val();
+            var master_whatsapp = $("#Master_whatsapp").val();
+            var master_whatsapp_connect = $("#Master_whatsapp_connect").val();
+            if (master_sms != "value") sms = false;
+            if (master_email != "value") mail = false;
+            if (master_whatsapp != "value") mobile = false;
+            if (master_whatsapp_connect != "value") sms = false;
+            //if (master_whatsapp_connect != "value") showErrorToast_any_error("@localizer["toasterForWhats_whatsappServicesNotConnected_ForthisLessor"]");
+            
+            const checkedValues = Array.from(document.querySelectorAll('.checkbox:checked')).map(checkbox => checkbox.name);
+            console.log(checkedValues);
+
             if (checkedValues.length > 0) {
                 if (checkedValues[0]=="All"){
                     checkedValues.splice(0, 1);
@@ -223,7 +237,7 @@
                     $("#div_sms").css("opacity", 1);
                 }
                 if (mobile == true) {
-                    $("#WhatsApp").prop("disabled", false);
+                    $("#whatsapp").prop("disabled", false);
                     $("#div_whatsapp").css("opacity", 1);
                 }
                 if (mail == true) {
@@ -236,7 +250,7 @@
                     $('input[name="sendway"]:checked').closest('.messageWay').addClass('active');
                     let selectedOption3 = $('input[name="sendway"]:checked').val();
                     $('input[name="sendway"]:checked').trigger('change');
-                    if (selectedOption3 === 'sms') { $('#clip').addClass('d-none'); }
+                    //if (selectedOption3 === 'sms') { $('#clip').addClass('d-none'); }
                     $("#MessagesModal").modal("show");
                 }
                 else{
@@ -500,12 +514,12 @@
                         if (response.status == true && response.message == '@ApiResponseStatus.Success') {
                             showToast_successfuly();
                         }
-                        else if (response.status == 2) {
-
-                        }
-                        else {
+                        else if (response.status == false) {
                             console.log(response.message);
                             showErrorToast_any_error("@localizer["ToastFailed"]");
+                        }
+                        else{
+                            showErrorToast_any_error(response.message);
                         }
                         resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
                     },

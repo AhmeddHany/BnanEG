@@ -21,6 +21,11 @@ namespace Bnan.Ui.ViewModels.CAS.Renters
         public List<Renter_SMS_VM>? all_status_sms = new List<Renter_SMS_VM>();
         public List<CrMasSysEvaluation>? Rates = new List<CrMasSysEvaluation>();
         public CrMasLessorInformation? thisCompanyData { get; set; }
+        public bool? Master_sms { get; set; }
+        public bool? Master_whatsapp { get; set; }
+        public bool? Master_email { get; set; }
+        public bool? Master_whatsapp_connect { get; set; }
+
 
         //public List<Car_TypeVM> all_Cars_Type_distinct = new List<Car_TypeVM>();
 

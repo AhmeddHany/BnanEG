@@ -24,6 +24,10 @@
     <div class="container main-container">
         <form action="">
             <td hidden> <input type="text" id="bnanMail" name="bnanMail" value="@(Model.all_lessors[0].CrMasLessorInformationContEmail?.Trim())" hidden /></td>
+            <td hidden> <input type="text" id="Master_sms" name="Master_sms" value="@(Model.Master_sms)" hidden /></td>
+            <td hidden> <input type="text" id="Master_email" name="Master_email" value="@(Model.Master_email)" hidden /></td>
+            <td hidden> <input type="text" id="Master_whatsapp" name="Master_whatsapp" value="@(Model.Master_whatsapp)" hidden /></td>
+            <td hidden> <input type="text" id="Master_whatsapp_connect" name="Master_whatsapp_connect" value="@(Model.Master_whatsapp_connect)" hidden /></td>
             <div class="row g-3 mb-2">
                 <div class="col">
                     <h3> @localizer["CompanyMessages_Companies"] </h3>
@@ -244,31 +248,46 @@
     <script>
         document.getElementById('MessagesModalBtn').addEventListener('click', function () {
             $("#sms").prop("disabled", true);
-            $("#WhatsApp").prop("disabled", true);
+            $("#whatsapp").prop("disabled", true);
             $("#email").prop("disabled", true);
             $("#div_sms").css("opacity", 0.5);
             $("#div_whatsapp").css("opacity", 0.5);
             $("#div_email").css("opacity", 0.5);
             $('#clip').removeClass('d-none');
             console.log("page2");
-
-            const checkedValues = Array.from(document.querySelectorAll('.checkbox:checked')).map(checkbox => checkbox.name);
-            console.log(checkedValues);
             var sms = true;
             var mobile = true;
             var mail = true;
+            var master_sms = $("#Master_sms").val();
+            var master_email = $("#Master_email").val();
+            var master_whatsapp = $("#Master_whatsapp").val();
+            var master_whatsapp_connect = $("#Master_whatsapp_connect").val();
+            if (master_sms != "value") sms = false;
+            if (master_email != "value") mail = false;
+            if (master_whatsapp != "value") mobile = false;
+            if (master_whatsapp_connect != "value") sms = false;
+            //if (master_whatsapp_connect != "value") showErrorToast_any_error("@localizer["toasterForWhats_whatsappServicesNotConnected_ForthisLessor"]");
+
+            const checkedValues = Array.from(document.querySelectorAll('.checkbox:checked')).map(checkbox => checkbox.name);
+            console.log(checkedValues);
             if (checkedValues.length > 0) {
                 if (checkedValues[0]=="All"){
                     checkedValues.splice(0, 1);
                 }
+                if (checkedValues.length == 1) {
+                    var this_sms = $("#sms_" + checkedValues[0] + "").val();
+                    if (this_sms != "A") sms = false;
+                    var this_mobile = $("#mob_" + checkedValues[0] + "").val();
+                    if (this_mobile.length < 5) mobile = false;
+                    var this_mail = $("#mail_" + checkedValues[0] + "").val();
+                    if (this_mail.length < 5) mail = false;
+                }
+
                 for (let i = 0; i < checkedValues.length;i+=1) {
                     var this_sms = $("#sms_" + checkedValues[i] + "").val();
                     console.log(this_sms);
-                    if (this_sms != "A") sms = false;
                     var this_mobile = $("#mob_" + checkedValues[i]+ "").val();
-                    if (this_mobile.length < 5) mobile = false;
                     var this_mail = $("#mail_" + checkedValues[i] + "").val();
-                    if (this_mail.length < 5) mail = false;
                     console.log({ this_sms, this_mobile, this_mail });
                 }
                 let bnanMail = $("#bnanMail").val();
@@ -278,7 +297,7 @@
                     $("#div_sms").css("opacity", 1);
                 }
                 if (mobile == true) {
-                    $("#WhatsApp").prop("disabled", false);
+                    $("#whatsapp").prop("disabled", false);
                     $("#div_whatsapp").css("opacity", 1);
                 }
                 if (mail == true) {
@@ -430,13 +449,15 @@
                 });
 
                 const text = $("#messageContent").val();
-                const address = $("#TitleSubject").val();
+                const subject = $("#TitleSubject").val();
                 formData.append('text', text);
-                formData.append('address', address);
+                formData.append('subject', subject);
 
 
                 // الحصول على كل القيم المحددة
-                const selectedValues = Array.from(document.querySelectorAll('.checkbox:checked')).map(checkbox => checkbox.name);
+                const selectedValues = Array.from(document.querySelectorAll('.checkbox'))
+                    .filter(checkbox => checkbox.checked)  // اختر فقط العناصر المحددة
+                    .map(checkbox => checkbox.name);  // احصل على الأسماء للقيم المحددة
 
                 // عرض القيم المحددة
                 console.log(selectedValues);
@@ -521,10 +542,10 @@
                     console.log(response);
                         if (response.status == true && response.message == '@ApiResponseStatus.Success') {
                             showToast_successfuly();
-                    }
-                    else{
+                        }
+                        else {
                             showErrorToast_any_error(response.message);
-                    }
+                        }
                     resolve(response); // عند نجاح الطلب، نقوم بإرجاع البيانات باستخدام resolve
                 },
                 error: function (error) {
@@ -534,6 +555,8 @@
             });
             });
         }
+
+
         async function send_ToAll_Email(formData) {
             return new Promise((resolve, reject) => {
 
@@ -544,11 +567,15 @@
                     contentType: false,  // مهم جدًا لرفع الملفات
                     url: "@Url.Action("send_ToAll_Email", "CompanyMessages", new { Area = "MAS" })",
                     success: function (response) {
-                        //$(".LoaderRun_Center_div").css("display", "none");
+                        //$("#min-loader").toggleClass("d-none", true);
                         //$(".chart22").html(response);
                         console.log(response);
                         if (response.status == true && response.message == '@ApiResponseStatus.Success') {
                             showToast_successfuly();
+                        }
+                        else if (response.status == false) {
+                            console.log(response.message);
+                            showErrorToast_any_error("@localizer["ToastFailed"]");
                         }
                         else {
                             showErrorToast_any_error(response.message);

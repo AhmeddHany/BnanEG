@@ -19,6 +19,10 @@ namespace Bnan.Ui.ViewModels.MAS
 
         public List<CrMasLessorInformation> all_lessors = new List<CrMasLessorInformation>();
         public List<lessor_SMS_VM> all_status_sms = new List<lessor_SMS_VM>();
+        public bool? Master_sms { get; set; }
+        public bool? Master_whatsapp { get; set; }
+        public bool? Master_email { get; set; }
+        public bool? Master_whatsapp_connect { get; set; }
         //public List<Car_TypeVM> all_Cars_Type_distinct = new List<Car_TypeVM>();
 
         //public List<MASChartBranchDataVM> listMasChartdataVM = new List<MASChartBranchDataVM>();

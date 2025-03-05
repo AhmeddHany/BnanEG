@@ -135,6 +135,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
 
             ViewBag.radio = "All";
 
+            all_RenterBasicContract = all_RenterBasicContract.OrderBy(x => x.CrCasRenterContractBasicExpectedEndDate).ToList();
 
             listReportActiveContract_CasVM VM = new listReportActiveContract_CasVM();
             //VM.all_RentersMas = allRenters;
@@ -223,30 +224,31 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                 //VM.all_RentersMas = allRenters;
                 VM.all_status = allStatus_contracts;
                 VM.all_Invoices = all_Invoices;
-                if (status == "all")
+                if (status == "All")
                 {
+                    AllContracts = AllContracts.OrderBy(x => x.CrCasRenterContractBasicExpectedEndDate).ToList();
                     VM.all_contractBasic = AllContracts;
                     return PartialView("_DataTableReportActiveContract_Cas", VM);
                 }
                 else if(status == "today")
                 {
                     var query_Alert1 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus == "2").ToList();
-                    AllContracts = AllContracts.Where(x => query_Alert1.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo && x.CrCasRenterContractBasicStatus == "A")).OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+                    AllContracts = AllContracts.Where(x => query_Alert1.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo && x.CrCasRenterContractBasicStatus == "A")).OrderBy(x => x.CrCasRenterContractBasicExpectedEndDate).ToList();
                 }
                 else if (status == "tomorrow")
                 {
                     var query_Alert2 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus == "1").ToList();
-                    AllContracts = AllContracts.Where(x => query_Alert2.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo)).OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+                    AllContracts = AllContracts.Where(x => query_Alert2.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo)).OrderBy(x => x.CrCasRenterContractBasicExpectedEndDate).ToList();
                 }
                 else if (status == "later")
                 {
                     var query_Alert3 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus == "0").ToList();
-                    AllContracts = AllContracts.Where(x => query_Alert3.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo)).OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+                    AllContracts = AllContracts.Where(x => query_Alert3.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo)).OrderBy(x => x.CrCasRenterContractBasicExpectedEndDate).ToList();
                 }
                 else if (status == "ended")
                 {
                     var query_Alert3 = allStatus_contracts.Where(x => x.CrCasRenterContractAlertContractActiviteStatus == "3").ToList();
-                    AllContracts = AllContracts.Where(x => query_Alert3.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo)).OrderBy(x => x.CrCasRenterContractBasicExpectedStartDate).ToList();
+                    AllContracts = AllContracts.Where(x => query_Alert3.Any(y => y.CrCasRenterContractAlertNo == x.CrCasRenterContractBasicNo)).OrderBy(x => x.CrCasRenterContractBasicExpectedEndDate).ToList();
                 }
                 VM.all_contractBasic = AllContracts;
                 return PartialView("_DataTableReportActiveContract_Cas", VM);
