@@ -1240,8 +1240,10 @@
     // CarForSale
     "CarForSaleUpdate": "إجراءات بيع السيارة",
     "AddedDate": "تاريخ الانضمام",
-    "CarsPictures": "صور السيارة"
-
+    "CarsPictures": "صور السيارة",
+    "UpdateCarForSaleInfo": "تحديث بيانات إجراءات بيع السيارة",
+    "OfferPrice": "سعر العرض",
+    "ActualSalePrice": "سعر البيع الفعلي"
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 

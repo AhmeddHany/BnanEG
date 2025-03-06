@@ -156,5 +156,37 @@ namespace Bnan.Inferastructure.Repository
             }
             return string.Empty;
         }
+
+        public async Task<bool> SoldCar(CrCasCarInformation crCasCarInformation)
+        {
+            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == crCasCarInformation.CrCasCarInformationSerailNo &&
+                                                                           x.CrCasCarInformationLessor == crCasCarInformation.CrCasCarInformationLessor);
+            if (car != null)
+            {
+
+                car.CrCasCarInformationOfferedSaleDate = crCasCarInformation.CrCasCarInformationOfferedSaleDate;
+                car.CrCasCarInformationOfferValueSale = crCasCarInformation.CrCasCarInformationOfferValueSale;
+                car.CrCasCarInformationReasons = crCasCarInformation.CrCasCarInformationReasons;
+                car.CrCasCarInformationForSaleStatus = crCasCarInformation.CrCasCarInformationForSaleStatus;
+                car.CrCasCarInformationStatus = crCasCarInformation.CrCasCarInformationStatus;
+                if (_unitOfWork.CrCasCarInformation.Update(car) != null) return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> CancelOffer(string serialNo, string lessorCode)
+        {
+            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == serialNo &&
+                                                                          x.CrCasCarInformationLessor == lessorCode);
+            if (car != null)
+            {
+                car.CrCasCarInformationOfferedSaleDate = null;
+                car.CrCasCarInformationOfferValueSale = 0;
+                car.CrCasCarInformationReasons = "";
+                car.CrCasCarInformationForSaleStatus = Status.Active;
+                if (_unitOfWork.CrCasCarInformation.Update(car) != null) return true;
+            }
+            return false;
+        }
     }
 }

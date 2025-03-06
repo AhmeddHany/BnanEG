@@ -1277,7 +1277,10 @@
     // CarForSale
     "CarForSaleUpdate": "Car Sale Procedures",
     "AddedDate": "Joining Date",
-    "CarsPictures": "Car Pictures"
+    "CarsPictures": "Car Pictures",
+    "UpdateCarForSaleInfo": "Update Car Sale Information",
+    "OfferPrice": "Offer Price",
+    "ActualSalePrice": "Actual Sale Price"
   },
   "ModalAutoLogout": "Your session is about to end!",
   "Arabic": "Arabic",

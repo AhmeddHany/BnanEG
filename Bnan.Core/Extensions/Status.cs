@@ -13,6 +13,7 @@
         public static string ForSale { get; set; } = "T";
         public static string RendAndForSale { get; set; } = "V";
         public static string Sold { get; set; } = "S";
+        public static string CancelOffer { get; set; } = "C";
         public static string Maintaince { get; set; } = "M";
         public static string Wating { get; set; } = "W";
         public static string Message { get; set; } = "M";
