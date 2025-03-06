@@ -377,7 +377,6 @@
             $('#MessageForm').submit(async function (event) {
                 event.preventDefault();
 
-                // //const checkedValues2 = Array.from(document.querySelectorAll('.checkbox:checked')).map(checkbox => checkbox.name);
                 // Create a new FormData object to hold the files
                 var formData = new FormData();
                 selectedFiles.forEach(function (file) {
@@ -417,42 +416,8 @@
                 });
                 formData.append('all_mobiles', all_mobiles);
                 formData.append('all_mails', all_mails);
-
-
-                // Uncomment this section to perform the actual AJAX request
-                /*
-                $.ajax({
-                    url: 'your-submit-url', // Replace with your URL
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        // Handle success
-                        console.log('Files submitted successfully:', response);
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error
-                        console.error('Submission failed:', error);
-                    }
-                });
-                */
-                
-        //$.ajax({
-        //url: "@Url.Action("send_ToAll_Whatsapp", "RenterMessages", new { Area = "CAS" })", // Replace with your URL
-        //type: 'POST',
-        //data: formData,
-        //processData: false,  // مهم جدًا لرفع الملفات
-        //contentType: false,  // مهم جدًا لرفع الملفات
-        //success: function(response) {
-        // // Handle success
-        // console.log('Files submitted successfully:', response);
-        //},
-        //error: function(xhr, status, error) {
-        // // Handle error
-        // console.error('Submission failed:', error);
-        //}
-        //});
+           
+               
                 var selectedOption2 = $('input[name="sendway"]:checked').val();
                 if (selectedOption2 === 'sms') {
                     //await send_ToAll_Whatsapp(formData);
@@ -480,8 +445,6 @@
                 contentType: false,  // مهم جدًا لرفع الملفات
                     url: "@Url.Action("send_ToAll_Whatsapp", "RenterMessages", new { Area = "CAS" })",
                 success: function (response) {
-                    //$("#min-loader").toggleClass("d-none", true);
-                    //$(".chart22").html(response);
                     console.log(response);
                         if (response.status == true && response.message == '@ApiResponseStatus.Success') {
                             showToast_successfuly();
@@ -508,8 +471,6 @@
                     contentType: false,  // مهم جدًا لرفع الملفات
                     url: "@Url.Action("send_ToAll_Email", "RenterMessages", new { Area = "CAS" })",
                     success: function (response) {
-                        //$("#min-loader").toggleClass("d-none", true);
-                        //$(".chart22").html(response);
                         console.log(response);
                         if (response.status == true && response.message == '@ApiResponseStatus.Success') {
                             showToast_successfuly();
