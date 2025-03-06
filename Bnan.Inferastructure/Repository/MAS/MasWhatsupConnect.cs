@@ -16,7 +16,7 @@ namespace Bnan.Inferastructure.Repository.MAS
         public async Task<bool> AddDefaultWhatsupConnect(string LessorCode)
         {
             CrCasLessorWhatsupConnect crCasLessorConnect = new CrCasLessorWhatsupConnect();
-            crCasLessorConnect.CrCasLessorWhatsupConnectId = await GetNextWhatsupConnectId(LessorCode);
+            //crCasLessorConnect.CrCasLessorWhatsupConnectId = await GetNextWhatsupConnectId(LessorCode);
             crCasLessorConnect.CrCasLessorWhatsupConnectLessor = LessorCode;
             crCasLessorConnect.CrCasLessorWhatsupConnectSerial = 0;
             crCasLessorConnect.CrCasLessorWhatsupConnectStatus = Status.Renewed;
@@ -35,7 +35,7 @@ namespace Bnan.Inferastructure.Repository.MAS
             else maxSerial = nextSerial;
 
             CrCasLessorWhatsupConnect crCasLessorConnect = new CrCasLessorWhatsupConnect();
-            crCasLessorConnect.CrCasLessorWhatsupConnectId = await GetNextWhatsupConnectId(LessorCode);
+            //crCasLessorConnect.CrCasLessorWhatsupConnectId = await GetNextWhatsupConnectId(LessorCode);
             crCasLessorConnect.CrCasLessorWhatsupConnectLessor = LessorCode;
             crCasLessorConnect.CrCasLessorWhatsupConnectSerial = maxSerial;
             crCasLessorConnect.CrCasLessorWhatsupConnectStatus = Status.Renewed;
@@ -88,35 +88,35 @@ namespace Bnan.Inferastructure.Repository.MAS
             return lastConnect?.OrderByDescending(x => x.CrCasLessorWhatsupConnectSerial).FirstOrDefault();
         }
 
-        private async Task<string> GetNextWhatsupConnectId(string lessorCode)
-        {
-            // اجلب السجلات من قاعدة البيانات بناءً على lessorCode
-            var lastConnect = await _unitOfWork.CrCasLessorWhatsupConnect
-                .FindAllAsync(x => x.CrCasLessorWhatsupConnectLessor == lessorCode);
+        //private async Task<string> GetNextWhatsupConnectId(string lessorCode)
+        //{
+        //    // اجلب السجلات من قاعدة البيانات بناءً على lessorCode
+        //    var lastConnect = await _unitOfWork.CrCasLessorWhatsupConnect
+        //        .FindAllAsync(x => x.CrCasLessorWhatsupConnectLessor == lessorCode);
 
-            // احصل على آخر رقم ID بناءً على الترتيب التنازلي
-            var lastRecord = lastConnect
-                .OrderByDescending(x => x.CrCasLessorWhatsupConnectId)
-                .FirstOrDefault()?.CrCasLessorWhatsupConnectId;
+        //    // احصل على آخر رقم ID بناءً على الترتيب التنازلي
+        //    var lastRecord = lastConnect
+        //        .OrderByDescending(x => x.CrCasLessorWhatsupConnectId)
+        //        .FirstOrDefault()?.CrCasLessorWhatsupConnectId;
 
-            if (!string.IsNullOrEmpty(lastRecord))
-            {
-                // قم بتقسيم الرقم إلى البادئة (Prefix) والرقم التسلسلي
-                var prefix = lastRecord.Substring(0, lastRecord.Length - 6); // الجزء بدون الرقم التسلسلي
-                var serialNumber = lastRecord.Substring(lastRecord.Length - 6, 6); // الرقم التسلسلي الأخير
+        //    if (!string.IsNullOrEmpty(lastRecord))
+        //    {
+        //        // قم بتقسيم الرقم إلى البادئة (Prefix) والرقم التسلسلي
+        //        var prefix = lastRecord.Substring(0, lastRecord.Length - 6); // الجزء بدون الرقم التسلسلي
+        //        var serialNumber = lastRecord.Substring(lastRecord.Length - 6, 6); // الرقم التسلسلي الأخير
 
-                // زيادة الرقم التسلسلي بمقدار 1
-                Int64 nextValue = Int64.Parse(serialNumber) + 1;
+        //        // زيادة الرقم التسلسلي بمقدار 1
+        //        Int64 nextValue = Int64.Parse(serialNumber) + 1;
 
-                // تجميع الرقم الجديد مع البادئة
-                return $"{prefix}{nextValue.ToString("000000")}";
-            }
-            else
-            {
-                // إذا لم يكن هناك أي سجل، ارجع إلى الرقم الأولي
-                return $"24-1000-{lessorCode}100-000001";
-            }
-        }
+        //        // تجميع الرقم الجديد مع البادئة
+        //        return $"{prefix}{nextValue.ToString("000000")}";
+        //    }
+        //    else
+        //    {
+        //        // إذا لم يكن هناك أي سجل، ارجع إلى الرقم الأولي
+        //        return $"24-1000-{lessorCode}100-000001";
+        //    }
+        //}
 
     }
 }

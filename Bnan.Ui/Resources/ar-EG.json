@@ -1229,14 +1229,6 @@
     //Branches
     "RentedSystem": "نظام التأجير",
     "RentedSystemNo": "رقم الفرع بنظام التأجير",
-    //"ModalFirstMessage_Branches_Delete": "حذف بيانات ونتائج1",
-    //"ModalSecondMessage_Branches_Delete": "حذف بيانات ونتائج2",
-    //"ModalFirstMessage_Branches_UnDelete": "استعادة بيانات ونتائج1",
-    //"ModalSecondMessage_Branches_UnDelete": "استعادة بيانات ونتائج2",
-    //"ModalFirstMessage_Branches_Hold": "ايقاف بيانات ونتائج1",
-    //"ModalSecondMessage_Branches_Hold": "ايقاف بيانات ونتائج2",
-    //"ModalFirstMessage_Branches_UnHold": "ارجاع بيانات ونتائج1",
-    //"ModalSecondMessage_Branches_UnHold": "ارجاع بيانات ونتائج2",
     "ModalFirstMessage_Branches_Delete": "سيترتب على حذف بيانات الفرع حذف جميع المستندات و نقاط البيع المرتبطة بالفرع مع الاحتفاظ بجميع الإجراءات الإدارية و المالية السابقة",
     "ModalSecondMessage_Branches_Delete": "",
     "ModalFirstMessage_Branches_UnDelete": "سيترتب على ارجاع بيانات الفرع ارجاع. جميع المستندات والسيارات و نقاط البيع وصلاحيات الفرع للموظفين المرتبطة بالفرع",
@@ -1244,7 +1236,14 @@
     "ModalFirstMessage_Branches_Hold": "سيترتب على إيقاف بيانات الفرع إيقاف تأجير سيارات الفرع و كذلك إيقاف عملية الدفع بنقاط البيع المرتبطة بالفرع",
     "ModalSecondMessage_Branches_Hold": "",
     "ModalFirstMessage_Branches_UnHold": "سيترتب على استرجاع تفعيل بيانات الفرع تفعيل السيارات و نقاط البيع و المستندات  المرتبطة بالفرع",
-    "ModalSecondMessage_Branches_UnHold": ""
+    "ModalSecondMessage_Branches_UnHold": "",
+    // CarForSale
+    "CarForSaleUpdate": "إجراءات بيع السيارة",
+    "AddedDate": "تاريخ الانضمام",
+    "CarsPictures": "صور السيارة",
+    "UpdateCarForSaleInfo": "تحديث بيانات إجراءات بيع السيارة",
+    "OfferPrice": "سعر العرض",
+    "ActualSalePrice": "سعر البيع الفعلي"
   },
   "ModalAutoLogout": "! جلستك على وشك الإنتهاء",
 
@@ -2308,7 +2307,7 @@
   "requiredNumber": "الحقل يجب ان يكون رقم",
   "PleaseEnterRequiredInfo": "من فضلك ادخل البيانات المطلوبة",
   "requiredFiledEmail": "من فضلك ادخل البريد الالكتروني بشكل صحيح",
-  "PleaseEnterCorrectFormatDate": "الرجاء إدخال التاريخ بالتنسيق yyyy/MM/dd",
+  "PleaseEnterCorrectFormatDate": "الرجاء إدخال التاريخ بالتنسيق الصحيح",
   "requiredFiledMaxLength7": "الحد الأقصى للطول هو 7",
   "requiredFiledMaxLength10Passowrd": "الحد الأقصى للطول هو 10",
 
@@ -3081,6 +3080,7 @@
   "EndMaintaince": "الاستهلاك حتى",
   "ConsumptionKM": "الاستهلاك(كم)",
   "KMEndsAt": "الاستهلاك حتى(كم)",
+  "KM": "كم",
   "CurrentMeterMessage": "لا يمكن ان تكون اقل من",
   "MaintainancesType": "أمر االصيانة",
   "notRegisteration": "لم يسجل بعد",

@@ -118,7 +118,6 @@ namespace Bnan.Inferastructure
         public virtual DbSet<CrMasUserProceduresValidation> CrMasUserProceduresValidations { get; set; } = null!;
         public virtual DbSet<CrMasUserSubValidation> CrMasUserSubValidations { get; set; } = null!;
 
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -2068,24 +2067,24 @@ namespace Bnan.Inferastructure
 
             modelBuilder.Entity<CrCasLessorWhatsupConnect>(entity =>
             {
+                entity.HasKey(e => new { e.CrCasLessorWhatsupConnectLessor, e.CrCasLessorWhatsupConnectSerial })
+                    .HasName("PK_CR_Cas_Lessor_Whatsup_Connect_1");
+
                 entity.ToTable("CR_Cas_Lessor_Whatsup_Connect");
-
-                entity.Property(e => e.CrCasLessorWhatsupConnectId)
-                    .HasMaxLength(22)
-                    .IsUnicode(false)
-                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Id");
-
-                entity.Property(e => e.CrCasLessorWhatsupConnectDeviceType)
-                    .HasMaxLength(20)
-                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_DeviceType");
-
-                entity.Property(e => e.CrCasLessorWhatsupConnectIsBusiness).HasColumnName("CR_Cas_Lessor_Whatsup_Connect_IsBusiness");
 
                 entity.Property(e => e.CrCasLessorWhatsupConnectLessor)
                     .HasMaxLength(4)
                     .IsUnicode(false)
                     .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Lessor")
                     .IsFixedLength();
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectSerial).HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Serial");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectDeviceType)
+                    .HasMaxLength(20)
+                    .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_DeviceType");
+
+                entity.Property(e => e.CrCasLessorWhatsupConnectIsBusiness).HasColumnName("CR_Cas_Lessor_Whatsup_Connect_IsBusiness");
 
                 entity.Property(e => e.CrCasLessorWhatsupConnectLoginDatetime)
                     .HasColumnType("datetime")
@@ -2103,8 +2102,6 @@ namespace Bnan.Inferastructure
                 entity.Property(e => e.CrCasLessorWhatsupConnectName)
                     .HasMaxLength(50)
                     .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Name");
-
-                entity.Property(e => e.CrCasLessorWhatsupConnectSerial).HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Serial");
 
                 entity.Property(e => e.CrCasLessorWhatsupConnectStatus)
                     .HasMaxLength(1)
@@ -2125,6 +2122,7 @@ namespace Bnan.Inferastructure
                 entity.HasOne(d => d.CrCasLessorWhatsupConnectLessorNavigation)
                     .WithMany(p => p.CrCasLessorWhatsupConnects)
                     .HasForeignKey(d => d.CrCasLessorWhatsupConnectLessor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CR_Cas_Lessor_Whatsup_Connect_CR_Mas_Lessor_Information");
 
                 entity.HasOne(d => d.CrCasLessorWhatsupConnectUserLoginNavigation)
@@ -4624,8 +4622,8 @@ namespace Bnan.Inferastructure
                     .HasColumnName("CR_Mas_Lessor_Information_Cont_Email");
 
                 entity.Property(e => e.CrMasLessorInformationContEmailToken)
-                   .HasMaxLength(100)
-                   .HasColumnName("CR_Mas_Lessor_Information_Cont_Email_Token");
+                    .HasMaxLength(100)
+                    .HasColumnName("CR_Mas_Lessor_Information_Cont_Email_Token");
 
                 entity.Property(e => e.CrMasLessorInformationContWhatsapp)
                     .HasMaxLength(20)
@@ -5949,9 +5947,10 @@ namespace Bnan.Inferastructure
                     .IsUnicode(false)
                     .HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Type")
                     .IsFixedLength();
+
                 entity.Property(e => e.CrMasSupContractCloseMechanismValue)
-                .HasColumnType("decimal(3, 2)")
-                .HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Value");
+                    .HasColumnType("decimal(3, 2)")
+                    .HasColumnName("CR_Mas_Sup_Contract_Close_Mechanism_Value");
             });
 
             modelBuilder.Entity<CrMasSupContractCloseSuspension>(entity =>
@@ -7435,7 +7434,6 @@ namespace Bnan.Inferastructure
                 entity.ToTable("CR_Mas_User_Information");
 
                 entity.HasIndex(e => e.CrMasUserInformationLessor, "IX_CR_Mas_User_Information_CR_Mas_User_Information_Lessor");
-
 
                 entity.Property(e => e.CrMasUserInformationCode)
                     .HasMaxLength(10)

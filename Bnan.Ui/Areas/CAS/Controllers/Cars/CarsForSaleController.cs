@@ -3,9 +3,8 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
 using Bnan.Ui.Areas.Base.Controllers;
-using Bnan.Ui.ViewModels.CAS;
+using Bnan.Ui.ViewModels.CAS.Cars;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +41,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
         {
             var user = await _userManager.GetUserAsync(User);
             await SetPageTitleAsync(string.Empty, pageNumber);
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Login", "Account");
+            }
             // Check Validition
             if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.ViewInformation))
             {
@@ -54,8 +58,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                                                         x.CrCasCarInformationForSaleStatus == Status.Active &&
                                                         x.CrCasCarInformationBranchStatus == Status.Active &&
                                                         x.CrCasCarInformationOwnerStatus == Status.Active,
-                                                        new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
-                                                                "CrCasCarInformationCategoryNavigation", "CrCasCarInformation2" });
+                                                        new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation" });
             if (!cars.Any())
             {
                 cars = _unitOfWork.CrCasCarInformation.FindAll(x => x.CrCasCarInformationLessor == user.CrMasUserInformationLessor &&
@@ -63,14 +66,14 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                                                         x.CrCasCarInformationStatus != Status.Sold &&
                                                         x.CrCasCarInformationBranchStatus == Status.Active &&
                                                         x.CrCasCarInformationOwnerStatus == Status.Active,
-                                                        new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
-                                                                "CrCasCarInformationCategoryNavigation", "CrCasCarInformation2" });
+                                                        new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation" });
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
 
+            var carsVM = _mapper.Map<List<Cars_CarsSaleVM>>(cars);
 
-            return View(cars);
+            return View(carsVM);
         }
 
         [HttpGet]
@@ -82,20 +85,26 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                                                                     x.CrCasCarInformationStatus != Status.Hold &&
                                                                     x.CrCasCarInformationBranchStatus == Status.Active &&
                                                                     x.CrCasCarInformationOwnerStatus == Status.Active,
-                                                                    new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
-                                                                            "CrCasCarInformationCategoryNavigation", "CrCasCarInformation2" });
+                                                                    new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation" });
+            var carsVM = _mapper.Map<List<Cars_CarsSaleVM>>(cars);
 
             if (!string.IsNullOrEmpty(status))
             {
-                if (status == Status.All) return PartialView("_CarsForSaleData", cars.Where(x => x.CrCasCarInformationStatus != Status.Sold &&
-                                                                         (x.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionConcatenateArName.Contains(search) ||
-                                                                          x.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionConcatenateEnName.Contains(search.ToLower())
+                if (status == Status.All) return PartialView("_CarsForSaleData", carsVM.Where(x => x.CrCasCarInformationStatus != Status.Sold &&
+                                                                         (x.CrCasCarInformationSerailNo.Contains(search) ||
+                                                                          x.CrCasCarInformationConcatenateArName.Contains(search) ||
+                                                                          x.CrCasCarInformationConcatenateEnName.Contains(search.ToLower())
                                                                           )));
-                else if (status == Status.Sold) return PartialView("_CarsForSaleData", cars.Where(x => x.CrCasCarInformationStatus == Status.Sold &&
-                                                                         (x.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionConcatenateArName.Contains(search) ||
-                                                                          x.CrCasCarInformationDistributionNavigation.CrMasSupCarDistributionConcatenateEnName.Contains(search.ToLower())
+                else if (status == Status.Sold) return PartialView("_CarsForSaleData", carsVM.Where(x => x.CrCasCarInformationStatus == Status.Sold &&
+                                                                         (x.CrCasCarInformationSerailNo.Contains(search) ||
+                                                                          x.CrCasCarInformationConcatenateArName.Contains(search) ||
+                                                                          x.CrCasCarInformationConcatenateEnName.Contains(search.ToLower())
                                                                           )));
-                else return PartialView("_CarsForSaleData", cars.Where(x => x.CrCasCarInformationForSaleStatus == status));
+                else return PartialView("_CarsForSaleData", carsVM.Where(x => x.CrCasCarInformationForSaleStatus == status &&
+                                                                         (x.CrCasCarInformationSerailNo.Contains(search) ||
+                                                                          x.CrCasCarInformationConcatenateArName.Contains(search) ||
+                                                                          x.CrCasCarInformationConcatenateEnName.Contains(search.ToLower())
+                                                                          )));
             }
             return PartialView();
         }
@@ -103,127 +112,285 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
         [HttpGet]
         public async Task<IActionResult> OfferCarForSale(string id)
         {
-            //sidebar Active
-            ViewBag.id = "#sidebarcars";
-            ViewBag.no = "7";
-            var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
-            var titles = await setTitle("202", "2202008", "2");
-            await ViewData.SetPageTitleAsync(titles[0], titles[1], titles[2], "تعديل", "Edit", titles[3]);
-            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == id && x.CrCasCarInformationLessor == lessorCode, new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
-                                                                                                                               "CrCasCarInformationCategoryNavigation", "CrCasCarInformation2"});
-            ViewBag.OfferDate = car.CrCasCarInformationOfferedSaleDate?.ToString("yyyy/MM/dd");
-            ViewBag.SoldDate = car.CrCasCarInformationSoldDate?.ToString("yyyy/MM/dd");
-            ViewBag.offerValue = car.CrCasCarInformationOfferValueSale?.ToString("N2", CultureInfo.InvariantCulture);
-            if (car.CrCasCarInformationForSaleStatus == Status.RendAndForSale) ViewBag.ForRent = _localizer["Yes"];
-            else ViewBag.ForRent = _localizer["Noo"];
-
-
-
-            var carVM = _mapper.Map<CarsInforamtionVM>(car);
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Login", "Account");
+            }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "CarsForSale");
+            }
+            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == id && x.CrCasCarInformationLessor == user.CrMasUserInformationLessor,
+                new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
+                       "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation"});
+            var carVM = _mapper.Map<Cars_CarsSaleVM>(car);
             return View(carVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> OfferCarForSale(CarsInforamtionVM carsInforamtionVM)
+        public async Task<IActionResult> OfferCarForSale(Cars_CarsSaleVM carsInforamtionVM)
         {
-            var sAr = "";
-            var sEn = "";
-
-            var userLogin = await _userManager.GetUserAsync(User);
-            var lessorCode = userLogin.CrMasUserInformationLessor;
-
-            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == carsInforamtionVM.CrCasCarInformationSerailNo && x.CrCasCarInformationLessor == lessorCode,
-                                                                                                                        new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
-                                                                                                                               "CrCasCarInformationCategoryNavigation", "CrCasCarInformation2"});
-            if (car != null)
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                var carModel = _mapper.Map<CrCasCarInformation>(carsInforamtionVM);
-                if (await _carInformation.UpdateCarToSale(carModel))
-                {
-                    await _unitOfWork.CompleteAsync();
-                    // SaveTracing
-                    var (mainTask, subTask, system, currentUserr) = await SetTrace("202", "2202008", "2");
-                    await _userLoginsService.SaveTracing(currentUserr.CrMasUserInformationCode, "عرض للبيع", "Offer For Sale", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
-
-                    if (carModel.CrCasCarInformationStatus == Status.Active && carModel.CrCasCarInformationForSaleStatus == null)
-                    {
-                        sAr = "للبيع فقط";
-                        sEn = "For Sale";
-                    }
-                    else if (carModel.CrCasCarInformationStatus == Status.Active && carModel.CrCasCarInformationForSaleStatus == "true")
-                    {
-                        sAr = "للبيع والإيجار";
-                        sEn = "For Sale And Rent";
-                    }
-
-                    // Save Adminstrive Procedures
-                    await _adminstritiveProcedures.SaveAdminstritive(currentUserr.CrMasUserInformationCode, "1", "217", "20", currentUserr.CrMasUserInformationLessor, "100",
-                        car.CrCasCarInformationSerailNo, null, null, null, null, null, null, null, null, sAr, sEn, "U", null);
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    return RedirectToAction("Index");
-                }
-                ;
-
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Login", "Account");
             }
-            return View(carsInforamtionVM);
-        }
-        [HttpPost]
-        public async Task<IActionResult> EditStatusOfSaleCar(string code, string status, string reasons)
-        {
-            string sAr = "";
-            string sEn = "";
-            var userLogin = await _userManager.GetUserAsync(User);
-            var car = _unitOfWork.CrCasCarInformation.Find(x => x.CrCasCarInformationSerailNo == code && x.CrCasCarInformationLessor == userLogin.CrMasUserInformationLessor);
-            if (car != null)
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
             {
-                if (status == Status.Save)
-                {
-                    sAr = "الغاء البيع";
-                    sEn = "Cancel offer";
-                    car.CrCasCarInformationForSaleStatus = Status.Active;
-                    car.CrCasCarInformationOfferValueSale = 0;
-                    car.CrCasCarInformationOfferedSaleDate = null;
-                    car.CrCasCarInformationSoldDate = null;
-                    car.CrCasCarInformationReasons = reasons;
-                }
-                if (status == Status.Hold)
-                {
-                    sAr = "تنفيذ البيع";
-                    sEn = "Confirm Offer";
-                    car.CrCasCarInformationStatus = Status.Sold;
-                    car.CrCasCarInformationSoldDate = DateTime.Now.Date;
-                    car.CrCasCarInformationReasons = reasons;
-                }
-                await _unitOfWork.CompleteAsync();
-                // SaveTracing
-                var (mainTask, subTask, system, currentUserr) = await SetTrace("202", "2202008", "2");
-                await _userLoginsService.SaveTracing(currentUserr.CrMasUserInformationCode, sAr, sEn, mainTask.CrMasSysMainTasksCode,
-                subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-                // Save Adminstrive Procedures
-                var proCode = "";
-                if (status == Status.Save) proCode = "217";
-                else proCode = "218";
-                await _adminstritiveProcedures.SaveAdminstritive(currentUserr.CrMasUserInformationCode, "1", proCode, "20", currentUserr.CrMasUserInformationLessor, "100",
-                    car.CrCasCarInformationSerailNo, null, null, null, null, null, null, null, null, sAr, sEn, "U", null);
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "CarsForSale");
+            }
+            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x =>
+                x.CrCasCarInformationSerailNo == carsInforamtionVM.CrCasCarInformationSerailNo &&
+                x.CrCasCarInformationStatus != Status.Deleted &&
+                x.CrCasCarInformationStatus != Status.Hold &&
+                x.CrCasCarInformationStatus != Status.Sold &&
+                x.CrCasCarInformationLessor == user.CrMasUserInformationLessor &&
+                x.CrCasCarInformationBranchStatus == Status.Active &&
+                x.CrCasCarInformationOwnerStatus == Status.Active,
+                new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
+                       "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation"});
+
+            if (car == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Home");
+            }
+
+            // ✅ تحقق من صحة البيانات المدخلة
+            ModelState.Remove(nameof(carsInforamtionVM.CrCasCarInformationSoldDate));
+            if (!ValidateCarSaleData(carsInforamtionVM))
+            {
+                var VM = _mapper.Map<Cars_CarsSaleVM>(car);
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return View(carsInforamtionVM);
+            }
+
+            // ✅ تجهيز البيانات وتحديث حالة السيارة
+            carsInforamtionVM.CrCasCarInformationLessor = user.CrMasUserInformationLessor;
+            var carModel = _mapper.Map<CrCasCarInformation>(carsInforamtionVM);
+            string status = await _carInformation.UpdateCarToSale(carModel);
+
+            if (!string.IsNullOrEmpty(status) && await _unitOfWork.CompleteAsync() > 0)
+            {
+                await SaveTracingForCarForSaleChange(user, car.CrCasCarInformationConcatenateArName, car.CrCasCarInformationConcatenateEnName, status);
+                await SaveAdminstritiveForCarForSale(user, "217", "20", car.CrCasCarInformationSerailNo, carsInforamtionVM.CrCasCarInformationReasons, status);
+
+                _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index");
             }
+
             _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            return View(carsInforamtionVM);
+        }
+
+        private bool ValidateCarSaleData(Cars_CarsSaleVM model)
+        {
+            bool isValid = true;
+
+            // ✅ التحقق من تاريخ العرض
+            if (model.CrCasCarInformationOfferedSaleDate < DateTime.Today)
+            {
+                ModelState.AddModelError("CrCasCarInformationOfferedSaleDate", _localizer["PleaseEnterCorrectFormatDate"]);
+                isValid = false;
+            }
+
+            // ✅ التحقق من قيمة البيع
+            if (!decimal.TryParse(model.OfferValueSaleString, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal result))
+            {
+                ModelState.AddModelError("OfferValueSaleString", _localizer["requiredNoLengthFiled1_2"]);
+                isValid = false;
+            }
+            else if (result >= 99999999999.99m)
+            {
+                ModelState.AddModelError("OfferValueSaleString", _localizer["requiredNoLengthFiled1_2"]);
+                isValid = false;
+            }
+            else
+            {
+                model.CrCasCarInformationOfferValueSale = result;
+            }
+
+            return isValid;
+        }
+        [HttpGet]
+        public async Task<IActionResult> SoldCar(string id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Login", "Account");
+            }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "CarsForSale");
+            }
+            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x =>
+                x.CrCasCarInformationSerailNo == id &&
+                x.CrCasCarInformationStatus != Status.Deleted &&
+                x.CrCasCarInformationStatus != Status.Hold &&
+                x.CrCasCarInformationStatus != Status.Sold &&
+                x.CrCasCarInformationForSaleStatus != Status.Active &&
+                x.CrCasCarInformationLessor == user.CrMasUserInformationLessor &&
+                x.CrCasCarInformationBranchStatus == Status.Active &&
+                x.CrCasCarInformationOwnerStatus == Status.Active,
+                new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
+                       "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation"});
+            if (car == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+                return RedirectToAction("Index", "Home");
+            }
+            var carVM = _mapper.Map<Cars_CarsSaleVM>(car);
+            return View(carVM);
+        }
+        [HttpPost]
+        public async Task<IActionResult> SoldCar(Cars_CarsSaleVM carsInforamtionVM)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+
+            if (user == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", });
+                return RedirectToAction("Login", "Account");
+            }
+            // Check Validition
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert))
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
+                return RedirectToAction("Index", "CarsForSale");
+            }
+            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x =>
+                x.CrCasCarInformationSerailNo == carsInforamtionVM.CrCasCarInformationSerailNo &&
+                x.CrCasCarInformationStatus != Status.Deleted &&
+                x.CrCasCarInformationStatus != Status.Hold &&
+                x.CrCasCarInformationStatus != Status.Sold &&
+                x.CrCasCarInformationForSaleStatus != Status.Active &&
+                x.CrCasCarInformationLessor == user.CrMasUserInformationLessor &&
+                x.CrCasCarInformationBranchStatus == Status.Active &&
+                x.CrCasCarInformationOwnerStatus == Status.Active,
+                new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
+                       "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation"});
+
+            if (car == null)
+            {
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", });
+                return RedirectToAction("Index", "Home");
+            }
+
+            ModelState.Remove(nameof(carsInforamtionVM.CrCasCarInformationOfferedSaleDate));
+            if (!ValidateCarSaleData(carsInforamtionVM))
+            {
+                var VM = _mapper.Map<Cars_CarsSaleVM>(car);
+                _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", });
+                return View(VM);
+            }
+            carsInforamtionVM.CrCasCarInformationLessor = user.CrMasUserInformationLessor;
+            carsInforamtionVM.CrCasCarInformationStatus = Status.Sold;
+            carsInforamtionVM.CrCasCarInformationOfferedSaleDate = car.CrCasCarInformationOfferedSaleDate;
+            carsInforamtionVM.CrCasCarInformationForSaleStatus = car.CrCasCarInformationForSaleStatus;
+            var carModel = _mapper.Map<CrCasCarInformation>(carsInforamtionVM);
+
+            if (await _carInformation.SoldCar(carModel) && await _unitOfWork.CompleteAsync() > 0)
+            {
+                await SaveTracingForCarForSaleChange(user, car.CrCasCarInformationConcatenateArName, car.CrCasCarInformationConcatenateEnName, Status.Sold);
+                await SaveAdminstritiveForCarForSale(user, "218", "20", car.CrCasCarInformationSerailNo, carsInforamtionVM.CrCasCarInformationReasons, Status.Sold);
+
+                _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", });
+                return RedirectToAction("Index");
+            }
+            _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", });
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<string> CancelOffer(string serialNumber)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            await SetPageTitleAsync(string.Empty, pageNumber);
+
+            if (user == null) return "false";
+
+            if (!await _baseRepo.CheckValidation(user.CrMasUserInformationCode, pageNumber, Status.Insert)) return "noAuth";
+
+            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x =>
+                x.CrCasCarInformationSerailNo == serialNumber &&
+                x.CrCasCarInformationStatus != Status.Deleted &&
+                x.CrCasCarInformationStatus != Status.Hold &&
+                x.CrCasCarInformationStatus != Status.Sold &&
+                x.CrCasCarInformationForSaleStatus != Status.Active &&
+                x.CrCasCarInformationLessor == user.CrMasUserInformationLessor &&
+                x.CrCasCarInformationBranchStatus == Status.Active &&
+                x.CrCasCarInformationOwnerStatus == Status.Active,
+                new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
+                       "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation"});
+
+            if (car == null) return "false";
+
+            if (await _carInformation.CancelOffer(car.CrCasCarInformationSerailNo, user.CrMasUserInformationLessor) && await _unitOfWork.CompleteAsync() > 0)
+            {
+                await SaveTracingForCarForSaleChange(user, car.CrCasCarInformationConcatenateArName, car.CrCasCarInformationConcatenateEnName, Status.CancelOffer);
+                await SaveAdminstritiveForCarForSale(user, "218", "20", car.CrCasCarInformationSerailNo, "", Status.CancelOffer);
+                return "true";
+            }
+            return "false";
+        }
+
+        private async Task SaveTracingForCarForSaleChange(CrMasUserInformation user, string arDistribution, string enDistribution, string status)
+        {
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                arDistribution,
+                enDistribution,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
+        }
+        private async Task SaveAdminstritiveForCarForSale(CrMasUserInformation user, string procudureCode, string classification, string serialNo, string reasons, string status)
+        {
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+            await _adminstritiveProcedures.SaveAdminstritive(user.CrMasUserInformationCode, "1", procudureCode, classification, user.CrMasUserInformationLessor, "100",
+            serialNo, null, null, null, null, null, null, null, null, operationAr, operationEn, status, reasons);
+        }
+        public IActionResult SuccesssMessageForCarsInformation()
+        {
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", });
             return RedirectToAction("Index");
         }
 
 
-
-
-
-
-        public IActionResult SuccesssMessageForCarsInformation()
+        public IActionResult FailedMessageForCarsInformation()
         {
-            _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", });
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult NoAuthMessageForCarsInformation()
+        {
+            _toastNotification.AddErrorToastMessage(_localizer["AuthEmplpoyee_No_auth"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", });
             return RedirectToAction("Index");
         }
     }

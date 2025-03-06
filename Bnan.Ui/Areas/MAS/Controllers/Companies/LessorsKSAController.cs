@@ -283,7 +283,7 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
                     await _BranchDocument.AddBranchDocumentDefault(LessorVMTlessor.CrMasLessorInformationCode);
 
                     // add Connects
-                    await _whatsupConnect.AddDefaultWhatsupConnect(LessorVMTlessor.CrMasLessorInformationCode);
+                    //await _whatsupConnect.AddDefaultWhatsupConnect(LessorVMTlessor.CrMasLessorInformationCode);
                     await _tgaConnect.AddDefault(LessorVMTlessor.CrMasLessorInformationCode);
                     await _shomoosConnect.AddDefault(LessorVMTlessor.CrMasLessorInformationCode);
                     await _smsConnect.AddDefault(LessorVMTlessor.CrMasLessorInformationCode);

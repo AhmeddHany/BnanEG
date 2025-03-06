@@ -75,5 +75,7 @@ namespace Bnan.Ui.ViewModels.CAS
         public virtual CrMasSupCarColor? CrCasCarInformationSeatColorNavigation { get; set; }
         public virtual CrMasSupCarColor? CrCasCarInformationSecondaryColorNavigation { get; set; }
         public virtual ICollection<CrCasCarAdvantage>? CrCasCarAdvantages { get; set; }
+        public virtual ICollection<CrCasCarDocumentsMaintenance>? CrCasCarDocumentsMaintenances { get; set; }
+
     }
 }

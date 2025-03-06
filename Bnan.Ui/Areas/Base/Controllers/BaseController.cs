@@ -82,6 +82,10 @@ namespace Bnan.Ui.Areas.Base.Controllers
             else if (status == Status.UpdateValidtions) return ("تحديث صلاحيات موظف", "Change Employee Validitions");
             else if (status == Status.Blocked) return ("تم الحظر", "Blocked");
             else if (status == Status.unBlocked) return ("فك الحظر", "Un Blocked");
+            else if (status == Status.RendAndForSale) return ("للبيع والايجار", "Sale And Rent");
+            else if (status == Status.ForSale) return ("عرض للبيع", "Offer To Sale");
+            else if (status == Status.CancelOffer) return ("الغاء العرض", "Cancel Offer");
+            else if (status == Status.Sold) return ("تنفيذ البيع", "Executing the sale");
             else return (" ", " ");
         }
 

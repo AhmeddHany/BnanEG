@@ -203,3 +203,7 @@ direction: ltr;
         transform: translateX(-100%);
     }
 }
+/*================dropdown  =================================================== */
+.dropdown-content-row {
+    text-align: left !important;
+}

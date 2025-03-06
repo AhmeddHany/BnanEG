@@ -3,6 +3,7 @@ using Bnan.Core.Models;
 using Bnan.Ui.ViewModels.BS;
 using Bnan.Ui.ViewModels.BS.CreateContract;
 using Bnan.Ui.ViewModels.CAS;
+using Bnan.Ui.ViewModels.CAS.Cars;
 using Bnan.Ui.ViewModels.CAS.Employees;
 using Bnan.Ui.ViewModels.CAS.Services;
 using Bnan.Ui.ViewModels.Identitiy;
@@ -79,6 +80,7 @@ namespace Bnan.Inferastructure
             CreateMap<CrCasCarInformation, CarsInforamtionVM>().ReverseMap();
             CreateMap<CrCasCarDocumentsMaintenance, DocumentsMaintainceCarVM>().ReverseMap();
             CreateMap<CarPriceVM, CrCasPriceCarBasic>().ReverseMap();
+            CreateMap<Cars_CarsSaleVM, CrCasCarInformation>().ReverseMap();
 
             CreateMap<RenterLessorVM, CrCasRenterLessor>().ReverseMap();
 

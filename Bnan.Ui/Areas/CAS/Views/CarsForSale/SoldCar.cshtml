@@ -1,0 +1,272 @@
+﻿@model Cars_CarsSaleVM
+@inject IViewLocalizer localizer
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+<div class="container-fluid h-100 main-container-fluid">
+    <div class="row h-100 flex-nowrap">
+        <div class="col  d-flex align-items-center justify-content-center flex-column">
+            <div class="container NewUpdate-container">
+                <div class="row mt-3 g-3 CarPagesRow">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-9">
+                            <form asp-area="CAS" asp-action="SoldCar" asp-controller="CarsForSale" class="needs-validation" novalidate id="carsForm">
+                                <input asp-for="CrCasCarInformationSerailNo" type="hidden" />
+                                <input type="hidden" asp-for="CrCasCarInformationForSaleStatus" id="formStatus" value="">
+                                <div class="row g-3 my-2">
+                                    <div class="col-md-6">
+                                        <h3>@localizer["UpdateCarForSaleInfo"]</h3>
+                                    </div>
+                                    <div class="col-md-6 save-col">
+                                        <button type="submit" class="custom-img-btn">
+                                            <img src="~/CasSys/images/save.svg" />
+                                        </button>
+                                        <button type="button" class="custom-img-btn" id="CancelOffer" data-serial="@Model.CrCasCarInformationSerailNo">
+                                            <img src="~/CasSys/images/delete (2).svg" />
+                                        </button>
+                                        <button type="button" class="custom-img-btn"><a class="d-flex align-items-center" href="/CAS/CarsForSale/Index"><img class="Chevron" src="~/CasSys/images/Chevron_Left.svg" /></a></button>
+                                    </div>
+                                    <div class="col-md-12 mb-4">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-auto">
+                                                <div class="CarBorder-CarData">
+                                                    <img src="@Url.Content(Model.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionImage)"
+                                                         alt="Car-photo"
+                                                         class="CarPhoto">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="row align-items-baseline">
+                                                    <div class="col-auto">
+                                                        <h5 class="subtitle">
+                                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ?
+                                                                Model.CrCasCarInformationConcatenateEnName :
+                                                                Model.CrCasCarInformationConcatenateArName)
+                                                        </h5>
+                                                    </div>
+                                                   @*  <div class="col-auto">
+                                                        <div class="CarColorDiv" style="background-color: rgb(255, 255, 255);"></div>
+                                                    </div> *@
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <p class="m-0">@Model.CrCasCarInformationNo</p>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <p class="m-0">
+                                                            @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ?
+                                                                Model.CrCasCarInformation1?.CrCasBranchInformationEnShortName :
+                                                                Model.CrCasCarInformation1?.CrCasBranchInformationArShortName)
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <p class="DataTitle">@localizer["AddedDate"]</p>
+                                                    </div>
+                                                    <div class="col-auto ">
+                                                        <p class="Saved-data">@Model.CrCasCarInformationJoinedFleetDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <p class="DataTitle">@localizer["ContractsCount"]</p>
+                                                    </div>
+                                                    <div class="col-auto ">
+                                                        <p class="Saved-data">@Model.CrCasCarInformationConractCount?.ToString("N0", CultureInfo.InvariantCulture)</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="row justify-content-between">
+                                                    <div class="col-md-auto">
+                                                        <div class="row">
+                                                            <div class="col-auto">
+                                                                <p class="DataTitle">@localizer["Days_Count"]</p>
+                                                            </div>
+                                                            <div class="col-auto ">
+                                                                <p class="Saved-data">@Model.CrCasCarInformationConractDaysNo?.ToString("N0", CultureInfo.InvariantCulture)</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-auto">
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <p class="DataTitle">@localizer["CurrentMeter"]</p>
+                                                    </div>
+                                                    <div class="col-auto ">
+                                                        <p class="Saved-data">@Model.CrCasCarInformationCurrentMeter?.ToString("N0", CultureInfo.InvariantCulture)</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row g-2  justify-content-between">
+                                        <div class="col-md-5">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>
+                                                        @localizer["OfferDate"]
+                                                    </p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrCasCarInformationOfferedSaleDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="SellingDate"
+                                                   class="form-label">
+                                                @localizer["SoldDate"]
+                                            </label>
+                                            @{
+                                                // التأكد من أن تاريخ العرض ليس فارغًا ثم إضافة يوم واحد للحصول على تاريخ البيع
+                                                var offerDate = Model.CrCasCarInformationOfferedSaleDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                                            }
+                                            <input type="date" id="date" class="form-control inputs" min="@offerDate" value="@offerDate"
+                                                   name="CrCasCarInformationSoldDate" required onkeydown="return false;" onpaste="return false;">
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="CrCasCarInformationSoldDate" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row g-2  justify-content-between">
+                                        <div class="col-md-5">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>@localizer["OfferPrice"]</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">@Model.CrCasCarInformationOfferValueSale.ToString("N2", CultureInfo.InvariantCulture)</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="Price"
+                                                   class="form-label">
+                                                @localizer["ActualSalePrice"]
+                                            </label>
+                                            <input type="text" id="Price" class="form-control inputs number-input" asp-for="OfferValueSaleString" maxlength="12" oninput="validateNumericInput(this)" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    <span asp-validation-for="OfferValueSaleString" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>@localizer["reasons"]</label>
+                                        <textarea class=" form-control textarea-inputs" rows="1" maxlength="100" asp-for="CrCasCarInformationReasons" type="text"></textarea>
+                                        <div class="invaild">
+                                            <div class="invalid-feedback">
+                                                <span asp-validation-for="CrCasCarInformationReasons" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+
+</div>
+
+@section scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+       
+        function validateNumericInput(input) {
+            let maxLength = parseInt(input.getAttribute("maxlength")); // الحد الأقصى للإدخال
+            let maxAfterDecimal = 2; // رقمين بعد العلامة العشرية
+            let maxBeforeDecimal = maxLength - (maxAfterDecimal + 1); // عدد الأرقام قبل العلامة العشرية
+
+            let value = input.value;
+
+            // السماح فقط بالأرقام والنقطة العشرية
+            value = value.replace(/[^0-9.]/g, '');
+
+            // منع إدخال أكثر من نقطة عشرية واحدة
+            let decimalCount = (value.match(/\./g) || []).length;
+            if (decimalCount > 1) {
+                value = value.substring(0, value.lastIndexOf(".")); // إزالة النقطة الزائدة
+            }
+
+            let decimalIndex = value.indexOf('.');
+
+            if (decimalIndex !== -1) {
+                let beforeDecimal = value.substring(0, decimalIndex);
+                let afterDecimal = value.substring(decimalIndex + 1);
+
+                // منع النقطة في بداية الرقم
+                if (beforeDecimal === "") {
+                    beforeDecimal = "0";
+                }
+
+                // تقييد الأرقام قبل وبعد العلامة العشرية
+                beforeDecimal = beforeDecimal.substring(0, maxBeforeDecimal);
+                afterDecimal = afterDecimal.substring(0, maxAfterDecimal);
+
+                // تحديث القيمة النهائية
+                input.value = beforeDecimal + '.' + afterDecimal;
+            } else {
+                // لا يوجد نقطة عشرية، تقييد الإدخال بعدد الأرقام المسموح بها
+                input.value = value.substring(0, maxBeforeDecimal);
+            }
+        }
+        $(document).ready(function () {
+            $("#CancelOffer").click(function () {
+                let serialNumber = $(this).data("serial"); // احصل على رقم السيارة من الزر
+
+                $.ajax({
+                    url: "/CAS/CarsForSale/CancelOffer", // نداء إلى الأكشن
+                    type: "POST",
+                    data: { serialNumber: serialNumber }, // إرسال رقم السيارة
+                    success: function (response) {
+                        if (response == "true") {
+                            window.location.href = "/CAS/CarsForSale/SuccesssMessageForCarsInformation";
+                        } else if (response == "noAuth") {
+                            window.location.href = "/CAS/CarsForSale/NoAuthMessageForCarsInformation";
+                        } else {
+                            window.location.href = "/CAS/CarsForSale/FailedMessageForCarsInformation";
+                        }
+                    },
+                    error: function () {
+                        window.location.href = "/CAS/CarsForSale/FailedMessageForCarsInformation"; // في حالة فشل الطلب
+                    }
+                });
+            });
+        });
+
+
+    </script>
+
+}

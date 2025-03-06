@@ -1273,7 +1273,14 @@
     "ModalFirstMessage_Branches_Hold": "Branch data will be Holed, Which All The Document And Sales Point Of Branch.",
     "ModalSecondMessage_Branches_Hold": "",
     "ModalFirstMessage_Branches_UnHold": "Retrieving the activation of the branch data will entail activating the cars, points of sale, and documents associated with the branch.",
-    "ModalSecondMessage_Branches_UnHold": ""
+    "ModalSecondMessage_Branches_UnHold": "",
+    // CarForSale
+    "CarForSaleUpdate": "Car Sale Procedures",
+    "AddedDate": "Joining Date",
+    "CarsPictures": "Car Pictures",
+    "UpdateCarForSaleInfo": "Update Car Sale Information",
+    "OfferPrice": "Offer Price",
+    "ActualSalePrice": "Actual Sale Price"
   },
   "ModalAutoLogout": "Your session is about to end!",
   "Arabic": "Arabic",
@@ -1967,10 +1974,10 @@
   "Add RenterContract Data": "Add  Renter Contract",
   "DateLast_Contract": "Last contractual",
   "DateFrist_Contract": "First contractual",
-  "Contract_Count": "Contracts_Count",
-  "Days_Count": "Days_Count",
-  "KM_Count": "KiloMeters_Count",
-  "KM_Count_walked": "KiloMeters_Count",
+  "Contract_Count": "Contracts Count",
+  "Days_Count": "Days Count",
+  "KM_Count": "KiloMeters Count",
+  "KM_Count_walked": "Kilometers Driven",
   "RenterContractId": "Contract Number",
   "His_Date": "Issue_Date",
   "RenterContractReport Hint": "This page allows you to display Active Contracts of Renter ",
@@ -2371,7 +2378,7 @@
   "requiredNumber": "The filed Must be Number",
   "PleaseEnterRequiredInfo": "Please Enter Required Information",
   "requiredFiledEmail": "Please enter a valid email address.",
-  "PleaseEnterCorrectFormatDate": "Please enter the date in the format yyyy/MM/dd",
+  "PleaseEnterCorrectFormatDate": "Please enter the date in the right format" ,
   "requiredFiledMaxLength7": "Maximum length is 7 characters.",
 
 
@@ -3032,6 +3039,7 @@
   "EndMaintaince": "Consumption even",
   "ConsumptionKM": "Consumption KM",
   "KMEndsAt": "KM Ends At (KM)",
+  "KM": "KM",
   "CurrentMeterMessage": "The value cannot be less than",
   "MaintainancesType": "Maintainance",
   "notRegisteration": "Not Registeration",

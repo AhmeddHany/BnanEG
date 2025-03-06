@@ -1,12 +1,6 @@
 ﻿using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Repository
 {
@@ -22,16 +16,16 @@ namespace Bnan.Inferastructure.Repository
 
         public async Task<bool> AddCarInformation(CrCasCarInformation model)
         {
-            var lessor = _unitOfWork.CrMasLessorInformation.Find(x => x.CrMasLessorInformationCode == model.CrCasCarInformationLessor);
-            var branch = _unitOfWork.CrCasBranchInformation.Find(x => x.CrCasBranchInformationLessor == model.CrCasCarInformationLessor && x.CrCasBranchInformationCode == "100", new[] { "CrCasBranchPost" });
-            var owner = _unitOfWork.CrCasOwners.Find(x => x.CrCasOwnersCode == lessor.CrMasLessorInformationGovernmentNo && x.CrCasOwnersLessorCode == lessor.CrMasLessorInformationCode);
-            var benficty = _unitOfWork.CrCasBeneficiary.Find(x => x.CrCasBeneficiaryCode == lessor.CrMasLessorInformationGovernmentNo && x.CrCasBeneficiaryLessorCode == lessor.CrMasLessorInformationCode);
-            var distribution = _unitOfWork.CrMasSupCarDistribution.Find(x => x.CrMasSupCarDistributionCode == model.CrCasCarInformationDistribution);
-            var color = _unitOfWork.CrMasSupCarColor.Find(x => x.CrMasSupCarColorCode == model.CrCasCarInformationMainColor);
+            var lessor = await _unitOfWork.CrMasLessorInformation.FindAsync(x => x.CrMasLessorInformationCode == model.CrCasCarInformationLessor);
+            var branch = await _unitOfWork.CrCasBranchInformation.FindAsync(x => x.CrCasBranchInformationLessor == model.CrCasCarInformationLessor && x.CrCasBranchInformationCode == "100", new[] { "CrCasBranchPost" });
+            var owner = await _unitOfWork.CrCasOwners.FindAsync(x => x.CrCasOwnersCode == lessor.CrMasLessorInformationGovernmentNo && x.CrCasOwnersLessorCode == lessor.CrMasLessorInformationCode);
+            var benficty = await _unitOfWork.CrCasBeneficiary.FindAsync(x => x.CrCasBeneficiaryCode == lessor.CrMasLessorInformationGovernmentNo && x.CrCasBeneficiaryLessorCode == lessor.CrMasLessorInformationCode);
+            var distribution = await _unitOfWork.CrMasSupCarDistribution.FindAsync(x => x.CrMasSupCarDistributionCode == model.CrCasCarInformationDistribution);
+            var color = await _unitOfWork.CrMasSupCarColor.FindAsync(x => x.CrMasSupCarColorCode == model.CrCasCarInformationMainColor);
             if (string.IsNullOrEmpty(model.CrCasCarInformationSecondaryColor)) model.CrCasCarInformationSecondaryColor = null;
             if (string.IsNullOrEmpty(model.CrCasCarInformationSeatColor)) model.CrCasCarInformationSeatColor = null;
             if (string.IsNullOrEmpty(model.CrCasCarInformationFloorColor)) model.CrCasCarInformationFloorColor = null;
-            var carPirce = _unitOfWork.CrCasPriceCarBasic.Find(x => x.CrCasPriceCarBasicDistributionCode == distribution.CrMasSupCarDistributionCode);
+            var carPirce = await _unitOfWork.CrCasPriceCarBasic.FindAsync(x => x.CrCasPriceCarBasicDistributionCode == distribution.CrMasSupCarDistributionCode);
             if (carPirce != null)
             {
                 model.CrCasCarInformationPriceNo = carPirce.CrCasPriceCarBasicNo;
@@ -42,7 +36,7 @@ namespace Bnan.Inferastructure.Repository
                 model.CrCasCarInformationPriceNo = null;
                 model.CrCasCarInformationPriceStatus = false;
             }
-            
+
             CrCasCarInformation casCarInformation = new CrCasCarInformation()
             {
                 CrCasCarInformationSerailNo = model.CrCasCarInformationSerailNo,
@@ -92,8 +86,8 @@ namespace Bnan.Inferastructure.Repository
         }
         public async Task<bool> AddAdvantagesToCar(string serialNumber, string advantageCode, string lessor, string distributionCode, string status)
         {
-            var distribution = _unitOfWork.CrMasSupCarDistribution.Find(x => x.CrMasSupCarDistributionCode == distributionCode);
-            var advantage = _unitOfWork.CrMasSupCarAdvantage.Find(x => x.CrMasSupCarAdvantagesCode == advantageCode);
+            var distribution = await _unitOfWork.CrMasSupCarDistribution.FindAsync(x => x.CrMasSupCarDistributionCode == distributionCode);
+            var advantage = await _unitOfWork.CrMasSupCarAdvantage.FindAsync(x => x.CrMasSupCarAdvantagesCode == advantageCode);
             if (advantage != null)
             {
                 CrCasCarAdvantage crCasCarAdvantage = new CrCasCarAdvantage()
@@ -116,8 +110,9 @@ namespace Bnan.Inferastructure.Repository
 
         public async Task<bool> UpdateCarInformation(CrCasCarInformation crCasCarInformation)
         {
-            var car = _unitOfWork.CrCasCarInformation.Find(x => x.CrCasCarInformationSerailNo == crCasCarInformation.CrCasCarInformationSerailNo);
-            if (car != null) {
+            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == crCasCarInformation.CrCasCarInformationSerailNo);
+            if (car != null)
+            {
                 car.CrCasCarInformationRegistration = crCasCarInformation.CrCasCarInformationRegistration;
                 car.CrCasCarInformationCvt = crCasCarInformation.CrCasCarInformationCvt;
                 car.CrCasCarInformationFuel = crCasCarInformation.CrCasCarInformationFuel;
@@ -133,7 +128,7 @@ namespace Bnan.Inferastructure.Repository
 
         public async Task<bool> UpdateAdvantagesToCar(string serialNumber, string advantageCode, string lessor, string status)
         {
-            var advantageCar= _unitOfWork.CrCasCarAdvantage.Find(x=>x.CrCasCarAdvantagesSerialNo==serialNumber&&x.CrCasCarAdvantagesCode==advantageCode&&x.CrCasCarAdvantagesLessor==lessor);
+            var advantageCar = await _unitOfWork.CrCasCarAdvantage.FindAsync(x => x.CrCasCarAdvantagesSerialNo == serialNumber && x.CrCasCarAdvantagesCode == advantageCode && x.CrCasCarAdvantagesLessor == lessor);
             if (advantageCar != null)
             {
                 advantageCar.CrCasCarAdvantagesStatus = status;
@@ -143,11 +138,10 @@ namespace Bnan.Inferastructure.Repository
             return false;
         }
 
-        public async Task<bool> UpdateCarToSale(CrCasCarInformation crCasCarInformation)
+        public async Task<string> UpdateCarToSale(CrCasCarInformation crCasCarInformation)
         {
-            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == crCasCarInformation.CrCasCarInformationSerailNo && x.CrCasCarInformationLessor == crCasCarInformation.CrCasCarInformationLessor,
-                                                                                                                       new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
-                                                                                                                          "CrCasCarInformationCategoryNavigation", "CrCasCarInformation2"});
+            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == crCasCarInformation.CrCasCarInformationSerailNo &&
+                                                                           x.CrCasCarInformationLessor == crCasCarInformation.CrCasCarInformationLessor);
             if (car != null)
             {
                 string status;
@@ -158,8 +152,39 @@ namespace Bnan.Inferastructure.Repository
                 car.CrCasCarInformationOfferValueSale = crCasCarInformation.CrCasCarInformationOfferValueSale;
                 car.CrCasCarInformationReasons = crCasCarInformation.CrCasCarInformationReasons;
                 car.CrCasCarInformationForSaleStatus = status;
-                _unitOfWork.CrCasCarInformation.Update(car);
-                return true;
+                if (_unitOfWork.CrCasCarInformation.Update(car) != null) return status;
+            }
+            return string.Empty;
+        }
+
+        public async Task<bool> SoldCar(CrCasCarInformation crCasCarInformation)
+        {
+            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == crCasCarInformation.CrCasCarInformationSerailNo &&
+                                                                           x.CrCasCarInformationLessor == crCasCarInformation.CrCasCarInformationLessor);
+            if (car != null)
+            {
+
+                car.CrCasCarInformationOfferedSaleDate = crCasCarInformation.CrCasCarInformationOfferedSaleDate;
+                car.CrCasCarInformationOfferValueSale = crCasCarInformation.CrCasCarInformationOfferValueSale;
+                car.CrCasCarInformationReasons = crCasCarInformation.CrCasCarInformationReasons;
+                car.CrCasCarInformationForSaleStatus = crCasCarInformation.CrCasCarInformationForSaleStatus;
+                car.CrCasCarInformationStatus = crCasCarInformation.CrCasCarInformationStatus;
+                if (_unitOfWork.CrCasCarInformation.Update(car) != null) return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> CancelOffer(string serialNo, string lessorCode)
+        {
+            var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == serialNo &&
+                                                                          x.CrCasCarInformationLessor == lessorCode);
+            if (car != null)
+            {
+                car.CrCasCarInformationOfferedSaleDate = null;
+                car.CrCasCarInformationOfferValueSale = 0;
+                car.CrCasCarInformationReasons = "";
+                car.CrCasCarInformationForSaleStatus = Status.Active;
+                if (_unitOfWork.CrCasCarInformation.Update(car) != null) return true;
             }
             return false;
         }
