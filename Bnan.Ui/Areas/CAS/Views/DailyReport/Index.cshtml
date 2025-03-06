@@ -410,11 +410,11 @@
        async function retrive_serials_ids_From_Datatable() {
             const promises = [];
             //$("#min-loader").toggleClass("d-none", true);
-            const promise3 = new Promise(resolve3 => {
-            $("#min-loader").removeClass("d-none");// اظهار loader تحميل
-            resolve3();
-            });
-            await promise3;
+            ////const promise3 = new Promise(resolve3 => {
+            ////$("#min-loader").removeClass("d-none");// اظهار loader تحميل
+            ////resolve3();
+            ////});
+            ////await promise3;
             var table4 = $('#Table').DataTable();
             end_init_ShowDatatable();
             var keyword2 = $('#search2').val().toLowerCase(); // الكلمة المدخلة للبحث (تحويلها إلى حروف صغيرة)
@@ -571,6 +571,23 @@
                         $("#p_balance").text(balance1);
                         $("#p_avilableBalance").text(avilableBalance1);
                         $("#p_reservedBalance").text(reservedBalance1);
+                        var pathExcel = response.linkpath;
+                        //var fileContentsBase64 = response.linkpath.fileContents;
+                        //// فك تشفير البيانات من Base64 إلى نص
+                        //const decodedContent = atob(fileContentsBase64);
+
+                        //// تحويل النص المشفر إلى Blob
+                        //const blob = new Blob([decodedContent], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+
+                        //const urlExcel = URL.createObjectURL(blob);
+
+                        var a = document.createElement('a');
+                        a.href = response.linkpath;  // المسار إلى الدالة التي تحمل الملف
+                        a.download = response.fileName; // اسم الملف عند تحميله
+                        //a.href = '/File/DownloadFile';  // المسار إلى الدالة التي تحمل الملف
+                        //a.download = 'file.txt'; // اسم الملف عند تحميله
+                        a.click(); // إنشاء الرابط بشكل ديناميكي
+
                         toastr.success("@localizer["ToastSave"]");
                     }
                     else if (response.code == 3) {

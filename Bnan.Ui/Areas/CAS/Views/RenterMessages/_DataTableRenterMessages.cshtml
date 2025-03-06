@@ -35,8 +35,10 @@
         </tr>
     </thead>
     <tbody>
-        @for (var x = 1; x < Model.all_Renters.Count; x++)
+        @{var ix =0;}
+        @for (var x = 0; x < Model.all_Renters.Count; x++)
         {
+            ix = x + 1;
             var item = Model.all_Renters[x];
             var status_sms = Model.all_status_sms.Find(x => x.Renter_Code == item.CrCasRenterLessorId);
             <tr>
@@ -80,7 +82,7 @@
                 </td>
                 <td>
                     <div class="filter-number-td">
-                        <div>@(x)</div>
+                        <div>@(ix)</div>
                     </div>
                 </td>
             </tr>

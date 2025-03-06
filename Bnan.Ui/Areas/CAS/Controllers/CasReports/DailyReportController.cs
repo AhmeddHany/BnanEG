@@ -440,8 +440,26 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                 }).ToList();
 
                 //////// Ar - En
-                var folderAr = "C:/ArDailyReport";
-                var folderEn = "C:/EnDailyReport";
+                //var folderAr = "C:/ArDailyReport";
+                //var folderEn = "C:/EnDailyReport";
+                // العثور على آخر \ في المسار
+                int lastBackslashIndexEn = En_pathFormoula.LastIndexOf('/');
+                int lastBackslashIndexAr = Ar_pathFormoula.LastIndexOf('/');
+
+                var folderAr = " ";
+                var folderEn = " ";
+                // إذا كان هناك \ في السلسلة، قم بقطع السلسلة حتى هذا الموضع
+                if (lastBackslashIndexEn >= 0)
+                {
+                    folderEn = En_pathFormoula.Substring(0, lastBackslashIndexEn);
+                }
+                // إذا كان هناك \ في السلسلة، قم بقطع السلسلة حتى هذا الموضع
+                if (lastBackslashIndexAr >= 0)
+                {
+                    folderAr = Ar_pathFormoula.Substring(0, lastBackslashIndexAr);
+                }
+                var newfileName = "DailyReportEn" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+                string newPath = " ";
                 //var folderSource = "C:/Users/HP/Desktop/Excels";
 
 
@@ -472,7 +490,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                     string originalFilePath_En = En_pathFormoula??" ";
 
                     // مسار النسخة الجديدة En
-                    string newFilePath_En = folderEn + "/" + "DailyReportEn" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+                    string newFilePath_En = folderEn + "/" + newfileName;
+                    newPath = newFilePath_En;
 
                     // فتح الملف الأصلي
                     using (var workbook_En = new XLWorkbook(originalFilePath_En))
@@ -521,6 +540,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                         };
                         return Json(result2);
                     }
+                    newfileName = newfileName.Replace("En", "Ar");
 
 
                     // مسار الملف الأصلي old excel Ar
@@ -528,7 +548,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                     string originalFilePath_Ar = Ar_pathFormoula??" ";
 
                     // مسار النسخة الجديدة Ar
-                    string newFilePath_Ar = folderAr + "/" + "DailyReportAr" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+                    string newFilePath_Ar = folderAr + "/" + newfileName;
+                    newPath = newFilePath_Ar;
 
                     // فتح الملف الأصلي
                     using (var workbook_Ar = new XLWorkbook(originalFilePath_Ar))
@@ -558,16 +579,37 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                         workbook_Ar.SaveAs(newFilePath_Ar);
                     }
                 }
-
-
-
-
-                var result = new
+                System.Threading.Thread.Sleep(100);  // تأخير 0.1 ثانية
+                // استخدام Task.Run لحذف الملف في الخلفية بعد 1 دقائق
+                Task.Run(async () =>
                 {
-                    code = 1,
-                    //link = filePath_for_src,
-                };
-                return Json(result);
+                    await Task.Delay(60000); // 1 دقائق
+                    DeleteFile(newPath); // حذف الملف بعد التأخير
+                });
+                try
+                {
+                    //newPath = "D:\\1 New BnanEG\\Bnan.Ui\\wwwroot\\images\\Company\\4004\\Support Images\\DailyReportAr20250227092618.xlsx";
+                    //newPath = "/images/Company/4004/Support Images/DailyReportAr20250227092618.xlsx";
+                    //// فتح الملف وتقديمه للتنزيل
+                    //var fileBytes = System.IO.File.ReadAllBytes(newPath);
+                    //var linkpathToDownload = File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", newfileName);
+
+                    newPath = newPath.Replace("./wwwroot",""); 
+                    var result = new
+                    {
+                        code = 1,
+                        linkpath = newPath,
+                        fileName = newfileName,
+
+
+                    };
+                    return Json(result);
+                }
+                catch (Exception ex)
+                {
+                    // التعامل مع الأخطاء إذا حدثت أثناء تحميل الملف
+                    return Json(new { code = 0, message = "حدث خطأ أثناء تحميل الملف: " + ex.Message });
+                }
             }
             catch (Exception ex)
             {
@@ -577,6 +619,22 @@ namespace Bnan.Ui.Areas.CAS.Controllers.CasReports
                 };
                 return Json(result1);
 
+            }
+        }
+
+        // API endpoint لحذف الملف بناءً على المسار الذي يتم إرساله
+        private void DeleteFile(string filePath)
+        {
+            filePath = "./wwwroot" + filePath;
+            // حذف الملف بعد 3 دقائق
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+                Console.WriteLine($"File {filePath} has been deleted after 3 minutes.");
+            }
+            else
+            {
+                Console.WriteLine($"File {filePath} not found for deletion.");
             }
         }
 
