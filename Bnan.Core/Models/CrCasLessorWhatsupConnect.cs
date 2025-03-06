@@ -5,9 +5,8 @@ namespace Bnan.Core.Models
 {
     public partial class CrCasLessorWhatsupConnect
     {
-        public string CrCasLessorWhatsupConnectId { get; set; } = null!;
-        public string? CrCasLessorWhatsupConnectLessor { get; set; }
-        public int? CrCasLessorWhatsupConnectSerial { get; set; }
+        public string CrCasLessorWhatsupConnectLessor { get; set; } = null!;
+        public int CrCasLessorWhatsupConnectSerial { get; set; }
         public string? CrCasLessorWhatsupConnectName { get; set; }
         public string? CrCasLessorWhatsupConnectMobile { get; set; }
         public string? CrCasLessorWhatsupConnectDeviceType { get; set; }
@@ -18,7 +17,7 @@ namespace Bnan.Core.Models
         public DateTime? CrCasLessorWhatsupConnectLogoutDatetime { get; set; }
         public string? CrCasLessorWhatsupConnectStatus { get; set; }
 
-        public virtual CrMasLessorInformation? CrCasLessorWhatsupConnectLessorNavigation { get; set; }
+        public virtual CrMasLessorInformation CrCasLessorWhatsupConnectLessorNavigation { get; set; } = null!;
         public virtual CrMasUserInformation? CrCasLessorWhatsupConnectUserLoginNavigation { get; set; }
         public virtual CrMasUserInformation? CrCasLessorWhatsupConnectUserLogoutNavigation { get; set; }
     }

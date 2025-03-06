@@ -145,7 +145,7 @@ namespace Bnan.Inferastructure.Repository
             if (car != null)
             {
                 string status;
-                if (crCasCarInformation.CrCasCarInformationForSaleStatus?.ToLower() == "checked") status = Status.RendAndForSale;
+                if (crCasCarInformation.CrCasCarInformationForSaleStatus?.ToLower() == "true") status = Status.RendAndForSale;
                 else status = Status.ForSale;
 
                 car.CrCasCarInformationOfferedSaleDate = crCasCarInformation.CrCasCarInformationOfferedSaleDate;

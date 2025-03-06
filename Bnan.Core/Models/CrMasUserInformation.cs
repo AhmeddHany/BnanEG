@@ -23,7 +23,6 @@ namespace Bnan.Core.Models
             CrMasUserMessageCrMasUserMessageUserSenderNavigations = new HashSet<CrMasUserMessage>();
             CrMasUserProceduresValidations = new HashSet<CrMasUserProceduresValidation>();
             CrMasUserSubValidations = new HashSet<CrMasUserSubValidation>();
-
         }
 
         public string CrMasUserInformationCode { get; set; } = null!;
@@ -64,7 +63,6 @@ namespace Bnan.Core.Models
         public bool? CrMasUserInformationOperationStatus { get; set; }
         public string? CrMasUserInformationStatus { get; set; }
         public string? CrMasUserInformationReasons { get; set; }
-
 
         public virtual CrMasLessorInformation? CrMasUserInformationLessorNavigation { get; set; }
         public virtual CrMasUserContractValidity CrMasUserContractValidity { get; set; } = null!;

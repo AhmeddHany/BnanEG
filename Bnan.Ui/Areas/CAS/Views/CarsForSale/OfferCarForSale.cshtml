@@ -197,7 +197,7 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            @* <div class="col-md-4">
                                                 <div class="row">
                                                     <div class="col-auto">
                                                         <p class="DataTitle">@localizer["KM_Count_walked"]</p>
@@ -206,7 +206,7 @@
                                                         <p class="Saved-data">@Model.CrCasCarInformationCurrentMeter?.ToString("N0", CultureInfo.InvariantCulture)</p>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> *@
                                             <div class="col-md-auto">
                                                 <div class="row">
                                                     <div class="col-auto">
@@ -249,7 +249,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="d-flex gap-2 align-items-end">
-                                                <input class="form-check-input checkbox" type="checkbox" value="checked" id="Rent&Sale" name="CrCasCarInformationForSaleStatus">
+                                                <input class="form-check-input checkbox" type="checkbox" value="true" id="Rent&Sale" name="CrCasCarInformationForSaleStatus">
                                                 <label class="form-check-label" for="Rent&Sale">
                                                     @localizer["ForSaleAndRent"]
                                                 </label>
