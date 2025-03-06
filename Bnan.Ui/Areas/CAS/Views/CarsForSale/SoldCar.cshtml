@@ -1,0 +1,256 @@
+﻿@model Cars_CarsSaleVM
+@inject IViewLocalizer localizer
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    ViewData["returnUrl"] = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+<div class="container-fluid h-100 main-container-fluid">
+    <div class="row h-100 flex-nowrap">
+        <div class="col  d-flex align-items-center justify-content-center flex-column">
+            <div class="container NewUpdate-container">
+                <div class="row mt-3 g-3 CarPagesRow">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-9">
+                            <form action="" class="needs-validation" novalidate id="carsForm">
+                                <input asp-for="CrCasCarInformationSerailNo" hidden />
+                                <div class="row g-3 my-2">
+                                    <div class="col-md-6">
+                                        <h3> تحديث بيانات إجراءات بيع السيارة </h3>
+                                    </div>
+                                    <div class="col-md-6 save-col">
+                                        <button type="submit" class="custom-img-btn"> <img src="~/CasSys/images/save.svg" /></button>
+                                        <button type="button" class="custom-img-btn"> <img src="~/CasSys/images/delete (2).svg" /></button>
+                                        <button type="button" class="custom-img-btn"><a class="d-flex align-items-center" href="/CAS/CarsForSale/Index"><img class="Chevron" src="~/CasSys/images/Chevron_Left.svg" /></a></button>
+                                    </div>
+                                    <div class="col-md-12 mb-4">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-auto">
+                                                <div class="CarBorder-CarData">
+                                                    <img src="~/CasSys/images/2021000018.png"
+                                                         alt="Car-photo"
+                                                         class="CarPhoto">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="row align-items-baseline">
+                                                    <div class="col-auto">
+                                                        <h5 class="subtitle">فورد - إسكورت - سيدان صغيرة - 2019  </h5>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <div class="CarColorDiv" style="background-color: rgb(255, 255, 255);"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <p class="m-0">1579634852</p>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <p class="m-0">الحزام الذهبي</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <p class="DataTitle">تاريخ الانضمام</p>
+                                                    </div>
+                                                    <div class="col-auto ">
+                                                        <p class="Saved-data">14/09/2016</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <p class="DataTitle">عدد العقود</p>
+                                                    </div>
+                                                    <div class="col-auto ">
+                                                        <p class="Saved-data">7</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="row justify-content-between">
+                                                    <div class="col-md-auto">
+                                                        <div class="row">
+                                                            <div class="col-auto">
+                                                                <p class="DataTitle">عدد الأيام</p>
+                                                            </div>
+                                                            <div class="col-auto ">
+                                                                <p class="Saved-data">91</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <p class="DataTitle">الكيلوات المقطوعة</p>
+                                                    </div>
+                                                    <div class="col-auto ">
+                                                        <p class="Saved-data">3,145</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-auto">
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <p class="DataTitle">القراءة الحالية</p>
+                                                    </div>
+                                                    <div class="col-auto ">
+                                                        <p class="Saved-data">3,145</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="row g-2  justify-content-between">
+                                        <div class="col-md-5">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>تاريخ العرض </p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">14/09/2024</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="SellingDate"
+                                                   class="form-label">
+                                                تاريخ البيع
+                                            </label>
+                                            <input type="date" id="date"
+                                                   class="form-control inputs"
+                                                   name="SellingDate" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    الحقل مطلوب
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row g-2  justify-content-between">
+                                        <div class="col-md-5">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>سعر العرض</p>
+                                                </div>
+                                                <div class="col-auto ">
+                                                    <p class="Saved-data">7,000</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="Price"
+                                                   class="form-label">
+                                                سعر البيع الفعلي
+                                            </label>
+                                            <input type="number" id="Price"
+                                                   class="form-control inputs number-input"
+                                                   name="Price" required>
+                                            <div class="invaild">
+                                                <div class="invalid-feedback">
+                                                    الحقل مطلوب
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>ملاحظات</label>
+                                        <textarea class=" form-control textarea-inputs" rows="1" maxlength="100" name="notes" type="text"></textarea>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+
+</div>
+
+@section scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var dateInput = document.getElementById("date");
+            var today = new Date().toISOString().split("T")[0]; // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+
+            dateInput.setAttribute("min", today); // تعيين الحد الأدنى إلى اليوم الحالي
+
+            // ✅ ضبط التاريخ الافتراضي إلى اليوم الحالي عند تحميل الصفحة إذا لم يتم تحديده
+            if (!dateInput.value) {
+                dateInput.value = today;
+            }
+
+            // ✅ منع اختيار تاريخ في الماضي
+            dateInput.addEventListener("change", function () {
+                if (dateInput.value < today) {
+                    dateInput.value = today;
+                }
+            });
+        });
+
+         function validateNumericInput(input) {
+            let maxLength = parseInt(input.getAttribute("maxlength")); // الحد الأقصى للإدخال
+            let maxAfterDecimal = 2; // رقمين بعد العلامة العشرية
+            let maxBeforeDecimal = maxLength - (maxAfterDecimal + 1); // عدد الأرقام قبل العلامة العشرية
+
+            let value = input.value;
+
+            // السماح فقط بالأرقام والنقطة العشرية
+            value = value.replace(/[^0-9.]/g, '');
+
+            // منع إدخال أكثر من نقطة عشرية واحدة
+            let decimalCount = (value.match(/\./g) || []).length;
+            if (decimalCount > 1) {
+                value = value.substring(0, value.lastIndexOf(".")); // إزالة النقطة الزائدة
+            }
+
+            let decimalIndex = value.indexOf('.');
+
+            if (decimalIndex !== -1) {
+                let beforeDecimal = value.substring(0, decimalIndex);
+                let afterDecimal = value.substring(decimalIndex + 1);
+
+                // منع النقطة في بداية الرقم
+                if (beforeDecimal === "") {
+                    beforeDecimal = "0";
+                }
+
+                // تقييد الأرقام قبل وبعد العلامة العشرية
+                beforeDecimal = beforeDecimal.substring(0, maxBeforeDecimal);
+                afterDecimal = afterDecimal.substring(0, maxAfterDecimal);
+
+                // تحديث القيمة النهائية
+                input.value = beforeDecimal + '.' + afterDecimal;
+            } else {
+                // لا يوجد نقطة عشرية، تقييد الإدخال بعدد الأرقام المسموح بها
+                input.value = value.substring(0, maxBeforeDecimal);
+            }
+        }
+    </script>
+
+}

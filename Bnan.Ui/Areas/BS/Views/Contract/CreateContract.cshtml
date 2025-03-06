@@ -5024,6 +5024,20 @@
                  current_fs.hide();
              }
          });
+
+         function HideZeroValuesFromDetailsContract() {
+            $("#dropdown-content-payment .dropdown-content-row").each(function () {
+                var valueElement = $(this).find(".personal-data-dropdown p");
+                var valueText = valueElement.text().trim();
+                var numericValue = parseFloat(valueText.replace(/,/g, '')) || 0;
+
+                if (numericValue === 0) {
+                    $(this).hide(); // إخفاء الصف إذا كانت القيمة 0 أو فارغة
+                } else {
+                    $(this).show(); // التأكد من ظهور الصف إذا كانت القيمة غير 0
+                }
+            });
+        }
          //Check Renter
          function SetRenterBalance() {
              //Get RenterBalance
@@ -5121,7 +5135,7 @@
                  });
              });
          }
-        function GetCarInfoForContract(serialNumber) {
+         function GetCarInfoForContract(serialNumber) {
              return new Promise((resolve, reject) => {
                  $.ajax({
                      url: "/BS/Contract/GetCarInfoForContract",
@@ -5623,6 +5637,7 @@
                  CalculateTotalAmount();
                  $("#payment-extra-details").show();
                  $('#AmountPayed').prop('readonly', false);
+                 setTimeout(HideZeroValuesFromDetailsContract, 100); // 🔹 التأكد من تنفيذ التحديث قبل الإخفاء
              } else {
                  clearPaymentData();
              }
@@ -7075,6 +7090,7 @@
                 });
             })
         });
+        
     </script>
     <script>
         $(document).ready(function () {

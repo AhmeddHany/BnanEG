@@ -1,7 +1,8 @@
 ﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.CAS.Cars
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
-@model IEnumerable<CrCasCarInformation>
+@model IEnumerable<Cars_CarsSaleVM>
 
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();

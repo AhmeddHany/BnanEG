@@ -1,7 +1,8 @@
 ﻿@using Bnan.Core.Extensions;
+@using Bnan.Ui.ViewModels.CAS.Cars
 @inject IViewLocalizer localizer
 @inject IOptions<RequestLocalizationOptions> options
-@model IEnumerable<CrCasCarInformation>
+@model IEnumerable<Cars_CarsSaleVM>
 
 @{
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
@@ -27,12 +28,12 @@
         }
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                <a href="" target="_blank"><img src="~/CasSys/images/Rectangle 196.svg" alt="Details pdf anchor"></a>
+            <tr onclick="location.href='@Url.Action(item.CrCasCarInformationForSaleStatus == "A" ? "OfferCarForSale" : "SoldCar", "CarsForSale", new { id = item.CrCasCarInformationSerailNo })'">
+                <td>
+                <a href="@Url.Content(item.CrCasCarInformationLastPictures)" target="_blank" onclick="event.stopPropagation();"><img src="~/CasSys/images/Rectangle 196.svg" alt="Details pdf anchor"></a>
             </td>
             <td>
-                    <p>@item.CrCasCarInformationOfferValueSale?.ToString("N2", CultureInfo.InvariantCulture)</p>
+                    <p>@item.CrCasCarInformationOfferValueSale.ToString("N2", CultureInfo.InvariantCulture)</p>
             </td>
             <td>
                     <p>@item.CrCasCarInformationSoldDate?.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture)</p>
@@ -47,14 +48,14 @@
                 <div class="d-flex gap-2 align-items-center">
                     <div class="col">
                         <div class="row justify-content-end">
-                            <div class="col-auto">
+                           @*  <div class="col-auto">
                                 <div class="CarColorDiv" style="background-color: rgb(255, 255, 255);"></div>
-                            </div>
+                            </div> *@
                             <div class="col-auto">
                                 <p class="FirstLineP">
                                         @(requestCulture?.RequestCulture.UICulture.Name == "en-US" ?
-                                        item.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionConcatenateEnName :
-                                        item.CrCasCarInformationDistributionNavigation?.CrMasSupCarDistributionConcatenateArName)
+                                        item.CrCasCarInformationConcatenateEnName :
+                                        item.CrCasCarInformationConcatenateArName)
                                 </p>
                             </div>
                         </div>
