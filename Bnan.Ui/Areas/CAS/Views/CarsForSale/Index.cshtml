@@ -90,6 +90,14 @@
         $("#wrapper").addClass("Branches-wrapper");
     </script>
     <script>
+        $(document).on("click", ".clickable-row", function () {
+            console.log("Clicked on a row!");
+            var url = $(this).data("url");
+            console.log("URL:", url);
+            if (url) {
+                window.location.href = url;
+            }
+        });
          //get AccountBank By Status function
         function GetCarsFitler(status, search) {
             $.ajax({

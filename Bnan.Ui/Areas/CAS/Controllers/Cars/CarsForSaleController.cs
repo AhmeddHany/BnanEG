@@ -100,7 +100,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                                                                           x.CrCasCarInformationConcatenateArName.Contains(search) ||
                                                                           x.CrCasCarInformationConcatenateEnName.Contains(search.ToLower())
                                                                           )));
-                else return PartialView("_CarsForSaleData", carsVM.Where(x => x.CrCasCarInformationForSaleStatus == status &&
+                else return PartialView("_CarsForSaleData", carsVM.Where(x => x.CrCasCarInformationStatus != Status.Sold &&
+                                                                              x.CrCasCarInformationForSaleStatus == status &&
                                                                          (x.CrCasCarInformationSerailNo.Contains(search) ||
                                                                           x.CrCasCarInformationConcatenateArName.Contains(search) ||
                                                                           x.CrCasCarInformationConcatenateEnName.Contains(search.ToLower())
@@ -126,8 +127,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 return RedirectToAction("Index", "CarsForSale");
             }
             var car = await _unitOfWork.CrCasCarInformation.FindAsync(x => x.CrCasCarInformationSerailNo == id && x.CrCasCarInformationLessor == user.CrMasUserInformationLessor,
-                new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
-                       "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation"});
+                new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation" });
             var carVM = _mapper.Map<Cars_CarsSaleVM>(car);
             return View(carVM);
         }
@@ -155,8 +155,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 x.CrCasCarInformationLessor == user.CrMasUserInformationLessor &&
                 x.CrCasCarInformationBranchStatus == Status.Active &&
                 x.CrCasCarInformationOwnerStatus == Status.Active,
-                new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
-                       "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation"});
+                new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation" });
 
             if (car == null)
             {
@@ -195,12 +194,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
         {
             bool isValid = true;
 
-            // ✅ التحقق من تاريخ العرض
-            if (model.CrCasCarInformationOfferedSaleDate < DateTime.Today)
-            {
-                ModelState.AddModelError("CrCasCarInformationOfferedSaleDate", _localizer["PleaseEnterCorrectFormatDate"]);
-                isValid = false;
-            }
+            //// ✅ التحقق من تاريخ العرض
+            //if (model.CrCasCarInformationOfferedSaleDate < DateTime.Today)
+            //{
+            //    ModelState.AddModelError("CrCasCarInformationOfferedSaleDate", _localizer["PleaseEnterCorrectFormatDate"]);
+            //    isValid = false;
+            //}
 
             // ✅ التحقق من قيمة البيع
             if (!decimal.TryParse(model.OfferValueSaleString, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal result))
@@ -245,8 +244,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 x.CrCasCarInformationLessor == user.CrMasUserInformationLessor &&
                 x.CrCasCarInformationBranchStatus == Status.Active &&
                 x.CrCasCarInformationOwnerStatus == Status.Active,
-                new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
-                       "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation"});
+                new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation" });
             if (car == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -281,8 +279,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 x.CrCasCarInformationLessor == user.CrMasUserInformationLessor &&
                 x.CrCasCarInformationBranchStatus == Status.Active &&
                 x.CrCasCarInformationOwnerStatus == Status.Active,
-                new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
-                       "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation"});
+                new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation" });
 
             if (car == null)
             {
@@ -333,8 +330,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 x.CrCasCarInformationLessor == user.CrMasUserInformationLessor &&
                 x.CrCasCarInformationBranchStatus == Status.Active &&
                 x.CrCasCarInformationOwnerStatus == Status.Active,
-                new[] {"CrCasCarInformation1", "CrCasCarInformationDistributionNavigation",
-                       "CrCasCarDocumentsMaintenances.CrCasCarDocumentsMaintenanceProceduresNavigation"});
+                new[] { "CrCasCarInformation1", "CrCasCarInformationDistributionNavigation" });
 
             if (car == null) return "false";
 

@@ -28,7 +28,12 @@
         }
         @foreach (var item in Model)
         {
-            <tr onclick="location.href='@Url.Action(item.CrCasCarInformationForSaleStatus == "A" ? "OfferCarForSale" : "SoldCar", "CarsForSale", new { id = item.CrCasCarInformationSerailNo })'">
+            var url = item.CrCasCarInformationStatus == Status.Sold ? "" :
+            (item.CrCasCarInformationForSaleStatus == "A"
+            ? Url.Action("OfferCarForSale", "CarsForSale", new { id = item.CrCasCarInformationSerailNo })
+            : Url.Action("SoldCar", "CarsForSale", new { id = item.CrCasCarInformationSerailNo }));
+
+            <tr data-url="@url" class="clickable-row @(string.IsNullOrEmpty(url) ? "disabled-row" : "")">
                 <td>
                 <a href="@Url.Content(item.CrCasCarInformationLastPictures)" target="_blank" onclick="event.stopPropagation();"><img src="~/CasSys/images/Rectangle 196.svg" alt="Details pdf anchor"></a>
             </td>
