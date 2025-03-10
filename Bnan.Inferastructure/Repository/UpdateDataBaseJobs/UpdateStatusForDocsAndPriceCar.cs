@@ -101,6 +101,7 @@ namespace Bnan.Inferastructure.Repository.UpdateDataBaseJobs
                     foreach (var car in cars)
                     {
                         car.CrCasCarInformationPriceStatus = false;
+                        car.CrCasCarInformationPriceNo = null;
                         if (!updatedCarInformations.Contains(car))
                         {
                             updatedCarInformations.Add(car);

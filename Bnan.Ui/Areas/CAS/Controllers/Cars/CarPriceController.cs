@@ -50,11 +50,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 return RedirectToAction("Index", "Home");
             }
             var carPrices = (await _unitOfWork.CrCasPriceCarBasic.FindAllAsNoTrackingAsync(x => x.CrCasPriceCarBasicLessorCode == user.CrMasUserInformationLessor && x.CrCasPriceCarBasicStatus == Status.Active,
-                                                                        new[] { "CrCasPriceCarBasicLessorCodeNavigation", "CrCasPriceCarBasicDistributionCodeNavigation.CrCasCarInformations" })).DistinctBy(x => x.CrCasPriceCarBasicDistributionCodeNavigation);
+                                                                        new[] { "CrCasPriceCarBasicLessorCodeNavigation", "CrCasPriceCarBasicDistributionCodeNavigation.CrCasCarInformations" }))/*.DistinctBy(x => x.CrCasPriceCarBasicDistributionCodeNavigation)*/;
             if (!carPrices.Any())
             {
-                carPrices = (await _unitOfWork.CrCasPriceCarBasic.FindAllAsNoTrackingAsync(x => x.CrCasPriceCarBasicLessorCode == user.CrMasUserInformationLessor && x.CrCasPriceCarBasicStatus == Status.Expire,
-                                                                        new[] { "CrCasPriceCarBasicLessorCodeNavigation", "CrCasPriceCarBasicDistributionCodeNavigation.CrCasCarInformations" })).DistinctBy(x => x.CrCasPriceCarBasicDistributionCodeNavigation);
+                carPrices = (await _unitOfWork.CrCasPriceCarBasic.FindAllAsNoTrackingAsync(x => x.CrCasPriceCarBasicLessorCode == user.CrMasUserInformationLessor && x.CrCasPriceCarBasicStatus != Status.Deleted,
+                                                                        new[] { "CrCasPriceCarBasicLessorCodeNavigation", "CrCasPriceCarBasicDistributionCodeNavigation.CrCasCarInformations" }))/*.DistinctBy(x => x.CrCasPriceCarBasicDistributionCodeNavigation)*/;
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
@@ -69,7 +69,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
             if (!string.IsNullOrEmpty(status))
             {
                 var carPrices = (await _unitOfWork.CrCasPriceCarBasic.FindAllAsNoTrackingAsync(l => l.CrCasPriceCarBasicLessorCode == user.CrMasUserInformationLessor,
-                                                                                                              new[] { "CrCasPriceCarBasicLessorCodeNavigation", "CrCasPriceCarBasicDistributionCodeNavigation.CrCasCarInformations" })).DistinctBy(x => x.CrCasPriceCarBasicDistributionCode);
+                                                                       new[] { "CrCasPriceCarBasicLessorCodeNavigation", "CrCasPriceCarBasicDistributionCodeNavigation.CrCasCarInformations" }));
+
                 if (status == Status.All)
                 {
                     var carPricesStatusAll = carPrices.Where(x => x.CrCasPriceCarBasicStatus != Status.Deleted &&
@@ -102,9 +103,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 return RedirectToAction("CarPrice", "CarPrice");
             }
             bool isEnglish = CultureInfo.CurrentCulture.Name == "en-US";
-            var carsInformation = await _unitOfWork.CrMasSupCarDistribution
-                .GetAllAsyncAsNoTrackingAsync();
-            var excludedCodes = (await _unitOfWork.CrCasPriceCarBasic.GetAllAsyncAsNoTrackingAsync()).Where(x => x.CrCasPriceCarBasicStatus == Status.Active &&
+            var carsInformation = await _unitOfWork.CrMasSupCarDistribution.FindAllAsNoTrackingAsync(x => x.CrMasSupCarDistributionStatus != Status.Deleted && x.CrMasSupCarDistributionCount > 0);
+            var excludedCodes = (await _unitOfWork.CrCasPriceCarBasic.GetAllAsyncAsNoTrackingAsync()).Where(x => x.CrCasPriceCarBasicStatus != Status.Deleted &&
                                                                                                             x.CrCasPriceCarBasicLessorCode == user.CrMasUserInformationLessor)
                                 .Select(x => x.CrCasPriceCarBasicDistributionCode).ToHashSet();
             var formattedCars = carsInformation
@@ -179,7 +179,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                     if (await _unitOfWork.CompleteAsync() > 0)
                     {
                         await SaveTracingForCarPriceChange(userLogin, distribution.CrMasSupCarDistributionConcatenateArName, distribution.CrMasSupCarDistributionConcatenateEnName, Status.Insert);
-                        await SaveAdminstritiveForCarPrice(userLogin, "219", "20", PriceCarNo, carPriceVM.CrCasPriceCarBasicReasons, Status.Insert);
+                        await SaveAdminstritiveForCarPrice(userLogin, "219", "20", CarPriceModel.CrCasPriceCarBasicDistributionCode, carPriceVM.CrCasPriceCarBasicReasons, Status.Insert);
                         _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                         return RedirectToAction("CarPrice");
                     }
@@ -256,6 +256,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 {
                     car.CrCasCarInformationPriceStatus = isChecked;
                     if (isChecked) car.CrCasCarInformationPriceNo = priceCarNo;
+                    else car.CrCasCarInformationPriceNo = null;
                 }
                 _unitOfWork.CrCasCarInformation.UpdateRange(cars);
             }
@@ -303,7 +304,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 if (await _unitOfWork.CompleteAsync() > 0)
                 {
                     await SaveTracingForCarPriceChange(user, carPrice.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateArName, carPrice.CrCasPriceCarBasicDistributionCodeNavigation.CrMasSupCarDistributionConcatenateEnName, Status.Deleted);
-                    await SaveAdminstritiveForCarPrice(user, "219", "20", carPrice.CrCasPriceCarBasicNo, carPrice.CrCasPriceCarBasicReasons, Status.Deleted);
+                    await SaveAdminstritiveForCarPrice(user, "219", "20", carPrice.CrCasPriceCarBasicDistributionCode, carPrice.CrCasPriceCarBasicReasons, Status.Deleted);
 
                     _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return "true";
@@ -359,11 +360,11 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Cars
                 system.CrMasSysSystemArName,
                 system.CrMasSysSystemEnName);
         }
-        private async Task SaveAdminstritiveForCarPrice(CrMasUserInformation user, string procudureCode, string classification, string PriceCarNo, string reasons, string status)
+        private async Task SaveAdminstritiveForCarPrice(CrMasUserInformation user, string procudureCode, string classification, string DistibuationNo, string reasons, string status)
         {
             var (operationAr, operationEn) = GetStatusTranslation(status);
             await _adminstritiveProcedures.SaveAdminstritive(user.CrMasUserInformationCode, "1", procudureCode, classification, user.CrMasUserInformationLessor, "100",
-            PriceCarNo, null, null, null, null, null, null, null, null, operationAr, operationEn, status, reasons);
+            DistibuationNo, null, null, null, null, null, null, null, null, operationAr, operationEn, status, reasons);
         }
 
         public IActionResult SuccesssMessageForCarPrice()

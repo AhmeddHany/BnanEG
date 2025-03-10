@@ -1,14 +1,5 @@
-﻿using Azure;
-using Bnan.Core.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bnan.Inferastructure.Extensions
 {
@@ -59,13 +50,13 @@ namespace Bnan.Inferastructure.Extensions
         public static async Task SetPageTitleAsync(this ViewDataDictionary viewData, string subtask, string operationAr, string operationEn, string userName)
         {
             string currentCulture = CultureInfo.CurrentCulture.Name;
-
             var titleParts = new List<string>();
 
             if (!string.IsNullOrEmpty(subtask))
             {
                 titleParts.Add(subtask);
             }
+
             if (currentCulture == "en-US")
             {
                 if (!string.IsNullOrEmpty(operationEn))
@@ -85,7 +76,9 @@ namespace Bnan.Inferastructure.Extensions
             {
                 titleParts.Add(userName);
             }
-            viewData["Title"] = string.Join(" - ", titleParts);
+
+            // Join only non-empty parts and avoid extra separators
+            viewData["Title"] = string.Join(" - ", titleParts.Where(part => !string.IsNullOrEmpty(part)));
         }
     }
 }

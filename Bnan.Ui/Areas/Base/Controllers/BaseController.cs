@@ -86,7 +86,7 @@ namespace Bnan.Ui.Areas.Base.Controllers
             else if (status == Status.ForSale) return ("عرض للبيع", "Offer To Sale");
             else if (status == Status.CancelOffer) return ("الغاء العرض", "Cancel Offer");
             else if (status == Status.Sold) return ("تنفيذ البيع", "Executing the sale");
-            else return (" ", " ");
+            else return ("", "");
         }
 
 

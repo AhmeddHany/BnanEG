@@ -41,9 +41,9 @@
                         <p class="secondLineP">@item.CrCasPriceCarBasicDate?.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture)</p>
                     </div>
                     <div class="col-auto d-flex justify-content-end">
-                        <div class="CarBorder">
-                            <img src="@Url.Content(item.CrCasPriceCarBasicDistributionCodeNavigation?.CrMasSupCarDistributionImage)"
-                              alt="Car-photo"  class="CarPhoto border-0 w-100 h-100" >
+                        <div class="CarBorder-CarData">
+                             <img src="@Url.Content(item.CrCasPriceCarBasicDistributionCodeNavigation?.CrMasSupCarDistributionImage)"
+                             style="max-width:100px;" class="CarPhoto">
                         </div>
                     </div>
                 </div>
@@ -63,6 +63,7 @@
                 </div>
             </td>
         </tr>
+        no++;
         }
     </tbody>
 </table>
