@@ -6,6 +6,7 @@
         public string Mobile { get; set; }          // رقم الهاتف
         public string DeviceType { get; set; }      // نوع الجهاز
         public string IsBussenis { get; set; }      // حالة العمل
+        public string Picture { get; set; }      // حالة العمل
 
         private int? serial;
         public int? Serial                          // معرف الاتصالات (مرن لاستقبال نص أو عدد)

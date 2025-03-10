@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Bnan.Core.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bnan.Ui.ViewModels.MAS
 {
@@ -84,5 +85,6 @@ namespace Bnan.Ui.ViewModels.MAS
         public string? CrMasLessorInformationReasons { get; set; }
 
         public BranchPostVM BranchPostVM { get; set; }
+        public CrCasLessorWhatsupConnect? WhatsupConnect { get; set; }
     }
 }

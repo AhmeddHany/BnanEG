@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Bnan.Core.Models
+﻿namespace Bnan.Core.Models
 {
     public partial class CrCasLessorWhatsupConnect
     {
@@ -15,6 +12,7 @@ namespace Bnan.Core.Models
         public DateTime? CrCasLessorWhatsupConnectLoginDatetime { get; set; }
         public string? CrCasLessorWhatsupConnectUserLogout { get; set; }
         public DateTime? CrCasLessorWhatsupConnectLogoutDatetime { get; set; }
+        public string? CrCasLessorWhatsupConnectPicture { get; set; }
         public string? CrCasLessorWhatsupConnectStatus { get; set; }
 
         public virtual CrMasLessorInformation CrCasLessorWhatsupConnectLessorNavigation { get; set; } = null!;

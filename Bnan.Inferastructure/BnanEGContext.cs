@@ -2119,6 +2119,10 @@ namespace Bnan.Inferastructure
                     .IsUnicode(false)
                     .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_User_Logout");
 
+                entity.Property(e => e.CrCasLessorWhatsupConnectPicture)
+                   .HasMaxLength(500)
+                   .HasColumnName("CR_Cas_Lessor_Whatsup_Connect_Picture");
+
                 entity.HasOne(d => d.CrCasLessorWhatsupConnectLessorNavigation)
                     .WithMany(p => p.CrCasLessorWhatsupConnects)
                     .HasForeignKey(d => d.CrCasLessorWhatsupConnectLessor)

@@ -179,17 +179,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
             {
                 var user = await _userManager.GetUserAsync(User);
                 var response = await WhatsAppServicesExtension.LogoutAsync(user.CrMasUserInformationLessor);
-                if (response.IsSuccessStatusCode)
-                {
-                    await _whatsupConnect.ChangeStatusOldWhatsupConnect(user.CrMasUserInformationLessor, user.CrMasUserInformationCode);
-                    await _whatsupConnect.AddNewWhatsupConnect(user.CrMasUserInformationLessor);
-                    await _unitOfWork.CompleteAsync();
-                    return Json(new { status = true, message = "تم قطع الاتصال بنجاح" });
-                }
-                else
-                {
-                    return Json(new { status = false, message = "حدث خطأ أثناء قطع الاتصال. تأكد من حالة الخادم." });
-                }
+                if (response.IsSuccessStatusCode) return Json(new { status = true, message = "تم قطع الاتصال بنجاح" });
+                else return Json(new { status = false, message = "حدث خطأ أثناء قطع الاتصال. تأكد من حالة الخادم." });
             }
             catch (Exception ex)
             {
@@ -226,28 +217,26 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
             try
             {
                 var user = await _userManager.GetUserAsync(User);
-
-                // استدعاء الميثود الجديدة التي تحقق الاتصال
-                var content = await WhatsAppServicesExtension.CheckIsConnected(user.CrMasUserInformationLessor);
-                // تحويل الـ Response إلى كائن C#
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
-                if (apiResponse.Key == "3" && apiResponse?.Status == true) return Json(new { status = true, message = "1" });
-                else if (apiResponse.Key == "4" && apiResponse?.Status == true && apiResponse.Data != null)
+                var whatsConnect = (await _unitOfWork.CrCasLessorWhatsupConnect.FindAllAsNoTrackingAsync(x => x.CrCasLessorWhatsupConnectLessor == user.CrMasUserInformationLessor))
+                                                                 .OrderBy(x => x.CrCasLessorWhatsupConnectSerial).LastOrDefault();
+                if (whatsConnect?.CrCasLessorWhatsupConnectStatus == null) return Json(new { status = false, code = "4", message = "not connected before" });
+                else if (whatsConnect?.CrCasLessorWhatsupConnectStatus == Status.Renewed) return Json(new { status = true, code = whatsConnect?.CrCasLessorWhatsupConnectStatus, message = "disconnected" });
+                else if (whatsConnect?.CrCasLessorWhatsupConnectStatus == Status.Active)
                 {
-                    var clientData = apiResponse.Data;
-                    var lastConnect = await GetLastConnect(user.CrMasUserInformationLessor);
-                    if (lastConnect != null && lastConnect.CrCasLessorWhatsupConnectStatus == "N") return Json(new { status = true, message = "2" });
-                    bool updateConnect = await _whatsupConnect.ChangeStatusOldWhenDisconnectFromWhatsup(user.CrMasUserInformationLessor, clientData.LastLogOut);
-                    bool addNewConnect = await _whatsupConnect.AddNewWhatsupConnect(user.CrMasUserInformationLessor);
-                    if (updateConnect && addNewConnect && await _unitOfWork.CompleteAsync() > 0) return Json(new { status = true, message = "3" });
-                    else return Json(new { status = false, message = "حدث خطأ اثناء حفظ البيانات" });
+                    ClientInfoWhatsup clientInfo = new ClientInfoWhatsup()
+                    {
+                        Name = whatsConnect.CrCasLessorWhatsupConnectName,
+                        DeviceType = whatsConnect.CrCasLessorWhatsupConnectDeviceType,
+                        Mobile = whatsConnect.CrCasLessorWhatsupConnectMobile,
+                        Picture = whatsConnect.CrCasLessorWhatsupConnectPicture,
+                    };
+                    return Json(new { status = true, code = whatsConnect?.CrCasLessorWhatsupConnectStatus, message = "connected", data = clientInfo });
                 }
-                else if (apiResponse?.Status == false && apiResponse.Key == "2") return Json(new { status = true, message = "4" });
-                else return Json(new { status = false, message = "حدث خطأ ف الاتصال" });
+                else return Json(new { status = false, code = "3", message = _localizer["SomethingWrongPleaseCallAdmin"] });
             }
             catch (Exception ex)
             {
-                return Json(new { status = false, message = $"حدث خطأ ف الاتصال: {ex.Message}" });
+                return Json(new { status = false, code = "3", message = _localizer["SomethingWrongPleaseCallAdmin"] });
             }
         }
         private async Task<bool> UpdateClientInfo(string lessorCode, ClientInfoWhatsup clientInfoWhatsup)

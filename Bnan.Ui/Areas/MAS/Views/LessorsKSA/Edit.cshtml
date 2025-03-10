@@ -757,110 +757,85 @@
     <script>
 
 
-        $('#Connect input[type="checkbox"]').on('click', async function () {
-            // تعطيل الـ checkbox مؤقتًا أثناء الانتظار
-            event.preventDefault();
+        // $('#Connect input[type="checkbox"]').on('click', async function () {
+        //     // تعطيل الـ checkbox مؤقتًا أثناء الانتظار
+        //     event.preventDefault();
 
-            toastr.options = { "positionClass": "@localizer["toastPostion"]" };
+        //     toastr.options = { "positionClass": "@localizer["toastPostion"]" };
 
-            var companyId = $('#CrMasLessorInformationCode').val();
-            console.log("companyId", companyId);
-            try {
-                const status = await connectLessorAsync(companyId);
-                console.log("status:", status);  // تحقق من القيم القادمة من الخادم
+        //     var companyId = $('#CrMasLessorInformationCode').val();
+        //     console.log("companyId", companyId);
+        //     try {
+        //         const status = await connectLessorAsync(companyId);
+        //         console.log("status:", status);  // تحقق من القيم القادمة من الخادم
 
-                if (status == '@ApiResponseStatus.Success') {
-                    // تفعيل الـ checkbox بعد نجاح الرد
-                    $('#Connect input[type="checkbox"]').prop('checked', true);
-                    toastr.success("Device successfully added!");
-                } else if (status == '@ApiResponseStatus.AlreadyExists') {
-                    // إلغاء تفعيل الـ checkbox إذا كان الجهاز موجود بالفعل
-                    $('#Connect input[type="checkbox"]').prop('checked', false);
-                    toastr.error("Device already exists!");
-                } else if (status == '@ApiResponseStatus.ValidationError') {
-                    // إلغاء تفعيل الـ checkbox إذا كانت هناك مشكلة في التحقق
-                    $('#Connect input[type="checkbox"]').prop('checked', false);
-                    toastr.error("Validation error! Please check the inputs.");
-                } else {
-                    // في حالة حدوث خطأ غير متوقع
-                    $('#Connect input[type="checkbox"]').prop('checked', false);
-                    toastr.error("An error occurred. Please try again later.");
-                }
+        //         if (status == '@ApiResponseStatus.Success') {
+        //             // تفعيل الـ checkbox بعد نجاح الرد
+        //             $('#Connect input[type="checkbox"]').prop('checked', true);
+        //             toastr.success("Device successfully added!");
+        //         } else if (status == '@ApiResponseStatus.AlreadyExists') {
+        //             // إلغاء تفعيل الـ checkbox إذا كان الجهاز موجود بالفعل
+        //             $('#Connect input[type="checkbox"]').prop('checked', false);
+        //             toastr.error("Device already exists!");
+        //         } else if (status == '@ApiResponseStatus.ValidationError') {
+        //             // إلغاء تفعيل الـ checkbox إذا كانت هناك مشكلة في التحقق
+        //             $('#Connect input[type="checkbox"]').prop('checked', false);
+        //             toastr.error("Validation error! Please check the inputs.");
+        //         } else {
+        //             // في حالة حدوث خطأ غير متوقع
+        //             $('#Connect input[type="checkbox"]').prop('checked', false);
+        //             toastr.error("An error occurred. Please try again later.");
+        //         }
 
-            } catch (error) {
-                console.error("Error:", error);
-                // إلغاء تفعيل الـ checkbox إذا حدث خطأ أثناء الـ AJAX
-                $('#Connect input[type="checkbox"]').prop('checked', false);
-                toastr.error("Failed to connect to the server.");
-            } finally {
-                // إعادة تمكين الـ checkbox بعد استلام الرد
-                $('#Connect input[type="checkbox"]').prop('disabled', false);
-            }
-        });
+        //     } catch (error) {
+        //         console.error("Error:", error);
+        //         // إلغاء تفعيل الـ checkbox إذا حدث خطأ أثناء الـ AJAX
+        //         $('#Connect input[type="checkbox"]').prop('checked', false);
+        //         toastr.error("Failed to connect to the server.");
+        //     } finally {
+        //         // إعادة تمكين الـ checkbox بعد استلام الرد
+        //         $('#Connect input[type="checkbox"]').prop('disabled', false);
+        //     }
+        // });
 
-        async function connectLessorAsync(companyId) {
-            return new Promise((resolve, reject) => {
-                $.ajax({
-                    type: "GET",
-                    url: "/MAS/LessorsKSA/Connect",
-                    data: { companyId: companyId },
-                    success: function (result) {
-                        console.log("result", result.status);
-                        resolve(result.status);  // إرجاع status في حالة النجاح
-                    },
-                    error: function () {
-                        console.log("AJAX error");
-                        reject("Failed to connect to the server");  // إرجاع رسالة خطأ في حالة الفشل
-                    }
-                });
-            });
-        }
+        // async function connectLessorAsync(companyId) {
+        //     return new Promise((resolve, reject) => {
+        //         $.ajax({
+        //             type: "GET",
+        //             url: "/MAS/LessorsKSA/Connect",
+        //             data: { companyId: companyId },
+        //             success: function (result) {
+        //                 console.log("result", result.status);
+        //                 resolve(result.status);  // إرجاع status في حالة النجاح
+        //             },
+        //             error: function () {
+        //                 console.log("AJAX error");
+        //                 reject("Failed to connect to the server");  // إرجاع رسالة خطأ في حالة الفشل
+        //             }
+        //         });
+        //     });
+        // }
 
 
 
 
         $(document).ready(async function () {
-            var companyId = $('#CrMasLessorInformationCode').val(); // افترض وجود الـ ID للشركة
-            console.log("Initializing checkbox for Company ID: ", companyId);
+            const status = "@Model.WhatsupConnect?.CrCasLessorWhatsupConnectStatus";
+            console.log("Initializing checkbox for Company status: ", status);
 
-            // التحقق من حالة التهيئة عند تحميل الصفحة
-            const status = await checkClientInitialized(companyId);
-
-            if (status === '@ApiResponseStatus.AlreadyExists') {
+            if(status!=null &&status!="@Status.Deleted"){
                 // إذا كانت مهيأة بالفعل، يتم تفعيل checkbox
                 $('#Connect input[type="checkbox"]').prop('checked', true);
                 $('#Connect input[type="checkbox"]').prop('disabled', true);
                 console.log("Client is already initialized. Checkbox set to true.");
-            } else if (status === '@ApiResponseStatus.NotFound') {
-                // إذا لم تكن مهيأة، يتم إلغاء تحديد checkbox
+            }
+            else{
+                 // إذا لم تكن مهيأة، يتم إلغاء تحديد checkbox
                 $('#Connect input[type="checkbox"]').prop('checked', false);
                 $('#Connect input[type="checkbox"]').prop('disabled', false);
                 console.log("Client is not initialized. Checkbox set to false.");
-            } else {
-                console.error("An error occurred while checking client initialization.");
             }
         });
-
-        async function checkClientInitialized(companyId) {
-            return new Promise((resolve, reject) => {
-                $.ajax({
-                    type: "GET",
-                    url: "/MAS/LessorsKSA/CheckClientInitialized",
-                    data: { companyId: companyId },
-                    success: function (result) {
-                        console.log("result", result.status);
-                        resolve(result.status);  // إرجاع status في حالة النجاح
-                    },
-                    error: function () {
-                        console.log("AJAX error");
-                        reject("Failed to connect to the server");  // إرجاع رسالة خطأ في حالة الفشل
-                    }
-                });
-            });
-        }
-
-
-
     </script>
 
 }

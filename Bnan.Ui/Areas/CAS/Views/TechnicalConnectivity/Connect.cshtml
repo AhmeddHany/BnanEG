@@ -402,46 +402,16 @@
         });
         const qrCodeTimeout = 30000; // صلاحية QR Code (30 ثانية)
         const connectionCheckInterval = 5000; // زمن التحقق (5 ثواني)
+        let monitoringTimer = null;
+        let previousStatus = null; // تخزين الحالة السابقة للاتصال
 
-
-
-        async function checkClientConnection() {
-            const url = `/CAS/TechnicalConnectivity/IsClientReady`;
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000);
-
-            try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    signal: controller.signal,
-                });
-
-                clearTimeout(timeoutId);
-
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-                const data = await response.json();
-                console.log("data.status", data.status)
-                return data.status && data.data ? true : false;
-            } catch (error) {
-                console.log("err data.status", data.status)
-                clearTimeout(timeoutId);
-                return false;
-            }
-        }
         async function checkClientConnectionWithUI() {
-            const url = `/CAS/TechnicalConnectivity/IsClientReady`;
-
-            // إظهار Loader أثناء التحقق
             showLoader();
-
             try {
-                const isConnected = await checkClientConnection();
 
-                if (isConnected) {
-                    // العميل متصل، إظهار الحالة المناسبة
-                    const response = await fetch(url);
-                    const { name, mobile, deviceType } = (await response.json()).data;
+                var result = await CheckLessorIsConnect();
+                if (result.status && result.code == "@Status.Active") {
+                    const { name, mobile, deviceType } = result.data || {};
                     showClientConnected(name, mobile, deviceType);
                 } else {
                     // العميل غير متصل، إظهار زر إنشاء QR
@@ -455,9 +425,9 @@
 
         async function fetchQrCode(event) {
             if (event) event.preventDefault(); // منع السلوك الافتراضي
-            const isConnected = await checkClientConnection();
+            const result = await CheckLessorIsConnect();
 
-            if (isConnected) return;
+            if (result.status && result.code == "@Status.Active") return;
 
             const url = `/CAS/TechnicalConnectivity/GenerateQrCode`;
             const controller = new AbortController();
@@ -496,6 +466,7 @@
                 console.log("result.Disconnect", result.status)
                 if (result.status) {
                     showLoader();
+                    clearTimeout(monitoringTimer); // إيقاف أي عمليات تحقق حالية
                     setTimeout(() => {
                         clearClientInfo();
                         showSuccessMessage(result.message || "تم قطع الاتصال بنجاح");
@@ -508,30 +479,31 @@
             }
         }
 
-        let monitoringTimer;
-
         async function monitorClientConnection() {
+            if (monitoringTimer) return; // تجنب تشغيل المراقبة أكثر من مرة
+
             let elapsedTime = 0;
 
             async function checkAndRepeat() {
                 elapsedTime += connectionCheckInterval;
 
-                const isConnected = await checkClientConnection();
-                if (isConnected) {
-                    clearTimeout(monitoringTimer); // إيقاف التحقق
-                    const response = await fetch(`/CAS/TechnicalConnectivity/IsClientReady`);
-                    const { name, mobile, deviceType } = (await response.json()).data;
+                var result = await CheckLessorIsConnect();
+                if (result.status && result.code == "@Status.Active") { // تحقق من الكود الصحيح لحالة "متصل"
+                    clearTimeout(monitoringTimer);
+                    monitoringTimer = null; // إلغاء المؤقت بعد النجاح
+                    const { name, mobile, deviceType } = result.data || {};
                     showClientConnected(name, mobile, deviceType);
-                    return; // إيقاف التكرار عند الاتصال
+                    return;
                 }
 
                 if (elapsedTime >= qrCodeTimeout) {
-                    clearTimeout(monitoringTimer); // إيقاف المؤقت بعد انتهاء الصلاحية
+                    clearTimeout(monitoringTimer);
+                    monitoringTimer = null;
                     showQrExpiredMessage();
-                    return; // إنهاء التنفيذ بعد انتهاء الوقت
+                    return;
                 }
 
-                // إعداد استدعاء متكرر بعد انتهاء التنفيذ الحالي
+                // إعداد استدعاء متكرر
                 monitoringTimer = setTimeout(checkAndRepeat, connectionCheckInterval);
             }
 
@@ -543,19 +515,19 @@
 
         function showLoader() {
             $('#QRArea').empty();
-            $('#QRArea').append('<span class="loader"></span>');
+            $('#QRArea').append('<span class="loader1"></span>');
         }
 
         function displayQrCode(qr) {
             $('#QRArea').empty();
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').append(`
-                                                                                        <div class="col-auto d-flex flex-column justify-content-center align-items-center">
-                                                                                            <div id="QRCode"></div>
-                                                                                            <br>
-                                                                                            <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
-                                                                                        </div>
-                                                                                    `);
+                                                                                <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+                                                                                    <div id="QRCode"></div>
+                                                                                    <br>
+                                                                                    <p><img src="/MasSystem/images/Frame 2608853.svg"> مسح الرمز</p>
+                                                                                </div>
+                                                                            `);
             $('#QRCode').qrcode(qr);
         }
 
@@ -563,33 +535,33 @@
             $('#QRArea').empty();
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').append(`
-                                                                                        <div class="col-auto d-flex gap-4 flex-column justify-content-center align-items-center"
-                                                                                             style="cursor:pointer;" id="ExpiredQRMessage" onclick="fetchQrCode()">
-                                                                                            <img src="/MasSystem/images/NotScannedQR.svg" alt="Expired QR">
-                                                                                            <p>انتهت صلاحية الرمز اضغط لإعادة التحميل</p>
-                                                                                        </div>
-                                                                                    `);
+                                                                                <div class="col-auto d-flex gap-4 flex-column justify-content-center align-items-center"
+                                                                                     style="cursor:pointer;" id="ExpiredQRMessage" onclick="fetchQrCode()">
+                                                                                    <img src="/MasSystem/images/NotScannedQR.svg" alt="Expired QR">
+                                                                                    <p>انتهت صلاحية الرمز اضغط لإعادة التحميل</p>
+                                                                                </div>
+                                                                            `);
         }
 
         function showQrButton() {
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                                        <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                                                                                            <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                                                                                        </button>
-                                                                                    `);
+                                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                                </button>
+                                                                            `);
         }
 
         function showClientConnected(name, mobile, deviceType) {
             $("#data-check-whatsup").css("background-color", "green");
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                                        <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
-                                                                                            <img src="/MasSystem/images/done.svg" style="width: 50px;">
-                                                                                            <p>أنت متصل بالواتساب</p>
-                                                                                            <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
-                                                                                        </div>
-                                                                                    `);
+                                                                                <div class="col-auto d-flex gap-2 flex-column justify-content-center align-items-center">
+                                                                                    <img src="/MasSystem/images/done.svg" style="width: 50px;">
+                                                                                    <p>أنت متصل بالواتساب</p>
+                                                                                    <button class="btn cut-connect-btn" type="button" onclick="logoutClient()">قطع الاتصال</button>
+                                                                                </div>
+                                                                            `);
             $("#DeviceName-whatsapp").val(name);
             $("#DeviceNameType-whatsapp").val(deviceType);
             $("#phone2").val(mobile);
@@ -598,18 +570,18 @@
         function handleFetchError(error) {
             const message = error.name === 'AbortError'
                 ? "حدث تأخير في الاتصال. الرجاء المحاولة مرة أخرى."
-                : "حدث خطأ أثناء تحميل رمز الـ QR.";
+                : "  حدث خطأ أثناء تحميل رمز الـ QR. ، الرجاء المحاولة مرة أخرى ";
             showFailureMessage(message);
         }
 
         function showFailureMessage(message) {
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                                        <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                                                                                            <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                                                                                        </button>
-                                                                                        <p>${message}</p>
-                                                                                    `);
+                                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                                </button>
+                                                                                <p>${message}</p>
+                                                                            `);
         }
 
         function clearClientInfo() {
@@ -621,14 +593,12 @@
             $("#data-check-whatsup").css("background-color", "#666666");
             $('#QRArea').empty();
             $('#QRArea').append(`
-                                                                                                <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
-                                                                                            <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
-                                                                                        </button>
-                                                                                        <p>${message}</p>
-                                                                                    `);
+                                                                                        <button type="button" class="border-0 bg-transparent" id="RegenerateQR" onclick="fetchQrCode()">
+                                                                                    <img id="qrImg" src="/MasSystem/images/qrcode 1.svg" alt="Generate QR">
+                                                                                </button>
+                                                                                <p>${message}</p>
+                                                                            `);
         }
-
-
 
         $(document).ready(function () {
             $("#sendMessage").click(function (e) {
@@ -657,27 +627,29 @@
                 });
             });
         });
-
-
         async function CheckLessorIsConnect() {
             const url = "/CAS/TechnicalConnectivity/CheckLessorIsConnected";
             try {
-                const response = await fetch(url); // استدعاء API
-                const result = await response.json(); // قراءة محتوى الرد
-                console.log("Response result:", result); // طباعة حالة HTTP
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const result = await response.json();
+                console.log("Response result:", result);
                 return result;
             } catch (error) {
-                console.log("حدث خطأ أثناء التحقق من الاتصال: " + error.message);
+                console.error("حدث خطأ أثناء التحقق من الاتصال:", error);
+                return { status: false, code: "error", message: "فشل الاتصال بالسيرفر" };
             }
         }
-
         async function setIntervalForChecklessorDisconnect() {
-            // نفذ الدالة لأول مرة
             var result = await CheckLessorIsConnect();
-            if (result.status && result.message == "3") {
-                await checkClientConnectionWithUI();
-                clearClientInfo();
-                showSuccessMessage("تم قطع الاتصال من خلال الواتساب");
+            if (result.code !== previousStatus) {
+                previousStatus = result.code; // تحديث الحالة السابقة
+                checkClientConnectionWithUI();
+                if (result.status && result.code == "@Status.Renewed") {
+                    clearClientInfo();
+                    showSuccessMessage("تم قطع الاتصال");
+                }
             }
             // بعد الانتهاء من تنفيذ الدالة، استدعيها مرة أخرى
             setTimeout(() => {

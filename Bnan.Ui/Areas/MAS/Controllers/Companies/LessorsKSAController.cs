@@ -416,6 +416,9 @@ namespace Bnan.Ui.Areas.MAS.Controllers.Companies
             }
             var callingKeys = _unitOfWork.CrMasSysCallingKeys.FindAll(x => x.CrMasSysCallingKeysStatus == Status.Active).Select(c => new SelectListItem { Value = c.CrMasSysCallingKeysCode.ToString(), Text = c.CrMasSysCallingKeysNo.Trim() }).ToList();
             ViewData["CallingKeys"] = callingKeys;
+            var whatsConnect = (await _unitOfWork.CrCasLessorWhatsupConnect.FindAllAsNoTrackingAsync(x => x.CrCasLessorWhatsupConnectLessor == lessor.CrMasLessorInformationCode))
+                                                .OrderBy(x => x.CrCasLessorWhatsupConnectSerial).LastOrDefault();
+            model.WhatsupConnect = whatsConnect;
             return View(model);
         }
         [HttpPost]
