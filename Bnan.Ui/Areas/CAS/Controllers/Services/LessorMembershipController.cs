@@ -3,14 +3,10 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using NToastNotify;
 
@@ -125,17 +121,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
                 }
                 if (await _unitOfWork.CompleteAsync() > 0)
                 {
-                    // Save Adminstrive Procedures
-                    await _adminstritiveProcedures.SaveAdminstritive(userLogin.CrMasUserInformationCode, "1", "242", "20", userLogin.CrMasUserInformationLessor, "100",
-                    "", null, null, null, null, null, null, null, null, "تعديل", "Edit", "U", null);
-
-                    //save Tracing
-                    var (mainTask, subTask, system, currentUser) = await SetTrace("207", "2207002", "2");
-
-                    await _userLoginsService.SaveTracing(currentUser.CrMasUserInformationCode, "تعديل", "Edit", mainTask.CrMasSysMainTasksCode,
-                    subTask.CrMasSysSubTasksCode, mainTask.CrMasSysMainTasksArName, subTask.CrMasSysSubTasksArName, mainTask.CrMasSysMainTasksEnName,
-                    subTask.CrMasSysSubTasksEnName, system.CrMasSysSystemCode, system.CrMasSysSystemArName, system.CrMasSysSystemEnName);
-
+                    await SaveTracingForChange(Status.Update);
+                    await SaveAdminstritiveForLessorMembership(userLogin.CrMasUserInformationCode, userLogin.CrMasUserInformationLessor, "242", "20", Status.Update, "");
                     _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return RedirectToAction("LessorMembership");
                 }
@@ -143,6 +130,38 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Services
 
             _toastNotification.AddErrorToastMessage(_localizer["ToastFailed"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             return RedirectToAction("Index", "Home");
+        }
+        private async Task SaveAdminstritiveForLessorMembership(string userLogin, string lessorCode, string procudureCode, string classification, string status, string reasons)
+        {
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+            await _adminstritiveProcedures.SaveAdminstritive(userLogin, "1", procudureCode, classification, lessorCode, "100",
+           lessorCode, null, null, null, null, null, null, null, null, operationAr, operationEn, status, reasons);
+        }
+        private async Task SaveTracingForChange(string status)
+        {
+
+
+            var recordAr = "العضويات";
+            var recordEn = "Memberships";
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+
+            var (mainTask, subTask, system, currentUser) = await SetTrace(pageNumber);
+
+            await _userLoginsService.SaveTracing(
+                currentUser.CrMasUserInformationCode,
+                recordAr,
+                recordEn,
+                operationAr,
+                operationEn,
+                mainTask.CrMasSysMainTasksCode,
+                subTask.CrMasSysSubTasksCode,
+                mainTask.CrMasSysMainTasksArName,
+                subTask.CrMasSysSubTasksArName,
+                mainTask.CrMasSysMainTasksEnName,
+                subTask.CrMasSysSubTasksEnName,
+                system.CrMasSysSystemCode,
+                system.CrMasSysSystemArName,
+                system.CrMasSysSystemEnName);
         }
     }
 }

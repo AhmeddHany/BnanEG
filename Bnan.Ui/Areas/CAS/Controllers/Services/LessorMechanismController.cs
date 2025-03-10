@@ -3,13 +3,9 @@ using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.Base;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
-using Bnan.Inferastructure.Repository;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
 using Bnan.Ui.ViewModels.CAS.MecanismInputs;
-using Bnan.Ui.ViewModels.MAS.UserValiditySystem;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +21,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
         private readonly IToastNotification _toastNotification;
         private readonly IStringLocalizer<LessorMechanismController> _localizer;
         private readonly IAdminstritiveProcedures _adminstritiveProcedures;
-        private readonly IUserLoginsService _userLoginsService ;
+        private readonly IUserLoginsService _userLoginsService;
         private readonly IBaseRepo _baseRepo;
 
         private readonly string pageNumber = SubTasks.LessorMechanizmCAS;
@@ -131,8 +127,10 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             //await _unitOfWork.CompleteAsync();
             if (await _unitOfWork.CompleteAsync() > 0)
             {
-                await SaveTracingForChange(Status.Update);
                 await UpdateMechanism();
+                await SaveTracingForChange(Status.Update);
+                await SaveAdminstritiveForLessorMechanism(currentUser.CrMasUserInformationCode, currentUser.CrMasUserInformationLessor, "241", "20", Status.Update, "");
+
             }
             return Json(new { success = true });
         }
@@ -146,7 +144,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             {
                 foreach (var item in Documents)
                 {
-                    var AboutToExpire =  _unitOfWork.CrCasLessorMechanism.FindAsync(l => l.CrCasLessorMechanismCode == item.CrCasBranchDocumentsLessor
+                    var AboutToExpire = _unitOfWork.CrCasLessorMechanism.FindAsync(l => l.CrCasLessorMechanismCode == item.CrCasBranchDocumentsLessor
                                                                                      && l.CrCasLessorMechanismProcedures == item.CrCasBranchDocumentsProcedures
                                                                                      && l.CrCasLessorMechanismProceduresClassification == item.CrCasBranchDocumentsProceduresClassification).Result.CrCasLessorMechanismDaysAlertAboutExpire;
                     item.CrCasBranchDocumentsDateAboutToFinish = item.CrCasBranchDocumentsEndDate?.AddDays(-(double)AboutToExpire);
@@ -196,9 +194,15 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 system.CrMasSysSystemArName,
                 system.CrMasSysSystemEnName);
         }
-        public  IActionResult SuccessToast()
+        private async Task SaveAdminstritiveForLessorMechanism(string userLogin, string lessorCode, string procudureCode, string classification, string status, string reasons)
         {
-           _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+            await _adminstritiveProcedures.SaveAdminstritive(userLogin, "1", procudureCode, classification, lessorCode, "100",
+           lessorCode, null, null, null, null, null, null, null, null, operationAr, operationEn, status, reasons);
+        }
+        public IActionResult SuccessToast()
+        {
+            _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
             return RedirectToAction("Index", "Home");
         }
     }

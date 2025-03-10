@@ -2,14 +2,11 @@
 using Bnan.Core.Extensions;
 using Bnan.Core.Interfaces;
 using Bnan.Core.Interfaces.Base;
-using Bnan.Core.Interfaces.CAS;
 using Bnan.Core.Interfaces.MAS;
 using Bnan.Core.Models;
-using Bnan.Inferastructure.Extensions;
 using Bnan.Inferastructure.Filters;
 using Bnan.Ui.Areas.Base.Controllers;
 using Bnan.Ui.ViewModels.CAS;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -72,36 +69,36 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             // Retrieve active driving licenses
             //var RenterLessorInformationAll = await _unitOfWork.CrCasRenterLessor.FindAllAsync(x => x.CrCasRenterLessorCode == user.CrMasUserInformationLessor && x.CrCasRenterLessorStatus==Status.Active, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" });
 
-    var RenterLessorInformationAll = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
-    predicate: x => x.CrCasRenterLessorStatus == Status.Active && x.CrCasRenterLessorCode == user.CrMasUserInformationLessor,
-    //x.CrCasCarInformationLastContractDate > start && x.CrCasCarInformationLastContractDate <= end,
-    selectProjection: query => query.Select(x => new RenterLessorInformation_SingleVM
-    {
-        CrCasRenterLessorCode = x.CrCasRenterLessorCode,
-        CrCasRenterLessorId = x.CrCasRenterLessorId,
-        CrCasRenterLessorCopyId = x.CrCasRenterLessorCopyId,
-        CrCasRenterLessorDateLastContractual = x.CrCasRenterLessorDateLastContractual,
-        CrCasRenterLessorContractCount = x.CrCasRenterLessorContractCount,
-        CrCasRenterLessorStatisticsAge = x.CrCasRenterLessorStatisticsAge,
-        CrCasRenterLessorStatisticsTraded = x.CrCasRenterLessorStatisticsTraded,
-        CrCasRenterLessorDealingMechanism = x.CrCasRenterLessorDealingMechanism,
-        CrCasRenterLessorStatus = x.CrCasRenterLessorStatus,
-        CrCasRenterLessorReasons = x.CrCasRenterLessorReasons,
-        addressAr = x.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation.CrMasSupPostCityConcatenateArName,
-        addressEn = x.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation.CrMasSupPostCityConcatenateEnName,
-        jobAr = x.CrCasRenterLessorStatisticsJobsNavigation.CrMasSupRenterProfessionsArName,
-        jobEn = x.CrCasRenterLessorStatisticsJobsNavigation.CrMasSupRenterProfessionsEnName,
-        nationalityAr = x.CrCasRenterLessorStatisticsNationalitiesNavigation.CrMasSupRenterNationalitiesArName,
-        nationalityEn = x.CrCasRenterLessorStatisticsNationalitiesNavigation.CrMasSupRenterNationalitiesEnName,
-        //RateAr = x.CrMasUserInformationOperationStatus,
-        //RateEn = x.CrMasUserInformationStatus,
-        RenterNameAr = x.CrCasRenterLessorNavigation.CrMasRenterInformationArName,
-        RenterNameEn = x.CrCasRenterLessorNavigation.CrMasRenterInformationEnName,
-        Email = x.CrCasRenterLessorNavigation.CrMasRenterInformationEmail,
+            var RenterLessorInformationAll = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
+            predicate: x => x.CrCasRenterLessorStatus == Status.Active && x.CrCasRenterLessorCode == user.CrMasUserInformationLessor,
+            //x.CrCasCarInformationLastContractDate > start && x.CrCasCarInformationLastContractDate <= end,
+            selectProjection: query => query.Select(x => new RenterLessorInformation_SingleVM
+            {
+                CrCasRenterLessorCode = x.CrCasRenterLessorCode,
+                CrCasRenterLessorId = x.CrCasRenterLessorId,
+                CrCasRenterLessorCopyId = x.CrCasRenterLessorCopyId,
+                CrCasRenterLessorDateLastContractual = x.CrCasRenterLessorDateLastContractual,
+                CrCasRenterLessorContractCount = x.CrCasRenterLessorContractCount,
+                CrCasRenterLessorStatisticsAge = x.CrCasRenterLessorStatisticsAge,
+                CrCasRenterLessorStatisticsTraded = x.CrCasRenterLessorStatisticsTraded,
+                CrCasRenterLessorDealingMechanism = x.CrCasRenterLessorDealingMechanism,
+                CrCasRenterLessorStatus = x.CrCasRenterLessorStatus,
+                CrCasRenterLessorReasons = x.CrCasRenterLessorReasons,
+                addressAr = x.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation.CrMasSupPostCityConcatenateArName,
+                addressEn = x.CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation.CrMasSupPostCityConcatenateEnName,
+                jobAr = x.CrCasRenterLessorStatisticsJobsNavigation.CrMasSupRenterProfessionsArName,
+                jobEn = x.CrCasRenterLessorStatisticsJobsNavigation.CrMasSupRenterProfessionsEnName,
+                nationalityAr = x.CrCasRenterLessorStatisticsNationalitiesNavigation.CrMasSupRenterNationalitiesArName,
+                nationalityEn = x.CrCasRenterLessorStatisticsNationalitiesNavigation.CrMasSupRenterNationalitiesEnName,
+                //RateAr = x.CrMasUserInformationOperationStatus,
+                //RateEn = x.CrMasUserInformationStatus,
+                RenterNameAr = x.CrCasRenterLessorNavigation.CrMasRenterInformationArName,
+                RenterNameEn = x.CrCasRenterLessorNavigation.CrMasRenterInformationEnName,
+                Email = x.CrCasRenterLessorNavigation.CrMasRenterInformationEmail,
 
-    })
-    , includes: new string[] { "CrCasRenterLessorNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }
-    );
+            })
+            , includes: new string[] { "CrCasRenterLessorNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }
+            );
 
             // If no active licenses, retrieve all licenses
             if (RenterLessorInformationAll.Count() == 0)
@@ -109,7 +106,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 //RenterLessorInformationAll = await _unitOfWork.CrCasRenterLessor.FindAllAsync(x => x.CrCasRenterLessorCode == user.CrMasUserInformationLessor && x.CrCasRenterLessorStatus == Status.Rented, new[] { "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" });
 
                 RenterLessorInformationAll = await _unitOfWork.CrCasRenterLessor.FindAllWithSelectAsNoTrackingAsync(
-                    predicate: x => x.CrCasRenterLessorStatus == Status.Rented && x.CrCasRenterLessorCode==user.CrMasUserInformationLessor,
+                    predicate: x => x.CrCasRenterLessorStatus == Status.Rented && x.CrCasRenterLessorCode == user.CrMasUserInformationLessor,
                     //x.CrCasCarInformationLastContractDate > start && x.CrCasCarInformationLastContractDate <= end,
                     selectProjection: query => query.Select(x => new RenterLessorInformation_SingleVM
                     {
@@ -136,23 +133,23 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                         Email = x.CrCasRenterLessorNavigation.CrMasRenterInformationEmail,
 
                     })
-                    , includes: new string[] {  "CrCasRenterLessorNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }
+                    , includes: new string[] { "CrCasRenterLessorNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation" }
                     );
                 ViewBag.radio = "All";
             }
             else ViewBag.radio = "A";
 
             var rates = await _unitOfWork.CrMasSysEvaluation.FindAllAsync(x => x.CrMasSysEvaluationsClassification == "1");
-            var ratesList= rates?.ToList();
+            var ratesList = rates?.ToList();
             //ViewData["Rates"] = rates;
             RenterLessorInformation_CASVM VM = new RenterLessorInformation_CASVM();
-            VM.all_Rates = ratesList?? new List<CrMasSysEvaluation>();
+            VM.all_Rates = ratesList ?? new List<CrMasSysEvaluation>();
             VM.all_RentersData = RenterLessorInformationAll ?? new List<RenterLessorInformation_SingleVM>();
             return View(VM);
         }
 
         [HttpGet]
-        public async Task<PartialViewResult> GetRenterLessorInformationByStatus(string status,string search)
+        public async Task<PartialViewResult> GetRenterLessorInformationByStatus(string status, string search)
         {
 
             var user = await _userManager.GetUserAsync(User);
@@ -198,7 +195,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 IEnumerable<RenterLessorInformation_SingleVM>? enumerable = RenterLessorInformationAll;
                 if (!string.IsNullOrEmpty(search))
                 {
-                    enumerable = enumerable.Where(x => (x.addressAr != null && x.addressAr.Contains(search)) || (x.addressEn != null && x.addressEn.ToLower().Contains(search.ToLower()))||
+                    enumerable = enumerable.Where(x => (x.addressAr != null && x.addressAr.Contains(search)) || (x.addressEn != null && x.addressEn.ToLower().Contains(search.ToLower())) ||
                     (x.jobAr != null && x.jobAr.Contains(search)) || (x.jobEn != null && x.jobEn.ToLower().Contains(search.ToLower())) ||
                     (x.nationalityAr != null && x.nationalityAr.Contains(search)) || (x.nationalityEn != null && x.nationalityEn.ToLower().Contains(search.ToLower())) ||
                     (x.RenterNameAr != null && x.RenterNameAr.Contains(search)) || (x.RenterNameEn != null && x.RenterNameEn.ToLower().Contains(search.ToLower())) ||
@@ -282,7 +279,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
                 })
                 , includes: new string[] { "CrCasRenterLessorCodeNavigation.CrCasAccountBanks", "CrCasRenterLessorNavigation.CrMasRenterInformationEmployerNavigation", "CrCasRenterLessorNavigation.CrMasRenterPost.CrMasRenterPostCityNavigation", "CrCasRenterLessorStatisticsNationalitiesNavigation", "CrCasRenterLessorStatisticsJobsNavigation", "CrCasRenterLessorIdtrypeNavigation", "CrCasRenterLessorStatisticsGenderNavigation", "CrCasRenterLessorMembershipNavigation" }
                 );
-            
+
             if (ThisRenterData == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -292,7 +289,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             // الحصول على المسار لحد المجلد wwwroot
             string wwwrootPath = _env.WebRootPath;
 
-            var image = ThisRenterData?.FirstOrDefault()?.SignatureImage?.Replace("~","") ?? " ";
+            var image = ThisRenterData?.FirstOrDefault()?.SignatureImage?.Replace("~", "") ?? " ";
 
             // تحديد المسار  الكامل 
             string filePath = wwwrootPath + image;
@@ -310,7 +307,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             RenterLessorInformation_CASVM VM = new RenterLessorInformation_CASVM();
             VM.This_RentersData_edit = ThisRenterData?.FirstOrDefault();
             VM.all_Rates = ratesList ?? new List<CrMasSysEvaluation>();
-            VM.CrCasRenterLessorId = ThisRenterData?.FirstOrDefault()?.CrCasRenterLessorId?? " ";
+            VM.CrCasRenterLessorId = ThisRenterData?.FirstOrDefault()?.CrCasRenterLessorId ?? " ";
             VM.CrCasRenterLessorCode = ThisRenterData?.FirstOrDefault()?.CrCasRenterLessorCode ?? " ";
             VM.CrCasRenterLessorReasons = ThisRenterData?.FirstOrDefault()?.CrCasRenterLessorReasons ?? " ";
             VM.CrCasRenterLessorDealingMechanism = ThisRenterData?.FirstOrDefault()?.CrCasRenterLessorDealingMechanism ?? " ";
@@ -342,15 +339,16 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             try
             {
                 if (singlExist.CrCasRenterLessorDealingMechanism == model.CrCasRenterLessorDealingMechanism && model.CrCasRenterLessorReasons?.Length < 1) return RedirectToAction("Edit", new { id = singlExist.CrCasRenterLessorId });
-                
+
                 if (model?.CrCasRenterLessorDealingMechanism == "16") { AdminStatus = Status.Blocked; }
                 else { AdminStatus = Status.unBlocked; }
 
                 if (singlExist.CrCasRenterLessorDealingMechanism == model?.CrCasRenterLessorDealingMechanism) AdminStatus = Status.Update;
-                singlExist.CrCasRenterLessorDealingMechanism = model.CrCasRenterLessorDealingMechanism;
+                if (model.CrCasRenterLessorDealingMechanism != "16") singlExist.CrCasRenterLessorDealingMechanism = await GetClosestEvaluationCode((decimal)singlExist.CrCasRenterLessorEvaluationValue);
+                else singlExist.CrCasRenterLessorDealingMechanism = model.CrCasRenterLessorDealingMechanism;
                 //singlExist.CrCasRenterLessorReasons = model.CrCasRenterLessorReasons;
-                var reasons = model?.CrCasRenterLessorReasons??" ";
-                var RenterId = model?.CrCasRenterLessorId??" ";
+                var reasons = model?.CrCasRenterLessorReasons ?? " ";
+                var RenterId = model?.CrCasRenterLessorId ?? " ";
                 _unitOfWork.CrCasRenterLessor.Update(singlExist);
                 if (await _unitOfWork.CompleteAsync() > 0) _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"], Title = "", }); //  إلغاء العنوان الجزء العلوي
 
@@ -446,7 +444,15 @@ namespace Bnan.Ui.Areas.CAS.Controllers
             );
 
         }
+        private async Task<string> GetClosestEvaluationCode(decimal EvaluationValue)
+        {
+            var evaluations = await _unitOfWork.CrMasSysEvaluation.FindAllAsNoTrackingAsync(x => x.CrMasSysEvaluationsClassification == "1");
 
+            var pareRateValue = Math.Abs(EvaluationValue);
+            // Find the closest evaluation
+            return evaluations.FirstOrDefault(x => x.CrMasSysServiceEvaluationsValue == pareRateValue).CrMasSysEvaluationsCode;
+
+        }
         [HttpPost]
         public IActionResult DisplayToastError_NoUpdate(string messageText)
         {

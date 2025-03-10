@@ -276,9 +276,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 // التحقق من نجاح حفظ البيانات
                 if (await _unitOfWork.CompleteAsync() > 0)
                 {
-                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                    // حفظ تتبع التغييرات للمستخدم
                     await SaveTracingForUserChange(createUser, Status.Insert, pageNumber);
+                    await SaveAdminstritiveForEmployee(user.CrMasUserInformationCode, user.CrMasUserInformationLessor, createUser.CrMasUserInformationCode, "231", "20", Status.Insert, createUser.CrMasUserInformationReasons);
+                    _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                     return RedirectToAction("Index", "Employees");
                 }
 
@@ -424,8 +424,9 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                     if (await _unitOfWork.CompleteAsync() > 0 && await ChangeRoleAsync(updatedUser))
                     {
                         await transaction.CommitAsync();
-                        _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                         await SaveTracingForUserChange(updatedUser, Status.Update, pageNumber);
+                        await SaveAdminstritiveForEmployee(user.CrMasUserInformationCode, user.CrMasUserInformationLessor, updatedUser.CrMasUserInformationCode, "231", "20", Status.Update, updatedUser.CrMasUserInformationReasons);
+                        _toastNotification.AddSuccessToastMessage(_localizer["ToastSave"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                         return RedirectToAction("Index", "Employees");
                     }
 
@@ -484,6 +485,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 _unitOfWork.CrMasUserInformation.Update(EditedUser);
                 await _unitOfWork.CompleteAsync();
                 await SaveTracingForUserChange(EditedUser, status, pageNumber);
+                await SaveAdminstritiveForEmployee(user.CrMasUserInformationCode, user.CrMasUserInformationLessor, EditedUser.CrMasUserInformationCode, "231", "20", status, reasons);
                 return "true";
             }
             catch (Exception ex)
@@ -645,7 +647,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             if (result.Succeeded)
             {
                 user.CrMasUserInformationChangePassWordLastDate = DateTime.Now.Date;
-                _unitOfWork.Complete();
+                await _unitOfWork.CompleteAsync();
                 await SaveTracingForUserChange(user, Status.ChangePassword, SubTasks.ChangePasswordCAS);
                 _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
                 return RedirectToAction("Index", "Home");
@@ -772,6 +774,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             var fullMessage = messageAr + Environment.NewLine + Environment.NewLine + messageEn;
 
             return fullMessage;
+        }
+        private async Task SaveAdminstritiveForEmployee(string userLogin, string lessorCode, string userUpdated, string procudureCode, string classification, string status, string reasons)
+        {
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+            await _adminstritiveProcedures.SaveAdminstritive(userLogin, "1", procudureCode, classification, lessorCode, "100",
+            userUpdated, null, null, null, null, null, null, null, null, operationAr, operationEn, status, reasons);
         }
         public IActionResult SuccessToast()
         {

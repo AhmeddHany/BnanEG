@@ -104,7 +104,7 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 return RedirectToAction("Index", "EmployeesSystemValiditions");
             }
             var EditedUser = await _unitOfWork.CrMasUserInformation.FindAsync(x => !id.StartsWith("CAS") && x.CrMasUserInformationCode == id &&
-                                                                                   x.CrMasUserInformationLessor == user.CrMasUserInformationLessor  );
+                                                                                   x.CrMasUserInformationLessor == user.CrMasUserInformationLessor);
             if (EditedUser == null || user == null)
             {
                 _toastNotification.AddErrorToastMessage(_localizer["SomethingWrongPleaseCallAdmin"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
@@ -208,8 +208,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                     }
                 }
                 //Save Adminstrive Procedures
-                if (await _unitOfWork.CompleteAsync() > 0) await SaveTracingForUserChange(model.UserId, Status.UpdateValidtions);
-                return Json(new { success = true });
+                if (await _unitOfWork.CompleteAsync() > 0)
+                {
+                    await SaveAdminstritiveForSystemValiditionsEmployee(user.CrMasUserInformationCode, user.CrMasUserInformationLessor, model.UserId, "232", "20", Status.Update, "");
+                    await SaveTracingForUserChange(model.UserId, Status.UpdateValidtions);
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false });
             }
             catch (Exception ex)
             {
@@ -244,6 +249,13 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 system.CrMasSysSystemCode,
                 system.CrMasSysSystemArName,
                 system.CrMasSysSystemEnName);
+        }
+
+        private async Task SaveAdminstritiveForSystemValiditionsEmployee(string userLogin, string lessorCode, string userUpdated, string procudureCode, string classification, string status, string reasons)
+        {
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+            await _adminstritiveProcedures.SaveAdminstritive(userLogin, "1", procudureCode, classification, lessorCode, "100",
+            userUpdated, null, null, null, null, null, null, null, null, operationAr, operationEn, status, reasons);
         }
         public IActionResult DisplayToastSuccess_ForEditValidtions()
         {

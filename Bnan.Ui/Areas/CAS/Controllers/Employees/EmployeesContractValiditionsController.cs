@@ -199,8 +199,8 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
             if (updateModel && await _unitOfWork.CompleteAsync() > 0)
             {
                 _toastNotification.AddSuccessToastMessage(_localizer["ToastEdit"], new ToastrOptions { PositionClass = _localizer["toastPostion"] });
-                // Save Adminstrive Procedures
                 await SaveTracingForUserChange(userEdited, Status.Update, pageNumber);
+                await SaveAdminstritiveForContractValiditionsEmployee(userLogin.CrMasUserInformationCode, userLogin.CrMasUserInformationLessor, userEdited.CrMasUserInformationCode, "233", "20", Status.Update, "");
                 return RedirectToAction("Index", "EmployeesContractValiditions");
             }
 
@@ -231,6 +231,12 @@ namespace Bnan.Ui.Areas.CAS.Controllers.Employees
                 system.CrMasSysSystemCode,
                 system.CrMasSysSystemArName,
                 system.CrMasSysSystemEnName);
+        }
+        private async Task SaveAdminstritiveForContractValiditionsEmployee(string userLogin, string lessorCode, string userUpdated, string procudureCode, string classification, string status, string reasons)
+        {
+            var (operationAr, operationEn) = GetStatusTranslation(status);
+            await _adminstritiveProcedures.SaveAdminstritive(userLogin, "1", procudureCode, classification, lessorCode, "100",
+            userUpdated, null, null, null, null, null, null, null, null, operationAr, operationEn, status, reasons);
         }
     }
 }
